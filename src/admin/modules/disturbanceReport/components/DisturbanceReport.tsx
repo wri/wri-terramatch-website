@@ -1,19 +1,101 @@
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { TextVariants } from "@/types/common";
 
 import DownloadMediaItem from "./DownloadMediaItem";
-import Intensity, { IntensityEnum } from "./Intensity";
+import Intensity from "./Intensity";
 import { DisturbanceReportData } from "./MockedData";
 
 interface DisturbanceReportProps {
   id: string;
   index: number;
+  values?: Record<string, any>;
+  formSteps?: any[];
 }
 
+const TextEntry = ({
+  value,
+  variant = "text-14",
+  className = "leading-none text-blueCustom-900",
+  variantLabel = "text-14-light",
+  classNameLabel = "leading-none text-darkCustom-300",
+  classNameContainer = "flex flex-col gap-2",
+  label
+}: {
+  value: any;
+  variant?: TextVariants;
+  className?: string;
+  variantLabel?: TextVariants;
+  classNameLabel?: string;
+  classNameContainer?: string;
+  label?: string;
+}) => {
+  return (
+    <div className={classNameContainer}>
+      <Text variant={variantLabel} className={classNameLabel}>
+        {label}
+      </Text>
+      {typeof value === "string" || typeof value === "number" ? (
+        <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
+      ) : (
+        <Text variant={variant} className={className}>
+          {formatEntryValue(value)}
+        </Text>
+      )}
+    </div>
+  );
+};
+
 const DisturbanceReport = (props: DisturbanceReportProps) => {
-  const { index } = props;
+  const { index, values = {}, formSteps = [] } = props;
+
+  const FIELD_KEYS = {
+    DISTURBANCE_TYPE: "dis-rep-disturbance-type",
+    DISTURBANCE_SUBTYPE: "dis-rep-disturbance-subtype",
+    INTENSITY: "dis-rep-intensity",
+    EXTENT: "dis-rep-extent",
+    PEOPLE_AFFECTED: "dis-rep-people-affected",
+    DATE_OF_DISTURBANCE: "dis-rep-date-of-disturbance",
+    MONETARY_DAMAGE: "dis-rep-monetary-damage",
+    DESCRIPTION: "dis-rep-description",
+    ACTION_DESCRIPTION: "dis-rep-action-description",
+    MEDIA_ASSETS: "dis-rep-media-assets"
+  };
+
+  const getFieldValue = (linkedFieldKey: string) => {
+    const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
+    if (!field) return null;
+    return values[field.name] || null;
+  };
+
+  // TODO: Uncomment this when we have the labels
+  // const getFieldLabel = (linkedFieldKey: string) => {
+  //   const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
+  //   return field?.label || linkedFieldKey;
+  // };
+
+  // const formatCurrency = (amount: number | string) => {
+  //   if (!amount) return "N/A";
+  //   const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
+  //   return new Intl.NumberFormat("en-US", {
+  //     style: "currency",
+  //     currency: "USD"
+  //   }).format(numAmount);
+  // };
+
+  const disturbanceType = getFieldValue(FIELD_KEYS.DISTURBANCE_TYPE);
+  const disturbanceSubtype = getFieldValue(FIELD_KEYS.DISTURBANCE_SUBTYPE);
+  const intensity = getFieldValue(FIELD_KEYS.INTENSITY);
+  const extent = getFieldValue(FIELD_KEYS.EXTENT);
+  const peopleAffected = getFieldValue(FIELD_KEYS.PEOPLE_AFFECTED);
+  const dateOfDisturbance = getFieldValue(FIELD_KEYS.DATE_OF_DISTURBANCE);
+  const monetaryDamage = getFieldValue(FIELD_KEYS.MONETARY_DAMAGE);
+  const description = getFieldValue(FIELD_KEYS.DESCRIPTION);
+  const actionDescription = getFieldValue(FIELD_KEYS.ACTION_DESCRIPTION);
+  const mediaAssets = getFieldValue(FIELD_KEYS.MEDIA_ASSETS);
 
   const columns = [
     {
@@ -43,44 +125,26 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           Disturbance Report {index + 1}
         </Text>
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Disturbance Type
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              Climatic
-            </Text>
-          </div>
-          <div className="col-span-2 flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Disturbance Subtype
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              Flooding, Pests-Disease, Extreme Heat, etc.
-            </Text>
-          </div>
+          <TextEntry value={disturbanceType} label="Disturbance Type" />
+          <TextEntry
+            value={disturbanceSubtype}
+            label="Disturbance Subtype"
+            classNameContainer="col-span-2 flex flex-col gap-2"
+          />
           <div className="flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
               Intensity
             </Text>
-            <Intensity className="text-blueCustom-900" intensity={IntensityEnum.HIGH} />
+            {intensity ? (
+              <Intensity className="text-blueCustom-900" intensity={intensity} />
+            ) : (
+              <Text variant="text-14" className="leading-none text-blueCustom-900">
+                N/A
+              </Text>
+            )}
           </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Extent
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              0-20
-            </Text>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              People Affected
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              1
-            </Text>
-          </div>
+          <TextEntry value={extent} label="Extent" />
+          <TextEntry value={peopleAffected} label="People Affected" />
           <div className="col-span-3 flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
               Property Affected
@@ -89,22 +153,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
               Entity 1, Entity 2 Entity 5, Entity 4
             </Text>
           </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Date of Disturbance
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              31/07/2025
-            </Text>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Monetary Damage
-            </Text>
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              $50,000
-            </Text>
-          </div>
+          <TextEntry value={dateOfDisturbance} label="Date of Disturbance" />
+          <TextEntry value={monetaryDamage} label="Monetary Damage" />
         </div>
       </div>
       <Table
@@ -114,37 +164,20 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
         invertSelectPagination={false}
         variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
       />
-      <div className="flex flex-col gap-2">
-        <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-          Description
-        </Text>
-        <Text variant="text-14" className="text-blueCustom-900">
-          The organization faced significant revenue decline of 15% due to pandemic-related disruptions while
-          maintaining stable operating margins through aggressive cost-cutting measures.
-        </Text>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-          Action Description
-        </Text>
-        <Text variant="text-14" className="text-blueCustom-900">
-          The organization faced significant revenue decline of 15% due to pandemic-related disruptions while
-          maintaining stable operating margins through aggressive cost-cutting measures.
-        </Text>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-          Download Media Assets
-        </Text>
-        <div className="grid grid-cols-3 gap-2">
-          <DownloadMediaItem name={"Image-1.jpg"} src={"https://www.google.com"} />
-          <DownloadMediaItem name={"Image-2.jpg"} src={"https://www.google.com"} />
-          <DownloadMediaItem name={"Image-3.jpg"} src={"https://www.google.com"} />
-          <DownloadMediaItem name={"Image-4.jpg"} src={"https://www.google.com"} />
-          <DownloadMediaItem name={"Image-5.jpg"} src={"https://www.google.com"} />
-          <DownloadMediaItem name={"Image-6.jpg"} src={"https://www.google.com"} />
+      <TextEntry value={actionDescription} label="Action Description" className="text-blueCustom-900" />
+      <TextEntry value={description} label="Description" className="text-blueCustom-900" />
+      {mediaAssets && Array.isArray(mediaAssets) && mediaAssets.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+            Download Media Assets
+          </Text>
+          <div className="grid grid-cols-3 gap-2">
+            {mediaAssets.map((media: any, mediaIndex: number) => (
+              <DownloadMediaItem key={mediaIndex} name={media.title || `Media-${mediaIndex + 1}`} src={media.url} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

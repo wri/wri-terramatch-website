@@ -221,6 +221,7 @@ export const apiFormQuestionToFormField = (
     max_character_limit: question.max_character_limit,
     min_number_limit: question.min_number_limit,
     max_number_limit: question.max_number_limit,
+    linked_field_key: question.linked_field_key,
     feedbackRequired
   };
 

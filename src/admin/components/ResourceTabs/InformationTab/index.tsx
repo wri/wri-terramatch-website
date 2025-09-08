@@ -125,7 +125,7 @@ const InformationTab: FC<IProps> = props => {
               </Then>
               <Else>
                 <When condition={props.type === "disturbance-reports"}>
-                  <DisturbanceReport id={record.uuid} index={0} />
+                  <DisturbanceReport id={record.uuid} index={0} values={values} formSteps={formSteps} />
                 </When>
                 <When condition={props.type === "financial-reports"}>
                   <div className="flex flex-col gap-8 p-2">

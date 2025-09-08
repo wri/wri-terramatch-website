@@ -4,9 +4,9 @@ import { twMerge } from "tailwind-merge";
 import Text from "@/components/elements/Text/Text";
 
 export enum IntensityEnum {
-  LOW = "Low",
-  MEDIUM = "Medium",
-  HIGH = "High"
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high"
 }
 
 interface IntensityProps {
