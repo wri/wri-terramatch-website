@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
@@ -22,7 +24,7 @@ const TextEntry = ({
   className = "leading-none text-blueCustom-900",
   variantLabel = "text-14-light",
   classNameLabel = "leading-none text-darkCustom-300",
-  classNameContainer = "flex flex-col gap-2",
+  classNameContainer = "flex flex-col gap-2 capitalize",
   label
 }: {
   value: any;
@@ -33,16 +35,33 @@ const TextEntry = ({
   classNameContainer?: string;
   label?: string;
 }) => {
+  const t = useT();
   return (
     <div className={classNameContainer}>
       <Text variant={variantLabel} className={classNameLabel}>
-        {label}
+        {t(label)}
       </Text>
-      {typeof value === "string" || typeof value === "number" ? (
-        <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
+      {Array.isArray(value) ? (
+        value.length === 0 ? (
+          <Text variant={variant} className={className}>
+            {t("Answer Not Provided")}
+          </Text>
+        ) : (
+          <Text variant={variant} className={className}>
+            {value.join(", ")}
+          </Text>
+        )
+      ) : value ? (
+        typeof value === "string" || typeof value === "number" ? (
+          <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
+        ) : (
+          <Text variant={variant} className={className}>
+            {formatEntryValue(value)}
+          </Text>
+        )
       ) : (
         <Text variant={variant} className={className}>
-          {formatEntryValue(value)}
+          {t("Answer Not Provided")}
         </Text>
       )}
     </div>
@@ -51,7 +70,7 @@ const TextEntry = ({
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
   const { values = {}, formSteps = [] } = props;
-
+  const t = useT();
   const FIELD_KEYS = {
     DISTURBANCE_TYPE: "dis-rep-disturbance-type",
     DISTURBANCE_SUBTYPE: "dis-rep-disturbance-subtype",
@@ -75,15 +94,6 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   // const getFieldLabel = (linkedFieldKey: string) => {
   //   const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
   //   return field?.label || linkedFieldKey;
-  // };
-
-  // const formatCurrency = (amount: number | string) => {
-  //   if (!amount) return "N/A";
-  //   const numAmount = typeof amount === "string" ? parseFloat(amount) : amount;
-  //   return new Intl.NumberFormat("en-US", {
-  //     style: "currency",
-  //     currency: "USD"
-  //   }).format(numAmount);
   // };
 
   const disturbanceType = getFieldValue(FIELD_KEYS.DISTURBANCE_TYPE);
@@ -131,13 +141,13 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           />
           <div className="flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Intensity
+              {t("Intensity")}
             </Text>
             {intensity ? (
               <Intensity className="text-blueCustom-900" intensity={intensity} />
             ) : (
               <Text variant="text-14" className="leading-none text-blueCustom-900">
-                N/A
+                {t("Answer Not Provided")}
               </Text>
             )}
           </div>
@@ -145,7 +155,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           <TextEntry value={peopleAffected} label="People Affected" />
           <div className="col-span-3 flex flex-col gap-2">
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              Property Affected
+              {t("Property Affected")}
             </Text>
             <Text variant="text-14" className="leading-none text-blueCustom-900">
               Entity 1, Entity 2 Entity 5, Entity 4
@@ -164,18 +174,23 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       />
       <TextEntry value={actionDescription} label="Action Description" className="text-blueCustom-900" />
       <TextEntry value={description} label="Description" className="text-blueCustom-900" />
-      {mediaAssets && Array.isArray(mediaAssets) && mediaAssets.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-            Download Media Assets
-          </Text>
+
+      <div className="flex flex-col gap-4">
+        <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+          {t("Download Media Assets")}
+        </Text>
+        {mediaAssets && Array.isArray(mediaAssets) && mediaAssets.length > 0 ? (
           <div className="grid grid-cols-3 gap-2">
             {mediaAssets.map((media: any, mediaIndex: number) => (
               <DownloadMediaItem key={mediaIndex} name={media.title || `Media-${mediaIndex + 1}`} src={media.url} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <Text variant="text-14" className="leading-none text-blueCustom-900">
+            {t("Answer Not Provided")}
+          </Text>
+        )}
+      </div>
     </div>
   );
 };
