@@ -84,7 +84,7 @@ const handleChange = (
       const assets = Number(currentRow.currentAssets ?? 0);
       const liabilities = Number(currentRow.currentLiabilities ?? 0);
       const ratio = liabilities !== 0 ? (assets / liabilities).toLocaleString() : "0";
-      currentRow.currentRatio = `${currencyInput?.[selectCurrency] ?? ""}${ratio}`;
+      currentRow.currentRatio = ratio;
     }
 
     updated[row] = currentRow;
@@ -156,7 +156,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       year: item,
       currentAssets: 0,
       currentLiabilities: 0,
-      currentRatio: `${currencyInput?.[selectCurrency]} 0`,
+      currentRatio: "0",
       currentAssetsUuid: null,
       currentLiabilitiesUuid: null,
       currentRatioUuid: null
