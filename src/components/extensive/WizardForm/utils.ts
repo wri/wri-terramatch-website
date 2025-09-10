@@ -129,6 +129,10 @@ export const getAnswer = (field: FormField, values: any): Answer => {
         });
       }
 
+      // @ts-ignore
+      if (field.linked_field_key === "dis-rep-site-affected" || field.linked_field_key === "dis-rep-polygon-affected") {
+        return JSON.stringify(value, null, 2);
+      }
       // Fall through to the default case.
     }
     // eslint-disable-next-line no-fallthrough

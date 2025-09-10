@@ -114,6 +114,8 @@ export const EntityEdit = () => {
               roundedCorners
               hideSaveAndCloseButton
               formSubmissionOrg={formSubmissionOrg}
+              entity={entityName}
+              projectUuid={entityValue?.data?.project?.uuid ?? null}
             />
           </EntityProvider>
         </FrameworkProvider>

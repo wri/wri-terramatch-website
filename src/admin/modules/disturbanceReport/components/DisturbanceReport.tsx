@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
+import { Link, useBasename } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
@@ -7,17 +8,29 @@ import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/Ta
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { TextVariants } from "@/types/common";
 
+import modules from "../..";
 import DownloadMediaItem from "./DownloadMediaItem";
 import Intensity from "./Intensity";
-import { DisturbanceReportData } from "./MockedData";
 
 interface DisturbanceReportProps {
   id: string;
   index: number;
   values?: Record<string, any>;
-  formSteps?: any[];
+  formSteps?: FormStepSchema[];
+}
+
+interface SiteAffected {
+  siteUuid: string;
+  siteName: string;
+}
+
+interface PolygonAffected {
+  polyUuid: string;
+  polyName: string;
+  siteUuid: string;
 }
 
 const TextEntry = ({
@@ -59,6 +72,7 @@ const TextEntry = ({
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
   const { values = {}, formSteps = [] } = props;
+  const basename = useBasename();
   const t = useT();
   const entries = useGetFormEntries({
     step: {
@@ -75,6 +89,14 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       step.fields?.forEach((field: any) => {
         if (field?.linked_field_key) {
           const entry = entries.find(e => e.title === field.label);
+          if (field.linked_field_key === "dis-rep-site-affected") {
+            map.set(field.linked_field_key, values[field.name]);
+            return;
+          }
+          if (field.linked_field_key === "dis-rep-polygon-affected") {
+            map.set(field.linked_field_key, values[field.name]);
+            return;
+          }
           if (entry) {
             map.set(field.linked_field_key, entry.value);
           }
@@ -82,6 +104,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       });
     });
     return map;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entries, formSteps]);
 
   const FIELD_KEYS = {
@@ -95,7 +118,9 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     MONETARY_DAMAGE: "dis-rep-monetary-damage",
     DESCRIPTION: "dis-rep-description",
     ACTION_DESCRIPTION: "dis-rep-action-description",
-    MEDIA_ASSETS: "dis-rep-media-assets"
+    MEDIA_ASSETS: "dis-rep-media-assets",
+    SITES_AFFECTED: "dis-rep-site-affected",
+    POLYGONS_AFFECTED: "dis-rep-polygon-affected"
   };
 
   // TODO: Uncomment this when we have the labels
@@ -114,6 +139,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const monetaryDamage = entriesMap.get(FIELD_KEYS.MONETARY_DAMAGE);
   const description = entriesMap.get(FIELD_KEYS.DESCRIPTION);
   const actionDescription = entriesMap.get(FIELD_KEYS.ACTION_DESCRIPTION);
+  const sitesAffected = entriesMap?.get(FIELD_KEYS.SITES_AFFECTED);
+  const polygonsAffected = entriesMap?.get(FIELD_KEYS.POLYGONS_AFFECTED);
 
   const getMediaAssets = () => {
     for (const step of formSteps) {
@@ -130,10 +157,15 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     {
       accessorKey: "sites_affected",
       header: "Sites Affected",
-      cell: ({ getValue }: any) => (
+      cell: ({ getValue, row }: any) => (
         <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
           {getValue()}
-          <Icon name={IconNames.LINK_PA} className="h-4 w-4 text-darkCustom-300 hover:text-primary" />
+          <Link
+            className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
+            to={`${basename}${`/${modules.site.ResourceName}/${row.original?.site_uuid}/show`}`}
+          >
+            <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
+          </Link>
         </Text>
       ),
       enableSorting: false,
@@ -146,6 +178,18 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       meta: { width: "50%" }
     }
   ];
+
+  const disturbanceReportData = Array.isArray(sitesAffected)
+    ? sitesAffected.map((site: SiteAffected) => {
+        const sitePolygons = polygonsAffected.flat().filter((poly: PolygonAffected) => poly.siteUuid === site.siteUuid);
+
+        return {
+          sites_affected: site.siteName,
+          site_uuid: site.siteUuid,
+          polygon_affected: sitePolygons.map((poly: PolygonAffected) => poly.polyName).join(", ")
+        };
+      })
+    : [];
 
   return (
     <div className="flex flex-col gap-6">
@@ -162,7 +206,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             <Text variant="text-14-light" className="leading-none text-darkCustom-300">
               {t("Intensity")}
             </Text>
-            {intensity ? (
+            {["low", "medium", "high"].includes(intensity?.toLowerCase()) ? (
               <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
             ) : (
               <Text variant="text-14" className="leading-none text-blueCustom-900">
@@ -182,7 +226,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
         </div>
       </div>
       <Table
-        data={DisturbanceReportData}
+        data={disturbanceReportData}
         columns={columns}
         hasPagination={false}
         invertSelectPagination={false}

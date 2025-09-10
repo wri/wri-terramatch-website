@@ -827,7 +827,7 @@ export type DisturbanceReportLightDto = {
   /**
    * @format date-time
    */
-  dateOfIncident: string | null;
+  dateOfDisturbance: string | null;
   intensity: string | null;
   /**
    * @format date-time
@@ -1558,7 +1558,7 @@ export type DisturbanceReportFullDto = {
   /**
    * @format date-time
    */
-  dateOfIncident: string | null;
+  dateOfDisturbance: string | null;
   intensity: string | null;
   /**
    * @format date-time
@@ -1591,6 +1591,8 @@ export type DisturbanceReportFullDto = {
   disturbanceType: string | null;
   propertyAffected: string[] | null;
   extent: string | null;
+  siteAffected: string | null;
+  polygonAffected: string | null;
 };
 
 export type ProjectUpdateAttributes = {

@@ -6,7 +6,9 @@ import { twMerge } from "tailwind-merge";
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import { EntityName } from "@/types/common";
 
+import { DisturbanceFieldsContainer } from "./DisturbanceFieldsContainer";
 import { FieldMapper } from "./FieldMapper";
 import { FormField } from "./types";
 
@@ -18,6 +20,8 @@ interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>,
   onChange: () => void;
   actionButtonProps?: IButtonProps;
   formSubmissionOrg?: any;
+  entity?: EntityName;
+  projectUuid?: string;
 }
 
 export const FormStep = ({
@@ -30,6 +34,8 @@ export const FormStep = ({
   children,
   className,
   formSubmissionOrg,
+  entity,
+  projectUuid,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
   useEffect(() => {
@@ -54,9 +60,33 @@ export const FormStep = ({
           items={fields!}
           uniqueId="name"
           itemClassName="mt-8"
-          render={field => (
-            <FieldMapper field={field} formHook={formHook} onChange={onChange} formSubmissionOrg={formSubmissionOrg} />
-          )}
+          render={field => {
+            if (entity === "disturbance-reports") {
+              const disturbanceFields = fields!.filter(f => (f as any).linked_field_key?.startsWith("dis-rep-"));
+              const currentIndex = disturbanceFields.findIndex(f => f.name === field.name);
+
+              if (currentIndex === 0) {
+                return (
+                  <DisturbanceFieldsContainer
+                    fields={disturbanceFields}
+                    formHook={formHook}
+                    onChange={onChange}
+                    projectUuid={projectUuid}
+                  />
+                );
+              }
+              return null;
+            } else {
+              return (
+                <FieldMapper
+                  field={field}
+                  formHook={formHook}
+                  onChange={onChange}
+                  formSubmissionOrg={formSubmissionOrg}
+                />
+              );
+            }
+          }}
         />
       </When>
       {children}

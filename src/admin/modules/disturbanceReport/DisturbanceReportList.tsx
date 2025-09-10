@@ -67,7 +67,7 @@ const DisturbanceReportDataGrid: FC = () => {
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
-      <DateField source="dateOfIncident" label="Date of Incident" locales="en-GB" />
+      <DateField source="dateOfDisturbance" label="Date of Disturbance" locales="en-GB" />
       <FunctionField
         source="intensity"
         label="Intensity"
