@@ -879,7 +879,7 @@ export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, 
   }
 
   if (!isValidGeographicBBox(bbox)) {
-    console.warn(
+    Log.warn(
       "zoomToBbox: Invalid geographic coordinates detected. Expected longitude between -180/180 and latitude between -90/90, but received:",
       bbox
     );
@@ -893,7 +893,7 @@ export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, 
       animate: true
     });
   } catch (error) {
-    console.warn("zoomToBbox: Error occurred while fitting bounds:", error);
+    Log.warn("zoomToBbox: Error occurred while fitting bounds:", error);
     return;
   }
 };
