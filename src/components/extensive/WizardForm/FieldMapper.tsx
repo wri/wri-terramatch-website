@@ -59,6 +59,8 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
           control={formHook.control}
           onChangeCapture={onChange}
           enableAdditionalOptions
+          // @ts-ignore
+          linkedFieldKey={field?.linked_field_key}
         />
       );
 

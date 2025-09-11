@@ -5,12 +5,14 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import Loader from "@/components/generic/Loading/Loader";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useOptionLabels } from "@/connections/util/Form";
+import { useDisturbanceOptions } from "@/hooks/useDisturbanceOptions";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 import Dropdown, { DropdownProps } from "./Dropdown";
 
 type ApiOptionsSource = "gadm-level-0" | "gadm-level-1" | "gadm-level-2";
+type DisturbanceOptionsSource = "disturbance-type" | "disturbance-subtype";
 
 export interface RHFDropdownProps
   extends Omit<DropdownProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
@@ -20,15 +22,39 @@ export interface RHFDropdownProps
   optionsFilterFieldName?: string;
   enableAdditionalOptions?: boolean;
   apiOptionsSource?: ApiOptionsSource;
+  disturbanceOptionsSource?: DisturbanceOptionsSource;
+  linkedFieldKey?: string;
 }
 
-type WithApiOptionsProps = Omit<RHFDropdownProps, "enableAdditionalOptions"> & {
+type WithApiOptionsProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "disturbanceOptionsSource"> & {
   apiOptionsSource: ApiOptionsSource; // make it required
 };
 
-type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "apiOptionsSource">;
+type WithDisturbanceOptionsProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "apiOptionsSource"> & {
+  disturbanceOptionsSource: DisturbanceOptionsSource; // make it required
+};
 
-type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "apiOptionsSource">;
+type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "apiOptionsSource" | "disturbanceOptionsSource">;
+
+type DropdownDisplayProps = Omit<
+  RHFDropdownProps,
+  "enableAdditionalOptions" | "apiOptionsSource" | "disturbanceOptionsSource"
+>;
+
+// Helper function to find the disturbance type field name
+const findDisturbanceTypeFieldName = (formHook?: UseFormReturn): string | undefined => {
+  if (!formHook) return undefined;
+
+  const formValues = formHook.getValues();
+
+  for (const [fieldName, value] of Object.entries(formValues)) {
+    if (value === "climatic" || value === "ecological" || value === "manmade") {
+      return fieldName;
+    }
+  }
+
+  return undefined;
+};
 
 const WithApiOptions: FC<WithApiOptionsProps> = props => {
   const { apiOptionsSource, optionsFilterFieldName, formHook, ...displayProps } = props;
@@ -108,6 +134,21 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
   return <DropdownDisplay {...displayProps} options={options} />;
 };
 
+const WithDisturbanceOptions: FC<WithDisturbanceOptionsProps> = props => {
+  const { disturbanceOptionsSource, formHook, ...displayProps } = props;
+
+  const parentFieldName =
+    disturbanceOptionsSource === "disturbance-subtype" ? findDisturbanceTypeFieldName(formHook) : undefined;
+
+  const options = useDisturbanceOptions(
+    disturbanceOptionsSource === "disturbance-type" ? "type" : "subtype",
+    formHook,
+    parentFieldName
+  );
+
+  return <DropdownDisplay {...displayProps} options={options} />;
+};
+
 const DropdownDisplay: FC<DropdownDisplayProps> = props => {
   const { onChangeCapture, formHook, optionsFilterFieldName, defaultValue, ...dropdownProps } = props;
 
@@ -142,11 +183,26 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
   );
 };
 
-const RHFDropdown = ({ apiOptionsSource, enableAdditionalOptions, ...props }: PropsWithChildren<RHFDropdownProps>) =>
-  apiOptionsSource == null ? (
-    <WithBuiltinOptions {...props} enableAdditionalOptions={enableAdditionalOptions} />
-  ) : (
-    <WithApiOptions {...props} apiOptionsSource={apiOptionsSource} />
-  );
+const RHFDropdown = ({ apiOptionsSource, enableAdditionalOptions, ...props }: PropsWithChildren<RHFDropdownProps>) => {
+  // Check if this is a disturbance field based on linkedFieldKey
+  const linkedFieldKey = props.linkedFieldKey;
+  const isDisturbanceType = linkedFieldKey === "dis-rep-disturbance-type";
+  const isDisturbanceSubtype = linkedFieldKey === "dis-rep-disturbance-subtype";
+  const disturbanceOptionsSource = isDisturbanceType
+    ? "disturbance-type"
+    : isDisturbanceSubtype
+    ? "disturbance-subtype"
+    : undefined;
+
+  if (apiOptionsSource != null) {
+    return <WithApiOptions {...props} apiOptionsSource={apiOptionsSource} />;
+  }
+
+  if (disturbanceOptionsSource != null) {
+    return <WithDisturbanceOptions {...props} disturbanceOptionsSource={disturbanceOptionsSource} />;
+  }
+
+  return <WithBuiltinOptions {...props} enableAdditionalOptions={enableAdditionalOptions} />;
+};
 
 export default RHFDropdown;
