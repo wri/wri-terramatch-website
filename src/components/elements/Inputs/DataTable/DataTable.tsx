@@ -133,7 +133,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
               cell: props => (
                 <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
               ),
-              meta: { align: "right" },
+              meta: { align: "right", cellStyles: { className: "sticky right-[5rem] bg-white" } },
               enableSorting: false
             } as ColumnDef<TData>
           ]
@@ -148,7 +148,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
             onClick={() => onDeleteEntry(props.getValue() as string)}
           />
         ),
-        meta: { align: "right" },
+        meta: { align: "right", cellStyles: { className: "sticky right-0 bg-white" } },
         enableSorting: false
       }
     ];
