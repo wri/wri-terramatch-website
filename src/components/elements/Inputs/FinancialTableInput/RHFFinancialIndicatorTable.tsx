@@ -84,7 +84,7 @@ const handleChange = (
       const assets = Number(currentRow.currentAssets ?? 0);
       const liabilities = Number(currentRow.currentLiabilities ?? 0);
       const ratio = liabilities !== 0 ? (assets / liabilities).toLocaleString() : "0";
-      currentRow.currentRatio = `${currencyInput?.[selectCurrency] ?? ""}${ratio}`;
+      currentRow.currentRatio = ratio;
     }
 
     updated[row] = currentRow;
