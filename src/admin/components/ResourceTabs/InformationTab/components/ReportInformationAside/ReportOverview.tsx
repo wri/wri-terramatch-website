@@ -12,6 +12,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
 
   const { record } = useShowContext();
   const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.updateRequestStatus);
+  const isDisturbanceReport = parent?.label === "Disturbance Report";
 
   return (
     <>
@@ -69,7 +70,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
           <Stack direction="row" alignItems="center" gap={2} flexWrap="wrap">
             <Button
               variant="outlined"
-              disabled={reportActionDisabled || record?.status === "needs-more-information"}
+              disabled={reportActionDisabled || record?.status === "needs-more-information" || isDisturbanceReport}
               onClick={() => setStatusModal("needs-more-information")}
             >
               Request More Info
@@ -77,13 +78,13 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={reportActionDisabled || record?.status === "approved"}
+              disabled={reportActionDisabled || record?.status === "approved" || isDisturbanceReport}
               onClick={() => setStatusModal("approved")}
             >
               Approve
             </Button>
             {parent && parent.label !== "Financial Report" && (
-              <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
+              <Button variant="outlined" onClick={() => setStatusModal("reminder")} disabled={isDisturbanceReport}>
                 Reminder
               </Button>
             )}
