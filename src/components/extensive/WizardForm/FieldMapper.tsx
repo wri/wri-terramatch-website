@@ -1,7 +1,6 @@
 import { FieldError, FieldValues, UseFormReturn } from "react-hook-form";
 
 import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput";
-import CollapseDisturbance from "@/components/elements/Inputs/CollapseDisturbance/CollapseDisturbance";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
@@ -222,18 +221,6 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
       return (
         <ConditionalInput
           {...field.fieldProps}
-          {...sharedProps}
-          formHook={formHook}
-          control={formHook.control}
-          onChangeCapture={onChange}
-        />
-      );
-
-    // @ts-ignore - FieldType.CollapseDisturbance not in FormField union type
-    case FieldType.CollapseDisturbance:
-      return (
-        <CollapseDisturbance
-          {...(field as any).fieldProps}
           {...sharedProps}
           formHook={formHook}
           control={formHook.control}

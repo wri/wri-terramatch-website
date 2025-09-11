@@ -56,7 +56,7 @@ export const getSchemaFields = (fields: FormField[]) => {
       }
     }
 
-    if (field.fieldProps?.required && schema[field.name]) {
+    if (field.fieldProps.required && schema[field.name]) {
       schema[field.name] = schema[field.name].required();
     }
   }

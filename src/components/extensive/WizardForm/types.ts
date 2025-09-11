@@ -81,8 +81,7 @@ export enum FieldType {
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
   StrategyAreaInput = "strategyAreaInput",
-  FinancialTableInput = "financialTableInput",
-  CollapseDisturbance = "collapseDisturbance"
+  FinancialTableInput = "financialTableInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
