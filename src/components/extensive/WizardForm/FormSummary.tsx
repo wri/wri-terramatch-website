@@ -1,5 +1,7 @@
+import { useMemo } from "react";
+
 import FormSummaryRow from "@/components/extensive/WizardForm/FormSummaryRow";
-import { useFormSectionIds } from "@/connections/util/Form";
+import { useFormSections } from "@/connections/util/Form";
 import { Entity } from "@/types/common";
 
 import List from "../List/List";
@@ -17,12 +19,16 @@ export type FormSummaryOptions = {
   subtitle?: string;
 };
 
-const FormSummary = (props: FormSummaryProps) => (
-  <List
-    className="space-y-8"
-    items={useFormSectionIds(props.formUuid)}
-    render={(sectionId, index) => <FormSummaryRow index={index} sectionId={sectionId} {...props} />}
-  />
-);
+const FormSummary = (props: FormSummaryProps) => {
+  const sections = useFormSections(props.formUuid);
+  const sectionIds = useMemo(() => (sections ?? []).map(({ uuid }) => uuid), [sections]);
+  return (
+    <List
+      className="space-y-8"
+      items={sectionIds}
+      render={(sectionId, index) => <FormSummaryRow index={index} sectionId={sectionId} {...props} />}
+    />
+  );
+};
 
 export default FormSummary;

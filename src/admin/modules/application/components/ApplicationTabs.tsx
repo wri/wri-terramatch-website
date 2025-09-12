@@ -1,5 +1,4 @@
 import { Divider, Typography } from "@mui/material";
-import { useT } from "@transifex/react";
 import {
   LabeledClasses,
   RaRecord,
@@ -13,17 +12,18 @@ import { Else, If, Then, When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import { Framework } from "@/context/framework.provider";
+import { useForm, useFormSection, useFormSections } from "@/connections/util/Form";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { formDefaultValues } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
+  const section = useFormSection(props.sectionId);
   return (
     <>
       <Typography variant="h6" component="h3">
-        {props.step.title}
+        {section?.title}
       </Typography>
       <List
         className="my-4 flex flex-col gap-4"
@@ -48,20 +48,27 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
 };
 
 const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
-  const t = useT();
-  const framework = record?.form?.framework_key as Framework;
-  const formSteps = getCustomFormSteps(record?.form!, t, undefined, framework);
-  const values = normalizedFormDefaultValue(record?.answers, formSteps);
+  const [, { data: form }] = useForm({ id: record?.form?.uuid, enabled: record?.form?.uuid != null });
+  // sections isn't valid until the useForm hook has returned valid data, but it's immediately valid at that time.
+  const sections = useFormSections(form?.uuid ?? "");
+  const values = form == null ? {} : formDefaultValues(record?.answers, form.uuid);
   const currentPitchEntity: Entity = {
     entityName: "project-pitches",
     entityUUID: record?.project_pitch_uuid ?? ""
   };
-  return (
+
+  return form == null ? null : (
     <List
       className="space-y-8"
-      items={formSteps}
-      render={(step, index) => (
-        <ApplicationTabRow index={index} step={step} values={values} steps={formSteps} entity={currentPitchEntity} />
+      items={sections ?? []}
+      render={({ uuid }, index) => (
+        <ApplicationTabRow
+          index={index}
+          formUuid={form.uuid}
+          sectionId={uuid}
+          values={values}
+          entity={currentPitchEntity}
+        />
       )}
     />
   );

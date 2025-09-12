@@ -67,14 +67,15 @@ export const selectForm = (id: string) => formSelector({ id }).data;
 
 export const sectionsConnection = v3Resource("formSections")
   .listByParentId<FormSectionDto>("formId", { sortProp: "order" })
+  .enabledProp()
   .buildConnection();
 export const questionsConnection = v3Resource("formQuestions")
   .listByParentId<FormQuestionDto>("sectionId", { sortProp: "order" })
   .buildConnection();
-export const useFormSectionIds = (formId: string) => useConnection(sectionsConnection, { parentId: formId })[1]?.data;
+export const useFormSections = (formId: string) => useConnection(sectionsConnection, { parentId: formId })[1]?.data;
 const sectionsSelector = connectionSelector(sectionsConnection);
 export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
-export const useFormQuestionIds = (sectionId: string) =>
+export const useSectionQuestions = (sectionId: string) =>
   useConnection(questionsConnection, { parentId: sectionId })[1]?.data;
 const questionsSelector = connectionSelector(questionsConnection);
 export const selectQuestions = (sectionId: string) => questionsSelector({ parentId: sectionId }).data ?? [];

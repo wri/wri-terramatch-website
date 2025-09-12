@@ -11858,7 +11858,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12022,7 +12022,7 @@ export type PostV2FormsSubmissionsResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12184,7 +12184,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12340,7 +12340,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12548,7 +12548,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12711,7 +12711,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -13323,7 +13323,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       status?: string;
       readable_status?: string;
     };
-    answers?: string;
+    answers?: Record<string, any>;
     status?: string;
     readable_status?: string;
     audits?: {
@@ -13982,7 +13982,7 @@ export type GetV2ApplicationsUUIDResponse = {
       status?: string;
       readable_status?: string;
     };
-    answers?: string;
+    answers?: Record<string, any>;
     status?: string;
     readable_status?: string;
     audits?: {

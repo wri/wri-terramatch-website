@@ -1,11 +1,11 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
 import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
-import { useFormQuestionIds, useFormSection } from "@/connections/util/Form";
+import { useFormSection, useSectionQuestions } from "@/connections/util/Form";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   sectionId: string;
@@ -24,7 +24,8 @@ export const FormStep = ({
   formSubmissionOrg,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
-  const questionIds = useFormQuestionIds(sectionId);
+  const questions = useSectionQuestions(sectionId);
+  const questionIds = useMemo(() => (questions ?? []).map(({ uuid }) => uuid), [questions]);
   const section = useFormSection(sectionId);
 
   useEffect(() => {

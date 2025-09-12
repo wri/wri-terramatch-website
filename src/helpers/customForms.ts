@@ -105,7 +105,7 @@ export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T
  * IMPORTANT: The form must already be cached in the Connection store via useForm for this function
  * to return valid values.
  */
-export function formDefaultValues(values: Dictionary<any>, formUuid: string) {
+export function formDefaultValues(values: Dictionary<any> | undefined, formUuid: string) {
   const sections = selectSections(formUuid);
   const questions = flatten(sections.map(({ uuid }) => selectQuestions(uuid)));
   return questions.reduce(
@@ -117,7 +117,7 @@ export function formDefaultValues(values: Dictionary<any>, formUuid: string) {
   );
 }
 
-const formDefaultValue = (question: FormQuestionDto, values: Dictionary<any>) => {
+const formDefaultValue = (question: FormQuestionDto, values: Dictionary<any> = {}) => {
   switch (question.inputType) {
     case "date":
       return parseDateValues(values[question.uuid]);

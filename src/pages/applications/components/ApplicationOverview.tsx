@@ -3,10 +3,9 @@ import { useT } from "@transifex/react";
 import Tabs from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
-import FrameworkProvider, { useFramework } from "@/context/framework.provider";
+import FrameworkProvider from "@/context/framework.provider";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
-import { normalizedFormDefaultValue } from "@/helpers/customForms";
-import { useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { formDefaultValues } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
 
 interface ApplicationOverviewProps {
@@ -42,13 +41,15 @@ const Item = ({ submission, organisation }: { submission?: FormSubmissionRead; o
     entityName: "project-pitches",
     entityUUID: submission?.project_pitch_uuid ?? ""
   };
-  const framework = useFramework(submission?.form!.framework_key);
-  const formSteps = useGetCustomFormSteps(submission?.form!, currentPitchEntity, framework);
-  const values = normalizedFormDefaultValue(submission?.answers, formSteps);
+  const frameworkKey = submission?.form!.framework_key;
+  const formUuid = submission?.form?.uuid;
+  const values = formUuid == null ? {} : formDefaultValues(submission?.answers, formUuid);
   return (
-    <FrameworkProvider frameworkKey={framework}>
+    <FrameworkProvider frameworkKey={frameworkKey}>
       <div className="flex flex-col gap-6 bg-white p-8">
-        <FormSummary steps={formSteps!} values={values} entity={currentPitchEntity} organisation={organisation} />
+        {formUuid == null ? null : (
+          <FormSummary formUuid={formUuid} values={values} entity={currentPitchEntity} organisation={organisation} />
+        )}
       </div>
     </FrameworkProvider>
   );

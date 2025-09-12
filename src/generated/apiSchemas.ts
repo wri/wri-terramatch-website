@@ -4333,7 +4333,7 @@ export type ProjectFullRead = {
         status?: string;
         readable_status?: string;
       };
-      answers?: string;
+      answers?: Record<string, any>;
       status?: string;
       readable_status?: string;
       audits?: {
@@ -5305,7 +5305,7 @@ export type FormSubmissionRead = {
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -5836,7 +5836,7 @@ export type ApplicationRead = {
       status?: string;
       readable_status?: string;
     };
-    answers?: string;
+    answers?: Record<string, any>;
     status?: string;
     readable_status?: string;
     audits?: {

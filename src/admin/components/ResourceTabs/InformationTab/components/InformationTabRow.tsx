@@ -6,13 +6,15 @@ import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useFormSection } from "@/connections/util/Form";
 
 const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries({ ...props, type });
+  const section = useFormSection(props.sectionId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
-        {props.step.title}
+        {section?.title}
       </Text>
       <List
         className={classNames("mt-4 gap-4", {
