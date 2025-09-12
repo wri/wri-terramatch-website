@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -28,29 +29,37 @@ export const DisturbanceAffectedSites = ({
 
   const siteAffectedValue = formHook.watch(siteField?.name as string) ?? [];
   const polygonAffectedValue = formHook.watch(polygonField?.name as string) ?? [];
+  const polygonAffectedArray = Array.isArray(polygonAffectedValue) ? polygonAffectedValue : [];
 
   useEffect(() => {
-    const maxLength = Math.max(siteAffectedValue.length, polygonAffectedValue.length);
+    const siteLength = siteField ? siteAffectedValue.length : 0;
+    const polygonLength = polygonField ? polygonAffectedArray.length : 0;
+    const maxLength = Math.max(siteLength, polygonLength);
+
     if (maxLength > 0) {
       const newSites = Array.from({ length: maxLength }, (_, index) => index);
-      setAffectedSites(newSites);
-      onChange();
+      if (affectedSites.length !== newSites.length || !affectedSites.every((val, index) => val === newSites[index])) {
+        setAffectedSites(newSites);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteAffectedValue, polygonAffectedValue, siteField?.name, polygonField?.name]);
+  }, [siteAffectedValue, polygonAffectedArray, siteField?.name, polygonField?.name]);
 
   const addAffectedSite = () => {
     const newIndex = affectedSites.length;
     setAffectedSites([...affectedSites, newIndex]);
 
-    const currentSites = formHook.getValues(siteField?.name as string) || [];
-    const currentPolygons = formHook.getValues(polygonField?.name as string) || [];
+    if (siteField?.name) {
+      const currentSites = formHook.getValues(siteField?.name as string) ?? [];
+      const sitesArray = Array.isArray(currentSites) ? currentSites : [];
+      formHook.setValue(siteField?.name as string, [...sitesArray, { siteUuid: "", siteName: "" }]);
+    }
 
-    const sitesArray = Array.isArray(currentSites) ? currentSites : [];
-    const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
-
-    formHook.setValue(siteField?.name as string, [...sitesArray, { siteUuid: "", siteName: "" }]);
-    formHook.setValue(polygonField?.name as string, [...polygonsArray, []]);
+    if (polygonField?.name) {
+      const currentPolygons = formHook.getValues(polygonField?.name as string) ?? [];
+      const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
+      formHook.setValue(polygonField?.name as string, [...polygonsArray, []]);
+    }
     onChange();
   };
 
@@ -58,19 +67,25 @@ export const DisturbanceAffectedSites = ({
     const updatedSites = affectedSites.filter((_, i) => i !== index);
     setAffectedSites(updatedSites);
 
-    const currentSites = formHook.getValues(siteField?.name as string) || [];
-    const currentPolygons = formHook.getValues(polygonField?.name as string) || [];
+    if (siteField?.name) {
+      const currentSites = formHook.getValues(siteField?.name as string) ?? [];
+      const sitesArray = Array.isArray(currentSites) ? currentSites : [];
+      const newSites = sitesArray.filter((_: any, i: number) => i !== index);
+      formHook.setValue(siteField?.name as string, newSites);
+    }
 
-    const sitesArray = Array.isArray(currentSites) ? currentSites : [];
-    const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
+    if (polygonField?.name) {
+      const currentPolygons = formHook.getValues(polygonField?.name as string) ?? [];
+      const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
+      const newPolygons = polygonsArray.filter((_: any, i: number) => i !== index);
+      formHook.setValue(polygonField?.name as string, newPolygons);
+    }
 
-    const newSites = sitesArray.filter((_: any, i: number) => i !== index);
-    const newPolygons = polygonsArray.filter((_: any, i: number) => i !== index);
-
-    formHook.setValue(siteField?.name as string, newSites);
-    formHook.setValue(polygonField?.name as string, newPolygons);
     onChange();
   };
+  if (!siteField && !polygonField) {
+    return null;
+  }
 
   return (
     <div>
@@ -79,25 +94,29 @@ export const DisturbanceAffectedSites = ({
         const currentSiteUuid = currentSiteData?.siteUuid;
         return (
           <div key={index} className="grid grid-cols-2 gap-x-10 gap-y-4 rounded-lg p-4">
-            <div>
-              <SiteReferenceInput
-                formHook={formHook}
-                onChange={onChange}
-                projectUuid={projectUuid}
-                label={`Site ${index + 1} Affected`}
-                fieldUuid={`${siteField?.name}[${index}]`}
-              />
-            </div>
+            <When condition={!!siteField}>
+              <div>
+                <SiteReferenceInput
+                  formHook={formHook}
+                  onChange={onChange}
+                  projectUuid={projectUuid}
+                  label={`Site ${index + 1} Affected`}
+                  fieldUuid={`${siteField?.name}[${index}]`}
+                />
+              </div>
+            </When>
 
-            <div>
-              <PolygonReferenceInput
-                formHook={formHook}
-                onChange={onChange}
-                siteUuid={currentSiteUuid}
-                label={`Polygons Affected`}
-                fieldUuid={`${polygonField?.name}[${index}]`}
-              />
-            </div>
+            <When condition={!!polygonField}>
+              <div>
+                <PolygonReferenceInput
+                  formHook={formHook}
+                  onChange={onChange}
+                  siteUuid={currentSiteUuid}
+                  label={`Polygons Affected`}
+                  fieldUuid={`${polygonField?.name}[${index}]`}
+                />
+              </div>
+            </When>
 
             <div className="col-span-2 flex justify-end">
               <button

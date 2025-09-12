@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 import { Link, useBasename } from "react-admin";
+import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
@@ -51,22 +52,24 @@ const TextEntry = ({
   label?: string;
 }) => {
   return (
-    <div className={classNameContainer}>
-      <Text variant={variantLabel} className={classNameLabel}>
-        {label}
-      </Text>
-      {Array.isArray(value) ? (
-        <Text variant={variant} className={className}>
-          {value.join(", ")}
+    <When condition={value}>
+      <div className={classNameContainer}>
+        <Text variant={variantLabel} className={classNameLabel}>
+          {label}
         </Text>
-      ) : typeof value === "string" || typeof value === "number" ? (
-        <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
-      ) : (
-        <Text variant={variant} className={className}>
-          {formatEntryValue(value)}
-        </Text>
-      )}
-    </div>
+        {Array.isArray(value) ? (
+          <Text variant={variant} className={className}>
+            {value.join(", ")}
+          </Text>
+        ) : typeof value === "string" || typeof value === "number" ? (
+          <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
+        ) : (
+          <Text variant={variant} className={className}>
+            {formatEntryValue(value)}
+          </Text>
+        )}
+      </div>
+    </When>
   );
 };
 
@@ -181,12 +184,13 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
 
   const disturbanceReportData = Array.isArray(sitesAffected)
     ? sitesAffected.map((site: SiteAffected) => {
-        const sitePolygons = polygonsAffected.flat().filter((poly: PolygonAffected) => poly.siteUuid === site.siteUuid);
+        const sitePolygons =
+          polygonsAffected?.flat().filter((poly: PolygonAffected) => poly?.siteUuid === site?.siteUuid) ?? [];
 
         return {
-          sites_affected: site.siteName,
-          site_uuid: site.siteUuid,
-          polygon_affected: sitePolygons.map((poly: PolygonAffected) => poly.polyName).join(", ")
+          sites_affected: site?.siteName,
+          site_uuid: site?.siteUuid,
+          polygon_affected: sitePolygons?.map((poly: PolygonAffected) => poly?.polyName).join(", ")
         };
       })
     : [];
@@ -202,18 +206,20 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             label={t("Disturbance Subtype")}
             classNameContainer="col-span-2 flex flex-col gap-2"
           />
-          <div className="flex flex-col gap-2">
-            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-              {t("Intensity")}
-            </Text>
-            {["low", "medium", "high"].includes(intensity?.toLowerCase()) ? (
-              <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
-            ) : (
-              <Text variant="text-14" className="leading-none text-blueCustom-900">
-                {t("Answer Not Provided")}
+          <When condition={intensity}>
+            <div className="flex flex-col gap-2">
+              <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+                {t("Intensity")}
               </Text>
-            )}
-          </div>
+              {["low", "medium", "high"].includes(intensity?.toLowerCase()) ? (
+                <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
+              ) : (
+                <Text variant="text-14" className="leading-none text-blueCustom-900">
+                  {t("Answer Not Provided")}
+                </Text>
+              )}
+            </div>
+          </When>
           <TextEntry value={extent} label={t("Extent")} />
           <TextEntry value={peopleAffected} label={t("People Affected")} />
           <TextEntry
@@ -235,22 +241,24 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       <TextEntry value={actionDescription} label={t("Action Description")} className="text-blueCustom-900" />
       <TextEntry value={description} label={t("Description")} className="text-blueCustom-900" />
 
-      <div className="flex flex-col gap-4">
-        <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-          {t("Download Media Assets")}
-        </Text>
-        {mediaAssets && Array.isArray(mediaAssets) && mediaAssets.length > 0 ? (
-          <div className="grid grid-cols-3 gap-2">
-            {mediaAssets.map((media: any, mediaIndex: number) => (
-              <DownloadMediaItem key={mediaIndex} name={media.title || `Media-${mediaIndex + 1}`} src={media.url} />
-            ))}
-          </div>
-        ) : (
-          <Text variant="text-14" className="leading-none text-blueCustom-900">
-            {t("Answer Not Provided")}
+      <When condition={mediaAssets}>
+        <div className="flex flex-col gap-4">
+          <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+            {t("Download Media Assets")}
           </Text>
-        )}
-      </div>
+          {Array.isArray(mediaAssets) && mediaAssets.length > 0 ? (
+            <div className="grid grid-cols-3 gap-2">
+              {mediaAssets.map((media: any, mediaIndex: number) => (
+                <DownloadMediaItem key={mediaIndex} name={media.title || `Media-${mediaIndex + 1}`} src={media.url} />
+              ))}
+            </div>
+          ) : (
+            <Text variant="text-14" className="leading-none text-blueCustom-900">
+              {t("Answer Not Provided")}
+            </Text>
+          )}
+        </div>
+      </When>
     </div>
   );
 };

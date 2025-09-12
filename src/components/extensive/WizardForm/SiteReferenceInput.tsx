@@ -65,7 +65,7 @@ export const SiteReferenceInput = ({
           }
         }
       } else {
-        if (fieldIndex !== undefined) {
+        if (fieldIndex !== undefined && fieldName) {
           const newArray = [...arrayValue];
           newArray[parseInt(fieldIndex)] = "";
           formHook.setValue(fieldName, newArray);
@@ -74,7 +74,7 @@ export const SiteReferenceInput = ({
       onChange();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onChange, siteChoices]
+    [siteChoices]
   );
 
   const dropdownValue = useMemo(() => {
