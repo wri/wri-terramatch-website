@@ -82,7 +82,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
-            {parent && parent.label !== "Financial Report" && (
+            {(!parent || parent.label === "Site") && (
               <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
                 Reminder
               </Button>
