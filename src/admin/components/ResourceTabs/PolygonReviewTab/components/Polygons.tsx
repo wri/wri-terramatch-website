@@ -17,6 +17,8 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useSiteValidation } from "@/connections/SiteValidation";
+import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
@@ -122,6 +124,47 @@ const Polygons = (props: IPolygonProps) => {
   } = usePolygonsPagination(filteredPolygons, [validFilter]);
 
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
+
+  // Test new site validation connection
+  const siteValidationResult = useSiteValidation({
+    entityName: "sites",
+    entityUuid: siteUuid ?? "",
+    enabled: !!siteUuid
+  });
+
+  // Test new single polygon validation connection
+  const polygonValidationResult = usePolygonValidation({
+    polygonUuid: currentPolygonUuid ?? ""
+  });
+
+  // Console logs to test the new connections
+  console.log("🔍 Testing new validation connections:");
+  console.log("📍 Site Validation Result:", {
+    data: siteValidationResult.data,
+    isLoading: siteValidationResult.isLoading,
+    error: siteValidationResult.error,
+    total: siteValidationResult.total
+  });
+  console.log("🔍 Single Polygon Validation Result:", {
+    data: polygonValidationResult,
+    polygonUuid: currentPolygonUuid,
+    enabled: !!currentPolygonUuid
+  });
+
+  // Test with first polygon if available
+  const firstPolygonUuid = polygonMenu[0]?.uuid;
+  const testPolygonValidation = usePolygonValidation({
+    polygonUuid: firstPolygonUuid ?? ""
+  });
+
+  if (firstPolygonUuid && !currentPolygonUuid) {
+    console.log("🧪 Testing with first polygon UUID:", firstPolygonUuid);
+    console.log("🧪 Test Polygon Validation Result:", {
+      data: testPolygonValidation,
+      polygonUuid: firstPolygonUuid,
+      enabled: !!firstPolygonUuid
+    });
+  }
   const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
     {
       queryParams: {
