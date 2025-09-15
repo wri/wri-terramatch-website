@@ -170,19 +170,8 @@ const Input = forwardRef(
     };
 
     const formatDateValue = (value: string) => {
-      const strictIsoMidnight = /^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/;
-      if (!strictIsoMidnight.test(value)) return value;
-      if (inputProps.type === "date") return value.split("T")[0];
-      if (inputProps.type === "datetime-local") {
-        const d = new Date(value);
-        const yyyy = d.getFullYear();
-        const mm = String(d.getMonth() + 1).padStart(2, "0");
-        const dd = String(d.getDate()).padStart(2, "0");
-        const hh = String(d.getHours()).padStart(2, "0");
-        const mi = String(d.getMinutes()).padStart(2, "0");
-        return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
-      }
-      return value;
+      if (!/^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/.test(value)) return value;
+      return inputProps.type === "date" ? value.split("T")[0] : new Date(value).toISOString().slice(0, 16);
     };
 
     // Check if input is date-like
