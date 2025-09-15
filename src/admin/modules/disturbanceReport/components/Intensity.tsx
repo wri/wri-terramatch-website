@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -16,6 +17,7 @@ interface IntensityProps {
 
 const Intensity: FC<IntensityProps> = (props: IntensityProps) => {
   const { className, intensity } = props;
+  const t = useT();
   const intensityColor = {
     [IntensityEnum.HIGH]: "bg-[#E42222]",
     [IntensityEnum.MEDIUM]: "bg-[#FF8838]",
@@ -31,7 +33,7 @@ const Intensity: FC<IntensityProps> = (props: IntensityProps) => {
   return (
     <Text variant="text-14-light" className={twMerge("flex items-center gap-2 leading-none", className)}>
       <div className={twMerge("h-2 w-2 shrink-0 rounded-full", intensityColor[intensity])} />
-      {intensityText[intensity]}
+      {t(intensityText[intensity])}
     </Text>
   );
 };

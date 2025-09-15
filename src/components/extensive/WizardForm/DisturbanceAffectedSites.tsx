@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { useCallback, useEffect, useState } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
 
@@ -22,6 +23,7 @@ export const DisturbanceAffectedSites = ({
   fields
 }: DisturbanceAffectedSitesProps) => {
   const [affectedSites, setAffectedSites] = useState<number[]>([]);
+  const t = useT();
 
   const siteField = fields.find((f: FormField) => f.type === FieldType.DisturbanceAffectedSite);
   const polygonField = fields.find((f: FormField) => f.type === FieldType.DisturbanceAffectedPolygon);
@@ -159,7 +161,7 @@ export const DisturbanceAffectedSites = ({
                 onClick={() => removeAffectedSite(index)}
                 className="px-0 font-semibold text-black/40 hover:text-red"
               >
-                Remove
+                {t("Remove")}
               </button>
             </div>
           </div>
@@ -172,7 +174,7 @@ export const DisturbanceAffectedSites = ({
             <div className="flex h-4 w-4 items-center justify-center rounded bg-primary">
               <Icon name={IconNames.PLUS} className="h-2.5 w-2.5 text-white" />
             </div>
-            Add Site Affected
+            {t("Add Site Affected")}
           </p>
         </Button>
       </div>

@@ -164,7 +164,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const columns = [
     {
       accessorKey: "sites_affected",
-      header: "Sites Affected",
+      header: t("Sites Affected"),
       cell: ({ getValue, row }: any) => (
         <Text variant="text-14-light" className="flex items-center gap-2 leading-none text-blueCustom-900">
           {getValue()}
@@ -181,7 +181,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     },
     {
       accessorKey: "polygon_affected",
-      header: "Polygons Affected",
+      header: t("Polygons Affected"),
       enableSorting: false,
       meta: { width: "50%" }
     }

@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FieldValues, UseFormReturn } from "react-hook-form";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
@@ -20,6 +21,7 @@ export const DisturbanceFieldsContainer = ({
   onChange,
   projectUuid
 }: DisturbanceFieldsContainerProps) => {
+  const t = useT();
   const inputDropdownFields = fields.filter(
     f => (f.type === "dropdown" || f.type === "input") && !f.type.startsWith("disturbanceAffected")
   );
@@ -29,15 +31,21 @@ export const DisturbanceFieldsContainer = ({
 
   return (
     <div key="disturbance-container">
-      <Accordion title="Add Disturbance" variant="tertiary" defaultOpen>
+      <Accordion title={t("Add Disturbance")} variant="tertiary" defaultOpen>
         <div className="border-light rounded-b-xl p-4">
           <div className="mb-6">
-            <h3 className="mb-4 text-lg font-semibold">Add Disturbance Information</h3>
+            <h3 className="mb-4 text-lg font-semibold">{t("Add Disturbance Information")}</h3>
             <InputDescription>
-              {`The three major disturbance types used in TerraMatch are defined below: <ul>
-                <li>Ecological – minor natural disturbances that impact less than half of planted species, including pests, small erosion events, etc.</li>
-                <li>Climatic – major natural disturbances that impact more than half of planted species or the landscape as a whole, including flooding, wildfires, etc.</li>
-                <li>Man-made – minor or major human-caused disturbances, including site vandalism, illegal grazing, etc.</li>
+              {`${t("The three major disturbance types used in TerraMatch are defined below:")} <ul>
+                <li>${t(
+                  "Ecological – minor natural disturbances that impact less than half of planted species, including pests, small erosion events, etc."
+                )}</li>
+                <li>${t(
+                  "Climatic – major natural disturbances that impact more than half of planted species or the landscape as a whole, including flooding, wildfires, etc."
+                )}</li>
+                <li>${t(
+                  "Man-made – minor or major human-caused disturbances, including site vandalism, illegal grazing, etc."
+                )}</li>
               </ul>`}
             </InputDescription>
           </div>
