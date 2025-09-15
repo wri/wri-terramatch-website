@@ -47,6 +47,8 @@ export type HtmlInputType =
   | "email"
   | "radio";
 
+const IS_ISO_MIDNIGHT = /^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/;
+
 const Input = forwardRef(
   (
     {
@@ -170,8 +172,8 @@ const Input = forwardRef(
     };
 
     const formatDateValue = (value: string) => {
-      if (!/^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/.test(value)) return value;
-      return inputProps.type === "date" ? value.split("T")[0] : new Date(value).toISOString().slice(0, 16);
+      if (!IS_ISO_MIDNIGHT.test(value)) return value;
+      return (inputProps.type === "date" ? value : new Date(value).toISOString()).split("T")[0];
     };
 
     // Check if input is date-like
