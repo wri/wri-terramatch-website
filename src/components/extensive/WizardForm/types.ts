@@ -26,6 +26,9 @@ import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 
+import { DisturbancePolygonAffectedInputProps } from "./DisturbancePolygonAffectedInput";
+import { DisturbanceSiteAffectedInputProps } from "./DisturbanceSiteAffectedInput";
+
 export interface FormStepSchema {
   title: string;
   fields: FormField[];
@@ -81,7 +84,9 @@ export enum FieldType {
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
   StrategyAreaInput = "strategyAreaInput",
-  FinancialTableInput = "financialTableInput"
+  FinancialTableInput = "financialTableInput",
+  DisturbanceAffectedSite = "disturbanceAffectedSite",
+  DisturbanceAffectedPolygon = "disturbanceAffectedPolygon"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -174,4 +179,12 @@ export type FormField =
   | FieldTypeBuilder<
       FieldType.FinancialTableInput,
       Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.DisturbanceAffectedSite,
+      Omit<DisturbanceSiteAffectedInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+    >
+  | FieldTypeBuilder<
+      FieldType.DisturbanceAffectedPolygon,
+      Omit<DisturbancePolygonAffectedInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >;

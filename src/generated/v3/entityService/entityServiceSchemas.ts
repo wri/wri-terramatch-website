@@ -2018,6 +2018,8 @@ export type LinkedFieldDto = {
     | "strategy-area"
     | "text"
     | "url"
+    | "disturbanceAffectedSite"
+    | "disturbanceAffectedPolygon"
     | "file"
     | "allBeneficiaries"
     | "associates"

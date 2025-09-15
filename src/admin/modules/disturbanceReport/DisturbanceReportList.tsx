@@ -29,7 +29,6 @@ import { DisturbanceReportLightDto } from "@/generated/v3/entityService/entitySe
 import { downloadFileBlob } from "@/utils/network";
 import { optionToChoices } from "@/utils/options";
 
-import modules from "..";
 import Intensity, { IntensityEnum } from "./components/Intensity";
 
 const tableMenu = [
@@ -43,47 +42,45 @@ const tableMenu = [
   }
 ];
 
-const DisturbanceReportDataGrid: FC = () => {
-  return (
-    <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
-      <TextField source="projectName" label="Project Name" />
-      <FunctionField
-        source="status"
-        label="Status"
-        sortable={false}
-        render={({ status }: DisturbanceReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
-          return <CustomChipField label={title} />;
-        }}
-      />
-      <FunctionField
-        source="updateRequestStatus"
-        label="Change Request Status"
-        sortable={false}
-        render={(record?: DisturbanceReportLightDto) => {
-          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
-            (option: any) => option.value === record?.updateRequestStatus
-          );
-          return <CustomChipField label={readableChangeRequestStatus?.title} />;
-        }}
-      />
-      <DateField source="dateOfDisturbance" label="Date of Disturbance" locales="en-GB" />
-      <FunctionField
-        source="intensity"
-        label="Intensity"
-        render={(record: DisturbanceReportLightDto) => {
-          return <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />;
-        }}
-        sortable={false}
-      />
-      <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
-      <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
-      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
-      </Menu>
-    </Datagrid>
-  );
-};
+const DisturbanceReportDataGrid: FC = () => (
+  <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
+    <TextField source="projectName" label="Project Name" />
+    <FunctionField
+      source="status"
+      label="Status"
+      sortable={false}
+      render={({ status }: DisturbanceReportLightDto) => {
+        const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        return <CustomChipField label={title} />;
+      }}
+    />
+    <FunctionField
+      source="updateRequestStatus"
+      label="Change Request Status"
+      sortable={false}
+      render={(record?: DisturbanceReportLightDto) => {
+        const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+          (option: any) => option.value === record?.updateRequestStatus
+        );
+        return <CustomChipField label={readableChangeRequestStatus?.title} />;
+      }}
+    />
+    <DateField source="dateOfDisturbance" label="Date of Disturbance" locales="en-GB" />
+    <FunctionField
+      source="intensity"
+      label="Intensity"
+      render={(record: DisturbanceReportLightDto) => {
+        return <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />;
+      }}
+      sortable={false}
+    />
+    <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
+    <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
+    <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+      <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+    </Menu>
+  </Datagrid>
+);
 
 export const DisturbanceReportList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
@@ -105,7 +102,7 @@ export const DisturbanceReportList: FC = () => {
     <ReferenceInput
       key="project"
       source="projectUuid"
-      reference={modules.project.ResourceName}
+      reference="project"
       label="Project"
       sort={{
         field: "name",

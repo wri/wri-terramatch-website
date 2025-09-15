@@ -571,6 +571,29 @@ export const apiFormQuestionToFormField = (
         }
       };
 
+    case "disturbanceAffectedSite":
+      return {
+        ...sharedProps,
+        type: FieldType.DisturbanceAffectedSite,
+
+        fieldProps: {
+          required,
+          id: question.uuid,
+          inputId: question.uuid
+        }
+      };
+
+    case "disturbanceAffectedPolygon":
+      return {
+        ...sharedProps,
+        type: FieldType.DisturbanceAffectedPolygon,
+
+        fieldProps: {
+          required,
+          id: question.uuid,
+          inputId: question.uuid
+        }
+      };
     case "conditional":
       return {
         ...sharedProps,
@@ -835,33 +858,7 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
-    case "select": {
-      if (
-        question.linked_field_key === "dis-rep-site-affected" ||
-        question.linked_field_key === "dis-rep-polygon-affected"
-      ) {
-        validation = yup.array();
-        if (required) validation = validation.required();
-        return validation;
-      } else {
-        if (question.multichoice) {
-          validation = yup.array(yup.string().required());
-          if (max) validation = validation.max(max);
-          if (isNumber(min)) validation = validation.min(min);
-          if (required) {
-            if (isNumber(min)) {
-              validation = validation.required();
-            } else {
-              validation = validation.min(1).required();
-            }
-          }
-        } else {
-          validation = yup.string();
-          if (required) validation = validation.required();
-        }
-        return validation;
-      }
-    }
+    case "select":
     case "select-image": {
       if (question.multichoice) {
         validation = yup.array(yup.string().required());
@@ -978,6 +975,15 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
         validation = validation.required("This field is required");
       }
 
+      return validation;
+    }
+
+    case "disturbanceAffectedSite":
+    case "disturbanceAffectedPolygon": {
+      validation = yup.array();
+      if (required) {
+        validation = validation.required().min(1, "This field is required");
+      }
       return validation;
     }
 

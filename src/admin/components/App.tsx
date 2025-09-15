@@ -170,7 +170,7 @@ const App = () => {
           list={modules.disturbanceReport.List}
           show={modules.disturbanceReport.Show}
           edit={modules.disturbanceReport.Edit}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.DISTURBANCE_REPORT} />}
           options={{ label: "Disturbance Reports" }}
           recordRepresentation={record => record?.title}
         />
@@ -192,14 +192,6 @@ const App = () => {
           edit={modules.impactStories.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "Impact Stories" }}
-        />
-        <Resource
-          name={modules.disturbanceReport.ResourceName}
-          list={modules.disturbanceReport.List}
-          show={modules.disturbanceReport.Show}
-          icon={() => <Icon className="h-8 w-8" name={IconNames.DISTURBANCE_REPORT} />}
-          options={{ label: "Disturbance Reports" }}
-          recordRepresentation={record => record?.name}
         />
       </Admin>
     </LoadingProvider>

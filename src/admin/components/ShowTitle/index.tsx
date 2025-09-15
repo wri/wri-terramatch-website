@@ -15,11 +15,9 @@ const ShowTitle = (props: IProps) => {
   const resource = useResourceContext();
   const titleGetter = useGetRecordRepresentation(resource);
 
-  const displayTitle = resource === "disturbanceReport" ? "View all Disturbance Reports" : titleGetter(record);
-
   const title = (
     <>
-      {displayTitle}
+      {titleGetter(record)}
       {(record?.is_test || record?.isTest) && <Chip className="mx-4" label={`test ${resource}`} color="info" />}
     </>
   );

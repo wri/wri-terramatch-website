@@ -1,26 +1,26 @@
 import { useCallback, useMemo } from "react";
-import { FieldValues, UseFormReturn } from "react-hook-form";
+import { FieldValues, useController, UseFormReturn } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
-interface SiteReferenceInputProps {
+export interface DisturbanceSiteAffectedInputProps {
   formHook: UseFormReturn<FieldValues, any>;
-  onChange: () => void;
+  onChangeCapture?: () => void;
   projectUuid?: string;
   label?: string;
   fieldUuid: string;
 }
 
-export const SiteReferenceInput = ({
+export const DisturbanceSiteAffectedInput = ({
   formHook,
-  onChange,
+  onChangeCapture,
   projectUuid,
   label = "Site",
   fieldUuid
-}: SiteReferenceInputProps) => {
+}: DisturbanceSiteAffectedInputProps) => {
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
     pageSize: 100,
@@ -45,7 +45,14 @@ export const SiteReferenceInput = ({
 
   const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
   const fieldName = fieldUuid.replace(/\[\d+\]$/, "");
-  const arrayValue = formHook.watch(fieldName) || [];
+
+  const {
+    field: { value: arrayValue, onChange: onArrayChange }
+  } = useController({
+    name: fieldName,
+    control: formHook.control
+  });
+
   const value = fieldIndex ? arrayValue[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
@@ -59,22 +66,21 @@ export const SiteReferenceInput = ({
             siteName: selectedSite.title
           };
           if (fieldIndex !== undefined) {
-            const newArray = [...arrayValue];
+            const newArray = [...(arrayValue ?? [])];
             newArray[parseInt(fieldIndex)] = siteData;
-            formHook.setValue(fieldName, newArray);
+            onArrayChange(newArray);
           }
         }
       } else {
-        if (fieldIndex !== undefined && fieldName) {
-          const newArray = [...arrayValue];
+        if (fieldIndex !== undefined) {
+          const newArray = [...(arrayValue ?? [])];
           newArray[parseInt(fieldIndex)] = "";
-          formHook.setValue(fieldName, newArray);
+          onArrayChange(newArray);
         }
       }
-      onChange();
+      onChangeCapture?.();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [siteChoices]
+    [siteChoices, fieldIndex, arrayValue, onArrayChange, onChangeCapture]
   );
 
   const dropdownValue = useMemo(() => {

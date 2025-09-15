@@ -21,17 +21,11 @@ export const DisturbanceFieldsContainer = ({
   projectUuid
 }: DisturbanceFieldsContainerProps) => {
   const inputDropdownFields = fields.filter(
-    (f: any) =>
-      (f.type === "dropdown" || f.type === "input") &&
-      f.linked_field_key !== "dis-rep-site-affected" &&
-      f.linked_field_key !== "dis-rep-polygon-affected"
+    f => (f.type === "dropdown" || f.type === "input") && !f.type.startsWith("disturbanceAffected")
   );
   const textAreaFields = fields.filter(f => f.type === "textArea");
   const fileFields = fields.filter(f => f.type === "file");
-
-  const affectedFields = fields.filter(
-    (f: any) => f.linked_field_key === "dis-rep-site-affected" || f.linked_field_key === "dis-rep-polygon-affected"
-  );
+  const affectedFields = fields.filter(f => f.type.startsWith("disturbanceAffected"));
 
   return (
     <div key="disturbance-container">

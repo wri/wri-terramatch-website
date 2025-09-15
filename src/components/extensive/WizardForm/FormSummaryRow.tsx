@@ -375,56 +375,46 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.Dropdown: {
-        //@ts-ignore
-        if (f.linked_field_key === "dis-rep-site-affected") {
-          const value = getFormattedAnswer(f, values);
-          const valueArray = JSON.parse(value!);
-          if (Array.isArray(valueArray)) {
-            const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
-            outputArr.push({
-              title: f.label ?? "",
-              type: f.type,
-              value: sitesAffectedArray.join("<br/>")
-            });
-          } else {
-            outputArr.push({
-              title: f.label ?? "",
-              type: f.type,
-              value: t("Answer Not Provided")
-            });
-          }
-          break;
+      case FieldType.DisturbanceAffectedSite: {
+        const value = getFormattedAnswer(f, values);
+        const valueArray = JSON.parse(value!);
+        if (Array.isArray(valueArray) && valueArray.length > 0) {
+          const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
+          outputArr.push({
+            title: f.label ?? "",
+            type: f.type,
+            value: sitesAffectedArray.join("<br/>")
+          });
+        } else {
+          outputArr.push({
+            title: f.label ?? "",
+            type: f.type,
+            value: t("Answer Not Provided")
+          });
         }
-        //@ts-ignore
-        if (f.linked_field_key === "dis-rep-polygon-affected") {
-          const value = getFormattedAnswer(f, values);
-          const valueArray = JSON.parse(value!);
-          if (Array.isArray(valueArray)) {
-            const polygonsByBatch = valueArray.map((batch: any) => {
-              const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
-              return `-${batchPolygons}.`;
-            });
+        break;
+      }
+      case FieldType.DisturbanceAffectedPolygon: {
+        const value = getFormattedAnswer(f, values);
+        const valueArray = JSON.parse(value!);
+        if (Array.isArray(valueArray) && valueArray.length > 0) {
+          const polygonsByBatch = valueArray.map((batch: any) => {
+            const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
+            return `-${batchPolygons}.`;
+          });
 
-            outputArr.push({
-              title: f.label ?? "",
-              type: f.type,
-              value: polygonsByBatch.join("<br/>")
-            });
-          } else {
-            outputArr.push({
-              title: f.label ?? "",
-              type: f.type,
-              value: t("Answer Not Provided")
-            });
-          }
-          break;
+          outputArr.push({
+            title: f.label ?? "",
+            type: f.type,
+            value: polygonsByBatch.join("<br/>")
+          });
+        } else {
+          outputArr.push({
+            title: f.label ?? "",
+            type: f.type,
+            value: t("Answer Not Provided")
+          });
         }
-        outputArr.push({
-          title: f.label ?? "",
-          type: f.type,
-          value: getFormattedAnswer(f, values) ?? nullText ?? t("Answer Not Provided")
-        });
         break;
       }
 

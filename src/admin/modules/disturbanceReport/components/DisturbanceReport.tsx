@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 import { Link, useBasename } from "react-admin";
-import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Table from "@/components/elements/Table/Table";
@@ -52,24 +51,30 @@ const TextEntry = ({
   label?: string;
 }) => {
   return (
-    <When condition={value}>
-      <div className={classNameContainer}>
-        <Text variant={variantLabel} className={classNameLabel}>
-          {label}
-        </Text>
-        {Array.isArray(value) ? (
-          <Text variant={variant} className={className}>
-            {value.join(", ")}
+    <>
+      {value == null ? null : (
+        <div className={classNameContainer}>
+          <Text variant={variantLabel} className={classNameLabel}>
+            {label}
           </Text>
-        ) : typeof value === "string" || typeof value === "number" ? (
-          <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
-        ) : (
-          <Text variant={variant} className={className}>
-            {formatEntryValue(value)}
-          </Text>
-        )}
-      </div>
-    </When>
+          {Array.isArray(value) ? (
+            <Text variant={variant} className={className}>
+              {value.join(", ")}
+            </Text>
+          ) : typeof value === "string" || typeof value === "number" ? (
+            <Text
+              variant={variant}
+              className={className}
+              dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }}
+            />
+          ) : (
+            <Text variant={variant} className={className}>
+              {formatEntryValue(value)}
+            </Text>
+          )}
+        </div>
+      )}
+    </>
   );
 };
 
@@ -206,7 +211,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             label={t("Disturbance Subtype")}
             classNameContainer="col-span-2 flex flex-col gap-2"
           />
-          <When condition={intensity}>
+          {intensity == null ? null : (
             <div className="flex flex-col gap-2">
               <Text variant="text-14-light" className="leading-none text-darkCustom-300">
                 {t("Intensity")}
@@ -219,7 +224,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
                 </Text>
               )}
             </div>
-          </When>
+          )}
           <TextEntry value={extent} label={t("Extent")} />
           <TextEntry value={peopleAffected} label={t("People Affected")} />
           <TextEntry
@@ -241,7 +246,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       <TextEntry value={actionDescription} label={t("Action Description")} className="text-blueCustom-900" />
       <TextEntry value={description} label={t("Description")} className="text-blueCustom-900" />
 
-      <When condition={mediaAssets}>
+      {mediaAssets == null ? null : (
         <div className="flex flex-col gap-4">
           <Text variant="text-14-light" className="leading-none text-darkCustom-300">
             {t("Download Media Assets")}
@@ -258,7 +263,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             </Text>
           )}
         </div>
-      </When>
+      )}
     </div>
   );
 };

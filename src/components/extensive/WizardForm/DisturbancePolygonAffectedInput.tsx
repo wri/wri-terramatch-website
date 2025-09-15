@@ -1,25 +1,25 @@
 import { useCallback, useMemo } from "react";
-import { FieldValues, UseFormReturn } from "react-hook-form";
+import { FieldValues, useController, UseFormReturn } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { OptionValue } from "@/types/common";
 
-interface PolygonReferenceInputProps {
+export interface DisturbancePolygonAffectedInputProps {
   formHook: UseFormReturn<FieldValues, any>;
-  onChange: () => void;
+  onChangeCapture?: () => void;
   siteUuid?: string;
   label?: string;
   fieldUuid: string;
 }
 
-export const PolygonReferenceInput = ({
+export const DisturbancePolygonAffectedInput = ({
   formHook,
-  onChange,
+  onChangeCapture,
   siteUuid,
   label = "Polygons",
   fieldUuid
-}: PolygonReferenceInputProps) => {
+}: DisturbancePolygonAffectedInputProps) => {
   const { data: polygonsData } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
@@ -46,7 +46,14 @@ export const PolygonReferenceInput = ({
 
   const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
   const fieldName = fieldUuid.replace(/\[\d+\]$/, "");
-  const arrayValue = formHook.watch(fieldName) || [];
+
+  const {
+    field: { value: arrayValue, onChange: onArrayChange }
+  } = useController({
+    name: fieldName,
+    control: formHook.control
+  });
+
   const value = fieldIndex ? arrayValue[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
@@ -67,21 +74,20 @@ export const PolygonReferenceInput = ({
           .filter(Boolean);
 
         if (fieldIndex !== undefined) {
-          const newArray = [...arrayValue];
+          const newArray = [...(arrayValue ?? [])];
           newArray[parseInt(fieldIndex)] = polygonsData;
-          formHook.setValue(fieldName, newArray);
+          onArrayChange(newArray);
         }
       } else {
-        if (fieldIndex !== undefined && fieldName) {
-          const newArray = [...arrayValue];
+        if (fieldIndex !== undefined) {
+          const newArray = [...(arrayValue ?? [])];
           newArray[parseInt(fieldIndex)] = [];
-          formHook.setValue(fieldName, newArray);
+          onArrayChange(newArray);
         }
       }
-      onChange();
+      onChangeCapture?.();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [polygonChoices, siteUuid]
+    [polygonChoices, siteUuid, fieldIndex, arrayValue, onArrayChange, onChangeCapture]
   );
 
   const dropdownValue = useMemo(() => {

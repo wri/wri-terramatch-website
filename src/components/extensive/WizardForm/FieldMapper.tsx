@@ -25,6 +25,8 @@ import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 
+import { DisturbancePolygonAffectedInput } from "./DisturbancePolygonAffectedInput";
+import { DisturbanceSiteAffectedInput } from "./DisturbanceSiteAffectedInput";
 import { FieldType, FormField } from "./types";
 interface FieldMapperProps {
   field: FormField;
@@ -258,6 +260,28 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
           control={formHook.control}
           onChangeCapture={onChange}
           formSubmissionOrg={formSubmissionOrg}
+        />
+      );
+
+    case FieldType.DisturbanceAffectedSite:
+      return (
+        <DisturbanceSiteAffectedInput
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          onChangeCapture={onChange}
+          fieldUuid={field.name}
+        />
+      );
+
+    case FieldType.DisturbanceAffectedPolygon:
+      return (
+        <DisturbancePolygonAffectedInput
+          {...field.fieldProps}
+          {...sharedProps}
+          formHook={formHook}
+          onChangeCapture={onChange}
+          fieldUuid={field.name}
         />
       );
 
