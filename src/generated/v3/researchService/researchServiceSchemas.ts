@@ -300,3 +300,16 @@ export type BoundingBoxDto = {
    */
   bbox: number[];
 };
+
+export type ValidationDto = {
+  /**
+   * The UUID of the polygon that was validated
+   *
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonId: string;
+  /**
+   * List of validation criteria results for this polygon
+   */
+  criteriaList: any[][];
+};

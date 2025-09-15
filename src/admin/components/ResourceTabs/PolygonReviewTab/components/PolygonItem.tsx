@@ -12,13 +12,9 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import {
-  hasCompletedDataWhitinStimatedAreaCriteriaInvalid,
-  parseValidationData,
-  parseValidationDataFromContext
-} from "@/helpers/polygonValidation";
+import { parseValidationData, parseValidationDataFromContext } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -51,7 +47,6 @@ const PolygonItem = ({
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [showWarning, setShowWarning] = useState(validationStatus == "partial");
   const { validationData } = useMapAreaContext();
   const t = useT();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
@@ -63,26 +58,19 @@ const PolygonItem = ({
     return null;
   }, [siteId, validationData, uuid]);
 
-  const { data: criteriaData } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: { uuid }
-    },
-    {
-      enabled: openCollapse && !getPolygonValidationFromContext(),
-      staleTime: 5 * 60 * 1000
-    }
-  );
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid: uuid
+  });
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
 
   useEffect(() => {
-    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaData));
-      setShowWarning(hasCompletedDataWhitinStimatedAreaCriteriaInvalid(criteriaData));
+    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+      setPolygonValidationData(parseValidationData(v3ValidationData));
     }
-  }, [criteriaData]);
+  }, [v3ValidationData]);
 
   useEffect(() => {
     const polygonValidation = getPolygonValidationFromContext();
@@ -145,11 +133,11 @@ const PolygonItem = ({
                 variant="text-10"
                 className={classNames("flex items-center gap-1 text-green", {
                   "text-green": validationStatus == "passed",
-                  "text-yellow-700": showWarning
+                  "text-yellow-700": validationStatus == "partial"
                 })}
               >
                 <Icon
-                  name={showWarning ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.STATUS_APPROVED}
+                  name={validationStatus == "partial" ? IconNames.EXCLAMATION_CIRCLE_FILL : IconNames.STATUS_APPROVED}
                   className="h-2 w-2"
                 />
                 Passed

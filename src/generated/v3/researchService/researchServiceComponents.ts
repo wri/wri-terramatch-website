@@ -385,7 +385,57 @@ export const boundingBoxGet = new V3ApiEndpoint<
   {}
 >("/boundingBoxes/v3/get", "GET");
 
+export type GetPolygonValidationPathParams = {
+  polygonUuid: string;
+};
+
+export type GetPolygonValidationError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type GetPolygonValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetPolygonValidationVariables = {
+  pathParams: GetPolygonValidationPathParams;
+};
+
+export const getPolygonValidation = new V3ApiEndpoint<
+  GetPolygonValidationResponse,
+  GetPolygonValidationError,
+  GetPolygonValidationVariables,
+  {}
+>("/validations/v3/polygons/{polygonUuid}", "GET");
+
 export const operationsByTag = {
   sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
-  boundingBoxes: { boundingBoxGet }
+  boundingBoxes: { boundingBoxGet },
+  validations: { getPolygonValidation }
 };

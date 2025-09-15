@@ -17,16 +17,10 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { useSiteValidation } from "@/connections/SiteValidation";
-import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchDeleteV2TerrafundPolygonUuid,
-  fetchGetV2TerrafundGeojsonComplete,
-  useGetV2TerrafundValidationSite
-} from "@/generated/apiComponents";
+import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
@@ -86,18 +80,7 @@ const Polygons = (props: IPolygonProps) => {
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
 
-  const {
-    setSelectedPolygonsInCheckbox,
-    selectedPolygonsInCheckbox,
-    setValidFilter,
-    validFilter,
-    validationData,
-    setValidationData,
-    validationDataTimestamp,
-    setValidationDataTimestamp,
-    isFetchingValidationData,
-    setIsFetchingValidationData
-  } = contextMapArea;
+  const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox, setValidFilter, validFilter } = contextMapArea;
 
   const polygonMenu = useMemo(() => props.menu || [], [props.menu]);
 
@@ -124,72 +107,6 @@ const Polygons = (props: IPolygonProps) => {
   } = usePolygonsPagination(filteredPolygons, [validFilter]);
 
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid });
-
-  // Test new site validation connection
-  const siteValidationResult = useSiteValidation({
-    entityName: "sites",
-    entityUuid: siteUuid ?? "",
-    enabled: !!siteUuid
-  });
-
-  // Test new single polygon validation connection
-  const polygonValidationResult = usePolygonValidation({
-    polygonUuid: currentPolygonUuid ?? ""
-  });
-
-  // Console logs to test the new connections
-  console.log("🔍 Testing new validation connections:");
-  console.log("📍 Site Validation Result:", {
-    data: siteValidationResult.data,
-    isLoading: siteValidationResult.isLoading,
-    error: siteValidationResult.error,
-    total: siteValidationResult.total
-  });
-  console.log("🔍 Single Polygon Validation Result:", {
-    data: polygonValidationResult,
-    polygonUuid: currentPolygonUuid,
-    enabled: !!currentPolygonUuid
-  });
-
-  // Test with first polygon if available
-  const firstPolygonUuid = polygonMenu[0]?.uuid;
-  const testPolygonValidation = usePolygonValidation({
-    polygonUuid: firstPolygonUuid ?? ""
-  });
-
-  if (firstPolygonUuid && !currentPolygonUuid) {
-    console.log("🧪 Testing with first polygon UUID:", firstPolygonUuid);
-    console.log("🧪 Test Polygon Validation Result:", {
-      data: testPolygonValidation,
-      polygonUuid: firstPolygonUuid,
-      enabled: !!firstPolygonUuid
-    });
-  }
-  const { refetch: fetchValidationData } = useGetV2TerrafundValidationSite(
-    {
-      queryParams: {
-        uuid: siteUuid ?? ""
-      }
-    },
-    {
-      enabled: false,
-      staleTime: 5 * 60 * 1000,
-      onSuccess: data => {
-        if (data && siteUuid) {
-          setValidationData((prev: any) => ({
-            ...prev,
-            [siteUuid]: data
-          }));
-          setValidationDataTimestamp(Date.now());
-        }
-        setIsFetchingValidationData(false);
-      },
-      onError: error => {
-        Log.error("Failed to fetch validation data:", error);
-        setIsFetchingValidationData(false);
-      }
-    }
-  );
 
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
@@ -222,23 +139,8 @@ const Polygons = (props: IPolygonProps) => {
   );
 
   const handleExpandCollapseToggle = useCallback(() => {
-    if (
-      !openCollapseAll &&
-      siteUuid &&
-      (!validationData[siteUuid] || Date.now() - validationDataTimestamp > 5 * 60 * 1000)
-    ) {
-      setIsFetchingValidationData(true);
-      fetchValidationData();
-    }
     setOpenCollapseAll(!openCollapseAll);
-  }, [
-    openCollapseAll,
-    siteUuid,
-    validationData,
-    validationDataTimestamp,
-    setIsFetchingValidationData,
-    fetchValidationData
-  ]);
+  }, [openCollapseAll]);
 
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
@@ -479,7 +381,6 @@ const Polygons = (props: IPolygonProps) => {
           variant="white-border"
           onClick={handleExpandCollapseToggle}
           className="flex h-9 gap-1.5 !rounded-lg px-2 !capitalize !text-darkCustom lg:px-3"
-          disabled={isFetchingValidationData}
         >
           {openCollapseAll ? (
             <Icon name={IconNames.IC_SHINK} className="mr-1 h-[0.8rem] w-[0.8rem] !text-darkCustom" />
@@ -489,7 +390,7 @@ const Polygons = (props: IPolygonProps) => {
           <span
             className={window.innerWidth > 1900 ? "text-14-bold !text-darkCustom" : "text-12-bold !text-darkCustom"}
           >
-            {isFetchingValidationData ? "Loading..." : openCollapseAll ? "Shrink  " : "Expand"}
+            {openCollapseAll ? "Shrink" : "Expand"}
           </span>
         </Button>
       </div>
