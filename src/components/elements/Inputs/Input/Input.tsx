@@ -132,10 +132,16 @@ const Input = forwardRef(
 
     const clearInput = () => formHook?.setValue(inputWrapperProps.name, "");
     const registeredFormProps = formHook?.register(inputWrapperProps.name, {
-      setValueAs: value =>
-        (inputProps.type === "number" && typeof value === "string" && !value) || typeof value === "undefined"
-          ? null
-          : value
+      setValueAs: value => {
+        if ((inputProps.type === "number" && typeof value === "string" && !value) || typeof value === "undefined") {
+          return null;
+        }
+        const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
+        if (isDateLike && typeof value === "string") {
+          return formatDateValue(value);
+        }
+        return value;
+      }
     });
 
     useEventListener(id, "wheel", function () {
@@ -163,19 +169,38 @@ const Input = forwardRef(
       disallowed.includes(e.key) && e.preventDefault();
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (inputProps.type === "number" && format === "number") {
-        const value = e.target.value;
-        const formattedValue = value.replace(/^0+(?=\d)/, "");
-        e.target.value = formattedValue;
+    const formatDateValue = (value: string) => {
+      const strictIsoMidnight = /^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/;
+      if (!strictIsoMidnight.test(value)) return value;
+      if (inputProps.type === "date") return value.split("T")[0];
+      if (inputProps.type === "datetime-local") {
+        const d = new Date(value);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, "0");
+        const dd = String(d.getDate()).padStart(2, "0");
+        const hh = String(d.getHours()).padStart(2, "0");
+        const mi = String(d.getMinutes()).padStart(2, "0");
+        return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
       }
-
-      if (inputProps.onChange) {
-        inputProps.onChange(e);
-      } else {
-        formHook?.setValue(inputWrapperProps.name, e.target.value);
-      }
+      return value;
     };
+
+    // Check if input is date-like
+    const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const isNumber = inputProps.type === "number" && format === "number";
+      if (isNumber) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
+      if (isDateLike && e.target.value) e.target.value = formatDateValue(e.target.value);
+      inputProps.onChange ? inputProps.onChange(e) : formHook?.setValue(inputWrapperProps.name, e.target.value);
+    };
+
+    // Normalize incoming value/defaultValue for date-like inputs on initial render
+    const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
+    const valueProps: Record<string, any> = {};
+    if ("value" in (inputProps as any)) valueProps.value = normalize((inputProps as any).value);
+    else if ("defaultValue" in (inputProps as any))
+      valueProps.defaultValue = normalize((inputProps as any).defaultValue);
     return (
       <InputWrapper
         inputId={id}
@@ -196,7 +221,7 @@ const Input = forwardRef(
           <input
             {...inputProps}
             {...registeredFormProps}
-            {...(inputProps.onChange ? { onChange: handleChange } : {})}
+            onChange={handleChange}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref || ref}
             id={id}
@@ -204,6 +229,7 @@ const Input = forwardRef(
             aria-invalid={!!error}
             aria-errormessage={error?.message}
             aria-describedby={`${id}-description`}
+            {...valueProps}
           />
           <When condition={!!iconButtonProps}>
             <IconButton {...iconButtonProps!} className="absolute right-3 top-[50%] translate-y-[-50%]" />
