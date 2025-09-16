@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { camelCase, isEmpty, remove } from "lodash";
 import { Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
-import { Else, If, Then, When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
 
 import NonScientificConfirmationModal from "@/components/elements/Inputs/TreeSpeciesInput/NonScientificConfirmationModal";
@@ -78,7 +77,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const [valueAutoComplete, setValueAutoComplete] = useState("");
   const [searchResult, setSearchResult] = useState<string[]>();
-  const [editIndex, setEditIndex] = useState<string | null>(null);
+  const [editUuid, setEditUuid] = useState<string | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<TreeSpeciesValue | null>(null);
   const refPlanted = useRef<HTMLDivElement>(null);
@@ -108,18 +107,30 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     uuid,
     collection
   });
-  const shouldPrepopulate = value.length == 0 && Object.values(previousPlantingCounts ?? {}).length > 0;
+  const shouldPrepopulate =
+    value.length == 0 &&
+    (Object.values(previousPlantingCounts ?? {}).length > 0 || (establishmentTrees ?? []).length > 0);
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
-      onChange(
-        Object.entries(previousPlantingCounts!).map(([name, previousCount]) => ({
-          uuid: uuidv4(),
-          name,
-          taxon_id: previousCount.taxonId,
-          amount: 0,
-          collection: props.collection
-        }))
-      );
+      const values = (establishmentTrees ?? []).map(({ name, taxonId }) => ({
+        uuid: uuidv4(),
+        name,
+        taxon_id: taxonId,
+        amount: 0,
+        collection: props.collection
+      }));
+      for (const [name, { taxonId }] of Object.entries(previousPlantingCounts ?? {})) {
+        if (values.find(({ name: valueName }) => valueName === name) == null) {
+          values.push({
+            uuid: uuidv4(),
+            name,
+            taxon_id: taxonId,
+            amount: 0,
+            collection: props.collection
+          });
+        }
+      }
+      onChange(values);
     }
   });
 
@@ -198,7 +209,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
     const taxonId = findTaxonId(valueAutoComplete);
 
     const doUpdate = () => {
-      setEditIndex(null);
+      setEditUuid(null);
 
       handleUpdate({
         ...editValue,
@@ -264,41 +275,40 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   return result;
                 }}
               />
-              <When condition={valueAutoComplete.length > 0}>
+              {valueAutoComplete.length > 0 && (
                 <button onClick={() => setValueAutoComplete("")} className="absolute right-4 top-4 ">
                   <Icon name={IconNames.CLEAR} className="min-h-3 min-w-3 h-3 w-3" />
                 </button>
-              </When>
+              )}
             </div>
-            <If condition={!editIndex}>
-              <Then>
-                <button onClick={addValue} disabled={valueAutoComplete.length < 1}>
-                  <Icon
-                    name={IconNames.IC_ADD_BUTTON}
-                    className={classNames("text-back h-10 w-10 hover:text-primary", {
-                      "cursor-not-allowed text-[#9F9F9F] hover:!text-[#9F9F9F]": valueAutoComplete.length < 1
-                    })}
-                  />
-                </button>
-              </Then>
-              <Else>
+            {editUuid == null ? (
+              <>
                 <Button onClick={updateValue} variant="secondary">
                   {t("Save")}
                 </Button>
                 <Button
                   onClick={() => {
-                    setEditIndex(null);
+                    setEditUuid(null);
                     setValueAutoComplete("");
                   }}
                   variant="secondary"
                 >
                   {t("Cancel")}
                 </Button>
-              </Else>
-            </If>
+              </>
+            ) : (
+              <button onClick={addValue} disabled={valueAutoComplete.length < 1}>
+                <Icon
+                  name={IconNames.IC_ADD_BUTTON}
+                  className={classNames("text-back h-10 w-10 hover:text-primary", {
+                    "cursor-not-allowed text-[#9F9F9F] hover:!text-[#9F9F9F]": valueAutoComplete.length < 1
+                  })}
+                />
+              </button>
+            )}
           </div>
         </div>
-        <When condition={!isEmpty(valueAutoComplete) && searchResult != null && isEmpty(searchResult)}>
+        {!isEmpty(valueAutoComplete) && searchResult != null && isEmpty(searchResult) && (
           <div className="w-[40%] rounded-lg border border-primary bg-neutral-250 p-2">
             <Text variant="text-14-semibold" className="mb-1 text-blueCustom-700">
               {t("No matches available")}
@@ -310,7 +320,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               </Text>
             </div>
           </div>
-        </When>
+        )}
         <div className="mb-1 mt-9 flex gap-6 border-b pb-4">
           <div
             className={classNames({ "w-[75%]": !displayPreviousCounts, "w-[50%]": displayPreviousCounts })}
@@ -335,7 +345,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 : ""}
             </Text>
           </div>
-          <When condition={displayPreviousCounts}>
+          {displayPreviousCounts && (
             <div>
               <Text variant="text-14-bold" className="uppercase text-black">
                 {t(totalToDateColumn)}
@@ -344,7 +354,7 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 {totalWithPrevious.toLocaleString()}
               </Text>
             </div>
-          </When>
+          )}
         </div>
         <List
           as="div"
@@ -355,10 +365,10 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
           render={(value, index) => (
             <div
               className={classNames("relative flex w-full items-center gap-6 border-b border-neutral-450 py-2", {
-                "blur-sm": editIndex && editIndex !== value.uuid
+                "blur-sm": editUuid && editUuid !== value.uuid
               })}
             >
-              <When condition={deleteIndex === value.uuid}>
+              {deleteIndex === value.uuid && (
                 <div className="absolute top-0 right-0 z-10 flex h-full w-full items-center justify-between bg-neutral-250 px-4 shadow-monitored">
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t(`Are you sure you want to delete “${value.name}”?`)}
@@ -378,15 +388,15 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                     </button>
                   </div>
                 </div>
-              </When>
-              <When condition={editIndex === value.uuid}>
+              )}
+              {editUuid === value.uuid && (
                 <div className="absolute top-0 right-0 z-10 flex h-full w-full items-center gap-1 bg-neutral-250 px-4 shadow-monitored">
                   <Icon name={IconNames.EDIT_TA} className="min-h-6 min-w-6 h-6 w-6 text-primary" />
                   <Text variant="text-16" className="text-blueCustom-700">
                     {t("Editing: {name}", { name: value.name })}
                   </Text>
                 </div>
-              </When>
+              )}
               <div
                 style={
                   refTreeSpecies
@@ -398,16 +408,16 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                 }
               >
                 <div className="flex items-center gap-1">
-                  <When condition={props.useTaxonomicBackbone && value.taxon_id == null}>
+                  {props.useTaxonomicBackbone && value.taxon_id == null && (
                     <div title={t("Non-Scientific Name")}>
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
-                  </When>
-                  <When condition={establishmentTrees != null && !establishmentTrees.includes(value.name ?? "")}>
+                  )}
+                  {establishmentTrees?.find(({ name }) => name === value.name ?? "") == null && (
                     <div title={t("New Species (not used in establishment)")}>
                       <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
-                  </When>
+                  )}
                   <Text variant="text-14-light" className="text-black ">
                     {t(value.name)}
                   </Text>
@@ -440,44 +450,40 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   />
                 )}
               </div>
-              <When condition={displayPreviousCounts}>
+              {displayPreviousCounts && (
                 <Text variant="text-14-light" className="text-black ">
                   {(previousPlantingCounts?.[value.name ?? ""]?.amount ?? 0).toLocaleString()}
                 </Text>
-              </When>
+              )}
               <div className="flex flex-1 justify-end gap-6">
                 <IconButton
                   iconProps={{ name: IconNames.EDIT_TA, width: 24 }}
                   className="text-blueCustom-700 hover:text-primary"
                   onClick={() => {
                     setValueAutoComplete(value.name ?? "");
-                    setEditIndex(value.uuid ?? null);
+                    setEditUuid(value.uuid ?? null);
                     setEditValue(value);
                     autoCompleteRef.current?.focus();
                   }}
                 />
-                <When
-                  condition={
-                    !displayPreviousCounts ||
-                    previousPlantingCounts == null ||
-                    // If we're using previous counts, only allow delete if this row has never been
-                    // reported on before.
-                    Object.keys(previousPlantingCounts).find(name => name === value.name) == null
-                  }
-                >
+                {(!displayPreviousCounts ||
+                  previousPlantingCounts == null ||
+                  // If we're using previous counts, only allow delete if this row has never been
+                  // reported on before.
+                  Object.keys(previousPlantingCounts).find(name => name === value.name) == null) && (
                   <IconButton
                     iconProps={{ name: IconNames.TRASH_TA, width: 24 }}
                     className="text-blueCustom-700 hover:text-primary"
                     onClick={() => setDeleteIndex(value.uuid ?? null)}
                   />
-                </When>
+                )}
               </div>
             </div>
           )}
         />
-        <When condition={!!props.error}>
+        {props.error != null && (
           <ErrorMessage error={{ message: t("One or more values are missing"), type: "required" }} className="mt-5" />
-        </When>
+        )}
       </div>
     </InputWrapper>
   );
