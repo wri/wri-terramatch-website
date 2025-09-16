@@ -50,11 +50,7 @@ const SubmissionPage = () => {
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={t("Are you ready to submit your application?")}
         content={t(
-          `If you are ready to submit your application for review, please confirm by pressing the 
-          “Submit” button. You will not be able to edit your application after submission, unless the 
-          review team reopens it with a request for more information.<br/>
-          If you are not ready to submit your application, press “Cancel” to return to your draft.
-          `
+          "If you are ready to submit your application for review, please confirm by pressing the “Submit” button. You will not be able to edit your application after submission, unless the review team reopens it with a request for more information.\n\nIf you are not ready to submit your application, press “Cancel” to return to your draft."
         )}
         primaryButtonProps={{
           children: t("Submit"),
