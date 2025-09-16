@@ -19,6 +19,19 @@ export const parseValidationData = (criteriaData: any) => {
   return transformedData;
 };
 
+export const parseV3ValidationData = (criteriaData: any) => {
+  const transformedData: ICriteriaCheckItem[] = criteriaData.criteriaList.map((criteria: any) => {
+    return {
+      id: criteria.criteriaId,
+      date: criteria.createdAt,
+      status: criteria.valid,
+      label: validationLabels[criteria.criteriaId],
+      extra_info: criteria.extraInfo
+    };
+  });
+  return transformedData;
+};
+
 export const parseValidationDataFromContext = (polygonValidation: any) => {
   if (!polygonValidation?.nonValidCriteria) {
     return [];
@@ -61,6 +74,20 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
         criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
         criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID) &&
       criteria.valid === 0
+  );
+};
+
+export const hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3 = (criteriaData: any) => {
+  if (!criteriaData?.criteriaList?.length) {
+    return false;
+  }
+
+  return criteriaData.criteriaList.some(
+    (criteria: any) =>
+      (criteria.criteriaId === ESTIMATED_AREA_CRITERIA_ID ||
+        criteria.criteriaId === WITHIN_COUNTRY_CRITERIA_ID ||
+        criteria.criteriaId === PLANT_START_DATE_CRITERIA_ID) &&
+      criteria.valid === false
   );
 };
 

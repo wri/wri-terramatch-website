@@ -2,19 +2,15 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { usePolygonValidation } from "@/connections/Validation";
-import { useMapAreaContext } from "@/context/mapArea.provider";
-import { parseValidationData, parseValidationDataFromContext } from "@/helpers/polygonValidation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -47,37 +43,12 @@ const PolygonItem = ({
 }: MapMenuPanelItemProps & { isChecked: boolean; onCheckboxChange: (uuid: string, isChecked: boolean) => void }) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const { validationData } = useMapAreaContext();
+  const [showWarning, setShowWarning] = useState(validationStatus == "partial");
   const t = useT();
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
-
-  const getPolygonValidationFromContext = useCallback(() => {
-    if (siteId && validationData[siteId]) {
-      return validationData[siteId].find((item: any) => item.uuid === uuid);
-    }
-    return null;
-  }, [siteId, validationData, uuid]);
-
-  const v3ValidationData = usePolygonValidation({
-    polygonUuid: uuid
-  });
 
   useEffect(() => {
     setOpenCollapse(isCollapsed);
   }, [isCollapsed]);
-
-  useEffect(() => {
-    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
-      setPolygonValidationData(parseValidationData(v3ValidationData));
-    }
-  }, [v3ValidationData]);
-
-  useEffect(() => {
-    const polygonValidation = getPolygonValidationFromContext();
-    if (polygonValidation) {
-      setPolygonValidationData(parseValidationDataFromContext(polygonValidation));
-    }
-  }, [getPolygonValidationFromContext, openCollapse]);
 
   const handleCheckboxClick = () => {
     onCheckboxChange(uuid, !isChecked);
@@ -159,7 +130,7 @@ const PolygonItem = ({
             staff.
           </Text>
         </When>
-        <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
+        <ChecklistErrorsInformation polygonUuid={uuid} showWarning={showWarning} onWarningChange={setShowWarning} />
       </When>
     </div>
   );
