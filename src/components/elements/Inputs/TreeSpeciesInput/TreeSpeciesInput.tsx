@@ -282,6 +282,15 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
               )}
             </div>
             {editUuid == null ? (
+              <button onClick={addValue} disabled={valueAutoComplete.length < 1}>
+                <Icon
+                  name={IconNames.IC_ADD_BUTTON}
+                  className={classNames("text-back h-10 w-10 hover:text-primary", {
+                    "cursor-not-allowed text-[#9F9F9F] hover:!text-[#9F9F9F]": valueAutoComplete.length < 1
+                  })}
+                />
+              </button>
+            ) : (
               <>
                 <Button onClick={updateValue} variant="secondary">
                   {t("Save")}
@@ -296,15 +305,6 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                   {t("Cancel")}
                 </Button>
               </>
-            ) : (
-              <button onClick={addValue} disabled={valueAutoComplete.length < 1}>
-                <Icon
-                  name={IconNames.IC_ADD_BUTTON}
-                  className={classNames("text-back h-10 w-10 hover:text-primary", {
-                    "cursor-not-allowed text-[#9F9F9F] hover:!text-[#9F9F9F]": valueAutoComplete.length < 1
-                  })}
-                />
-              </button>
             )}
           </div>
         </div>
@@ -413,11 +413,12 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
                   )}
-                  {establishmentTrees?.find(({ name }) => name === value.name ?? "") == null && (
-                    <div title={t("New Species (not used in establishment)")}>
-                      <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
-                    </div>
-                  )}
+                  {establishmentTrees != null &&
+                    establishmentTrees?.find(({ name }) => name === value.name ?? "") == null && (
+                      <div title={t("New Species (not used in establishment)")}>
+                        <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
+                      </div>
+                    )}
                   <Text variant="text-14-light" className="text-black ">
                     {t(value.name)}
                   </Text>
