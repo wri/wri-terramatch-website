@@ -462,6 +462,14 @@ export const getSteps = (t: typeof useT, uuid: string, countryOptions: Option[])
           }
         },
         {
+          name: "fin_budget_current_year",
+          label: t("Organization Budget in USD for this year"),
+          placeholder: t("Organization Budget in USD"),
+          type: FieldType.Input,
+          validation: yup.number().min(0).max(9999999999999),
+          fieldProps: { type: "number" }
+        },
+        {
           name: "bank_statements",
           type: FieldType.FileUpload,
           label: t("Upload your organization's bank statements"),

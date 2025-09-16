@@ -32,6 +32,7 @@ const validationSchema = yup.object({
   fin_budget_3year: yup.number().nullable(),
   fin_budget_2year: yup.number().nullable(),
   fin_budget_1year: yup.number().nullable(),
+  fin_budget_current_year: yup.number().nullable(),
   ha_restored_total: yup.number().nullable(),
   ha_restored_3year: yup.number().nullable(),
   trees_grown_total: yup.number().nullable(),
@@ -102,6 +103,12 @@ export const OrganisationEdit = () => {
           <TextInput
             source="fin_budget_1year"
             label="Organization Budget in USD for (-1 years from today)"
+            type="number"
+            fullWidth
+          />
+          <TextInput
+            source="fin_budget_current_year"
+            label="Organization Budget in USD for (this year)"
             type="number"
             fullWidth
           />
