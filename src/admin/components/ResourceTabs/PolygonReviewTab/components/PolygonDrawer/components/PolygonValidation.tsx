@@ -6,7 +6,8 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { usePolygonValidation } from "@/connections/Validation";
+import { isCompletedDataOrEstimatedArea, parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 
 import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
@@ -20,19 +21,36 @@ export interface ICriteriaCheckItemProps {
 }
 
 export interface ICriteriaCheckProps {
-  menu: ICriteriaCheckItemProps[];
+  polygonUuid: string;
   clickedValidation: (value: boolean) => void;
   clickedRunFixPolygonOverlaps: (value: boolean) => void;
-  status: boolean;
 }
 
 const PolygonValidation = (props: ICriteriaCheckProps) => {
-  const { clickedValidation, clickedRunFixPolygonOverlaps, status, menu } = props;
+  const { clickedValidation, clickedRunFixPolygonOverlaps, polygonUuid } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [menu, setMenu] = useState<ICriteriaCheckItemProps[]>([]);
+  const [status, setStatus] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getFormatedExtraInfo } = useMessageValidators();
+
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid
+  });
+
+  useEffect(() => {
+    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+      const processedMenu = parseV3ValidationData(v3ValidationData);
+      setMenu(processedMenu);
+      setStatus(true);
+    } else {
+      setMenu([]);
+      setStatus(false);
+    }
+  }, [v3ValidationData]);
+
   const formattedDate = (dateObject: Date) => {
     const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
     return `${localDate.toLocaleTimeString("en-US", {

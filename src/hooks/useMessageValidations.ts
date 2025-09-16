@@ -325,7 +325,6 @@ export const useMessageValidators = () => {
 
   const getFormatedExtraInfo = useMemo(
     () => (extraInfo: any, criteria_id: any) => {
-      console.log("extraInfo", extraInfo, "criteria_id", criteria_id);
       if (criteria_id === 12) {
         return getProjectGoalMessage(extraInfo);
       } else if (criteria_id === 3) {

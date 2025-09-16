@@ -16,18 +16,15 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
-  useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { parseValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
@@ -84,9 +81,6 @@ const PolygonDrawer = ({
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
-  const [validationStatus, setValidationStatus] = useState(false);
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
-  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
@@ -102,26 +96,7 @@ const PolygonDrawer = ({
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
-  const {
-    data: validationCriteriaData,
-    isLoading: isLoadingValidationCriteria,
-    refetch: refetchValidationCriteria
-  } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: { uuid: polygonSelected }
-    },
-    {
-      enabled: !!polygonSelected,
-      onSuccess: data => {
-        if (data?.polygon_id) {
-          setPolygonCriteriaMap((oldPolygonMap: Record<string, unknown>) => ({
-            ...oldPolygonMap,
-            [data.polygon_id?.toString() ?? ""]: data
-          }));
-        }
-      }
-    }
-  );
+  const isLoadingValidationCriteria = false; // PolygonValidation handles its own loading
 
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: async (data: any) => {
@@ -135,7 +110,7 @@ const PolygonDrawer = ({
         context?.reloadSiteData?.();
       }
 
-      refetchValidationCriteria();
+      // V3 validation data will be automatically refetched
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -214,14 +189,6 @@ const PolygonDrawer = ({
   useValueChanged(isPolygonStatusOpen, () => {
     setButtonToogle(!isPolygonStatusOpen);
   });
-  useEffect(() => {
-    if (validationCriteriaData?.criteria_list && validationCriteriaData?.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(validationCriteriaData));
-      setValidationStatus(true);
-    } else {
-      setValidationStatus(false);
-    }
-  }, [validationCriteriaData]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -240,33 +207,9 @@ const PolygonDrawer = ({
     }
   }, [openEditNewPolygon]);
 
-  const isValidCriteriaData = (criteriaData: any) => {
-    if (!criteriaData?.criteria_list?.length) {
-      return true;
-    }
-    return criteriaData.criteria_list.some(
-      (criteria: any) =>
-        criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-        criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
-        criteria.valid !== 1
-    );
-  };
-
   useEffect(() => {
-    const fetchCriteriaValidation = async () => {
-      if (!buttonToogle) {
-        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
-          queryParams: {
-            uuid: polygonSelected
-          }
-        });
-        setCriteriaValidation(criteriaData);
-      }
-    };
-
-    fetchCriteriaValidation();
     setSelectPolygonVersion(selectedPolygonData);
-  }, [buttonToogle, polygonSelected, selectedPolygonData]);
+  }, [selectedPolygonData]);
 
   const {
     data: polygonVersions,
@@ -361,7 +304,7 @@ const PolygonDrawer = ({
               record={selectedPolygon}
               mutate={mutateSitePolygons}
               showChangeRequest={false}
-              checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
+              checkPolygonsSite={true} // PolygonValidation handles validation internally
             />
             <CommentarySection
               variantText="text-14-semibold"
@@ -393,10 +336,9 @@ const PolygonDrawer = ({
                 </div>
               ) : (
                 <PolygonValidation
-                  menu={polygonValidationData ?? []}
+                  polygonUuid={polygonSelected}
                   clickedValidation={setCheckPolygonValidation}
                   clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
-                  status={validationStatus}
                 />
               )}
             </Accordion>
