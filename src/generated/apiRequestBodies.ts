@@ -162,6 +162,57 @@ export type PostV2FormsEntityFormUuidBody = {
   form_uuid?: string;
 };
 
+export type PostV2FundingProgrammeBody = {
+  name?: string;
+  description?: string;
+  read_more_url?: string;
+  location?: string;
+  organisation_types?: string[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  status?: string;
+};
+
+export type V2AdminOrganisationApproveBody = {
+  uuid: string;
+};
+
+export type GetV2AdminFormsBody = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+  /**
+   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
+   */
+  sort?: string;
+  /**
+   * number of results (per page) to return
+   */
+  per_page?: number;
+  /**
+   * page number you want results from
+   */
+  page?: number;
+};
+
 export type V2PostOrganisationsBody = {
   /**
    * Available type are for-profit-organization, non-profit-organization, government-agency
