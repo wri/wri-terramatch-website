@@ -202,8 +202,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     return indicatorData
       .filter(
         (polygon: Indicators) =>
-          polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-          polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase())
+          polygon?.status === "approved" &&
+          (polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+            polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase()))
       )
       .sort((a, b) => (a.poly_name || "").localeCompare(b.poly_name || ""));
   }, [indicatorData, searchTerm]);
@@ -214,6 +215,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const options = [
       { title: "All Polygons", value: "0" },
       ...indicatorData
+        .filter((item: any) => item.status === "approved")
         .map((item: any) => ({
           title: item.poly_name || "",
           value: item.poly_id || ""
@@ -323,12 +325,20 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
           const response = await fetchGetV2ProjectsUUIDSitePolygonsAll({
             pathParams: { uuid: entity_uuid }
           });
-          polygonUuids = response.map((polygon: any) => polygon.uuid).filter(Boolean) ?? [];
+          polygonUuids =
+            response
+              .filter((polygon: any) => polygon.status === "approved")
+              .map((polygon: any) => polygon.uuid)
+              .filter(Boolean) ?? [];
         } else if (entity === "sites") {
           const response = await fetchGetV2SitesSitePolygon({
             pathParams: { site: entity_uuid }
           });
-          polygonUuids = response.map((polygon: any) => polygon.poly_id).filter(Boolean) ?? [];
+          polygonUuids =
+            response
+              .filter((polygon: any) => polygon.status === "approved")
+              .map((polygon: any) => polygon.poly_id)
+              .filter(Boolean) ?? [];
         }
 
         const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug) => {

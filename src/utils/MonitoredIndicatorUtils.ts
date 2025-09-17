@@ -141,6 +141,7 @@ export const processIndicatorData = (presentIndicator: Indicator) => (polygons: 
   }
 
   return polygons
+    .filter(sitePolygon => sitePolygon.status === "approved")
     .map(sitePolygon => {
       const indicator = sitePolygon?.indicators?.find(
         (ind: { indicatorSlug: string }) => ind.indicatorSlug === presentIndicator
