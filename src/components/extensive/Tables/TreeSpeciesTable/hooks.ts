@@ -138,7 +138,7 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
         collection !== "seeds" &&
         establishmentTrees != null &&
         name != null &&
-        !establishmentTrees.includes(name)
+        establishmentTrees.find(species => species.name === name) == null
       ) {
         speciesTypes.push("new");
       }
@@ -164,7 +164,11 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
       .map(([name, { amount, taxonId }]) => {
         const speciesTypes = [];
         if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
-        if (entity !== "projectReports" && collection !== "seeds" && !establishmentTrees?.includes(name)) {
+        if (
+          entity !== "projectReports" &&
+          collection !== "seeds" &&
+          establishmentTrees?.find(species => species.name === name) == null
+        ) {
           speciesTypes.push("new");
         }
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };
