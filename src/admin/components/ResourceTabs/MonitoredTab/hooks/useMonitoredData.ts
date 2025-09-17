@@ -16,6 +16,7 @@ import {
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
 import { EntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 const dataPolygonOverview = [
   {
@@ -296,22 +297,19 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   useEffect(() => {
     const fetchRerunData = async () => {
-      if (!entity || !entity_uuid || !indicatorPolygonsStatus) return;
+      if (entity == null || entity_uuid == null || indicatorPolygonsStatus == null) return;
 
       setIsLoadingRerunVerify(true);
 
-      const approvedPolygons = indicatorPolygonsStatus.approved || 0;
+      const approvedPolygons = indicatorPolygonsStatus.approved ?? 0;
       setTotalPolygonsForRerun(approvedPolygons);
 
       if (approvedPolygons === 0) {
-        const updateRerunDropdownOptions = () => {
-          return DROPDOWN_OPTIONS.map(option => {
-            return {
-              ...option,
-              title: `${option.title} (0 polygons available for rerun)`
-            };
-          });
-        };
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (0 polygons available for rerun)`
+          }));
         setRerunAnalysisToSlug({});
         setRerunDropdownOptions(updateRerunDropdownOptions);
         setIsLoadingRerunVerify(false);
@@ -325,12 +323,12 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
           const response = await fetchGetV2ProjectsUUIDSitePolygonsAll({
             pathParams: { uuid: entity_uuid }
           });
-          polygonUuids = response.map((polygon: any) => polygon.uuid).filter(Boolean) || [];
+          polygonUuids = response.map((polygon: any) => polygon.uuid).filter(Boolean) ?? [];
         } else if (entity === "sites") {
           const response = await fetchGetV2SitesSitePolygon({
             pathParams: { site: entity_uuid }
           });
-          polygonUuids = response.map((polygon: any) => polygon.poly_id).filter(Boolean) || [];
+          polygonUuids = response.map((polygon: any) => polygon.poly_id).filter(Boolean) ?? [];
         }
 
         const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug) => {
@@ -338,27 +336,21 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
           return acc;
         }, {});
 
-        const updateRerunDropdownOptions = () => {
-          return DROPDOWN_OPTIONS.map(option => {
-            return {
-              ...option,
-              title: `${option.title} (${polygonUuids.length} polygons available for rerun)`
-            };
-          });
-        };
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (${polygonUuids.length} polygons available for rerun)`
+          }));
 
         setRerunAnalysisToSlug(rerunSlugToAnalysis);
         setRerunDropdownOptions(updateRerunDropdownOptions);
       } catch (error) {
-        console.error("Error fetching polygon data for rerun:", error);
-        const updateRerunDropdownOptions = () => {
-          return DROPDOWN_OPTIONS.map(option => {
-            return {
-              ...option,
-              title: `${option.title} (${approvedPolygons} polygons available for rerun)`
-            };
-          });
-        };
+        Log.error("Error fetching polygon data for rerun:", error);
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (${approvedPolygons} polygons available for rerun)`
+          }));
         setRerunDropdownOptions(updateRerunDropdownOptions);
       }
 

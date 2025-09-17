@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { FC, useState } from "react";
 import { When } from "react-if";
 
@@ -54,6 +55,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
     loadingRerunVerify
   } = useMonitoredData(entityType, entityUuid);
   const { openNotification } = useNotificationContext();
+  const t = useT();
   const [selectSlug, setSelectSlug] = useState<string | undefined>();
   const [isRerunMode, setIsRerunMode] = useState<boolean>(false);
 
@@ -66,8 +68,8 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         setLoadingAnalysis?.(false);
         return openNotification(
           "warning",
-          "Warning",
-          "No polygons available for rerun. All polygons have complete analysis data."
+          t("Warning"),
+          t("No polygons available for rerun. All polygons have complete analysis data.")
         );
       }
 
@@ -84,7 +86,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
     } else {
       if (analysisToSlug[`${indicatorSlugSelected}`]?.message) {
         setLoadingAnalysis?.(false);
-        return openNotification("warning", "Warning", analysisToSlug[`${indicatorSlugSelected}`].message);
+        return openNotification("warning", t("Warning"), analysisToSlug[`${indicatorSlugSelected}`].message);
       }
 
       await runAnalysisIndicator({
@@ -149,12 +151,14 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             />
             <div className="flex flex-col gap-1">
               <Text variant="text-14-semibold" className="text-darkCustom">
-                Rerun existing analysis
+                {t("Rerun existing analysis")}
               </Text>
               <Text variant="text-12" className="text-neutral-600">
                 {isRerunMode
-                  ? `Force rerun analysis for ${totalPolygonsForRerun} polygons (will overwrite existing data)`
-                  : "Run analysis only for polygons that haven't been processed yet"}
+                  ? t("Force rerun analysis for {{count}} polygons (will overwrite existing data)", {
+                      count: totalPolygonsForRerun
+                    })
+                  : t("Run analysis only for polygons that haven't been processed yet")}
               </Text>
             </div>
           </div>
@@ -163,7 +167,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             <div className="border-yellow-200 bg-yellow-50 flex items-center gap-2 rounded-lg border p-3">
               <Icon name={IconNames.EXCLAMATION_CIRCLE_FILL} className="h-5 w-5 text-yellow-600" />
               <Text variant="text-12" className="text-yellow-800">
-                All polygons have complete analysis data. No rerun is needed.
+                {t("All polygons have complete analysis data. No rerun is needed.")}
               </Text>
             </div>
           </When>
@@ -179,11 +183,11 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
               options={isRerunMode ? rerunDropdownOptions : dropdownAnalysisOptions}
               value={
                 isRerunMode
-                  ? rerunDropdownOptions.find(option => option.slug === (selectSlug || indicatorSlug))?.value
-                    ? [rerunDropdownOptions.find(option => option.slug === (selectSlug || indicatorSlug))?.value!]
+                  ? rerunDropdownOptions.find(option => option.slug === (selectSlug ?? indicatorSlug))?.value
+                    ? [rerunDropdownOptions.find(option => option.slug === (selectSlug ?? indicatorSlug))?.value!]
                     : []
-                  : dropdownAnalysisOptions.find(option => option.slug === (selectSlug || indicatorSlug))?.value
-                  ? [dropdownAnalysisOptions.find(option => option.slug === (selectSlug || indicatorSlug))?.value!]
+                  : dropdownAnalysisOptions.find(option => option.slug === (selectSlug ?? indicatorSlug))?.value
+                  ? [dropdownAnalysisOptions.find(option => option.slug === (selectSlug ?? indicatorSlug))?.value!]
                   : []
               }
               onChange={e => {
@@ -203,7 +207,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
             <div className="flex items-center justify-center py-8">
               <InlineLoader loading={true} />
               <Text variant="text-12" className="ml-2 text-neutral-600">
-                Loading indicator data...
+                {t("Loading indicator data...")}
               </Text>
             </div>
           </When>
@@ -224,7 +228,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
           variant="primary"
         >
           <Text variant="text-14-bold" className="capitalize text-white">
-            {isRerunMode ? "Rerun Analysis" : primaryButtonText}
+            {isRerunMode ? t("Rerun Analysis") : primaryButtonText}
           </Text>
           <InlineLoader loading={loadingVerify || loadingRerunVerify} />
         </Button>
