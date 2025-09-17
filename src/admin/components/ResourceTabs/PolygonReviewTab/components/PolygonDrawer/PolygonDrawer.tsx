@@ -96,8 +96,6 @@ const PolygonDrawer = ({
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
-  const isLoadingValidationCriteria = false; // PolygonValidation handles its own loading
-
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: async (data: any) => {
       setCheckPolygonValidation(false);
@@ -110,7 +108,8 @@ const PolygonDrawer = ({
         context?.reloadSiteData?.();
       }
 
-      // V3 validation data will be automatically refetched
+      // TODO: clear connection to recall updated data.
+      // in the future V3 validation data will be automatically on changes
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -304,7 +303,7 @@ const PolygonDrawer = ({
               record={selectedPolygon}
               mutate={mutateSitePolygons}
               showChangeRequest={false}
-              checkPolygonsSite={true} // PolygonValidation handles validation internally
+              checkPolygonsSite={true}
             />
             <CommentarySection
               variantText="text-14-semibold"
@@ -330,17 +329,11 @@ const PolygonDrawer = ({
         <Else>
           <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
-              {isLoadingValidationCriteria ? (
-                <div className="flex justify-center py-4">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
-                </div>
-              ) : (
-                <PolygonValidation
-                  polygonUuid={polygonSelected}
-                  clickedValidation={setCheckPolygonValidation}
-                  clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
-                />
-              )}
+              <PolygonValidation
+                polygonUuid={polygonSelected}
+                clickedValidation={setCheckPolygonValidation}
+                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
+              />
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>

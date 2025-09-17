@@ -22,7 +22,7 @@ import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
 import Status from "../Status/Status";
-import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
+// import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -66,7 +66,7 @@ const MapMenuPanelItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const [, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
@@ -323,7 +323,7 @@ const MapMenuPanelItem = ({
             )}
           </Text>
         </When>
-        <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
+        {/* <ChecklistErrorsInformation polygonValidationData={polygonValidationData} /> TODO: this is part of another ticket for PD get it maybe from polygon validation data */}
       </When>
     </div>
   );
