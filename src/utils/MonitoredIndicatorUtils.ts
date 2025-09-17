@@ -11,30 +11,17 @@ import {
 type EcoRegionCategory = "australasian" | "afrotropical" | "paleartic" | "neotropical";
 
 const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
-  australasian: [
-    "Southeast Australia temperate forests",
-    "Tocantins/Pindare moist forests",
-    "Tapajós-Xingu moist forests",
-    "Mato Grosso seasonal forests",
-    "Mato Grosso seasonal forests, Xingu-Tocantins-Araguaia moist forests",
-    "Bahia coastal forests",
-    "Southern Miombo woodlands",
-    "Palawan rain forests"
-  ],
+  australasian: ["Southeast Australia temperate forests", "Palawan rain forests"],
   afrotropical: [
-    "Atlantic mixed forests",
+    "Southern Miombo woodlands",
     "Northern Acacia-Commiphora bushlands and thickets",
     "Southern Rift montane forest-grassland mosaic",
-    "Sierra Madre de Chiapas moist forests",
-    "Iberian sclerophyllous and semi-deciduous forests",
-    "Northwest Iberian montane forests",
     "Northwestern Congolian lowland forests",
     "Albertine Rift montane forests",
     "Sahelian Acacia savanna",
     "Northern Congolian forest-savanna mosaic",
     "Nigerian lowland forests",
     "West Sudanian savanna",
-    "Northern Congolian forest-savanna mosaic, Northwestern Congolian lowland forests",
     "Eastern Guinean forests",
     "Victoria Basin forest-savanna mosaic",
     "Guinean forest-savanna mosaic",
@@ -52,35 +39,37 @@ const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
     "Inner Niger Delta flooded savanna",
     "Western Guinean lowland forests",
     "Eastern Miombo woodlands",
-    "Ethiopian montane forests, Ethiopian montane grasslands and woodlands",
     "Cross-Sanaga-Bioko coastal forests",
     "Zambezian and Mopane woodlands",
-    "Madagascar lowland forests",
-    "Madagascar subhumid forests",
     "Southern Congolian forest-savanna mosaic",
-    "East African montane forests",
-    "East African montane forests, Northern Acacia-Commiphora bushlands and thickets",
-    "Albertine Rift montane forests, Lake"
-  ],
-  paleartic: [
-    "Southwest Iberian Mediterranean sclerophyllous and mixed forests",
-    "Narmada Valley dry deciduous forests",
     "East African montane moorlands",
     "Cameroonian Highlands forests",
+    "Cross-Niger transition forests",
+    "Madagascar lowland forests",
+    "Madagascar subhumid forests"
+  ],
+  paleartic: [
+    "Iberian sclerophyllous and semi-deciduous forests",
+    "Northwest Iberian montane forests",
+    "Southwest Iberian Mediterranean sclerophyllous and mixed forests",
     "Celtic broadleaf forests",
-    "Atlantic Coast restingas",
+    "Atlantic mixed forests",
+    "Narmada Valley dry deciduous forests",
     "Gulf of Oman desert and semi-desert"
   ],
   neotropical: [
+    "Tocantins/Pindare moist forests",
+    "Tapajós-Xingu moist forests",
+    "Mato Grosso seasonal forests",
+    "Xingu-Tocantins-Araguaia moist forests",
+    "Bahia coastal forests",
+    "Atlantic Coast restingas",
     "Sinú Valley dry forests",
     "Santa Marta montane forests",
     "Petén-Veracruz moist forests",
     "Central American Atlantic moist forests",
-    "Petén-Veracruz moist forests, Central American Atlantic moist forests",
     "Central American montane forests",
-    "Central American Atlantic moist forests, Central American montane forests",
-    "Cross-Niger transition forests",
-    "Atlantic Coast restingas"
+    "Sierra Madre de Chiapas moist forests"
   ]
 };
 
