@@ -161,6 +161,11 @@ export class V3ApiEndpoint<
     };
   }
 
+  clearPending(variables: Omit<RequestVariables, "body">) {
+    const fullUrl = resolveUrl(this.url, variables);
+    ApiSlice.clearPending(fullUrl, this.method);
+  }
+
   indexMetaSelector(resource: ResourceType, variables: Omit<RequestVariables, "body">) {
     // Some query params get specified as a single indexed key like `page[number]`, and some get
     // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
