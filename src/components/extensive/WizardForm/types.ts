@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { UseControllerProps } from "react-hook-form";
+import { useT } from "@transifex/react";
+import { ReactElement } from "react";
+import { Control, FieldError, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { AnySchema } from "yup";
 
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
@@ -25,6 +27,27 @@ import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAre
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
+import { Framework } from "@/context/framework.provider";
+import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+export type FieldInputType = FormQuestionDto["inputType"];
+
+export type SharedFieldProps = {
+  error: FieldError;
+  name: string;
+  label: string;
+  required: boolean;
+  placeholder: string | undefined;
+  description: string | undefined;
+  formHook: UseFormReturn;
+  control: Control;
+  onChangeCapture: () => void;
+};
+
+export type FormFieldFactory = {
+  createValidator: (question: FormQuestionDto, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  renderInput: (question: FormQuestionDto, sharedProps: SharedFieldProps) => ReactElement;
+};
 
 export interface FormStepSchema {
   title: string;

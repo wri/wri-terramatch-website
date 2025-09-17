@@ -12,13 +12,14 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FormQuestionContextType } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { findCachedGadmTitle, loadGadmCodes } from "@/connections/Gadm";
 import { selectChildQuestions } from "@/connections/util/Form";
 import { Framework } from "@/context/framework.provider";
 import { FormRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { getFieldValidation, SELECT_FILTER_QUESTION } from "@/helpers/customForms";
+import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
@@ -34,9 +35,12 @@ const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework
     if (question.inputType === "tableInput") {
       schema[question.uuid] = getSchema(selectChildQuestions(question.uuid), t, framework);
     } else if (question.inputType === "conditional") {
-      schema[question.uuid] = getFieldValidation(question, t, framework)!.nullable().label(question.label);
+      schema[question.uuid] = FormFieldFactories[question.inputType]
+        .createValidator(question, t, framework)!
+        .nullable()
+        .label(question.label);
       for (const child of selectChildQuestions(question.uuid)) {
-        const childValidation = getFieldValidation(child, t, framework);
+        const childValidation = FormFieldFactories[child.inputType].createValidator(child, t, framework);
         if (childValidation != null) {
           schema[child.uuid] = childValidation
             .when(question.uuid, {
@@ -53,7 +57,7 @@ const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework
         }
       }
     } else {
-      const validation = getFieldValidation(question, t, framework) ?? yup.mixed();
+      const validation = FormFieldFactories[question.inputType].createValidator(question, t, framework) ?? yup.mixed();
       schema[question.uuid] = validation.nullable().label(question.label ?? "");
     }
 
