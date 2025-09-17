@@ -193,7 +193,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
-        // Clear V3 validation cache for all polygons in the site
         if (sitePolygonData && Array.isArray(sitePolygonData)) {
           const polygonUuids = sitePolygonData
             .map(polygon => polygon.polygonUuid)
