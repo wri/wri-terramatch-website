@@ -35,7 +35,7 @@ const MonitoredDataMap = ({
 
   useEffect(() => {
     setLoading(true);
-    getPolygonsData(entityUuid, undefined, "created_at", entityName, (data: any) => {
+    getPolygonsData(entityUuid, "approved", "created_at", entityName, (data: any) => {
       const parsedData = parsePolygonData(data.polygonsData);
       setPolygonsData(parsedData);
       setLoading(false);

@@ -29,7 +29,11 @@ const SitePolygonsTable = ({
       connectionProps={{
         entityName,
         entityUuid,
-        filter: { "presentIndicator[]": [presentIndicator], search: searchTerm }
+        filter: {
+          "presentIndicator[]": [presentIndicator],
+          "polygonStatus[]": ["approved"],
+          search: searchTerm
+        }
       }}
       variant={variant}
       columns={presentIndicator ? TABLE_COLUMNS_MAPPING[presentIndicator] : []}
