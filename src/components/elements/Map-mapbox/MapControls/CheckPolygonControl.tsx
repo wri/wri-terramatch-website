@@ -25,6 +25,7 @@ import {
 import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import JobsSlice from "@/store/jobsSlice";
 import Log from "@/utils/log";
 
@@ -155,6 +156,14 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       setClickedValidation(false);
       hideLoader();
       setShouldRefetchValidation(true);
+      if (sitePolygonData && Array.isArray(sitePolygonData)) {
+        const polygonUuids = sitePolygonData
+          .map(polygon => polygon.polygonUuid)
+          .filter((uuid): uuid is string => Boolean(uuid));
+        if (polygonUuids.length > 0) {
+          ApiSlice.pruneCache("validations", polygonUuids);
+        }
+      }
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
@@ -184,6 +193,15 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
+        // Clear V3 validation cache for all polygons in the site
+        if (sitePolygonData && Array.isArray(sitePolygonData)) {
+          const polygonUuids = sitePolygonData
+            .map(polygon => polygon.polygonUuid)
+            .filter((uuid): uuid is string => Boolean(uuid));
+          if (polygonUuids.length > 0) {
+            ApiSlice.pruneCache("validations", polygonUuids);
+          }
+        }
         const updatedPolygonNames = data.updated_polygons
           ?.map(p => p.poly_name)
           .filter(Boolean)
