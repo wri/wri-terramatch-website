@@ -13,16 +13,17 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 import { preparePreviewField } from "@/admin/components/Dialogs/FormQuestionPreviewDialog";
+import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import ModalProvider from "@/context/modal.provider";
-import { FormSectionRead, V2GenericList } from "@/generated/apiSchemas";
+import { FormSectionRead } from "@/generated/apiSchemas";
 import { apiFormSectionToFormStep } from "@/helpers/customForms";
 import Log from "@/utils/log";
 
 interface ConfirmationDialogProps extends DialogProps {
   section?: FormSectionRead;
-  linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[];
+  linkedFieldData: FormQuestionField[];
 }
 
 export const FormSectionPreviewDialog = ({ linkedFieldData, section: _section, ...props }: ConfirmationDialogProps) => {
@@ -64,7 +65,7 @@ export const FormSectionPreviewDialog = ({ linkedFieldData, section: _section, .
   );
 };
 
-const sectionPayloadToFormSectionRead = (section: any, linkedFieldData: any) => {
+const sectionPayloadToFormSectionRead = (section: any, linkedFieldData: FormQuestionField[]) => {
   section.form_questions = section.form_questions.map((question: any) =>
     preparePreviewField(question, linkedFieldData)
   );

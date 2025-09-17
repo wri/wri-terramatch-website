@@ -157,19 +157,19 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The cursor for the first record on this page.
            */
           cursor?: string;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -208,19 +208,19 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {

@@ -1,11 +1,12 @@
 import { format } from "date-fns";
-import { sortBy } from "lodash";
+import { isBoolean, sortBy } from "lodash";
 import { Identifier } from "react-admin";
 
 import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formDataProvider";
 import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
+import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { AdditionalInputTypes } from "@/admin/types/common";
-import { FormQuestionRead, FormRead, V2GenericList } from "@/generated/apiSchemas";
+import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
 
 //Response normalizers
 /**
@@ -58,10 +59,7 @@ const normalizeFormQuestion = (question: any) => {
  * @param payload formCreateObject
  * @returns normalized version of formCreateObject
  */
-export const normalizeFormCreatePayload = (
-  payload: FormRead,
-  linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[]
-): any => ({
+export const normalizeFormCreatePayload = (payload: FormRead, linkedFieldData: FormQuestionField[]) => ({
   ...payload,
   deadline_at: payload.deadline_at
     ? (() => {
@@ -72,9 +70,9 @@ export const normalizeFormCreatePayload = (
         }
       })()
     : null,
-  form_sections: setOrderFromIndex(payload.form_sections || [])?.map(section => ({
+  form_sections: setOrderFromIndex(payload.form_sections ?? [])?.map(section => ({
     ...section,
-    form_questions: setOrderFromIndex(section.form_questions || [])?.map((question: any) =>
+    form_questions: setOrderFromIndex(section.form_questions ?? [])?.map((question: any) =>
       normalizeQuestionCreatePayload(question, linkedFieldData)
     )
   }))
@@ -82,14 +80,14 @@ export const normalizeFormCreatePayload = (
 
 export const normalizeQuestionCreatePayload = (
   payload: FormQuestionRead & any,
-  linkedFieldData: (V2GenericList & { input_type: string; multichoice: boolean | null })[]
+  linkedFieldData: FormQuestionField[]
 ) => {
   const { form_question_options, table_headers, child_form_questions, ...restOfPayload } = payload;
-  const input_type = linkedFieldData.find(field => field.uuid === payload.linked_field_key)?.input_type;
-  const field = linkedFieldData.find(field => field.uuid === payload.linked_field_key);
+  const input_type = linkedFieldData.find(field => field.id === payload.linked_field_key)?.inputType;
+  const field = linkedFieldData.find(field => field.id === payload.linked_field_key);
   const output = {
     ...restOfPayload,
-    input_type: field?.input_type
+    input_type: field?.inputType
   };
 
   //@ts-ignore
@@ -98,8 +96,8 @@ export const normalizeQuestionCreatePayload = (
     output.collection = field?.collection;
   }
 
-  if (typeof field?.multichoice === "boolean") {
-    output.multichoice = field?.multichoice;
+  if (isBoolean(field?.multiChoice)) {
+    output.multichoice = field?.multiChoice;
   }
 
   //@ts-ignore

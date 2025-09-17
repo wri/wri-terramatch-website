@@ -124,31 +124,22 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
 
         return header;
       }),
-      ...(handleUpdate
-        ? [
-            {
-              id: "update",
-              accessorKey: "uuid",
-              header: "",
-              cell: props => (
-                <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
-              ),
-              meta: { align: "right" },
-              enableSorting: false
-            } as ColumnDef<TData>
-          ]
-        : []),
       {
-        id: "delete",
+        id: "actions",
         accessorKey: "uuid",
         header: "",
         cell: props => (
-          <IconButton
-            iconProps={{ name: IconNames.TRASH_CIRCLE, className: "fill-error" }}
-            onClick={() => onDeleteEntry(props.getValue() as string)}
-          />
+          <div className="flex items-center gap-5">
+            <When condition={!!handleUpdate}>
+              <IconButton iconProps={{ name: IconNames.EDIT }} onClick={() => openFormUpdateModalHandler(props)} />
+            </When>
+            <IconButton
+              iconProps={{ name: IconNames.TRASH_CIRCLE, className: "fill-error" }}
+              onClick={() => onDeleteEntry(props.getValue() as string)}
+            />
+          </div>
         ),
-        meta: { align: "right" },
+        meta: { align: "right", cellStyles: { className: "sticky right-0 bg-white" } },
         enableSorting: false
       }
     ];

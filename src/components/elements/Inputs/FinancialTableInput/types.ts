@@ -154,7 +154,7 @@ export function formatFinancialData(
         year,
         currentAssets: row["current-assets"]?.amount ?? 0,
         currentLiabilities: row["current-liabilities"]?.amount ?? 0,
-        currentRatio: formatCurrency(row["current-ratio"]?.amount) ?? 0,
+        currentRatio: row["current-ratio"]?.amount ?? 0,
         currentAssetsUuid: row["current-assets"]?.uuid,
         currentLiabilitiesUuid: row["current-liabilities"]?.uuid,
         currentRatioUuid: row["current-ratio"]?.uuid

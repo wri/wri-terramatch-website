@@ -7,6 +7,8 @@ import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
+  fetchGetV2ProjectsUUIDSitePolygonsAll,
+  fetchGetV2SitesSitePolygon,
   useGetV2IndicatorsEntityUuid,
   useGetV2IndicatorsEntityUuidSlug,
   useGetV2IndicatorsEntityUuidSlugVerify,
@@ -14,6 +16,7 @@ import {
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
 import { EntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 const dataPolygonOverview = [
   {
@@ -97,6 +100,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
+  const [isLoadingRerunVerify, setIsLoadingRerunVerify] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
@@ -108,7 +112,16 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     restorationByStrategy: [],
     restorationByLandUse: []
   });
+  const [rerunAnalysisToSlug, setRerunAnalysisToSlug] = useState<any>({
+    treeCoverLoss: [],
+    treeCoverLossFires: [],
+    restorationByEcoRegion: [],
+    restorationByStrategy: [],
+    restorationByLandUse: []
+  });
   const [dropdownAnalysisOptions, setDropdownAnalysisOptions] = useState(DROPDOWN_OPTIONS);
+  const [rerunDropdownOptions, setRerunDropdownOptions] = useState(DROPDOWN_OPTIONS);
+  const [totalPolygonsForRerun, setTotalPolygonsForRerun] = useState<number>(0);
 
   const {
     data: indicatorData,
@@ -189,8 +202,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     return indicatorData
       .filter(
         (polygon: Indicators) =>
-          polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
-          polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase())
+          polygon?.status === "approved" &&
+          (polygon?.poly_name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
+            polygon?.site_name?.toLowerCase().includes(searchTerm?.toLowerCase()))
       )
       .sort((a, b) => (a.poly_name || "").localeCompare(b.poly_name || ""));
   }, [indicatorData, searchTerm]);
@@ -201,6 +215,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const options = [
       { title: "All Polygons", value: "0" },
       ...indicatorData
+        .filter((item: any) => item.status === "approved")
         .map((item: any) => ({
           title: item.poly_name || "",
           value: item.poly_id || ""
@@ -282,6 +297,81 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   }, [entity, entity_uuid, modalOpened]);
 
+  useEffect(() => {
+    const fetchRerunData = async () => {
+      if (entity == null || entity_uuid == null || indicatorPolygonsStatus == null) return;
+
+      setIsLoadingRerunVerify(true);
+
+      const approvedPolygons = indicatorPolygonsStatus.approved ?? 0;
+      setTotalPolygonsForRerun(approvedPolygons);
+
+      if (approvedPolygons === 0) {
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (0 polygons available for rerun)`
+          }));
+        setRerunAnalysisToSlug({});
+        setRerunDropdownOptions(updateRerunDropdownOptions);
+        setIsLoadingRerunVerify(false);
+        return;
+      }
+
+      try {
+        let polygonUuids: string[] = [];
+
+        if (entity === "projects") {
+          const response = await fetchGetV2ProjectsUUIDSitePolygonsAll({
+            pathParams: { uuid: entity_uuid }
+          });
+          polygonUuids =
+            response
+              .filter((polygon: any) => polygon.status === "approved")
+              .map((polygon: any) => polygon.uuid)
+              .filter(Boolean) ?? [];
+        } else if (entity === "sites") {
+          const response = await fetchGetV2SitesSitePolygon({
+            pathParams: { site: entity_uuid }
+          });
+          polygonUuids =
+            response
+              .filter((polygon: any) => polygon.status === "approved")
+              .map((polygon: any) => polygon.poly_id)
+              .filter(Boolean) ?? [];
+        }
+
+        const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug) => {
+          acc[slug] = polygonUuids;
+          return acc;
+        }, {});
+
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (${polygonUuids.length} polygons available for rerun)`
+          }));
+
+        setRerunAnalysisToSlug(rerunSlugToAnalysis);
+        setRerunDropdownOptions(updateRerunDropdownOptions);
+      } catch (error) {
+        Log.error("Error fetching polygon data for rerun:", error);
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (${approvedPolygons} polygons available for rerun)`
+          }));
+        setRerunDropdownOptions(updateRerunDropdownOptions);
+      }
+
+      setIsLoadingRerunVerify(false);
+    };
+
+    if (modalOpened(ModalId.MODAL_RUN_ANALYSIS)) {
+      fetchRerunData();
+    }
+  }, [entity, entity_uuid, indicatorPolygonsStatus, modalOpened]);
+
   return {
     polygonsIndicator: filteredPolygons,
     polygonOptions,
@@ -291,12 +381,16 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     runAnalysisIndicator: mutate,
     loadingAnalysis: isLoading,
     loadingVerify: isLoadingVerify,
+    loadingRerunVerify: isLoadingRerunVerify,
     isLoadingIndicator,
     setIsLoadingVerify,
     dropdownAnalysisOptions,
+    rerunDropdownOptions,
     analysisToSlug,
+    rerunAnalysisToSlug,
     polygonMissingAnalysis,
     treeCoverLossData,
-    treeCoverLossFiresData
+    treeCoverLossFiresData,
+    totalPolygonsForRerun
   };
 };
