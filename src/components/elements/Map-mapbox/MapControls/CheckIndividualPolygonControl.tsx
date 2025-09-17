@@ -12,6 +12,7 @@ import {
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";
@@ -37,6 +38,9 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
+      if (editPolygon?.uuid) {
+        ApiSlice.pruneCache("validations", [editPolygon.uuid]);
+      }
       hideLoader();
       displayNotification(
         t("Please update and re-run if validations fail."),
@@ -66,6 +70,9 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       setShouldRefetchPolygonData(true);
       setShouldRefetchValidation(true);
       setShouldRefetchPolygonVersions(true);
+      if (editPolygon?.uuid) {
+        ApiSlice.pruneCache("validations", [editPolygon.uuid]);
+      }
 
       const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
         pathParams: { uuid: editPolygon?.primary_uuid as string }

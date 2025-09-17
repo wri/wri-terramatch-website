@@ -26,13 +26,14 @@ import {
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
-import PolygonValidation from "./components/PolygonValidation";
+import SinglePolygonValidation from "./components/SinglePolygonValidation";
 import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
@@ -106,10 +107,8 @@ const PolygonDrawer = ({
 
       if (data.polygon_id) {
         context?.reloadSiteData?.();
+        ApiSlice.pruneCache("validations", [polygonSelected]);
       }
-
-      // TODO: clear connection to recall updated data.
-      // in the future V3 validation data will be automatically on changes
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -138,6 +137,7 @@ const PolygonDrawer = ({
         .join(", ");
       openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
       setShouldRefetchValidation(true);
+      ApiSlice.pruneCache("validations", [polygonSelected]);
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
@@ -329,7 +329,7 @@ const PolygonDrawer = ({
         <Else>
           <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
-              <PolygonValidation
+              <SinglePolygonValidation
                 polygonUuid={polygonSelected}
                 clickedValidation={setCheckPolygonValidation}
                 clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}

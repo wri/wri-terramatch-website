@@ -26,7 +26,7 @@ export interface ICriteriaCheckProps {
   clickedRunFixPolygonOverlaps: (value: boolean) => void;
 }
 
-const PolygonValidation = (props: ICriteriaCheckProps) => {
+const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
   const { clickedValidation, clickedRunFixPolygonOverlaps, polygonUuid } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
@@ -160,4 +160,4 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   );
 };
 
-export default PolygonValidation;
+export default SinglePolygonValidation;
