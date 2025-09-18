@@ -21763,7 +21763,22 @@ export type PostV2IndicatorsSlugResponse = {
 };
 
 export type PostV2IndicatorsSlugRequestBody = {
+  /**
+   * Array of polygon UUIDs to process. If not provided, all eligible polygons will be processed.
+   */
   uuids?: string[];
+  /**
+   * Force rerun even if records already exist for this polygon and indicator.
+   *
+   * @default false
+   */
+  force?: boolean;
+  /**
+   * Update existing records instead of skipping them.
+   *
+   * @default false
+   */
+  update_existing?: boolean;
 };
 
 export type PostV2IndicatorsSlugVariables = {
