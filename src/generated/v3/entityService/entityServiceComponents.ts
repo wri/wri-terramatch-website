@@ -802,6 +802,7 @@ export type UploadFileResponse = {
 
 export type UploadFileVariables = {
   pathParams: UploadFilePathParams;
+  formData: FormData;
 };
 
 /**
