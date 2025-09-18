@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { ChangeEvent, useState } from "react";
 import { When } from "react-if";
@@ -33,6 +34,7 @@ export const FileCardContent = ({
   showPrivateCheckbox,
   onPrivateChange
 }: FileCardContentProps) => {
+  const t = useT();
   const [isPublic, setIsPublic] = useState<boolean>(!!file?.is_public);
 
   const hasPreview = file?.url && file.mime_type?.includes("image");
@@ -71,7 +73,7 @@ export const FileCardContent = ({
           <div className="mt-1 flex items-center gap-2">
             <Checkbox name="" inputClassName="h-4 w-4" onChange={handlePrivateChange} checked={!isPublic} />
 
-            <Text variant="text-light-body-300">Check this box to mark the file as private</Text>
+            <Text variant="text-light-body-300">{t("Check this box to mark the file as private")}</Text>
           </div>
         </When>
       </div>
