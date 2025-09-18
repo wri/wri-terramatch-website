@@ -276,7 +276,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       if (siteUuid && validationData[siteUuid]) {
         return validationData[siteUuid];
       }
-
       return [];
     };
 
