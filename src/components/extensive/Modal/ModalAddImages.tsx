@@ -100,7 +100,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
       collection: collection
     })
   );
-  const [, { uploadFile, isLoading, uploadFailed, isSuccess, clearPending }] = useUploadFile({
+  const [, { uploadFile, isLoading, uploadFailed, isSuccess /*, clearPending */ }] = useUploadFile({
     entity: model as
       | "projects"
       | "sites"
@@ -197,7 +197,8 @@ const ModalAddImages: FC<ModalAddProps> = ({
         uploadState: { isLoading: false, isSuccess: true }
       });
     }
-    clearPending();
+    // This is causing the unlimited loop render
+    // clearPending();
   });
 
   const removeFileFromValue = (file: Partial<UploadedFile>) => {
@@ -267,6 +268,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
       } catch (e) {
         Log.error(e);
       }
+      body.append("isPublic", "true");
       console.log("hereherhehre");
       uploadFile(body);
     }
