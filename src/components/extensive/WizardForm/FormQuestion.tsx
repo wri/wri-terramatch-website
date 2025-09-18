@@ -2,6 +2,7 @@ import { FC, useMemo } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
+import { SharedFieldProps } from "@/components/extensive/WizardForm/types";
 import { selectQuestion } from "@/connections/util/Form";
 
 type FormQuestionProps = {
@@ -16,7 +17,7 @@ const FormQuestion: FC<FormQuestionProps> = ({ questionId, formHook, onChange, f
     const question = selectQuestion(questionId);
     if (question == null) return null;
 
-    const sharedProps = {
+    const sharedProps: SharedFieldProps = {
       error: formHook.formState.errors?.[question.uuid] as FieldError,
       name: question.uuid,
       label: question.label,
