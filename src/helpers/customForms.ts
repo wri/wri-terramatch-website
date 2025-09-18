@@ -470,20 +470,6 @@ export const apiFormQuestionToFormField = (
       };
     }
 
-    case "dataTable": {
-      return {
-        ...sharedProps,
-        type: FieldType.DataTable,
-
-        fieldProps: {
-          required,
-          addButtonCaption: question.add_button_text,
-          fields: sortBy(question.children, "order").map(q => apiFormQuestionToFormField(q, t, entity, framework)),
-          tableColumns: sortBy(question.children, "order").map(q => ({ title: q.header_label, key: q.uuid }))
-        }
-      };
-    }
-
     case "leaderships": {
       return {
         ...sharedProps,

@@ -4,7 +4,7 @@ import { objectValidation } from "@/utils/yup";
 
 export const TableInputField: FormFieldFactory = {
   createValidator: ({ validation }) => objectValidation(validation),
-  renderInput: ({ uuid, tableHeaders, additionalProps }, sharedProps) => (
-    <RHFInputTable {...sharedProps} headers={tableHeaders} questionId={uuid} hasTotal={additionalProps?.with_numbers} />
+  renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (
+    <RHFInputTable {...sharedProps} headers={tableHeaders} questionId={name} hasTotal={additionalProps?.with_numbers} />
   )
 };

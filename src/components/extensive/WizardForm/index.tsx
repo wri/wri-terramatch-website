@@ -24,7 +24,7 @@ import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { getSchema } from "./utils";
+import { getSchema, questionDtoToDefinition } from "./utils";
 
 export interface WizardFormProps {
   formUuid: string;
@@ -87,7 +87,7 @@ function WizardForm(props: WizardFormProps) {
         : selectSections(form?.uuid).map(({ uuid }) => ({
             sectionId: uuid,
             title: selectSection(uuid)?.title,
-            validation: getSchema(selectQuestions(uuid), t, framework)
+            validation: getSchema(selectQuestions(uuid).map(questionDtoToDefinition), t, framework)
           }));
     const questions = sections.flatMap(({ sectionId }) => selectQuestions(sectionId));
     return { sections, questions };

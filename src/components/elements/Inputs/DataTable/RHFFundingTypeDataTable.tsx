@@ -2,9 +2,8 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
@@ -34,55 +33,39 @@ export const getFundingTypeTableColumns = (
   { accessorKey: "amount", header: t("Funding amount") }
 ];
 
-export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => t): FormField[] => {
-  return [
-    {
-      label: t("Select Funding year"),
-      name: "year",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: Array(6)
-          .fill(0)
-          .map((_, index) => {
-            const year = new Date().getFullYear() - 5 + index;
-            return { title: `${year}`, value: year };
-          }),
-        required: true
-      }
-    },
-    {
-      label: t("Select Funding type"),
-      name: "type",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getFundingTypesOptions(t),
-        required: true
-      }
-    },
-    {
-      label: t("Funding source"),
-      name: "source",
-      type: FieldType.Input,
-      validation: yup.string().required(),
-      fieldProps: {
-        type: "text",
-        required: true
-      }
-    },
-    {
-      label: t("Funding amount"),
-      name: "amount",
-      type: FieldType.Input,
-      validation: yup.string().min(0).max(9999999999999).required(),
-      fieldProps: {
-        type: "number",
-        required: true
-      }
-    }
-  ];
-};
+export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) => t): QuestionDefinition[] => [
+  {
+    label: t("Select Funding year"),
+    name: "year",
+    inputType: "select",
+    validation: { required: true },
+    options: Array(6)
+      .fill(0)
+      .map((_, index) => {
+        const year = new Date().getFullYear() - 5 + index;
+        return { title: `${year}`, value: year };
+      })
+  },
+  {
+    label: t("Select Funding type"),
+    name: "type",
+    inputType: "select",
+    options: getFundingTypesOptions(t),
+    validation: { required: true }
+  },
+  {
+    label: t("Funding source"),
+    name: "source",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Funding amount"),
+    name: "amount",
+    inputType: "number",
+    validation: { required: true }
+  }
+];
 
 /**
  * @param props PropsWithChildren<RHFSelectProps>
@@ -144,6 +127,7 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     ...item,
     amount: currencyInput[currency] ? currencyInput[currency] + " " + item?.amount : item?.amount
   }));
+
   return (
     <DataTable
       key={tableKey}
@@ -173,7 +157,7 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
       tableColumns={getFundingTypeTableColumns(t)}
-      fields={getFundingTypeFields(t)}
+      questions={getFundingTypeQuestions(t)}
       hasPagination={true}
       invertSelectPagination={true}
     />

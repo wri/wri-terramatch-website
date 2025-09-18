@@ -1,26 +1,30 @@
-import { FormHTMLAttributes, Fragment } from "react";
+import { FC, FormHTMLAttributes, Fragment, useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
+
 import List from "../List/List";
-import { FieldMapper } from "../WizardForm/FieldMapper";
-import { FormField } from "../WizardForm/types";
+import { QuestionDefinition } from "../WizardForm/types";
 
 export interface SimpleFormProps {
-  fields: FormField[];
+  questions: QuestionDefinition[];
   formHook: UseFormReturn;
-  onChange: () => void;
+  onChange?: () => void;
 }
 
-const SimpleForm = (props: SimpleFormProps) => {
+const SimpleForm: FC<SimpleFormProps> = ({ questions, formHook, onChange }) => {
   if (process.env.NODE_ENV === "test") return null; //Hacky test fix. TODO: find the actual cause for this!
+  const _onChange = useCallback(() => onChange?.(), [onChange]);
   return (
-    <List<FormField, FormHTMLAttributes<HTMLFormElement>>
+    <List<QuestionDefinition, FormHTMLAttributes<HTMLFormElement>>
       as="div"
       className="w-full space-y-8"
-      items={props.fields}
+      items={questions}
       itemAs={Fragment}
       uniqueId="name"
-      render={field => <FieldMapper field={field} formHook={props.formHook} onChange={props.onChange} />}
+      render={question => (
+        <FormQuestion key={question.name} question={question} formHook={formHook} onChange={_onChange} />
+      )}
     />
   );
 };

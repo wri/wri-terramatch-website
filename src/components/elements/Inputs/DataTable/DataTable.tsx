@@ -11,7 +11,7 @@ import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 
 declare module "@tanstack/react-table" {
@@ -25,7 +25,7 @@ declare module "@tanstack/react-table" {
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   modalEditTitle?: string;
-  fields: FormField[];
+  questions: QuestionDefinition[];
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
@@ -43,7 +43,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
   const {
-    fields,
+    questions,
     addButtonCaption,
     tableColumns,
     value,
@@ -62,7 +62,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   const openFormModalHandler = () => {
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
+      <FormModal title={props.modalTitle || props.addButtonCaption} questions={questions} onSubmit={onAddNewEntry} />
     );
   };
 
@@ -72,7 +72,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       ModalId.FORM_MODAL,
       <FormModal
         title={modalEditTitle}
-        fields={fields}
+        questions={questions}
         defaultValues={rowValues}
         onSubmit={updatedValues => {
           handleUpdate?.({ ...rowValues, ...updatedValues });
@@ -113,13 +113,13 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         cell: props => (props.getValue() as number) + 1
       },
       ...tableColumns.map(header => {
-        const field = fields.find(field => field.name === header.accessorKey);
-        if (field?.type === FieldType.Dropdown) {
-          if (!header.cell) {
+        const question = questions.find(({ name }) => name === header.accessorKey);
+        if (question?.inputType === "select") {
+          if (header.cell == null) {
             header.cell = props =>
-              field.fieldProps.options.find(option => option.value === props.getValue())?.title || props.getValue();
+              question.options?.find(option => option.value === props.getValue())?.title ?? props.getValue();
           }
-          header.id = field.name;
+          header.id = question.name;
         }
 
         return header;
@@ -153,7 +153,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       }
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields, tableColumns]);
+  }, [questions, tableColumns]);
 
   return (
     <InputWrapper {...inputWrapperProps}>

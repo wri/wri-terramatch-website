@@ -2,9 +2,8 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
 import {
   getDisturbanceExtentOptions,
   getDisturbanceIntensityOptions,
@@ -58,60 +57,48 @@ export const getDisturbanceTableColumns = (
   return columns;
 };
 
-export const getDisturbanceTableFields = (
+export const getDisturbanceTableQuestions = (
   props: { hasIntensity?: boolean; hasExtent?: boolean },
   t: typeof useT | Function = (t: string) => t
 ) => {
-  const fields: FormField[] = [
+  const questions: QuestionDefinition[] = [
     {
       label: t("Disturbance Type"),
       name: "type",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceTypeOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceTypeOptions(),
+      validation: { required: true }
     }
   ];
 
   if (props.hasIntensity) {
-    fields.push({
+    questions.push({
       label: t("Intensity"),
       name: "intensity",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceIntensityOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceIntensityOptions(),
+      validation: { required: true }
     });
   }
 
   if (props.hasExtent) {
-    fields.push({
+    questions.push({
       label: t("Extent (% Of Site Affected)"),
       name: "extent",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceExtentOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceExtentOptions(),
+      validation: { required: true }
     });
   }
 
-  fields.push({
+  questions.push({
     label: t("Description"),
     name: "description",
-    type: FieldType.TextArea,
-    validation: yup.string(),
-    fieldProps: {
-      required: false
-    }
+    inputType: "long-text",
+    validation: { required: true }
   });
 
-  return fields;
+  return questions;
 };
 
 const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
@@ -128,7 +115,7 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       onChange={onChange}
       addButtonCaption={t("Add Disturbance")}
       tableColumns={getDisturbanceTableColumns(props, t)}
-      fields={getDisturbanceTableFields(props, t)}
+      questions={getDisturbanceTableQuestions(props, t)}
     />
   );
 };

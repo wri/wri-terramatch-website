@@ -27,6 +27,7 @@ interface ConfirmationDialogProps extends DialogProps {
   formTitle?: string;
 }
 
+// TODO: when this is refactored in TM-2418, remove FieldMapper and all its dependant utilities.
 export const FormQuestionPreviewDialog = ({
   linkedFieldData,
   question: _question,

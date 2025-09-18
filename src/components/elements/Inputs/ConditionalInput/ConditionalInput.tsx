@@ -6,6 +6,7 @@ import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import List from "@/components/extensive/List/List";
 import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
+import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { selectChildQuestions } from "@/connections/util/Form";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValueWithBoolean } from "@/types/common";
@@ -25,8 +26,8 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const value = formHook.watch(questionId);
 
   const children = useMemo(() => selectChildQuestions(questionId), [questionId]);
-  const displayChildIds = useMemo(
-    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value).map(({ uuid }) => uuid),
+  const displayChildren = useMemo(
+    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value).map(questionDtoToDefinition),
     [children, value]
   );
 
@@ -89,11 +90,11 @@ const ConditionalInput = (props: ConditionalInputProps) => {
       />
 
       <List
-        items={displayChildIds}
+        items={displayChildren}
         uniqueId="name"
         itemClassName="mt-8"
-        render={childId => (
-          <FormQuestion key={childId} questionId={childId} formHook={formHook} onChange={onChangeCapture} />
+        render={child => (
+          <FormQuestion key={child.name} question={child} formHook={formHook} onChange={onChangeCapture} />
         )}
       />
     </>

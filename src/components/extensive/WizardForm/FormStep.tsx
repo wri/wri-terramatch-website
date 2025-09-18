@@ -5,6 +5,7 @@ import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
 import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
+import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { useFormSection, useSectionQuestions } from "@/connections/util/Form";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -25,7 +26,7 @@ export const FormStep = ({
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
   const questions = useSectionQuestions(sectionId);
-  const questionIds = useMemo(() => (questions ?? []).map(({ uuid }) => uuid), [questions]);
+  const questionDefinitions = useMemo(() => (questions ?? []).map(questionDtoToDefinition), [questions]);
   const section = useFormSection(sectionId);
 
   useEffect(() => {
@@ -36,15 +37,15 @@ export const FormStep = ({
 
   return (
     <FormStepHeader {...divProps} title={section.title ?? undefined} subtitle={section.description ?? undefined}>
-      {questionIds.length === 0 ? null : (
+      {questionDefinitions.length === 0 ? null : (
         <List
-          items={questionIds}
+          items={questionDefinitions}
           uniqueId="name"
           itemClassName="mt-8"
-          render={questionId => (
+          render={question => (
             <FormQuestion
-              key={questionId}
-              questionId={questionId}
+              key={question.name}
+              question={question}
               formHook={formHook}
               onChange={onChange}
               formSubmissionOrg={formSubmissionOrg}

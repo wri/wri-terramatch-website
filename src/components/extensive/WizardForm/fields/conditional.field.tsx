@@ -4,7 +4,7 @@ import { booleanValidation } from "@/utils/yup";
 
 export const ConditionalField: FormFieldFactory = {
   createValidator: ({ validation }) => booleanValidation(validation),
-  renderInput: ({ uuid }, sharedProps) => (
-    <ConditionalInput {...sharedProps} questionId={uuid} id={uuid} inputId={uuid} />
+  renderInput: ({ name }, sharedProps) => (
+    <ConditionalInput {...sharedProps} questionId={name} id={name} inputId={name} />
   )
 };

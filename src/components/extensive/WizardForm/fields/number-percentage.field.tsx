@@ -10,7 +10,7 @@ export const NumberPercentageField: FormFieldFactory = {
     return validator;
   },
 
-  renderInput: ({ linkedFieldKey }, sharedProps) => {
+  renderInput: (question, sharedProps) => {
     return <Input {...sharedProps} type="number" min={0} max={100} />;
   }
 };

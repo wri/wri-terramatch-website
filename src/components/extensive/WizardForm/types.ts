@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { ReactElement } from "react";
 import { Control, FieldError, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { AnySchema } from "yup";
 
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
@@ -28,9 +28,34 @@ import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { Framework } from "@/context/framework.provider";
-import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormQuestionDto, FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Option } from "@/types/common";
 
 export type FieldInputType = FormQuestionDto["inputType"];
+
+export type QuestionDefinition = {
+  inputType: FieldInputType;
+  name: string;
+  label: string;
+  placeholder?: string | null;
+  description?: string | null;
+  validation?: Dictionary<any> | null;
+  multiChoice?: boolean;
+  collection?: string | null;
+  optionsList?: string | null;
+  optionsOther?: boolean | null;
+  // This is only used for client-side data tables. All questions sent from the server send an
+  // optionsList instead.
+  options?: Option[];
+  showOnParentCondition?: boolean | null;
+  linkedFieldKey?: string | null;
+  isParentConditionalDefault?: boolean;
+  minCharacterLimit?: number | null;
+  maxCharacterLimit?: number | null;
+  years?: number[] | null;
+  tableHeaders?: FormTableHeaderDto[] | null;
+  additionalProps?: Dictionary<any> | null;
+};
 
 export type SharedFieldProps = {
   error: FieldError;
@@ -45,8 +70,8 @@ export type SharedFieldProps = {
 };
 
 export type FormFieldFactory = {
-  createValidator: (question: FormQuestionDto, t: typeof useT, framework: Framework) => AnySchema | undefined;
-  renderInput: (question: FormQuestionDto, sharedProps: SharedFieldProps) => ReactElement;
+  createValidator: (question: QuestionDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  renderInput: (question: QuestionDefinition, sharedProps: SharedFieldProps) => ReactElement;
 };
 
 export interface FormStepSchema {
@@ -81,7 +106,6 @@ export enum FieldType {
   FileUpload = "file",
   TreeSpecies = "treeSpecies",
   SeedingsTableInput = "seedingsTableInput",
-  DataTable = "dataTable",
   LeadershipsDataTable = "leadershipsDataTable",
   FundingTypeDataTable = "fundingTypeDataTable",
   StrataDataTable = "strataDataTable",
@@ -127,7 +151,6 @@ export type FormField =
       FieldType.SeedingsTableInput,
       Omit<RHFSeedingTableInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >
-  | FieldTypeBuilder<FieldType.DataTable, Omit<RHFDataTableProps, "onChangeCapture" | keyof UseControllerProps>>
   | FieldTypeBuilder<
       FieldType.LeadershipsDataTable,
       Omit<RHFLeadershipsTableProps, "onChangeCapture" | keyof UseControllerProps>

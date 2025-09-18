@@ -30,13 +30,13 @@ export const NumberField: FormFieldFactory = {
     return validator;
   },
 
-  renderInput: ({ linkedFieldKey }, sharedProps) => {
+  renderInput: ({ linkedFieldKey, additionalProps }, sharedProps) => {
     if (linkedFieldKey?.includes("-lat-")) {
       return <Input {...sharedProps} type="number" min={-90} max={90} allowNegative />;
     }
     if (linkedFieldKey?.includes("-long-")) {
       return <Input {...sharedProps} type="number" min={-180} max={180} allowNegative />;
     }
-    return <Input {...sharedProps} type="number" />;
+    return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   }
 };

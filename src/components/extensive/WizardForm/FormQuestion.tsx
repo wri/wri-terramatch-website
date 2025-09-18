@@ -2,24 +2,20 @@ import { FC, useMemo } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { SharedFieldProps } from "@/components/extensive/WizardForm/types";
-import { selectQuestion } from "@/connections/util/Form";
+import { QuestionDefinition, SharedFieldProps } from "@/components/extensive/WizardForm/types";
 
 type FormQuestionProps = {
-  questionId: string;
+  question: QuestionDefinition;
   formHook: UseFormReturn;
   onChange: () => void;
   formSubmissionOrg?: any;
 };
 
-const FormQuestion: FC<FormQuestionProps> = ({ questionId, formHook, onChange, formSubmissionOrg }) => {
-  const questionData = useMemo(() => {
-    const question = selectQuestion(questionId);
-    if (question == null) return null;
-
-    const sharedProps: SharedFieldProps = {
-      error: formHook.formState.errors?.[question.uuid] as FieldError,
-      name: question.uuid,
+const FormQuestion: FC<FormQuestionProps> = ({ question, formHook, onChange, formSubmissionOrg }) => {
+  const sharedProps = useMemo(
+    (): SharedFieldProps => ({
+      error: formHook.formState.errors?.[question.name] as FieldError,
+      name: question.name,
       label: question.label,
       required: question.validation?.required === true,
       placeholder: question.placeholder ?? undefined,
@@ -27,13 +23,10 @@ const FormQuestion: FC<FormQuestionProps> = ({ questionId, formHook, onChange, f
       formHook,
       control: formHook.control,
       onChangeCapture: onChange
-    };
+    }),
+    [formHook, onChange, question]
+  );
 
-    return { question, sharedProps };
-  }, [formHook, onChange, questionId]);
-  if (questionData == null) return null;
-
-  const { question, sharedProps } = questionData;
   const { inputType } = question;
 
   return FormFieldFactories[inputType].renderInput(question, sharedProps);

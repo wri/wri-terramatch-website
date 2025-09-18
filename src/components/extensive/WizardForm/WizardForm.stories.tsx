@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as yup from "yup";
 
 import {
-  getFundingTypeFields,
+  getFundingTypeQuestions,
   getFundingTypeTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { FileType } from "@/types/common";
@@ -238,7 +238,7 @@ const getSteps = (edit?: boolean): FormStepSchema[] => {
           label: "What are your funding sources?*",
           description: "Add a description for jobs created.",
           fieldProps: {
-            fields: getFundingTypeFields(),
+            fields: getFundingTypeQuestions(),
             tableColumns: getFundingTypeTableColumns(),
             addButtonCaption: "Add funding source"
           }

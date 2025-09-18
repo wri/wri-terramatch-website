@@ -7,9 +7,9 @@ export const MapInputField: FormFieldFactory = {
   createValidator: ({ validation, linkedFieldKey }) =>
     linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidation(validation),
 
-  renderInput: ({ uuid }, sharedProps) => (
+  renderInput: ({ name }, sharedProps) => (
     <MapAreaProvider>
-      <RHFMap {...sharedProps} inputId={uuid} />
+      <RHFMap {...sharedProps} inputId={name} />
     </MapAreaProvider>
   )
 };

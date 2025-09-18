@@ -14,6 +14,7 @@ import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RH
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FormQuestionContextType } from "@/components/extensive/WizardForm/formQuestions.provider";
+import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
 import { findCachedGadmTitle, loadGadmCodes } from "@/connections/Gadm";
 import { selectChildQuestions } from "@/connections/util/Form";
 import { Framework } from "@/context/framework.provider";
@@ -24,26 +25,35 @@ import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-export const getSchema = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
+export const getSchema = (
+  questions: QuestionDefinition[],
+  t: typeof useT,
+  framework: Framework = Framework.UNDEFINED
+) => {
   return yup.object(getSchemaFields(questions, t, framework));
 };
 
-const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework: Framework) => {
+export const questionDtoToDefinition = (question: FormQuestionDto): QuestionDefinition => ({
+  ...question,
+  name: question.uuid
+});
+
+const getSchemaFields = (questions: QuestionDefinition[], t: typeof useT, framework: Framework) => {
   let schema: Dictionary<AnySchema> = {};
 
   for (const question of questions) {
     if (question.inputType === "tableInput") {
-      schema[question.uuid] = getSchema(selectChildQuestions(question.uuid), t, framework);
+      schema[question.name] = getSchema(selectChildQuestions(question.name).map(questionDtoToDefinition), t, framework);
     } else if (question.inputType === "conditional") {
-      schema[question.uuid] = FormFieldFactories[question.inputType]
+      schema[question.name] = FormFieldFactories[question.inputType]
         .createValidator(question, t, framework)!
         .nullable()
         .label(question.label);
-      for (const child of selectChildQuestions(question.uuid)) {
+      for (const child of selectChildQuestions(question.name)) {
         const childValidation = FormFieldFactories[child.inputType].createValidator(child, t, framework);
         if (childValidation != null) {
           schema[child.uuid] = childValidation
-            .when(question.uuid, {
+            .when(question.name, {
               is: child.showOnParentCondition === true,
               then: schema => schema,
               otherwise: () => yup.mixed().nullable()
@@ -58,11 +68,11 @@ const getSchemaFields = (questions: FormQuestionDto[], t: typeof useT, framework
       }
     } else {
       const validation = FormFieldFactories[question.inputType].createValidator(question, t, framework) ?? yup.mixed();
-      schema[question.uuid] = validation.nullable().label(question.label ?? "");
+      schema[question.name] = validation.nullable().label(question.label ?? "");
     }
 
-    if (question.validation?.required === true && schema[question.uuid] != null) {
-      schema[question.uuid] = schema[question.uuid].required();
+    if (question.validation?.required === true && schema[question.name] != null) {
+      schema[question.name] = schema[question.name].required();
     }
   }
 

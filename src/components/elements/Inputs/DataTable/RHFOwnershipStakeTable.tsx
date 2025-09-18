@@ -2,9 +2,7 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
 import {
@@ -120,68 +118,43 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
       addButtonCaption={t("Add Ownership Stake")}
       modalEditTitle={t("Update Ownership Stake")}
       tableColumns={getOwnershipTableColumns(t)}
-      fields={[
+      questions={[
         {
           label: t("first name"),
           name: "first_name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("last name"),
           name: "last_name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Gender"),
           name: "gender",
-          type: FieldType.Dropdown,
-          validation: yup.string().required(),
-          fieldProps: {
-            options: getGenderOptions(t),
-            required: true
-          }
+          inputType: "select",
+          options: getGenderOptions(t),
+          validation: { required: true }
         },
         {
           label: t("Title"),
           name: "title",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Year of birth"),
           name: "year_of_birth",
-          type: FieldType.Input,
-          validation: yup.number().min(1900).max(2050).required(),
-          fieldProps: {
-            type: "number",
-            required: true
-          }
+          inputType: "number",
+          validation: { required: true, min: 1900, max: 2050 }
         },
         {
           label: t("Percent Ownership"),
           name: "percent_ownership",
-          type: FieldType.Input,
-          validation: yup.number().min(1).max(100).required(),
-          fieldProps: {
-            type: "number",
-            min: 1,
-            max: 100,
-            required: true
-          }
+          inputType: "number",
+          validation: { required: true, min: 1, max: 100 }
         }
       ]}
     />

@@ -2,7 +2,6 @@ import { FieldError, FieldValues, UseFormReturn } from "react-hook-form";
 
 import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
@@ -33,6 +32,7 @@ interface FieldMapperProps {
   formSubmissionOrg?: any;
 }
 
+// TODO: this is only used in the form question preview dialog now. May be removed in TM-2418
 export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
@@ -117,11 +117,6 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
           onChangeCapture={onChange}
           formHook={formHook}
         />
-      );
-
-    case FieldType.DataTable:
-      return (
-        <RHFDataTable {...field.fieldProps} {...sharedProps} control={formHook.control} onChangeCapture={onChange} />
       );
 
     case FieldType.LeadershipsDataTable:
