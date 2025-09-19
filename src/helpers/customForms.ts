@@ -221,7 +221,6 @@ export const apiFormQuestionToFormField = (
     max_character_limit: question.max_character_limit,
     min_number_limit: question.min_number_limit,
     max_number_limit: question.max_number_limit,
-    linked_field_key: question.linked_field_key,
     feedbackRequired
   };
 
@@ -571,29 +570,6 @@ export const apiFormQuestionToFormField = (
         }
       };
 
-    case "disturbanceAffectedSite":
-      return {
-        ...sharedProps,
-        type: FieldType.DisturbanceAffectedSite,
-
-        fieldProps: {
-          required,
-          id: question.uuid,
-          inputId: question.uuid
-        }
-      };
-
-    case "disturbanceAffectedPolygon":
-      return {
-        ...sharedProps,
-        type: FieldType.DisturbanceAffectedPolygon,
-
-        fieldProps: {
-          required,
-          id: question.uuid,
-          inputId: question.uuid
-        }
-      };
     case "conditional":
       return {
         ...sharedProps,
