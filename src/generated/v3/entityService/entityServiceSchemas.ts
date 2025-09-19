@@ -815,6 +815,38 @@ export type FinancialReportLightDto = {
   updatedAt: string;
 };
 
+export type DisturbanceReportEntryDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  name: string;
+  inputType: string;
+  title: Record<string, any> | null;
+  subtitle: Record<string, any> | null;
+  value: Record<string, any> | null;
+};
+
 export type DisturbanceReportLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -838,8 +870,11 @@ export type DisturbanceReportLightDto = {
   /**
    * @format date-time
    */
-  dateOfDisturbance: string | null;
   intensity: string | null;
+  /**
+   * @format date-time
+   */
+  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -848,6 +883,7 @@ export type DisturbanceReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  entries: DisturbanceReportEntryDto[] | null;
 };
 
 export type ProjectFullDto = {
@@ -1486,6 +1522,7 @@ export type FundingTypeDto = {
   type: string | null;
   organisationName: string | null;
   organisationUuid: string | null;
+  financialReportId: number | null;
 };
 
 export type FinancialReportFullDto = {
@@ -1569,8 +1606,11 @@ export type DisturbanceReportFullDto = {
   /**
    * @format date-time
    */
-  dateOfDisturbance: string | null;
   intensity: string | null;
+  /**
+   * @format date-time
+   */
+  dateOfDisturbance: string | null;
   /**
    * @format date-time
    */
@@ -1579,6 +1619,7 @@ export type DisturbanceReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  entries: DisturbanceReportEntryDto[] | null;
   title: string | null;
   /**
    * @format date-time
@@ -1598,12 +1639,6 @@ export type DisturbanceReportFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
-  disturbanceSubtype: string[] | null;
-  disturbanceType: string | null;
-  propertyAffected: string[] | null;
-  extent: string | null;
-  siteAffected: string | null;
-  polygonAffected: string | null;
 };
 
 export type ProjectUpdateAttributes = {
@@ -2029,8 +2064,6 @@ export type LinkedFieldDto = {
     | "strategy-area"
     | "text"
     | "url"
-    | "disturbanceAffectedSite"
-    | "disturbanceAffectedPolygon"
     | "file"
     | "allBeneficiaries"
     | "associates"
@@ -2049,7 +2082,8 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "disturbanceReportEntries";
   optionListKey: string | null;
   multiChoice: string | null;
   collection: string | null;
