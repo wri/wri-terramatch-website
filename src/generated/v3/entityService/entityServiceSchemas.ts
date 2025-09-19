@@ -842,9 +842,9 @@ export type DisturbanceReportEntryDto = {
   entityUuid: string;
   name: string;
   inputType: string;
-  title: Record<string, any> | null;
-  subtitle: Record<string, any> | null;
-  value: Record<string, any> | null;
+  title: string | null;
+  subtitle: string | null;
+  value: string | null;
 };
 
 export type DisturbanceReportLightDto = {
@@ -2067,6 +2067,7 @@ export type LinkedFieldDto = {
     | "file"
     | "allBeneficiaries"
     | "associates"
+    | "disturbanceReportEntries"
     | "disturbances"
     | "employees"
     | "financialIndicators"
@@ -2082,8 +2083,7 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays"
-    | "disturbanceReportEntries";
+    | "workdays";
   optionListKey: string | null;
   multiChoice: string | null;
   collection: string | null;
