@@ -1443,6 +1443,7 @@ export type FundingTypeDto = {
   type: string | null;
   organisationName: string | null;
   organisationUuid: string | null;
+  financialReportId: number | null;
 };
 
 export type FinancialReportFullDto = {
