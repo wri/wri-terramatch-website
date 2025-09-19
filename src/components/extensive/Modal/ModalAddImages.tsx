@@ -13,7 +13,8 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
+import { useUploadFile } from "@/connections/Media";
+import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -78,31 +79,35 @@ const ModalAddImages: FC<ModalAddProps> = ({
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
-  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore swagger issue
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-    },
-    onError(err, variables: any) {
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const file = variables.file;
+  // const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
+  //   onSuccess(data, variables) {
+  //     //@ts-ignore swagger issue
+  //     addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+  //   },
+  //   onError(err, variables: any) {
+  //     if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+  //       const file = variables.file;
 
-        addFileToValue({
-          collection_name: variables.pathParams.collection,
-          size: file?.size,
-          file_name: file?.name,
-          title: file?.name,
-          mime_type: file?.type,
-          is_cover: false,
-          is_public: true,
-          rawFile: file,
-          uploadState: {
-            isLoading: false,
-            isSuccess: false
-          }
-        });
-      }
-    }
+  //       addFileToValue({
+  //         collection_name: variables.pathParams.collection,
+  //         size: file?.size,
+  //         file_name: file?.name,
+  //         title: file?.name,
+  //         mime_type: file?.type,
+  //         is_cover: false,
+  //         is_public: true,
+  //         rawFile: file,
+  //         uploadState: {
+  //           isLoading: false,
+  //           isSuccess: false
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
+
+  const [, { create: uploadFile }] = useUploadFile({
+    pathParams: { entity: model, collection, uuid: entityData.uuid }
   });
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
@@ -215,12 +220,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
         Log.error(e);
       }
 
-      uploadFile?.({
-        pathParams: { model, collection, uuid: entityData.uuid },
-        file: file,
-        //@ts-ignore swagger issue
-        body
-      });
+      uploadFile(body as never);
     }
   };
 

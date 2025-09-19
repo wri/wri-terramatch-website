@@ -420,6 +420,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
   create: <DTO, Props extends Record<string, unknown> = {}>(
     variablesFactory: VariablesFactory<Omit<TVariables, "body">, Props> = () => ({} as Omit<TVariables, "body">)
   ) => {
+    console.log("variablesFactory", variablesFactory);
     const createEndpoint = requireEndpoint(endpoint);
     return new ApiConnectionFactory<TVariables, CreateConnection<DTO, CreateAttributes<TVariables>>, Props, THeaders>(
       // This connection does not load data on mount; the endpoint being passed in is for creation of resources.
@@ -431,6 +432,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
         selectors: [
           (props, variablesFactory, resource) => {
             const variables = variablesFactory(props);
+            console.log("variables", variables);
             if (variables == null) {
               const create = () => {};
               return () => ({ data: undefined, isCreating: false, createFailure: undefined, create });
