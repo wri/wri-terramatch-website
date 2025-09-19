@@ -1,22 +1,15 @@
 import { useT } from "@transifex/react";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
-import {
-  ESTIMATED_AREA_CRITERIA_ID,
-  PLANT_START_DATE_CRITERIA_ID,
-  WITHIN_COUNTRY_CRITERIA_ID
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
+import { OVERLAPPING_CRITERIA_ID } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import {
-  GetV2TerrafundValidationSiteResponse,
-  useGetV2SitesSitePolygon,
-  useGetV2TerrafundValidationSite
-} from "@/generated/apiComponents";
+import { useAllSiteValidations } from "@/connections/Validation";
+import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -40,19 +33,6 @@ interface DisplayedPolygonType {
   failingCriterias: string[] | undefined;
 }
 
-type Criteria = GetV2TerrafundValidationSiteResponse[number];
-
-const EXCLUDED_VALIDATION_CRITERIAS = [
-  ESTIMATED_AREA_CRITERIA_ID,
-  WITHIN_COUNTRY_CRITERIA_ID,
-  PLANT_START_DATE_CRITERIA_ID
-];
-
-const getFailingCriterias = (criteria: Criteria): string[] => {
-  const nonValidCriteriasIds = criteria?.nonValidCriteria?.map(r => r.criteria_id) ?? [];
-  return nonValidCriteriasIds.filter(r => !EXCLUDED_VALIDATION_CRITERIAS.includes(r));
-};
-
 const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   iconProps,
   title,
@@ -72,51 +52,45 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   const { data: polygonList } = useGetV2SitesSitePolygon({
     pathParams: { site: site.uuid }
   });
-  const { data: polygonsCriteriaData } = useGetV2TerrafundValidationSite({
-    queryParams: { uuid: site.uuid }
-  });
+  const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
+    useAllSiteValidations(site.uuid, OVERLAPPING_CRITERIA_ID);
   const t = useT();
 
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
 
-  const memoizedCheckValidCriteria = useMemo(
-    () => (criteria: Criteria) => {
-      if (!criteria.checked) return false;
-      if (criteria?.nonValidCriteria?.length === 0) return true;
-      const failingCriterias = getFailingCriterias(criteria);
-      return failingCriterias.length === 0;
-    },
-    []
-  );
+  useEffect(() => {
+    if (site?.uuid) {
+      fetchOverlapValidations();
+    }
+  }, [site?.uuid, fetchOverlapValidations]);
 
   useEffect(() => {
-    if (!polygonList || !polygonsCriteriaData) return;
+    if (!polygonList || overlapValidations.length === 0) return;
 
-    const filteredPolygonList = selectedUUIDs
-      ? polygonList.filter(polygon => polygon.poly_id && selectedUUIDs.includes(polygon.poly_id))
-      : polygonList;
+    const overlappingPolygonUuids = overlapValidations.map(validation => validation.polygonId).filter(Boolean);
 
-    const failingPolygons = filteredPolygonList.filter(polygon => {
-      const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id);
-      return polygon.poly_id && !memoizedCheckValidCriteria(criteria as Criteria);
-    });
+    let overlappingPolygons = polygonList.filter(
+      polygon => polygon.poly_id && overlappingPolygonUuids.includes(polygon.poly_id)
+    );
+
+    if (selectedUUIDs) {
+      overlappingPolygons = overlappingPolygons.filter(
+        polygon => polygon.poly_id && selectedUUIDs.includes(polygon.poly_id)
+      );
+    }
 
     setDisplayedPolygons(
-      failingPolygons.map(polygon => {
-        const criteria = polygonsCriteriaData.find(criteria => criteria.uuid === polygon.poly_id) as Criteria;
-        const failingCriterias = getFailingCriterias(criteria);
-        const approved = memoizedCheckValidCriteria(criteria);
-
+      overlappingPolygons.map(polygon => {
         return {
           id: polygon.uuid,
-          checked: criteria?.checked,
+          checked: true,
           name: polygon.poly_name ?? t("Unnamed Polygon"),
-          canBeApproved: approved,
-          failingCriterias
+          canBeApproved: false,
+          failingCriterias: [OVERLAPPING_CRITERIA_ID.toString()]
         };
       })
     );
-  }, [polygonList, polygonsCriteriaData, t, memoizedCheckValidCriteria, selectedUUIDs]);
+  }, [polygonList, overlapValidations, t, selectedUUIDs]);
 
   return (
     <ModalBaseSubmit {...rest}>

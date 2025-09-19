@@ -165,7 +165,6 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        // Handle both V2 (string) and V3 (object) data formats
         const infoArray: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
         const {
           sum_area_project,
