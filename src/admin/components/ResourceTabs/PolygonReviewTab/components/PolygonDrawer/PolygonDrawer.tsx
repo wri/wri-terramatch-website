@@ -16,26 +16,24 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  fetchPostV2TerrafundValidationPolygon,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
-  useGetV2TerrafundValidationCriteriaData,
   usePostV2TerrafundClipPolygonsPolygonUuid,
   usePostV2TerrafundValidationPolygon
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { parseValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
 import AttributeInformation from "./components/AttributeInformation";
-import PolygonValidation from "./components/PolygonValidation";
+import SinglePolygonValidation from "./components/SinglePolygonValidation";
 import VersionHistory from "./components/VersionHistory";
 
 const statusColor: Record<string, string> = {
@@ -84,9 +82,6 @@ const PolygonDrawer = ({
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
-  const [validationStatus, setValidationStatus] = useState(false);
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>();
-  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
   const t = useT();
@@ -102,27 +97,6 @@ const PolygonDrawer = ({
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
-  const {
-    data: validationCriteriaData,
-    isLoading: isLoadingValidationCriteria,
-    refetch: refetchValidationCriteria
-  } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: { uuid: polygonSelected }
-    },
-    {
-      enabled: !!polygonSelected,
-      onSuccess: data => {
-        if (data?.polygon_id) {
-          setPolygonCriteriaMap((oldPolygonMap: Record<string, unknown>) => ({
-            ...oldPolygonMap,
-            [data.polygon_id?.toString() ?? ""]: data
-          }));
-        }
-      }
-    }
-  );
-
   const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
     onSuccess: async (data: any) => {
       setCheckPolygonValidation(false);
@@ -133,9 +107,8 @@ const PolygonDrawer = ({
 
       if (data.polygon_id) {
         context?.reloadSiteData?.();
+        ApiSlice.pruneCache("validations", [polygonSelected]);
       }
-
-      refetchValidationCriteria();
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
@@ -164,6 +137,7 @@ const PolygonDrawer = ({
         .join(", ");
       openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
       setShouldRefetchValidation(true);
+      ApiSlice.pruneCache("validations", [polygonSelected]);
       await refetchPolygonVersions();
       await sitePolygonRefresh?.();
       await refresh?.();
@@ -214,14 +188,6 @@ const PolygonDrawer = ({
   useValueChanged(isPolygonStatusOpen, () => {
     setButtonToogle(!isPolygonStatusOpen);
   });
-  useEffect(() => {
-    if (validationCriteriaData?.criteria_list && validationCriteriaData?.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(validationCriteriaData));
-      setValidationStatus(true);
-    } else {
-      setValidationStatus(false);
-    }
-  }, [validationCriteriaData]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -240,33 +206,9 @@ const PolygonDrawer = ({
     }
   }, [openEditNewPolygon]);
 
-  const isValidCriteriaData = (criteriaData: any) => {
-    if (!criteriaData?.criteria_list?.length) {
-      return true;
-    }
-    return criteriaData.criteria_list.some(
-      (criteria: any) =>
-        criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-        criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
-        criteria.valid !== 1
-    );
-  };
-
   useEffect(() => {
-    const fetchCriteriaValidation = async () => {
-      if (!buttonToogle) {
-        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
-          queryParams: {
-            uuid: polygonSelected
-          }
-        });
-        setCriteriaValidation(criteriaData);
-      }
-    };
-
-    fetchCriteriaValidation();
     setSelectPolygonVersion(selectedPolygonData);
-  }, [buttonToogle, polygonSelected, selectedPolygonData]);
+  }, [selectedPolygonData]);
 
   const {
     data: polygonVersions,
@@ -361,7 +303,7 @@ const PolygonDrawer = ({
               record={selectedPolygon}
               mutate={mutateSitePolygons}
               showChangeRequest={false}
-              checkPolygonsSite={isValidCriteriaData(criteriaValidation)}
+              checkPolygonsSite={true}
             />
             <CommentarySection
               variantText="text-14-semibold"
@@ -387,18 +329,11 @@ const PolygonDrawer = ({
         <Else>
           <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
             <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
-              {isLoadingValidationCriteria ? (
-                <div className="flex justify-center py-4">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
-                </div>
-              ) : (
-                <PolygonValidation
-                  menu={polygonValidationData ?? []}
-                  clickedValidation={setCheckPolygonValidation}
-                  clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
-                  status={validationStatus}
-                />
-              )}
+              <SinglePolygonValidation
+                polygonUuid={polygonSelected}
+                clickedValidation={setCheckPolygonValidation}
+                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
+              />
             </Accordion>
             <Divider />
             <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>

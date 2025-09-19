@@ -66,7 +66,7 @@ const MapMenuPanelItem = ({
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const [, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
 
@@ -323,7 +323,7 @@ const MapMenuPanelItem = ({
             )}
           </Text>
         </When>
-        <ChecklistErrorsInformation polygonValidationData={polygonValidationData} />
+        <ChecklistErrorsInformation polygonUuid={poly_id} />
       </When>
     </div>
   );

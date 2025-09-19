@@ -79,6 +79,13 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           required={required}
           disabled={disabled}
           type="checkbox"
+          onChange={e => {
+            if (props.onChange) {
+              props.onChange(e);
+            } else if (props.onClick) {
+              props.onClick(e as any);
+            }
+          }}
           className={tw(
             classNames(
               "h-4 w-4 cursor-pointer rounded-sm border-neutral-400 transition-all duration-300 checked:text-primary-500 focus:ring-transparent disabled:bg-neutral-400 lg:h-5 lg:w-5",

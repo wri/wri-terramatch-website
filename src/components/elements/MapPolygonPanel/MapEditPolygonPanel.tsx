@@ -4,11 +4,13 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchPostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
+import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
-import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -43,7 +45,6 @@ const MapEditPolygonPanel = ({
     setSelectedPolyVersion,
     setOpenModalConfirmation,
     setPreviewVersion,
-    validationData,
     setHasOverlaps,
     shouldRefetchValidation
   } = useMapAreaContext();
@@ -62,16 +63,6 @@ const MapEditPolygonPanel = ({
   };
 
   const [criteriaData, setCriteriaData] = useState<V2TerrafundCriteriaData | null>(null);
-  const hasOverlaps = (polygonValidation: any) => {
-    if (polygonValidation.nonValidCriteria) {
-      for (const criteria of polygonValidation.nonValidCriteria) {
-        if (criteria.criteria_id === 3 && criteria.valid === 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
 
   useEffect(() => {
     const fetchValidationData = async () => {
@@ -82,11 +73,7 @@ const MapEditPolygonPanel = ({
           });
 
           if (response) {
-            const transformedData: V2TerrafundCriteriaData = {
-              polygon_id: response.polygon_id,
-              criteria_list: response.criteria_list || []
-            };
-            setCriteriaData(transformedData);
+            ApiSlice.pruneCache("validations", [editPolygon.uuid]);
           }
         } catch (error) {
           console.error("Error fetching validation data:", error);
@@ -99,26 +86,28 @@ const MapEditPolygonPanel = ({
     }
   }, [shouldRefetchValidation, editPolygon?.uuid]);
 
-  useValueChanged(validationData, () => {
-    const siteDataPolygon = validationData[siteData?.uuid ?? ""] ?? [];
-    const criteriaDataPolygon = siteDataPolygon.find((polygon: any) => polygon.uuid === editPolygon?.uuid);
-    if (criteriaDataPolygon) {
-      setHasOverlaps(hasOverlaps(criteriaDataPolygon));
+  const polygonValidationData = usePolygonValidation({ polygonUuid: editPolygon?.uuid || "" });
 
+  useEffect(() => {
+    if (polygonValidationData) {
+      const hasOverlapsV3 = polygonValidationData.criteriaList.some(
+        (criteria: ValidationCriteriaDto) => criteria.criteriaId === 3 && !criteria.valid
+      );
+      setHasOverlaps(hasOverlapsV3);
       const transformedData: V2TerrafundCriteriaData = {
-        polygon_id: criteriaDataPolygon.uuid,
-        criteria_list:
-          criteriaDataPolygon.nonValidCriteria?.map((criteria: any) => ({
-            criteria_id: criteria.criteria_id,
-            valid: criteria.valid,
-            latest_created_at: criteria.latest_created_at,
-            extra_info: criteria.extra_info
-          })) || []
+        polygon_id: polygonValidationData.polygonId,
+        criteria_list: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
+          criteria_id: criteria.criteriaId,
+          valid: criteria.valid ? 1 : 0,
+          latest_created_at: criteria.createdAt,
+          extra_info: criteria.extraInfo || undefined
+        }))
       };
 
       setCriteriaData(transformedData);
     }
-  });
+  }, [polygonValidationData, editPolygon?.uuid, setHasOverlaps]);
+
   return (
     <>
       <div className="flex items-start justify-between gap-4">
