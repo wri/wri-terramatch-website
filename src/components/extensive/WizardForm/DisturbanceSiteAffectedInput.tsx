@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { FieldValues, useController, UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
@@ -7,19 +7,19 @@ import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbanceSiteAffectedInputProps {
-  formHook: UseFormReturn<FieldValues, any>;
   onChangeCapture?: () => void;
   projectUuid?: string;
-  label?: string;
   fieldUuid: string;
+  value: any[];
+  field: ControllerRenderProps<any, any>;
 }
 
 export const DisturbanceSiteAffectedInput = ({
-  formHook,
   onChangeCapture,
   projectUuid,
-  label = "Site",
-  fieldUuid
+  fieldUuid,
+  value: siteAffectedValue,
+  field
 }: DisturbanceSiteAffectedInputProps) => {
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
@@ -44,16 +44,10 @@ export const DisturbanceSiteAffectedInput = ({
   }
 
   const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
-  const fieldName = fieldUuid.replace(/\[\d+\]$/, "");
 
-  const {
-    field: { value: arrayValue, onChange: onArrayChange }
-  } = useController({
-    name: fieldName,
-    control: formHook.control
-  });
-
-  const value = fieldIndex ? arrayValue[parseInt(fieldIndex)] : null;
+  const currentSites = siteAffectedValue.find(f => f.name === "site-affected")?.value;
+  const sitesArray = typeof currentSites === "string" ? JSON.parse(currentSites) : currentSites;
+  const value = fieldIndex ? sitesArray[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
     (selectedValues: OptionValue[]) => {
@@ -66,21 +60,34 @@ export const DisturbanceSiteAffectedInput = ({
             siteName: selectedSite.title
           };
           if (fieldIndex !== undefined) {
-            const newArray = [...(arrayValue ?? [])];
+            const newArray = [...(sitesArray ?? [])];
             newArray[parseInt(fieldIndex)] = siteData;
-            onArrayChange(newArray);
+            const newValue = siteAffectedValue?.map(f => {
+              if (f.name === "site-affected") {
+                return { ...f, value: newArray };
+              }
+              return f;
+            });
+            field.onChange(newValue);
           }
         }
       } else {
         if (fieldIndex !== undefined) {
-          const newArray = [...(arrayValue ?? [])];
+          const newArray = [...(sitesArray ?? [])];
           newArray[parseInt(fieldIndex)] = "";
-          onArrayChange(newArray);
+          const newValue = siteAffectedValue?.map(f => {
+            if (f.name === "site-affected") {
+              return { ...f, value: newArray };
+            }
+            return f;
+          });
+          field.onChange(newValue);
         }
       }
       onChangeCapture?.();
     },
-    [siteChoices, fieldIndex, arrayValue, onArrayChange, onChangeCapture]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [siteChoices, fieldIndex, sitesArray, field.onChange, onChangeCapture]
   );
 
   const dropdownValue = useMemo(() => {
@@ -92,7 +99,7 @@ export const DisturbanceSiteAffectedInput = ({
 
   return (
     <Dropdown
-      label={label}
+      label={`Site ${fieldIndex ? parseInt(fieldIndex) + 1 : 1} Affected`}
       options={siteChoices}
       value={dropdownValue}
       onChange={_onChange}

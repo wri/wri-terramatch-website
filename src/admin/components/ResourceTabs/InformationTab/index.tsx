@@ -8,7 +8,6 @@ import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
-import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
@@ -124,9 +123,6 @@ const InformationTab: FC<IProps> = props => {
                 </Card>
               </Then>
               <Else>
-                <When condition={props.type === "disturbance-reports"}>
-                  <DisturbanceReport id={record.uuid} index={0} values={values} formSteps={formSteps} />
-                </When>
                 <When condition={props.type === "financial-reports"}>
                   <div className="flex flex-col gap-8 p-2">
                     {formSteps.map(step =>
@@ -164,7 +160,7 @@ const InformationTab: FC<IProps> = props => {
                     )}
                   </div>
                 </When>
-                <When condition={props.type !== "financial-reports" && props.type !== "disturbance-reports"}>
+                <When condition={props.type !== "financial-reports"}>
                   <Stack gap={4}>
                     <Card sx={{ padding: 4 }} className="!shadow-none">
                       <List

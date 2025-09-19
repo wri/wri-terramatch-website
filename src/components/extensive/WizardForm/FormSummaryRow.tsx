@@ -375,46 +375,47 @@ export const getFormEntries = (
         break;
       }
 
-      case FieldType.DisturbanceAffectedSite: {
-        const value = getFormattedAnswer(f, values);
-        const valueArray = JSON.parse(value!);
-        if (Array.isArray(valueArray) && valueArray.length > 0) {
-          const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
-          outputArr.push({
-            title: f.label ?? "",
-            type: f.type,
-            value: sitesAffectedArray.join("<br/>")
-          });
-        } else {
-          outputArr.push({
-            title: f.label ?? "",
-            type: f.type,
-            value: t("Answer Not Provided")
-          });
-        }
-        break;
-      }
-      case FieldType.DisturbanceAffectedPolygon: {
-        const value = getFormattedAnswer(f, values);
-        const valueArray = JSON.parse(value!);
-        if (Array.isArray(valueArray) && valueArray.length > 0) {
-          const polygonsByBatch = valueArray.map((batch: any) => {
-            const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
-            return `-${batchPolygons}.`;
-          });
+      case FieldType.DisturbanceReportEntries: {
+        const rawValue = values?.[f.name];
+        const modValue = rawValue?.map((v: any) => {
+          const parsedValue =
+            typeof v.value === "string" && v.value.startsWith("[") && v.value.endsWith("]")
+              ? JSON.parse(v.value)
+              : v.value;
+          if (v.name == "site-affected") {
+            const valueArray = parsedValue;
+            if (Array.isArray(valueArray) && valueArray.length > 0) {
+              const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
+              return `${v.title}:<br/> ${sitesAffectedArray.join("<br/>")}`;
+            }
+            return `${v.title}: ${t("Answer Not Provided")}`;
+          } else if (v.name == "polygon-affected") {
+            const valueArray = parsedValue;
+            if (Array.isArray(valueArray) && valueArray.length > 0) {
+              return `${v.title}:<br/> ${valueArray
+                .map((batch: any) => {
+                  const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
+                  return `-${batchPolygons}.`;
+                })
+                .join("<br/>")}`;
+            }
+            return `${v.title}: ${t("Answer Not Provided")}`;
+          }
 
-          outputArr.push({
-            title: f.label ?? "",
-            type: f.type,
-            value: polygonsByBatch.join("<br/>")
-          });
-        } else {
-          outputArr.push({
-            title: f.label ?? "",
-            type: f.type,
-            value: t("Answer Not Provided")
-          });
-        }
+          if (v.name === "disturbance-subtype" || v.name === "property-affected") {
+            if (Array.isArray(parsedValue)) {
+              return `${v.title}: ${parsedValue.join(", ")}`;
+            }
+          }
+
+          return `${v.title}: ${v.value ?? t("Answer Not Provided")}`;
+        });
+
+        outputArr.push({
+          title: f.label ?? "",
+          type: f.type,
+          value: modValue.join("<br/>")
+        });
         break;
       }
 

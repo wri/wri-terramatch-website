@@ -5,6 +5,7 @@ import { AnySchema } from "yup";
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
+import { RHFDisturbanceReportEntriesProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceReportEntries";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
@@ -25,9 +26,6 @@ import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAre
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
-
-import { DisturbancePolygonAffectedInputProps } from "./DisturbancePolygonAffectedInput";
-import { DisturbanceSiteAffectedInputProps } from "./DisturbanceSiteAffectedInput";
 
 export interface FormStepSchema {
   title: string;
@@ -85,8 +83,7 @@ export enum FieldType {
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
   StrategyAreaInput = "strategyAreaInput",
   FinancialTableInput = "financialTableInput",
-  DisturbanceAffectedSite = "disturbanceAffectedSite",
-  DisturbanceAffectedPolygon = "disturbanceAffectedPolygon"
+  DisturbanceReportEntries = "disturbanceReportEntries"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -181,10 +178,6 @@ export type FormField =
       Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >
   | FieldTypeBuilder<
-      FieldType.DisturbanceAffectedSite,
-      Omit<DisturbanceSiteAffectedInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
-    >
-  | FieldTypeBuilder<
-      FieldType.DisturbanceAffectedPolygon,
-      Omit<DisturbancePolygonAffectedInputProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
+      FieldType.DisturbanceReportEntries,
+      Omit<RHFDisturbanceReportEntriesProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >;

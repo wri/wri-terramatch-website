@@ -1,24 +1,26 @@
 import { useCallback, useMemo } from "react";
-import { FieldValues, useController, UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbancePolygonAffectedInputProps {
-  formHook: UseFormReturn<FieldValues, any>;
   onChangeCapture?: () => void;
   siteUuid?: string;
   label?: string;
   fieldUuid: string;
+  value: any[];
+  field: ControllerRenderProps<any, any>;
 }
 
 export const DisturbancePolygonAffectedInput = ({
-  formHook,
   onChangeCapture,
   siteUuid,
   label = "Polygons",
-  fieldUuid
+  fieldUuid,
+  value: polygonAffectedValue,
+  field
 }: DisturbancePolygonAffectedInputProps) => {
   const { data: polygonsData } = useAllSitePolygons({
     entityName: "sites",
@@ -45,16 +47,9 @@ export const DisturbancePolygonAffectedInput = ({
   }
 
   const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
-  const fieldName = fieldUuid.replace(/\[\d+\]$/, "");
-
-  const {
-    field: { value: arrayValue, onChange: onArrayChange }
-  } = useController({
-    name: fieldName,
-    control: formHook.control
-  });
-
-  const value = fieldIndex ? arrayValue[parseInt(fieldIndex)] : null;
+  const currentPolygons = polygonAffectedValue.find(f => f.name === "polygon-affected")?.value;
+  const polygonsArray = typeof currentPolygons === "string" ? JSON.parse(currentPolygons) : currentPolygons;
+  const value = fieldIndex ? polygonsArray[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
     (selectedValues: OptionValue[]) => {
@@ -74,20 +69,33 @@ export const DisturbancePolygonAffectedInput = ({
           .filter(Boolean);
 
         if (fieldIndex !== undefined) {
-          const newArray = [...(arrayValue ?? [])];
+          const newArray = [...(polygonsArray ?? [])];
           newArray[parseInt(fieldIndex)] = polygonsData;
-          onArrayChange(newArray);
+          const newValue = polygonAffectedValue?.map(f => {
+            if (f.name === "polygon-affected") {
+              return { ...f, value: newArray };
+            }
+            return f;
+          });
+          field.onChange(newValue);
         }
       } else {
         if (fieldIndex !== undefined) {
-          const newArray = [...(arrayValue ?? [])];
+          const newArray = [...(polygonsArray ?? [])];
           newArray[parseInt(fieldIndex)] = [];
-          onArrayChange(newArray);
+          const newValue = polygonAffectedValue?.map(f => {
+            if (f.name === "polygon-affected") {
+              return { ...f, value: newArray };
+            }
+            return f;
+          });
+          field.onChange(newValue);
         }
       }
       onChangeCapture?.();
     },
-    [polygonChoices, siteUuid, fieldIndex, arrayValue, onArrayChange, onChangeCapture]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [polygonChoices, siteUuid, fieldIndex, polygonAffectedValue, field.onChange, onChangeCapture]
   );
 
   const dropdownValue = useMemo(() => {

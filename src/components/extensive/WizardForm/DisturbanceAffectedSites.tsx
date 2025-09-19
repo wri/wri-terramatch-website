@@ -1,40 +1,35 @@
 import { useT } from "@transifex/react";
 import { useCallback, useEffect, useState } from "react";
-import { FieldError, UseFormReturn } from "react-hook-form";
+import { ControllerRenderProps } from "react-hook-form";
 
 import Button from "@/components/elements/Button/Button";
-import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { FieldMapper } from "./FieldMapper";
-import { FieldType, FormField } from "./types";
+import { DisturbancePolygonAffectedInput } from "./DisturbancePolygonAffectedInput";
+import { DisturbanceSiteAffectedInput } from "./DisturbanceSiteAffectedInput";
 
 export interface DisturbanceAffectedSitesProps {
-  formHook: UseFormReturn<any>;
-  onChange: () => void;
+  onChange?: () => void;
   projectUuid?: string;
-  fields: FormField[];
+  value: any[];
+  field: ControllerRenderProps<any, any>;
 }
 
-export const DisturbanceAffectedSites = ({
-  formHook,
-  onChange,
-  projectUuid,
-  fields
-}: DisturbanceAffectedSitesProps) => {
+export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }: DisturbanceAffectedSitesProps) => {
   const [affectedSites, setAffectedSites] = useState<number[]>([]);
   const t = useT();
 
-  const siteField = fields.find((f: FormField) => f.type === FieldType.DisturbanceAffectedSite);
-  const polygonField = fields.find((f: FormField) => f.type === FieldType.DisturbanceAffectedPolygon);
-
-  const siteAffectedValue = formHook.watch(siteField?.name as string) ?? [];
-  const polygonAffectedValue = formHook.watch(polygonField?.name as string) ?? [];
+  const siteField = value?.find(f => f.name === "site-affected");
+  const polygonField = value?.find(f => f.name === "polygon-affected");
+  const siteValue = siteField?.value;
+  const siteAffectedValue = typeof siteValue === "string" ? JSON.parse(siteValue) : siteValue;
+  const polygonValue = polygonField?.value;
+  const polygonAffectedValue = typeof polygonValue === "string" ? JSON.parse(polygonValue) : polygonValue;
   const polygonAffectedArray = Array.isArray(polygonAffectedValue) ? polygonAffectedValue : [];
 
   useEffect(() => {
-    const siteLength = siteField ? siteAffectedValue.length : 0;
-    const polygonLength = polygonField ? polygonAffectedArray.length : 0;
+    const siteLength = siteField ? siteAffectedValue?.length : 0;
+    const polygonLength = polygonField ? polygonAffectedArray?.length : 0;
     const maxLength = Math.max(siteLength, polygonLength);
 
     if (maxLength > 0) {
@@ -44,116 +39,90 @@ export const DisturbanceAffectedSites = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [siteAffectedValue, polygonAffectedArray, siteField?.name, polygonField?.name]);
+  }, [siteAffectedValue, polygonAffectedArray, siteField?.name, polygonField?.name, value]);
 
   const addAffectedSite = useCallback(() => {
     const newIndex = affectedSites.length;
     setAffectedSites([...affectedSites, newIndex]);
 
-    if (siteField?.name) {
-      const currentSites = formHook.getValues(siteField?.name as string) ?? [];
-      const sitesArray = Array.isArray(currentSites) ? currentSites : [];
-      formHook.setValue(siteField?.name as string, [...sitesArray, { siteUuid: "", siteName: "" }], {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true
-      });
-    }
+    const currentSites = siteField?.value;
+    const sitesArray = typeof currentSites === "string" ? JSON.parse(currentSites) : currentSites;
+    const currentPolygons = polygonField?.value;
+    const polygonsArray = typeof currentPolygons === "string" ? JSON.parse(currentPolygons) : currentPolygons;
 
-    if (polygonField?.name) {
-      const currentPolygons = formHook.getValues(polygonField?.name as string) ?? [];
-      const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
-      formHook.setValue(polygonField?.name as string, [...polygonsArray, []], {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true
-      });
-    }
-    onChange();
-  }, [affectedSites, siteField?.name, polygonField?.name, formHook, onChange]);
+    const newValue = value?.map(f => {
+      if (f.name === siteField?.name) {
+        return { ...f, value: [...sitesArray, { siteUuid: "", siteName: "" }] };
+      }
+      if (f.name === polygonField?.name) {
+        return { ...f, value: [...polygonsArray, []] };
+      }
+      return f;
+    });
+
+    field.onChange(newValue);
+    onChange?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value, field, onChange, siteField, polygonField]);
 
   const removeAffectedSite = useCallback(
     (index: number) => {
       const updatedSites = affectedSites.filter((_, i) => i !== index);
       setAffectedSites(updatedSites);
 
-      if (siteField?.name) {
-        const currentSites = formHook.getValues(siteField?.name as string) ?? [];
-        const sitesArray = Array.isArray(currentSites) ? currentSites : [];
-        const newSites = sitesArray.filter((_: any, i: number) => i !== index);
-        formHook.setValue(siteField?.name as string, newSites, {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true
-        });
-      }
+      const newSites = siteAffectedValue?.filter((_: any, i: number) => i !== index);
+      const newPolygons = polygonAffectedValue?.filter((_: any, i: number) => i !== index);
 
-      if (polygonField?.name) {
-        const currentPolygons = formHook.getValues(polygonField?.name as string) ?? [];
-        const polygonsArray = Array.isArray(currentPolygons) ? currentPolygons : [];
-        const newPolygons = polygonsArray.filter((_: any, i: number) => i !== index);
-        formHook.setValue(polygonField?.name as string, newPolygons, {
-          shouldValidate: true,
-          shouldDirty: true,
-          shouldTouch: true
-        });
-      }
+      const newValue = value?.map(f => {
+        if (f.name === siteField?.name) {
+          return { ...f, value: newSites };
+        }
+        if (f.name === polygonField?.name) {
+          return { ...f, value: newPolygons };
+        }
+        return f;
+      });
 
-      onChange();
+      field.onChange(newValue);
+      onChange?.();
     },
-    [affectedSites, siteField?.name, polygonField?.name, formHook, onChange]
+    [
+      affectedSites,
+      siteField?.name,
+      polygonField?.name,
+      siteAffectedValue,
+      polygonAffectedValue,
+      value,
+      field,
+      onChange
+    ]
   );
-  if (!siteField && !polygonField) {
-    return null;
-  }
 
   return (
-    <InputWrapper error={formHook.formState.errors[siteField?.name || (polygonField?.name as string)] as FieldError}>
+    <>
       {affectedSites.map((_, index) => {
-        const currentSiteData = siteAffectedValue[index];
+        const currentSiteData = siteAffectedValue?.[index];
         const currentSiteUuid = currentSiteData?.siteUuid;
         return (
           <div key={index} className="grid grid-cols-2 gap-x-10 gap-y-4 rounded-lg p-4">
             {siteField == null ? null : (
-              <InputWrapper
-                label={index == 0 ? siteField.label : undefined}
-                description={index == 0 ? siteField.description : undefined}
-              >
-                <FieldMapper
-                  field={{
-                    ...siteField,
-                    name: `${siteField?.name}[${index}]`,
-                    label: `Site ${index + 1} Affected`,
-                    fieldProps: {
-                      ...siteField.fieldProps,
-                      projectUuid
-                    }
-                  }}
-                  formHook={formHook}
-                  onChange={onChange}
-                />
-              </InputWrapper>
+              <DisturbanceSiteAffectedInput
+                value={value}
+                field={field}
+                onChangeCapture={onChange}
+                projectUuid={projectUuid}
+                fieldUuid={`${siteField?.name}[${index}]`}
+              />
             )}
 
             {polygonField == null ? null : (
-              <InputWrapper
-                label={index == 0 ? polygonField.label : undefined}
-                description={index == 0 ? polygonField.description : undefined}
-              >
-                <FieldMapper
-                  field={{
-                    ...polygonField,
-                    name: `${polygonField?.name}[${index}]`,
-                    label: `Polygons Affected`,
-                    fieldProps: {
-                      ...polygonField.fieldProps,
-                      siteUuid: currentSiteUuid
-                    }
-                  }}
-                  formHook={formHook}
-                  onChange={onChange}
-                />
-              </InputWrapper>
+              <DisturbancePolygonAffectedInput
+                value={value}
+                field={field}
+                onChangeCapture={onChange}
+                siteUuid={currentSiteUuid}
+                fieldUuid={`${polygonField?.name}[${index}]`}
+              />
             )}
 
             <div className="col-span-2 flex justify-end">
@@ -178,6 +147,6 @@ export const DisturbanceAffectedSites = ({
           </p>
         </Button>
       </div>
-    </InputWrapper>
+    </>
   );
 };

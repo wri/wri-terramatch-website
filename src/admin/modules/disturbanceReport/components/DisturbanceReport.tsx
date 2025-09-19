@@ -9,6 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS } from "@/constants/options/disturbanceReports";
 import { TextVariants } from "@/types/common";
 
 import modules from "../..";
@@ -16,8 +17,8 @@ import DownloadMediaItem from "./DownloadMediaItem";
 import Intensity from "./Intensity";
 
 interface DisturbanceReportProps {
-  id: string;
-  index: number;
+  id?: string;
+  index?: number;
   values?: Record<string, any>;
   formSteps?: FormStepSchema[];
 }
@@ -95,19 +96,8 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     const map = new Map();
     formSteps.forEach(step => {
       step.fields?.forEach((field: any) => {
-        if (field?.linked_field_key) {
-          const entry = entries.find(e => e.title === field.label);
-          if (field.linked_field_key === "dis-rep-site-affected") {
-            map.set(field.linked_field_key, values[field.name]);
-            return;
-          }
-          if (field.linked_field_key === "dis-rep-polygon-affected") {
-            map.set(field.linked_field_key, values[field.name]);
-            return;
-          }
-          if (entry) {
-            map.set(field.linked_field_key, entry.value);
-          }
+        if (field?.type) {
+          map.set(field.type, values[field.name]);
         }
       });
     });
@@ -115,51 +105,45 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entries, formSteps]);
 
-  const FIELD_KEYS = {
-    DISTURBANCE_TYPE: "dis-rep-disturbance-type",
-    DISTURBANCE_SUBTYPE: "dis-rep-disturbance-subtype",
-    INTENSITY: "dis-rep-intensity",
-    EXTENT: "dis-rep-extent",
-    PROPERTY_AFFECTED: "dis-rep-property-affected",
-    PEOPLE_AFFECTED: "dis-rep-people-affected",
-    DATE_OF_DISTURBANCE: "dis-rep-date-of-disturbance",
-    MONETARY_DAMAGE: "dis-rep-monetary-damage",
-    DESCRIPTION: "dis-rep-description",
-    ACTION_DESCRIPTION: "dis-rep-action-description",
-    MEDIA_ASSETS: "dis-rep-media-assets",
-    SITES_AFFECTED: "dis-rep-site-affected",
-    POLYGONS_AFFECTED: "dis-rep-polygon-affected"
-  };
+  const disturbanceReportEntries = entriesMap.get("disturbanceReportEntries") ?? [];
 
-  // TODO: Uncomment this when we have the labels
-  // const getFieldLabel = (linkedFieldKey: string) => {
-  //   const field = formSteps[0]?.fields?.find((f: any) => f.linked_field_key === linkedFieldKey);
-  //   return field?.label || linkedFieldKey;
-  // };
-
-  const disturbanceType = entriesMap.get(FIELD_KEYS.DISTURBANCE_TYPE);
-  const disturbanceSubtype = entriesMap.get(FIELD_KEYS.DISTURBANCE_SUBTYPE);
-  const intensity = entriesMap.get(FIELD_KEYS.INTENSITY);
-  const extent = entriesMap.get(FIELD_KEYS.EXTENT);
-  const propertyAffected = entriesMap.get(FIELD_KEYS.PROPERTY_AFFECTED);
-  const peopleAffected = entriesMap.get(FIELD_KEYS.PEOPLE_AFFECTED);
-  const dateOfDisturbance = entriesMap.get(FIELD_KEYS.DATE_OF_DISTURBANCE);
-  const monetaryDamage = entriesMap.get(FIELD_KEYS.MONETARY_DAMAGE);
-  const description = entriesMap.get(FIELD_KEYS.DESCRIPTION);
-  const actionDescription = entriesMap.get(FIELD_KEYS.ACTION_DESCRIPTION);
-  const sitesAffected = entriesMap?.get(FIELD_KEYS.SITES_AFFECTED);
-  const polygonsAffected = entriesMap?.get(FIELD_KEYS.POLYGONS_AFFECTED);
-
-  const getMediaAssets = () => {
-    for (const step of formSteps) {
-      const field = step?.fields?.find((f: any) => f?.linked_field_key === FIELD_KEYS.MEDIA_ASSETS);
-      if (field) {
-        return values[field.name] ?? null;
+  const parseFieldValue = (value: any) => {
+    if (typeof value === "string" && value.startsWith("[") && value.endsWith("]")) {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return value;
       }
     }
-    return null;
+    return value;
   };
-  const mediaAssets = getMediaAssets();
+
+  const getFieldValue = (fieldName: string) => {
+    const field = disturbanceReportEntries.find((f: any) => f.name === fieldName);
+    return field ? parseFieldValue(field.value) : null;
+  };
+
+  const disturbanceType = getFieldValue("disturbance-type");
+  const disturbanceSubtype = getFieldValue("disturbance-subtype");
+  const intensity = getFieldValue("intensity");
+  const extent = getFieldValue("extent");
+  const propertyAffected = getFieldValue("property-affected");
+  const peopleAffected = getFieldValue("people-affected");
+  const dateOfDisturbance = getFieldValue("date-of-disturbance");
+  const monetaryDamage = getFieldValue("monetary-damage");
+  const sitesAffected = getFieldValue("site-affected");
+  const polygonsAffected = getFieldValue("polygon-affected");
+  const mediaAssets = getFieldValue("media-assets");
+
+  const formatValuesWithOptions = (values: string[], options: Array<{ value: string; title: string }>) => {
+    if (!Array.isArray(values)) return values;
+    return values.map(value => {
+      const option = options.find(opt => opt.value === value);
+      return option ? option.title : value;
+    });
+  };
+
+  const formattedPropertyAffected = formatValuesWithOptions(propertyAffected, DISTURBANCE_PROPERTY_AFFECTED_OPTIONS);
 
   const columns = [
     {
@@ -228,7 +212,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           <TextEntry value={extent} label={t("Extent")} />
           <TextEntry value={peopleAffected} label={t("People Affected")} />
           <TextEntry
-            value={propertyAffected}
+            value={formattedPropertyAffected}
             label={t("Property Affected")}
             classNameContainer="col-span-3 flex flex-col gap-2"
           />
@@ -236,15 +220,15 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           <TextEntry value={monetaryDamage} label={t("Monetary Damage")} />
         </div>
       </div>
-      <Table
-        data={disturbanceReportData}
-        columns={columns}
-        hasPagination={false}
-        invertSelectPagination={false}
-        variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
-      />
-      <TextEntry value={actionDescription} label={t("Action Description")} className="text-blueCustom-900" />
-      <TextEntry value={description} label={t("Description")} className="text-blueCustom-900" />
+      {disturbanceReportData.length > 0 && (
+        <Table
+          data={disturbanceReportData}
+          columns={columns}
+          hasPagination={false}
+          invertSelectPagination={false}
+          variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+        />
+      )}
 
       {mediaAssets == null ? null : (
         <div className="flex flex-col gap-4">

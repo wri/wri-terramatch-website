@@ -640,6 +640,18 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "disturbanceReportEntries":
+      return {
+        ...sharedProps,
+        type: FieldType.DisturbanceReportEntries,
+
+        fieldProps: {
+          required,
+          id: question.uuid,
+          inputId: question.uuid
+        }
+      };
+
     default:
       return null;
   }
@@ -978,12 +990,9 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
-    case "disturbanceAffectedSite":
-    case "disturbanceAffectedPolygon": {
+    case "disturbanceReportEntries": {
       validation = yup.array();
-      if (required) {
-        validation = validation.required().min(1, "This field is required");
-      }
+      if (required) validation = validation.required();
       return validation;
     }
 

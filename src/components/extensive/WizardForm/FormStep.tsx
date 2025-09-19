@@ -8,7 +8,6 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { EntityName } from "@/types/common";
 
-import { DisturbanceFieldsContainer } from "./DisturbanceFieldsContainer";
 import { FieldMapper } from "./FieldMapper";
 import { FormField } from "./types";
 
@@ -60,33 +59,15 @@ export const FormStep = ({
           items={fields!}
           uniqueId="name"
           itemClassName="mt-8"
-          render={field => {
-            if (entity === "disturbance-reports") {
-              const disturbanceFields = fields!.filter(f => (f as any).linked_field_key?.startsWith("dis-rep-"));
-              const currentIndex = disturbanceFields.findIndex(f => f.name === field.name);
-
-              if (currentIndex === 0) {
-                return (
-                  <DisturbanceFieldsContainer
-                    fields={disturbanceFields}
-                    formHook={formHook}
-                    onChange={onChange}
-                    projectUuid={projectUuid}
-                  />
-                );
-              }
-              return null;
-            } else {
-              return (
-                <FieldMapper
-                  field={field}
-                  formHook={formHook}
-                  onChange={onChange}
-                  formSubmissionOrg={formSubmissionOrg}
-                />
-              );
-            }
-          }}
+          render={field => (
+            <FieldMapper
+              field={field}
+              formHook={formHook}
+              onChange={onChange}
+              formSubmissionOrg={formSubmissionOrg}
+              projectUuid={projectUuid}
+            />
+          )}
         />
       </When>
       {children}
