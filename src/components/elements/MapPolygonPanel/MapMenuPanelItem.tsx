@@ -22,7 +22,7 @@ import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
 import { StatusEnum } from "../Status/constants/statusMap";
 import Status from "../Status/Status";
-// import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
+import ChecklistErrorsInformation from "./ChecklistErrorsInformation";
 
 export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   uuid: string;
@@ -323,7 +323,7 @@ const MapMenuPanelItem = ({
             )}
           </Text>
         </When>
-        {/* <ChecklistErrorsInformation polygonValidationData={polygonValidationData} /> TODO: this is part of another ticket for PD get it maybe from polygon validation data */}
+        <ChecklistErrorsInformation polygonUuid={poly_id} />
       </When>
     </div>
   );

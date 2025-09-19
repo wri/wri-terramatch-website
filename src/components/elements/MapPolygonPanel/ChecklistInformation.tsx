@@ -57,7 +57,7 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
         const existingValidation = existingValidations.get(Number(id));
 
         if (!isAdmin && Number(id) === 14 && existingValidation != null && !existingValidation.status) {
-          const extraInfo = JSON.parse(existingValidation.extra_info ?? "[]");
+          const extraInfo = existingValidation.extra_info || [];
           const hasOnlyPlantingStatusError =
             Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
 

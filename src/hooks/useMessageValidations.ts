@@ -116,8 +116,7 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        // Handle both V2 (string) and V3 (object) data formats
-        const infoArray: ExtraInfoItem[] = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
+        const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
             if (!isAdmin && info.field === "planting_status") {
