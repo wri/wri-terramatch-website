@@ -440,6 +440,12 @@ export type GetSiteValidationPathParams = {
 
 export type GetSiteValidationQueryParams = {
   page: Schemas.NumberPage;
+  /**
+   * Filter validations by criteria ID
+   *
+   * @example 3
+   */
+  criteriaId?: number;
 };
 
 export type GetSiteValidationError = Fetcher.ErrorWrapper<

@@ -49,14 +49,15 @@ const siteValidationConnection = v3Resource("validations", getSiteValidation)
   }))
   .pagination()
   .enabledProp()
-  .addProps<{ siteUuid: string }>(({ siteUuid }) => ({
-    pathParams: { siteUuid }
+  .addProps<{ siteUuid: string; criteriaId?: number }>(({ siteUuid, criteriaId }) => ({
+    pathParams: { siteUuid },
+    queryParams: { page: {}, ...(criteriaId != null && { criteriaId }) }
   }))
   .buildConnection();
 
 const ALL_VALIDATIONS_PAGE_SIZE = 100;
 
-export const useAllSiteValidations = (siteUuid: string) => {
+export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => {
   const [allValidations, setAllValidations] = useState<ValidationDto[]>([]);
   const [total, setTotal] = useState(0);
 
@@ -80,6 +81,7 @@ export const useAllSiteValidations = (siteUuid: string) => {
 
         const firstPageResponse = await loadConnection(siteValidationConnection, {
           siteUuid,
+          criteriaId,
           pageSize: ALL_VALIDATIONS_PAGE_SIZE,
           pageNumber: 1,
           enabled: true
@@ -110,6 +112,7 @@ export const useAllSiteValidations = (siteUuid: string) => {
         for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
           const pageResponse = await loadConnection(siteValidationConnection, {
             siteUuid,
+            criteriaId,
             pageSize: ALL_VALIDATIONS_PAGE_SIZE,
             pageNumber: pageNumber,
             enabled: true
@@ -128,7 +131,7 @@ export const useAllSiteValidations = (siteUuid: string) => {
         return [];
       }
     },
-    [siteUuid]
+    [siteUuid, criteriaId]
   );
 
   return {
