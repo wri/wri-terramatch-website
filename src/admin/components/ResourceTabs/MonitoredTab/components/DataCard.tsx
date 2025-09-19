@@ -661,7 +661,7 @@ const DataCard = ({
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "11.45%" } }
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "data.afrotropical",
@@ -670,16 +670,25 @@ const DataCard = ({
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "11.05%" } }
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "data.paleartic",
-      header: "Paleartic11",
+      header: "Paleartic",
       cell: (props: any) => {
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "10.33%" } }
+      meta: { style: { width: "9.5%" } }
+    },
+    {
+      accessorKey: "data.neotropical",
+      header: "Neotropical",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "more",

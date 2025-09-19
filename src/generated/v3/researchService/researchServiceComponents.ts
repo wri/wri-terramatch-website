@@ -434,8 +434,83 @@ export const getPolygonValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/polygons/{polygonUuid}", "GET");
 
+export type GetSiteValidationPathParams = {
+  siteUuid: string;
+};
+
+export type GetSiteValidationQueryParams = {
+  page: Schemas.NumberPage;
+  /**
+   * Filter validations by criteria ID
+   *
+   * @example 3
+   */
+  criteriaId?: number;
+};
+
+export type GetSiteValidationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSiteValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetSiteValidationVariables = {
+  pathParams: GetSiteValidationPathParams;
+  queryParams: GetSiteValidationQueryParams;
+};
+
+export const getSiteValidation = new V3ApiEndpoint<
+  GetSiteValidationResponse,
+  GetSiteValidationError,
+  GetSiteValidationVariables,
+  {}
+>("/validations/v3/sites/{siteUuid}", "GET");
+
 export const operationsByTag = {
   sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation }
+  validations: { getPolygonValidation, getSiteValidation }
 };
