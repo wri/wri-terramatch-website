@@ -1,14 +1,28 @@
-import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import { Dictionary } from "lodash";
+
+import RHFDisturbanceTable, {
+  getDisturbanceTableColumns
+} from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { appendTableAnswers } from "@/components/extensive/WizardForm/utils";
 import { arrayValidation } from "@/utils/yup";
+
+const props = (additionalProps?: Dictionary<any> | null) => ({
+  hasExtent: additionalProps?.with_extent,
+  hasIntensity: additionalProps?.with_intensity
+});
 
 export const DisturbancesField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
+
   renderInput: ({ additionalProps }, sharedProps) => (
-    <RHFDisturbanceTable
-      {...sharedProps}
-      hasExtent={additionalProps?.with_extent}
-      hasIntensity={additionalProps?.with_intensity}
-    />
-  )
+    <RHFDisturbanceTable {...sharedProps} {...props(additionalProps)} />
+  ),
+
+  getAnswer: () => undefined,
+
+  appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
+    const headers = getDisturbanceTableColumns(props(additionalProps));
+    appendTableAnswers(csv, label, headers, formValues[name]);
+  }
 };

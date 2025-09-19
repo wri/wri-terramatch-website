@@ -11,5 +11,9 @@ export const MapInputField: FormFieldFactory = {
     <MapAreaProvider>
       <RHFMap {...sharedProps} inputId={name} />
     </MapAreaProvider>
-  )
+  ),
+
+  getAnswer: () => undefined,
+
+  appendAnswers: () => undefined
 };

@@ -11,5 +11,9 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       years={years ?? undefined}
       model={collection ?? undefined}
     />
-  )
+  ),
+
+  getAnswer: () => undefined,
+
+  appendAnswers: () => undefined
 };

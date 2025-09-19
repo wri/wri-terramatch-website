@@ -54,5 +54,9 @@ export const DemographicField: FormFieldFactory = {
       demographicType={inputType as DemographicType}
       collection={collection ?? ""}
     />
-  )
+  ),
+
+  getAnswer: () => undefined,
+
+  appendAnswers: () => undefined
 };

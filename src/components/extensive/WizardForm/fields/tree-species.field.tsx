@@ -1,7 +1,8 @@
 import * as yup from "yup";
 
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
-import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
 
 export const TreeSpeciesField: FormFieldFactory = {
   createValidator: ({ additionalProps, validation }) => {
@@ -26,5 +27,26 @@ export const TreeSpeciesField: FormFieldFactory = {
       withNumbers={additionalProps?.with_numbers}
       collection={collection ?? ""}
     />
-  )
+  ),
+
+  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
+
+  appendAnswers: (question, csv, formValues) => {
+    const value = ((TreeSpeciesField.getAnswer(question, formValues) ?? []) as TreeSpeciesValue[]).filter(
+      v => v != null
+    );
+    if (value.length > 0) {
+      if (question.additionalProps?.with_numbers === true) {
+        csv.pushRow([question.label, "Species name", "Total Trees"]);
+        for (const { name, amount } of value) {
+          csv.pushRow(["", name, amount]);
+        }
+      } else {
+        csv.pushRow([question.label, "Species name"]);
+        for (const { name } of value) {
+          csv.pushRow(["", name]);
+        }
+      }
+    }
+  }
 };

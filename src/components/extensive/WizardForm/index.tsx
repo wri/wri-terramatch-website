@@ -80,18 +80,23 @@ function WizardForm(props: WizardFormProps) {
   // selectors in use won't work correctly.
   const [, { data: form }] = useApiForm({ id: props.formUuid, enabled: props.formUuid != null });
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const { sections, questions } = useMemo(() => {
-    const sections =
+  const sections = useMemo(
+    () =>
       form?.uuid == null
         ? []
         : selectSections(form?.uuid).map(({ uuid }) => ({
             sectionId: uuid,
             title: selectSection(uuid)?.title,
-            validation: getSchema(selectQuestions(uuid).map(questionDtoToDefinition), t, framework)
-          }));
-    const questions = sections.flatMap(({ sectionId }) => selectQuestions(sectionId));
-    return { sections, questions };
-  }, [form?.uuid, framework, t]);
+            validation: getSchema(
+              selectQuestions(uuid)
+                .filter(({ parentId }) => parentId == null)
+                .map(questionDtoToDefinition),
+              t,
+              framework
+            )
+          })),
+    [form?.uuid, framework, t]
+  );
   const selectedSection = sections[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? sections.length : sections.length - 1;
@@ -294,7 +299,7 @@ function WizardForm(props: WizardFormProps) {
 
   return (
     <div>
-      <FormQuestionsProvider questions={questions}>
+      <FormQuestionsProvider formId={props.formUuid}>
         {!props.header?.hide && (
           <WizardFormHeader
             currentStep={selectedStepIndex + 1}

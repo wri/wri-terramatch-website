@@ -27,9 +27,11 @@ import { StrategyAreaInputProps } from "@/components/elements/Inputs/StrategyAre
 import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
+import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Framework } from "@/context/framework.provider";
 import { FormQuestionDto, FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Option } from "@/types/common";
+import { Option, UploadedFile } from "@/types/common";
+import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 export type FieldInputType = FormQuestionDto["inputType"];
 
@@ -72,7 +74,11 @@ export type SharedFieldProps = {
 export type FormFieldFactory = {
   createValidator: (question: QuestionDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
   renderInput: (question: QuestionDefinition, sharedProps: SharedFieldProps) => ReactElement;
+  getAnswer: (question: QuestionDefinition, formValues: Dictionary<any>) => Answer;
+  appendAnswers: (question: QuestionDefinition, csv: CSVGenerator, formValues: Dictionary<any>) => void;
 };
+
+export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;
 
 export interface FormStepSchema {
   title: string;

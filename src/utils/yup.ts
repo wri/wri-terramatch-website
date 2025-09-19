@@ -8,7 +8,7 @@ export const UrlRegex =
 export const urlValidation = (t: typeof useT) =>
   yup.string().matches(UrlRegex, { message: t("URL is not valid."), excludeEmptyString: true });
 
-export const arrayValidation = (validation: Dictionary<any> | null) => {
+export const arrayValidation = (validation?: Dictionary<any> | null) => {
   let validator = yup.array();
   if (validation?.required === true) {
     const min = validation?.min ?? 1;
@@ -17,7 +17,7 @@ export const arrayValidation = (validation: Dictionary<any> | null) => {
   return validator;
 };
 
-export const stringValidation = (validation: Dictionary<any> | null) => {
+export const stringValidation = (validation?: Dictionary<any> | null) => {
   const validator = yup.string();
   return validation?.required === true ? validator.required() : validator;
 };

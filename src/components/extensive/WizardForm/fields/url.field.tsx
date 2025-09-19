@@ -1,5 +1,6 @@
 import Input from "@/components/elements/Inputs/Input/Input";
-import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { urlValidation } from "@/utils/yup";
 
 export const UrlField: FormFieldFactory = {
@@ -9,5 +10,9 @@ export const UrlField: FormFieldFactory = {
     return validator;
   },
 
-  renderInput: (question, sharedProps) => <Input {...sharedProps} type="url" />
+  renderInput: (question, sharedProps) => <Input {...sharedProps} type="url" />,
+
+  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
+
+  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
 };

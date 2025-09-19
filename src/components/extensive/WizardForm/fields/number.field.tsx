@@ -2,7 +2,8 @@ import { isNumber } from "lodash";
 import * as yup from "yup";
 
 import Input from "@/components/elements/Inputs/Input/Input";
-import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 
 export const NumberField: FormFieldFactory = {
   createValidator: ({ validation, linkedFieldKey }) => {
@@ -38,5 +39,9 @@ export const NumberField: FormFieldFactory = {
       return <Input {...sharedProps} type="number" min={-180} max={180} allowNegative />;
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
-  }
+  },
+
+  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
+
+  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
 };

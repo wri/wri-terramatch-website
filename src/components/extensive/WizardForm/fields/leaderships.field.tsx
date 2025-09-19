@@ -1,10 +1,18 @@
-import RHFLeadershipsDataTable from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
+import RHFLeadershipsDataTable, {
+  getLeadershipsTableColumns
+} from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { appendTableAnswers } from "@/components/extensive/WizardForm/utils";
 import { arrayValidation } from "@/utils/yup";
 
 export const LeadershipsField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
   renderInput: ({ collection }, sharedProps) => (
     <RHFLeadershipsDataTable {...sharedProps} collection={collection ?? ""} />
-  )
+  ),
+  getAnswer: () => undefined,
+  appendAnswers: ({ label, name }, csv, formValues) => {
+    const headers = getLeadershipsTableColumns();
+    appendTableAnswers(csv, label, headers, formValues[name]);
+  }
 };

@@ -2,6 +2,7 @@ import * as yup from "yup";
 
 import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 
 export const StrategyAreaField: FormFieldFactory = {
   createValidator: ({ validation }, t, framework) => {
@@ -44,5 +45,32 @@ export const StrategyAreaField: FormFieldFactory = {
       linkedFieldKey={linkedFieldKey}
       hasOtherOptions={optionsOther}
     />
-  )
+  ),
+
+  getAnswer: ({ name, options }, formValues) => {
+    const value = formValues[name];
+    const parsedValue: { [key: string]: number }[] = JSON.parse(value);
+
+    if (Array.isArray(parsedValue)) {
+      const formatted = parsedValue
+        .filter(entry => {
+          const key = Object.keys(entry)[0];
+          const percent = entry[key];
+          return key && percent !== null && percent !== undefined && !isNaN(percent);
+        })
+        .map(entry => {
+          const key = Object.keys(entry)[0];
+          const percent = entry[key];
+          const title = options.find(o => o.value === key)?.title || key;
+
+          return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
+        });
+
+      return formatted;
+    }
+
+    return value;
+  },
+
+  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
 };
