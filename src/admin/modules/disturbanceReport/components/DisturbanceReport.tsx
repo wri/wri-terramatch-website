@@ -12,7 +12,6 @@ import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS } from "@/constants/options/disturbanceReports";
 import { TextVariants } from "@/types/common";
 
-import modules from "../..";
 import DownloadMediaItem from "./DownloadMediaItem";
 import Intensity from "./Intensity";
 
@@ -154,7 +153,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           {getValue()}
           <Link
             className="h-4 w-4 cursor-pointer text-darkCustom-300 hover:text-primary"
-            to={`${basename}${`/${modules.site.ResourceName}/${row.original?.site_uuid}/show`}`}
+            to={`${basename}${`/site/${row.original?.site_uuid}/show`}`}
           >
             <Icon name={IconNames.LINK_PA} className="h-4 w-4" />
           </Link>
