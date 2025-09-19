@@ -3,6 +3,7 @@ import { FieldError, FieldValues, UseFormReturn } from "react-hook-form";
 import BooleanInput from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import RHFDataTable from "@/components/elements/Inputs/DataTable/RHFDataTable";
+import { RHFDisturbanceReportEntries } from "@/components/elements/Inputs/DataTable/RHFDisturbanceReportEntries";
 import RHFDisturbanceTable from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import FundingTypeDataTable from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import RHFInvasiveTable from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
@@ -31,9 +32,10 @@ interface FieldMapperProps {
   formHook: UseFormReturn<FieldValues, any>;
   onChange: () => void;
   formSubmissionOrg?: any;
+  projectUuid?: string;
 }
 
-export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: FieldMapperProps) => {
+export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg, projectUuid }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
     name: field.name,
@@ -256,6 +258,18 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: Fi
           control={formHook.control}
           onChangeCapture={onChange}
           formSubmissionOrg={formSubmissionOrg}
+        />
+      );
+
+    case FieldType.DisturbanceReportEntries:
+      return (
+        <RHFDisturbanceReportEntries
+          {...field.fieldProps}
+          {...sharedProps}
+          control={formHook.control}
+          onChangeCapture={onChange}
+          formHook={formHook}
+          projectUuid={projectUuid}
         />
       );
 

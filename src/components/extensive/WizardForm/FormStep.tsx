@@ -6,6 +6,7 @@ import { twMerge } from "tailwind-merge";
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
+import { EntityName } from "@/types/common";
 
 import { FieldMapper } from "./FieldMapper";
 import { FormField } from "./types";
@@ -18,6 +19,8 @@ interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>,
   onChange: () => void;
   actionButtonProps?: IButtonProps;
   formSubmissionOrg?: any;
+  entity?: EntityName;
+  projectUuid?: string;
 }
 
 export const FormStep = ({
@@ -30,6 +33,8 @@ export const FormStep = ({
   children,
   className,
   formSubmissionOrg,
+  entity,
+  projectUuid,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
   useEffect(() => {
@@ -55,7 +60,13 @@ export const FormStep = ({
           uniqueId="name"
           itemClassName="mt-8"
           render={field => (
-            <FieldMapper field={field} formHook={formHook} onChange={onChange} formSubmissionOrg={formSubmissionOrg} />
+            <FieldMapper
+              field={field}
+              formHook={formHook}
+              onChange={onChange}
+              formSubmissionOrg={formSubmissionOrg}
+              projectUuid={projectUuid}
+            />
           )}
         />
       </When>
