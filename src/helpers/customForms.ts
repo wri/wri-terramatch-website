@@ -21,7 +21,7 @@ export const formDataNormalizer = (formUuid: string) => {
       switch (question.inputType) {
         case "number": {
           const value = values[question.uuid];
-          results[question.uuid] = isEmpty(value) && (question.minNumberLimit ?? 0) < 0 ? value : Number(value);
+          results[question.uuid] = isEmpty(value) ? value : Number(value);
           break;
         }
 
@@ -301,8 +301,6 @@ export const apiFormQuestionToFormField = (
     parent_id: question.parent_id,
     min_character_limit: question.min_character_limit,
     max_character_limit: question.max_character_limit,
-    min_number_limit: question.min_number_limit,
-    max_number_limit: question.max_number_limit,
     feedbackRequired
   };
 
@@ -325,8 +323,6 @@ export const apiFormQuestionToFormField = (
 
           fieldProps: {
             required,
-            max: question.max_number_limit,
-            min: question.min_number_limit,
             type: question.input_type,
             allowNegative: true
           }

@@ -2058,8 +2058,6 @@ export type FormQuestionDto = {
   isParentConditionalDefault: boolean;
   minCharacterLimit: number | null;
   maxCharacterLimit: number | null;
-  minNumberLimit: number | null;
-  maxNumberLimit: number | null;
   years: number[] | null;
   tableHeaders: FormTableHeaderDto[] | null;
   additionalProps: Record<string, any> | null;
