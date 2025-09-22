@@ -5,8 +5,15 @@ import { tableSortingStateToQueryParamsSort } from "@/utils/dataTransformation";
 
 type getQueryParamsOpts = { page: number; pageSize: number; filters: FilterValue[]; sorting: SortingState };
 
-export const getQueryParams = ({ page, pageSize, filters, sorting }: getQueryParamsOpts): any => {
-  let queryParams: any = { page, per_page: pageSize };
+export type QueryParamsResult = {
+  page: number;
+  per_page: number;
+  sort?: string;
+  search?: string;
+} & Record<string, string | number | boolean | undefined>;
+
+export const getQueryParams = ({ page, pageSize, filters, sorting }: getQueryParamsOpts): QueryParamsResult => {
+  let queryParams: QueryParamsResult = { page, per_page: pageSize };
 
   filters?.forEach?.(filter => {
     if (filter.filter.type === "dropDown") {

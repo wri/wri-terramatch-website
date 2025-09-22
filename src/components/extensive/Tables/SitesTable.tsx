@@ -17,6 +17,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { ProjectLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { Status } from "@/types/common";
 import { Selected } from "@/types/connection";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -80,8 +81,8 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           cell: props => {
             let value = props.getValue() as string;
 
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-            return <StatusTableCell statusProps={statusProps} />;
+            const statusProps = getActionCardStatusMapper(t)[value]!;
+            return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
           }
         },
         {
@@ -89,12 +90,12 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           header: t("Change Request"),
           cell: props => {
             let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
+            const statusProps = getActionCardStatusMapper(t)[value]!;
 
             if (value === "no-update") {
               return t("N/A");
             } else {
-              return <StatusTableCell statusProps={statusProps} />;
+              return <StatusTableCell statusProps={statusProps as { status: Status; statusText: string }} />;
             }
           }
         },
@@ -113,7 +114,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           header: "",
           enableSorting: false,
           cell: props => {
-            const record = props.row.original as any;
+            const record = props.row.original as SiteLightDto & { site_reports_total?: number };
 
             return (
               <ActionTableCell

@@ -52,15 +52,8 @@ function TableFilter({ filters, onChangeFilters, className, columnFilters, ...pr
   const t = useT();
 
   const onChangeHandler = (value: string, filter: ColumnFilter) => {
-    console.log("🔍 TableFilter onChangeHandler called", {
-      value,
-      filter: filter.accessorKey,
-      currentFilters: filters,
-      timestamp: new Date().toISOString()
-    });
     remove(filters, f => f.filter.accessorKey === filter.accessorKey);
     if (value !== showAllValue) filters = uniqBy([...filters, { value, filter }], "filter.accessorKey");
-    console.log("🔍 TableFilter calling onChangeFilters with:", filters);
     onChangeFilters(filters);
   };
 

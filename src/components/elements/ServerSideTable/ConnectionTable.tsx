@@ -92,7 +92,7 @@ export function ConnectionTable<
     ...connectionProps,
     ...paginatedConnectionProps,
     filter: {
-      ...(connectionProps as any)?.filter,
+      ...(connectionProps as TProps & { filter?: Record<string, unknown> })?.filter,
       ...paginatedConnectionProps.filter
     }
   } as unknown as TProps);
