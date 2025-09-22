@@ -954,6 +954,45 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
+    case "financialIndicators": {
+      validation = yup.array().test("required-documentation", function (value) {
+        if (!Array.isArray(value)) return true;
+
+        // Find all documentation entries (description-documents collection)
+        const documentationEntries = value.filter((item: any) => item.collection === "description-documents");
+
+        // If there are no documentation entries at all, validation passes
+        // (this allows other financial data to be entered without documentation)
+        if (documentationEntries.length === 0) {
+          return true;
+        }
+
+        // Check which years are missing documentation
+        const missingYears = documentationEntries
+          .filter(
+            (entry: any) =>
+              !entry.documentation || !Array.isArray(entry.documentation) || entry.documentation.length === 0
+          )
+          .map((entry: any) => entry.year);
+
+        if (missingYears.length > 0) {
+          return this.createError({
+            message: `Document upload is required for years ${missingYears.join(
+              ", "
+            )}. Please upload at least one supporting document for each year.`
+          });
+        }
+
+        return true;
+      });
+
+      if (required) {
+        validation = validation.required("This field is required");
+      }
+
+      return validation;
+    }
+
     default:
       return null;
   }
