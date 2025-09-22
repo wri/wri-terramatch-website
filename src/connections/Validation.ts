@@ -12,16 +12,8 @@ import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { loadConnection } from "@/utils/loadConnection";
 
-const hasValidParams = (pathParams: GetPolygonValidationPathParams | undefined): boolean => {
-  const isValid =
-    pathParams != null &&
-    pathParams.polygonUuid != null &&
-    pathParams.polygonUuid !== "" &&
-    pathParams.polygonUuid !== "undefined" &&
-    !isEmpty(pathParams.polygonUuid);
-
-  return isValid;
-};
+const hasValidParams = (pathParams: GetPolygonValidationPathParams | undefined): boolean =>
+  !isEmpty(pathParams?.polygonUuid) && pathParams?.polygonUuid !== "undefined";
 
 const validationConnection = v3Resource("validations", getPolygonValidation)
   .singleResource<ValidationDto>(({ id }) => {
@@ -32,27 +24,20 @@ const validationConnection = v3Resource("validations", getPolygonValidation)
   .buildConnection();
 
 export const usePolygonValidation = (pathParams: GetPolygonValidationPathParams) => {
-  const result = useConnection(validationConnection, {
+  const [, { data }] = useConnection(validationConnection, {
     id: pathParams.polygonUuid,
     enabled: hasValidParams(pathParams)
   });
-
-  const validationData = result[1].data;
-
-  return validationData;
+  return data;
 };
 
 const siteValidationConnection = v3Resource("validations", getSiteValidation)
-  .index<ValidationDto>(() => ({
-    pathParams: { siteUuid: "" },
-    queryParams: { page: {} }
+  .index<ValidationDto, { siteUuid: string; criteriaId?: number }>(({ siteUuid, criteriaId }) => ({
+    pathParams: { siteUuid },
+    queryParams: { criteriaId }
   }))
   .pagination()
   .enabledProp()
-  .addProps<{ siteUuid: string; criteriaId?: number }>(({ siteUuid, criteriaId }) => ({
-    pathParams: { siteUuid },
-    queryParams: { page: {}, ...(criteriaId != null && { criteriaId }) }
-  }))
   .buildConnection();
 
 const ALL_VALIDATIONS_PAGE_SIZE = 100;
@@ -63,7 +48,7 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
 
   const fetchAllValidationPages = useCallback(
     async (clearCache: boolean = false) => {
-      if (!siteUuid) return;
+      if (siteUuid == null) return;
 
       setAllValidations([]);
       setTotal(0);
@@ -87,7 +72,7 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
           enabled: true
         });
 
-        if (firstPageResponse.loadFailure) {
+        if (firstPageResponse.loadFailure != null) {
           throw firstPageResponse.loadFailure;
         }
 

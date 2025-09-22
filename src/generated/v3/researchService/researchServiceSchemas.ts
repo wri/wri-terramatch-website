@@ -341,18 +341,3 @@ export type ValidationDto = {
    */
   criteriaList: ValidationCriteriaDto[];
 };
-
-export type NumberPage = {
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
-};
