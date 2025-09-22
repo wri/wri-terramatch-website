@@ -41,16 +41,14 @@ const ChecklistErrorsInformation = ({
   });
 
   useEffect(() => {
-    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+    if (v3ValidationData?.criteriaList != null && v3ValidationData.criteriaList.length > 0) {
       setPolygonValidationData(parseV3ValidationData(v3ValidationData));
       setIsLoading(false);
       if (onWarningChange) {
         onWarningChange(hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3(v3ValidationData));
       }
-    } else if (v3ValidationData === undefined) {
-      setIsLoading(true);
     } else {
-      setIsLoading(false);
+      setIsLoading(v3ValidationData == null);
     }
   }, [v3ValidationData, onWarningChange]);
   const VARIANT_MAP = {

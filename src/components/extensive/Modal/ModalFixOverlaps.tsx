@@ -59,7 +59,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
 
   useEffect(() => {
-    if (site?.uuid) {
+    if (site?.uuid != null) {
       fetchOverlapValidations();
     }
   }, [site?.uuid, fetchOverlapValidations]);
