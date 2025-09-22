@@ -3,12 +3,12 @@ import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+import { ICriteriaCheckItem } from "@/types/validation";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";

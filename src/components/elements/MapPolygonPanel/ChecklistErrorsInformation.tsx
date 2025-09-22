@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
 import {
@@ -13,6 +12,7 @@ import {
 } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { TextVariants } from "@/types/common";
+import { ICriteriaCheckItem } from "@/types/validation";
 
 import Text from "../Text/Text";
 

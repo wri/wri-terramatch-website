@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { OVERLAPPING_CRITERIA_ID } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
@@ -21,6 +20,7 @@ import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import JobsSlice from "@/store/jobsSlice";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
 
 import Button from "../../Button/Button";

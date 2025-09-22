@@ -3,13 +3,13 @@ import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
-import { OVERLAPPING_CRITERIA_ID } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";

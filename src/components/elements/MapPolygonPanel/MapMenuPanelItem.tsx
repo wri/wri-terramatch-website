@@ -3,12 +3,6 @@ import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
-import {
-  ESTIMATED_AREA_CRITERIA_ID,
-  ICriteriaCheckItem,
-  PLANT_START_DATE_CRITERIA_ID,
-  WITHIN_COUNTRY_CRITERIA_ID
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
@@ -20,6 +14,12 @@ import { useModalContext } from "@/context/modal.provider";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import {
+  ESTIMATED_AREA_CRITERIA_ID,
+  ICriteriaCheckItem,
+  PLANT_START_DATE_CRITERIA_ID,
+  WITHIN_COUNTRY_CRITERIA_ID
+} from "@/types/validation";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -82,7 +82,7 @@ const MapMenuPanelItem = ({
           if (Number(item.id) === 14 && !item.status && item.extra_info != null) {
             const extraInfo = item.extra_info;
             const hasOnlyPlantingStatusError =
-              Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
+              Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0]?.field === "planting_status";
 
             if (hasOnlyPlantingStatusError) {
               return {

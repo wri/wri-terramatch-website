@@ -9,16 +9,9 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
 import { isCompletedDataOrEstimatedArea, parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
-import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
-
-export interface ICriteriaCheckItemProps {
-  id: string;
-  status: boolean;
-  label: string;
-  date?: string;
-  extra_info?: string;
-}
+export interface ICriteriaCheckItemProps extends ICriteriaCheckItem {}
 
 export interface ICriteriaCheckProps {
   polygonUuid: string;
