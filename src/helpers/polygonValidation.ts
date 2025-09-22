@@ -6,21 +6,8 @@ import {
 } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 
-export const parseValidationData = (criteriaData: any) => {
-  const transformedData: ICriteriaCheckItem[] = criteriaData.criteriaList.map((criteria: any) => {
-    return {
-      id: criteria.criteria_id,
-      date: criteria.latest_created_at,
-      status: criteria.valid === 1,
-      label: validationLabels[criteria.criteria_id],
-      extra_info: criteria.extra_info
-    };
-  });
-  return transformedData;
-};
-
 export const parseV3ValidationData = (criteriaData: any) => {
-  const transformedData: ICriteriaCheckItem[] = criteriaData.criteriaList.map((criteria: any) => {
+  return criteriaData.criteriaList.map((criteria: any) => {
     return {
       id: criteria.criteriaId,
       date: criteria.createdAt,
@@ -29,7 +16,6 @@ export const parseV3ValidationData = (criteriaData: any) => {
       extra_info: criteria.extraInfo
     };
   });
-  return transformedData;
 };
 
 export const parseValidationDataFromContext = (polygonValidation: any) => {
