@@ -958,19 +958,21 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       validation = yup.array().test("required-documentation", function (value) {
         if (!Array.isArray(value)) return true;
 
-        // Find all documentation entries (description-documents collection)
         const documentationEntries = value.filter(
           (item: { collection?: string; year?: number | string; documentation?: unknown }) =>
             item.collection === "description-documents"
         );
 
-        // If there are no documentation entries at all, validation passes
-        // (this allows other financial data to be entered without documentation)
+        if (required && documentationEntries.length === 0) {
+          return this.createError({
+            message: "At least one document upload is required. Please upload at least one supporting document."
+          });
+        }
+
         if (documentationEntries.length === 0) {
           return true;
         }
 
-        // Check which years are missing documentation
         const missingYears = documentationEntries
           .filter(entry => !Array.isArray((entry as any).documentation) || (entry as any).documentation.length === 0)
           .map(entry => entry.year as number | string);
