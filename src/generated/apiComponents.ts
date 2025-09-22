@@ -8035,6 +8035,7 @@ export type PostV2FundingTypeError = Fetcher.ErrorWrapper<undefined>;
 export type PostV2FundingTypeResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -8081,6 +8082,7 @@ export type PatchV2FundingTypeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type PatchV2FundingTypeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -8137,6 +8139,7 @@ export type DeleteV2FundingTypeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type DeleteV2FundingTypeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
