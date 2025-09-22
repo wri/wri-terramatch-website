@@ -22,7 +22,7 @@ export interface TableMetaInfo {
 }
 
 export interface ServerSideTableProps<TData> extends Omit<TableProps<TData>, "onTableStateChange"> {
-  meta: TableMetaInfo;
+  meta?: TableMetaInfo;
   onTableStateChange?: (state: ServerSideTableState) => void;
   onQueryParamChange?: (queryParams: QueryParams) => void;
   defaultPageSize?: number;
@@ -47,6 +47,7 @@ export function ServerSideTable<TData extends RowData>({
   defaultPageSize = DEFAULT_PAGE_SIZE,
   children,
   alwaysShowPagination = false,
+  meta = {},
   ...props
 }: ServerSideTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>(props.initialTableState?.sorting ?? []);
@@ -76,13 +77,13 @@ export function ServerSideTable<TData extends RowData>({
       >
         {children}
       </Table>
-      {((props.meta.last_page && props.meta.last_page > 1) || alwaysShowPagination) && (
+      {((meta.last_page && meta.last_page > 1) || alwaysShowPagination) && (
         <div className="relative z-20 pt-4">
           <Pagination
             variant={VARIANT_PAGINATION_DASHBOARD}
-            getCanNextPage={() => page < (props.meta.last_page || 1)}
+            getCanNextPage={() => page < (meta.last_page || 1)}
             getCanPreviousPage={() => page > 1}
-            getPageCount={() => props.meta.last_page || 1}
+            getPageCount={() => meta.last_page || 1}
             nextPage={() => setPage(page => page + 1)}
             pageIndex={page - 1}
             previousPage={() => setPage(page => page - 1)}
