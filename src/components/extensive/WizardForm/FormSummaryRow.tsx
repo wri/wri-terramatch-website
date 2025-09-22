@@ -375,6 +375,50 @@ export const getFormEntries = (
         break;
       }
 
+      case FieldType.DisturbanceReportEntries: {
+        const rawValue = values?.[f.name];
+        const modValue = rawValue?.map((v: any) => {
+          const parsedValue =
+            typeof v.value === "string" && v.value.startsWith("[") && v.value.endsWith("]")
+              ? JSON.parse(v.value)
+              : v.value;
+          if (v.name == "site-affected") {
+            const valueArray = parsedValue;
+            if (Array.isArray(valueArray) && valueArray.length > 0) {
+              const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
+              return `${v.title}:<br/> ${sitesAffectedArray.join("<br/>")}`;
+            }
+            return `${v.title}: ${t("Answer Not Provided")}`;
+          } else if (v.name == "polygon-affected") {
+            const valueArray = parsedValue;
+            if (Array.isArray(valueArray) && valueArray.length > 0) {
+              return `${v.title}:<br/> ${valueArray
+                .map((batch: any) => {
+                  const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
+                  return `-${batchPolygons}.`;
+                })
+                .join("<br/>")}`;
+            }
+            return `${v.title}: ${t("Answer Not Provided")}`;
+          }
+
+          if (v.name === "disturbance-subtype" || v.name === "property-affected") {
+            if (Array.isArray(parsedValue)) {
+              return `${v.title}: ${parsedValue.join(", ")}`;
+            }
+          }
+
+          return `${v.title}: ${v.value ?? t("Answer Not Provided")}`;
+        });
+
+        outputArr.push({
+          title: f.label ?? "",
+          type: f.type,
+          value: modValue.join("<br/>")
+        });
+        break;
+      }
+
       default: {
         outputArr.push({
           title: f.label ?? "",
