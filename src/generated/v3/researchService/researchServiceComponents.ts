@@ -439,7 +439,18 @@ export type GetSiteValidationPathParams = {
 };
 
 export type GetSiteValidationQueryParams = {
-  page: Schemas.NumberPage;
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
   /**
    * Filter validations by criteria ID
    *
@@ -499,7 +510,7 @@ export type GetSiteValidationResponse = {
 
 export type GetSiteValidationVariables = {
   pathParams: GetSiteValidationPathParams;
-  queryParams: GetSiteValidationQueryParams;
+  queryParams?: GetSiteValidationQueryParams;
 };
 
 export const getSiteValidation = new V3ApiEndpoint<
