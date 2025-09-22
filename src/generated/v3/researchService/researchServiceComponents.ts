@@ -439,11 +439,6 @@ export type GetSiteValidationPathParams = {
 };
 
 export type GetSiteValidationQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
   /**
    * The size of page being requested
    *
