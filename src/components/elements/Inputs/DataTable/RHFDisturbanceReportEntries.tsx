@@ -14,6 +14,28 @@ import {
 import { useDisturbanceOptions } from "@/hooks/useDisturbanceOptions";
 import { Option, OptionValue } from "@/types/common";
 
+const parseJsonValue = (val: any, fieldName?: string) => {
+  if (typeof val === "string" && val.startsWith("[") && val.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(val);
+      if (fieldName === "polygon-affected" && Array.isArray(parsed) && parsed.length > 0 && Array.isArray(parsed[0])) {
+        return parsed[0];
+      }
+      return parsed;
+    } catch (e) {
+      return val;
+    }
+  }
+  return val;
+};
+
+const convertToOptionValues = (stringArray: string[], options: Option[]) => {
+  if (!Array.isArray(stringArray)) return [];
+  return stringArray
+    .map(str => options.find(opt => opt.value === str)?.value)
+    .filter((value): value is string => value !== undefined);
+};
+
 export interface RHFDisturbanceReportEntriesProps extends InputWrapperProps {
   inputId?: string;
   containerClassName?: string;
@@ -33,13 +55,11 @@ export interface RHFDisturbanceReportEntriesDataTableProps
   onChangeCapture?: () => void;
   optionsFilterFieldName?: string;
   formHook: UseFormReturn<FieldValues, any>;
-  projectUuid?: string;
 }
 
 const RHFDisturbanceReportEntries = ({
   onChangeCapture,
   formHook,
-  projectUuid,
   ...props
 }: RHFDisturbanceReportEntriesDataTableProps) => {
   const { field } = useController(props);
@@ -63,26 +83,6 @@ const RHFDisturbanceReportEntries = ({
     [value, field, onChangeCapture]
   );
 
-  const parseJsonValue = useCallback((val: any, fieldName?: string) => {
-    if (typeof val === "string" && val.startsWith("[") && val.endsWith("]")) {
-      try {
-        const parsed = JSON.parse(val);
-        if (
-          fieldName === "polygon-affected" &&
-          Array.isArray(parsed) &&
-          parsed.length > 0 &&
-          Array.isArray(parsed[0])
-        ) {
-          return parsed[0];
-        }
-        return parsed;
-      } catch (e) {
-        return val;
-      }
-    }
-    return val;
-  }, []);
-
   const getFieldValue = useCallback(
     (fieldName: string) => {
       if (!Array.isArray(value)) {
@@ -103,15 +103,8 @@ const RHFDisturbanceReportEntries = ({
 
       return rawValue;
     },
-    [value, parseJsonValue]
+    [value]
   );
-
-  const convertToOptionValues = useCallback((stringArray: string[], options: Option[]) => {
-    if (!Array.isArray(stringArray)) return [];
-    return stringArray
-      .map(str => options.find(opt => opt.value === str)?.value)
-      .filter((value): value is string => value !== undefined);
-  }, []);
 
   const disturbanceTypeOptions = useDisturbanceOptions("type");
   const currentDisturbanceType = getFieldValue("disturbance-type");
@@ -217,7 +210,7 @@ const RHFDisturbanceReportEntries = ({
                   label="Disturbance Type"
                   required
                   options={disturbanceTypeOptions}
-                  value={getFieldValue("disturbance-type") ? [getFieldValue("disturbance-type")] : []}
+                  value={getFieldValue("disturbance-type") != null ? [getFieldValue("disturbance-type")] : []}
                   onChange={handleDisturbanceTypeChange}
                 />
               </div>
@@ -228,7 +221,7 @@ const RHFDisturbanceReportEntries = ({
                   required
                   options={disturbanceSubtypeOptions}
                   multiSelect
-                  value={convertToOptionValues(getFieldValue("disturbance-subtype") || [], disturbanceSubtypeOptions)}
+                  value={convertToOptionValues(getFieldValue("disturbance-subtype") ?? [], disturbanceSubtypeOptions)}
                   onChange={handleDisturbanceSubtypeChange}
                 />
               </div>
@@ -238,7 +231,7 @@ const RHFDisturbanceReportEntries = ({
                   label="Intensity"
                   required
                   options={DISTURBANCE_INTENSITY_OPTIONS}
-                  value={getFieldValue("intensity") ? [getFieldValue("intensity")] : []}
+                  value={getFieldValue("intensity") != null ? [getFieldValue("intensity")] : []}
                   onChange={handleIntensityChange}
                 />
               </div>
@@ -248,7 +241,7 @@ const RHFDisturbanceReportEntries = ({
                   label="Extent"
                   required
                   options={DISTURBANCE_EXTENT_OPTIONS}
-                  value={getFieldValue("extent") ? [getFieldValue("extent")] : []}
+                  value={getFieldValue("extent") != null ? [getFieldValue("extent")] : []}
                   onChange={handleExtentChange}
                 />
               </div>
@@ -295,19 +288,14 @@ const RHFDisturbanceReportEntries = ({
                   placeholder="Select date"
                   label="Date of Disturbance"
                   required
-                  value={getFieldValue("date-of-disturbance") || ""}
+                  value={getFieldValue("date-of-disturbance") ?? ""}
                   onChange={handleDateChange}
                 />
               </div>
             </div>
             <div className="col-span-2 w-full border-t border-black border-opacity-12" />
 
-            <DisturbanceAffectedSites
-              onChange={onChangeCapture}
-              field={field}
-              value={value!}
-              projectUuid={projectUuid}
-            />
+            <DisturbanceAffectedSites onChange={onChangeCapture} field={field} value={value!} />
           </div>
         </div>
       </Accordion>

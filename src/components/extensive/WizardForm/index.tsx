@@ -199,8 +199,6 @@ function WizardForm(props: WizardFormProps) {
           subtitle={step.subtitle}
           onChange={onChange}
           formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
-          entity={props?.entity}
-          projectUuid={props?.projectUuid}
         ></FormStep>
         <FormFooter
           variant="sticky"
@@ -252,7 +250,6 @@ function WizardForm(props: WizardFormProps) {
                 }
               : undefined
           }
-          entity={props?.entity}
         >
           <FormSummary values={formHook.getValues()} steps={props.steps} onEdit={setSelectedStepIndex} />
         </FormStep>

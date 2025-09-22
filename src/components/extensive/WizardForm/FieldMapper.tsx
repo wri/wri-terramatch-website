@@ -32,10 +32,9 @@ interface FieldMapperProps {
   formHook: UseFormReturn<FieldValues, any>;
   onChange: () => void;
   formSubmissionOrg?: any;
-  projectUuid?: string;
 }
 
-export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg, projectUuid }: FieldMapperProps) => {
+export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg }: FieldMapperProps) => {
   const sharedProps = {
     error: formHook.formState.errors?.[field.name] as FieldError,
     name: field.name,
@@ -269,7 +268,6 @@ export const FieldMapper = ({ field, formHook, onChange, formSubmissionOrg, proj
           control={formHook.control}
           onChangeCapture={onChange}
           formHook={formHook}
-          projectUuid={projectUuid}
         />
       );
 

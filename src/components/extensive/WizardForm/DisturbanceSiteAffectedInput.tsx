@@ -3,12 +3,12 @@ import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
+import { useEntityContext } from "@/context/entity.provider";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbanceSiteAffectedInputProps {
   onChangeCapture?: () => void;
-  projectUuid?: string;
   fieldUuid: string;
   value: any[];
   field: ControllerRenderProps<any, any>;
@@ -16,11 +16,11 @@ export interface DisturbanceSiteAffectedInputProps {
 
 export const DisturbanceSiteAffectedInput = ({
   onChangeCapture,
-  projectUuid,
   fieldUuid,
   value: siteAffectedValue,
   field
 }: DisturbanceSiteAffectedInputProps) => {
+  const { projectUuid } = useEntityContext();
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
     pageSize: 100,
@@ -30,16 +30,16 @@ export const DisturbanceSiteAffectedInput = ({
   });
 
   const siteChoices = useMemo(() => {
-    if (!sitesData || !projectUuid || !("data" in sitesData) || !sitesData.data) return [];
+    if (sitesData == null || projectUuid == null || !("data" in sitesData) || sitesData.data == null) return [];
 
     return sitesData.data.map((site: any) => ({
-      title: site.name || `Site ${site.uuid}`,
+      title: site.name ?? `Site ${site.uuid}`,
       value: site.uuid,
-      meta: { country: site.country || "" }
+      meta: { country: site.country ?? "" }
     }));
   }, [sitesData, projectUuid]);
 
-  if (!fieldUuid) {
+  if (fieldUuid == null) {
     return null;
   }
 
@@ -47,7 +47,7 @@ export const DisturbanceSiteAffectedInput = ({
 
   const currentSites = siteAffectedValue.find(f => f.name === "site-affected")?.value;
   const sitesArray = typeof currentSites === "string" ? JSON.parse(currentSites) : currentSites;
-  const value = fieldIndex ? sitesArray[parseInt(fieldIndex)] : null;
+  const value = fieldIndex != null ? sitesArray[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
     (selectedValues: OptionValue[]) => {
@@ -59,28 +59,18 @@ export const DisturbanceSiteAffectedInput = ({
             siteUuid: selectedSite.value,
             siteName: selectedSite.title
           };
-          if (fieldIndex !== undefined) {
+          if (fieldIndex != null) {
             const newArray = [...(sitesArray ?? [])];
             newArray[parseInt(fieldIndex)] = siteData;
-            const newValue = siteAffectedValue?.map(f => {
-              if (f.name === "site-affected") {
-                return { ...f, value: newArray };
-              }
-              return f;
-            });
+            const newValue = siteAffectedValue?.map(f => (f.name === "site-affected" ? { ...f, value: newArray } : f));
             field.onChange(newValue);
           }
         }
       } else {
-        if (fieldIndex !== undefined) {
+        if (fieldIndex != null) {
           const newArray = [...(sitesArray ?? [])];
           newArray[parseInt(fieldIndex)] = "";
-          const newValue = siteAffectedValue?.map(f => {
-            if (f.name === "site-affected") {
-              return { ...f, value: newArray };
-            }
-            return f;
-          });
+          const newValue = siteAffectedValue?.map(f => (f.name === "site-affected" ? { ...f, value: newArray } : f));
           field.onChange(newValue);
         }
       }
@@ -91,7 +81,7 @@ export const DisturbanceSiteAffectedInput = ({
   );
 
   const dropdownValue = useMemo(() => {
-    if (value && typeof value === "object" && value.siteUuid) {
+    if (value?.siteUuid != null) {
       return [value.siteUuid];
     }
     return [];
@@ -99,7 +89,7 @@ export const DisturbanceSiteAffectedInput = ({
 
   return (
     <Dropdown
-      label={`Site ${fieldIndex ? parseInt(fieldIndex) + 1 : 1} Affected`}
+      label={`Site ${fieldIndex != null ? parseInt(fieldIndex) + 1 : 1} Affected`}
       options={siteChoices}
       value={dropdownValue}
       onChange={_onChange}

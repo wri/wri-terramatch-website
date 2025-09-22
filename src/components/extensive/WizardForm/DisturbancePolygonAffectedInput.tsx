@@ -31,25 +31,25 @@ export const DisturbancePolygonAffectedInput = ({
   });
 
   const polygonChoices = useMemo(() => {
-    if (!polygonsData || !siteUuid) return [];
+    if (polygonsData == null || siteUuid == null) return [];
 
     return polygonsData
       .filter((polygon: any) => polygon.status === "approved")
       .map((polygon: any) => ({
         title: polygon.name || `Polygon ${polygon.uuid}`,
         value: polygon.uuid,
-        meta: { practice: polygon.practice || "" }
+        meta: { practice: polygon.practice ?? "" }
       }));
   }, [polygonsData, siteUuid]);
 
-  if (!fieldUuid) {
+  if (fieldUuid == null) {
     return null;
   }
 
   const fieldIndex = fieldUuid.match(/\[(\d+)\]/)?.[1];
   const currentPolygons = polygonAffectedValue.find(f => f.name === "polygon-affected")?.value;
   const polygonsArray = typeof currentPolygons === "string" ? JSON.parse(currentPolygons) : currentPolygons;
-  const value = fieldIndex ? polygonsArray[parseInt(fieldIndex)] : null;
+  const value = fieldIndex != null ? polygonsArray[parseInt(fieldIndex)] : null;
 
   const _onChange = useCallback(
     (selectedValues: OptionValue[]) => {
@@ -68,27 +68,21 @@ export const DisturbancePolygonAffectedInput = ({
           })
           .filter(Boolean);
 
-        if (fieldIndex !== undefined) {
+        if (fieldIndex != null) {
           const newArray = [...(polygonsArray ?? [])];
           newArray[parseInt(fieldIndex)] = polygonsData;
-          const newValue = polygonAffectedValue?.map(f => {
-            if (f.name === "polygon-affected") {
-              return { ...f, value: newArray };
-            }
-            return f;
-          });
+          const newValue = polygonAffectedValue?.map(f =>
+            f.name === "polygon-affected" ? { ...f, value: newArray } : f
+          );
           field.onChange(newValue);
         }
       } else {
-        if (fieldIndex !== undefined) {
+        if (fieldIndex != null) {
           const newArray = [...(polygonsArray ?? [])];
           newArray[parseInt(fieldIndex)] = [];
-          const newValue = polygonAffectedValue?.map(f => {
-            if (f.name === "polygon-affected") {
-              return { ...f, value: newArray };
-            }
-            return f;
-          });
+          const newValue = polygonAffectedValue?.map(f =>
+            f.name === "polygon-affected" ? { ...f, value: newArray } : f
+          );
           field.onChange(newValue);
         }
       }

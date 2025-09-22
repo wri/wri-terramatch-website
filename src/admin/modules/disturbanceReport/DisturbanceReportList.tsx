@@ -69,9 +69,9 @@ const DisturbanceReportDataGrid: FC = () => (
     <FunctionField
       source="intensity"
       label="Intensity"
-      render={(record: DisturbanceReportLightDto) => {
-        return <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />;
-      }}
+      render={(record: DisturbanceReportLightDto) => (
+        <Intensity intensity={record?.intensity?.toLowerCase() as IntensityEnum} />
+      )}
       sortable={false}
     />
     <DateField source="updatedAt" label="Last Updated" locales="en-GB" />

@@ -10,12 +10,11 @@ import { DisturbanceSiteAffectedInput } from "./DisturbanceSiteAffectedInput";
 
 export interface DisturbanceAffectedSitesProps {
   onChange?: () => void;
-  projectUuid?: string;
   value: any[];
   field: ControllerRenderProps<any, any>;
 }
 
-export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }: DisturbanceAffectedSitesProps) => {
+export const DisturbanceAffectedSites = ({ onChange, value, field }: DisturbanceAffectedSitesProps) => {
   const [affectedSites, setAffectedSites] = useState<number[]>([]);
   const t = useT();
 
@@ -28,8 +27,8 @@ export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }
   const polygonAffectedArray = Array.isArray(polygonAffectedValue) ? polygonAffectedValue : [];
 
   useEffect(() => {
-    const siteLength = siteField ? siteAffectedValue?.length : 0;
-    const polygonLength = polygonField ? polygonAffectedArray?.length : 0;
+    const siteLength = siteField ? siteAffectedValue?.length ?? 0 : 0;
+    const polygonLength = polygonField ? polygonAffectedArray?.length ?? 0 : 0;
     const maxLength = Math.max(siteLength, polygonLength);
 
     if (maxLength > 0) {
@@ -52,10 +51,10 @@ export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }
 
     const newValue = value?.map(f => {
       if (f.name === siteField?.name) {
-        return { ...f, value: [...sitesArray, { siteUuid: "", siteName: "" }] };
+        return { ...f, value: [...(sitesArray ?? []), { siteUuid: "", siteName: "" }] };
       }
       if (f.name === polygonField?.name) {
-        return { ...f, value: [...polygonsArray, []] };
+        return { ...f, value: [...(polygonsArray ?? []), []] };
       }
       return f;
     });
@@ -70,8 +69,8 @@ export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }
       const updatedSites = affectedSites.filter((_, i) => i !== index);
       setAffectedSites(updatedSites);
 
-      const newSites = siteAffectedValue?.filter((_: any, i: number) => i !== index);
-      const newPolygons = polygonAffectedValue?.filter((_: any, i: number) => i !== index);
+      const newSites = (siteAffectedValue ?? [])?.filter((_: any, i: number) => i !== index);
+      const newPolygons = (polygonAffectedValue ?? [])?.filter((_: any, i: number) => i !== index);
 
       const newValue = value?.map(f => {
         if (f.name === siteField?.name) {
@@ -110,7 +109,6 @@ export const DisturbanceAffectedSites = ({ onChange, projectUuid, value, field }
                 value={value}
                 field={field}
                 onChangeCapture={onChange}
-                projectUuid={projectUuid}
                 fieldUuid={`${siteField?.name}[${index}]`}
               />
             )}

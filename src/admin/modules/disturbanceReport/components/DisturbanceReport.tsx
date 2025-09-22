@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { flatMap } from "lodash";
 import { useMemo } from "react";
 import { Link, useBasename } from "react-admin";
 
@@ -7,13 +8,23 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS } from "@/constants/options/disturbanceReports";
 import { TextVariants } from "@/types/common";
 
 import DownloadMediaItem from "./DownloadMediaItem";
 import Intensity from "./Intensity";
+
+const parseFieldValue = (value: any) => {
+  if (typeof value === "string" && value.startsWith("[") && value.endsWith("]")) {
+    try {
+      return JSON.parse(value);
+    } catch (e) {
+      return value;
+    }
+  }
+  return value;
+};
 
 interface DisturbanceReportProps {
   id?: string;
@@ -49,73 +60,35 @@ const TextEntry = ({
   classNameLabel?: string;
   classNameContainer?: string;
   label?: string;
-}) => {
-  return (
-    <>
-      {value == null ? null : (
-        <div className={classNameContainer}>
-          <Text variant={variantLabel} className={classNameLabel}>
-            {label}
-          </Text>
-          {Array.isArray(value) ? (
-            <Text variant={variant} className={className}>
-              {value.join(", ")}
-            </Text>
-          ) : typeof value === "string" || typeof value === "number" ? (
-            <Text
-              variant={variant}
-              className={className}
-              dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }}
-            />
-          ) : (
-            <Text variant={variant} className={className}>
-              {formatEntryValue(value)}
-            </Text>
-          )}
-        </div>
+}) =>
+  value == null ? null : (
+    <div className={classNameContainer}>
+      <Text variant={variantLabel} className={classNameLabel}>
+        {label}
+      </Text>
+      {Array.isArray(value) ? (
+        <Text variant={variant} className={className}>
+          {value.join(", ")}
+        </Text>
+      ) : typeof value === "string" || typeof value === "number" ? (
+        <Text variant={variant} className={className} dangerouslySetInnerHTML={{ __html: formatEntryValue(value) }} />
+      ) : (
+        <Text variant={variant} className={className}>
+          {formatEntryValue(value)}
+        </Text>
       )}
-    </>
+    </div>
   );
-};
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
   const { values = {}, formSteps = [] } = props;
   const basename = useBasename();
   const t = useT();
-  const entries = useGetFormEntries({
-    step: {
-      title: "Disturbance Report",
-      fields: formSteps.flatMap(step => step.fields ?? [])
-    },
-    values,
-    type: "disturbance-reports"
-  });
 
-  const entriesMap = useMemo(() => {
-    const map = new Map();
-    formSteps.forEach(step => {
-      step.fields?.forEach((field: any) => {
-        if (field?.type) {
-          map.set(field.type, values[field.name]);
-        }
-      });
-    });
-    return map;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entries, formSteps]);
-
-  const disturbanceReportEntries = entriesMap.get("disturbanceReportEntries") ?? [];
-
-  const parseFieldValue = (value: any) => {
-    if (typeof value === "string" && value.startsWith("[") && value.endsWith("]")) {
-      try {
-        return JSON.parse(value);
-      } catch (e) {
-        return value;
-      }
-    }
-    return value;
-  };
+  const disturbanceReportEntries = useMemo(() => {
+    const field = flatMap(formSteps, "fields").find(({ type }) => type === "disturbanceReportEntries");
+    return values[field?.name ?? ""] ?? [];
+  }, [values, formSteps]);
 
   const getFieldValue = (fieldName: string) => {
     const field = disturbanceReportEntries.find((f: any) => f.name === fieldName);
