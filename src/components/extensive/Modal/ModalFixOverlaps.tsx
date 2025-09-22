@@ -67,15 +67,15 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   useEffect(() => {
     if (!polygonList || overlapValidations.length === 0) return;
 
-    const overlappingPolygonUuids = overlapValidations.map(validation => validation.polygonId).filter(Boolean);
+    const overlappingPolygonUuids = overlapValidations.map(validation => validation.polygonId).filter(id => id != null);
 
     let overlappingPolygons = polygonList.filter(
       polygon => polygon.poly_id && overlappingPolygonUuids.includes(polygon.poly_id)
     );
 
-    if (selectedUUIDs) {
+    if (selectedUUIDs != null) {
       overlappingPolygons = overlappingPolygons.filter(
-        polygon => polygon.poly_id && selectedUUIDs.includes(polygon.poly_id)
+        polygon => polygon.poly_id != null && selectedUUIDs.includes(polygon.poly_id)
       );
     }
 
@@ -86,7 +86,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
           checked: true,
           name: polygon.poly_name ?? t("Unnamed Polygon"),
           canBeApproved: false,
-          failingCriterias: [OVERLAPPING_CRITERIA_ID.toString()]
+          failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`]
         };
       })
     );

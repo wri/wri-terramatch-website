@@ -38,7 +38,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
-      if (editPolygon?.uuid) {
+      if (editPolygon?.uuid != null) {
         ApiSlice.pruneCache("validations", [editPolygon.uuid]);
       }
       hideLoader();
@@ -70,7 +70,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
       setShouldRefetchPolygonData(true);
       setShouldRefetchValidation(true);
       setShouldRefetchPolygonVersions(true);
-      if (editPolygon?.uuid) {
+      if (editPolygon?.uuid != null) {
         ApiSlice.pruneCache("validations", [editPolygon.uuid]);
       }
 

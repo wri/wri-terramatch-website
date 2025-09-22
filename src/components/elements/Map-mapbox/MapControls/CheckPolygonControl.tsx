@@ -68,7 +68,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       setClickedValidation(false);
       hideLoader();
       setShouldRefetchValidation(true);
-      if (sitePolygonData && Array.isArray(sitePolygonData)) {
+      if (Array.isArray(sitePolygonData)) {
         const polygonUuids = sitePolygonData
           .map(polygon => polygon.polygonUuid)
           .filter((uuid): uuid is string => Boolean(uuid));
@@ -105,7 +105,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
-        if (sitePolygonData && Array.isArray(sitePolygonData)) {
+        if (Array.isArray(sitePolygonData)) {
           const polygonUuids = sitePolygonData
             .map(polygon => polygon.polygonUuid)
             .filter((uuid): uuid is string => Boolean(uuid));
@@ -173,7 +173,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   }, [overlapValidations]);
 
   useValueChanged(sitePolygonData, () => {
-    if (sitePolygonData && siteUuid) {
+    if (sitePolygonData && siteUuid != null) {
       setValidationDataTimestamp(0);
       fetchOverlapValidations();
     }

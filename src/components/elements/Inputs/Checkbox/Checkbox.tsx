@@ -80,9 +80,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           disabled={disabled}
           type="checkbox"
           onChange={e => {
-            if (props.onChange) {
+            if (props.onChange != null) {
               props.onChange(e);
-            } else if (props.onClick) {
+            } else if (props.onClick != null) {
               props.onClick(e as any);
             }
           }}
