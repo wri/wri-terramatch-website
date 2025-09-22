@@ -155,7 +155,8 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
       if (entity.endsWith("Reports")) {
         return { ...tableRowData, treeCount: amount };
       }
-      return { ...tableRowData, treeCount: getReportAmount(name) ?? 0 };
+      // The getReportAmount(name) function was looking for data in reportCounts, which is only populated for report entities, not applications
+      return { ...tableRowData, treeCount: amount ?? 0 };
     });
     const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries
       .filter(
