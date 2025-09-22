@@ -29,6 +29,9 @@ export type QueryParams = {
   sort?: string;
   page?: number;
   per_page?: number;
+  search?: string;
+  status?: string;
+  update_request_status?: string;
 };
 
 export const DEFAULT_PAGE_SIZE = 5;

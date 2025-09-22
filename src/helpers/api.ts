@@ -10,7 +10,7 @@ export const getQueryParams = ({ page, pageSize, filters, sorting }: getQueryPar
 
   filters?.forEach?.(filter => {
     if (filter.filter.type === "dropDown") {
-      queryParams[`filter[${filter.filter.accessorKey}]`] = filter.value;
+      queryParams[filter.filter.accessorKey] = filter.value;
     } else if (filter.filter.type === "search") {
       queryParams.search = filter.value;
     }

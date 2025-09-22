@@ -1,10 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
+import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -31,6 +32,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
   const t = useT();
   const { format } = useDate();
   const { openModal, closeModal } = useModalContext();
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   const handleDeleteSite = useCallback(
     (uuid: string) => {
@@ -131,37 +133,55 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
   );
 
   return (
-    <ConnectionTable
-      connection={indexSiteConnection}
-      connectionProps={{ filter: { projectUuid: project.uuid } }}
-      onFetch={onFetch}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      columns={columns}
-      columnFilters={[
-        { type: "search", accessorKey: "query", placeholder: t("Search") },
-        {
-          type: "dropDown",
-          accessorKey: "status",
-          label: t("Status"),
-          options: getStatusOptions(t)
-        },
-        {
-          type: "dropDown",
-          accessorKey: "update_request_status",
-          label: t("Change Request"),
-          options: getChangeRequestStatusOptions(t)
-        },
-        {
-          type: "button",
-          accessorKey: "add_site",
-          name: t("Add Site"),
-          hide: !hasAddButton,
-          as: Link,
-          href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`
-        }
-      ]}
-      alwaysShowPagination={alwaysShowPagination}
-    />
+    <div>
+      <ConnectionTable
+        connection={indexSiteConnection}
+        connectionProps={{ filter: { projectUuid: project.uuid } }}
+        onFetch={data => {
+          onFetch?.(data);
+          // Check if there are active filters by looking at the query parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          const hasSearch = urlParams.get("search");
+          const hasStatus = urlParams.get("status");
+          const hasUpdateRequestStatus = urlParams.get("update_request_status");
+          setHasActiveFilters(!!(hasSearch || hasStatus || hasUpdateRequestStatus));
+        }}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        columns={columns}
+        columnFilters={[
+          { type: "search", accessorKey: "query", placeholder: t("Search") },
+          {
+            type: "dropDown",
+            accessorKey: "status",
+            label: t("Status"),
+            options: getStatusOptions(t)
+          },
+          {
+            type: "dropDown",
+            accessorKey: "update_request_status",
+            label: t("Change Request"),
+            options: getChangeRequestStatusOptions(t).filter(option => option.value !== "restoration-in-progress")
+          },
+          {
+            type: "button",
+            accessorKey: "add_site",
+            name: t("Add Site"),
+            hide: !hasAddButton,
+            as: Link,
+            href: `/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`
+          }
+        ]}
+        alwaysShowPagination={alwaysShowPagination}
+      />
+      {/* Show custom message when there are no results and filters are active */}
+      {hasActiveFilters && (
+        <div className="text-gray-500 py-8 text-center">
+          <Text variant="text-light-subtitle-400">
+            {t("No sites match your search criteria. Try adjusting your filters.")}
+          </Text>
+        </div>
+      )}
+    </div>
   );
 };
 
