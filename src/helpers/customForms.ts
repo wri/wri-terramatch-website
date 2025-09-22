@@ -161,7 +161,7 @@ export const apiFormSectionToFormStep = (
 };
 
 export const apiQuestionsToFormFields = (
-  questions: any,
+  questions: FormQuestionRead[],
   t: typeof useT,
   entity?: Entity,
   framework?: Framework,
@@ -959,7 +959,10 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
         if (!Array.isArray(value)) return true;
 
         // Find all documentation entries (description-documents collection)
-        const documentationEntries = value.filter((item: any) => item.collection === "description-documents");
+        const documentationEntries = value.filter(
+          (item: { collection?: string; year?: number | string; documentation?: unknown }) =>
+            item.collection === "description-documents"
+        );
 
         // If there are no documentation entries at all, validation passes
         // (this allows other financial data to be entered without documentation)
@@ -969,11 +972,8 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
         // Check which years are missing documentation
         const missingYears = documentationEntries
-          .filter(
-            (entry: any) =>
-              !entry.documentation || !Array.isArray(entry.documentation) || entry.documentation.length === 0
-          )
-          .map((entry: any) => entry.year);
+          .filter(entry => !Array.isArray((entry as any).documentation) || (entry as any).documentation.length === 0)
+          .map(entry => entry.year as number | string);
 
         if (missingYears.length > 0) {
           return this.createError({
