@@ -88,7 +88,7 @@ export const EntityEdit = () => {
     currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
     start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
   };
-  console.log("entityValue", entityValue);
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
