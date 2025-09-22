@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, useCallback, useEffect, useState } from "react";
+import { DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import {
@@ -14,9 +14,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
+import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { parseValidationDataFromContext } from "@/helpers/polygonValidation";
+import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { parseV3ValidationData } from "@/helpers/polygonValidation";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -62,30 +65,22 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring, validationData } = useMapAreaContext();
+  const { isMonitoring } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
-  const [, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
-  const { polygonCriteriaMap: polygonMap } = useMapAreaContext();
-
-  const getPolygonValidationFromContext = useCallback(() => {
-    if (site_id != null && validationData[site_id] != null) {
-      return validationData[site_id].find((item: any) => item.uuid === poly_id);
-    }
-    return null;
-  }, [site_id, validationData, poly_id]);
+  const isAdminUser = useIsAdmin();
+  const adminCheck = isAdmin ?? isAdminUser;
+  const validationData = usePolygonValidation({ polygonUuid: poly_id || "" });
 
   useEffect(() => {
-    const polygonValidation = getPolygonValidationFromContext();
-
-    if (polygonValidation != null) {
-      const parsedData = parseValidationDataFromContext(polygonValidation);
-      if (!isAdmin) {
-        const updatedData = parsedData.map(item => {
+    if (validationData != null) {
+      const parsedData = parseV3ValidationData(validationData);
+      if (!adminCheck) {
+        const updatedData = parsedData.map((item: ICriteriaCheckItem) => {
           if (Number(item.id) === 14 && !item.status && item.extra_info != null) {
-            const extraInfo = JSON.parse(item.extra_info);
+            const extraInfo = item.extra_info;
             const hasOnlyPlantingStatusError =
               Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
 
@@ -98,28 +93,30 @@ const MapMenuPanelItem = ({
           }
           return item;
         });
-        setPolygonValidationData(updatedData);
         if (validationStatus === "failed" && updatedData.length > 0) {
-          const hasOnlyPlantingStatusError = updatedData.every(item => (Number(item.id) === 14 ? item.status : true));
+          const hasOnlyPlantingStatusError = updatedData.every((item: ICriteriaCheckItem) =>
+            Number(item.id) === 14 ? item.status : true
+          );
           if (hasOnlyPlantingStatusError) {
             setAdjustedValidationStatus("passed");
           }
         }
       } else {
-        setPolygonValidationData(parsedData);
         setAdjustedValidationStatus(validationStatus);
       }
 
       setShowWarning(
-        polygonValidation.nonValidCriteria?.some(
-          (criteria: any) =>
-            criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
-            criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
-            criteria.criteria_id === PLANT_START_DATE_CRITERIA_ID
+        validationData.criteriaList?.some(
+          (criteria: ValidationCriteriaDto) =>
+            criteria.criteriaId === ESTIMATED_AREA_CRITERIA_ID ||
+            criteria.criteriaId === WITHIN_COUNTRY_CRITERIA_ID ||
+            criteria.criteriaId === PLANT_START_DATE_CRITERIA_ID
         )
       );
+    } else {
+      setAdjustedValidationStatus(validationStatus);
     }
-  }, [poly_id, polygonMap, site_id, uuid, validationData, getPolygonValidationFromContext, isAdmin, validationStatus]);
+  }, [validationData, poly_id, adminCheck, validationStatus]);
 
   const openFormModalHandlerConfirm = () => {
     openModal(

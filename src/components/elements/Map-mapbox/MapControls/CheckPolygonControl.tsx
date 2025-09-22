@@ -46,12 +46,8 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { hideLoader } = useLoading();
-  const {
-    setShouldRefetchValidation,
-    setShouldRefetchPolygonData,
-    setSelectedPolygonsInCheckbox,
-    setValidationDataTimestamp
-  } = useMapAreaContext();
+  const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
+    useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
@@ -174,7 +170,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useValueChanged(sitePolygonData, () => {
     if (sitePolygonData && siteUuid != null) {
-      setValidationDataTimestamp(0);
       fetchOverlapValidations();
     }
   });

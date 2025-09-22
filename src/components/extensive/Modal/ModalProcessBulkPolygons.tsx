@@ -9,7 +9,6 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { ModalProps } from "./Modal";
@@ -56,7 +55,6 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
   const [currentSelectedUuids, setCurrentSelectedUuids] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const { validationData } = useMapAreaContext();
 
   useEffect(() => {
     if (sitePolygonData) {
@@ -83,7 +81,7 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
 
       setDisplayedPolygons(polygonsData);
     }
-  }, [sitePolygonData, selectedPolygonsInCheckbox, validationData, t]);
+  }, [sitePolygonData, selectedPolygonsInCheckbox, t]);
 
   useEffect(() => {
     const uuids = polygonsSelected

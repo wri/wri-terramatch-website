@@ -22,7 +22,7 @@ export const parseValidationDataFromContext = (polygonValidation: any) => {
   if (!polygonValidation?.nonValidCriteria) {
     return [];
   }
-
+  console.log("polygonValidation context", polygonValidation);
   const transformedData: ICriteriaCheckItem[] = polygonValidation.nonValidCriteria.map((criteria: any) => {
     return {
       id: criteria.criteria_id,
