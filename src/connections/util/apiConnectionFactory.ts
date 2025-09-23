@@ -431,7 +431,6 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
         selectors: [
           (props, variablesFactory, resource) => {
             const variables = variablesFactory(props);
-
             if (variables == null) {
               const create = () => {};
               return () => ({ data: undefined, isCreating: false, createFailure: undefined, create });
