@@ -45,6 +45,7 @@ import {
   profitAnalysisColumnsMap,
   useDebouncedChange
 } from "./types";
+
 export interface RHFFinancialIndicatorsDataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
@@ -97,7 +98,7 @@ const currencyInput = {
   GBP: "£"
 } as any;
 
-/*
+/**
  * @param props PropsWithChildren<RHFFinancialIndicatorsDataTableProps>
  * @returns React Hook Form Ready FinancialIndicator Component
  */
