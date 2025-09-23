@@ -505,7 +505,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <div>
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -528,7 +528,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 </div>
                 <span className="text-13">{selectCurrency}</span>
               </div>
-            </div>
+            </InputWrapper>
           );
         }
       },
@@ -583,7 +583,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <div>
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -605,7 +605,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 </div>
                 <span className="text-13">{selectCurrency}</span>
               </div>
-            </div>
+            </InputWrapper>
           );
         }
       }
