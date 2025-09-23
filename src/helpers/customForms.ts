@@ -995,6 +995,12 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
+    case "disturbanceReportEntries": {
+      validation = yup.array();
+      if (required) validation = validation.required();
+      return validation;
+    }
+
     default:
       return null;
   }
