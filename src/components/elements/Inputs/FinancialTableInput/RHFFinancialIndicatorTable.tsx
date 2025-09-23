@@ -97,7 +97,7 @@ const currencyInput = {
   GBP: "£"
 } as any;
 
-/**
+/*
  * @param props PropsWithChildren<RHFFinancialIndicatorsDataTableProps>
  * @returns React Hook Form Ready FinancialIndicator Component
  */
