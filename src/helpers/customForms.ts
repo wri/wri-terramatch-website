@@ -161,7 +161,7 @@ export const apiFormSectionToFormStep = (
 };
 
 export const apiQuestionsToFormFields = (
-  questions: FormQuestionRead[],
+  questions: any,
   t: typeof useT,
   entity?: Entity,
   framework?: Framework,
