@@ -15,6 +15,7 @@ import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchSe
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import {
+  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
   PLANT_START_DATE_CRITERIA_ID,
@@ -71,15 +72,15 @@ const MapMenuPanelItem = ({
   const t = useT();
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const isAdminUser = useIsAdmin();
-  const adminCheck = isAdmin ?? isAdminUser;
-  const validationData = usePolygonValidation({ polygonUuid: poly_id || "" });
+  const adminCheck = isAdmin || isAdminUser;
+  const validationData = usePolygonValidation({ polygonUuid: poly_id ?? "" });
 
   useEffect(() => {
     if (validationData != null) {
       const parsedData = parseV3ValidationData(validationData);
       if (!adminCheck) {
         const updatedData = parsedData.map((item: ICriteriaCheckItem) => {
-          if (Number(item.id) === 14 && !item.status && item.extra_info != null) {
+          if (Number(item.id) === COMPLETED_DATA_CRITERIA_ID && !item.status && item.extra_info != null) {
             const extraInfo = item.extra_info;
             const hasOnlyPlantingStatusError =
               Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0]?.field === "planting_status";
@@ -95,7 +96,7 @@ const MapMenuPanelItem = ({
         });
         if (validationStatus === "failed" && updatedData.length > 0) {
           const hasOnlyPlantingStatusError = updatedData.every((item: ICriteriaCheckItem) =>
-            Number(item.id) === 14 ? item.status : true
+            Number(item.id) === COMPLETED_DATA_CRITERIA_ID ? item.status : true
           );
           if (hasOnlyPlantingStatusError) {
             setAdjustedValidationStatus("passed");

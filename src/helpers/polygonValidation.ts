@@ -23,7 +23,7 @@ export const parseValidationDataFromContext = (polygonValidation: any) => {
   if (!polygonValidation?.nonValidCriteria) {
     return [];
   }
-  console.log("polygonValidation context", polygonValidation);
+
   const transformedData: ICriteriaCheckItem[] = polygonValidation.nonValidCriteria.map((criteria: any) => {
     return {
       id: criteria.criteria_id,
@@ -37,16 +37,14 @@ export const parseValidationDataFromContext = (polygonValidation: any) => {
   return transformedData;
 };
 
+const EXCLUDED_CRITERIA_IDS = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID, PLANT_START_DATE_CRITERIA_ID];
+
 export const isValidCriteriaData = (criteriaData: ValidationDto): boolean => {
   if (!criteriaData?.criteriaList?.length) {
     return true;
   }
   return !criteriaData.criteriaList.some(
-    (criteria: ValidationCriteriaDto) =>
-      criteria.criteriaId !== ESTIMATED_AREA_CRITERIA_ID &&
-      criteria.criteriaId !== WITHIN_COUNTRY_CRITERIA_ID &&
-      criteria.criteriaId !== PLANT_START_DATE_CRITERIA_ID &&
-      !criteria.valid
+    ({ criteriaId, valid }) => !valid && !EXCLUDED_CRITERIA_IDS.includes(criteriaId)
   );
 };
 
@@ -70,11 +68,7 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3 = (criteriaData
   }
 
   return criteriaData.criteriaList.some(
-    (criteria: ValidationCriteriaDto) =>
-      (criteria.criteriaId === ESTIMATED_AREA_CRITERIA_ID ||
-        criteria.criteriaId === WITHIN_COUNTRY_CRITERIA_ID ||
-        criteria.criteriaId === PLANT_START_DATE_CRITERIA_ID) &&
-      criteria.valid === false
+    ({ criteriaId, valid }) => EXCLUDED_CRITERIA_IDS.includes(criteriaId) && valid === false
   );
 };
 
