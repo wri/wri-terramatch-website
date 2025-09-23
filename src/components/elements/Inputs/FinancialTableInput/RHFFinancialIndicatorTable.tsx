@@ -450,7 +450,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <div>
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -472,7 +472,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 </div>
                 <span className="text-13">{selectCurrency}</span>
               </div>
-            </div>
+            </InputWrapper>
           );
         }
       },
@@ -649,7 +649,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <div>
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -671,7 +671,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 </div>
                 <span className="text-13">{selectCurrency}</span>
               </div>
-            </div>
+            </InputWrapper>
           );
         }
       },
@@ -704,7 +704,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <div>
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -727,7 +727,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 </div>
                 <span className="text-13">{selectCurrency}</span>
               </div>
-            </div>
+            </InputWrapper>
           );
         }
       },
@@ -901,7 +901,16 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           };
 
           return (
-            <div>
+            <InputWrapper
+              error={
+                showError
+                  ? {
+                      message: `Document upload is required for year ${row.original.year}. Please upload at least one supporting document.`,
+                      type: "manual"
+                    }
+                  : undefined
+              }
+            >
               <FileInput
                 key={rowIndex}
                 files={files as Partial<UploadedFile>[]}
@@ -915,13 +924,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 }
                 onChange={newFiles => newFiles.forEach(handleSelectFile)}
               />
-              {showError && (
-                <div className="mt-1 text-sm text-error">
-                  Document upload is required for year {row.original.year}. Please upload at least one supporting
-                  document.
-                </div>
-              )}
-            </div>
+            </InputWrapper>
           );
         }
       }
