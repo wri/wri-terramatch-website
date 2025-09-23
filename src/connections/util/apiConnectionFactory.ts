@@ -432,7 +432,7 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
         selectors: [
           (props, variablesFactory, resource) => {
             const variables = variablesFactory(props);
-            console.log("variables", variables);
+
             if (variables == null) {
               const create = () => {};
               return () => ({ data: undefined, isCreating: false, createFailure: undefined, create });
@@ -456,14 +456,11 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
                   if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
-                  console.log("isMultipart", isMultipart);
+
                   let headers: HeadersInit = {
                     "Content-Type": isMultipart ? "multipart/form-data" : "application/json"
                   };
-                  console.log("headers", headers);
-                  console.log("variables", variables);
-                  console.log("resource", resource);
-                  console.log("attributes", attributes);
+
                   if (isMultipart) {
                     // @ts-ignore
                     const { formData, ...restAttributes } = attributes;
