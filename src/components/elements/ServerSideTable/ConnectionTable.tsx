@@ -109,7 +109,7 @@ export function ConnectionTable<
 
   const indexTotal = connected?.indexTotal;
 
-  const isLoading = !connectionLoaded && connected == null;
+  const isLoading = !connectionLoaded;
   return (
     <ServerSideTable
       meta={{

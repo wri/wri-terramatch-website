@@ -81,9 +81,9 @@ export function ServerSideTable<TData extends RowData>({
         <div className="relative z-20 pt-4">
           <Pagination
             variant={VARIANT_PAGINATION_DASHBOARD}
-            getCanNextPage={() => page < (meta.last_page || 1)}
+            getCanNextPage={() => page < (meta.last_page ?? 1)}
             getCanPreviousPage={() => page > 1}
-            getPageCount={() => meta.last_page || 1}
+            getPageCount={() => meta.last_page ?? 1}
             nextPage={() => setPage(page => page + 1)}
             pageIndex={page - 1}
             previousPage={() => setPage(page => page - 1)}

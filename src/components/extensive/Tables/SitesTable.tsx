@@ -62,6 +62,19 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
     [closeModal, openModal, t]
   );
 
+  const handleFetch = useCallback(
+    (data: Selected<typeof indexSiteConnection>) => {
+      onFetch?.(data);
+      // Check if there are active filters by looking at the query parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasSearch = urlParams.get("search");
+      const hasStatus = urlParams.get("status");
+      const hasUpdateRequestStatus = urlParams.get("update_request_status");
+      setHasActiveFilters(!!(hasSearch || hasStatus || hasUpdateRequestStatus));
+    },
+    [onFetch]
+  );
+
   const columns = useMemo(
     () =>
       [
@@ -134,19 +147,11 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
   );
 
   return (
-    <div>
+    <>
       <ConnectionTable
         connection={indexSiteConnection}
         connectionProps={{ filter: { projectUuid: project.uuid } }}
-        onFetch={data => {
-          onFetch?.(data);
-          // Check if there are active filters by looking at the query parameters
-          const urlParams = new URLSearchParams(window.location.search);
-          const hasSearch = urlParams.get("search");
-          const hasStatus = urlParams.get("status");
-          const hasUpdateRequestStatus = urlParams.get("update_request_status");
-          setHasActiveFilters(!!(hasSearch || hasStatus || hasUpdateRequestStatus));
-        }}
+        onFetch={handleFetch}
         variant={VARIANT_TABLE_BORDER_ALL}
         columns={columns}
         columnFilters={[
@@ -182,7 +187,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
           </Text>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
