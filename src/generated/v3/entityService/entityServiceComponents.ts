@@ -874,7 +874,14 @@ export type EstablishmentTreesFindPathParams = {
   /**
    * Entity type for which to retrieve the establishment tree data.
    */
-  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports" | "financialReports";
+  entity:
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -942,7 +949,15 @@ export type TreeReportCountsFindPathParams = {
   /**
    * Entity type for which to retrieve the associated report count data.
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for which to retrieve the associated report count data.
    */
@@ -1234,7 +1249,15 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -1609,6 +1632,49 @@ export const entityIndex = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.FinancialReportLightDto;
       }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbanceReports
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+      };
+      data?: {
+        /**
+         * @example disturbanceReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceReportLightDto;
+      }[];
     },
   EntityIndexError,
   EntityIndexVariables,
@@ -1619,7 +1685,15 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1811,6 +1885,25 @@ export const entityGet = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.FinancialReportFullDto;
       };
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbanceReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example disturbanceReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceReportFullDto;
+      };
     },
   EntityGetError,
   EntityGetVariables,
@@ -1821,7 +1914,15 @@ export type EntityDeletePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1880,7 +1981,15 @@ export type EntityUpdatePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1943,7 +2052,15 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports" | "financialReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for association
    */
@@ -2457,6 +2574,7 @@ export type LinkedFieldsIndexQueryParams = {
   formTypes?: (
     | "organisation"
     | "financialReport"
+    | "disturbanceReport"
     | "nursery"
     | "nurseryReport"
     | "project"

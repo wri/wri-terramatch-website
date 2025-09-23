@@ -2854,6 +2854,7 @@ export type V2FundingTypeCreate = {
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -12404,6 +12405,7 @@ export type V2FinancialReportRead = {
   funding_types?: {
     uuid?: string;
     organisation_id?: string;
+    financial_report_id?: string;
     amount?: number;
     year?: number;
     type?: string;
