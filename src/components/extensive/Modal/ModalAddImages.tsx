@@ -15,6 +15,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useUploadFile } from "@/connections/Media";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -106,8 +107,16 @@ const ModalAddImages: FC<ModalAddProps> = ({
   //   }
   // });
 
-  const [, { create: uploadFile }] = useUploadFile({
-    pathParams: { entity: model, collection, uuid: entityData.uuid }
+  const [, { data: uploadedFile, create: uploadFile, isCreating: isUploading, createFailure: uploadFailure }] =
+    useUploadFile({ entity: model as any, collection, uuid: entityData.uuid });
+
+  useRequestComplete(isUploading, () => {
+    console.log("uploadedFile", uploadedFile);
+    if (uploadFailure == null) {
+      console.log("data", uploadedFile);
+    } else {
+      console.log("uploadFailure", uploadFailure);
+    }
   });
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
@@ -206,21 +215,22 @@ const ModalAddImages: FC<ModalAddProps> = ({
         }
       });
 
-      const body = new FormData();
-      body.append("upload_file", file);
+      let longitude = 0;
+      let latitude = 0;
 
       try {
         const location = await exifr.gps(file);
 
         if (location) {
-          body.append("lat", location.latitude.toString());
-          body.append("lng", location.longitude.toString());
+          latitude = location.latitude;
+          longitude = location.longitude;
         }
       } catch (e) {
         Log.error(e);
       }
-
-      uploadFile(body as never);
+      const formData = new FormData();
+      formData.append("uploadFile", file);
+      uploadFile({ isPublic: true, lat: latitude, lng: longitude, formData }, true);
     }
   };
 

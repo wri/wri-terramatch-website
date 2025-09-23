@@ -801,8 +801,8 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
+  body: Schemas.ExtraMediaRequestBody;
   pathParams: UploadFilePathParams;
-  formData: FormData;
 };
 
 /**

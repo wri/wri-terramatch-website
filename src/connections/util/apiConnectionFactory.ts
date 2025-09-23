@@ -27,7 +27,7 @@ export type IndexConnection<DTO> = ListConnection<DTO> & {
 export type CreateConnection<DTO, CreateAttributes> = DataConnection<DTO> & {
   isCreating: boolean;
   createFailure: PendingError | undefined;
-  create: (attributes: CreateAttributes) => void;
+  create: (attributes: CreateAttributes, isMultipart?: boolean) => void;
 };
 export type LoadFailureConnection = { loadFailure: PendingError | undefined };
 export type IsLoadingConnection = { isLoading: boolean };
@@ -452,11 +452,30 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
                   });
                 }
 
-                const create = (attributes: CreateAttributes<TVariables>) => {
+                const create = (attributes: CreateAttributes<TVariables>, isMultipart?: boolean) => {
                   if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
-                  createEndpoint.fetch({ ...variables, body: { data: { type: resource, attributes } } });
+                  console.log("isMultipart", isMultipart);
+                  let headers: HeadersInit = {
+                    "Content-Type": isMultipart ? "multipart/form-data" : "application/json"
+                  };
+                  console.log("headers", headers);
+                  console.log("variables", variables);
+                  console.log("resource", resource);
+                  console.log("attributes", attributes);
+                  if (isMultipart) {
+                    // @ts-ignore
+                    const { formData, ...restAttributes } = attributes;
+                    formData.append("type", resource);
+                    formData.append("data", JSON.stringify({ attributes: restAttributes }));
+                    createEndpoint.fetch({ ...variables, body: formData }, headers as THeaders);
+                  } else {
+                    createEndpoint.fetch(
+                      { ...variables, body: { data: { type: resource, attributes } } },
+                      headers as THeaders
+                    );
+                  }
                 };
 
                 return {
