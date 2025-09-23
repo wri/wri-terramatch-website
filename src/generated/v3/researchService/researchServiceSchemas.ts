@@ -300,3 +300,44 @@ export type BoundingBoxDto = {
    */
   bbox: number[];
 };
+
+export type ValidationCriteriaDto = {
+  /**
+   * The criteria ID that was validated
+   *
+   * @example 3
+   */
+  criteriaId: number;
+  /**
+   * Whether the polygon passed this validation criteria
+   *
+   * @example true
+   */
+  valid: boolean;
+  /**
+   * When this validation was last run
+   *
+   * @format date-time
+   * @example 2025-02-20T22:01:31Z
+   */
+  createdAt: string;
+  /**
+   * Additional information about the validation result
+   *
+   * @example null
+   */
+  extraInfo?: Record<string, any>;
+};
+
+export type ValidationDto = {
+  /**
+   * The UUID of the polygon that was validated
+   *
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonId: string;
+  /**
+   * List of validation criteria results for this polygon
+   */
+  criteriaList: ValidationCriteriaDto[];
+};

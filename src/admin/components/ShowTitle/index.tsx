@@ -33,7 +33,11 @@ const ShowTitle = (props: IProps) => {
         <When condition={!!title}>
           <If
             condition={
-              resource === "site" || resource === "project" || resource === "projectReport" || resource === "nursery"
+              resource === "site" ||
+              resource === "project" ||
+              resource === "projectReport" ||
+              resource === "nursery" ||
+              resource === "disturbanceReport"
             }
           >
             <Then>
