@@ -451,9 +451,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -508,9 +506,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -588,9 +584,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -656,9 +650,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -713,9 +705,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -895,6 +885,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
           const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
 
+          // Check if this year has documentation entries but no files uploaded
+          const hasDocumentationEntry =
+            documentationData?.[rowIndex] && documentationData[rowIndex].year === row.original.year;
+          const hasFiles = files && files.length > 0;
+          const showError = hasDocumentationEntry && !hasFiles;
+
           const handleSelectFile = async (file: File) => {
             await onSelectFile(file, {
               uuid: row.id,
@@ -906,19 +902,30 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           };
 
           return (
-            <FileInput
-              key={rowIndex}
-              files={files as Partial<UploadedFile>[]}
-              onDelete={file =>
-                handleDeleteFile(file, {
-                  collection: "documentation",
-                  year: row.original.year,
-                  field: columnKey,
-                  rowIndex: row.index
-                })
+            <InputWrapper
+              error={
+                showError
+                  ? {
+                      message: `Document upload is required for year ${row.original.year}. Please upload at least one supporting document.`,
+                      type: "manual"
+                    }
+                  : undefined
               }
-              onChange={newFiles => newFiles.forEach(handleSelectFile)}
-            />
+            >
+              <FileInput
+                key={rowIndex}
+                files={files as Partial<UploadedFile>[]}
+                onDelete={file =>
+                  handleDeleteFile(file, {
+                    collection: "documentation",
+                    year: row.original.year,
+                    field: columnKey,
+                    rowIndex: row.index
+                  })
+                }
+                onChange={newFiles => newFiles.forEach(handleSelectFile)}
+              />
+            </InputWrapper>
           );
         }
       }
@@ -1197,6 +1204,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         description={props.description}
         inputId={id}
         feedbackRequired={props.feedbackRequired}
+        error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
       >
         <div className="mb-10 space-y-6">
           <Dropdown

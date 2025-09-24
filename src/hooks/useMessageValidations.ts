@@ -61,8 +61,7 @@ export const useMessageValidators = () => {
       (extraInfo: any): string[] => {
         if (extraInfo == null) return [];
         try {
-          const infoArray: IntersectionInfo[] = JSON.parse(extraInfo);
-          return infoArray.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
+          return extraInfo.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
             return intersectSmaller
               ? t(
                   "Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name}) [in site: {site_name}]",
@@ -94,7 +93,8 @@ export const useMessageValidators = () => {
         if (extraInfo == null) return [];
 
         try {
-          const infoObject = JSON.parse(extraInfo);
+          // Handle both V2 (string) and V3 (object) data formats
+          const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
           if (infoObject && typeof infoObject === "object" && "country_name" in infoObject) {
             const countryName = infoObject.country_name || "Unknown Country";
             return [
@@ -113,10 +113,10 @@ export const useMessageValidators = () => {
     [t]
   );
   const getDataMessage = useMemo(
-    () => (extraInfo: string | undefined) => {
+    () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        const infoArray: ExtraInfoItem[] = JSON.parse(extraInfo);
+        const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
             if (!isAdmin && info.field === "planting_status") {
@@ -162,10 +162,10 @@ export const useMessageValidators = () => {
   );
 
   const getProjectGoalMessage = useMemo(
-    () => (extraInfo: string | undefined) => {
+    () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        const infoArray: ProjectGoalInfo = JSON.parse(extraInfo);
+        const infoArray: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
         const {
           sum_area_project,
           percentage_project,
@@ -179,10 +179,21 @@ export const useMessageValidators = () => {
         if (total_area_site === null) {
           messages.push(t("Site Goal: A goal has not been specified."));
         } else if (sum_area_site !== undefined && percentage_site !== undefined && total_area_site !== undefined) {
+          // Ensure numeric values are properly formatted
+          const formattedSumAreaSite = typeof sum_area_site === "number" ? sum_area_site.toFixed(2) : sum_area_site;
+          const formattedPercentageSite =
+            typeof percentage_site === "number" ? percentage_site.toFixed(2) : percentage_site;
+          const formattedTotalAreaSite =
+            typeof total_area_site === "number" ? total_area_site.toFixed(2) : total_area_site;
+
           messages.push(
             t(
               "Site Goal: The sum of all site polygons {sum_area_site} ha is {percentage_site}% of total hectares to be restored for this site ({total_area_site} ha)",
-              { sum_area_site, percentage_site, total_area_site }
+              {
+                sum_area_site: formattedSumAreaSite,
+                percentage_site: formattedPercentageSite,
+                total_area_site: formattedTotalAreaSite
+              }
             )
           );
         }
@@ -194,10 +205,22 @@ export const useMessageValidators = () => {
           percentage_project !== undefined &&
           total_area_project !== undefined
         ) {
+          // Ensure numeric values are properly formatted
+          const formattedSumAreaProject =
+            typeof sum_area_project === "number" ? sum_area_project.toFixed(2) : sum_area_project;
+          const formattedPercentageProject =
+            typeof percentage_project === "number" ? percentage_project.toFixed(2) : percentage_project;
+          const formattedTotalAreaProject =
+            typeof total_area_project === "number" ? total_area_project.toFixed(2) : total_area_project;
+
           messages.push(
             t(
               "Project Goal: The sum of all project polygons {sum_area_project} ha is {percentage_project}% of total hectares to be restored ({total_area_project} ha)",
-              { sum_area_project, percentage_project, total_area_project }
+              {
+                sum_area_project: formattedSumAreaProject,
+                percentage_project: formattedPercentageProject,
+                total_area_project: formattedTotalAreaProject
+              }
             )
           );
         }
@@ -211,10 +234,11 @@ export const useMessageValidators = () => {
   );
 
   const getPlantStartDateMessage = useMemo(
-    () => (extraInfo: string | undefined) => {
+    () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        const info: PlantStartDateInfo = JSON.parse(extraInfo);
+        // Handle both V2 (string) and V3 (object) data formats
+        const info: PlantStartDateInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
 
         switch (info.error_type) {
           case "MISSING_VALUE":
@@ -298,7 +322,7 @@ export const useMessageValidators = () => {
   );
 
   const getFormatedExtraInfo = useMemo(
-    () => (extraInfo: string | undefined, criteria_id: any) => {
+    () => (extraInfo: any, criteria_id: any) => {
       if (criteria_id === 12) {
         return getProjectGoalMessage(extraInfo);
       } else if (criteria_id === 3) {

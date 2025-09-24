@@ -1,15 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useGetV2TerrafundValidationCriteriaData } from "@/generated/apiComponents";
-import { isValidCriteriaData, parseValidationData } from "@/helpers/polygonValidation";
 
 interface UnifiedCollapsibleRowProps {
   type: string;
@@ -23,60 +19,13 @@ interface UnifiedCollapsibleRowProps {
 const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
   const { type, item, index, polygonsSelected, setPolygonsSelected } = props;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const { validationData } = useMapAreaContext();
-
-  const { data: fetchedCriteriaData, isLoading } = useGetV2TerrafundValidationCriteriaData(
-    {
-      queryParams: { uuid: item.id }
-    },
-    {
-      enabled: openCollapse && !validationData?.[item.id] && !validationData?.[item.uuid],
-      staleTime: 5 * 60 * 1000,
-      cacheTime: 10 * 60 * 1000
-    }
-  );
 
   useEffect(() => {
-    const getValidationData = () => {
-      const contextData = validationData?.[item.id];
-      if (contextData) {
-        return {
-          polygon_id: item.id,
-          criteria_list: contextData.nonValidCriteria
-        };
-      }
-
-      const contextDataByUuid = validationData?.[item.uuid];
-      if (contextDataByUuid) {
-        return {
-          polygon_id: item.uuid,
-          criteria_list: contextDataByUuid.nonValidCriteria
-        };
-      }
-
-      return fetchedCriteriaData;
-    };
-
-    const criteriaDataPolygon = getValidationData();
-
     setShowWarning(item.validation_status === "partial");
-
-    if (criteriaDataPolygon?.criteria_list && criteriaDataPolygon.criteria_list.length > 0) {
-      setPolygonValidationData(parseValidationData(criteriaDataPolygon));
-      setIsChecked(true);
-    } else {
-      setIsChecked(
-        item.validation_status === "passed" ||
-          item.validation_status === "partial" ||
-          item.validation_status === "failed" ||
-          item.checked ||
-          false
-      );
-    }
-  }, [item, fetchedCriteriaData, validationData, openCollapse]);
+    setIsChecked(item.checked || ["passed", "partial", "failed"].includes(item.validation_status));
+  }, [item]);
 
   const canBeApproved = () => {
     if (!item.checked) {
@@ -89,15 +38,6 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
 
     if (item.validation_status === "passed" || item.validation_status === "partial") {
       return true;
-    }
-
-    const contextData = validationData?.[item.id] || validationData?.[item.uuid];
-    if (contextData) {
-      return contextData.valid;
-    }
-
-    if (fetchedCriteriaData) {
-      return isValidCriteriaData(fetchedCriteriaData);
     }
 
     return false;
@@ -161,17 +101,13 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
       <When condition={openCollapse}>
         <div className="flex items-center ">
           <div className="flex-[3]" />
-          {isLoading ? (
-            <Text variant="text-12" className="flex-[2]">
-              Loading validation data...
-            </Text>
-          ) : (
-            <ChecklistErrorsInformation
-              polygonValidationData={polygonValidationData}
-              className="flex-[2]"
-              variant="table"
-            />
-          )}
+          <ChecklistErrorsInformation
+            polygonUuid={item.id}
+            className="flex-[2]"
+            variant="table"
+            showWarning={showWarning}
+            onWarningChange={setShowWarning}
+          />
         </div>
       </When>
     </div>
