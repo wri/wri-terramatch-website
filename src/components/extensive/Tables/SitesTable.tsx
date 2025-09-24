@@ -1,5 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import { isEmpty } from "lodash";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 
@@ -67,10 +68,10 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
       onFetch?.(data);
       // Check if there are active filters by looking at the query parameters
       const urlParams = new URLSearchParams(window.location.search);
-      const hasSearch = urlParams.get("search");
-      const hasStatus = urlParams.get("status");
-      const hasUpdateRequestStatus = urlParams.get("update_request_status");
-      setHasActiveFilters(!!(hasSearch || hasStatus || hasUpdateRequestStatus));
+      const search = urlParams.get("search");
+      const status = urlParams.get("status");
+      const updateRequestStatus = urlParams.get("update_request_status");
+      setHasActiveFilters(!isEmpty(search) || !isEmpty(status) || !isEmpty(updateRequestStatus));
     },
     [onFetch]
   );
