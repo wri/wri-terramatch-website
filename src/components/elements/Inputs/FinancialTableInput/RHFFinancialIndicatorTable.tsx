@@ -1033,7 +1033,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             description={t(
               isFundoFloraNonProfitOrEnterprise
                 ? "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Budgets must detail your entire organisation's expenses. Audited budgets are preferred, if available, but are not required at this stage.<br><br>Include in the financial statements, if possible: Income Statement (DRE) or Statement of Surplus and Losses (DSP) - in the case of non-profit organisations, Balance Sheet and Cash Flow Statement."
-                : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
+                : "Please provide supporting documentation for each year’s financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
             )}
             tableColumns={documentationColumns}
             value={documentationData ?? []}
