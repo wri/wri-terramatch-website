@@ -5,7 +5,7 @@ import { Else, If, Then } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { ICriteriaCheckItem } from "@/types/validation";
@@ -112,13 +112,13 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
                     name={
                       item.status
                         ? IconNames.CHECK_PROGRESSBAR
-                        : isCompletedDataOrEstimatedArea(item)
+                        : shouldShowAsWarning(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.IC_ERROR_PANEL
                     }
                     className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
                       "text-green-400": item.status,
-                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
                     })}
                   />
                   {t(item.label)}
