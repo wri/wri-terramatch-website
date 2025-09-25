@@ -4,10 +4,10 @@ import { UseFormReturn } from "react-hook-form";
 import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
 
 import List from "../List/List";
-import { QuestionDefinition } from "../WizardForm/types";
+import { FieldDefinition } from "../WizardForm/types";
 
 export interface SimpleFormProps {
-  questions: QuestionDefinition[];
+  questions: FieldDefinition[];
   formHook: UseFormReturn;
   onChange?: () => void;
 }
@@ -16,7 +16,7 @@ const SimpleForm: FC<SimpleFormProps> = ({ questions, formHook, onChange }) => {
   if (process.env.NODE_ENV === "test") return null; //Hacky test fix. TODO: find the actual cause for this!
   const _onChange = useCallback(() => onChange?.(), [onChange]);
   return (
-    <List<QuestionDefinition, FormHTMLAttributes<HTMLFormElement>>
+    <List<FieldDefinition, FormHTMLAttributes<HTMLFormElement>>
       as="div"
       className="w-full space-y-8"
       items={questions}

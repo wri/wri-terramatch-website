@@ -19,7 +19,7 @@ import { Entity } from "@/types/common";
 
 const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries(props);
-  const section = useFormSection(props.sectionId);
+  const section = useFormSection(props.stepId);
   return (
     <>
       <Typography variant="h6" component="h3">
@@ -65,7 +65,7 @@ const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
         <ApplicationTabRow
           index={index}
           formUuid={form.uuid}
-          sectionId={uuid}
+          stepId={uuid}
           values={values}
           entity={currentPitchEntity}
         />

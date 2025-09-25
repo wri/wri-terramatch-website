@@ -1,13 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import { getRequestedInformationForm } from "@/components/extensive/WizardForm/utils";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import FormModelProvider, { FormModel } from "@/context/formModel.provider";
-import FrameworkProvider, { useFramework } from "@/context/framework.provider";
+import { useFramework } from "@/context/framework.provider";
+import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
   useGetV2ApplicationsUUID,
   usePatchV2FormsSubmissionsUUID,
@@ -72,48 +73,45 @@ const RequestMoreInformationPage = () => {
     }
     return models;
   }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(submission?.form_uuid);
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={applicationLoading}>
-        <FrameworkProvider frameworkKey={framework}>
-          <FormModelProvider models={formModels}>
-            <WizardForm
-              disableInitialAutoProgress
-              steps={formSteps}
-              nextButtonText={t("Save and Continue")}
-              submitButtonText={t("Submit")}
-              hideBackButton={false}
-              onBackFirstStep={router.back}
-              onCloseForm={() => router.push(`/applications/${uuid}`)}
-              onChange={data =>
-                updateSubmission({ pathParams: { uuid: submission?.uuid ?? "" }, body: { answers: data } })
+      <LoadingContainer loading={applicationLoading || !providerLoaded}>
+        <WizardForm
+          fieldsProvider={fieldsProvider}
+          models={formModels}
+          framework={framework}
+          disableInitialAutoProgress
+          nextButtonText={t("Save and Continue")}
+          submitButtonText={t("Submit")}
+          hideBackButton={false}
+          onBackFirstStep={router.back}
+          onCloseForm={() => router.push(`/applications/${uuid}`)}
+          onChange={data => updateSubmission({ pathParams: { uuid: submission?.uuid ?? "" }, body: { answers: data } })}
+          formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
+          onSubmit={() =>
+            submitFormSubmission({
+              pathParams: {
+                uuid: submission?.uuid ?? ""
               }
-              formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-              onSubmit={() =>
-                submitFormSubmission({
-                  pathParams: {
-                    uuid: submission?.uuid ?? ""
-                  }
-                })
-              }
-              submitButtonDisable={isSubmitting}
-              defaultValues={defaultValues}
-              tabOptions={{
-                markDone: true,
-                disableFutureTabs: true
-              }}
-              summaryOptions={{
-                title: t("Review Application Details"),
-                downloadButtonText: t("Download Application")
-              }}
-              title={submission?.form?.title}
-              roundedCorners
-              //@ts-ignore
-              formSubmissionOrg={submission?.organisation_attributes}
-            />
-          </FormModelProvider>
-        </FrameworkProvider>
+            })
+          }
+          submitButtonDisable={isSubmitting}
+          defaultValues={defaultValues}
+          tabOptions={{
+            markDone: true,
+            disableFutureTabs: true
+          }}
+          summaryOptions={{
+            title: t("Review Application Details"),
+            downloadButtonText: t("Download Application")
+          }}
+          title={submission?.form?.title}
+          roundedCorners
+          //@ts-ignore
+          formSubmissionOrg={submission?.organisation_attributes}
+        />
       </LoadingContainer>
     </BackgroundLayout>
   );

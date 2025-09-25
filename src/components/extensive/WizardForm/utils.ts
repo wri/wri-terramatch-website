@@ -6,12 +6,12 @@ import * as yup from "yup";
 import { AnySchema } from "yup";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { FormQuestionContextType, useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
-import { Answer, QuestionDefinition } from "@/components/extensive/WizardForm/types";
+import { Answer, FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { loadGadmCodes } from "@/connections/Gadm";
 import { selectChildQuestions } from "@/connections/util/Form";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
+import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { FormRead } from "@/generated/apiSchemas";
 import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
@@ -19,15 +19,11 @@ import { Option, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-export const getSchema = (
-  questions: QuestionDefinition[],
-  t: typeof useT,
-  framework: Framework = Framework.UNDEFINED
-) => {
+export const getSchema = (questions: FieldDefinition[], t: typeof useT, framework: Framework = Framework.UNDEFINED) => {
   return yup.object(getSchemaFields(questions, t, framework));
 };
 
-export const questionDtoToDefinition = (question: FormQuestionDto): QuestionDefinition => ({
+export const questionDtoToDefinition = (question: FormQuestionDto): FieldDefinition => ({
   ...question,
   name: question.uuid
 });
@@ -47,16 +43,16 @@ export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {
 };
 
 export const useFilterFieldName = (linkedFieldKey?: string) => {
-  const { linkedFieldQuestion } = useFormQuestions();
-  return useMemo(() => {
-    const filterKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
-    return filterKey == null ? undefined : linkedFieldQuestion(filterKey)?.name;
-  }, [linkedFieldKey, linkedFieldQuestion]);
+  const { fieldByKey } = useFieldsProvider();
+  return useMemo(
+    () => fieldByKey(SELECT_FILTER_QUESTION[linkedFieldKey ?? ""] ?? "")?.name,
+    [fieldByKey, linkedFieldKey]
+  );
 };
 
 const selectChildDefinitions = (parentId: string) => selectChildQuestions(parentId).map(questionDtoToDefinition);
 
-const getSchemaFields = (questions: QuestionDefinition[], t: typeof useT, framework: Framework) => {
+const getSchemaFields = (questions: FieldDefinition[], t: typeof useT, framework: Framework) => {
   let schema: Dictionary<AnySchema> = {};
 
   for (const question of questions) {
@@ -97,36 +93,48 @@ const getSchemaFields = (questions: QuestionDefinition[], t: typeof useT, framew
   return schema;
 };
 
+export const childIdsWithCondition = (fieldId: string, condition: boolean, fieldsProvider: FormFieldsProvider) =>
+  (
+    fieldsProvider
+      .childIds(fieldId)
+      .map(childId => fieldsProvider.fieldById(childId))
+      .filter(child => child != null && child.showOnParentCondition === condition) as FieldDefinition[]
+  ).map(({ name }) => name);
+
 /**
  * Some form answers require data from external sources to be able to display the title associated
  * with the value in the form field (currently just GADM codes). This method goes through the given
  * set of form fields and caches all data that will be needed by synchronous methods like getAnswer()
  */
 export const loadExternalAnswerSources = async (
-  questions: QuestionDefinition[],
+  fieldIds: string[],
   values: Dictionary<any>,
-  formQuestionContext: FormQuestionContextType
+  fieldsProvider: FormFieldsProvider
 ) => {
   const promises: Promise<unknown>[] = [];
 
-  for (const question of questions) {
-    if (question.inputType === "conditional") {
-      const children = formQuestionContext
-        .childQuestions(question.name)
-        .filter(({ showOnParentCondition }) => showOnParentCondition === values[question.name]);
-      promises.push(loadExternalAnswerSources(children, values, formQuestionContext));
-    } else if (question.inputType === "select") {
-      if (!question.optionsList?.startsWith("gadm-level-")) continue;
+  for (const fieldId of fieldIds) {
+    const field = fieldsProvider.fieldById(fieldId);
+    if (field == null) continue;
 
-      const level = Number(question.optionsList.slice(-1)) as 0 | 1 | 2;
+    if (field.inputType === "conditional") {
+      promises.push(
+        loadExternalAnswerSources(
+          childIdsWithCondition(fieldId, values[fieldId], fieldsProvider),
+          values,
+          fieldsProvider
+        )
+      );
+    } else if (field.inputType === "select") {
+      if (!field.optionsList?.startsWith("gadm-level-")) continue;
+
+      const level = Number(field.optionsList.slice(-1)) as 0 | 1 | 2;
       if (level === 0) {
         promises.push(loadGadmCodes({ level }));
       } else {
-        const filterField = SELECT_FILTER_QUESTION[question.linkedFieldKey ?? ""];
+        const filterField = SELECT_FILTER_QUESTION[field.linkedFieldKey ?? ""];
         if (filterField != null) {
-          const parentCodes = toArray(
-            values?.[formQuestionContext.linkedFieldQuestion(filterField)?.name ?? ""] ?? []
-          ) as string[];
+          const parentCodes = toArray(values?.[fieldsProvider.fieldByKey(filterField)?.name ?? ""] ?? []) as string[];
           if (!isEmpty(parentCodes)) {
             promises.push(loadGadmCodes({ level, parentCodes }));
           }
@@ -138,10 +146,10 @@ export const loadExternalAnswerSources = async (
   await Promise.all(promises);
 };
 
-export const getAnswer = (question: QuestionDefinition, values: Dictionary<any>): Answer =>
+export const getAnswer = (question: FieldDefinition, values: Dictionary<any>): Answer =>
   FormFieldFactories[question.inputType].getAnswer(question, values);
 
-export const getFormattedAnswer = (question: QuestionDefinition, values: Dictionary<any>): string | undefined => {
+export const getFormattedAnswer = (question: FieldDefinition, values: Dictionary<any>): string | undefined => {
   const answer = getAnswer(question, values);
 
   if (Array.isArray(answer) && question.inputType === "file") {
@@ -158,11 +166,14 @@ export const getFormattedAnswer = (question: QuestionDefinition, values: Diction
   }
 };
 
-export const downloadAnswersCSV = (questions: QuestionDefinition[], values: Dictionary<any>) => {
+export const downloadAnswersCSV = (fieldsProvider: FormFieldsProvider, values: Dictionary<any>) => {
   const csv = new CSVGenerator();
   csv.pushRow(["Question", "Answer"]);
-  for (const question of questions) {
-    appendAnswersAsCSVRow(csv, question, values);
+  for (const stepId of fieldsProvider.stepIds()) {
+    for (const fieldId of fieldsProvider.fieldIds(stepId)) {
+      const field = fieldsProvider.fieldById(fieldId);
+      if (field != null) appendAnswersAsCSVRow(csv, field, values);
+    }
   }
   csv.download("answers.csv");
 };
@@ -188,7 +199,7 @@ export const appendTableAnswers = (
   });
 };
 
-export const appendAnswersAsCSVRow = (csv: CSVGenerator, question: QuestionDefinition, values: Dictionary<any>) => {
+export const appendAnswersAsCSVRow = (csv: CSVGenerator, question: FieldDefinition, values: Dictionary<any>) => {
   FormFieldFactories[question.inputType].appendAnswers(question, csv, values);
 };
 

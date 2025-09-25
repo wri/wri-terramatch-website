@@ -2,10 +2,10 @@ import { FC, useMemo } from "react";
 import { FieldError, UseFormReturn } from "react-hook-form";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { QuestionDefinition, SharedFieldProps } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, SharedFieldProps } from "@/components/extensive/WizardForm/types";
 
 type FormQuestionProps = {
-  question: QuestionDefinition;
+  question: FieldDefinition;
   formHook: UseFormReturn;
   onChange: () => void;
   formSubmissionOrg?: any;

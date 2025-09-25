@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
@@ -33,7 +33,7 @@ export const getFundingTypeTableColumns = (
   { accessorKey: "amount", header: t("Funding amount") }
 ];
 
-export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) => t): QuestionDefinition[] => [
+export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) => t): FieldDefinition[] => [
   {
     label: t("Select Funding year"),
     name: "year",

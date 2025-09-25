@@ -22,23 +22,23 @@ import Text from "@/components/elements/Text/Text";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
-import { useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { selectChildQuestions, selectQuestions, useFormSection, useSectionQuestions } from "@/connections/util/Form";
 import { FORM_POLYGONS } from "@/constants/statuses";
+import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
-import { getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
+import { childIdsWithCondition, getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
-  sectionId: string;
+  stepId: string;
   index: number;
   nullText?: string;
   entity?: Entity;
@@ -56,8 +56,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   let { record } = useShowContext();
   const { type, entity } = props;
-  const questions = useSectionQuestions(props.sectionId);
-  const formQuestionContext = useFormQuestions();
+  const fieldsProvider = useFieldsProvider();
 
   record = { organisation: props.organisation, ...record };
   const uuid = entity?.entityUUID ?? record?.uuid;
@@ -102,23 +101,26 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
   useEffect(() => {
-    loadExternalAnswerSources(questions ?? [], props.values, formQuestionContext).finally(() =>
+    loadExternalAnswerSources(fieldsProvider.fieldIds(props.stepId), props.values, fieldsProvider).finally(() =>
       setExternalSourcesLoaded(true)
     );
-  }, [formQuestionContext, props.values, questions]);
+  }, [fieldsProvider, props.stepId, props.values]);
 
   return useMemo(
     () =>
-      externalSourcesLoaded ? getFormEntries(props, t, undefined, entityPolygonData, bbox, mapFunctions, record) : [],
+      externalSourcesLoaded
+        ? getFormEntries(fieldsProvider, props, t, undefined, entityPolygonData, bbox, mapFunctions, record)
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
   );
 };
 
 export const getFormEntries = (
-  { sectionId, values, nullText, type, entity }: GetFormEntriesProps,
+  fieldsProvider: FormFieldsProvider,
+  { stepId, values, nullText, type, entity }: GetFormEntriesProps,
   t: typeof useT,
-  questions = selectQuestions(sectionId),
+  fieldIds = fieldsProvider.fieldIds(stepId),
   entityPolygonData?: any,
   bbox?: any,
   mapFunctions?: any,
@@ -126,12 +128,15 @@ export const getFormEntries = (
 ) => {
   const outputArr: FormEntry[] = [];
 
-  questions.forEach(question => {
-    switch (question.inputType) {
+  fieldIds.forEach(fieldId => {
+    const field = fieldsProvider.fieldById(fieldId);
+    if (field == null) return;
+
+    switch (field.inputType) {
       case "treeSpecies": {
-        const value = (getAnswer(question, values) ?? []) as TreeSpeciesValue[];
+        const value = (getAnswer(field, values) ?? []) as TreeSpeciesValue[];
         const collection = value[0]?.collection;
-        outputArr.push(treeSpeciesSummary(collection, entity, question, values));
+        outputArr.push(treeSpeciesSummary(collection, entity, field, values));
         break;
       }
 
@@ -144,19 +149,19 @@ export const getFormEntries = (
       case "indirectBeneficiaries":
       case "employees":
       case "associates": {
-        const entries = (values[question.uuid]?.[0] ?? {}).demographics ?? [];
+        const entries = (values[field.name]?.[0] ?? {}).demographics ?? [];
         outputArr.push({
-          title: question.label,
-          inputType: question.inputType,
-          value: <DemographicsCollapseGrid entries={entries} variant={GRID_VARIANT_NARROW} type={question.inputType} />
+          title: field.label,
+          inputType: field.inputType,
+          value: <DemographicsCollapseGrid entries={entries} variant={GRID_VARIANT_NARROW} type={field.inputType} />
         });
         break;
       }
 
       case "mapInput": {
         outputArr.push({
-          title: question.label,
-          inputType: question.inputType,
+          title: field.label,
+          inputType: field.inputType,
           value: entityPolygonData && Object.keys(entityPolygonData).length !== 0 && (
             <MapContainer
               polygonsData={entityPolygonData}
@@ -175,9 +180,9 @@ export const getFormEntries = (
       }
 
       case "financialIndicators": {
-        const entries = values[question.uuid];
+        const entries = values[field.name];
         if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
-        const years = question.years;
+        const years = field.years;
         const columnMaps: Record<string, string[]> = {
           documentationData: documentationColumnsMap
         };
@@ -248,8 +253,8 @@ export const getFormEntries = (
           .join("");
 
         const output = {
-          title: question.label,
-          inputType: question.inputType,
+          title: field.label,
+          inputType: field.inputType,
           value: value ?? t("Answer Not Provided")
         };
 
@@ -258,12 +263,15 @@ export const getFormEntries = (
       }
 
       case "tableInput": {
-        const rows = selectChildQuestions(question.uuid);
+        const rows = fieldsProvider
+          .childIds(field.name)
+          .map(fieldsProvider.fieldById)
+          .filter(field => field != null) as FieldDefinition[];
         outputArr.push({
-          title: question.label,
-          inputType: question.inputType,
+          title: field.label,
+          inputType: field.inputType,
           value: rows
-            .map(row => `${row.label}: ${values[question.uuid]?.[row.name ?? ""] ?? t("Answer Not Provided")}`)
+            .map(row => `${row.label}: ${values[field.name]?.[row.name ?? ""] ?? t("Answer Not Provided")}`)
             .join("<br/>")
         });
         break;
@@ -277,46 +285,45 @@ export const getFormEntries = (
       case "invasive": {
         let headers: AccessorKeyColumnDef<any>[] = [];
 
-        if (question.inputType === "leaderships") headers = getLeadershipsTableColumns(t);
-        else if (question.inputType === "ownershipStake") headers = getOwnershipTableColumns(t);
-        else if (question.inputType === "fundingType") headers = getFundingTypeTableColumns(t);
-        else if (question.inputType === "stratas") headers = getStrataTableColumns(t);
-        else if (question.inputType === "disturbances") {
-          const { with_intensity: hasIntensity, with_extent: hasExtent } = (question.additionalProps ?? {}) as {
+        if (field.inputType === "leaderships") headers = getLeadershipsTableColumns(t);
+        else if (field.inputType === "ownershipStake") headers = getOwnershipTableColumns(t);
+        else if (field.inputType === "fundingType") headers = getFundingTypeTableColumns(t);
+        else if (field.inputType === "stratas") headers = getStrataTableColumns(t);
+        else if (field.inputType === "disturbances") {
+          const { with_intensity: hasIntensity, with_extent: hasExtent } = (field.additionalProps ?? {}) as {
             with_intensity: boolean | undefined;
             with_extent: boolean | undefined;
           };
           headers = getDisturbanceTableColumns({ hasIntensity, hasExtent }, t);
-        } else if (question.inputType === "invasive") headers = getInvasiveTableColumns(t);
+        } else if (field.inputType === "invasive") headers = getInvasiveTableColumns(t);
 
-        outputArr.push(dataTableSummary(headers, question, values));
+        outputArr.push(dataTableSummary(headers, field, values));
         break;
       }
 
       case "seedings": {
-        if (question.additionalProps?.capture_count === true) {
+        if (field.additionalProps?.capture_count === true) {
           // RHFSeedingTableInput
-          outputArr.push(treeSpeciesSummary("seeds", entity, question, values));
+          outputArr.push(treeSpeciesSummary("seeds", entity, field, values));
         } else {
           // RHFSeedingTable
-          outputArr.push(dataTableSummary(getSeedingTableColumns(t, false), question, values));
+          outputArr.push(dataTableSummary(getSeedingTableColumns(t, false), field, values));
         }
         break;
       }
 
       case "conditional": {
         outputArr.push({
-          title: question.label ?? "",
-          inputType: question.inputType,
-          value: getFormattedAnswer(question, values) ?? nullText ?? t("Answer Not Provided")
+          title: field.label ?? "",
+          inputType: field.inputType,
+          value: getFormattedAnswer(field, values) ?? nullText ?? t("Answer Not Provided")
         });
         outputArr.push(
           ...getFormEntries(
-            { values, nullText, sectionId, type, entity },
+            fieldsProvider,
+            { values, nullText, stepId, type, entity },
             t,
-            selectChildQuestions(question.uuid).filter(
-              ({ showOnParentCondition }) => showOnParentCondition === values[question.uuid]
-            )
+            childIdsWithCondition(field.name, values[field.name], fieldsProvider)
           )
         );
         break;
@@ -324,9 +331,9 @@ export const getFormEntries = (
 
       default: {
         outputArr.push({
-          title: question.label ?? "",
-          inputType: question.inputType,
-          value: getFormattedAnswer(question, values) ?? nullText ?? t("Answer Not Provided")
+          title: field.label ?? "",
+          inputType: field.inputType,
+          value: getFormattedAnswer(field, values) ?? nullText ?? t("Answer Not Provided")
         });
       }
     }
@@ -335,9 +342,9 @@ export const getFormEntries = (
   return outputArr;
 };
 
-const dataTableSummary = (headers: AccessorKeyColumnDef<any>[], question: FormQuestionDto, values: any) => {
+const dataTableSummary = (headers: AccessorKeyColumnDef<any>[], field: FieldDefinition, values: any) => {
   const stringValues: string[] = [];
-  values?.[question.uuid]?.forEach((entry: any) => {
+  values?.[field.name]?.forEach((entry: any) => {
     const row: (string | undefined)[] = [];
 
     Object.values(headers).forEach(h => {
@@ -349,8 +356,8 @@ const dataTableSummary = (headers: AccessorKeyColumnDef<any>[], question: FormQu
   });
 
   return {
-    title: question.label,
-    inputType: question.inputType,
+    title: field.label,
+    inputType: field.inputType,
     value: stringValues.join("<br/>")
   };
 };
@@ -358,10 +365,10 @@ const dataTableSummary = (headers: AccessorKeyColumnDef<any>[], question: FormQu
 const treeSpeciesSummary = (
   collection: string | undefined,
   entity: Entity | undefined,
-  question: FormQuestionDto,
+  field: FieldDefinition,
   values: any
 ) => {
-  const value = (getAnswer(question, values) ?? []) as TreeSpeciesValue[];
+  const value = (getAnswer(field, values) ?? []) as TreeSpeciesValue[];
   const plants = value.map(
     ({ name, amount, taxon_id }) =>
       ({
@@ -374,10 +381,10 @@ const treeSpeciesSummary = (
       } as PlantData)
   );
   const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
-  const tableType = question.additionalProps?.with_numbers !== true ? "noCount" : undefined;
+  const tableType = field.additionalProps?.with_numbers !== true ? "noCount" : undefined;
   return {
-    title: question.label,
-    inputType: question.inputType,
+    title: field.label,
+    inputType: field.inputType,
     value: (
       <TreeSpeciesTable
         {...{ plants, collection, tableType }}
@@ -412,14 +419,14 @@ const getEntityPolygonData = (
   return null;
 };
 
-const FormSummaryRow = ({ sectionId, index, ...props }: FormSummaryRowProps) => {
+const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
-  const section = useFormSection(sectionId);
-  const entries = useGetFormEntries({ sectionId, ...props });
+  const { title } = useFieldsProvider().step(stepId) ?? {};
+  const entries = useGetFormEntries({ stepId, ...props });
   return (
     <Accordion
       variant="secondary"
-      title={section?.title ?? ""}
+      title={title ?? ""}
       ctaButtonProps={
         props.onEdit
           ? {

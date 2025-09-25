@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import FrameworkProvider from "@/context/framework.provider";
+import { toFramework } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { useEntityForm } from "@/hooks/useFormGet";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
@@ -27,6 +27,7 @@ const EditEntityPage = () => {
   const { formData: data, isLoading, loadError } = useEntityForm(entityName, entityUUID);
   //@ts-ignore
   const formData = (data?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
+  const framework = toFramework(entity.framework_key);
 
   if (loadError) {
     return notFound();
@@ -34,12 +35,10 @@ const EditEntityPage = () => {
 
   return (
     <BackgroundLayout>
-      <FrameworkProvider frameworkKey={entity.framework_key}>
-        <LoadingContainer loading={isLoading || getEntityLoading}>
-          <EditEntityForm {...{ entityName, entityUUID, entity, formData }} />
-        </LoadingContainer>
-        <PageFooter />
-      </FrameworkProvider>
+      <LoadingContainer loading={isLoading || getEntityLoading}>
+        <EditEntityForm {...{ framework, entityName, entityUUID, entity, formData }} />
+      </LoadingContainer>
+      <PageFooter />
     </BackgroundLayout>
   );
 };

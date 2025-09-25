@@ -8,8 +8,8 @@ import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { FormModelType } from "@/connections/util/Form";
-import FormModelProvider from "@/context/formModel.provider";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import { toFramework } from "@/context/framework.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -62,6 +62,15 @@ export const EntityEdit = () => {
 
   const { form_title: title } = entityData;
 
+  const model = useMemo(() => {
+    const model = camelCase(
+      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+    ) as FormModelType;
+    return { model, uuid: entityUUID };
+  }, [entityName, entityUUID]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
+  const framework = toFramework(form?.frameworkKey);
+
   if (loadError != null || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -85,44 +94,32 @@ export const EntityEdit = () => {
     start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
   };
 
-  const formModelType = useMemo(
-    () =>
-      camelCase(
-        isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
-      ) as FormModelType,
-    [entityName]
-  );
-
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <LoadingContainer loading={isLoading}>
-        {form == null ? null : (
-          <FrameworkProvider frameworkKey={form.frameworkKey as Framework}>
-            <FormModelProvider model={formModelType} uuid={entityUUID}>
-              <WizardForm
-                formUuid={form.uuid}
-                errors={error}
-                onBackFirstStep={() => navigate("..")}
-                onChange={data => updateEntity({ answers: normalizer(data) })}
-                formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-                onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-                defaultValues={defaultValues}
-                title={bannerTitle}
-                tabOptions={{
-                  markDone: true,
-                  disableFutureTabs: true
-                }}
-                summaryOptions={{
-                  title: "Review Details",
-                  downloadButtonText: "Download"
-                }}
-                roundedCorners
-                hideSaveAndCloseButton
-                formSubmissionOrg={formSubmissionOrg}
-              />
-            </FormModelProvider>
-          </FrameworkProvider>
-        )}
+      <LoadingContainer loading={isLoading || !providerLoaded}>
+        <WizardForm
+          models={model}
+          fieldsProvider={fieldsProvider}
+          framework={framework}
+          errors={error}
+          onBackFirstStep={() => navigate("..")}
+          onChange={data => updateEntity({ answers: normalizer(data) })}
+          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
+          defaultValues={defaultValues}
+          title={bannerTitle}
+          tabOptions={{
+            markDone: true,
+            disableFutureTabs: true
+          }}
+          summaryOptions={{
+            title: "Review Details",
+            downloadButtonText: "Download"
+          }}
+          roundedCorners
+          hideSaveAndCloseButton
+          formSubmissionOrg={formSubmissionOrg}
+        />
       </LoadingContainer>
     </div>
   );

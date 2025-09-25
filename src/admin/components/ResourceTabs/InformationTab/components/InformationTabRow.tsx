@@ -10,7 +10,7 @@ import { useFormSection } from "@/connections/util/Form";
 
 const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries({ ...props, type });
-  const section = useFormSection(props.sectionId);
+  const section = useFormSection(props.stepId);
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">

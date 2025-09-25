@@ -4,11 +4,12 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
+import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { pruneEntityCache } from "@/connections/Entity";
 import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
-import FormModelProvider from "@/context/formModel.provider";
-import { useFrameworkContext } from "@/context/framework.provider";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import {
@@ -23,6 +24,7 @@ import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
 
 interface EditEntityFormProps {
+  framework: Framework;
   entityName: EntityName;
   entityUUID: string;
   entity: Record<string, any>;
@@ -103,13 +105,13 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     };
   }, [formSteps, mode]);
 
-  const formModelType = useMemo(
-    () =>
-      camelCase(
-        isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
-      ) as FormModelType,
-    [entityName]
-  );
+  const model = useMemo(() => {
+    const model = camelCase(
+      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+    ) as FormModelType;
+    return { model, uuid: entityUUID };
+  }, [entityName, entityUUID]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid);
 
   const formSubmissionOrg = {
     uuid: organisation?.uuid,
@@ -119,11 +121,13 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   };
 
   return (
-    <FormModelProvider model={formModelType} uuid={entityUUID}>
+    <LoadingContainer loading={!providerLoaded}>
       <CurrencyProvider>
         <WizardForm
+          framework={framework}
+          models={model}
+          fieldsProvider={fieldsProvider}
           formSubmissionOrg={formSubmissionOrg}
-          steps={formSteps!}
           errors={error}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push("/home")}
@@ -168,7 +172,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
           {...initialStepProps}
         />
       </CurrencyProvider>
-    </FormModelProvider>
+    </LoadingContainer>
   );
 };
 

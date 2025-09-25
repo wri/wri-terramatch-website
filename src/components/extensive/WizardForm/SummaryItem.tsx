@@ -3,13 +3,12 @@ import { FC, SetStateAction } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { FormFooter } from "@/components/extensive/WizardForm/FormFooter";
-import { useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 type SummaryItemProps = {
-  formUuid: string;
   title: string;
   subtitle?: string;
   formHook: UseFormReturn;
@@ -20,7 +19,6 @@ type SummaryItemProps = {
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
-  formUuid,
   title,
   subtitle,
   formHook,
@@ -30,7 +28,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   submitButtonDisable
 }) => {
   const t = useT();
-  const { allQuestions } = useFormQuestions();
+  const fieldsProvider = useFieldsProvider();
   return (
     <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
       <FormStepHeader
@@ -42,11 +40,11 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
-                onClick: () => downloadAnswersCSV(allQuestions, formHook.getValues())
+                onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
         }
       >
-        <FormSummary values={formHook.getValues()} formUuid={formUuid} onEdit={setSelectedStepIndex} />
+        <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
       <FormFooter
         variant="sticky"

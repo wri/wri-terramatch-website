@@ -4,6 +4,7 @@ import { useMemo } from "react";
 
 import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { normalizedFormDefaultValue } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
 
@@ -40,11 +41,20 @@ export default function useFormChanges(
   const t = useT();
   const currentValues = useMemo(() => normalizedFormDefaultValue(current, steps), [current, steps]);
   const changedValues = useMemo(() => normalizedFormDefaultValue(changed, steps), [changed, steps]);
+  const fieldsProvider = useFieldsProvider();
   return useMemo(
     () =>
       steps.map(step => {
-        const currentEntries = getFormEntries({ values: currentValues, nullText: "-", step, entity }, t);
-        const changedEntries = getFormEntries({ values: changedValues, nullText: "-", step, entity }, t);
+        const currentEntries = getFormEntries(
+          fieldsProvider,
+          { values: currentValues, nullText: "-", step, entity },
+          t
+        );
+        const changedEntries = getFormEntries(
+          fieldsProvider,
+          { values: changedValues, nullText: "-", step, entity },
+          t
+        );
 
         return {
           step,
@@ -62,6 +72,6 @@ export default function useFormChanges(
           })
         };
       }),
-    [steps, currentValues, entity, t, changedValues]
+    [steps, fieldsProvider, currentValues, entity, t, changedValues]
   );
 }

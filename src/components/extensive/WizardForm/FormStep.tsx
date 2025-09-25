@@ -9,7 +9,7 @@ import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils
 import { useFormSection, useSectionQuestions } from "@/connections/util/Form";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  sectionId: string;
+  stepId: string;
   formHook: UseFormReturn;
   onChange: () => void;
   actionButtonProps?: IButtonProps;
@@ -17,7 +17,7 @@ interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>,
 }
 
 export const FormStep = ({
-  sectionId,
+  stepId,
   formHook,
   onChange,
   actionButtonProps,
@@ -25,13 +25,13 @@ export const FormStep = ({
   formSubmissionOrg,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
-  const questions = useSectionQuestions(sectionId);
+  const questions = useSectionQuestions(stepId);
   const questionDefinitions = useMemo(() => (questions ?? []).map(questionDtoToDefinition), [questions]);
-  const section = useFormSection(sectionId);
+  const section = useFormSection(stepId);
 
   useEffect(() => {
     formHook.clearErrors();
-  }, [sectionId, formHook]);
+  }, [stepId, formHook]);
 
   if (section == null) return null;
 

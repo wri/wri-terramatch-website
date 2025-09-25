@@ -11768,6 +11768,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -11933,6 +11934,7 @@ export type PostV2FormsSubmissionsResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -12096,6 +12098,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -12253,6 +12256,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -12462,6 +12466,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -12626,6 +12631,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -13239,6 +13245,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
     id?: string;
     uuid?: string;
     name?: string;
+    form_uuid?: string;
     form?: {
       id?: number;
       uuid?: string;
@@ -13899,6 +13906,7 @@ export type GetV2ApplicationsUUIDResponse = {
     id?: string;
     uuid?: string;
     name?: string;
+    form_uuid?: string;
     form?: {
       id?: number;
       uuid?: string;

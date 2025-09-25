@@ -4243,6 +4243,7 @@ export type ProjectFullRead = {
       id?: string;
       uuid?: string;
       name?: string;
+      form_uuid?: string;
       form?: {
         id?: number;
         uuid?: string;
@@ -5216,6 +5217,7 @@ export type FormSubmissionRead = {
   id?: string;
   uuid?: string;
   name?: string;
+  form_uuid?: string;
   form?: {
     id?: number;
     uuid?: string;
@@ -5748,6 +5750,7 @@ export type ApplicationRead = {
     id?: string;
     uuid?: string;
     name?: string;
+    form_uuid?: string;
     form?: {
       id?: number;
       uuid?: string;

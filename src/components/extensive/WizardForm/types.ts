@@ -30,6 +30,7 @@ import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeci
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Framework } from "@/context/framework.provider";
 import {
+  FormDto,
   FormQuestionDto,
   FormQuestionOptionDto,
   FormTableHeaderDto
@@ -39,8 +40,20 @@ import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 export type FieldInputType = FormQuestionDto["inputType"];
 
-export type QuestionDefinition = {
+export type FormDefinition = Omit<
+  FormDto,
+  "uuid" | "type" | "deadlineAt" | "published" | "stageId" | "fundingProgrammeId"
+>;
+
+export type StepDefinition = {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+};
+
+export type FieldDefinition = {
   inputType: FieldInputType;
+  // Functions as the ID for form fields. When the fields come from the API, this is also the UUID.
   name: string;
   label: string;
   placeholder?: string | null;
@@ -75,10 +88,10 @@ export type SharedFieldProps = {
 };
 
 export type FormFieldFactory = {
-  createValidator: (question: QuestionDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
-  renderInput: (question: QuestionDefinition, sharedProps: SharedFieldProps) => ReactElement;
-  getAnswer: (question: QuestionDefinition, formValues: Dictionary<any>) => Answer;
-  appendAnswers: (question: QuestionDefinition, csv: CSVGenerator, formValues: Dictionary<any>) => void;
+  createValidator: (question: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  renderInput: (question: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
+  getAnswer: (question: FieldDefinition, formValues: Dictionary<any>) => Answer;
+  appendAnswers: (question: FieldDefinition, csv: CSVGenerator, formValues: Dictionary<any>) => void;
 };
 
 export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;

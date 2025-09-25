@@ -11,7 +11,7 @@ import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 
 declare module "@tanstack/react-table" {
@@ -25,7 +25,7 @@ declare module "@tanstack/react-table" {
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   modalEditTitle?: string;
-  questions: QuestionDefinition[];
+  questions: FieldDefinition[];
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];

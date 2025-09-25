@@ -8,7 +8,7 @@ import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import SimpleForm from "@/components/extensive/SimpleForm/SimpleForm";
-import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getSchema } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
 
@@ -17,7 +17,7 @@ import { ModalBase } from "./ModalsBases";
 
 export interface FormModalProps {
   title?: string;
-  questions: QuestionDefinition[];
+  questions: FieldDefinition[];
   onSubmit: (data: any) => void;
   defaultValues?: Record<string, any>;
 }

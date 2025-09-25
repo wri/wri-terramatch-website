@@ -7,11 +7,11 @@ import { twMerge } from "tailwind-merge";
 
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
-import { FormQuestionsProvider } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
-import { selectQuestions, selectSection, selectSections, useForm as useApiForm } from "@/connections/util/Form";
-import { useFramework } from "@/context/framework.provider";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import WizardFormProvider, { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -24,10 +24,12 @@ import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { getSchema, questionDtoToDefinition } from "./utils";
+import { getSchema } from "./utils";
 
 export interface WizardFormProps {
-  formUuid: string;
+  fieldsProvider: FormFieldsProvider;
+  models: FormModelsDefinition;
+  framework: Framework;
   defaultValues?: any;
   onStepChange?: (values: any) => void;
   onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
@@ -74,32 +76,26 @@ export interface WizardFormProps {
 function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
-  const framework = useFramework();
-  // In most cases, we should expect the form already to be loaded by our parent, but this simply ensures
-  // that it's cached correctly. Without the form already loaded in the connection cache, all the section / question
-  // selectors in use won't work correctly.
-  const [, { data: form }] = useApiForm({ id: props.formUuid, enabled: props.formUuid != null });
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const sections = useMemo(
-    () =>
-      form?.uuid == null
-        ? []
-        : selectSections(form?.uuid).map(({ uuid }) => ({
-            sectionId: uuid,
-            title: selectSection(uuid)?.title,
-            validation: getSchema(
-              selectQuestions(uuid)
-                .filter(({ parentId }) => parentId == null)
-                .map(questionDtoToDefinition),
-              t,
-              framework
-            )
-          })),
-    [form?.uuid, framework, t]
-  );
-  const selectedSection = sections[selectedStepIndex];
+  const steps = useMemo(() => {
+    return props.fieldsProvider.stepIds().map(stepId => {
+      return {
+        id: stepId,
+        title: props.fieldsProvider.step(stepId)?.title,
+        validation: getSchema(
+          props.fieldsProvider
+            .fieldIds(stepId)
+            .map(fieldId => props.fieldsProvider.fieldById(fieldId))
+            .filter(field => field != null) as FieldDefinition[],
+          t,
+          props.framework
+        )
+      };
+    });
+  }, [props.framework, props.fieldsProvider, t]);
+  const selectedSection = steps[selectedStepIndex];
 
-  const lastIndex = props.summaryOptions ? sections.length : sections.length - 1;
+  const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
       () =>
@@ -181,7 +177,7 @@ function WizardForm(props: WizardFormProps) {
     if (props.disableAutoProgress || props.disableInitialAutoProgress) return;
 
     // If none of the steps has an invalid field, use the last step
-    const stepIndex = sections.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
+    const stepIndex = steps.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
   });
 
@@ -198,7 +194,7 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const renderStep = useCallback(
-    (sectionId: string, title: string | null, index: number) => (
+    (stepId: string, title: string | null, index: number) => (
       <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
         {index === 0 && title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
@@ -213,7 +209,7 @@ function WizardForm(props: WizardFormProps) {
         )}
         <FormStep
           id="step"
-          sectionId={sectionId}
+          stepId={stepId}
           formHook={formHook}
           onChange={onChange}
           formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
@@ -251,23 +247,22 @@ function WizardForm(props: WizardFormProps) {
 
   const stepTabItems = useMemo(
     () =>
-      sections.map(({ sectionId, title }, index) => ({
+      steps.map(({ id, title }, index) => ({
         title: t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title }),
         done: props.tabOptions?.markDone && index < selectedStepIndex,
         disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
-        renderBody: () => renderStep(sectionId, title ?? null, index)
+        renderBody: () => renderStep(id, title ?? null, index)
       })),
-    [props.tabOptions?.disableFutureTabs, props.tabOptions?.markDone, renderStep, sections, selectedStepIndex, t]
+    [props.tabOptions?.disableFutureTabs, props.tabOptions?.markDone, renderStep, steps, selectedStepIndex, t]
   );
 
   const summaryItem = useMemo(
     () => ({
       title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
-      done: props.tabOptions?.markDone && sections.length < selectedStepIndex,
-      disabled: props.tabOptions?.disableFutureTabs && sections.length > selectedStepIndex,
+      done: props.tabOptions?.markDone && steps.length < selectedStepIndex,
+      disabled: props.tabOptions?.disableFutureTabs && steps.length > selectedStepIndex,
       renderBody: () => (
         <SummaryItem
-          formUuid={props.formUuid}
           title={props.summaryOptions?.title!}
           subtitle={props.summaryOptions?.subtitle}
           formHook={formHook}
@@ -282,14 +277,13 @@ function WizardForm(props: WizardFormProps) {
       formHook,
       lastIndex,
       onSubmitStep,
-      props.formUuid,
       props.submitButtonDisable,
       props.summaryOptions?.downloadButtonText,
       props.summaryOptions?.subtitle,
       props.summaryOptions?.title,
       props.tabOptions?.disableFutureTabs,
       props.tabOptions?.markDone,
-      sections.length,
+      steps.length,
       selectedStepIndex,
       t
     ]
@@ -299,32 +293,34 @@ function WizardForm(props: WizardFormProps) {
 
   return (
     <div>
-      <FormQuestionsProvider formId={props.formUuid}>
-        {!props.header?.hide && (
-          <WizardFormHeader
-            currentStep={selectedStepIndex + 1}
-            numberOfSteps={tabItems.length}
-            formStatus={props.formStatus}
-            errorMessage={props.errors && t("Something went wrong")}
-            onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
-            title={props.title}
-            subtitle={props.subtitle}
-          />
-        )}
-        <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
-          <Tabs
-            onChangeSelected={setSelectedStepIndex}
-            selectedIndex={selectedStepIndex}
-            tabItems={tabItems}
-            rounded={props.roundedCorners}
-            tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
-            itemOption={{}}
-            carouselOptions={{
-              slidesPerView: 3
-            }}
-          />
-        </div>
-      </FormQuestionsProvider>
+      <FrameworkProvider frameworkKey={props.framework}>
+        <WizardFormProvider models={props.models} fieldsProvider={props.fieldsProvider}>
+          {!props.header?.hide && (
+            <WizardFormHeader
+              currentStep={selectedStepIndex + 1}
+              numberOfSteps={tabItems.length}
+              formStatus={props.formStatus}
+              errorMessage={props.errors && t("Something went wrong")}
+              onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
+              title={props.title}
+              subtitle={props.subtitle}
+            />
+          )}
+          <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
+            <Tabs
+              onChangeSelected={setSelectedStepIndex}
+              selectedIndex={selectedStepIndex}
+              tabItems={tabItems}
+              rounded={props.roundedCorners}
+              tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
+              itemOption={{}}
+              carouselOptions={{
+                slidesPerView: 3
+              }}
+            />
+          </div>
+        </WizardFormProvider>
+      </FrameworkProvider>
     </div>
   );
 }

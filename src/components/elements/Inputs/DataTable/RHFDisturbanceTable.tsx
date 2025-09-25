@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { QuestionDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import {
   getDisturbanceExtentOptions,
   getDisturbanceIntensityOptions,
@@ -61,7 +61,7 @@ export const getDisturbanceTableQuestions = (
   props: { hasIntensity?: boolean; hasExtent?: boolean },
   t: typeof useT | Function = (t: string) => t
 ) => {
-  const questions: QuestionDefinition[] = [
+  const questions: FieldDefinition[] = [
     {
       label: t("Disturbance Type"),
       name: "type",
