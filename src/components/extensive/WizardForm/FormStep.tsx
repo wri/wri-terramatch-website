@@ -5,8 +5,8 @@ import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
 import FormField from "@/components/extensive/WizardForm/FormField";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
-import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
-import { useFormSection, useSectionQuestions } from "@/connections/util/Form";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
+import { isNotNull } from "@/utils/array";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   stepId: string;
@@ -23,26 +23,28 @@ export const FormStep = ({
   children,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
-  const questions = useSectionQuestions(stepId);
-  const questionDefinitions = useMemo(() => (questions ?? []).map(questionDtoToDefinition), [questions]);
-  const section = useFormSection(stepId);
+  const { step, fieldIds, fieldById } = useFieldsProvider();
+  const stepDefinition = step(stepId);
+  const fields = useMemo(() => fieldIds(stepId).map(fieldById).filter(isNotNull), [fieldById, fieldIds, stepId]);
 
   useEffect(() => {
     formHook.clearErrors();
   }, [stepId, formHook]);
 
-  if (section == null) return null;
+  if (stepDefinition == null) return null;
 
   return (
-    <FormStepHeader {...divProps} title={section.title ?? undefined} subtitle={section.description ?? undefined}>
-      {questionDefinitions.length === 0 ? null : (
+    <FormStepHeader
+      {...divProps}
+      title={stepDefinition.title ?? undefined}
+      subtitle={stepDefinition.description ?? undefined}
+    >
+      {fields.length === 0 ? null : (
         <List
-          items={questionDefinitions}
+          items={fields}
           uniqueId="name"
           itemClassName="mt-8"
-          render={question => (
-            <FormField key={question.name} field={question} formHook={formHook} onChange={onChange} />
-          )}
+          render={field => <FormField key={field.name} field={field} formHook={formHook} onChange={onChange} />}
         />
       )}
       {children}

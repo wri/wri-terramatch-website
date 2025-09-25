@@ -19,8 +19,8 @@ import { Option, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-export const getSchema = (questions: FieldDefinition[], t: typeof useT, framework: Framework = Framework.UNDEFINED) => {
-  return yup.object(getSchemaFields(questions, t, framework));
+export const getSchema = (fields: FieldDefinition[], t: typeof useT, framework: Framework = Framework.UNDEFINED) => {
+  return yup.object(getSchemaFields(fields, t, framework));
 };
 
 export const questionDtoToDefinition = (question: FormQuestionDto): FieldDefinition => ({
@@ -52,22 +52,22 @@ export const useFilterFieldName = (linkedFieldKey?: string) => {
 
 const selectChildDefinitions = (parentId: string) => selectChildQuestions(parentId).map(questionDtoToDefinition);
 
-const getSchemaFields = (questions: FieldDefinition[], t: typeof useT, framework: Framework) => {
+const getSchemaFields = (fields: FieldDefinition[], t: typeof useT, framework: Framework) => {
   let schema: Dictionary<AnySchema> = {};
 
-  for (const question of questions) {
-    if (question.inputType === "tableInput") {
-      schema[question.name] = getSchema(selectChildDefinitions(question.name), t, framework);
-    } else if (question.inputType === "conditional") {
-      schema[question.name] = FormFieldFactories[question.inputType]
-        .createValidator(question, t, framework)!
+  for (const field of fields) {
+    if (field.inputType === "tableInput") {
+      schema[field.name] = getSchema(selectChildDefinitions(field.name), t, framework);
+    } else if (field.inputType === "conditional") {
+      schema[field.name] = FormFieldFactories[field.inputType]
+        .createValidator(field, t, framework)!
         .nullable()
-        .label(question.label);
-      for (const child of selectChildDefinitions(question.name)) {
+        .label(field.label);
+      for (const child of selectChildDefinitions(field.name)) {
         const childValidation = FormFieldFactories[child.inputType].createValidator(child, t, framework);
         if (childValidation != null) {
           schema[child.name] = childValidation
-            .when(question.name, {
+            .when(field.name, {
               is: child.showOnParentCondition === true,
               then: schema => schema,
               otherwise: () => yup.mixed().nullable()
@@ -81,12 +81,12 @@ const getSchemaFields = (questions: FieldDefinition[], t: typeof useT, framework
         }
       }
     } else {
-      const validation = FormFieldFactories[question.inputType].createValidator(question, t, framework) ?? yup.mixed();
-      schema[question.name] = validation.nullable().label(question.label ?? "");
+      const validation = FormFieldFactories[field.inputType].createValidator(field, t, framework) ?? yup.mixed();
+      schema[field.name] = validation.nullable().label(field.label ?? "");
     }
 
-    if (question.validation?.required === true && schema[question.name] != null) {
-      schema[question.name] = schema[question.name].required();
+    if (field.validation?.required === true && schema[field.name] != null) {
+      schema[field.name] = schema[field.name].required();
     }
   }
 
@@ -146,13 +146,20 @@ export const loadExternalAnswerSources = async (
   await Promise.all(promises);
 };
 
-export const getAnswer = (question: FieldDefinition, values: Dictionary<any>): Answer =>
-  FormFieldFactories[question.inputType].getAnswer(question, values);
+export const getAnswer = (
+  fields: FieldDefinition,
+  values: Dictionary<any>,
+  fieldsProvider: FormFieldsProvider
+): Answer => FormFieldFactories[fields.inputType].getAnswer(fields, values, fieldsProvider);
 
-export const getFormattedAnswer = (question: FieldDefinition, values: Dictionary<any>): string | undefined => {
-  const answer = getAnswer(question, values);
+export const getFormattedAnswer = (
+  field: FieldDefinition,
+  values: Dictionary<any>,
+  fieldsProvider: FormFieldsProvider
+): string | undefined => {
+  const answer = getAnswer(field, values, fieldsProvider);
 
-  if (Array.isArray(answer) && question.inputType === "file") {
+  if (Array.isArray(answer) && field.inputType === "file") {
     return (answer as UploadedFile[])
       .filter(file => !!file)
       ?.map(file => `<a href="${file.url}" target="_blank">${file.file_name}</a>`)
@@ -172,7 +179,7 @@ export const downloadAnswersCSV = (fieldsProvider: FormFieldsProvider, values: D
   for (const stepId of fieldsProvider.stepIds()) {
     for (const fieldId of fieldsProvider.fieldIds(stepId)) {
       const field = fieldsProvider.fieldById(fieldId);
-      if (field != null) appendAnswersAsCSVRow(csv, field, values);
+      if (field != null) appendAnswersAsCSVRow(csv, field, values, fieldsProvider);
     }
   }
   csv.download("answers.csv");
@@ -199,8 +206,13 @@ export const appendTableAnswers = (
   });
 };
 
-export const appendAnswersAsCSVRow = (csv: CSVGenerator, question: FieldDefinition, values: Dictionary<any>) => {
-  FormFieldFactories[question.inputType].appendAnswers(question, csv, values);
+export const appendAnswersAsCSVRow = (
+  csv: CSVGenerator,
+  field: FieldDefinition,
+  values: Dictionary<any>,
+  fieldsProvider: FormFieldsProvider
+) => {
+  FormFieldFactories[field.inputType].appendAnswers(field, csv, values, fieldsProvider);
 };
 
 /**

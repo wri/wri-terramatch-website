@@ -1,6 +1,6 @@
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { selectChildQuestions } from "@/connections/util/Form";
+import { isNotNull } from "@/utils/array";
 import { objectValidation } from "@/utils/yup";
 
 export const TableInputField: FormFieldFactory = {
@@ -17,10 +17,10 @@ export const TableInputField: FormFieldFactory = {
 
   getAnswer: () => undefined,
 
-  appendAnswers: ({ label, name, tableHeaders }, csv, formValues) => {
+  appendAnswers: ({ label, name, tableHeaders }, csv, formValues, { childIds, fieldById }) => {
     csv.pushRow([label, tableHeaders?.[0]?.label ?? undefined, tableHeaders?.[1]?.label ?? undefined]);
-    for (const row of selectChildQuestions(name)) {
-      csv.pushRow(["", row.label, formValues[row.uuid] ?? ""]);
+    for (const row of childIds(name).map(fieldById).filter(isNotNull)) {
+      csv.pushRow(["", row.label, formValues[row.name] ?? ""]);
     }
   }
 };

@@ -6,10 +6,10 @@ import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import List from "@/components/extensive/List/List";
 import FormField from "@/components/extensive/WizardForm/FormField";
-import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
-import { selectChildQuestions } from "@/connections/util/Form";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValueWithBoolean } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 export interface ConditionalInputProps extends Omit<InputProps, "defaultValue" | "type">, UseControllerProps {
   fieldId: string;
@@ -22,18 +22,19 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const [valueCondition, setValueCondition] = useState<OptionValueWithBoolean>();
   const t = useT();
   const { field } = useController(props);
+  const { childIds, fieldById } = useFieldsProvider();
 
   const value = formHook.watch(fieldId);
 
-  const children = useMemo(() => selectChildQuestions(fieldId), [fieldId]);
+  const children = useMemo(() => childIds(fieldId).map(fieldById).filter(isNotNull), [childIds, fieldById, fieldId]);
   const displayChildren = useMemo(
-    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value).map(questionDtoToDefinition),
+    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value),
     [children, value]
   );
 
   useEffect(() => {
     children.forEach(child => {
-      if (child.showOnParentCondition === value) formHook.register(child.uuid);
+      if (child.showOnParentCondition === value) formHook.register(child.name);
     });
     formHook.clearErrors(fieldId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,13 +61,13 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     const values = props?.formHook?.formState?.defaultValues;
     let fieldsCount = 0;
     children.forEach(child => {
-      if (values && Array.isArray(values[child.uuid]) && values[child.uuid]?.length > 0 && field.value == null) {
+      if (values && Array.isArray(values[child.name]) && values[child.name]?.length > 0 && field.value == null) {
         field.onChange(true);
         formHook.reset(formHook.getValues());
         return;
       }
       if (values && (field.value == true || field.value == null)) {
-        if ((Array.isArray(values[child.uuid]) && values[child.uuid]?.length < 1) || values[child.uuid] == null) {
+        if ((Array.isArray(values[child.name]) && values[child.name]?.length < 1) || values[child.name] == null) {
           fieldsCount++;
         }
       }

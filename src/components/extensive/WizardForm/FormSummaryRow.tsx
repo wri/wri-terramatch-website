@@ -135,9 +135,9 @@ export const getFormEntries = (
 
     switch (field.inputType) {
       case "treeSpecies": {
-        const value = (getAnswer(field, values) ?? []) as TreeSpeciesValue[];
+        const value = (getAnswer(field, values, fieldsProvider) ?? []) as TreeSpeciesValue[];
         const collection = value[0]?.collection;
-        outputArr.push(treeSpeciesSummary(collection, entity, field, values));
+        outputArr.push(treeSpeciesSummary(collection, entity, field, values, fieldsProvider));
         break;
       }
 
@@ -302,7 +302,7 @@ export const getFormEntries = (
       case "seedings": {
         if (field.additionalProps?.capture_count === true) {
           // RHFSeedingTableInput
-          outputArr.push(treeSpeciesSummary("seeds", entity, field, values));
+          outputArr.push(treeSpeciesSummary("seeds", entity, field, values, fieldsProvider));
         } else {
           // RHFSeedingTable
           outputArr.push(dataTableSummary(getSeedingTableColumns(t, false), field, values));
@@ -314,7 +314,7 @@ export const getFormEntries = (
         outputArr.push({
           title: field.label ?? "",
           inputType: field.inputType,
-          value: getFormattedAnswer(field, values) ?? nullText ?? t("Answer Not Provided")
+          value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")
         });
         outputArr.push(
           ...getFormEntries(
@@ -331,7 +331,7 @@ export const getFormEntries = (
         outputArr.push({
           title: field.label ?? "",
           inputType: field.inputType,
-          value: getFormattedAnswer(field, values) ?? nullText ?? t("Answer Not Provided")
+          value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")
         });
       }
     }
@@ -364,9 +364,10 @@ const treeSpeciesSummary = (
   collection: string | undefined,
   entity: Entity | undefined,
   field: FieldDefinition,
-  values: any
+  values: any,
+  fieldsProvider: FormFieldsProvider
 ) => {
-  const value = (getAnswer(field, values) ?? []) as TreeSpeciesValue[];
+  const value = (getAnswer(field, values, fieldsProvider) ?? []) as TreeSpeciesValue[];
   const plants = value.map(
     ({ name, amount, taxon_id }) =>
       ({

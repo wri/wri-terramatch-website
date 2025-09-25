@@ -43,5 +43,6 @@ export const NumberField: FormFieldFactory = {
 
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
-  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
+  appendAnswers: (question, csv, values, fieldsProvider) =>
+    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
 };

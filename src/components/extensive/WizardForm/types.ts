@@ -29,6 +29,7 @@ import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpec
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Framework } from "@/context/framework.provider";
+import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import {
   FormDto,
   FormQuestionDto,
@@ -90,8 +91,13 @@ export type SharedFieldProps = {
 export type FormFieldFactory = {
   createValidator: (question: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
   renderInput: (question: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
-  getAnswer: (question: FieldDefinition, formValues: Dictionary<any>) => Answer;
-  appendAnswers: (question: FieldDefinition, csv: CSVGenerator, formValues: Dictionary<any>) => void;
+  getAnswer: (question: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
+  appendAnswers: (
+    field: FieldDefinition,
+    csv: CSVGenerator,
+    formValues: Dictionary<any>,
+    fieldsProvider: FormFieldsProvider
+  ) => void;
 };
 
 export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;

@@ -21,5 +21,6 @@ export const RadioField: FormFieldFactory = {
     }
   },
 
-  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
+  appendAnswers: (question, csv, values, fieldsProvider) =>
+    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
 };

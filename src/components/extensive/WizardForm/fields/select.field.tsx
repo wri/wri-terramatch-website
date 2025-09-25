@@ -2,7 +2,6 @@ import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { findCachedGadmTitle } from "@/connections/Gadm";
-import { selectQuestion, selectQuestions, selectSection, selectSections } from "@/connections/util/Form";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { isNotNull, toArray } from "@/utils/array";
 import { selectValidation } from "@/utils/yup";
@@ -22,7 +21,7 @@ export const SelectField: FormFieldFactory = {
     />
   ),
 
-  getAnswer: ({ name, options, optionsList, linkedFieldKey }, formValues) => {
+  getAnswer: ({ name, options, optionsList, linkedFieldKey }, formValues, { fieldByKey }) => {
     const value = formValues[name];
 
     if (options == null && optionsList?.startsWith("gadm-level-")) {
@@ -36,17 +35,11 @@ export const SelectField: FormFieldFactory = {
         const filterLinkedKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
         if (filterLinkedKey == null) return value;
 
-        const { sectionId } = selectQuestion(name) ?? {};
-        const { formId } = selectSection(sectionId ?? "") ?? {};
-        for (const { uuid } of selectSections(formId ?? "")) {
-          const question = selectQuestions(uuid).find(question => question.linkedFieldKey === filterLinkedKey);
-          if (question == null) continue;
+        const filterField = fieldByKey(filterLinkedKey);
+        if (filterField == null) return value;
 
-          const parentCodes = toArray(formValues?.[question.uuid]) as string[];
-          return findCachedGadmTitle(level, value, parentCodes) ?? value;
-        }
-
-        return value;
+        const parentCodes = toArray(formValues?.[filterField.name]) as string[];
+        return findCachedGadmTitle(level, value, parentCodes) ?? value;
       });
     }
 
@@ -59,5 +52,6 @@ export const SelectField: FormFieldFactory = {
     }
   },
 
-  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
+  appendAnswers: (question, csv, values, fieldsProvider) =>
+    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
 };

@@ -7,5 +7,6 @@ export const DateField: FormFieldFactory = {
   createValidator: ({ validation }) => stringValidation(validation),
   renderInput: (question, sharedProps) => <Input {...sharedProps} type="date" />,
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
-  appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
+  appendAnswers: (question, csv, values, fieldsProvider) =>
+    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
 };

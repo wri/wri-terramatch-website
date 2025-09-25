@@ -62,8 +62,6 @@ const formConnection = v3Resource("forms", formGet)
   .enabledProp()
   .buildConnection();
 export const useForm = connectionHook(formConnection);
-const formSelector = connectionSelector(formConnection);
-export const selectForm = (id: string) => formSelector({ id }).data;
 
 export const sectionsConnection = v3Resource("formSections")
   .listByParentId<FormSectionDto>("formId", { sortProp: "order" })
@@ -75,18 +73,15 @@ export const questionsConnection = v3Resource("formQuestions")
 export const useFormSections = (formId: string) => useConnection(sectionsConnection, { parentId: formId })[1]?.data;
 const sectionsSelector = connectionSelector(sectionsConnection);
 export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
-export const useSectionQuestions = (sectionId: string) =>
-  useConnection(questionsConnection, { parentId: sectionId })[1]?.data;
 const questionsSelector = connectionSelector(questionsConnection);
 export const selectQuestions = (sectionId: string) => questionsSelector({ parentId: sectionId }).data ?? [];
 
 const sectionConnection = v3Resource("formSections").cachedSingleResource<FormSectionDto>().buildConnection();
-const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
 export const useFormSection = (sectionUuid: string) => useConnection(sectionConnection, { id: sectionUuid })[1]?.data;
 const sectionSelector = connectionSelector(sectionConnection);
 export const selectSection = (sectionUuid: string) => sectionSelector({ id: sectionUuid }).data;
-export const useFormQuestion = (questionUuid: string) =>
-  useConnection(questionConnection, { id: questionUuid })[1]?.data;
+
+const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
 const questionSelector = connectionSelector(questionConnection);
 export const selectQuestion = (questionUuid: string) => questionSelector({ id: questionUuid }).data;
 export const selectChildQuestions = (questionUuid: string) => {

@@ -22,7 +22,7 @@ const SimpleForm: FC<SimpleFormProps> = ({ fields, formHook, onChange }) => {
       items={fields}
       itemAs={Fragment}
       uniqueId="name"
-      render={question => <FormField key={question.name} field={question} formHook={formHook} onChange={_onChange} />}
+      render={field => <FormField key={field.name} field={field} formHook={formHook} onChange={_onChange} />}
     />
   );
 };
