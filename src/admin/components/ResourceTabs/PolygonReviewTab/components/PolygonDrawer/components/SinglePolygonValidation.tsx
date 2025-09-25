@@ -7,7 +7,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
-import { isCompletedDataOrEstimatedArea, parseV3ValidationData } from "@/helpers/polygonValidation";
+import { parseV3ValidationData, shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
@@ -118,12 +118,12 @@ const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
                     name={
                       item.status
                         ? IconNames.ROUND_GREEN_TICK
-                        : isCompletedDataOrEstimatedArea(item)
+                        : shouldShowAsWarning(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.ROUND_RED_CROSS
                     }
                     className={classNames("h-4 w-4", {
-                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
                     })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
