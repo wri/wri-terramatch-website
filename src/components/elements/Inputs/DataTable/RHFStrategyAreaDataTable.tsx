@@ -1,42 +1,26 @@
-import { AccessorKeyColumnDef } from "@tanstack/react-table";
-import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
-import { FieldValues, useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { PropsWithChildren, useMemo } from "react";
+import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+
+import { toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
+import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Option } from "@/types/common";
 
 import { StrategyAreaInput, StrategyAreaInputProps } from "../StrategyAreaInput/StrategyAreaInput";
 
-// TODO:
-//  * get rid of options / apiOptionsSource, all option sources are API driven now
-//  * accept linkedFieldKey and reference (probably move to here) SELECT_FILTER_QUESTIONS from customForms.ts, get rid of optionsFilterFieldName
 export interface RHFStrategyAreaDataTableProps
-  extends Omit<StrategyAreaInputProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
+  extends Omit<StrategyAreaInputProps, "defaultValue" | "value" | "onChange" | "optionsFilter" | "options">,
     UseControllerProps {
   onChangeCapture?: () => void;
-  optionsFilterFieldName?: string;
-  formHook: UseFormReturn<FieldValues, any>;
+  formHook: UseFormReturn;
   collection?: string;
+  options: FormQuestionOptionDto[] | Option[];
+  linkedFieldKey?: string;
 }
-
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns
- */
-
-export const getStrategyAreaColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
-  {
-    accessorKey: "strategy",
-    header: t("Restoration strategy or land use")
-  },
-  {
-    accessorKey: "percentage",
-    header: t("% of project area"),
-    cell: props => `${props.getValue()}%`
-  }
-];
 
 const RHFStrategyAreaDataTable = ({
   onChangeCapture,
-  optionsFilterFieldName,
+  linkedFieldKey,
+  options,
   formHook,
   collection,
   ...props
@@ -44,6 +28,10 @@ const RHFStrategyAreaDataTable = ({
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const propsOptions = useMemo(() => toFormOptions(options), [options]);
+  const filterFieldName = useFilterFieldName(linkedFieldKey);
+
   const _onChange = (value: string) => {
     onChange(value);
     onChangeCapture?.();
@@ -53,10 +41,11 @@ const RHFStrategyAreaDataTable = ({
     <StrategyAreaInput
       onChange={_onChange}
       {...props}
-      optionsFilter={optionsFilterFieldName ? formHook?.watch(optionsFilterFieldName, null) : undefined}
+      optionsFilter={filterFieldName == null ? undefined : formHook?.watch(filterFieldName, null)}
       formHook={formHook}
       collection={collection}
       value={value}
+      options={propsOptions}
     />
   );
 };

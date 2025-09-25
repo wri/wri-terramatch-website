@@ -2,10 +2,10 @@ import * as yup from "yup";
 
 import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
+import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
 
 export const StrategyAreaField: FormFieldFactory = {
-  createValidator: ({ validation }, t, framework) => {
+  createValidator: ({ validation }) => {
     const validator = yup.string().test("total-percentage", function (value) {
       try {
         const parsed = JSON.parse(value ?? "[]");
@@ -37,39 +37,34 @@ export const StrategyAreaField: FormFieldFactory = {
     return validation?.required === true ? validator.required() : validator;
   },
 
-  renderInput: ({ collection, optionsList, optionsOther, linkedFieldKey }, sharedProps) => (
+  renderInput: ({ collection, options, linkedFieldKey }, sharedProps) => (
     <RHFStrategyAreaDataTable
       {...sharedProps}
       collection={collection ?? ""}
-      optionsList={optionsList}
-      linkedFieldKey={linkedFieldKey}
-      hasOtherOptions={optionsOther}
+      linkedFieldKey={linkedFieldKey ?? undefined}
+      options={options ?? []}
     />
   ),
 
   getAnswer: ({ name, options }, formValues) => {
     const value = formValues[name];
     const parsedValue: { [key: string]: number }[] = JSON.parse(value);
+    if (!Array.isArray(parsedValue)) return value;
 
-    if (Array.isArray(parsedValue)) {
-      const formatted = parsedValue
-        .filter(entry => {
-          const key = Object.keys(entry)[0];
-          const percent = entry[key];
-          return key && percent !== null && percent !== undefined && !isNaN(percent);
-        })
-        .map(entry => {
-          const key = Object.keys(entry)[0];
-          const percent = entry[key];
-          const title = options.find(o => o.value === key)?.title || key;
+    const formOptions = toFormOptions(options);
+    return parsedValue
+      .filter(entry => {
+        const key = Object.keys(entry)[0];
+        const percent = entry[key];
+        return key && percent !== null && percent !== undefined && !isNaN(percent);
+      })
+      .map(entry => {
+        const key = Object.keys(entry)[0];
+        const percent = entry[key];
+        const title = formOptions.find(o => o.value === key)?.title ?? key;
 
-          return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
-        });
-
-      return formatted;
-    }
-
-    return value;
+        return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
+      });
   },
 
   appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
