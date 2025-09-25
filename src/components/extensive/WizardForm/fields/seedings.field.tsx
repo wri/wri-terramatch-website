@@ -8,7 +8,7 @@ export const SeedingsField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
   renderInput: ({ additionalProps, collection, model }, sharedProps) => {
     if (additionalProps?.capture_count === true) {
-      return <RHFSeedingTableInput {...sharedProps} model={model!} withNumbers />;
+      return <RHFSeedingTableInput {...sharedProps} error={sharedProps.error as any} model={model!} withNumbers />;
     } else {
       return <RHFSeedingTable {...sharedProps} collection={collection ?? ""} captureCount={false} />;
     }

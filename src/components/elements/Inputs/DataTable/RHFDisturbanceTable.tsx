@@ -9,7 +9,6 @@ import {
   getDisturbanceIntensityOptions,
   getDisturbanceTypeOptions
 } from "@/constants/options/disturbance";
-import { Entity } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -19,7 +18,6 @@ export interface RHFDisturbanceTableProps
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  entity: Entity;
   hasIntensity?: boolean;
   hasExtent?: boolean;
 }
@@ -101,7 +99,7 @@ export const getDisturbanceTableQuestions = (
   return questions;
 };
 
-const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
+const RHFDisturbanceTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
   const t = useT();
   const {
     field: { value, onChange }
