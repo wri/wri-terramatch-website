@@ -1,19 +1,20 @@
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useMemo } from "react";
 import { useController } from "react-hook-form";
 
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { OptionValue } from "@/types/common";
 
 import { RHFSelectProps } from "../Select/RHFSelect";
 import SelectImage from "./SelectImage";
 
-// TODO:
-//  * Remove options prop, get from Connection with new optionsList string prop
-export interface RHFSelectImageProps extends RHFSelectProps {}
+export interface RHFSelectImageProps extends Omit<RHFSelectProps, "linkedFieldKey"> {}
 
-const RHFSelectImage = ({ onChangeCapture, ...props }: PropsWithChildren<RHFSelectImageProps>) => {
+const RHFSelectImage = ({ onChangeCapture, options, ...props }: PropsWithChildren<RHFSelectImageProps>) => {
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const propsOptions = useMemo(() => toFormOptions(options), [options]);
 
   const _onChange = (value: OptionValue[]) => {
     if (props.multiSelect) onChange(value);
@@ -23,7 +24,7 @@ const RHFSelectImage = ({ onChangeCapture, ...props }: PropsWithChildren<RHFSele
     props.formHook.trigger();
   };
 
-  return <SelectImage {...props} value={value} onChange={_onChange} />;
+  return <SelectImage {...props} options={propsOptions} value={value} onChange={_onChange} />;
 };
 
 export default RHFSelectImage;

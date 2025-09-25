@@ -5,9 +5,11 @@ import { stringValidation } from "@/utils/yup";
 
 export const RadioField: FormFieldFactory = {
   createValidator: ({ validation }) => stringValidation(validation),
+
   renderInput: ({ options, linkedFieldKey }, sharedProps) => (
     <RHFSelect {...sharedProps} options={options ?? []} linkedFieldKey={linkedFieldKey ?? undefined} />
   ),
+
   getAnswer: ({ name, options }, formValues) => {
     const value = formValues[name];
     const formOptions = toFormOptions(options);
@@ -20,5 +22,6 @@ export const RadioField: FormFieldFactory = {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
   },
+
   appendAnswers: (question, csv, values) => csv.pushRow([question.label, getFormattedAnswer(question, values)])
 };
