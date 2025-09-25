@@ -32,6 +32,7 @@ import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/gen
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 import List from "../List/List";
 import { childIdsWithCondition, getAnswer, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
@@ -263,10 +264,7 @@ export const getFormEntries = (
       }
 
       case "tableInput": {
-        const rows = fieldsProvider
-          .childIds(field.name)
-          .map(fieldsProvider.fieldById)
-          .filter(field => field != null) as FieldDefinition[];
+        const rows = fieldsProvider.childIds(field.name).map(fieldsProvider.fieldById).filter(isNotNull);
         outputArr.push({
           title: field.label,
           inputType: field.inputType,

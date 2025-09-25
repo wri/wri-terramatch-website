@@ -1,6 +1,7 @@
 import RHFSelectImage from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { isNotNull } from "@/utils/array";
 import { selectValidation } from "@/utils/yup";
 
 export const SelectImageField: FormFieldFactory = {
@@ -14,10 +15,7 @@ export const SelectImageField: FormFieldFactory = {
     const value = formValues[name];
     const formOptions = toFormOptions(options);
     if (Array.isArray(value)) {
-      return (
-        (value.map(v => formOptions.find(o => o.value === v)?.title).filter(title => title != null) as string[]) ??
-        value
-      );
+      return value.map(v => formOptions.find(o => o.value === v)?.title).filter(isNotNull) ?? value;
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }

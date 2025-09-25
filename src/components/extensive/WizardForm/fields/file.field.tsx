@@ -3,7 +3,7 @@ import * as yup from "yup";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { UploadedFile } from "@/types/common";
-import { toArray } from "@/utils/array";
+import { isNotNull, toArray } from "@/utils/array";
 
 export const FileField: FormFieldFactory = {
   createValidator: ({ validation, multiChoice }) => {
@@ -32,7 +32,7 @@ export const FileField: FormFieldFactory = {
   getAnswer: ({ name }, formValues) => toArray(formValues[name]),
 
   appendAnswers: (question, csv, values) => {
-    const value = (FileField.getAnswer(question, values) as UploadedFile[]).filter(v => v != null);
+    const value = (FileField.getAnswer(question, values) as UploadedFile[]).filter(isNotNull);
     if (value.length > 0) {
       csv.pushRow([question.label, "FileName", "File Url"]);
 

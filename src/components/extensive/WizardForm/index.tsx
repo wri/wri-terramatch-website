@@ -9,7 +9,6 @@ import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
-import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
@@ -17,6 +16,7 @@ import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { isNotNull } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -88,7 +88,7 @@ function WizardForm(props: WizardFormProps) {
           props.fieldsProvider
             .fieldIds(stepId)
             .map(fieldId => props.fieldsProvider.fieldById(fieldId))
-            .filter(field => field != null) as FieldDefinition[],
+            .filter(isNotNull),
           t,
           props.framework
         )

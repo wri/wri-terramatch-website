@@ -5,6 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
 import InputTable, { InputTableProps, InputTableRow } from "./InputTable";
 
@@ -57,11 +58,7 @@ const RHFInputTable: FC<RHFInputTableProps> = ({ onChangeCapture, formHook, head
   }, [headers]);
   const { childIds, fieldById } = useFieldsProvider();
   const rows = useMemo(
-    (): InputTableRow[] =>
-      childIds(fieldId)
-        .map(fieldById)
-        .map(toTableRow)
-        .filter(row => row != null) as InputTableRow[],
+    () => childIds(fieldId).map(fieldById).map(toTableRow).filter(isNotNull),
     [childIds, fieldById, fieldId]
   );
 
