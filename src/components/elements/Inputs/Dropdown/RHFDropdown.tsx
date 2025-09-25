@@ -1,52 +1,79 @@
+import { useT } from "@transifex/react";
 import { difference } from "lodash";
 import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import { useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useOptionLabels } from "@/connections/util/Form";
+import { getMonthOptions } from "@/constants/options/months";
+import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 import Dropdown, { DropdownProps } from "./Dropdown";
 
-type ApiOptionsSource = "gadm-level-0" | "gadm-level-1" | "gadm-level-2";
-
-// TODO:
-//  * get rid of options / apiOptionsSource, all option sources are API driven now
-//  * accept linkedFieldKey and reference (probably move to here) SELECT_FILTER_QUESTIONS from customForms.ts, get rid of optionsFilterFieldName
-//  * Get the current list of form questions from a new form context provided at the wizard form level.
 export interface RHFDropdownProps
   extends Omit<DropdownProps, "defaultValue" | "value" | "onChange" | "optionsFilter" | "options">,
     UseControllerProps<any> {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  optionsFilterFieldName?: string;
+  options?: FormQuestionOptionDto[] | Option[];
   enableAdditionalOptions?: boolean;
-  apiOptionsSource?: ApiOptionsSource;
+  optionsList?: string;
+  linkedFieldKey?: string;
 }
 
-type WithApiOptionsProps = Omit<RHFDropdownProps, "enableAdditionalOptions"> & {
-  apiOptionsSource: ApiOptionsSource; // make it required
+type WithOptionsList = Omit<RHFDropdownProps, "optionsList"> & {
+  optionsList: string; // make it required
 };
 
-type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "apiOptionsSource">;
+type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "options"> & {
+  options: FormQuestionOptionDto[] | Option[]; // make it required
+};
 
-type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "apiOptionsSource">;
+type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "optionsList" | "options"> & {
+  options: Option[]; // make it required
+};
 
-const WithApiOptions: FC<WithApiOptionsProps> = props => {
-  const { apiOptionsSource, optionsFilterFieldName, formHook, ...displayProps } = props;
+const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
+  (option as FormQuestionOptionDto).slug != null;
+
+export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>
+  (options ?? []).map(option =>
+    isDtoOption(option) ? { title: option.label, value: option.slug, meta: { image_url: option.imageUrl } } : option
+  );
+
+export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {
+  // We currently only support "months" for this feature
+  if (optionsList === "months") return getMonthOptions(t);
+  return [];
+};
+
+const useFilterFieldName = (linkedFieldKey?: string) => {
+  const { linkedFieldQuestion } = useFormQuestions();
+  return useMemo(() => {
+    const filterKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
+    return filterKey == null ? undefined : linkedFieldQuestion(filterKey)?.name;
+  }, [linkedFieldKey, linkedFieldQuestion]);
+};
+
+const WithGadmOptions: FC<WithOptionsList> = props => {
+  const { optionsList, linkedFieldKey, formHook, ...displayProps } = props;
   // If the parentCodes change, it can cause the useGadmOptions hook to return null until all options
   // have loaded. In that case, we want to avoid sending null options to DropdownDisplay, as that will
   // cause it to unselect its current selections.
   const [optionsCache, setOptionsCache] = useState<Option[] | undefined>();
+  const filterFieldName = useFilterFieldName(linkedFieldKey);
 
-  const parentFieldValue = optionsFilterFieldName != null ? formHook?.watch(optionsFilterFieldName) : undefined;
+  const parentFieldValue = filterFieldName != null ? formHook?.watch(filterFieldName) : undefined;
   const parentCodes = useMemo(
     () => (parentFieldValue == null ? undefined : toArray(parentFieldValue)),
     [parentFieldValue]
   );
-  const level = useMemo(() => Number(apiOptionsSource.slice(-1)) as 0 | 1 | 2, [apiOptionsSource]);
+  const level = useMemo(() => Number(optionsList.slice(-1)) as 0 | 1 | 2, [optionsList]);
   const options = useGadmOptions({ level, parentCodes });
 
   useEffect(() => {
@@ -60,34 +87,39 @@ const WithApiOptions: FC<WithApiOptionsProps> = props => {
   );
 };
 
-const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
-  const { enableAdditionalOptions, ...displayProps } = props;
+const WithHardcodedOptions: FC<WithOptionsList> = ({ optionsList, ...displayProps }) => {
+  const t = useT();
+  const options = useMemo(() => getHardcodedOptions(optionsList, t), [optionsList, t]);
+  return <WithBuiltinOptions {...displayProps} options={options} />;
+};
+
+const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = ({ options, enableAdditionalOptions, ...displayProps }) => {
   const {
     field: { value }
-  } = useController(props);
+  } = useController(displayProps);
+
+  const propsOptions = useMemo(() => toFormOptions(options), [options]);
 
   const additionalOptionValue = useMemo(
     () =>
       difference<OptionValue>(
         toArray(value),
-        props.options.map(op => op.value)
+        propsOptions.map(op => op.value)
       ) as string[],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.options]
+    [propsOptions]
   );
 
-  //To fetch additional option labels that are not included in original options list
+  // To fetch additional option labels that are not included in original options list
   const [, { data: optionsData }] = useOptionLabels({ ids: additionalOptionValue });
 
   const additionalOptions = useMemo(
     () =>
-      //@ts-ignore
       Object.values(optionsData ?? {}).map(option => ({
         title: option.label,
         value: option.slug,
         meta: { image_url: option.imageUrl }
       })) as Option[],
-    //@ts-ignore
     [optionsData]
   );
 
@@ -101,19 +133,20 @@ const WithBuiltinOptions: FC<WithBuiltinOptionsProps> = props => {
     [additionalOptions]
   );
 
-  const options = useMemo(
+  const allOptions = useMemo(
     () =>
-      enableAdditionalOptions && !props.hasOtherOptions
-        ? [...props.options, ...additionalOptions, ...notFoundOptions]
-        : props.options,
-    [additionalOptions, enableAdditionalOptions, notFoundOptions, props.hasOtherOptions, props.options]
+      enableAdditionalOptions && !displayProps.hasOtherOptions
+        ? [...propsOptions, ...additionalOptions, ...notFoundOptions]
+        : propsOptions,
+    [additionalOptions, enableAdditionalOptions, notFoundOptions, displayProps.hasOtherOptions, propsOptions]
   );
 
-  return <DropdownDisplay {...displayProps} options={options} />;
+  return <DropdownDisplay {...displayProps} options={allOptions} />;
 };
 
 const DropdownDisplay: FC<DropdownDisplayProps> = props => {
-  const { onChangeCapture, formHook, optionsFilterFieldName, defaultValue, ...dropdownProps } = props;
+  const { onChangeCapture, formHook, linkedFieldKey, defaultValue, ...dropdownProps } = props;
+  const filterFieldName = useFilterFieldName(linkedFieldKey);
 
   const {
     field: { value, onChange }
@@ -137,7 +170,7 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
       value={valueArray}
       defaultValue={defaultValueArray}
       onChange={_onChange}
-      optionsFilter={optionsFilterFieldName ? formHook?.watch(optionsFilterFieldName) : undefined}
+      optionsFilter={filterFieldName == null ? undefined : formHook?.watch(filterFieldName)}
       onInternalError={error => {
         if (error != null) formHook?.setError(props.name, error);
         else formHook?.clearErrors(props.name);
@@ -146,11 +179,13 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
   );
 };
 
-const RHFDropdown = ({ apiOptionsSource, enableAdditionalOptions, ...props }: PropsWithChildren<RHFDropdownProps>) =>
-  apiOptionsSource == null ? (
-    <WithBuiltinOptions {...props} enableAdditionalOptions={enableAdditionalOptions} />
+const RHFDropdown = ({ optionsList, options, ...props }: PropsWithChildren<RHFDropdownProps>) =>
+  options != null ? (
+    <WithBuiltinOptions {...props} options={options} />
+  ) : optionsList?.startsWith("gadm-level-") ? (
+    <WithGadmOptions {...props} optionsList={optionsList} />
   ) : (
-    <WithApiOptions {...props} apiOptionsSource={apiOptionsSource} />
+    <WithHardcodedOptions {...props} optionsList={optionsList ?? ""} />
   );
 
 export default RHFDropdown;

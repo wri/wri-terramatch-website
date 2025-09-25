@@ -29,7 +29,11 @@ import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpec
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Framework } from "@/context/framework.provider";
-import { FormQuestionDto, FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  FormQuestionDto,
+  FormQuestionOptionDto,
+  FormTableHeaderDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { Option, UploadedFile } from "@/types/common";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
@@ -46,9 +50,7 @@ export type QuestionDefinition = {
   collection?: string | null;
   optionsList?: string | null;
   optionsOther?: boolean | null;
-  // This is only used for client-side data tables. All questions sent from the server send an
-  // optionsList instead.
-  options?: Option[];
+  options?: FormQuestionOptionDto[] | Option[] | null;
   showOnParentCondition?: boolean | null;
   linkedFieldKey?: string | null;
   isParentConditionalDefault?: boolean;

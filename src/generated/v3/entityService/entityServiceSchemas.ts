@@ -1864,7 +1864,7 @@ export type OptionLabelDto = {
    */
   label: string;
   /**
-   * Option label text in English
+   * Option image
    */
   imageUrl: string | null;
 };
@@ -1981,6 +1981,23 @@ export type FormSectionDto = {
   description: string | null;
 };
 
+export type FormQuestionOptionDto = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  altValue: string | null;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option image
+   */
+  imageUrl: string | null;
+  order: number;
+};
+
 export type FormTableHeaderDto = {
   slug: string | null;
   /**
@@ -2053,6 +2070,7 @@ export type FormQuestionDto = {
   order: number;
   optionsList: string | null;
   optionsOther: boolean | null;
+  options: FormQuestionOptionDto[] | null;
   showOnParentCondition: boolean | null;
   linkedFieldKey: string | null;
   isParentConditionalDefault: boolean;

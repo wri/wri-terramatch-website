@@ -22,7 +22,7 @@ export const stringValidation = (validation?: Dictionary<any> | null) => {
   return validation?.required === true ? validator.required() : validator;
 };
 
-export const selectValidation = (multiChoice: boolean, validation: Dictionary<any> | null) => {
+export const selectValidation = (multiChoice?: boolean | null, validation?: Dictionary<any> | null) => {
   if (multiChoice) {
     const validator = yup.array(yup.string().required());
     return validation?.required === true ? validator.required() : validator;

@@ -2438,6 +2438,43 @@ export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
   };
 }>;
 
+export type OptionLabelsGetListResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
 export type OptionLabelsGetListVariables = {
   pathParams: OptionLabelsGetListPathParams;
 };
@@ -2446,7 +2483,7 @@ export type OptionLabelsGetListVariables = {
  * Get a list of option labels by list key
  */
 export const optionLabelsGetList = new V3ApiEndpoint<
-  undefined,
+  OptionLabelsGetListResponse,
   OptionLabelsGetListError,
   OptionLabelsGetListVariables,
   {}
