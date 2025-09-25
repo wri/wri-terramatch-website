@@ -1,19 +1,21 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { Dictionary, isEmpty, isFunction } from "lodash";
+import { useMemo } from "react";
 import * as yup from "yup";
 import { AnySchema } from "yup";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { FormQuestionContextType } from "@/components/extensive/WizardForm/formQuestions.provider";
+import { FormQuestionContextType, useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
 import { Answer, QuestionDefinition } from "@/components/extensive/WizardForm/types";
 import { loadGadmCodes } from "@/connections/Gadm";
 import { selectChildQuestions } from "@/connections/util/Form";
+import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormRead } from "@/generated/apiSchemas";
-import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
-import { UploadedFile } from "@/types/common";
+import { Option, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
@@ -29,6 +31,28 @@ export const questionDtoToDefinition = (question: FormQuestionDto): QuestionDefi
   ...question,
   name: question.uuid
 });
+
+const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
+  (option as FormQuestionOptionDto).slug != null;
+
+export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>
+  (options ?? []).map(option =>
+    isDtoOption(option) ? { title: option.label, value: option.slug, meta: { image_url: option.imageUrl } } : option
+  );
+
+export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {
+  // We currently only support "months" for this feature
+  if (optionsList === "months") return getMonthOptions(t);
+  return [];
+};
+
+export const useFilterFieldName = (linkedFieldKey?: string) => {
+  const { linkedFieldQuestion } = useFormQuestions();
+  return useMemo(() => {
+    const filterKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
+    return filterKey == null ? undefined : linkedFieldQuestion(filterKey)?.name;
+  }, [linkedFieldKey, linkedFieldQuestion]);
+};
 
 const selectChildDefinitions = (parentId: string) => selectChildQuestions(parentId).map(questionDtoToDefinition);
 

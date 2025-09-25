@@ -1,31 +1,34 @@
-import { PropsWithChildren } from "react";
-import { FieldValues, useController, UseControllerProps, UseFormReturn } from "react-hook-form";
+import { PropsWithChildren, useMemo } from "react";
+import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { OptionValue } from "@/types/common";
+import { toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
+import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Option, OptionValue } from "@/types/common";
 
 import Select, { SelectProps } from "./Select";
 
-/**
- * TODO:
- *   * Remove options prop, get from Connection with new optionsList string prop
- */
 export interface RHFSelectProps
-  extends Omit<SelectProps, "defaultValue" | "value" | "onChange" | "optionsFilter">,
+  extends Omit<SelectProps, "defaultValue" | "value" | "onChange" | "optionsFilter" | "options">,
     UseControllerProps {
   onChangeCapture?: () => void;
-  optionsFilterFieldName?: string;
-  formHook: UseFormReturn<FieldValues, any>;
+  formHook: UseFormReturn;
+  options: FormQuestionOptionDto[] | Option[];
+  linkedFieldKey?: string;
 }
 
 const RHFSelect = ({
   onChangeCapture,
-  optionsFilterFieldName,
   formHook,
+  options,
+  linkedFieldKey,
   ...props
 }: PropsWithChildren<RHFSelectProps>) => {
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const propsOptions = useMemo(() => toFormOptions(options), [options]);
+  const filterFieldName = useFilterFieldName(linkedFieldKey);
 
   const _onChange = (value: OptionValue[]) => {
     if (props.multiSelect) onChange(value);
@@ -39,7 +42,8 @@ const RHFSelect = ({
       {...props}
       value={value}
       onChange={_onChange}
-      optionsFilter={optionsFilterFieldName ? formHook.watch(optionsFilterFieldName, null) : undefined}
+      optionsFilter={filterFieldName == null ? undefined : formHook.watch(filterFieldName, null)}
+      options={propsOptions}
     />
   );
 };

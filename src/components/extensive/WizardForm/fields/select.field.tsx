@@ -1,6 +1,6 @@
-import RHFDropdown, { getHardcodedOptions, toFormOptions } from "@/components/elements/Inputs/Dropdown/RHFDropdown";
+import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
+import { getFormattedAnswer, getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { findCachedGadmTitle } from "@/connections/Gadm";
 import { selectQuestion, selectQuestions, selectSection, selectSections } from "@/connections/util/Form";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";

@@ -3,13 +3,11 @@ import { difference } from "lodash";
 import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { useFormQuestions } from "@/components/extensive/WizardForm/formQuestions.provider";
+import { getHardcodedOptions, toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
 import Loader from "@/components/generic/Loading/Loader";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useOptionLabels } from "@/connections/util/Form";
-import { getMonthOptions } from "@/constants/options/months";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
@@ -36,28 +34,6 @@ type WithBuiltinOptionsProps = Omit<RHFDropdownProps, "options"> & {
 
 type DropdownDisplayProps = Omit<RHFDropdownProps, "enableAdditionalOptions" | "optionsList" | "options"> & {
   options: Option[]; // make it required
-};
-
-const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
-  (option as FormQuestionOptionDto).slug != null;
-
-export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>
-  (options ?? []).map(option =>
-    isDtoOption(option) ? { title: option.label, value: option.slug, meta: { image_url: option.imageUrl } } : option
-  );
-
-export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {
-  // We currently only support "months" for this feature
-  if (optionsList === "months") return getMonthOptions(t);
-  return [];
-};
-
-const useFilterFieldName = (linkedFieldKey?: string) => {
-  const { linkedFieldQuestion } = useFormQuestions();
-  return useMemo(() => {
-    const filterKey = SELECT_FILTER_QUESTION[linkedFieldKey ?? ""];
-    return filterKey == null ? undefined : linkedFieldQuestion(filterKey)?.name;
-  }, [linkedFieldKey, linkedFieldQuestion]);
 };
 
 const WithGadmOptions: FC<WithOptionsList> = props => {
