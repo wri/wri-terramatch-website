@@ -6,9 +6,9 @@ import { arrayValidation } from "@/utils/yup";
 
 export const SeedingsField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
-  renderInput: ({ additionalProps, collection }, sharedProps) => {
+  renderInput: ({ additionalProps, collection, model }, sharedProps) => {
     if (additionalProps?.capture_count === true) {
-      return <RHFSeedingTableInput {...sharedProps} withNumbers />;
+      return <RHFSeedingTableInput {...sharedProps} model={model!} withNumbers />;
     } else {
       return <RHFSeedingTable {...sharedProps} collection={collection ?? ""} captureCount={false} />;
     }

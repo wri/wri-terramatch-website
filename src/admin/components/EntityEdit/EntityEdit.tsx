@@ -1,4 +1,4 @@
-import { defaults } from "lodash";
+import { camelCase, defaults } from "lodash";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
@@ -7,13 +7,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import EntityProvider from "@/context/entity.provider";
+import { FormModelType } from "@/connections/util/Form";
+import FormModelProvider from "@/context/formModel.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useFormDefaultValues, useNormalizer } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
-import { EntityName } from "@/types/common";
+import { EntityName, isSingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 export const EntityEdit = () => {
@@ -83,12 +85,20 @@ export const EntityEdit = () => {
     start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
   };
 
+  const formModelType = useMemo(
+    () =>
+      camelCase(
+        isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+      ) as FormModelType,
+    [entityName]
+  );
+
   return (
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
         {form == null ? null : (
           <FrameworkProvider frameworkKey={form.frameworkKey as Framework}>
-            <EntityProvider entityUuid={entityUUID} entityName={entityName}>
+            <FormModelProvider model={formModelType} uuid={entityUUID}>
               <WizardForm
                 formUuid={form.uuid}
                 errors={error}
@@ -110,7 +120,7 @@ export const EntityEdit = () => {
                 hideSaveAndCloseButton
                 formSubmissionOrg={formSubmissionOrg}
               />
-            </EntityProvider>
+            </FormModelProvider>
           </FrameworkProvider>
         )}
       </LoadingContainer>

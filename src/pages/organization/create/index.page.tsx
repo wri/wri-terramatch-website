@@ -9,6 +9,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
+import FormModelProvider from "@/context/formModel.provider";
 import { useModalContext } from "@/context/modal.provider";
 import {
   useDeleteV2OrganisationsRetractMyDraft,
@@ -82,23 +83,25 @@ const CreateOrganisationForm = () => {
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isFetchingOrgData}>
-        <WizardForm
-          steps={formSteps}
-          formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-          errors={error}
-          defaultValues={defaultValues}
-          onChange={data => updateOrganisation({ body: data, pathParams: { uuid } })}
-          onSubmit={() => submitOrganisation({ pathParams: { uuid } })}
-          submitButtonDisable={isSubmitting}
-          onBackFirstStep={onBackFirstStep}
-          title={t("Create Organization")}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          hideSaveAndCloseButton
-          roundedCorners
-        />
+        <FormModelProvider model="organisations" uuid={uuid}>
+          <WizardForm
+            steps={formSteps}
+            formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
+            errors={error}
+            defaultValues={defaultValues}
+            onChange={data => updateOrganisation({ body: data, pathParams: { uuid } })}
+            onSubmit={() => submitOrganisation({ pathParams: { uuid } })}
+            submitButtonDisable={isSubmitting}
+            onBackFirstStep={onBackFirstStep}
+            title={t("Create Organization")}
+            tabOptions={{
+              markDone: true,
+              disableFutureTabs: true
+            }}
+            hideSaveAndCloseButton
+            roundedCorners
+          />
+        </FormModelProvider>
       </LoadingContainer>
     </BackgroundLayout>
   );

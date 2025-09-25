@@ -6,6 +6,7 @@ import WizardForm from "@/components/extensive/WizardForm";
 import { getRequestedInformationForm } from "@/components/extensive/WizardForm/utils";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import FormModelProvider, { FormModel } from "@/context/formModel.provider";
 import FrameworkProvider, { useFramework } from "@/context/framework.provider";
 import {
   useGetV2ApplicationsUUID,
@@ -61,44 +62,57 @@ const RequestMoreInformationPage = () => {
   const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, currentPitchEntity, framework) : [];
   const defaultValues = useFormDefaultValues(submission?.answers, formSteps);
 
+  const formModels = useMemo(() => {
+    const models: FormModel[] = [];
+    if (submission?.organisation_uuid != null) {
+      models.push({ model: "organisations", uuid: submission.organisation_uuid });
+    }
+    if (submission?.project_pitch_uuid != null) {
+      models.push({ model: "projectPitches", uuid: submission.project_pitch_uuid });
+    }
+    return models;
+  }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={applicationLoading}>
         <FrameworkProvider frameworkKey={framework}>
-          <WizardForm
-            disableInitialAutoProgress
-            steps={formSteps}
-            nextButtonText={t("Save and Continue")}
-            submitButtonText={t("Submit")}
-            hideBackButton={false}
-            onBackFirstStep={router.back}
-            onCloseForm={() => router.push(`/applications/${uuid}`)}
-            onChange={data =>
-              updateSubmission({ pathParams: { uuid: submission?.uuid ?? "" }, body: { answers: data } })
-            }
-            formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-            onSubmit={() =>
-              submitFormSubmission({
-                pathParams: {
-                  uuid: submission?.uuid ?? ""
-                }
-              })
-            }
-            submitButtonDisable={isSubmitting}
-            defaultValues={defaultValues}
-            tabOptions={{
-              markDone: true,
-              disableFutureTabs: true
-            }}
-            summaryOptions={{
-              title: t("Review Application Details"),
-              downloadButtonText: t("Download Application")
-            }}
-            title={submission?.form?.title}
-            roundedCorners
-            //@ts-ignore
-            formSubmissionOrg={submission?.organisation_attributes}
-          />
+          <FormModelProvider models={formModels}>
+            <WizardForm
+              disableInitialAutoProgress
+              steps={formSteps}
+              nextButtonText={t("Save and Continue")}
+              submitButtonText={t("Submit")}
+              hideBackButton={false}
+              onBackFirstStep={router.back}
+              onCloseForm={() => router.push(`/applications/${uuid}`)}
+              onChange={data =>
+                updateSubmission({ pathParams: { uuid: submission?.uuid ?? "" }, body: { answers: data } })
+              }
+              formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
+              onSubmit={() =>
+                submitFormSubmission({
+                  pathParams: {
+                    uuid: submission?.uuid ?? ""
+                  }
+                })
+              }
+              submitButtonDisable={isSubmitting}
+              defaultValues={defaultValues}
+              tabOptions={{
+                markDone: true,
+                disableFutureTabs: true
+              }}
+              summaryOptions={{
+                title: t("Review Application Details"),
+                downloadButtonText: t("Download Application")
+              }}
+              title={submission?.form?.title}
+              roundedCorners
+              //@ts-ignore
+              formSubmissionOrg={submission?.organisation_attributes}
+            />
+          </FormModelProvider>
         </FrameworkProvider>
       </LoadingContainer>
     </BackgroundLayout>

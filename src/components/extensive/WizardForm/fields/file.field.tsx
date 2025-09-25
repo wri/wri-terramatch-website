@@ -16,9 +16,10 @@ export const FileField: FormFieldFactory = {
     }
   },
 
-  renderInput: ({ additionalProps, collection, multiChoice }, sharedProps) => (
+  renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => (
     <RHFFileInput
       {...sharedProps}
+      model={model!}
       isPhotosAndVideo={["photos", "videos"].includes(collection ?? "")}
       allowMultiple={multiChoice}
       collection={collection ?? ""}

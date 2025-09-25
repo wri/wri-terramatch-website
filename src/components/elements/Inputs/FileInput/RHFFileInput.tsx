@@ -4,6 +4,8 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import { FormModelType } from "@/connections/util/Form";
+import { useFormModelUuid } from "@/context/formModel.provider";
 import {
   useDeleteV2FilesUUID,
   usePostV2FileUploadMODELCOLLECTIONUUID,
@@ -17,32 +19,28 @@ import Log from "@/utils/log";
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
 
-// TODO:
-//  * Get model / uuid from the entity context, make sure entity context is in use everywhere it needs to be.
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
     UseControllerProps {
-  model: string;
   collection: string;
-  uuid: string;
   formHook?: UseFormReturn;
   showPrivateCheckbox?: boolean;
   onChangeCapture?: () => void;
   isPhotosAndVideo?: boolean;
+  model: FormModelType;
 }
 
 const RHFFileInput = ({
   formHook,
   model,
   collection,
-  uuid,
   showPrivateCheckbox,
   onChangeCapture,
   isPhotosAndVideo = false,
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
-
+  const uuid = useFormModelUuid(model);
   const { field } = useController(fileInputProps);
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
@@ -183,6 +181,11 @@ const RHFFileInput = ({
       }
     } catch (e) {
       Log.error("Failed to append geotagging information", e);
+    }
+
+    if (uuid == null) {
+      Log.error("Missing a model UUID for this file input", { model, collection });
+      return;
     }
 
     upload?.({

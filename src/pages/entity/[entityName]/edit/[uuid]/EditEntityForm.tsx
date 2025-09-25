@@ -1,20 +1,26 @@
 import { useT } from "@transifex/react";
-import { defaults } from "lodash";
+import { camelCase, defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import { pruneEntityCache } from "@/connections/Entity";
+import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
-import EntityProvider from "@/context/entity.provider";
+import FormModelProvider from "@/context/formModel.provider";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport, pluralEntityNameToSingular } from "@/helpers/entity";
+import {
+  getEntityDetailPageLink,
+  isEntityReport,
+  pluralEntityNameToSingular,
+  singularEntityNameToPlural
+} from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useFormDefaultValues, useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
-import { EntityName } from "@/types/common";
+import { EntityName, isSingularEntityName } from "@/types/common";
 
 interface EditEntityFormProps {
   entityName: EntityName;
@@ -97,6 +103,14 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     };
   }, [formSteps, mode]);
 
+  const formModelType = useMemo(
+    () =>
+      camelCase(
+        isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+      ) as FormModelType,
+    [entityName]
+  );
+
   const formSubmissionOrg = {
     uuid: organisation?.uuid,
     type: organisation?.type,
@@ -105,7 +119,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   };
 
   return (
-    <EntityProvider entityUuid={entityUUID} entityName={entityName}>
+    <FormModelProvider model={formModelType} uuid={entityUUID}>
       <CurrencyProvider>
         <WizardForm
           formSubmissionOrg={formSubmissionOrg}
@@ -154,7 +168,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
           {...initialStepProps}
         />
       </CurrencyProvider>
-    </EntityProvider>
+    </FormModelProvider>
   );
 };
 

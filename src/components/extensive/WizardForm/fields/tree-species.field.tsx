@@ -20,12 +20,13 @@ export const TreeSpeciesField: FormFieldFactory = {
     return validation?.required === true ? validator.required() : validator;
   },
 
-  renderInput: ({ additionalProps, collection }, sharedProps) => (
+  renderInput: ({ additionalProps, collection, model }, sharedProps) => (
     <RHFTreeSpeciesInput
       {...sharedProps}
       error={sharedProps.error as any}
       withNumbers={additionalProps?.with_numbers}
       collection={collection ?? ""}
+      model={model!}
     />
   ),
 

@@ -59,6 +59,7 @@ export type QuestionDefinition = {
   years?: number[] | null;
   tableHeaders?: FormTableHeaderDto[] | null;
   additionalProps?: Dictionary<any> | null;
+  model?: FormQuestionDto["model"];
 };
 
 export type SharedFieldProps = {

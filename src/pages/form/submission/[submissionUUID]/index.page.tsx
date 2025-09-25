@@ -1,9 +1,11 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import FormModelProvider, { FormModel } from "@/context/formModel.provider";
 import FrameworkProvider, { useFramework } from "@/context/framework.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
@@ -33,43 +35,56 @@ const SubmissionPage = () => {
   );
   const defaultValues = useFormDefaultValues(formData?.data?.answers, formSteps);
 
+  const formModels = useMemo(() => {
+    const models: FormModel[] = [];
+    if (formData?.data?.organisation_uuid != null) {
+      models.push({ model: "organisations", uuid: formData.data.organisation_uuid });
+    }
+    if (formData?.data?.project_pitch_uuid != null) {
+      models.push({ model: "projectPitches", uuid: formData.data.project_pitch_uuid });
+    }
+    return models;
+  }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading}>
         <FrameworkProvider frameworkKey={framework}>
-          <WizardForm
-            steps={formSteps!}
-            errors={error}
-            onBackFirstStep={router.back}
-            onCloseForm={() => router.push("/home")}
-            onChange={data =>
-              updateSubmission({
-                pathParams: { uuid: submissionUUID },
-                body: { answers: normalizedFormData(data, formSteps!) }
-              })
-            }
-            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-            onSubmit={() =>
-              submitFormSubmission({
-                pathParams: {
-                  uuid: submissionUUID
-                }
-              })
-            }
-            submitButtonDisable={isSubmitting}
-            defaultValues={defaultValues}
-            title={formData?.data.form?.title}
-            tabOptions={{
-              markDone: true,
-              disableFutureTabs: true
-            }}
-            summaryOptions={{
-              title: t("Review Application Details"),
-              downloadButtonText: t("Download Application")
-            }}
-            roundedCorners
-            formSubmissionOrg={formData?.data?.organisation_attributes}
-          />
+          <FormModelProvider models={formModels}>
+            <WizardForm
+              steps={formSteps!}
+              errors={error}
+              onBackFirstStep={router.back}
+              onCloseForm={() => router.push("/home")}
+              onChange={data =>
+                updateSubmission({
+                  pathParams: { uuid: submissionUUID },
+                  body: { answers: normalizedFormData(data, formSteps!) }
+                })
+              }
+              formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+              onSubmit={() =>
+                submitFormSubmission({
+                  pathParams: {
+                    uuid: submissionUUID
+                  }
+                })
+              }
+              submitButtonDisable={isSubmitting}
+              defaultValues={defaultValues}
+              title={formData?.data.form?.title}
+              tabOptions={{
+                markDone: true,
+                disableFutureTabs: true
+              }}
+              summaryOptions={{
+                title: t("Review Application Details"),
+                downloadButtonText: t("Download Application")
+              }}
+              roundedCorners
+              formSubmissionOrg={formData?.data?.organisation_attributes}
+            />
+          </FormModelProvider>
         </FrameworkProvider>
       </LoadingContainer>
     </BackgroundLayout>
