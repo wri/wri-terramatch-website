@@ -7,7 +7,12 @@ export const TableInputField: FormFieldFactory = {
   createValidator: ({ validation }) => objectValidation(validation),
 
   renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (
-    <RHFInputTable {...sharedProps} headers={tableHeaders} questionId={name} hasTotal={additionalProps?.with_numbers} />
+    <RHFInputTable
+      {...sharedProps}
+      headers={tableHeaders ?? []}
+      fieldId={name}
+      hasTotal={additionalProps?.with_numbers}
+    />
   ),
 
   getAnswer: () => undefined,

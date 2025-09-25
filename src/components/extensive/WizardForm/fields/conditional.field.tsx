@@ -10,9 +10,7 @@ import { booleanValidation } from "@/utils/yup";
 
 export const ConditionalField: FormFieldFactory = {
   createValidator: ({ validation }) => booleanValidation(validation),
-  renderInput: ({ name }, sharedProps) => (
-    <ConditionalInput {...sharedProps} questionId={name} id={name} inputId={name} />
-  ),
+  renderInput: ({ name }, sharedProps) => <ConditionalInput {...sharedProps} fieldId={name} id={name} inputId={name} />,
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
   appendAnswers: (question, csv, formValues) => {
     csv.pushRow([question.label, getFormattedAnswer(question, formValues)]);

@@ -1,7 +1,7 @@
 import { FC, FormHTMLAttributes, Fragment, useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
+import FormField from "@/components/extensive/WizardForm/FormField";
 
 import List from "../List/List";
 import { FieldDefinition } from "../WizardForm/types";
@@ -22,9 +22,7 @@ const SimpleForm: FC<SimpleFormProps> = ({ questions, formHook, onChange }) => {
       items={questions}
       itemAs={Fragment}
       uniqueId="name"
-      render={question => (
-        <FormQuestion key={question.name} question={question} formHook={formHook} onChange={_onChange} />
-      )}
+      render={question => <FormField key={question.name} field={question} formHook={formHook} onChange={_onChange} />}
     />
   );
 };

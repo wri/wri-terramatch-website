@@ -32,12 +32,12 @@ export const selectValidation = (multiChoice?: boolean | null, validation?: Dict
   }
 };
 
-export const objectValidation = (validation: Dictionary<any> | null) => {
+export const objectValidation = (validation?: Dictionary<any> | null) => {
   const validator = yup.object();
   return validation?.required === true ? validator.required() : validator;
 };
 
-export const booleanValidation = (validation: Dictionary<any> | null) => {
+export const booleanValidation = (validation?: Dictionary<any> | null) => {
   const validator = yup.boolean();
   return validation?.required === true ? validator.required() : validator;
 };

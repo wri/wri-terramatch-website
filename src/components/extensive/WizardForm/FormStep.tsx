@@ -3,7 +3,7 @@ import { UseFormReturn } from "react-hook-form";
 
 import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
-import FormQuestion from "@/components/extensive/WizardForm/FormQuestion";
+import FormField from "@/components/extensive/WizardForm/FormField";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { useFormSection, useSectionQuestions } from "@/connections/util/Form";
@@ -43,9 +43,9 @@ export const FormStep = ({
           uniqueId="name"
           itemClassName="mt-8"
           render={question => (
-            <FormQuestion
+            <FormField
               key={question.name}
-              question={question}
+              field={question}
               formHook={formHook}
               onChange={onChange}
               formSubmissionOrg={formSubmissionOrg}

@@ -38,7 +38,7 @@ const StubFormFieldsProvider: FormFieldsProvider = {
 
 // Returns a boolean indicating whether the form is loaded, and the fields provider.
 export const useApiFieldsProvider = (formUuid?: string | null): [boolean, FormFieldsProvider] => {
-  const [, { data: form }] = useForm({ id: formUuid, enabled: formUuid != null });
+  const [, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
   const provider = useMemo<FormFieldsProvider>(() => {
     // section ids and question ids are sorted at the connection level based on the `order` field.
     const stepIds = form == null ? [] : selectSections(form.uuid).map(({ uuid }) => uuid);
