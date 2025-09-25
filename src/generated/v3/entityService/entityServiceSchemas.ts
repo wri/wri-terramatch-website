@@ -1874,16 +1874,16 @@ export type LinkedFieldDto = {
    * Linked field id
    */
   id: string;
-  formType:
-    | "organisation"
-    | "financialReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport";
+  formModelType:
+    | "organisations"
+    | "financialReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports";
   label: string;
   name: string;
   inputType:
@@ -2072,6 +2072,17 @@ export type FormQuestionDto = {
   optionsOther: boolean | null;
   options: FormQuestionOptionDto[] | null;
   showOnParentCondition: boolean | null;
+  model:
+    | "organisations"
+    | "financialReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
+    | null;
   linkedFieldKey: string | null;
   isParentConditionalDefault: boolean;
   minCharacterLimit: number | null;

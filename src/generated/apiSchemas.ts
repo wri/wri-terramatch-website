@@ -4351,6 +4351,7 @@ export type ProjectFullRead = {
        */
       tags?: string[];
       project_pitch_uuid?: string;
+      organisation_uuid?: string;
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -5323,6 +5324,7 @@ export type FormSubmissionRead = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  organisation_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -5854,6 +5856,7 @@ export type ApplicationRead = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    organisation_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
