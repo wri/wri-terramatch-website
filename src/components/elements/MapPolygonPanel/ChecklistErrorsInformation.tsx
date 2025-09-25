@@ -1,32 +1,70 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { usePolygonValidation } from "@/connections/Validation";
+import {
+  hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3,
+  isCompletedDataOrEstimatedArea,
+  parseV3ValidationData
+} from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { TextVariants } from "@/types/common";
+import { ICriteriaCheckItem } from "@/types/validation";
 
 import Text from "../Text/Text";
 
 interface ChecklistErrorsInformationProps {
-  polygonValidationData: ICriteriaCheckItem[];
+  polygonUuid: string;
   className?: string;
   variant?: "table" | "default";
+  showWarning?: boolean;
+  onWarningChange?: (showWarning: boolean) => void;
 }
 
 const ChecklistErrorsInformation = ({
-  polygonValidationData,
+  polygonUuid,
   className,
-  variant = "default"
+  variant = "default",
+  showWarning = false,
+  onWarningChange
 }: ChecklistErrorsInformationProps) => {
   const t = useT();
   const { getFormatedExtraInfo } = useMessageValidators();
+  const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid
+  });
+
+  useEffect(() => {
+    if (v3ValidationData?.criteriaList != null && v3ValidationData.criteriaList.length > 0) {
+      setPolygonValidationData(parseV3ValidationData(v3ValidationData));
+      setIsLoading(false);
+      if (onWarningChange) {
+        onWarningChange(hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3(v3ValidationData));
+      }
+    } else {
+      setIsLoading(v3ValidationData == null);
+    }
+  }, [v3ValidationData, onWarningChange]);
   const VARIANT_MAP = {
     table: { text: "text-12", container: "gap-1 mt-1" },
     default: { text: "text-14-light", container: "gap-3 mt-3" }
   };
+
+  if (isLoading) {
+    return (
+      <div className={classNames("flex items-center justify-center py-4", className)}>
+        <Text variant="text-12" className="text-gray-500">
+          Loading validation data...
+        </Text>
+      </div>
+    );
+  }
 
   return (
     <div className={classNames("grid", className, VARIANT_MAP[variant].container)}>
