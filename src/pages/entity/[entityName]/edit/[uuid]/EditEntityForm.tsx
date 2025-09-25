@@ -3,6 +3,7 @@ import { camelCase, defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { pruneEntityCache } from "@/connections/Entity";
@@ -113,12 +114,21 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   }, [entityName, entityUUID]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid);
 
-  const formSubmissionOrg = {
-    uuid: organisation?.uuid,
-    type: organisation?.type,
-    currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
-    start_month: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
-  };
+  const orgDetails = useMemo(
+    (): OrgFormDetails => ({
+      uuid: organisation?.uuid,
+      currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
+      startMonth: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
+    }),
+    [
+      entity?.currency,
+      entity?.fin_start_month,
+      entityName,
+      organisation?.currency,
+      organisation?.fin_start_month,
+      organisation?.uuid
+    ]
+  );
 
   return (
     <LoadingContainer loading={!providerLoaded}>
@@ -127,7 +137,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
           framework={framework}
           models={model}
           fieldsProvider={fieldsProvider}
-          formSubmissionOrg={formSubmissionOrg}
+          orgDetails={orgDetails}
           errors={error}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push("/home")}

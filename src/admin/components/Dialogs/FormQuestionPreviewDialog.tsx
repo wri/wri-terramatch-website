@@ -59,12 +59,7 @@ export const FormQuestionPreviewDialog = ({
         <Divider />
 
         <DialogContent>
-          <FieldMapper
-            field={field}
-            formHook={formHook}
-            onChange={() => Log.debug("Field Mapper onChange")}
-            formSubmissionOrg={{ title: formTitle }}
-          />
+          <FieldMapper field={field} formHook={formHook} onChange={() => Log.debug("Field Mapper onChange")} />
         </DialogContent>
 
         <DialogActions sx={{ padding: 3 }}>

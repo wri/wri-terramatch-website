@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import { getRequestedInformationForm } from "@/components/extensive/WizardForm/utils";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -75,6 +76,18 @@ const RequestMoreInformationPage = () => {
   }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(submission?.form_uuid);
 
+  const orgDetails = useMemo(
+    (): OrgFormDetails | undefined =>
+      submission?.organisation_attributes == null
+        ? undefined
+        : {
+            uuid: submission.organisation_attributes.uuid,
+            currency: submission.organisation_attributes.currency,
+            startMonth: submission.organisation_attributes.start_month
+          },
+    [submission?.organisation_attributes]
+  );
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={applicationLoading || !providerLoaded}>
@@ -109,8 +122,7 @@ const RequestMoreInformationPage = () => {
           }}
           title={submission?.form?.title}
           roundedCorners
-          //@ts-ignore
-          formSubmissionOrg={submission?.organisation_attributes}
+          orgDetails={orgDetails}
         />
       </LoadingContainer>
     </BackgroundLayout>

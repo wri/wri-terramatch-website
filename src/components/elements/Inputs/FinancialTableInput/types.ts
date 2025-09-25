@@ -3,12 +3,11 @@ import { useEffect, useMemo } from "react";
 
 import { OptionValue } from "@/types/common";
 
-export type orgSubmission = {
-  uuid: string;
-  type: string;
-  currency: string;
-  start_month: string | number;
-  title?: string | null;
+export type OrgFormDetails = {
+  uuid?: string;
+  currency?: string;
+  startMonth?: string | number;
+  title?: string;
 };
 
 export type BaseYearlyData = {

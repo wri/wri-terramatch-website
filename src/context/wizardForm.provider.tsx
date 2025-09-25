@@ -1,5 +1,6 @@
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FieldDefinition, FormDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { selectQuestions, selectSection, selectSections, useForm } from "@/connections/util/Form";
@@ -94,19 +95,26 @@ export const useApiFieldsProvider = (formUuid?: string | null): [boolean, FormFi
 type IFormFieldsContext = {
   models: FormModel[];
   fieldsProvider: FormFieldsProvider;
+  orgDetails?: OrgFormDetails;
 };
 
 type WizardFormProviderProps = {
   models: FormModelsDefinition;
   fieldsProvider: FormFieldsProvider;
+  orgDetails?: OrgFormDetails;
 };
 
 const WizardFormContext = createContext<IFormFieldsContext>({ models: [], fieldsProvider: StubFormFieldsProvider });
 
-const WizardFormProvider: FC<PropsWithChildren<WizardFormProviderProps>> = ({ models, fieldsProvider, children }) => {
+const WizardFormProvider: FC<PropsWithChildren<WizardFormProviderProps>> = ({
+  models,
+  fieldsProvider,
+  orgDetails,
+  children
+}) => {
   const contextModels = useMemo(() => toArray(models), [models]);
   return (
-    <WizardFormContext.Provider value={{ models: contextModels, fieldsProvider }}>
+    <WizardFormContext.Provider value={{ models: contextModels, fieldsProvider, orgDetails }}>
       {children}
     </WizardFormContext.Provider>
   );
@@ -116,5 +124,7 @@ export const useFormModelUuid = (type?: FormModelType | null) =>
   useContext(WizardFormContext).models.find(m => m.model === type)?.uuid;
 
 export const useFieldsProvider = () => useContext(WizardFormContext).fieldsProvider;
+
+export const useOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
 
 export default WizardFormProvider;

@@ -8,10 +8,9 @@ type FormQuestionProps = {
   field: FieldDefinition;
   formHook: UseFormReturn;
   onChange: () => void;
-  formSubmissionOrg?: any;
 };
 
-const FormField: FC<FormQuestionProps> = ({ field, formHook, onChange, formSubmissionOrg }) => {
+const FormField: FC<FormQuestionProps> = ({ field, formHook, onChange }) => {
   const sharedProps = useMemo(
     (): SharedFieldProps => ({
       error: formHook.formState.errors?.[field.name] as FieldError,

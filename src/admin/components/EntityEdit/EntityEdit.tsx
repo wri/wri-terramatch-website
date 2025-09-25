@@ -5,6 +5,7 @@ import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { FormModelType } from "@/connections/util/Form";
@@ -87,12 +88,22 @@ export const EntityEdit = () => {
 
   const organisation = entityValue?.data?.organisation;
 
-  const formSubmissionOrg = {
-    uuid: organisation?.uuid,
-    type: organisation?.type,
-    currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
-    start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
-  };
+  const orgDetails = useMemo(
+    (): OrgFormDetails => ({
+      uuid: organisation?.uuid,
+      currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
+      startMonth:
+        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
+    }),
+    [
+      entityName,
+      entityValue?.data?.currency,
+      entityValue?.data?.fin_start_month,
+      organisation?.currency,
+      organisation?.fin_start_month,
+      organisation?.uuid
+    ]
+  );
 
   return (
     <div className="mx-auto w-full max-w-7xl">
@@ -118,7 +129,7 @@ export const EntityEdit = () => {
           }}
           roundedCorners
           hideSaveAndCloseButton
-          formSubmissionOrg={formSubmissionOrg}
+          orgDetails={orgDetails}
         />
       </LoadingContainer>
     </div>

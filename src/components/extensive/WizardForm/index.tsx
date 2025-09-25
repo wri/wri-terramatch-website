@@ -5,6 +5,7 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
@@ -30,6 +31,8 @@ export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
   models: FormModelsDefinition;
   framework: Framework;
+  orgDetails?: OrgFormDetails;
+
   defaultValues?: any;
   onStepChange?: (values: any) => void;
   onChange?: (values: Dictionary<any>, isCloseAndSave?: boolean) => void;
@@ -70,7 +73,6 @@ export interface WizardFormProps {
   initialStepIndex?: number;
   roundedCorners?: boolean;
   className?: string;
-  formSubmissionOrg?: any;
 }
 
 function WizardForm(props: WizardFormProps) {
@@ -207,13 +209,7 @@ function WizardForm(props: WizardFormProps) {
             </div>
           </div>
         )}
-        <FormStep
-          id="step"
-          stepId={stepId}
-          formHook={formHook}
-          onChange={onChange}
-          formSubmissionOrg={{ ...props?.formSubmissionOrg, title: props?.title }}
-        />
+        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={onChange} />
         <FormFooter
           variant="sticky"
           backButtonProps={
@@ -291,10 +287,15 @@ function WizardForm(props: WizardFormProps) {
 
   const tabItems: TabItem[] = props.summaryOptions == null ? stepTabItems : [...stepTabItems, summaryItem];
 
+  const orgDetails = useMemo(
+    (): OrgFormDetails => ({ title: props.title, ...props.orgDetails }),
+    [props.orgDetails, props.title]
+  );
+
   return (
     <div>
       <FrameworkProvider frameworkKey={props.framework}>
-        <WizardFormProvider models={props.models} fieldsProvider={props.fieldsProvider}>
+        <WizardFormProvider models={props.models} fieldsProvider={props.fieldsProvider} orgDetails={orgDetails}>
           {!props.header?.hide && (
             <WizardFormHeader
               currentStep={selectedStepIndex + 1}

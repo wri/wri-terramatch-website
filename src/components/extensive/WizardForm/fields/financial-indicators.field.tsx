@@ -5,12 +5,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
   createValidator: () => undefined,
 
   renderInput: ({ years, collection }, sharedProps) => (
-    <RHFFinancialIndicatorsDataTable
-      {...sharedProps}
-      formSubmissionOrg={formSubmissionOrg}
-      years={years ?? undefined}
-      model={collection ?? undefined}
-    />
+    <RHFFinancialIndicatorsDataTable {...sharedProps} years={years ?? undefined} collection={collection ?? undefined} />
   ),
 
   getAnswer: () => undefined,

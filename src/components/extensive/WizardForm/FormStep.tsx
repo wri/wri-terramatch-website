@@ -13,7 +13,6 @@ interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>,
   formHook: UseFormReturn;
   onChange: () => void;
   actionButtonProps?: IButtonProps;
-  formSubmissionOrg?: any;
 }
 
 export const FormStep = ({
@@ -22,7 +21,6 @@ export const FormStep = ({
   onChange,
   actionButtonProps,
   children,
-  formSubmissionOrg,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
   const questions = useSectionQuestions(stepId);
@@ -43,13 +41,7 @@ export const FormStep = ({
           uniqueId="name"
           itemClassName="mt-8"
           render={question => (
-            <FormField
-              key={question.name}
-              field={question}
-              formHook={formHook}
-              onChange={onChange}
-              formSubmissionOrg={formSubmissionOrg}
-            />
+            <FormField key={question.name} field={question} formHook={formHook} onChange={onChange} />
           )}
         />
       )}
