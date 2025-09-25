@@ -137,7 +137,7 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       addButtonCaption={t("Add team member")}
       modalEditTitle={t("Update team member")}
       tableColumns={getLeadershipsTableColumns(t)}
-      questions={[
+      fields={[
         {
           label: t("Team Member first name"),
           name: "first_name",

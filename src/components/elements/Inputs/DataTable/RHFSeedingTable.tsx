@@ -117,7 +117,7 @@ const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildr
       additionalValues={{ collection }}
       addButtonCaption={t("Add Species or mix")}
       tableColumns={getSeedingTableColumns(t, captureCount)}
-      questions={getSeedingsQuestions(t, captureCount)}
+      fields={getSeedingsQuestions(t, captureCount)}
     />
   );
 };

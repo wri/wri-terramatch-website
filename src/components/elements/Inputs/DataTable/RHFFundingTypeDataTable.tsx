@@ -157,7 +157,7 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
       tableColumns={getFundingTypeTableColumns(t)}
-      questions={getFundingTypeQuestions(t)}
+      fields={getFundingTypeQuestions(t)}
       hasPagination={true}
       invertSelectPagination={true}
     />

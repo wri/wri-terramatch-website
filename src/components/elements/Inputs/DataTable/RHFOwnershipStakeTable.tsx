@@ -118,7 +118,7 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
       addButtonCaption={t("Add Ownership Stake")}
       modalEditTitle={t("Update Ownership Stake")}
       tableColumns={getOwnershipTableColumns(t)}
-      questions={[
+      fields={[
         {
           label: t("first name"),
           name: "first_name",

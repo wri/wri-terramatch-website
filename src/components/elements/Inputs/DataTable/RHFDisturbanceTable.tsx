@@ -115,7 +115,7 @@ const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChi
       onChange={onChange}
       addButtonCaption={t("Add Disturbance")}
       tableColumns={getDisturbanceTableColumns(props, t)}
-      questions={getDisturbanceTableQuestions(props, t)}
+      fields={getDisturbanceTableQuestions(props, t)}
     />
   );
 };

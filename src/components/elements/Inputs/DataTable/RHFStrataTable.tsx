@@ -3,18 +3,12 @@ import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { Entity } from "@/types/common";
-
 import DataTable, { DataTableProps } from "./DataTable";
 
-// TODO:
-//  * Get entity from the entity context
 export interface RHFStrataTableProps
   extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
-  onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  entity: Entity;
 }
 
 export const getStrataTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
@@ -22,7 +16,7 @@ export const getStrataTableColumns = (t: typeof useT | Function = (t: string) =>
   { accessorKey: "description", header: t("Characteristics"), enableSorting: false }
 ];
 
-const RHFStrataTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFStrataTableProps>) => {
+const RHFStrataTable = ({ ...props }: PropsWithChildren<RHFStrataTableProps>) => {
   const t = useT();
   const {
     field: { value, onChange }
@@ -36,7 +30,7 @@ const RHFStrataTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren
       generateUuids={true}
       addButtonCaption={t("Add Strata")}
       tableColumns={getStrataTableColumns(t)}
-      questions={[
+      fields={[
         {
           label: t("Percentage of the amount of the site area affected"),
           name: "extent",

@@ -17,16 +17,16 @@ import { ModalBase } from "./ModalsBases";
 
 export interface FormModalProps {
   title?: string;
-  questions: FieldDefinition[];
+  fields: FieldDefinition[];
   onSubmit: (data: any) => void;
   defaultValues?: Record<string, any>;
 }
 
-const FormModal: FC<FormModalProps> = ({ title, questions, onSubmit, defaultValues }) => {
+const FormModal: FC<FormModalProps> = ({ title, fields, onSubmit, defaultValues }) => {
   const t = useT();
   const { closeModal } = useModalContext();
 
-  const resolver = useMemo(() => yupResolver(getSchema(questions, t)), [questions, t]);
+  const resolver = useMemo(() => yupResolver(getSchema(fields, t)), [fields, t]);
   const formHook = useForm({ resolver, mode: "onSubmit", defaultValues });
 
   return (
@@ -47,7 +47,7 @@ const FormModal: FC<FormModalProps> = ({ title, questions, onSubmit, defaultValu
           formHook.reset();
         })}
       >
-        <SimpleForm questions={questions} formHook={formHook} />
+        <SimpleForm fields={fields} formHook={formHook} />
         <Button type="submit" className="m-auto mt-15">
           {t("Save")}
         </Button>

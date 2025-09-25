@@ -38,7 +38,7 @@ const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
       generateUuids={true}
       addButtonCaption={t("Add invasive")}
       tableColumns={getInvasiveTableColumns(t)}
-      questions={[
+      fields={[
         {
           label: t("Plant Species"),
           placeholder: t("Add Species (scientific name)"),
