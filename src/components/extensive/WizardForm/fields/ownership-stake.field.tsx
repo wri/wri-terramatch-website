@@ -7,7 +7,7 @@ import { arrayValidation } from "@/utils/yup";
 
 export const OwnershipStakeField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
-  renderInput: (question, sharedProps) => <RHFOwnershipStakeTable {...sharedProps} />,
+  renderInput: (field, sharedProps) => <RHFOwnershipStakeTable {...sharedProps} />,
   getAnswer: () => undefined,
   appendAnswers: ({ label, name }, csv, formValues) => {
     const headers = getOwnershipTableColumns();

@@ -1,7 +1,7 @@
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
-import { FieldDefinition, FormDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { selectQuestions, selectSection, selectSections, useForm } from "@/connections/util/Form";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -17,7 +17,6 @@ export type FormModel = {
 export type FormModelsDefinition = FormModel | FormModel[];
 
 export type FormFieldsProvider = {
-  form: () => FormDefinition | undefined;
   // Returns the step IDs in the order they should be displayed in the form.
   stepIds: () => string[];
   step: (id: string) => StepDefinition | undefined;
@@ -28,13 +27,40 @@ export type FormFieldsProvider = {
 };
 
 const StubFormFieldsProvider: FormFieldsProvider = {
-  form: () => undefined,
   stepIds: () => [],
   step: () => undefined,
   fieldIds: () => [],
   fieldById: () => undefined,
   fieldByKey: () => undefined,
   childIds: () => []
+};
+
+export type LocalSteps = (StepDefinition & {
+  fields: FieldDefinition[];
+})[];
+
+export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvider => {
+  return useMemo<FormFieldsProvider>(() => {
+    const stepIds = localSteps.map(({ id }) => id);
+    const stepsById = new Map<string, StepDefinition>(localSteps.map(({ fields, ...step }) => [step.id, step]));
+    const fieldIds = new Map(localSteps.map(({ id, fields }) => [id, fields.map(({ name }) => name)]));
+    const fieldsById = new Map(localSteps.flatMap(({ fields }) => fields.map(field => [field.name, field])));
+    const fieldsByKey = new Map(
+      [...fieldsById.values()]
+        .filter(({ linkedFieldKey }) => linkedFieldKey != null)
+        .map(field => [field.linkedFieldKey as string, field])
+    );
+
+    return {
+      stepIds: () => stepIds ?? [],
+      step: (id: string) => stepsById.get(id),
+      fieldIds: (sectionId: string) => fieldIds.get(sectionId) ?? [],
+      fieldById: (id: string) => fieldsById.get(id),
+      fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
+      // local steps don't support child fields.
+      childIds: () => []
+    };
+  }, [localSteps]);
 };
 
 // Returns a boolean indicating whether the form is loaded, and the fields provider.
@@ -60,8 +86,8 @@ export const useApiFieldsProvider = (formUuid?: string | null): [boolean, FormFi
       form == null
         ? new Map<string, FieldDefinition>()
         : new Map(
-            stepIds.flatMap(sectionId =>
-              selectQuestions(sectionId).map(question => [question.uuid, questionDtoToDefinition(question)])
+            stepIds.flatMap(stepId =>
+              selectQuestions(stepId).map(question => [question.uuid, questionDtoToDefinition(question)])
             )
           );
     const fieldsByKey = new Map(

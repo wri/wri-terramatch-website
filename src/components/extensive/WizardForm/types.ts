@@ -31,7 +31,6 @@ import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import {
-  FormDto,
   FormQuestionDto,
   FormQuestionOptionDto,
   FormTableHeaderDto
@@ -39,12 +38,9 @@ import {
 import { Option, UploadedFile } from "@/types/common";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-export type FieldInputType = FormQuestionDto["inputType"];
-
-export type FormDefinition = Omit<
-  FormDto,
-  "uuid" | "type" | "deadlineAt" | "published" | "stageId" | "fundingProgrammeId"
->;
+// There are a couple of types that are supported by the hardcoded client side forms (like org creation),
+// but aren't in use in any wizard forms.
+export type FieldInputType = FormQuestionDto["inputType"] | "tel";
 
 export type StepDefinition = {
   id: string;

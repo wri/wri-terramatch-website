@@ -31,10 +31,10 @@ export const FileField: FormFieldFactory = {
 
   getAnswer: ({ name }, formValues) => toArray(formValues[name]),
 
-  appendAnswers: (question, csv, values) => {
-    const value = (FileField.getAnswer(question, values) as UploadedFile[]).filter(isNotNull);
+  appendAnswers: (field, csv, values, fieldsProvider) => {
+    const value = (FileField.getAnswer(field, values, fieldsProvider) as UploadedFile[]).filter(isNotNull);
     if (value.length > 0) {
-      csv.pushRow([question.label, "FileName", "File Url"]);
+      csv.pushRow([field.label, "FileName", "File Url"]);
 
       value.forEach(v => {
         csv.pushRow(["", v.title ?? v.file_name ?? "", v.url]);

@@ -22,6 +22,7 @@ import { SelectImageField } from "./select-image.field";
 import { StratasField } from "./stratas.field";
 import { StrategyAreaField } from "./strategy-area.field";
 import { TableInputField } from "./table-input.field";
+import { TelephoneField } from "./telephone.field";
 import { TextField } from "./text.field";
 import { TreeSpeciesField } from "./tree-species.field";
 import { UrlField } from "./url.field";
@@ -35,6 +36,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   number: NumberField,
   "number-percentage": NumberPercentageField,
   url: UrlField,
+  tel: TelephoneField,
   leaderships: LeadershipsField,
   ownershipStake: OwnershipStakeField,
   stratas: StratasField,

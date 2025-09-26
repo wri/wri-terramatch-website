@@ -3,10 +3,13 @@ import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/type
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { stringValidation } from "@/utils/yup";
 
-export const TextField: FormFieldFactory = {
+export const TelephoneField: FormFieldFactory = {
   createValidator: ({ validation }) => stringValidation(validation),
-  renderInput: (field, sharedProps) => <Input {...sharedProps} type="text" />,
+
+  renderInput: (field, sharedProps) => <Input {...sharedProps} type="tel" />,
+
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
+
   appendAnswers: (field, csv, values, fieldsProvider) =>
     csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
 };

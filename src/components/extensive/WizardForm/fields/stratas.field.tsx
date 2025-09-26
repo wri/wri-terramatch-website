@@ -5,7 +5,7 @@ import { arrayValidation } from "@/utils/yup";
 
 export const StratasField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
-  renderInput: (question, sharedProps) => <RHFStrataTable {...sharedProps} />,
+  renderInput: (field, sharedProps) => <RHFStrataTable {...sharedProps} />,
   getAnswer: () => undefined,
 
   appendAnswers: ({ label, name }, csv, formValues) => {

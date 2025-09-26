@@ -12,6 +12,7 @@ import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import {
   useDeleteV2OrganisationsRetractMyDraft,
   useGetV2OrganisationsUUID,
@@ -60,8 +61,8 @@ const CreateOrganisationForm = () => {
     }
   });
 
-  // TODO create a fields provider that uses hardcoded FE definitions.
-  const formSteps = getSteps(t, uuid, countryOptions ?? []);
+  const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
+  const provider = useLocalStepsProvider(formSteps);
   const defaultValues = useFormDefaultValues(orgData?.data, formSteps);
 
   const onBackFirstStep = () => {
@@ -90,6 +91,7 @@ const CreateOrganisationForm = () => {
         <WizardForm
           framework={Framework.UNDEFINED}
           models={models}
+          fieldsProvider={provider}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
           errors={error}
           defaultValues={defaultValues}

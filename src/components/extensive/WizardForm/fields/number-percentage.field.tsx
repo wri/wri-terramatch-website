@@ -11,12 +11,12 @@ export const NumberPercentageField: FormFieldFactory = {
     return validator;
   },
 
-  renderInput: (question, sharedProps) => {
+  renderInput: (field, sharedProps) => {
     return <Input {...sharedProps} type="number" min={0} max={100} />;
   },
 
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
-  appendAnswers: (question, csv, values, fieldsProvider) =>
-    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
+  appendAnswers: (field, csv, values, fieldsProvider) =>
+    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
 };

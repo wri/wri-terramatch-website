@@ -8,13 +8,13 @@ export const ConditionalField: FormFieldFactory = {
   createValidator: ({ validation }) => booleanValidation(validation),
   renderInput: ({ name }, sharedProps) => <ConditionalInput {...sharedProps} fieldId={name} id={name} inputId={name} />,
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
-  appendAnswers: (question, csv, formValues, fieldsProvider) => {
-    csv.pushRow([question.label, getFormattedAnswer(question, formValues, fieldsProvider)]);
+  appendAnswers: (field, csv, formValues, fieldsProvider) => {
+    csv.pushRow([field.label, getFormattedAnswer(field, formValues, fieldsProvider)]);
     fieldsProvider
-      .childIds(question.name)
+      .childIds(field.name)
       .map(fieldsProvider.fieldById)
       .filter(isNotNull)
-      .filter(({ showOnParentCondition }) => showOnParentCondition === formValues[question.name])
+      .filter(({ showOnParentCondition }) => showOnParentCondition === formValues[field.name])
       .forEach(child => {
         appendAnswersAsCSVRow(csv, child, formValues, fieldsProvider);
       });

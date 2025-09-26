@@ -34,6 +34,6 @@ export const LongTextField: FormFieldFactory = {
 
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
-  appendAnswers: (question, csv, values, fieldsProvider) =>
-    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
+  appendAnswers: (field, csv, values, fieldsProvider) =>
+    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
 };

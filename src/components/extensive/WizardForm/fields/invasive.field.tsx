@@ -5,7 +5,7 @@ import { arrayValidation } from "@/utils/yup";
 
 export const InvasiveField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
-  renderInput: (question, sharedProps) => <RHFInvasiveTable {...sharedProps} />,
+  renderInput: (field, sharedProps) => <RHFInvasiveTable {...sharedProps} />,
   getAnswer: () => undefined,
   appendAnswers: ({ label, name }, csv, formValues) => {
     const headers = getInvasiveTableColumns();

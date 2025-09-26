@@ -7,7 +7,7 @@ import { arrayValidation } from "@/utils/yup";
 
 export const FundingTypeField: FormFieldFactory = {
   createValidator: ({ validation }) => arrayValidation(validation),
-  renderInput: (question, sharedProps) => <RHFFundingTypeDataTable {...sharedProps} />,
+  renderInput: (field, sharedProps) => <RHFFundingTypeDataTable {...sharedProps} />,
   getAnswer: () => undefined,
   appendAnswers: ({ label, name }, csv, formValues) => {
     const headers = getFundingTypeTableColumns();

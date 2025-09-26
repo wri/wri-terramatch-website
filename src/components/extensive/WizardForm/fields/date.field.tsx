@@ -5,8 +5,8 @@ import { stringValidation } from "@/utils/yup";
 
 export const DateField: FormFieldFactory = {
   createValidator: ({ validation }) => stringValidation(validation),
-  renderInput: (question, sharedProps) => <Input {...sharedProps} type="date" />,
+  renderInput: (field, sharedProps) => <Input {...sharedProps} type="date" />,
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
-  appendAnswers: (question, csv, values, fieldsProvider) =>
-    csv.pushRow([question.label, getFormattedAnswer(question, values, fieldsProvider)])
+  appendAnswers: (field, csv, values, fieldsProvider) =>
+    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
 };

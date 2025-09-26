@@ -3,6 +3,7 @@ import * as yup from "yup";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { isNotNull } from "@/utils/array";
 
 export const TreeSpeciesField: FormFieldFactory = {
   createValidator: ({ additionalProps, validation }) => {
@@ -32,18 +33,18 @@ export const TreeSpeciesField: FormFieldFactory = {
 
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
-  appendAnswers: (question, csv, formValues) => {
-    const value = ((TreeSpeciesField.getAnswer(question, formValues) ?? []) as TreeSpeciesValue[]).filter(
-      v => v != null
+  appendAnswers: (field, csv, formValues, fieldsProvider) => {
+    const value = ((TreeSpeciesField.getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[]).filter(
+      isNotNull
     );
     if (value.length > 0) {
-      if (question.additionalProps?.with_numbers === true) {
-        csv.pushRow([question.label, "Species name", "Total Trees"]);
+      if (field.additionalProps?.with_numbers === true) {
+        csv.pushRow([field.label, "Species name", "Total Trees"]);
         for (const { name, amount } of value) {
           csv.pushRow(["", name, amount]);
         }
       } else {
-        csv.pushRow([question.label, "Species name"]);
+        csv.pushRow([field.label, "Species name"]);
         for (const { name } of value) {
           csv.pushRow(["", name]);
         }
