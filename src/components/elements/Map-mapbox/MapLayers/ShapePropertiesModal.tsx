@@ -5,7 +5,6 @@ import { useT } from "@transifex/react";
 import circleToPolygon from "circle-to-polygon";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { FieldError, useForm } from "react-hook-form";
-import { When } from "react-if";
 import * as yup from "yup";
 
 import Button from "@/components/elements/Button/Button";
@@ -19,6 +18,7 @@ import { getDistributionOptions } from "@/constants/options/distribution";
 import { getLandUseTypeOptions } from "@/constants/options/landUseType";
 import { getRestorationStrategyOptions } from "@/constants/options/restorationStrategy";
 import { useModalContext } from "@/context/modal.provider";
+
 interface ShapePropertiesModalProps {
   draw?: MapboxDraw;
   feature: MapboxGeoJSONFeature;
@@ -66,7 +66,7 @@ export const ShapePropertiesModal = ({
   const t = useT();
 
   const defaultValues = {
-    Radius: Math.round(feature.properties?.radiusInKm * 1000) || 2000,
+    Radius: Math.round((feature.properties?.radiusInKm as number) * 1000) || 2000,
     Poly_ID: getFeatureProperties<string>(feature.properties, "Poly_ID"),
     Practice: getFeatureProperties<string>(feature.properties, "Practice")?.split(","),
     Target_Sys: getFeatureProperties<string>(feature.properties, "Target_Sys"),
@@ -106,7 +106,7 @@ export const ShapePropertiesModal = ({
       <form onSubmit={handleSubmit(onHandleSubmit)} className="flex w-full flex-col gap-8">
         <Text variant="text-heading-1000">{t("Polygon Details")}</Text>
         <hr />
-        <When condition={feature.properties?.isCircle}>
+        {feature.properties?.isCircle === true ? (
           <Input
             type="number"
             {...register("Radius", { required: true })}
@@ -117,7 +117,7 @@ export const ShapePropertiesModal = ({
             required
             error={formState.errors.Radius}
           />
-        </When>
+        ) : null}
         <Input
           type="text"
           {...register("Poly_ID")}

@@ -27,7 +27,12 @@ export const useFormSubmission = (uuid?: string) => {
     }
   );
 
-  return { isLoading: !formDataValid, formData: formDataValid ? formData : undefined };
+  const [formLoaded, { data: form, loadFailure: formLoadFailure }] = useForm({
+    id: formData?.data?.form_uuid,
+    enabled: formData?.data?.form_uuid != null
+  });
+
+  return formDataValid && formLoaded ? { isLoading: false, formData, form, formLoadFailure } : { isLoading: true };
 };
 
 /**

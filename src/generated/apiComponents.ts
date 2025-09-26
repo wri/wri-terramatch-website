@@ -12355,6 +12355,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -12447,6 +12448,7 @@ export type PostV2FormsSubmissionsResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -12537,6 +12539,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -12621,6 +12624,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -12753,6 +12757,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -12844,6 +12849,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   organisation_uuid?: string;
   organisation_attributes?: {
     uuid?: string;
@@ -13384,6 +13390,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
     organisation_uuid?: string;
     organisation_attributes?: {
       uuid?: string;
@@ -13971,6 +13978,7 @@ export type GetV2ApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
     organisation_uuid?: string;
     organisation_attributes?: {
       uuid?: string;
