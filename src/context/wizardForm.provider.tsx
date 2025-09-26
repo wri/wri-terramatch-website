@@ -81,10 +81,11 @@ export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvide
 };
 
 /**
- * Creates a fields provider for a given form UUID. IMPORTANT: The form _must already have been cached
- * in the connection store at the time this function is called for this provider to be valid_.
+ * Creates a fields provider for a given form UUID.
+ * IMPORTANT: The form _must already have been cached in the connection store at the time this
+ * function is called for this provider to be valid_.
  */
-export const createApiFieldsProvider = (
+const createApiFieldsProvider = (
   formUuid?: string,
   feedbackFields?: string[] | null,
   fieldFilter: (field: FormQuestionDto) => boolean = () => true
@@ -150,12 +151,15 @@ export const useApiFieldsProvider = (
   fieldFilter: (field: FormQuestionDto) => boolean = () => true
 ): [boolean, FormFieldsProvider] => {
   const enabled = formUuid != null;
-  const formLoaded = useForm({ id: formUuid ?? undefined, enabled: formUuid != null })[0] && enabled;
+  const [formLoaded, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
   const provider = useMemo(
-    () => createApiFieldsProvider(formUuid ?? undefined, feedbackFields, fieldFilter),
-    [feedbackFields, fieldFilter, formUuid]
+    // It's important that this memoized result depends on the loaded form in some way (here it's
+    // using the UUID from the form response instead of formUuid in the args) so that this memoized
+    // result recalculates when the form is done loading.
+    () => createApiFieldsProvider(form?.uuid, feedbackFields, fieldFilter),
+    [feedbackFields, fieldFilter, form?.uuid]
   );
-  return [formLoaded, provider];
+  return [formLoaded && enabled, provider];
 };
 
 type IFormFieldsContext = {
