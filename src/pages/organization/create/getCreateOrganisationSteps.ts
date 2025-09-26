@@ -94,6 +94,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps =
         placeholder: t("Add Registration Files"),
         collection: "legal_registration",
         multiChoice: true,
+        model: "organisations",
         additionalProps: { max: 5, accept: [FileType.ImagePdf] }
       }
     ]
@@ -154,6 +155,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps =
         label: t("Your organization logo"),
         placeholder: t("Add your organization logo"),
         collection: "logo",
+        model: "organisations",
         additionalProps: { max: 3, accept: [FileType.Image] }
       },
       {
@@ -162,6 +164,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps =
         label: t("Cover photo"),
         placeholder: t("Add a cover photo"),
         collection: "cover",
+        model: "organisations",
         additionalProps: { max: 20, accept: [FileType.Image] }
       }
     ]

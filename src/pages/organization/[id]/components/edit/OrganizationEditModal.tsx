@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
@@ -8,7 +9,9 @@ import ConfirmationModal from "@/components/extensive/WizardForm/modals/Confirma
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
 import { useGadmOptions } from "@/connections/Gadm";
+import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
@@ -28,7 +31,9 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const { closeModal, openModal } = useModalContext();
   const countryOptions = useGadmOptions({ level: 0 });
 
-  const formSteps = getSteps(t, uuid, countryOptions ?? []);
+  const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
+  const provider = useLocalStepsProvider(formSteps);
+
   const defaultValues = useFormDefaultValues(organization, formSteps);
   const { mutateAsync: updateOrganization, error } = usePutV2OrganisationsUUID({
     onSuccess: () => {
@@ -52,12 +57,16 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     }
   };
 
+  const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
+
   return (
     <EditModalBase>
       <WizardEditForm
         title={t("Edit Organization Profile")}
+        framework={Framework.UNDEFINED}
+        models={models}
+        fieldsProvider={provider}
         onSave={handleSave}
-        steps={formSteps}
         defaultValues={defaultValues}
         errors={error}
       />

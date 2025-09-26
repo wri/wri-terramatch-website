@@ -36,7 +36,7 @@ const StubFormFieldsProvider: FormFieldsProvider = {
 };
 
 export type LocalSteps = (StepDefinition & {
-  fields: FieldDefinition[];
+  fields: (FieldDefinition & { children?: FieldDefinition[] })[];
 })[];
 
 export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvider => {
@@ -44,11 +44,24 @@ export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvide
     const stepIds = localSteps.map(({ id }) => id);
     const stepsById = new Map<string, StepDefinition>(localSteps.map(({ fields, ...step }) => [step.id, step]));
     const fieldIds = new Map(localSteps.map(({ id, fields }) => [id, fields.map(({ name }) => name)]));
-    const fieldsById = new Map(localSteps.flatMap(({ fields }) => fields.map(field => [field.name, field])));
+    const fieldsById = new Map(
+      localSteps.flatMap(({ fields }) =>
+        fields.flatMap(
+          ({ children, ...field }) =>
+            [[field.name, field], ...(children ?? []).map(child => [child.name, child])] as [string, FieldDefinition][]
+        )
+      )
+    );
     const fieldsByKey = new Map(
       [...fieldsById.values()]
         .filter(({ linkedFieldKey }) => linkedFieldKey != null)
         .map(field => [field.linkedFieldKey as string, field])
+    );
+    const childIds = new Map<string, string[]>(
+      localSteps
+        .flatMap(({ fields }) => fields)
+        .filter(({ children }) => children != null)
+        .map(({ name, children }) => [name, (children ?? []).map(({ name }) => name)])
     );
 
     return {
@@ -57,8 +70,7 @@ export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvide
       fieldIds: (sectionId: string) => fieldIds.get(sectionId) ?? [],
       fieldById: (id: string) => fieldsById.get(id),
       fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
-      // local steps don't support child fields.
-      childIds: () => []
+      childIds: (fieldId: string) => childIds.get(fieldId) ?? []
     };
   }, [localSteps]);
 };
