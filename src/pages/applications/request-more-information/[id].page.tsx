@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
@@ -16,6 +16,7 @@ import {
   usePutV2FormsSubmissionsSubmitUUID
 } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
+import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
@@ -47,17 +48,6 @@ const RequestMoreInformationPage = () => {
     ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
   );
 
-  // Create entity object for RHFMap to work with useGetV2TerrafundProjectPolygon
-  // const currentPitchEntity: Entity = {
-  //   entityName: "project-pitch",
-  //   entityUUID: submission?.project_pitch_uuid ?? ""
-  // };
-  //
-  // const requestedInformationForm = getRequestedInformationForm(
-  //   submission?.form ?? {},
-  //   //@ts-ignore
-  //   submission?.translated_feedback_fields ?? []
-  // );
   const framework = useFramework(submission?.framework_key);
   const defaultValues = useFormDefaultValues(submission?.answers ?? {}, submission?.form_uuid);
 
@@ -71,7 +61,22 @@ const RequestMoreInformationPage = () => {
     }
     return models;
   }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(submission?.form_uuid);
+  const feedbackFields = useMemo(
+    () => submission?.translated_feedback_fields ?? [],
+    [submission?.translated_feedback_fields]
+  );
+  const requestedInformationFilter = useCallback(
+    // Include all questions that have a parent in case the parent is included
+    // TODO: this should not be using the label. It will require an API change and a data migration
+    //  in the DB to fix this.
+    ({ label, parentId }: FormQuestionDto) => parentId != null || feedbackFields.includes(label),
+    [feedbackFields]
+  );
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(
+    submission?.form_uuid,
+    feedbackFields,
+    requestedInformationFilter
+  );
   const [, { data: form }] = useForm({ id: submission?.form_uuid, enabled: submission?.form_uuid != null });
 
   const orgDetails = useMemo(

@@ -11801,6 +11801,9 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -11890,6 +11893,9 @@ export type PostV2FormsSubmissionsResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -11977,6 +11983,9 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12058,6 +12067,9 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12191,6 +12203,9 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12279,6 +12294,9 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12816,6 +12834,9 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       currency?: string;
       start_month?: string;
     };
+    feedback?: void;
+    feedback_fields?: string[];
+    translated_feedback_fields?: string[];
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -13400,6 +13421,9 @@ export type GetV2ApplicationsUUIDResponse = {
       currency?: string;
       start_month?: string;
     };
+    feedback?: void;
+    feedback_fields?: string[];
+    translated_feedback_fields?: string[];
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;

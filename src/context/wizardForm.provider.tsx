@@ -3,8 +3,8 @@ import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
-import { selectQuestions, selectSection, selectSections, useForm } from "@/connections/util/Form";
-import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { selectQuestions, selectSections, useForm } from "@/connections/util/Form";
+import { FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { toArray } from "@/utils/array";
 
 type FormModelType = NonNullable<FormQuestionDto["model"]>;
@@ -20,10 +20,11 @@ export type FormFieldsProvider = {
   // Returns the step IDs in the order they should be displayed in the form.
   stepIds: () => string[];
   step: (id: string) => StepDefinition | undefined;
-  fieldIds: (sectionId: string) => string[];
+  fieldIds: (stepId: string) => string[];
   fieldById: (id: string) => FieldDefinition | undefined;
   fieldByKey: (linkedFieldKey: string) => FieldDefinition | undefined;
   childIds: (fieldId: string) => string[];
+  feedbackRequired: (fieldId: string) => boolean;
 };
 
 const StubFormFieldsProvider: FormFieldsProvider = {
@@ -32,7 +33,8 @@ const StubFormFieldsProvider: FormFieldsProvider = {
   fieldIds: () => [],
   fieldById: () => undefined,
   fieldByKey: () => undefined,
-  childIds: () => []
+  childIds: () => [],
+  feedbackRequired: () => false
 };
 
 export type LocalSteps = (StepDefinition & {
@@ -67,49 +69,59 @@ export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvide
     return {
       stepIds: () => stepIds ?? [],
       step: (id: string) => stepsById.get(id),
-      fieldIds: (sectionId: string) => fieldIds.get(sectionId) ?? [],
+      fieldIds: (stepIds: string) => fieldIds.get(stepIds) ?? [],
       fieldById: (id: string) => fieldsById.get(id),
       fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
-      childIds: (fieldId: string) => childIds.get(fieldId) ?? []
+      childIds: (fieldId: string) => childIds.get(fieldId) ?? [],
+      feedbackRequired: () => false
     };
   }, [localSteps]);
 };
 
 // Returns a boolean indicating whether the form is loaded, and the fields provider.
-export const useApiFieldsProvider = (formUuid?: string | null): [boolean, FormFieldsProvider] => {
+export const useApiFieldsProvider = (
+  formUuid?: string | null,
+  feedbackFields?: string[] | null,
+  fieldFilter: (field: FormQuestionDto) => boolean = () => true
+): [boolean, FormFieldsProvider] => {
   const [, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
   const provider = useMemo<FormFieldsProvider>(() => {
-    // section ids and question ids are sorted at the connection level based on the `order` field.
-    const stepIds = form == null ? [] : selectSections(form.uuid).map(({ uuid }) => uuid);
-    const stepsById =
-      form == null ? new Map<string, StepDefinition>() : new Map(stepIds.map(id => [id, { id, ...selectSection(id) }]));
-    const fieldIds =
+    // start by building a structure of the whole form from what's cached in the API store, and by
+    // using the optional fieldFilter.
+    // sections and questions are sorted at the connection level based on the `order` field.
+    const stepsById = new Map<string, StepDefinition>();
+    const fieldsById = new Map<string, FieldDefinition>();
+    const sections =
       form == null
-        ? new Map<string, string[]>()
-        : new Map(
-            stepIds.map(id => [
-              id,
-              selectQuestions(id)
-                .filter(({ parentId }) => parentId == null)
-                .map(({ uuid }) => uuid)
-            ])
-          );
-    const fieldsById =
-      form == null
-        ? new Map<string, FieldDefinition>()
-        : new Map(
-            stepIds.flatMap(stepId =>
-              selectQuestions(stepId).map(question => [question.uuid, questionDtoToDefinition(question)])
-            )
-          );
+        ? []
+        : selectSections(form.uuid).reduce((steps, section) => {
+            const questions = selectQuestions(section.uuid).filter(fieldFilter);
+            // If the only questions left after ones that have a parent, then this is effectively
+            // an empty step and will be skipped.
+            if (questions.filter(({ parentId }) => parentId == null).length == 0) return steps;
+
+            const { uuid, ...step } = section;
+            stepsById.set(uuid, { id: uuid, ...step });
+            for (const question of questions) {
+              fieldsById.set(question.uuid, questionDtoToDefinition(question));
+            }
+
+            return [...steps, { ...section, fields: questions }];
+          }, [] as (FormSectionDto & { fields: FormQuestionDto[] })[]);
+
+    // memoize a bunch of stuff to make the provider fast
+    const stepIds = [...stepsById.keys()];
+    const fieldIds = new Map(
+      sections.map(step => [step.uuid, step.fields.filter(({ parentId }) => parentId == null).map(({ uuid }) => uuid)])
+    );
     const fieldsByKey = new Map(
       [...fieldsById.values()]
         .filter(({ linkedFieldKey }) => linkedFieldKey != null)
         .map(field => [field.linkedFieldKey as string, field])
     );
 
-    const childIds = stepIds
-      .flatMap(id => selectQuestions(id))
+    const childIds = sections
+      .flatMap(({ fields }) => fields)
       .filter(({ parentId }) => parentId != null)
       .reduce((map, { uuid, parentId }) => {
         const list = map.get(parentId!) ?? [];
@@ -121,12 +133,13 @@ export const useApiFieldsProvider = (formUuid?: string | null): [boolean, FormFi
       form: () => form,
       stepIds: () => stepIds ?? [],
       step: (id: string) => stepsById.get(id),
-      fieldIds: (sectionId: string) => fieldIds.get(sectionId) ?? [],
+      fieldIds: (stepId: string) => fieldIds.get(stepId) ?? [],
       fieldById: (id: string) => fieldsById.get(id),
       fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
-      childIds: (fieldId: string) => childIds.get(fieldId) ?? []
+      childIds: (fieldId: string) => childIds.get(fieldId) ?? [],
+      feedbackRequired: (fieldId: string) => feedbackFields?.includes(fieldId) ?? false
     };
-  }, [form]);
+  }, [feedbackFields, fieldFilter, form]);
   return [form != null, provider];
 };
 

@@ -12,7 +12,6 @@ import { selectChildQuestions } from "@/connections/util/Form";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
-import { FormRead } from "@/generated/apiSchemas";
 import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { Option, UploadedFile } from "@/types/common";
@@ -213,32 +212,4 @@ export const appendAnswersAsCSVRow = (
   fieldsProvider: FormFieldsProvider
 ) => {
   FormFieldFactories[field.inputType].appendAnswers(field, csv, values, fieldsProvider);
-};
-
-/**
- * Get requested information form based on fields requested.
- * @param form
- * @param requestedInfoFields
- * @returns Form to be used in getCustomFormSteps params
- */
-export const getRequestedInformationForm = (form: FormRead, requestedInfoFields: string[]): FormRead => {
-  const form_sections = form.form_sections
-    ?.map(s => {
-      const newQuestions = s?.form_questions
-        ?.map(q => {
-          // TODO - To update this logic, needs BED change.
-          // The way we are selecting fields are unreliable since it's searching for label and it can lead to having two result!!
-          if (q.label && !requestedInfoFields.includes(q.label)) return;
-          return q;
-        })
-        .filter(Boolean);
-
-      return {
-        ...s,
-        form_questions: newQuestions
-      };
-    })
-    .filter(s => s?.form_questions && s.form_questions.length > 0);
-
-  return { ...form, form_sections } as FormRead;
 };

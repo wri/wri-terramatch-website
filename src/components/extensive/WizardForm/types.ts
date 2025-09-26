@@ -82,6 +82,7 @@ export type SharedFieldProps = {
   formHook: UseFormReturn;
   control: Control;
   onChangeCapture: () => void;
+  feedbackRequired: boolean;
 };
 
 export type FormFieldFactory = {

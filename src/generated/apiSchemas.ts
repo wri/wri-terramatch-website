@@ -4276,6 +4276,9 @@ export type ProjectFullRead = {
         currency?: string;
         start_month?: string;
       };
+      feedback?: void;
+      feedback_fields?: string[];
+      translated_feedback_fields?: string[];
       updated_by?: string;
       deleted_at?: string;
       created_at?: string;
@@ -5173,6 +5176,9 @@ export type FormSubmissionRead = {
     currency?: string;
     start_month?: string;
   };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -5629,6 +5635,9 @@ export type ApplicationRead = {
       currency?: string;
       start_month?: string;
     };
+    feedback?: void;
+    feedback_fields?: string[];
+    translated_feedback_fields?: string[];
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;

@@ -53,9 +53,6 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
     }
   });
 
-  // TODO: figure out how to handle feedback
-  // const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
-
   const sourceData = useMemo(
     () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
     [formData?.answers, formData?.update_request?.content]
@@ -84,23 +81,35 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
     )
   };
 
-  const initialStepProps = useMemo(() => {
-    const stepIndex =
-      mode == null ? 0 : formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
-
-    return {
-      initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
-      disableInitialAutoProgress: stepIndex >= 0
-    };
-  }, [mode]);
-
   const model = useMemo(() => {
     const model = camelCase(
       isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
     ) as FormModelType;
     return { model, uuid: entityUUID };
   }, [entityName, entityUUID]);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid);
+
+  const feedbackFields = useMemo(
+    () =>
+      mode?.includes("provide-feedback")
+        ? formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? []
+        : [],
+    [formData?.feedback_fields, formData?.update_request?.feedback_fields, mode]
+  );
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid, feedbackFields);
+
+  const initialStepProps = useMemo(() => {
+    if (providerLoaded && feedbackFields != null) {
+      for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
+        for (const fieldId of fieldsProvider.fieldIds(stepId)) {
+          if (fieldsProvider.feedbackRequired(fieldId)) {
+            return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
+          }
+        }
+      }
+    }
+
+    return { initialStepIndex: 0, disableInitialAutoProgress: false };
+  }, [feedbackFields, fieldsProvider, providerLoaded]);
 
   const orgDetails = useMemo(
     (): OrgFormDetails => ({
@@ -121,54 +130,56 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
   return (
     <LoadingContainer loading={!providerLoaded}>
       <CurrencyProvider>
-        <WizardForm
-          framework={framework}
-          models={model}
-          fieldsProvider={fieldsProvider}
-          orgDetails={orgDetails}
-          errors={error}
-          onBackFirstStep={router.back}
-          onCloseForm={() => router.push("/home")}
-          onChange={(data, closeAndSave?: boolean) =>
-            updateEntity({
-              answers: normalizedFormData(data, formSteps!),
-              ...(closeAndSave ? { continue_later_action: true } : {})
-            })
-          }
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitEntity({
-              pathParams: {
-                entity: entityName,
-                uuid: entityUUID
-              }
-            })
-          }
-          submitButtonDisable={isSubmitting}
-          defaultValues={defaultValues}
-          title={formTitle}
-          subtitle={formSubtitle}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          summaryOptions={{
-            title: t("Review Details"),
-            downloadButtonText: t("Download")
-          }}
-          roundedCorners
-          saveAndCloseModal={{
-            content:
-              saveAndCloseModalMapping[entityName] ??
-              t(
-                "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
-              ),
-            onConfirm() {
-              router.push(getEntityDetailPageLink(entityName, entityUUID));
+        {providerLoaded && (
+          <WizardForm
+            framework={framework}
+            models={model}
+            fieldsProvider={fieldsProvider}
+            orgDetails={orgDetails}
+            errors={error}
+            onBackFirstStep={router.back}
+            onCloseForm={() => router.push("/home")}
+            onChange={(data, closeAndSave?: boolean) =>
+              updateEntity({
+                answers: normalizedFormData(data, formSteps!),
+                ...(closeAndSave ? { continue_later_action: true } : {})
+              })
             }
-          }}
-          {...initialStepProps}
-        />
+            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+            onSubmit={() =>
+              submitEntity({
+                pathParams: {
+                  entity: entityName,
+                  uuid: entityUUID
+                }
+              })
+            }
+            submitButtonDisable={isSubmitting}
+            defaultValues={defaultValues}
+            title={formTitle}
+            subtitle={formSubtitle}
+            tabOptions={{
+              markDone: true,
+              disableFutureTabs: true
+            }}
+            summaryOptions={{
+              title: t("Review Details"),
+              downloadButtonText: t("Download")
+            }}
+            roundedCorners
+            saveAndCloseModal={{
+              content:
+                saveAndCloseModalMapping[entityName] ??
+                t(
+                  "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
+                ),
+              onConfirm() {
+                router.push(getEntityDetailPageLink(entityName, entityUUID));
+              }
+            }}
+            {...initialStepProps}
+          />
+        )}
       </CurrencyProvider>
     </LoadingContainer>
   );
