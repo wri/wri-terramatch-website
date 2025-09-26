@@ -114,7 +114,9 @@ const createApiFieldsProvider = (
         }, [] as (FormSectionDto & { fields: FormQuestionDto[] })[]);
 
   // memoize a bunch of stuff to make the provider fast
-  const stepIds = [...stepsById.keys()];
+
+  // Use the response from selectSections instead of stepsById map because it's sorted by order.
+  const stepIds = formUuid == null ? [] : selectSections(formUuid).map(({ uuid }) => uuid);
   const fieldIds = new Map(
     sections.map(step => [step.uuid, step.fields.filter(({ parentId }) => parentId == null).map(({ uuid }) => uuid)])
   );
