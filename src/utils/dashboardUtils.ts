@@ -1,3 +1,5 @@
+import { useT } from "@transifex/react";
+
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import {
@@ -44,7 +46,8 @@ export interface ChartDataVolunteers {
 
 export const parseJobCreatedByType = (
   data: TotalJobsCreatedDto | undefined,
-  type: "gender" | "age"
+  type: "gender" | "age",
+  t: typeof useT
 ): GroupedBarChartData => {
   if (!data) return { type, chartData: [], total: 0, maxValue: 0 };
 
@@ -61,8 +64,8 @@ export const parseJobCreatedByType = (
     const maxValue = Math.max(ptWomen, ptMen, ptNonBinary, ptOthersGender, ftWomen, ftMen, ftNonBinary, ftOthersGender);
 
     const chartData = [
-      { name: "Part-Time", Women: ptWomen, Men: ptMen, "Non-Binary": ptNonBinary, Other: ptOthersGender },
-      { name: "Full-Time", Women: ftWomen, Men: ftMen, "Non-Binary": ftNonBinary, Other: ftOthersGender }
+      { name: t("Part-Time"), Women: ptWomen, Men: ptMen, "Non-Binary": ptNonBinary, Other: ptOthersGender },
+      { name: t("Full-Time"), Women: ftWomen, Men: ftMen, "Non-Binary": ftNonBinary, Other: ftOthersGender }
     ];
 
     return { type, chartData, total: data.totalJobsCreated, maxValue };
@@ -77,32 +80,33 @@ export const parseJobCreatedByType = (
 
   const maxValue = Math.max(ptYouth, ptNonYouth, ptOthersAge, ftYouth, ftNonYouth, ftOthersAge);
   const chartData = [
-    { name: "Part-Time", Youth: ptYouth, "Non-Youth": ptNonYouth, Other: ptOthersAge },
-    { name: "Full-Time", Youth: ftYouth, "Non-Youth": ftNonYouth, Other: ftOthersAge }
+    { name: t("Part-Time"), Youth: ptYouth, "Non-Youth": ptNonYouth, Other: ptOthersAge },
+    { name: t("Full-Time"), Youth: ftYouth, "Non-Youth": ftNonYouth, Other: ftOthersAge }
   ];
   return { type, chartData, total: data.totalJobsCreated, maxValue };
 };
 
 export const parseVolunteersByType = (
   data: TotalJobsCreatedDto | undefined,
-  type: "gender" | "age"
+  type: "gender" | "age",
+  t: typeof useT
 ): ChartDataVolunteers => {
   if (!data) return { chartData: [], type, total: 0 };
 
   if (type === "gender") {
     const chartData: ChartDataItem[] = [
-      { name: "Women", value: (data as any).volunteerWomen ?? 0 },
-      { name: "Men", value: (data as any).volunteerMen ?? 0 },
-      { name: "Unknown", value: (data as any).volunteerOthers ?? 0 },
-      { name: "Non-Binary", value: (data as any).volunteerNonBinary ?? 0 }
+      { name: t("Women"), value: (data as any).volunteerWomen ?? 0 },
+      { name: t("Men"), value: (data as any).volunteerMen ?? 0 },
+      { name: t("Unknown"), value: (data as any).volunteerOthers ?? 0 },
+      { name: t("Non-Binary"), value: (data as any).volunteerNonBinary ?? 0 }
     ];
     const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
     return { type, chartData, total };
   }
   const chartData: ChartDataItem[] = [
-    { name: "Youth", value: (data as any).volunteerYouth ?? 0 },
-    { name: "Non-Youth", value: (data as any).volunteerNonYouth ?? 0 },
-    { name: "Unknown", value: (data as any).volunteerAgeOthers ?? 0 }
+    { name: t("Youth"), value: (data as any).volunteerYouth ?? 0 },
+    { name: t("Non-Youth"), value: (data as any).volunteerNonYouth ?? 0 },
+    { name: t("Unknown"), value: (data as any).volunteerAgeOthers ?? 0 }
   ];
   const total = (data as any).totalVolunteers ?? chartData.reduce((s, i: any) => s + (i.value ?? 0), 0);
   return { type, chartData, total };

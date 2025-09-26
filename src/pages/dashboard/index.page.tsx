@@ -175,7 +175,7 @@ const Dashboard = () => {
   const COLUMN_ACTIVE_PROGRAMME = useMemo(
     () => [
       {
-        header: "Country",
+        header: t("Country"),
         cell: (props: any) => {
           const value = props.getValue().split("_");
           return (
@@ -189,22 +189,22 @@ const Dashboard = () => {
         enableSorting: false
       },
       {
-        header: "Projects",
+        header: t("Projects"),
         accessorKey: "project",
         enableSorting: false
       },
       {
-        header: "Trees Planted",
+        header: t("Trees Planted"),
         accessorKey: "treesPlanted",
         enableSorting: false
       },
       {
-        header: "Hectares",
+        header: t("Hectares"),
         accessorKey: "restorationHectares",
         enableSorting: false
       },
       {
-        header: "Jobs Created",
+        header: t("Jobs Created"),
         accessorKey: "jobsCreated",
         enableSorting: false
       },
@@ -244,7 +244,7 @@ const Dashboard = () => {
             }
           ])
     ],
-    [isMobile, setFilters, countryChoices]
+    [isMobile, setFilters, countryChoices, t]
   );
 
   const COLUMN_ACTIVE_COUNTRY = useMemo(
@@ -345,11 +345,17 @@ const Dashboard = () => {
     [activeProjects, filters.uuid]
   );
 
-  const jobsCreatedByGenderData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "gender"), [jobsCreatedData]);
-  const jobsCreatedByAgeData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "age"), [jobsCreatedData]);
+  const jobsCreatedByGenderData = useMemo(
+    () => parseJobCreatedByType(jobsCreatedData, "gender", t),
+    [jobsCreatedData, t]
+  );
+  const jobsCreatedByAgeData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "age", t), [jobsCreatedData, t]);
 
-  const volunteersByGenderData = useMemo(() => parseVolunteersByType(jobsCreatedData, "gender"), [jobsCreatedData]);
-  const volunteersByAgeData = useMemo(() => parseVolunteersByType(jobsCreatedData, "age"), [jobsCreatedData]);
+  const volunteersByGenderData = useMemo(
+    () => parseVolunteersByType(jobsCreatedData, "gender", t),
+    [jobsCreatedData, t]
+  );
+  const volunteersByAgeData = useMemo(() => parseVolunteersByType(jobsCreatedData, "age", t), [jobsCreatedData, t]);
 
   const projectCounts = useMemo(
     () => ({

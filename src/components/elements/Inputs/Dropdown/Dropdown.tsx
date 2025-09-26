@@ -285,7 +285,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         <div className="flex items-center justify-between">
                           <Checkbox
                             name=""
-                            label="Select All"
+                            label={t("Select All")}
                             textClassName={classNames(variant.optionLabelClassName, "whitespace-nowrap")}
                             inputClassName={classNames(variant.optionCheckboxClassName, "checked:bg-dash")}
                             className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}
