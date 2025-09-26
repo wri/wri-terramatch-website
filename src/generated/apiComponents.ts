@@ -2638,10 +2638,6 @@ export type PostV2FormsENTITYPathParams = {
    * allowed values projects/sites/nurseries
    */
   entity: string;
-  /**
-   * this is the uuid of the form
-   */
-  uuid: string;
 };
 
 export type PostV2FormsENTITYError = Fetcher.ErrorWrapper<undefined>;
