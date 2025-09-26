@@ -5,7 +5,7 @@ import RHFDisturbanceTable, {
 } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
-import { arrayValidation } from "@/utils/yup";
+import { arrayValidator } from "@/utils/yup";
 
 const props = (additionalProps?: Dictionary<any> | null) => ({
   hasExtent: additionalProps?.with_extent,
@@ -13,7 +13,7 @@ const props = (additionalProps?: Dictionary<any> | null) => ({
 });
 
 export const DisturbancesField: FormFieldFactory = {
-  createValidator: ({ validation }) => arrayValidation(validation),
+  createValidator: arrayValidator,
 
   renderInput: ({ additionalProps }, sharedProps) => (
     <RHFDisturbanceTable {...sharedProps} {...props(additionalProps)} />

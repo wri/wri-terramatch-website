@@ -3,10 +3,10 @@ import RHFFundingTypeDataTable, {
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
-import { arrayValidation } from "@/utils/yup";
+import { arrayValidator } from "@/utils/yup";
 
 export const FundingTypeField: FormFieldFactory = {
-  createValidator: ({ validation }) => arrayValidation(validation),
+  createValidator: arrayValidator,
 
   renderInput: (field, sharedProps) => <RHFFundingTypeDataTable {...sharedProps} />,
 

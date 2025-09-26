@@ -5,10 +5,10 @@ import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/type
 import { appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { normalizedFormFieldData } from "@/helpers/customForms";
 import { isNotNull } from "@/utils/array";
-import { booleanValidation } from "@/utils/yup";
+import { booleanValidator } from "@/utils/yup";
 
 export const ConditionalField: FormFieldFactory = {
-  createValidator: ({ validation }) => booleanValidation(validation),
+  createValidator: booleanValidator,
 
   renderInput: ({ name }, sharedProps) => <ConditionalInput {...sharedProps} fieldId={name} id={name} inputId={name} />,
 

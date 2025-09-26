@@ -2,10 +2,10 @@ import RHFSelectImage from "@/components/elements/Inputs/SelectImage/RHFSelectIm
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
-import { selectValidation } from "@/utils/yup";
+import { selectValidator } from "@/utils/yup";
 
 export const SelectImageField: FormFieldFactory = {
-  createValidator: ({ validation, multiChoice }) => selectValidation(multiChoice, validation),
+  createValidator: selectValidator,
 
   renderInput: ({ options, multiChoice }, sharedProps) => (
     <RHFSelectImage {...sharedProps} multiSelect={multiChoice} options={options ?? []} />

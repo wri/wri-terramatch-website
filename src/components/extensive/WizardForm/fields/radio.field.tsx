@@ -2,10 +2,10 @@ import RHFSelect from "@/components/elements/Inputs/Select/RHFSelect";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
-import { stringValidation } from "@/utils/yup";
+import { stringValidator } from "@/utils/yup";
 
 export const RadioField: FormFieldFactory = {
-  createValidator: ({ validation }) => stringValidation(validation),
+  createValidator: stringValidator,
 
   renderInput: ({ options, linkedFieldKey }, sharedProps) => (
     <RHFSelect {...sharedProps} options={options ?? []} linkedFieldKey={linkedFieldKey ?? undefined} />

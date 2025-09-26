@@ -2,10 +2,10 @@ import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import Input from "@/components/elements/Inputs/Input/Input";
 import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
-import { stringValidation } from "@/utils/yup";
+import { stringValidator } from "@/utils/yup";
 
 export const DateField: FormFieldFactory = {
-  createValidator: ({ validation }) => stringValidation(validation),
+  createValidator: stringValidator,
 
   renderInput: (field, sharedProps) => <Input {...sharedProps} type="date" />,
 

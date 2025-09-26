@@ -4,10 +4,10 @@ import { getFormattedAnswer, getHardcodedOptions, toFormOptions } from "@/compon
 import { findCachedGadmTitle } from "@/connections/Gadm";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { isNotNull, toArray } from "@/utils/array";
-import { selectValidation } from "@/utils/yup";
+import { selectValidator } from "@/utils/yup";
 
 export const SelectField: FormFieldFactory = {
-  createValidator: ({ validation, multiChoice }) => selectValidation(multiChoice, validation),
+  createValidator: selectValidator,
 
   renderInput: ({ optionsList, options, multiChoice, optionsOther, linkedFieldKey }, sharedProps) => (
     <RHFDropdown

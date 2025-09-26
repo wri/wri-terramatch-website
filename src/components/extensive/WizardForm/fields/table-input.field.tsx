@@ -1,10 +1,10 @@
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { isNotNull } from "@/utils/array";
-import { objectValidation } from "@/utils/yup";
+import { objectValidator } from "@/utils/yup";
 
 export const TableInputField: FormFieldFactory = {
-  createValidator: ({ validation }) => objectValidation(validation),
+  createValidator: objectValidator,
 
   renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (
     <RHFInputTable

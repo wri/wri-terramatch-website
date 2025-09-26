@@ -5,11 +5,10 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import Log from "@/utils/log";
-import { objectValidation } from "@/utils/yup";
+import { objectValidator } from "@/utils/yup";
 
 export const MapInputField: FormFieldFactory = {
-  createValidator: ({ validation, linkedFieldKey }) =>
-    linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidation(validation),
+  createValidator: field => (field.linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidator(field)),
 
   renderInput: ({ name, model }, sharedProps) => (
     <MapAreaProvider>
