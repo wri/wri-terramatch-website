@@ -1,12 +1,10 @@
-import { useT } from "@transifex/react";
 import React, { FC } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { FieldType } from "@/components/extensive/WizardForm/types";
-import { useFrameworkContext } from "@/context/framework.provider";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { normalizedFormDefaultValue } from "@/helpers/customForms";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
@@ -23,8 +21,8 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { isLoading: ctxLoading, record } = useShowContext();
-  const t = useT();
-  const { framework } = useFrameworkContext();
+  // const t = useT();
+  // const { framework } = useFrameworkContext();
   const entityName = entity ?? record?.entity;
   const entityUuid = record?.uuid;
 
@@ -33,7 +31,6 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   if (isLoading || !record) return null;
 
-  const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
     : normalizedFormDefaultValue(response?.data.answers!, formSteps);

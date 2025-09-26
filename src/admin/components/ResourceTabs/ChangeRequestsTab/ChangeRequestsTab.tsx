@@ -1,7 +1,6 @@
 import { Check, PriorityHigh } from "@mui/icons-material";
 import { Box, Button, Card, Grid, Stack, Typography } from "@mui/material";
 import { pink } from "@mui/material/colors";
-import { useT } from "@transifex/react";
 import { FC, useMemo, useState } from "react";
 import {
   FunctionField,
@@ -17,8 +16,6 @@ import { Else, If, Then, When } from "react-if";
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
-import { Framework } from "@/context/framework.provider";
-import { getCustomFormSteps } from "@/helpers/customForms";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { Entity, EntityName, SingularEntityName } from "@/types/common";
 
@@ -32,26 +29,20 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 
 const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest }) => {
   const ctx = useShowContext();
-  const t = useT();
+  // const t = useT();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
   const { formData: currentValues, refetch } = useEntityForm(entity, ctx?.record?.uuid);
 
   // @ts-ignore
   const changeRequest = currentValues?.data?.update_request;
-  const framework = changeRequest?.framework_key as Framework;
+  // const framework = changeRequest?.framework_key as Framework;
   const changes = changeRequest?.content;
   // @ts-ignore
   const current = currentValues?.data?.answers;
   // @ts-ignore
   const status = changeRequest?.status;
-  // @ts-ignore
-  const form = currentValues?.data?.form;
 
-  const formSteps = useMemo(
-    () => (form == null ? [] : getCustomFormSteps(form, t, undefined, framework)),
-    [form, framework, t]
-  );
   const entityDef = useMemo(
     () => ({ entityName: entity, entityUUID: ctx?.record?.uuid ?? "" } as Entity),
     [ctx?.record?.uuid, entity]

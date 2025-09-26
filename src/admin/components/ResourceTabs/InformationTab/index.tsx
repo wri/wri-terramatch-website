@@ -1,5 +1,4 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC } from "react";
@@ -18,7 +17,7 @@ import { FieldType } from "@/components/extensive/WizardForm/types";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { normalizedFormDefaultValue } from "@/helpers/customForms";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
@@ -59,7 +58,7 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
 };
 const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
-  const t = useT();
+  // const t = useT();
   const { framework } = useFrameworkContext();
   const entity = camelCase(props.type) as SupportedEntity;
   const entityUuid = record?.uuid;
@@ -75,7 +74,6 @@ const InformationTab: FC<IProps> = props => {
 
   if (isLoading || !record) return null;
 
-  const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
   const values = record.migrated
     ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
     : normalizedFormDefaultValue(response?.data.answers!, formSteps);

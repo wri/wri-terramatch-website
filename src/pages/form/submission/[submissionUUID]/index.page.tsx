@@ -6,12 +6,13 @@ import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
-import { useFormDefaultValues, useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -28,13 +29,8 @@ const SubmissionPage = () => {
     }
   });
 
-  const framework = useFramework(formData?.data?.form?.framework_key);
-  const formSteps = useGetCustomFormSteps(
-    formData?.data?.form,
-    { entityName: "project-pitch", entityUUID: formData?.data?.project_pitch_uuid ?? "" },
-    framework
-  );
-  const defaultValues = useFormDefaultValues(formData?.data?.answers, formSteps);
+  const framework = useFramework(formData?.data?.framework_key);
+  const defaultValues = useFormDefaultValues(formData?.data?.answers ?? {}, formData?.data?.form_uuid);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
@@ -46,6 +42,7 @@ const SubmissionPage = () => {
     }
     return models;
   }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
+  const [, { data: form }] = useForm({ id: formData?.data.form_uuid, enabled: formData?.data.form_uuid != null });
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid);
 
   const orgDetails = useMemo(
@@ -86,7 +83,7 @@ const SubmissionPage = () => {
           }
           submitButtonDisable={isSubmitting}
           defaultValues={defaultValues}
-          title={formData?.data.form?.title}
+          title={form?.title}
           tabOptions={{
             markDone: true,
             disableFutureTabs: true

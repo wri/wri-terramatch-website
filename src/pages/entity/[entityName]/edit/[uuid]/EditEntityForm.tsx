@@ -12,15 +12,11 @@ import { CurrencyProvider } from "@/context/currency.provider";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
+import { FormDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
-import {
-  getEntityDetailPageLink,
-  isEntityReport,
-  pluralEntityNameToSingular,
-  singularEntityNameToPlural
-} from "@/helpers/entity";
+import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import { useFormDefaultValues, useGetCustomFormSteps } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
 
@@ -30,9 +26,10 @@ interface EditEntityFormProps {
   entityUUID: string;
   entity: Record<string, any>;
   formData: GetV2FormsENTITYUUIDResponse;
+  form: FormDto;
 }
 
-const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntityFormProps) => {
+const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
@@ -56,23 +53,14 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     }
   });
 
-  const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
-
-  const formSteps = useGetCustomFormSteps(
-    formData.form,
-    {
-      entityName: pluralEntityNameToSingular(entityName),
-      entityUUID
-    },
-    framework,
-    mode?.includes("provide-feedback") ? feedbackFields : undefined
-  );
+  // TODO: figure out how to handle feedback
+  // const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
 
   const sourceData = useMemo(
     () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
     [formData?.answers, formData?.update_request?.content]
   );
-  const defaultValues = useFormDefaultValues(sourceData, formSteps);
+  const defaultValues = useFormDefaultValues(sourceData, formData?.form_uuid);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
   const formTitle =
@@ -80,7 +68,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       ? t("{siteName} Site Report", { siteName: entity.site.name })
       : entityName === "financial-reports"
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
-      : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
+      : `${form.title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -104,7 +92,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
       disableInitialAutoProgress: stepIndex >= 0
     };
-  }, [formSteps, mode]);
+  }, [mode]);
 
   const model = useMemo(() => {
     const model = camelCase(

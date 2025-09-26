@@ -15,7 +15,7 @@ import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/ap
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import { useFormDefaultValues, useNormalizer } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { useFormDefaultValues, useNormalizer } from "@/hooks/useNormalFormValues";
 import { EntityName, isSingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
 

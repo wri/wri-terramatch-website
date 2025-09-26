@@ -24,7 +24,7 @@ const EditEntityPage = () => {
   });
   const entity = entityData?.data ?? {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { formData: data, isLoading, loadError } = useEntityForm(entityName, entityUUID);
+  const { formData: data, form, isLoading, loadError } = useEntityForm(entityName, entityUUID);
   //@ts-ignore
   const formData = (data?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
   const framework = toFramework(entity.framework_key);
@@ -36,7 +36,7 @@ const EditEntityPage = () => {
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading || getEntityLoading}>
-        <EditEntityForm {...{ framework, entityName, entityUUID, entity, formData }} />
+        <EditEntityForm {...{ framework, entityName, entityUUID, entity, formData, form: form! }} />
       </LoadingContainer>
       <PageFooter />
     </BackgroundLayout>

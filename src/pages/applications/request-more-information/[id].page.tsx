@@ -5,9 +5,9 @@ import { useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
-import { getRequestedInformationForm } from "@/components/extensive/WizardForm/utils";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
@@ -16,9 +16,7 @@ import {
   usePutV2FormsSubmissionsSubmitUUID
 } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
-import { getCustomFormSteps } from "@/helpers/customForms";
-import { useFormDefaultValues } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
-import { Entity } from "@/types/common";
+import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
@@ -50,19 +48,18 @@ const RequestMoreInformationPage = () => {
   );
 
   // Create entity object for RHFMap to work with useGetV2TerrafundProjectPolygon
-  const currentPitchEntity: Entity = {
-    entityName: "project-pitch",
-    entityUUID: submission?.project_pitch_uuid ?? ""
-  };
-
-  const requestedInformationForm = getRequestedInformationForm(
-    submission?.form ?? {},
-    //@ts-ignore
-    submission?.translated_feedback_fields ?? []
-  );
-  const framework = useFramework(submission?.form?.framework_key);
-  const formSteps = submission ? getCustomFormSteps(requestedInformationForm, t, currentPitchEntity, framework) : [];
-  const defaultValues = useFormDefaultValues(submission?.answers, formSteps);
+  // const currentPitchEntity: Entity = {
+  //   entityName: "project-pitch",
+  //   entityUUID: submission?.project_pitch_uuid ?? ""
+  // };
+  //
+  // const requestedInformationForm = getRequestedInformationForm(
+  //   submission?.form ?? {},
+  //   //@ts-ignore
+  //   submission?.translated_feedback_fields ?? []
+  // );
+  const framework = useFramework(submission?.framework_key);
+  const defaultValues = useFormDefaultValues(submission?.answers ?? {}, submission?.form_uuid);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
@@ -75,6 +72,7 @@ const RequestMoreInformationPage = () => {
     return models;
   }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(submission?.form_uuid);
+  const [, { data: form }] = useForm({ id: submission?.form_uuid, enabled: submission?.form_uuid != null });
 
   const orgDetails = useMemo(
     (): OrgFormDetails | undefined =>
@@ -120,7 +118,7 @@ const RequestMoreInformationPage = () => {
             title: t("Review Application Details"),
             downloadButtonText: t("Download Application")
           }}
-          title={submission?.form?.title}
+          title={form?.title}
           roundedCorners
           orgDetails={orgDetails}
         />
