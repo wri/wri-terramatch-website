@@ -165,7 +165,7 @@ type IFormFieldsContext = {
 };
 
 type WizardFormProviderProps = {
-  models: FormModelsDefinition;
+  models?: FormModelsDefinition;
   fieldsProvider: FormFieldsProvider;
   orgDetails?: OrgFormDetails;
 };
