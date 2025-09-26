@@ -47,8 +47,6 @@ const EntityIntroPage = () => {
   );
 
   const { formData: entityData } = useEntityForm(entityName, entityUUID);
-
-  //@ts-ignore
   const form = entityData?.data?.form || formData?.data;
 
   const {

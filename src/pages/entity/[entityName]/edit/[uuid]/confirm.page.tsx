@@ -8,7 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
@@ -20,15 +20,12 @@ const ConfirmPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  const { formData: data, isLoading } = useEntityForm(entityName, entityUUID);
+  const { form, isLoading } = useEntityForm(entityName, entityUUID);
 
   const { data: entityData } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
-  //@ts-ignore
-  const entity = (entityData?.data || {}) as any;
-  //@ts-ignore
-  const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+  const entity = entityData?.data ?? {};
 
   const callToActionMapping: { [index: string]: IButtonProps[] } = {
     projects: [{ children: t("View Project"), href: `/project/${entityUUID}` }],
@@ -93,7 +90,7 @@ const ConfirmPage = () => {
             <div
               className="with-inner-html"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(formData.form?.submission_message || "")
+                __html: DOMPurify.sanitize(form?.submissionMessage ?? "")
               }}
             />
             <div className="mt-15 flex w-full justify-between">

@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
-import { camelCase, defaults } from "lodash";
+import { camelCase } from "lodash";
+import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
@@ -9,33 +10,51 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { pruneEntityCache } from "@/connections/Entity";
 import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
-import { FormDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
+import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
+import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
 
 interface EditEntityFormProps {
-  framework: Framework;
   entityName: EntityName;
   entityUUID: string;
   entity: Record<string, any>;
-  formData: GetV2FormsENTITYUUIDResponse;
-  form: FormDto;
 }
 
-const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: EditEntityFormProps) => {
+const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
-  const { framework } = useFrameworkContext();
-  const organisation = entity?.organisation;
+
+  const { formData, isLoading, loadError } = useEntityForm(entityName, entityUUID);
+  const framework = toFramework(formData?.data.framework_key);
+  const entityData = formData?.data;
+
+  const model = useMemo(() => {
+    const model = camelCase(
+      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+    ) as FormModelType;
+    return { model, uuid: entityUUID };
+  }, [entityName, entityUUID]);
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
+
+  const feedbackFields = useMemo(
+    () =>
+      mode?.includes("provide-feedback")
+        ? entityData?.update_request?.feedback_fields ?? entityData?.feedback_fields ?? []
+        : [],
+    [entityData?.feedback_fields, entityData?.update_request?.feedback_fields, mode]
+  );
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData?.data, fieldsProvider);
+
+  const organisation = entity?.organisation;
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
@@ -58,7 +77,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
       ? t("{siteName} Site Report", { siteName: entity.site.name })
       : entityName === "financial-reports"
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
-      : `${form.title} ${isReport ? reportingWindow : ""}`;
+      : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -73,28 +92,6 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
       "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the nurseries section under your project page. Would you like to close this form and continue later?"
     )
   };
-
-  const model = useMemo(() => {
-    const model = camelCase(
-      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
-    ) as FormModelType;
-    return { model, uuid: entityUUID };
-  }, [entityName, entityUUID]);
-
-  const feedbackFields = useMemo(
-    () =>
-      mode?.includes("provide-feedback")
-        ? formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? []
-        : [],
-    [formData?.feedback_fields, formData?.update_request?.feedback_fields, mode]
-  );
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid, feedbackFields);
-
-  const sourceData = useMemo(
-    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    [formData?.answers, formData?.update_request?.content]
-  );
-  const defaultValues = useMemo(() => formDefaultValues(sourceData, fieldsProvider), [fieldsProvider, sourceData]);
 
   const initialStepProps = useMemo(() => {
     if (providerLoaded && feedbackFields != null) {
@@ -126,8 +123,10 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
     ]
   );
 
+  if (loadError != null) return notFound();
+
   return (
-    <LoadingContainer loading={!providerLoaded}>
+    <LoadingContainer loading={isLoading || !providerLoaded}>
       <CurrencyProvider>
         {providerLoaded && (
           <WizardForm

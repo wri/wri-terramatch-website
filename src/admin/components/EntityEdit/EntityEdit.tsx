@@ -1,4 +1,4 @@
-import { camelCase, defaults } from "lodash";
+import { camelCase } from "lodash";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
@@ -12,9 +12,9 @@ import { FormModelType } from "@/connections/util/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
+import { normalizedFormData } from "@/helpers/customForms";
 import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useEntityForm } from "@/hooks/useFormGet";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { EntityName, isSingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
@@ -51,9 +51,7 @@ export const EntityEdit = () => {
   } = useEntityForm(entityName, entityUUID);
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
-
   const entityData = (entityResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
-  const { form_title: title } = entityData;
 
   const model = useMemo(() => {
     const model = camelCase(
@@ -63,26 +61,16 @@ export const EntityEdit = () => {
   }, [entityName, entityUUID]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
-
-  const sourceData = useMemo(
-    () => defaults(entityData?.update_request?.content ?? {}, entityData?.answers),
-    [entityData?.answers, entityData?.update_request?.content]
-  );
-  const defaultValues = useMemo(() => formDefaultValues(sourceData, fieldsProvider), [fieldsProvider, sourceData]);
-
-  if (loadError != null || formLoadFailure != null) {
-    Log.error("Form data load failed", { loadError, formLoadFailure });
-    return notFound();
-  }
+  const defaultValues = useDefaultValues(entityData, fieldsProvider);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${title}`;
+      return `${entityValue?.data?.site?.name} ${form?.title}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${title}`;
+      return `${entityValue?.data?.nursery?.name} ${form?.title}`;
     }
-    return title;
-  }, [entityName, entityValue, title]);
+    return form?.title;
+  }, [entityName, entityValue, form?.title]);
 
   const organisation = entityValue?.data?.organisation;
 
@@ -102,6 +90,11 @@ export const EntityEdit = () => {
       organisation?.uuid
     ]
   );
+
+  if (loadError != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadError, formLoadFailure });
+    return notFound();
+  }
 
   return (
     <div className="mx-auto w-full max-w-7xl">

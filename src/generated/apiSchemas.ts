@@ -77,6 +77,7 @@ export type EntityFormRead = {
   status?: string;
   form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
