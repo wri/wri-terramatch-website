@@ -150,10 +150,13 @@ export const loadExternalAnswerSources = async (
 };
 
 export const getAnswer = (
-  fields: FieldDefinition,
+  field: FieldDefinition,
   values: Dictionary<any>,
   fieldsProvider: FormFieldsProvider
-): Answer => FormFieldFactories[fields.inputType].getAnswer(fields, values, fieldsProvider);
+): Answer => {
+  const { getAnswer } = FormFieldFactories[field.inputType];
+  return getAnswer == null ? (values[field.name] as Answer) : getAnswer(field, values, fieldsProvider);
+};
 
 export const getFormattedAnswer = (
   field: FieldDefinition,

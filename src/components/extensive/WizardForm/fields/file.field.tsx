@@ -2,6 +2,7 @@ import * as yup from "yup";
 
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getAnswer } from "@/components/extensive/WizardForm/utils";
 import { UploadedFile } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
 
@@ -32,7 +33,7 @@ export const FileField: FormFieldFactory = {
   getAnswer: ({ name }, formValues) => toArray(formValues[name]),
 
   appendAnswers: (field, csv, values, fieldsProvider) => {
-    const value = (FileField.getAnswer(field, values, fieldsProvider) as UploadedFile[]).filter(isNotNull);
+    const value = (getAnswer(field, values, fieldsProvider) as UploadedFile[]).filter(isNotNull);
     if (value.length > 0) {
       csv.pushRow([field.label, "FileName", "File Url"]);
 

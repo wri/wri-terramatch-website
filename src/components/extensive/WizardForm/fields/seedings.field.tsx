@@ -1,6 +1,6 @@
 import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
-import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import {
   appendTableAnswers,
   dataTableEntryValue,
@@ -18,8 +18,6 @@ export const SeedingsField: FormFieldFactory = {
       return <RHFSeedingTable {...sharedProps} collection={collection ?? ""} captureCount={false} />;
     }
   },
-
-  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
   appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
     const headers = getSeedingTableColumns(undefined, additionalProps?.capture_count === true);

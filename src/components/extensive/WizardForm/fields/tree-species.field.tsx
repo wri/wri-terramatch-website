@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
-import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
 
@@ -32,12 +32,8 @@ export const TreeSpeciesField: FormFieldFactory = {
     />
   ),
 
-  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
-
   appendAnswers: (field, csv, formValues, fieldsProvider) => {
-    const value = ((TreeSpeciesField.getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[]).filter(
-      isNotNull
-    );
+    const value = ((getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[]).filter(isNotNull);
     if (value.length > 0) {
       if (field.additionalProps?.with_numbers === true) {
         csv.pushRow([field.label, "Species name", "Total Trees"]);

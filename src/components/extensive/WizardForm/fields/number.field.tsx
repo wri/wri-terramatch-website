@@ -2,7 +2,7 @@ import { isNumber } from "lodash";
 import * as yup from "yup";
 
 import Input from "@/components/elements/Inputs/Input/Input";
-import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 
 export const NumberField: FormFieldFactory = {
@@ -40,8 +40,6 @@ export const NumberField: FormFieldFactory = {
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   },
-
-  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
   appendAnswers: (field, csv, values, fieldsProvider) =>
     csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)]),

@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
-import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 
 export const LongTextField: FormFieldFactory = {
@@ -31,8 +31,6 @@ export const LongTextField: FormFieldFactory = {
   renderInput: ({ minCharacterLimit, maxCharacterLimit }, sharedProps) => (
     <TextArea {...sharedProps} minLength={minCharacterLimit ?? undefined} maxLength={maxCharacterLimit ?? undefined} />
   ),
-
-  getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
   appendAnswers: (field, csv, values, fieldsProvider) =>
     csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])

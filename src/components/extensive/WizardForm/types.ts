@@ -100,7 +100,15 @@ export type GetEntryValueProps = {
 export type FormFieldFactory = {
   createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
   renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
-  getAnswer: (field: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
+
+  /**
+   * Return the Answer value for this field. The default is to simply return the form value at this field's id
+   *
+   * Note: this means that if a field should explicitly provide _no_ answer, it must define this method and
+   * return undefined.
+   */
+  getAnswer?: (field: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
+
   appendAnswers: (
     field: FieldDefinition,
     csv: CSVGenerator,
