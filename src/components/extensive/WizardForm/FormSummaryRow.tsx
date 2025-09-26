@@ -56,6 +56,17 @@ export interface FormEntry {
   value: any;
 }
 
+const getTableHtml = (body: string, t: typeof useT) => {
+  return (
+    `<table class="table-auto w-100"><thead><tr>` +
+    `<th>${t("Year")}</th>` +
+    `<th>${t("Revenue")}</th>` +
+    `<th>${t("Expenses")}</th>` +
+    `<th>${t("Profit")}</th>` +
+    `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
+  );
+};
+
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   let { record } = useShowContext();
@@ -232,7 +243,7 @@ export const getFormEntries = (
 
         const formatted = formatFinancialData(entries, years, "", "");
         const sections = [
-          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
           { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
           { title: t("Current Ratio"), key: "currentRatioData" },
           { title: t("Documentation"), key: "documentationData" }
@@ -259,7 +270,23 @@ export const getFormEntries = (
 
             if (filteredRows.length === 0) return "";
 
-            const rowsHtml = filteredRows
+            const tableRows = filteredRows.filter((row: Record<string, any>) => {
+              return row["profit"];
+            });
+            const nonTableRows = filteredRows.filter((row: Record<string, any>) => {
+              return !row["profit"];
+            });
+
+            const tableHtml = tableRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  return `<td>${isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()}</td>`;
+                });
+                return cellValues.join("");
+              })
+              .join("</tr><tr>");
+
+            const rowsHtml = nonTableRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
                   if (col === "documentation") {
@@ -290,7 +317,8 @@ export const getFormEntries = (
               })
               .join("<br/>");
 
-            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+            const body = tableRows.length > 0 ? getTableHtml(tableHtml, t) : rowsHtml;
+            return `<strong>${section.title}</strong><br/>${body}<br/><br/>`;
           })
           .filter(Boolean)
           .join("");
