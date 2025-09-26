@@ -13,12 +13,18 @@ import { Else, If, Then, When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import WizardFormProvider, { FormModel, useApiFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
+import WizardFormProvider, {
+  FormModel,
+  useApiFieldsProvider,
+  useFieldsProvider,
+  useFormEntities
+} from "@/context/wizardForm.provider";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 
 const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
-  const entries = useGetFormEntries(props);
+  const entities = useFormEntities();
+  const entries = useGetFormEntries({ ...props, entity: entities[0] });
   const title = useFieldsProvider().step(props.stepId)?.title;
   return (
     <>

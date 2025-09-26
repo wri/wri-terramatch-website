@@ -13,7 +13,7 @@ import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary"
 import { FieldInputType, GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
+import { FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
@@ -27,11 +27,11 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   stepId: string;
   index: number;
   nullText?: string;
-  // TODO Get entity from wizard context
-  entity?: Entity;
 }
 
-type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit" | "formUuid">;
+type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit" | "formUuid"> & {
+  entity?: Entity;
+};
 
 type FormEntry = {
   title?: string;
@@ -179,7 +179,8 @@ const getEntityPolygonData = (
 const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
   const { title } = useFieldsProvider().step(stepId) ?? {};
-  const entries = useGetFormEntries({ stepId, ...props });
+  const entities = useFormEntities();
+  const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
   return (
     <Accordion
       variant="secondary"

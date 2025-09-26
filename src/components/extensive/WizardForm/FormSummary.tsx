@@ -1,13 +1,11 @@
 import FormSummaryRow from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { Entity } from "@/types/common";
 
 import List from "../List/List";
 
 export interface FormSummaryProps {
   values: any;
   onEdit?: (stepIndex: number) => void;
-  entity?: Entity;
   organisation?: any;
 }
 

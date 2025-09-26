@@ -1,3 +1,4 @@
+import { kebabCase } from "lodash";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
@@ -5,6 +6,7 @@ import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardFo
 import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { selectQuestions, selectSections, useForm } from "@/connections/util/Form";
 import { FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Entity, EntityName } from "@/types/common";
 import { toArray } from "@/utils/array";
 
 type FormModelType = NonNullable<FormQuestionDto["model"]>;
@@ -188,6 +190,20 @@ export const useFormModelUuid = (type?: FormModelType | null) =>
   useContext(WizardFormContext).models.find(m => m.model === type)?.uuid;
 
 export const useFieldsProvider = () => useContext(WizardFormContext).fieldsProvider;
+
+export const useFormEntities = () => {
+  const { models } = useContext(WizardFormContext);
+  return useMemo<Entity[]>(
+    () =>
+      (models ?? [])
+        .filter(({ model }) => model != null && model !== "organisations")
+        .map(({ model, uuid }) => ({
+          entityName: kebabCase(model) as EntityName,
+          entityUUID: uuid
+        })),
+    [models]
+  );
+};
 
 export const useOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
 
