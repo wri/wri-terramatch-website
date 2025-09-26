@@ -1,4 +1,5 @@
 import { Divider, Typography } from "@mui/material";
+import { FC, useMemo } from "react";
 import {
   LabeledClasses,
   RaRecord,
@@ -12,18 +13,17 @@ import { Else, If, Then, When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import { useForm, useFormSection, useFormSections } from "@/connections/util/Form";
+import WizardFormProvider, { FormModel, useApiFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
-import { Entity } from "@/types/common";
 
-const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
+const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
   const entries = useGetFormEntries(props);
-  const section = useFormSection(props.stepId);
+  const title = useFieldsProvider().step(props.stepId)?.title;
   return (
     <>
       <Typography variant="h6" component="h3">
-        {section?.title}
+        {title}
       </Typography>
       <List
         className="my-4 flex flex-col gap-4"
@@ -48,29 +48,24 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
 };
 
 const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
-  const [, { data: form }] = useForm({ id: record?.form?.uuid, enabled: record?.form?.uuid != null });
-  // sections isn't valid until the useForm hook has returned valid data, but it's immediately valid at that time.
-  const sections = useFormSections(form?.uuid ?? "");
-  const values = form == null ? {} : formDefaultValues(record?.answers, form.uuid);
-  const currentPitchEntity: Entity = {
-    entityName: "project-pitches",
-    entityUUID: record?.project_pitch_uuid ?? ""
-  };
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(record?.form_uuid);
+  const values = useMemo(
+    () => formDefaultValues(record?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, record?.answers]
+  );
+  const model = useMemo<FormModel>(
+    () => ({ model: "projectPitches", uuid: record?.project_pitch_uuid ?? "" }),
+    [record?.project_pitch_uuid]
+  );
 
-  return form == null ? null : (
-    <List
-      className="space-y-8"
-      items={sections ?? []}
-      render={({ uuid }, index) => (
-        <ApplicationTabRow
-          index={index}
-          formUuid={form.uuid}
-          stepId={uuid}
-          values={values}
-          entity={currentPitchEntity}
-        />
-      )}
-    />
+  return !providerLoaded ? null : (
+    <WizardFormProvider models={model} fieldsProvider={fieldsProvider}>
+      <List
+        className="space-y-8"
+        items={fieldsProvider.stepIds()}
+        render={stepId => <ApplicationTabRow stepId={stepId} values={values} />}
+      />
+    </WizardFormProvider>
   );
 };
 

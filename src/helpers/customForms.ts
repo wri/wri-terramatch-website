@@ -1,11 +1,8 @@
-import { Dictionary, flatten } from "lodash";
+import { Dictionary } from "lodash";
 
-import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FieldDefinition, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
-import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isNotNull } from "@/utils/array";
 
 export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
@@ -24,56 +21,17 @@ export const normalizedFormFieldData = (
 ) => FormFieldFactories[field.inputType].normalizeValue?.(field, values, fieldsProvider) ?? values;
 
 /**
- * Returns default values mounting WizardForm based on the values given from the current answers
- * on the entity, and the formUUID.
- *
- * IMPORTANT: The form must already be cached in the Connection store via useForm for this function
- * to return valid values.
+ * Returns default values for mounting WizardForm based on the values given from the current answers
+ * on the entity.
  */
-export function formDefaultValues(values: Dictionary<any> | undefined, formUuid: string) {
-  const sections = selectSections(formUuid);
-  const questions = flatten(sections.map(({ uuid }) => selectQuestions(uuid)));
-  return questions.reduce(
-    (results, question) => ({
-      ...results,
-      [question.uuid]: formDefaultValue(question, values)
-    }),
-    {} as Dictionary<any>
-  );
-}
-
-const formDefaultValue = (question: FormQuestionDto, values: Dictionary<any> = {}) => {
-  switch (question.inputType) {
-    case "date":
-      return parseDateValues(values[question.uuid]);
-
-    case "tableInput":
-      return selectChildQuestions(question.uuid).reduce(
-        (acc, child) => ({
-          ...acc,
-          [child.uuid]: values[child.uuid]
-        }),
-        {} as Dictionary<any>
-      );
-
-    case "conditional":
-      return typeof values[question.uuid] === "boolean" ? values[question.uuid] : true;
-
-    case "mapInput": {
-      if (typeof values[question.uuid] === "string") {
-        try {
-          return JSON.parse(values[question.uuid]);
-        } catch (e) {
-          /* fall through to undefined return below */
-        }
-      }
-      return undefined;
+export function formDefaultValues(values: Dictionary<any>, fieldsProvider: FormFieldsProvider) {
+  for (const stepId of fieldsProvider.stepIds()) {
+    for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
+      values = FormFieldFactories[field.inputType].defaultValue?.(field, values, fieldsProvider) ?? values;
     }
-
-    default:
-      return values[question.uuid];
   }
-};
+  return values;
+}
 
 export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};

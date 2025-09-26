@@ -12,9 +12,8 @@ import { FormModelType } from "@/connections/util/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { normalizedFormData } from "@/helpers/customForms";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { singularEntityNameToPlural } from "@/helpers/entity";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { EntityName, isSingularEntityName } from "@/types/common";
@@ -54,13 +53,6 @@ export const EntityEdit = () => {
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
   const entityData = (entityResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
-
-  const sourceData = useMemo(
-    () => defaults(entityData?.update_request?.content ?? {}, entityData?.answers),
-    [entityData?.answers, entityData?.update_request?.content]
-  );
-  const defaultValues = useFormDefaultValues(sourceData, form?.uuid);
-
   const { form_title: title } = entityData;
 
   const model = useMemo(() => {
@@ -71,6 +63,12 @@ export const EntityEdit = () => {
   }, [entityName, entityUUID]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
+
+  const sourceData = useMemo(
+    () => defaults(entityData?.update_request?.content ?? {}, entityData?.answers),
+    [entityData?.answers, entityData?.update_request?.content]
+  );
+  const defaultValues = useMemo(() => formDefaultValues(sourceData, fieldsProvider), [fieldsProvider, sourceData]);
 
   if (loadError != null || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });

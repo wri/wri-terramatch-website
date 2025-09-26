@@ -10,8 +10,7 @@ import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
-import { normalizedFormData } from "@/helpers/customForms";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
 
 const SubmissionPage = () => {
@@ -30,7 +29,6 @@ const SubmissionPage = () => {
   });
 
   const framework = useFramework(formData?.data?.framework_key);
-  const defaultValues = useFormDefaultValues(formData?.data?.answers ?? {}, formData?.data?.form_uuid);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
@@ -44,6 +42,10 @@ const SubmissionPage = () => {
   }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
   const [, { data: form }] = useForm({ id: formData?.data.form_uuid, enabled: formData?.data.form_uuid != null });
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid);
+  const defaultValues = useMemo(
+    () => formDefaultValues(formData?.data?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, formData?.data?.answers]
+  );
 
   const orgDetails = useMemo(
     (): OrgFormDetails | undefined =>

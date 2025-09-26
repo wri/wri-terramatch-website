@@ -42,6 +42,7 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   stepId: string;
   index: number;
   nullText?: string;
+  // TODO Get entity from wizard context
   entity?: Entity;
 }
 

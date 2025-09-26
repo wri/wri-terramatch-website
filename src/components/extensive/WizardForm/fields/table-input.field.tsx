@@ -24,6 +24,14 @@ export const TableInputField: FormFieldFactory = {
     }
   },
 
+  defaultValue: ({ name }, formValues, { childIds, fieldById }) => {
+    const value = childIds(name)
+      .map(fieldById)
+      .filter(isNotNull)
+      .reduce((value, child) => ({ ...value, [child.name]: formValues[child.name] }), {});
+    return { ...formValues, [name]: value };
+  },
+
   normalizeValue: ({ name }, formValues) => {
     const { [name]: tableValues, ...rest } = formValues;
     return { ...rest, ...tableValues };

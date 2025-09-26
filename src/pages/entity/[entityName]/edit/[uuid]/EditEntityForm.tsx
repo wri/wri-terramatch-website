@@ -13,9 +13,8 @@ import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { FormDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { normalizedFormData } from "@/helpers/customForms";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
@@ -52,12 +51,6 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
       }
     }
   });
-
-  const sourceData = useMemo(
-    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    [formData?.answers, formData?.update_request?.content]
-  );
-  const defaultValues = useFormDefaultValues(sourceData, formData?.form_uuid);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
   const formTitle =
@@ -96,6 +89,12 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
     [formData?.feedback_fields, formData?.update_request?.feedback_fields, mode]
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.form_uuid, feedbackFields);
+
+  const sourceData = useMemo(
+    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
+    [formData?.answers, formData?.update_request?.content]
+  );
+  const defaultValues = useMemo(() => formDefaultValues(sourceData, fieldsProvider), [fieldsProvider, sourceData]);
 
   const initialStepProps = useMemo(() => {
     if (providerLoaded && feedbackFields != null) {

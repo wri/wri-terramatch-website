@@ -62,6 +62,7 @@ const formConnection = v3Resource("forms", formGet)
   .enabledProp()
   .buildConnection();
 export const useForm = connectionHook(formConnection);
+export const loadForm = connectionLoader(formConnection);
 
 export const sectionsConnection = v3Resource("formSections")
   .listByParentId<FormSectionDto>("formId", { sortProp: "order" })
@@ -70,7 +71,6 @@ export const sectionsConnection = v3Resource("formSections")
 export const questionsConnection = v3Resource("formQuestions")
   .listByParentId<FormQuestionDto>("sectionId", { sortProp: "order" })
   .buildConnection();
-export const useFormSections = (formId: string) => useConnection(sectionsConnection, { parentId: formId })[1]?.data;
 const sectionsSelector = connectionSelector(sectionsConnection);
 export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
 const questionsSelector = connectionSelector(questionsConnection);
@@ -78,8 +78,6 @@ export const selectQuestions = (sectionId: string) => questionsSelector({ parent
 
 const sectionConnection = v3Resource("formSections").cachedSingleResource<FormSectionDto>().buildConnection();
 export const useFormSection = (sectionUuid: string) => useConnection(sectionConnection, { id: sectionUuid })[1]?.data;
-const sectionSelector = connectionSelector(sectionConnection);
-export const selectSection = (sectionUuid: string) => sectionSelector({ id: sectionUuid }).data;
 
 const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
 const questionSelector = connectionSelector(questionConnection);

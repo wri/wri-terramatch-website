@@ -20,7 +20,7 @@ import {
   usePutV2OrganisationsUUID
 } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
+import { formDefaultValues } from "@/helpers/customForms";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 
@@ -63,7 +63,7 @@ const CreateOrganisationForm = () => {
 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
-  const defaultValues = useFormDefaultValues(orgData?.data, formSteps);
+  const defaultValues = useMemo(() => formDefaultValues(orgData?.data ?? {}, provider), [orgData?.data, provider]);
 
   const onBackFirstStep = () => {
     openModal(

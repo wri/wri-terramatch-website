@@ -78,69 +78,82 @@ export const useLocalStepsProvider = (localSteps: LocalSteps): FormFieldsProvide
   }, [localSteps]);
 };
 
+/**
+ * Creates a fields provider for a given form UUID. IMPORTANT: The form _must already have been cached
+ * in the connection store at the time this function is called for this provider to be valid_.
+ */
+export const createApiFieldsProvider = (
+  formUuid?: string,
+  feedbackFields?: string[] | null,
+  fieldFilter: (field: FormQuestionDto) => boolean = () => true
+) => {
+  // start by building a structure of the whole form from what's cached in the API store, and by
+  // using the optional fieldFilter.
+  // sections and questions are sorted at the connection level based on the `order` field.
+  const stepsById = new Map<string, StepDefinition>();
+  const fieldsById = new Map<string, FieldDefinition>();
+  const sections =
+    formUuid == null
+      ? []
+      : selectSections(formUuid).reduce((steps, section) => {
+          const questions = selectQuestions(section.uuid).filter(fieldFilter);
+          // If the only questions left after ones that have a parent, then this is effectively
+          // an empty step and will be skipped.
+          if (questions.filter(({ parentId }) => parentId == null).length == 0) return steps;
+
+          const { uuid, ...step } = section;
+          stepsById.set(uuid, { id: uuid, ...step });
+          for (const question of questions) {
+            fieldsById.set(question.uuid, questionDtoToDefinition(question));
+          }
+
+          return [...steps, { ...section, fields: questions }];
+        }, [] as (FormSectionDto & { fields: FormQuestionDto[] })[]);
+
+  // memoize a bunch of stuff to make the provider fast
+  const stepIds = [...stepsById.keys()];
+  const fieldIds = new Map(
+    sections.map(step => [step.uuid, step.fields.filter(({ parentId }) => parentId == null).map(({ uuid }) => uuid)])
+  );
+  const fieldsByKey = new Map(
+    [...fieldsById.values()]
+      .filter(({ linkedFieldKey }) => linkedFieldKey != null)
+      .map(field => [field.linkedFieldKey as string, field])
+  );
+
+  const childIds = sections
+    .flatMap(({ fields }) => fields)
+    .filter(({ parentId }) => parentId != null)
+    .reduce((map, { uuid, parentId }) => {
+      const list = map.get(parentId!) ?? [];
+      map.set(parentId!, [...list, uuid]);
+      return map;
+    }, new Map<string, string[]>());
+
+  return {
+    stepIds: () => stepIds ?? [],
+    step: (id: string) => stepsById.get(id),
+    fieldIds: (stepId: string) => fieldIds.get(stepId) ?? [],
+    fieldById: (id: string) => fieldsById.get(id),
+    fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
+    childIds: (fieldId: string) => childIds.get(fieldId) ?? [],
+    feedbackRequired: (fieldId: string) => feedbackFields?.includes(fieldId) ?? false
+  };
+};
+
 // Returns a boolean indicating whether the form is loaded, and the fields provider.
 export const useApiFieldsProvider = (
   formUuid?: string | null,
   feedbackFields?: string[] | null,
   fieldFilter: (field: FormQuestionDto) => boolean = () => true
 ): [boolean, FormFieldsProvider] => {
-  const [, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
-  const provider = useMemo<FormFieldsProvider>(() => {
-    // start by building a structure of the whole form from what's cached in the API store, and by
-    // using the optional fieldFilter.
-    // sections and questions are sorted at the connection level based on the `order` field.
-    const stepsById = new Map<string, StepDefinition>();
-    const fieldsById = new Map<string, FieldDefinition>();
-    const sections =
-      form == null
-        ? []
-        : selectSections(form.uuid).reduce((steps, section) => {
-            const questions = selectQuestions(section.uuid).filter(fieldFilter);
-            // If the only questions left after ones that have a parent, then this is effectively
-            // an empty step and will be skipped.
-            if (questions.filter(({ parentId }) => parentId == null).length == 0) return steps;
-
-            const { uuid, ...step } = section;
-            stepsById.set(uuid, { id: uuid, ...step });
-            for (const question of questions) {
-              fieldsById.set(question.uuid, questionDtoToDefinition(question));
-            }
-
-            return [...steps, { ...section, fields: questions }];
-          }, [] as (FormSectionDto & { fields: FormQuestionDto[] })[]);
-
-    // memoize a bunch of stuff to make the provider fast
-    const stepIds = [...stepsById.keys()];
-    const fieldIds = new Map(
-      sections.map(step => [step.uuid, step.fields.filter(({ parentId }) => parentId == null).map(({ uuid }) => uuid)])
-    );
-    const fieldsByKey = new Map(
-      [...fieldsById.values()]
-        .filter(({ linkedFieldKey }) => linkedFieldKey != null)
-        .map(field => [field.linkedFieldKey as string, field])
-    );
-
-    const childIds = sections
-      .flatMap(({ fields }) => fields)
-      .filter(({ parentId }) => parentId != null)
-      .reduce((map, { uuid, parentId }) => {
-        const list = map.get(parentId!) ?? [];
-        map.set(parentId!, [...list, uuid]);
-        return map;
-      }, new Map<string, string[]>());
-
-    return {
-      form: () => form,
-      stepIds: () => stepIds ?? [],
-      step: (id: string) => stepsById.get(id),
-      fieldIds: (stepId: string) => fieldIds.get(stepId) ?? [],
-      fieldById: (id: string) => fieldsById.get(id),
-      fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
-      childIds: (fieldId: string) => childIds.get(fieldId) ?? [],
-      feedbackRequired: (fieldId: string) => feedbackFields?.includes(fieldId) ?? false
-    };
-  }, [feedbackFields, fieldFilter, form]);
-  return [form != null, provider];
+  const enabled = formUuid != null;
+  const formLoaded = useForm({ id: formUuid ?? undefined, enabled: formUuid != null })[0] && enabled;
+  const provider = useMemo(
+    () => createApiFieldsProvider(formUuid ?? undefined, feedbackFields, fieldFilter),
+    [feedbackFields, fieldFilter, formUuid]
+  );
+  return [formLoaded, provider];
 };
 
 type IFormFieldsContext = {

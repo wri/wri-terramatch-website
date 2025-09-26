@@ -95,6 +95,21 @@ export type FormFieldFactory = {
     formValues: Dictionary<any>,
     fieldsProvider: FormFieldsProvider
   ) => void;
+
+  /**
+   * Using the current values in the given dictionary, set the correct default value for this field.
+   * Default is to NOOP
+   */
+  defaultValue?: (
+    field: FieldDefinition,
+    formValues: Dictionary<any>,
+    fieldsProvider: FormFieldsProvider
+  ) => Dictionary<any>;
+
+  /**
+   * Normalize the value that was provided in the form input so that it can be sent to the server
+   * in the correct format. Default is to NOOP.
+   */
   normalizeValue?: (
     field: FieldDefinition,
     formValues: Dictionary<any>,

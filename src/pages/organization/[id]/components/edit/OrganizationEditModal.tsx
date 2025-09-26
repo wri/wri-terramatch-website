@@ -14,8 +14,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
-import { normalizedFormData } from "@/helpers/customForms";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 
 import { getSteps } from "./getEditOrganisationSteps";
 
@@ -33,8 +32,8 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
+  const defaultValues = useMemo(() => formDefaultValues(organization ?? {}, provider), [organization, provider]);
 
-  const defaultValues = useFormDefaultValues(organization, formSteps);
   const { mutateAsync: updateOrganization, error } = usePutV2OrganisationsUUID({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["v2", "organisations"] });

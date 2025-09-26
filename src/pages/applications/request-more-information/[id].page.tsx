@@ -17,8 +17,7 @@ import {
 } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { normalizedFormData } from "@/helpers/customForms";
-import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
@@ -50,7 +49,6 @@ const RequestMoreInformationPage = () => {
   );
 
   const framework = useFramework(submission?.framework_key);
-  const defaultValues = useFormDefaultValues(submission?.answers ?? {}, submission?.form_uuid);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
@@ -77,6 +75,10 @@ const RequestMoreInformationPage = () => {
     submission?.form_uuid,
     feedbackFields,
     requestedInformationFilter
+  );
+  const defaultValues = useMemo(
+    () => formDefaultValues(submission?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, submission?.answers]
   );
   const [, { data: form }] = useForm({ id: submission?.form_uuid, enabled: submission?.form_uuid != null });
 
