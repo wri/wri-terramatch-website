@@ -15,8 +15,8 @@ import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/g
 import { FormDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
 
@@ -141,7 +141,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData, form }: Edit
             onCloseForm={() => router.push("/home")}
             onChange={(data, closeAndSave?: boolean) =>
               updateEntity({
-                answers: normalizedFormData(data, formSteps!),
+                answers: normalizedFormData(data, fieldsProvider),
                 ...(closeAndSave ? { continue_later_action: true } : {})
               })
             }

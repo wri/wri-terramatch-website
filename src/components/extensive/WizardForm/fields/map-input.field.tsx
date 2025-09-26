@@ -15,5 +15,17 @@ export const MapInputField: FormFieldFactory = {
 
   getAnswer: () => undefined,
 
-  appendAnswers: () => undefined
+  appendAnswers: () => undefined,
+
+  normalizeValue: ({ name }, formValues) => {
+    const value = formValues[name];
+    if (typeof value === "object") {
+      try {
+        formValues[name] = JSON.stringify(value);
+      } catch (e) {
+        formValues[name] = "";
+      }
+    }
+    return formValues;
+  }
 };

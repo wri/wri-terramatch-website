@@ -44,5 +44,11 @@ export const NumberField: FormFieldFactory = {
   getAnswer: ({ name }, formValues) => formValues[name] as Answer,
 
   appendAnswers: (field, csv, values, fieldsProvider) =>
-    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
+    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)]),
+
+  normalizeValue: ({ name, validation }, formValues) => {
+    const value = formValues[name];
+    formValues[name] = value == null && (validation?.min ?? 0) < 0 ? value : Number(value);
+    return formValues;
+  }
 };

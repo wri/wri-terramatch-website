@@ -20,7 +20,7 @@ import {
   usePutV2OrganisationsUUID
 } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
-import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 

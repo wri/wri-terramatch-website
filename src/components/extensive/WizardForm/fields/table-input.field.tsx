@@ -22,5 +22,10 @@ export const TableInputField: FormFieldFactory = {
     for (const row of childIds(name).map(fieldById).filter(isNotNull)) {
       csv.pushRow(["", row.label, formValues[row.name] ?? ""]);
     }
+  },
+
+  normalizeValue: ({ name }, formValues) => {
+    const { [name]: tableValues, ...rest } = formValues;
+    return { ...rest, ...tableValues };
   }
 };

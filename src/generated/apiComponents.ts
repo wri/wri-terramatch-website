@@ -5386,12 +5386,288 @@ export const useGetV2AdminOrganisationsExport = <TData = undefined>(
 
 export type PostV2OrganisationsError = Fetcher.ErrorWrapper<undefined>;
 
+export type PostV2OrganisationsResponse = {
+  uuid?: string;
+  type?: string;
+  private?: boolean;
+  name?: string;
+  phone?: string;
+  currency?: string;
+  states?: string[];
+  loan_status_types?: string[];
+  land_systems?: string[];
+  fund_utilisation?: string[];
+  detailed_intervention_types?: string[];
+  account_number_1?: string;
+  account_number_2?: string;
+  approach_of_marginalized_communities?: string;
+  community_engagement_numbers_marginalized?: string;
+  founding_date?: string;
+  description?: string;
+  leadership_team?: string;
+  countries?: string[];
+  languages?: string[];
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  web_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  hq_street_1?: string;
+  hq_street_2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_zipcode?: string;
+  hq_country?: string;
+  fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
+  ha_restored_total?: number;
+  /**
+   * @format float
+   */
+  ha_restored_3year?: number;
+  relevant_experience_years?: number;
+  trees_grown_total?: number;
+  trees_grown_3year?: number;
+  tree_care_approach?: string;
+  ft_permanent_employees?: number;
+  pt_permanent_employees?: number;
+  temp_employees?: number;
+  female_employees?: number;
+  male_employees?: number;
+  young_employees?: number;
+  additional_funding_details?: string;
+  community_experience?: string;
+  total_engaged_community_members_3yr?: number;
+  percent_engaged_women_3yr?: number;
+  percent_engaged_men_3yr?: number;
+  percent_engaged_under_35_3yr?: number;
+  percent_engaged_over_35_3yr?: number;
+  percent_engaged_smallholder_3yr?: number;
+  total_trees_grown?: number;
+  avg_tree_survival_rate?: number;
+  tree_maintenance_aftercare_approach?: string;
+  restored_areas_description?: string;
+  monitoring_evaluation_experience?: string;
+  funding_history?: string;
+  engagement_farmers?: string[];
+  engagement_women?: string[];
+  engagement_youth?: string[];
+  engagement_non_youth?: string[];
+  tree_restoration_practices?: string[];
+  business_model?: string;
+  subtype?: string;
+  organisation_revenue_this_year?: number;
+  shapefiles?: {
+    uuid?: string;
+    shapefileable_type?: string;
+    shapefileable_id?: number;
+    geojson?: string;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
+  }[];
+  bank_statements?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  previous_annual_reports?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  logo?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  reference?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_2year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_last_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_this_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_next_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  legal_registration?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  /**
+   * this is a list of key value pairs eg slug: name
+   */
+  tags?: string[];
+};
+
 export type PostV2OrganisationsVariables = {
   body?: RequestBodies.V2PostOrganisationsBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPostV2Organisations = (variables: PostV2OrganisationsVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2OrganisationsError, RequestBodies.V2PostOrganisationsBody, {}, {}, {}>({
+  apiFetch<PostV2OrganisationsResponse, PostV2OrganisationsError, RequestBodies.V2PostOrganisationsBody, {}, {}, {}>({
     url: "/v2/organisations",
     method: "post",
     ...variables,
@@ -5400,12 +5676,12 @@ export const fetchPostV2Organisations = (variables: PostV2OrganisationsVariables
 
 export const usePostV2Organisations = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2OrganisationsError, PostV2OrganisationsVariables>,
+    reactQuery.UseMutationOptions<PostV2OrganisationsResponse, PostV2OrganisationsError, PostV2OrganisationsVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2OrganisationsError, PostV2OrganisationsVariables>(
+  return reactQuery.useMutation<PostV2OrganisationsResponse, PostV2OrganisationsError, PostV2OrganisationsVariables>(
     (variables: PostV2OrganisationsVariables) => fetchPostV2Organisations({ ...fetcherOptions, ...variables }),
     options
   );
@@ -5731,6 +6007,282 @@ export type PutV2OrganisationsUUIDPathParams = {
 
 export type PutV2OrganisationsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
+export type PutV2OrganisationsUUIDResponse = {
+  uuid?: string;
+  type?: string;
+  private?: boolean;
+  name?: string;
+  phone?: string;
+  currency?: string;
+  states?: string[];
+  loan_status_types?: string[];
+  land_systems?: string[];
+  fund_utilisation?: string[];
+  detailed_intervention_types?: string[];
+  account_number_1?: string;
+  account_number_2?: string;
+  approach_of_marginalized_communities?: string;
+  community_engagement_numbers_marginalized?: string;
+  founding_date?: string;
+  description?: string;
+  leadership_team?: string;
+  countries?: string[];
+  languages?: string[];
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  web_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  hq_street_1?: string;
+  hq_street_2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_zipcode?: string;
+  hq_country?: string;
+  fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
+  ha_restored_total?: number;
+  /**
+   * @format float
+   */
+  ha_restored_3year?: number;
+  relevant_experience_years?: number;
+  trees_grown_total?: number;
+  trees_grown_3year?: number;
+  tree_care_approach?: string;
+  ft_permanent_employees?: number;
+  pt_permanent_employees?: number;
+  temp_employees?: number;
+  female_employees?: number;
+  male_employees?: number;
+  young_employees?: number;
+  additional_funding_details?: string;
+  community_experience?: string;
+  total_engaged_community_members_3yr?: number;
+  percent_engaged_women_3yr?: number;
+  percent_engaged_men_3yr?: number;
+  percent_engaged_under_35_3yr?: number;
+  percent_engaged_over_35_3yr?: number;
+  percent_engaged_smallholder_3yr?: number;
+  total_trees_grown?: number;
+  avg_tree_survival_rate?: number;
+  tree_maintenance_aftercare_approach?: string;
+  restored_areas_description?: string;
+  monitoring_evaluation_experience?: string;
+  funding_history?: string;
+  engagement_farmers?: string[];
+  engagement_women?: string[];
+  engagement_youth?: string[];
+  engagement_non_youth?: string[];
+  tree_restoration_practices?: string[];
+  business_model?: string;
+  subtype?: string;
+  organisation_revenue_this_year?: number;
+  shapefiles?: {
+    uuid?: string;
+    shapefileable_type?: string;
+    shapefileable_id?: number;
+    geojson?: string;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
+  }[];
+  bank_statements?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  previous_annual_reports?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  logo?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  reference?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_2year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_last_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_this_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_next_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  legal_registration?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  /**
+   * this is a list of key value pairs eg slug: name
+   */
+  tags?: string[];
+};
+
 export type PutV2OrganisationsUUIDVariables = {
   body?: RequestBodies.V2PostOrganisationsBody;
   pathParams: PutV2OrganisationsUUIDPathParams;
@@ -5738,7 +6290,7 @@ export type PutV2OrganisationsUUIDVariables = {
 
 export const fetchPutV2OrganisationsUUID = (variables: PutV2OrganisationsUUIDVariables, signal?: AbortSignal) =>
   apiFetch<
-    undefined,
+    PutV2OrganisationsUUIDResponse,
     PutV2OrganisationsUUIDError,
     RequestBodies.V2PostOrganisationsBody,
     {},
@@ -5748,12 +6300,20 @@ export const fetchPutV2OrganisationsUUID = (variables: PutV2OrganisationsUUIDVar
 
 export const usePutV2OrganisationsUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PutV2OrganisationsUUIDError, PutV2OrganisationsUUIDVariables>,
+    reactQuery.UseMutationOptions<
+      PutV2OrganisationsUUIDResponse,
+      PutV2OrganisationsUUIDError,
+      PutV2OrganisationsUUIDVariables
+    >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PutV2OrganisationsUUIDError, PutV2OrganisationsUUIDVariables>(
+  return reactQuery.useMutation<
+    PutV2OrganisationsUUIDResponse,
+    PutV2OrganisationsUUIDError,
+    PutV2OrganisationsUUIDVariables
+  >(
     (variables: PutV2OrganisationsUUIDVariables) => fetchPutV2OrganisationsUUID({ ...fetcherOptions, ...variables }),
     options
   );
@@ -12078,11 +12638,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
 
 export type PatchV2FormsSubmissionsUUIDRequestBody = {
   status?: string;
-  answers?: {
-    question_id?: number;
-    value?: string;
-    options?: string[];
-  }[];
+  answers?: Record<string, any>;
 };
 
 export type PatchV2FormsSubmissionsUUIDVariables = {

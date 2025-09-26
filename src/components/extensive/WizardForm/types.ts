@@ -86,15 +86,20 @@ export type SharedFieldProps = {
 };
 
 export type FormFieldFactory = {
-  createValidator: (question: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
-  renderInput: (question: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
-  getAnswer: (question: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
+  createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
+  getAnswer: (field: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
   appendAnswers: (
     field: FieldDefinition,
     csv: CSVGenerator,
     formValues: Dictionary<any>,
     fieldsProvider: FormFieldsProvider
   ) => void;
+  normalizeValue?: (
+    field: FieldDefinition,
+    formValues: Dictionary<any>,
+    fieldsProvider: FormFieldsProvider
+  ) => Dictionary<any>;
 };
 
 export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;

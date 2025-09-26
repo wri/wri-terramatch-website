@@ -12,10 +12,11 @@ import { FormModelType } from "@/connections/util/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { normalizedFormData } from "@/helpers/customForms";
 import { singularEntityNameToPlural } from "@/helpers/entity";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import { useFormDefaultValues, useNormalizer } from "@/hooks/useNormalFormValues";
 import { EntityName, isSingularEntityName } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -59,7 +60,6 @@ export const EntityEdit = () => {
     [entityData?.answers, entityData?.update_request?.content]
   );
   const defaultValues = useFormDefaultValues(sourceData, form?.uuid);
-  const normalizer = useNormalizer(form?.uuid);
 
   const { form_title: title } = entityData;
 
@@ -114,7 +114,7 @@ export const EntityEdit = () => {
           framework={framework}
           errors={error}
           onBackFirstStep={() => navigate("..")}
-          onChange={data => updateEntity({ answers: normalizer(data) })}
+          onChange={data => updateEntity({ answers: normalizedFormData(data, fieldsProvider) })}
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}

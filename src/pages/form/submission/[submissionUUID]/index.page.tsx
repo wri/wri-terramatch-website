@@ -11,8 +11,8 @@ import { useFramework } from "@/context/framework.provider";
 import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 import { useFormSubmission } from "@/hooks/useFormGet";
-import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -70,7 +70,7 @@ const SubmissionPage = () => {
           onChange={data =>
             updateSubmission({
               pathParams: { uuid: submissionUUID },
-              body: { answers: normalizedFormData(data, formSteps!) }
+              body: { answers: normalizedFormData(data, fieldsProvider) }
             })
           }
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}

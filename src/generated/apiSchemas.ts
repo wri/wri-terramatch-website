@@ -5556,11 +5556,7 @@ export type FormSubmissionCreate = {
 
 export type FormSubmissionUpdate = {
   status?: string;
-  answers?: {
-    question_id?: number;
-    value?: string;
-    options?: string[];
-  }[];
+  answers?: Record<string, any>;
 };
 
 export type ApplicationLiteRead = {

@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
@@ -15,7 +15,7 @@ import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
-import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 
 import { getSteps } from "./getEditOrganisationSteps";
 
@@ -42,20 +42,22 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     }
   });
 
-  const handleSave = async (data: any) => {
-    // @ts-ignore
-    const res: { data: V2OrganisationRead } = await updateOrganization({
-      body: normalizedFormData(data, formSteps),
-      pathParams: { uuid }
-    });
+  const handleSave = useCallback(
+    async (data: any) => {
+      const res = await updateOrganization({
+        body: normalizedFormData(data, provider),
+        pathParams: { uuid }
+      });
 
-    if (res.data.uuid) {
-      closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
-      return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
-    } else {
-      return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
-    }
-  };
+      if (res.uuid != null) {
+        closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+        return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+      } else {
+        return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+      }
+    },
+    [closeModal, openModal, provider, updateOrganization, uuid]
+  );
 
   const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
 

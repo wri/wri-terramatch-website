@@ -17,7 +17,8 @@ import {
 } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useFormDefaultValues } from "@/hooks/useNormalFormValues";
+import { normalizedFormData } from "@/helpers/customForms";
+import { useFormDefaultValues } from "@/hooks/useFormDefaultValues";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
@@ -104,7 +105,12 @@ const RequestMoreInformationPage = () => {
           hideBackButton={false}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push(`/applications/${uuid}`)}
-          onChange={data => updateSubmission({ pathParams: { uuid: submission?.uuid ?? "" }, body: { answers: data } })}
+          onChange={data =>
+            updateSubmission({
+              pathParams: { uuid: submission?.uuid ?? "" },
+              body: { answers: normalizedFormData(data, fieldsProvider) }
+            })
+          }
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
           onSubmit={() =>
             submitFormSubmission({

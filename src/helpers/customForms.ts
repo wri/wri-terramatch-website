@@ -1,93 +1,27 @@
-import { Dictionary, flatten, isEmpty, isObject } from "lodash";
+import { Dictionary, flatten } from "lodash";
 
 import { parseDateValues } from "@/admin/apiProvider/utils/entryFormat";
-import { FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
+import { FieldDefinition, FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
+import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
-export const formDataNormalizer = (formUuid: string) => {
-  const sections = selectSections(formUuid);
-  const questions = flatten(sections.map(({ uuid }) => selectQuestions(uuid)));
-
-  return (values: Dictionary<any>) => {
-    const results: Dictionary<any> = {};
-
-    for (const question of questions) {
-      switch (question.inputType) {
-        case "number": {
-          const value = values[question.uuid];
-          results[question.uuid] = isEmpty(value) ? value : Number(value);
-          break;
-        }
-
-        case "tableInput":
-          Object.assign(results, values[question.uuid]);
-          break;
-
-        case "mapInput":
-          results[question.uuid] = isObject(values[question.uuid]) ? JSON.stringify(values[question.uuid]) : "";
-          break;
-
-        default:
-          results[question.uuid] = values[question.uuid];
-      }
+export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
+  for (const stepId of fieldsProvider.stepIds()) {
+    for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
+      values = normalizedFormFieldData(values, field, fieldsProvider);
     }
+  }
+  return values;
+}
 
-    return results;
-  };
-};
-
-// export function normalizedFormData(values: Dictionary<any>, steps: FormStepSchema[]): Dictionary<any> {
-//   for (const step of steps) {
-//     for (const field of step.fields) {
-//       values = normalizedFormFieldData(values, field);
-//     }
-//   }
-//   return values;
-// }
-//
-// export const normalizedFormFieldData = <T = any>(values: T, field: FormField): T => {
-//   switch (field.type) {
-//     case FieldType.Input: {
-//       if (field.fieldProps.type === "number") {
-//         const fieldValue = values[field.name];
-//         const isEmpty = fieldValue === undefined || fieldValue === null;
-//         if (isEmpty && field.fieldProps.min < 0) {
-//           values[field.name] = fieldValue;
-//         } else {
-//           values[field.name] = Number(fieldValue);
-//         }
-//       }
-//       break;
-//     }
-//     case FieldType.InputTable: {
-//       const inputValues = values[field.name];
-//       values = { ...values, ...inputValues };
-//       values = omit(values, [field.name]);
-//       break;
-//     }
-//
-//     case FieldType.Conditional: {
-//       field?.fieldProps.fields.map(f => {
-//         values = normalizedFormFieldData(values, f);
-//       });
-//       break;
-//     }
-//
-//     case FieldType.Map: {
-//       if (typeof values[field.name] === "object") {
-//         try {
-//           values[field.name] = JSON.stringify(values[field.name]);
-//         } catch (e) {
-//           values[field.name] = "";
-//         }
-//       }
-//       break;
-//     }
-//   }
-//
-//   return values;
-// };
+export const normalizedFormFieldData = (
+  values: Dictionary<any>,
+  field: FieldDefinition,
+  fieldsProvider: FormFieldsProvider
+) => FormFieldFactories[field.inputType].normalizeValue?.(field, values, fieldsProvider) ?? values;
 
 /**
  * Returns default values mounting WizardForm based on the values given from the current answers
