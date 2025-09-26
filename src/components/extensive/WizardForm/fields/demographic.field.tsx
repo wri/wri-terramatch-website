@@ -1,6 +1,8 @@
 import * as yup from "yup";
 
 import RHFDemographicsTable from "@/components/elements/Inputs/DemographicsInput/RHFDemographicsTable";
+import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
+import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
@@ -58,5 +60,12 @@ export const DemographicField: FormFieldFactory = {
 
   getAnswer: () => undefined,
 
-  appendAnswers: () => undefined
+  appendAnswers: () => undefined,
+
+  getEntryValue: ({ name, inputType }, formValues) => {
+    const entries = ((formValues[name]?.[0] ?? {}).demographics ?? []) as DemographicEntryDto[];
+    return (
+      <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
+    );
+  }
 };

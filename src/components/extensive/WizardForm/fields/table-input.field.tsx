@@ -24,6 +24,13 @@ export const TableInputField: FormFieldFactory = {
     }
   },
 
+  getEntryValue: ({ name }, formValues, { fieldsProvider: { childIds, fieldById }, t }) =>
+    childIds(name)
+      .map(fieldById)
+      .filter(isNotNull)
+      .map(row => `${row.label}: ${formValues[name]?.[row.name ?? ""] ?? t("Answer Not Provided")}`)
+      .join("<br/>"),
+
   defaultValue: ({ name }, formValues, { childIds, fieldById }) => {
     const value = childIds(name)
       .map(fieldById)

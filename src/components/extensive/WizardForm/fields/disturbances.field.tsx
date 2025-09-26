@@ -4,7 +4,7 @@ import RHFDisturbanceTable, {
   getDisturbanceTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { appendTableAnswers } from "@/components/extensive/WizardForm/utils";
+import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { arrayValidation } from "@/utils/yup";
 
 const props = (additionalProps?: Dictionary<any> | null) => ({
@@ -24,5 +24,8 @@ export const DisturbancesField: FormFieldFactory = {
   appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
     const headers = getDisturbanceTableColumns(props(additionalProps));
     appendTableAnswers(csv, label, headers, formValues[name]);
-  }
+  },
+
+  getEntryValue: (field, formValues, { t }) =>
+    dataTableEntryValue(getDisturbanceTableColumns(props(field.additionalProps), t), field, formValues)
 };

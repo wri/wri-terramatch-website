@@ -28,6 +28,7 @@ import { TextAreaProps } from "@/components/elements/Inputs/textArea/TextArea";
 import { RHFSeedingTableInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { RHFTreeSpeciesInputProps } from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
+import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import {
@@ -35,7 +36,7 @@ import {
   FormQuestionOptionDto,
   FormTableHeaderDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Option, UploadedFile } from "@/types/common";
+import { Entity, EntityName, Option, UploadedFile } from "@/types/common";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 // There are a couple of types that are supported by the hardcoded client side forms (like org creation),
@@ -85,6 +86,17 @@ export type SharedFieldProps = {
   feedbackRequired: boolean;
 };
 
+export type GetEntryValueProps = {
+  fieldsProvider: FormFieldsProvider;
+  t: typeof useT;
+  entity?: Entity;
+  type?: EntityName;
+  entityPolygonData?: Dictionary<string[]>;
+  bbox?: BBox;
+  mapFunctions?: any;
+  record?: any;
+};
+
 export type FormFieldFactory = {
   createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
   renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
@@ -95,6 +107,12 @@ export type FormFieldFactory = {
     formValues: Dictionary<any>,
     fieldsProvider: FormFieldsProvider
   ) => void;
+
+  /**
+   * Generate a FormEntry value for the given field with the given values and supplementary information.
+   * The default uses `getFormattedAnswer`.
+   */
+  getEntryValue?: (field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => any;
 
   /**
    * Using the current values in the given dictionary, set the correct default value for this field.

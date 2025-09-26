@@ -3,6 +3,7 @@ import * as yup from "yup";
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { Answer, FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
 
 export const TreeSpeciesField: FormFieldFactory = {
@@ -50,5 +51,11 @@ export const TreeSpeciesField: FormFieldFactory = {
         }
       }
     }
+  },
+
+  getEntryValue: (field, formValues, { entity, fieldsProvider }) => {
+    const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
+    const collection = value[0]?.collection;
+    return treeSpeciesEntryValue(collection, entity, field, formValues, fieldsProvider);
   }
 };
