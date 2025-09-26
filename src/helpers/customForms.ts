@@ -1,7 +1,7 @@
 import { Dictionary } from "lodash";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { FieldDefinition, FormStepSchema } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { isNotNull } from "@/utils/array";
 
@@ -51,28 +51,3 @@ export const applyFieldDefault = (
   values: Dictionary<any>,
   fieldsProvider: FormFieldsProvider
 ): Dictionary<any> => FormFieldFactories[field.inputType].defaultValue?.(field, values, fieldsProvider) ?? values;
-
-export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
-  if (!values || !steps) return {};
-  if (typeof values === "string") {
-    try {
-      values = JSON.parse(values);
-    } catch (e) {
-      console.warn("Failed to parse values as JSON:", e);
-      return {};
-    }
-  }
-
-  delete values.uuid;
-  delete values.updated_at;
-  delete values.deleted_at;
-  delete values.created_at;
-
-  for (const step of steps) {
-    for (const field of step.fields) {
-      normalizedFieldDefaultValue(values, field);
-    }
-  }
-
-  return values;
-}
