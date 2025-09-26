@@ -161,7 +161,7 @@ export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesV
 
 export interface FormStepSchema {
   title: string;
-  fields: FormField[];
+  fields: FieldDefinition[];
   tabTitle?: string;
   subtitle?: string;
 }

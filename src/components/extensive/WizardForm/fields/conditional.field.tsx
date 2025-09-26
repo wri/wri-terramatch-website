@@ -3,7 +3,7 @@ import { isBoolean } from "lodash";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
-import { normalizedFormFieldData } from "@/helpers/customForms";
+import { applyFieldDefault, normalizedFormFieldData } from "@/helpers/customForms";
 import { isNotNull } from "@/utils/array";
 import { booleanValidator } from "@/utils/yup";
 
@@ -24,10 +24,15 @@ export const ConditionalField: FormFieldFactory = {
       });
   },
 
-  defaultValue: ({ name }, formValues) => ({
-    ...formValues,
-    [name]: isBoolean(formValues[name]) ? formValues[name] : true
-  }),
+  defaultValue: ({ name }, formValues, fieldsProvider) =>
+    fieldsProvider
+      .childIds(name)
+      .map(fieldsProvider.fieldById)
+      .filter(isNotNull)
+      .reduce((values, child) => applyFieldDefault(child, values, fieldsProvider), {
+        ...formValues,
+        [name]: isBoolean(formValues[name]) ? formValues[name] : true
+      }),
 
   normalizeValue: ({ name }, formValues, fieldsProvider) =>
     fieldsProvider

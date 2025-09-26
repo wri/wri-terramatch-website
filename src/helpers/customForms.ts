@@ -5,6 +5,19 @@ import { FieldDefinition, FormStepSchema } from "@/components/extensive/WizardFo
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { isNotNull } from "@/utils/array";
 
+// If a select field with the key's linked field shows up, use the value's linked field question
+// to filter the options.
+export const SELECT_FILTER_QUESTION: Dictionary<string> = {
+  "org-hq-state": "org-hq-country",
+  "org-states": "org-countries",
+  "org-level-1-past-restoration": "org-level-0-past-restoration",
+  "org-level-2-past-restoration": "org-level-1-past-restoration",
+  "pro-pit-states": "pro-pit-country",
+  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
+  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
+  "pro-states": "pro-country"
+};
+
 export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
   for (const stepId of fieldsProvider.stepIds()) {
     for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
@@ -27,11 +40,17 @@ export const normalizedFormFieldData = (
 export function formDefaultValues(values: Dictionary<any>, fieldsProvider: FormFieldsProvider) {
   for (const stepId of fieldsProvider.stepIds()) {
     for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
-      values = FormFieldFactories[field.inputType].defaultValue?.(field, values, fieldsProvider) ?? values;
+      values = applyFieldDefault(field, values, fieldsProvider);
     }
   }
   return values;
 }
+
+export const applyFieldDefault = (
+  field: FieldDefinition,
+  values: Dictionary<any>,
+  fieldsProvider: FormFieldsProvider
+): Dictionary<any> => FormFieldFactories[field.inputType].defaultValue?.(field, values, fieldsProvider) ?? values;
 
 export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStepSchema[]): T {
   if (!values || !steps) return {};
@@ -57,16 +76,3 @@ export function normalizedFormDefaultValue<T = any>(values?: T, steps?: FormStep
 
   return values;
 }
-
-// If a select field with the key's linked field shows up, use the value's linked field question
-// to filter the options.
-export const SELECT_FILTER_QUESTION: Dictionary<string> = {
-  "org-hq-state": "org-hq-country",
-  "org-states": "org-countries",
-  "org-level-1-past-restoration": "org-level-0-past-restoration",
-  "org-level-2-past-restoration": "org-level-1-past-restoration",
-  "pro-pit-states": "pro-pit-country",
-  "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
-  "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
-  "pro-states": "pro-country"
-};
