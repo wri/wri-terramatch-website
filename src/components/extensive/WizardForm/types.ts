@@ -98,7 +98,14 @@ export type GetEntryValueProps = {
 };
 
 export type FormFieldFactory = {
+  /**
+   * Creates a Yup validations schema for this field definition.
+   */
   createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+
+  /**
+   * Renders the form field as a form input.
+   */
   renderInput: (field: FieldDefinition, sharedProps: SharedFieldProps) => ReactElement;
 
   /**
@@ -109,7 +116,14 @@ export type FormFieldFactory = {
    */
   getAnswer?: (field: FieldDefinition, formValues: Dictionary<any>, fieldsProvider: FormFieldsProvider) => Answer;
 
-  appendAnswers: (
+  /**
+   * Appends the answers for this field to the provided CSV generator. The default is to append
+   * one row with the field label and the value from getFormattedAnswer.
+   *
+   * Note: this means that if a field should explicitly _not_ add rows to the CSV, it must define
+   * this method and NOOP.
+   */
+  appendAnswers?: (
     field: FieldDefinition,
     csv: CSVGenerator,
     formValues: Dictionary<any>,

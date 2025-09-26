@@ -2,7 +2,7 @@ import * as yup from "yup";
 
 import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 
 export const StrategyAreaField: FormFieldFactory = {
   createValidator: ({ validation }) => {
@@ -65,8 +65,5 @@ export const StrategyAreaField: FormFieldFactory = {
 
         return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
       });
-  },
-
-  appendAnswers: (field, csv, values, fieldsProvider) =>
-    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
+  }
 };

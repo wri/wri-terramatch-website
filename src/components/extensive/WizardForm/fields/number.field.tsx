@@ -3,7 +3,6 @@ import * as yup from "yup";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 
 export const NumberField: FormFieldFactory = {
   createValidator: ({ validation, linkedFieldKey }) => {
@@ -40,9 +39,6 @@ export const NumberField: FormFieldFactory = {
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   },
-
-  appendAnswers: (field, csv, values, fieldsProvider) =>
-    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)]),
 
   normalizeValue: ({ name, validation }, formValues) => {
     const value = formValues[name];

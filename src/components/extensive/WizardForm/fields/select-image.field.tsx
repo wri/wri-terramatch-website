@@ -1,6 +1,6 @@
 import RHFSelectImage from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer, toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
 import { selectValidator } from "@/utils/yup";
 
@@ -19,8 +19,5 @@ export const SelectImageField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  },
-
-  appendAnswers: (field, csv, values, fieldsProvider) =>
-    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
+  }
 };

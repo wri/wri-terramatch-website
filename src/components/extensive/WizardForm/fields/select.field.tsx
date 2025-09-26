@@ -1,6 +1,6 @@
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { getFormattedAnswer, getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { findCachedGadmTitle } from "@/connections/Gadm";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { isNotNull, toArray } from "@/utils/array";
@@ -50,8 +50,5 @@ export const SelectField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  },
-
-  appendAnswers: (field, csv, values, fieldsProvider) =>
-    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)])
+  }
 };

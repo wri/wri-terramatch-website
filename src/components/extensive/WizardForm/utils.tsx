@@ -218,7 +218,12 @@ export const appendAnswersAsCSVRow = (
   values: Dictionary<any>,
   fieldsProvider: FormFieldsProvider
 ) => {
-  FormFieldFactories[field.inputType].appendAnswers(field, csv, values, fieldsProvider);
+  const { appendAnswers } = FormFieldFactories[field.inputType];
+  if (appendAnswers == null) {
+    csv.pushRow([field.label, getFormattedAnswer(field, values, fieldsProvider)]);
+  } else {
+    appendAnswers(field, csv, values, fieldsProvider);
+  }
 };
 
 export const treeSpeciesEntryValue = (
