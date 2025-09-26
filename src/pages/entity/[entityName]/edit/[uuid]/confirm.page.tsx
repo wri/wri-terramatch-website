@@ -13,7 +13,6 @@ import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
-/* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
 const ConfirmPage = () => {
   const t = useT();
   const router = useRouter();

@@ -11,7 +11,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { FormModelType } from "@/connections/util/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { singularEntityNameToPlural } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
@@ -51,7 +51,6 @@ export const EntityEdit = () => {
   } = useEntityForm(entityName, entityUUID);
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
-  const entityData = (entityResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
   const model = useMemo(() => {
     const model = camelCase(
@@ -61,16 +60,16 @@ export const EntityEdit = () => {
   }, [entityName, entityUUID]);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
-  const defaultValues = useDefaultValues(entityData, fieldsProvider);
+  const defaultValues = useDefaultValues(entityResponse?.data, fieldsProvider);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${form?.title}`;
+      return `${entityValue?.data?.site?.name} ${entityResponse?.data.form_title}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${form?.title}`;
+      return `${entityValue?.data?.nursery?.name} ${entityResponse?.data.form_title}`;
     }
     return form?.title;
-  }, [entityName, entityValue, form?.title]);
+  }, [entityName, entityResponse, entityValue, form?.title]);
 
   const organisation = entityValue?.data?.organisation;
 
