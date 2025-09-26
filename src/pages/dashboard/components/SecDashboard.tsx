@@ -87,12 +87,12 @@ const SecDashboard = ({
 
   const tableColumns = [
     {
-      header: isTableProject ? "Organization" : "Specie",
+      header: isTableProject ? t("Organization") : t("Specie"),
       accessorKey: "label",
       enableSorting: false
     },
     {
-      header: "Count",
+      header: t("Count"),
       accessorKey: "valueText",
       enableSorting: false
     }
