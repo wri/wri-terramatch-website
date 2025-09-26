@@ -20,18 +20,16 @@ const RequestMoreInformationSuccessPage = () => {
           <Icon name={IconNames.CHECK_CIRCLE} className="stroke-success" width={60} />
           <div className="flex flex-col gap-4">
             <Text variant="text-heading-700" className="text-center uppercase">
-              {t("Thank you for sending your application!")}
+              {t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}
             </Text>
             <Text variant="text-body-1000" className="text-center">
-              {t(
-                "Thank you for completing your application. The WRI team will review your application and contact you to keep you informed of the status. In the meantime, periodically check your email and the platform for any notifications."
-              )}
+              {t("The WRI team will review your updates and will be in touch with updates.")}
             </Text>
           </div>
           <div className="flex flex-col gap-4">
             <Text variant="text-heading-200">{t("Next Steps:")}</Text>
             <Text variant="text-body-1000">
-              {t("Once the review has been completed there are several scenarios that can happen.")}
+              {t("Once your application updates have been reviewed, there are several scenarios that can happen.")}
             </Text>
             <ul className="ml-4 flex list-disc flex-col gap-2">
               <li>
