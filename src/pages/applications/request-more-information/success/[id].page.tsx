@@ -23,7 +23,7 @@ const RequestMoreInformationSuccessPage = () => {
               {t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}
             </Text>
             <Text variant="text-body-1000" className="text-center">
-              {t("The WRI team will review your updates and will be in touch with updates.")}
+              {t("The WRI team will review your changes and will be in touch with updates")}
             </Text>
           </div>
           <div className="flex flex-col gap-4">
