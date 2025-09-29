@@ -223,6 +223,8 @@ const RHFDisturbanceReportEntries = ({
                   multiSelect
                   value={convertToOptionValues(getFieldValue("disturbance-subtype") ?? [], disturbanceSubtypeOptions)}
                   onChange={handleDisturbanceSubtypeChange}
+                  className="!h-auto min-h-[40px]"
+                  titleClassname="!whitespace-normal !break-words"
                 />
               </div>
               <div>

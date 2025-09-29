@@ -31,6 +31,7 @@ import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeS
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity } from "@/connections/EntityAssociation";
+import { formatOptions } from "@/constants/options/disturbanceReports";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
@@ -404,8 +405,12 @@ export const getFormEntries = (
 
           if (v.name === "disturbance-subtype" || v.name === "property-affected") {
             if (Array.isArray(parsedValue)) {
-              return `${v.title}: ${parsedValue.join(", ")}`;
+              return `${v.title}: ${formatOptions(parsedValue).join(", ")}`;
             }
+          }
+
+          if (v.name === "intensity" || v.name === "disturbance-type") {
+            return `${v.title}: ${formatOptions(v.value ?? "")}`;
           }
 
           return `${v.title}: ${v.value ?? t("Answer Not Provided")}`;
