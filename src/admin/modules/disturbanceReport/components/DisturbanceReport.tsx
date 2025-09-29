@@ -192,7 +192,10 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             className="text-blueCustom-900"
           />
           <TextEntry value={dateOfDisturbance} label={t("Date of Disturbance")} />
-          <TextEntry value={monetaryDamage} label={t("Monetary Damage")} />
+          <TextEntry
+            value={monetaryDamage ? `${Number(monetaryDamage).toLocaleString()} $` : t("Answer Not Provided")}
+            label={t("Monetary Damage (USD)")}
+          />
         </div>
       </div>
       {disturbanceReportData.length > 0 && (
