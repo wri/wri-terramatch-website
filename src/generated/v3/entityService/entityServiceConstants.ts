@@ -31,8 +31,8 @@ import {
   StrataDto,
   OptionLabelDto,
   LinkedFieldDto,
-  FormDto,
   FormLightDto,
+  FormFullDto,
   FormSectionDto,
   FormQuestionDto
 } from "./entityServiceSchemas";
@@ -88,7 +88,7 @@ export type EntityServiceApiResources = {
   stratas: StoreResourceMap<StrataDto>;
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
-  forms: StoreResourceMap<FormDto | FormLightDto>;
+  forms: StoreResourceMap<FormLightDto | FormFullDto>;
   formSections: StoreResourceMap<FormSectionDto>;
   formQuestions: StoreResourceMap<FormQuestionDto>;
 };
@@ -177,4 +177,17 @@ export const DemographicCollections = {
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
+} as const;
+
+export const Forms = {
+  FORM_TYPES: [
+    "application",
+    "financial-report",
+    "project",
+    "project-report",
+    "site",
+    "site-report",
+    "nursery",
+    "nursery-report"
+  ] as const
 } as const;

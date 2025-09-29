@@ -2565,97 +2565,35 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
-export type FormGetPathParams = {
+export type FormIndexQueryParams = {
+  ["sort[field]"]?: string;
   /**
-   * Form uuid
+   * @default ASC
    */
-  uuid: string;
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  type?:
+    | "application"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report";
 };
-
-export type FormGetError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type FormGetResponse = {
-  meta?: {
-    /**
-     * @example forms
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example forms
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.FormDto;
-  };
-  included?: (
-    | {
-        /**
-         * @example formSections
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormSectionDto;
-      }
-    | {
-        /**
-         * @example formQuestions
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormQuestionDto;
-      }
-  )[];
-};
-
-export type FormGetVariables = {
-  pathParams: FormGetPathParams;
-};
-
-/**
- * Get a form by uuid. Includes all sections and questions within the form.
- */
-export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
-  "/forms/v3/forms/{uuid}",
-  "GET"
-);
 
 export type FormIndexError = Fetcher.ErrorWrapper<{
   status: 400;
@@ -2739,10 +2677,109 @@ export type FormIndexResponse = {
   )[];
 };
 
+export type FormIndexVariables = {
+  queryParams?: FormIndexQueryParams;
+};
+
 /**
  * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
  */
-export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, {}, {}>("/forms/v3/forms", "GET");
+export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, FormIndexVariables, {}>(
+  "/forms/v3/forms",
+  "GET"
+);
+
+export type FormGetPathParams = {
+  /**
+   * Form uuid
+   */
+  uuid: string;
+};
+
+export type FormGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormGetResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+  included?: (
+    | {
+        /**
+         * @example formSections
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormSectionDto;
+      }
+    | {
+        /**
+         * @example formQuestions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormQuestionDto;
+      }
+  )[];
+};
+
+export type FormGetVariables = {
+  pathParams: FormGetPathParams;
+};
+
+/**
+ * Get a form by uuid. Includes all sections and questions within the form.
+ */
+export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "GET"
+);
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
@@ -2756,5 +2793,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formGet, formIndex }
+  forms: { formIndex, formGet }
 };

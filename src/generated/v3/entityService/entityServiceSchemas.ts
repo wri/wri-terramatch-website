@@ -1925,7 +1925,24 @@ export type LinkedFieldDto = {
   collection: string | null;
 };
 
-export type FormDto = {
+/**
+ * CONSTANTS
+ */
+export type Forms = {
+  /**
+   * @example application
+   * @example financial-report
+   * @example project
+   * @example project-report
+   * @example site
+   * @example site-report
+   * @example nursery
+   * @example nursery-report
+   */
+  FORM_TYPES: string[];
+};
+
+export type FormLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
    */
@@ -1935,38 +1952,18 @@ export type FormDto = {
    * Translated form title
    */
   title: string;
-  type: string | null;
+  type:
+    | "application"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
   published: boolean;
   bannerUrl: string | null;
-  /**
-   * Translated form subtitle
-   */
-  subtitle: string | null;
-  /**
-   * Translated form description
-   */
-  description: string | null;
-  frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
-    | "epa-ghana-pilot"
-    | "ppc"
-    | "hbf"
-    | "fundo-flora"
-    | null;
-  documentation: string | null;
-  documentationLabel: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt: string | null;
-  /**
-   * Translated submission message
-   */
-  submissionMessage: string | null;
-  stageId: string | null;
-  fundingProgrammeId: string | null;
 };
 
 export type FormSectionDto = {
@@ -2098,7 +2095,7 @@ export type FormQuestionDto = {
   additionalProps: Record<string, any> | null;
 };
 
-export type FormLightDto = {
+export type FormFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
    */
@@ -2108,7 +2105,45 @@ export type FormLightDto = {
    * Translated form title
    */
   title: string;
-  type: string | null;
+  type:
+    | "application"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
   published: boolean;
   bannerUrl: string | null;
+  /**
+   * Translated form subtitle
+   */
+  subtitle: string | null;
+  /**
+   * Translated form description
+   */
+  description: string | null;
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  documentation: string | null;
+  documentationLabel: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt: string | null;
+  /**
+   * Translated submission message
+   */
+  submissionMessage: string | null;
+  stageId: string | null;
+  fundingProgrammeId: string | null;
 };

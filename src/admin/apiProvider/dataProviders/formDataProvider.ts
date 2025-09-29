@@ -7,20 +7,20 @@ import {
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { loadLinkedFields } from "@/connections/util/Form";
+import { loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
 import {
   DeleteV2AdminFormsUUIDError,
   fetchDeleteV2AdminFormsUUID,
-  fetchGetV2AdminForms,
   fetchGetV2FormsUUID,
   fetchPatchV2AdminFormsUUID,
   fetchPostV2AdminForms,
   GetV2AdminFormsError
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
 export interface FormDataProvider extends Partial<DataProvider> {}
 
@@ -119,16 +119,17 @@ export const formDataProvider: FormDataProvider = {
     }
   },
 
+  //@ts-ignore
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminForms({
-        queryParams: raListParamsToQueryParams(params, [], [], [], { light: true })
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+    const connected = await loadFormIndex(raConnectionProps(params));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form index fetch failed", connected.loadFailure);
     }
+
+    return {
+      data: (connected.data?.map(form => ({ ...form, id: form.uuid })) ?? []) as FormLightDto[],
+      total: connected.indexTotal
+    };
   },
 
   async getOne(_, params) {

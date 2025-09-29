@@ -4,19 +4,23 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, connectionSelector } from "@/connections/util/connectionShortcuts";
 import {
   formGet,
+  formIndex,
+  FormIndexQueryParams,
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
   optionLabelsGetList,
   optionLabelsIndex
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
-  FormDto,
+  FormFullDto,
+  FormLightDto,
   FormQuestionDto,
   FormSectionDto,
   LinkedFieldDto,
   OptionLabelDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
+import { Filter } from "@/types/connection";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -57,8 +61,15 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
 export const useLinkedFields = connectionHook(linkedFieldsConnection);
 export const loadLinkedFields = connectionLoader(linkedFieldsConnection);
 
+const formIndexConnection = v3Resource("forms", formIndex)
+  .index<FormLightDto>()
+  .pagination()
+  .filter<Filter<FormIndexQueryParams>>()
+  .buildConnection();
+export const loadFormIndex = connectionLoader(formIndexConnection);
+
 const formConnection = v3Resource("forms", formGet)
-  .singleFullResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .singleFullResource<FormFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .enabledProp()
   .buildConnection();
 export const useForm = connectionHook(formConnection);
