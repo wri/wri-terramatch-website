@@ -9,7 +9,7 @@ import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/Ta
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS } from "@/constants/options/disturbanceReports";
+import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS, formatOptions } from "@/constants/options/disturbanceReports";
 import { TextVariants } from "@/types/common";
 
 import DownloadMediaItem from "./DownloadMediaItem";
@@ -116,6 +116,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   };
 
   const formattedPropertyAffected = formatValuesWithOptions(propertyAffected, DISTURBANCE_PROPERTY_AFFECTED_OPTIONS);
+  const formattedSubtype = formatOptions(disturbanceSubtype);
 
   const columns = [
     {
@@ -163,9 +164,10 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
           <TextEntry value={disturbanceType} label={t("Disturbance Type")} />
           <TextEntry
-            value={disturbanceSubtype}
+            value={formattedSubtype}
             label={t("Disturbance Subtype")}
             classNameContainer="col-span-2 flex flex-col gap-2"
+            className="text-blueCustom-900"
           />
           {intensity == null ? null : (
             <div className="flex flex-col gap-2">
@@ -187,6 +189,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             value={formattedPropertyAffected}
             label={t("Property Affected")}
             classNameContainer="col-span-3 flex flex-col gap-2"
+            className="text-blueCustom-900"
           />
           <TextEntry value={dateOfDisturbance} label={t("Date of Disturbance")} />
           <TextEntry value={monetaryDamage} label={t("Monetary Damage")} />

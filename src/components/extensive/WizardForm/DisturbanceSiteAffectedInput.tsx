@@ -3,6 +3,7 @@ import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
+import { APPROVED, RESTORATION_IN_PROGRESS } from "@/constants/statuses";
 import { useEntityContext } from "@/context/entity.provider";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
@@ -32,11 +33,13 @@ export const DisturbanceSiteAffectedInput = ({
   const siteChoices = useMemo(() => {
     if (sitesData == null || projectUuid == null || !("data" in sitesData) || sitesData.data == null) return [];
 
-    return sitesData.data.map((site: any) => ({
-      title: site.name ?? `Site ${site.uuid}`,
-      value: site.uuid,
-      meta: { country: site.country ?? "" }
-    }));
+    return sitesData.data
+      .filter((site: any) => site.status === APPROVED || site.status === RESTORATION_IN_PROGRESS)
+      .map((site: any) => ({
+        title: site.name ?? `Site ${site.uuid}`,
+        value: site.uuid,
+        meta: { country: site.country ?? "" }
+      }));
   }, [sitesData, projectUuid]);
 
   if (fieldUuid == null) {
