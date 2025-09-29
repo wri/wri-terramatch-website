@@ -5,6 +5,7 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
 import { APPROVED, RESTORATION_IN_PROGRESS } from "@/constants/statuses";
 import { useEntityContext } from "@/context/entity.provider";
+import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
 
@@ -34,11 +35,10 @@ export const DisturbanceSiteAffectedInput = ({
     if (sitesData == null || projectUuid == null || !("data" in sitesData) || sitesData.data == null) return [];
 
     return sitesData.data
-      .filter((site: any) => site.status === APPROVED || site.status === RESTORATION_IN_PROGRESS)
-      .map((site: any) => ({
+      .filter((site: SiteLightDto) => site.status === APPROVED || site.status === RESTORATION_IN_PROGRESS)
+      .map((site: SiteLightDto) => ({
         title: site.name ?? `Site ${site.uuid}`,
-        value: site.uuid,
-        meta: { country: site.country ?? "" }
+        value: site.uuid
       }));
   }, [sitesData, projectUuid]);
 
