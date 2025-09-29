@@ -59,10 +59,10 @@ export interface FormEntry {
 const getTableHtml = (body: string, t: typeof useT) => {
   return (
     `<table class="w-full"><thead><tr>` +
-    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Year")}</th>` +
-    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Revenue")}</th>` +
-    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Expenses")}</th>` +
-    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Profit")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Year")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Revenue")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Expenses")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Profit")}</th>` +
     `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
   );
 };
@@ -280,7 +280,7 @@ export const getFormEntries = (
             const tableHtml = tableRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
-                  return `<td class="py-2.5 border-b border-black/30 text-sm text-black font-normal">${
+                  return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium">${
                     isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
                   }</td>`;
                 });
