@@ -36,7 +36,16 @@ const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQues
 
 export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>
   (options ?? []).map(option =>
-    isDtoOption(option) ? { title: option.label, value: option.slug, meta: { image_url: option.imageUrl } } : option
+    isDtoOption(option)
+      ? {
+          title: option.label,
+          value: option.slug,
+          meta: {
+            image_url: option.imageUrl,
+            image: option.thumbUrl == null ? null : { thumb_url: option.thumbUrl }
+          }
+        }
+      : option
   );
 
 export const getHardcodedOptions = (optionsList: string, t?: typeof useT) => {

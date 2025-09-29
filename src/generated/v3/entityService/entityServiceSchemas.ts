@@ -2002,6 +2002,7 @@ export type FormQuestionOptionDto = {
    */
   imageUrl: string | null;
   order: number;
+  thumbUrl: string | null;
 };
 
 export type FormTableHeaderDto = {
