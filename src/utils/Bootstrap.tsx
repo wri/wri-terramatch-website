@@ -34,6 +34,7 @@ const useRedirect = () => {
 
       matcher.if(user == null, () => {
         matcher.startsWith("/auth")?.allow();
+        matcher.startsWith("/admin")?.redirect("/auth/login");
         matcher.exact("/")?.allow();
         matcher.redirect("/");
       });
