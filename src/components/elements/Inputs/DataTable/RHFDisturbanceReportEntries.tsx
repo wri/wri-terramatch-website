@@ -281,6 +281,8 @@ const RHFDisturbanceReportEntries = ({
                     DISTURBANCE_PROPERTY_AFFECTED_OPTIONS
                   )}
                   onChange={handlePropertyAffectedChange}
+                  className="!h-auto min-h-[40px]"
+                  titleClassname="!whitespace-normal !break-words"
                 />
               </div>
               <div>
