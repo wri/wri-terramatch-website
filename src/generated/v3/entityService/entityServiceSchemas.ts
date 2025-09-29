@@ -1937,8 +1937,7 @@ export type FormDto = {
   title: string;
   type: string | null;
   published: boolean;
-  banner: MediaDto;
-  document: MediaDto;
+  bannerUrl: string | null;
   /**
    * Translated form subtitle
    */
@@ -2111,6 +2110,5 @@ export type FormLightDto = {
   title: string;
   type: string | null;
   published: boolean;
-  banner: MediaDto;
-  document: MediaDto;
+  bannerUrl: string | null;
 };

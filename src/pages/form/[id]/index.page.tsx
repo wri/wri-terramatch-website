@@ -34,7 +34,7 @@ const FormIntroPage = () => {
               <WizardFormIntro
                 variant="small"
                 title={form.title}
-                imageSrc={form.banner?.url ?? undefined}
+                imageSrc={form.bannerUrl ?? undefined}
                 description={form.description ?? undefined}
                 deadline={form.deadlineAt ?? undefined}
                 ctaProps={{
