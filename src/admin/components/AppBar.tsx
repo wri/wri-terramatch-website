@@ -19,8 +19,8 @@ export const AppBar = (props: AppBarProps) => {
         primaryText="Logout"
         leftIcon={<Icon name={IconNames.LOGOUT} className="p-0.5" />}
         onClick={() => {
-          logout();
           window.location.href = "/auth/login";
+          logout();
         }}
       />
     </UserMenu>
