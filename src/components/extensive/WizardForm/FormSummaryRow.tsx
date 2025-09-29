@@ -209,6 +209,11 @@ export const getFormEntries = (
 
       case FieldType.FinancialTableInput: {
         const entries = values[f.name];
+        outputArr.push({
+          title: "Local Currency",
+          type: FieldType.Input,
+          value: entries?.find((entry: any) => entry.currency)?.currency ?? t("Answer Not Provided")
+        });
         if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
         const years = f.fieldProps.years;
         const collections = f.fieldProps.model;
