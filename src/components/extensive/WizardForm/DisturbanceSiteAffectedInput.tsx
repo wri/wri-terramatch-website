@@ -80,7 +80,7 @@ export const DisturbanceSiteAffectedInput = ({
                 return { ...f, value: newArray };
               }
 
-              if (isDifferentSite && f.name === "polygons-affected") {
+              if (isDifferentSite && f.name === "polygon-affected") {
                 const polysArray = typeof f.value === "string" ? JSON.parse(f.value) : f.value;
                 const polysNew = Array.isArray(polysArray) ? [...polysArray] : [];
                 polysNew[parseInt(fieldIndex)] = [];
@@ -103,7 +103,7 @@ export const DisturbanceSiteAffectedInput = ({
               return { ...f, value: newArray };
             }
 
-            if (f.name === "polygons-affected") {
+            if (f.name === "polygon-affected") {
               const polysArray = typeof f.value === "string" ? JSON.parse(f.value) : f.value;
               const polysNew = Array.isArray(polysArray) ? [...polysArray] : [];
               polysNew[parseInt(fieldIndex)] = [];
