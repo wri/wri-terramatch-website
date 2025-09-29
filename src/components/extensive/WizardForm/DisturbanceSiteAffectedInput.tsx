@@ -16,6 +16,11 @@ export interface DisturbanceSiteAffectedInputProps {
   field: ControllerRenderProps<any, any>;
 }
 
+interface SiteAffectedValue {
+  siteName: string;
+  siteUuid: string;
+}
+
 export const DisturbanceSiteAffectedInput = ({
   onChangeCapture,
   fieldUuid,
@@ -55,6 +60,8 @@ export const DisturbanceSiteAffectedInput = ({
   const _onChange = useCallback(
     (selectedValues: OptionValue[]) => {
       const selectedValue = selectedValues[0];
+      const prevSiteUuid = value?.siteUuid;
+
       if (selectedValue) {
         const selectedSite = siteChoices.find(site => site.value === selectedValue);
         if (selectedSite) {
@@ -65,7 +72,24 @@ export const DisturbanceSiteAffectedInput = ({
           if (fieldIndex != null) {
             const newArray = [...(sitesArray ?? [])];
             newArray[parseInt(fieldIndex)] = siteData;
-            const newValue = siteAffectedValue?.map(f => (f.name === "site-affected" ? { ...f, value: newArray } : f));
+
+            const isDifferentSite = String(prevSiteUuid ?? "") !== String(selectedSite.value);
+
+            const newValue = siteAffectedValue?.map(f => {
+              if (f.name === "site-affected") {
+                return { ...f, value: newArray };
+              }
+
+              if (isDifferentSite && f.name === "polygon-affected") {
+                const polysArray = typeof f.value === "string" ? JSON.parse(f.value) : f.value;
+                const polysNew = Array.isArray(polysArray) ? [...polysArray] : [];
+                polysNew[parseInt(fieldIndex)] = [];
+                return { ...f, value: polysNew };
+              }
+
+              return f;
+            });
+
             field.onChange(newValue);
           }
         }
@@ -73,14 +97,29 @@ export const DisturbanceSiteAffectedInput = ({
         if (fieldIndex != null) {
           const newArray = [...(sitesArray ?? [])];
           newArray[parseInt(fieldIndex)] = "";
-          const newValue = siteAffectedValue?.map(f => (f.name === "site-affected" ? { ...f, value: newArray } : f));
+
+          const newValue = siteAffectedValue?.map(f => {
+            if (f.name === "site-affected") {
+              return { ...f, value: newArray };
+            }
+
+            if (f.name === "polygon-affected") {
+              const polysArray = typeof f.value === "string" ? JSON.parse(f.value) : f.value;
+              const polysNew = Array.isArray(polysArray) ? [...polysArray] : [];
+              polysNew[parseInt(fieldIndex)] = [];
+              return { ...f, value: polysNew };
+            }
+
+            return f;
+          });
+
           field.onChange(newValue);
         }
       }
       onChangeCapture?.();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [siteChoices, fieldIndex, sitesArray, field.onChange, onChangeCapture]
+    [siteChoices, fieldIndex, sitesArray, field.onChange, onChangeCapture, value?.siteUuid]
   );
 
   const dropdownValue = useMemo(() => {
@@ -90,10 +129,34 @@ export const DisturbanceSiteAffectedInput = ({
     return [];
   }, [value]);
 
+  const optionsForDropdown = useMemo(() => {
+    const currentSelectedUuid = value?.siteUuid != null ? String(value.siteUuid) : null;
+
+    const selectedUuidsAcrossRows = new Set<string>(
+      (Array.isArray(sitesArray) ? sitesArray : [])
+        .map((s: SiteAffectedValue) => s?.siteUuid)
+        .filter((uuid: string) => uuid != null)
+        .map((uuid: string) => String(uuid))
+        .filter((uuid: string) => uuid !== currentSelectedUuid)
+    );
+
+    const selectedOptionForThisRow = currentSelectedUuid
+      ? siteChoices.find(o => String(o.value) === currentSelectedUuid)
+      : undefined;
+
+    const availableOptions = siteChoices.filter(o => !selectedUuidsAcrossRows.has(String(o.value)));
+
+    if (selectedOptionForThisRow) {
+      const withoutDup = availableOptions.filter(o => String(o.value) !== currentSelectedUuid);
+      return [selectedOptionForThisRow, ...withoutDup];
+    }
+    return availableOptions;
+  }, [siteChoices, sitesArray, value?.siteUuid]);
+
   return (
     <Dropdown
       label={`Site ${fieldIndex != null ? parseInt(fieldIndex) + 1 : 1} Affected`}
-      options={siteChoices}
+      options={optionsForDropdown}
       value={dropdownValue}
       onChange={_onChange}
       placeholder={projectUuid ? "Search and select sites..." : "Please select a project first"}

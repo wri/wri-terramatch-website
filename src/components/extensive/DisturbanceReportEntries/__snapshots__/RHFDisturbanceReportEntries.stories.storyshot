@@ -397,6 +397,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       aria-invalid={false}
                       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
                       id=":r3t:"
+                      lang="en-GB"
                       name="date-of-disturbance"
                       onChange={[Function]}
                       placeholder="Select date"

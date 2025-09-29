@@ -286,6 +286,7 @@ const RHFDisturbanceReportEntries = ({
               <div>
                 <Input
                   type="date"
+                  lang="en-GB"
                   name="date-of-disturbance"
                   placeholder="Select date"
                   label="Date of Disturbance"
