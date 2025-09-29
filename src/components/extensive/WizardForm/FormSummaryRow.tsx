@@ -58,11 +58,11 @@ export interface FormEntry {
 
 const getTableHtml = (body: string, t: typeof useT) => {
   return (
-    `<table class="table-auto w-100"><thead><tr>` +
-    `<th>${t("Year")}</th>` +
-    `<th>${t("Revenue")}</th>` +
-    `<th>${t("Expenses")}</th>` +
-    `<th>${t("Profit")}</th>` +
+    `<table class="w-full"><thead><tr>` +
+    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Year")}</th>` +
+    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Revenue")}</th>` +
+    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Expenses")}</th>` +
+    `<th class="py-2 text-base font-medium border-b border-black text-black/50">${t("Profit")}</th>` +
     `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
   );
 };
@@ -280,7 +280,9 @@ export const getFormEntries = (
             const tableHtml = tableRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
-                  return `<td>${isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()}</td>`;
+                  return `<td class="py-2.5 border-b border-black/30 text-sm text-black font-normal">${
+                    isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
+                  }</td>`;
                 });
                 return cellValues.join("");
               })
@@ -296,7 +298,7 @@ export const getFormEntries = (
                           if (document.url) {
                             return `<a href="${
                               document.url
-                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                            }" target="_blank" rel="noopener noreferrer" class="underline text-primary">${
                               document.file_name ?? ""
                             }</a>`;
                           }
