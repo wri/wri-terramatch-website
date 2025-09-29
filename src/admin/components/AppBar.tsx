@@ -1,7 +1,6 @@
-import { AppBar as RaAppBar, AppBarProps, Link, MenuItemLink, UserMenu } from "react-admin";
+import { AppBar as RaAppBar, AppBarProps, Link, Logout, MenuItemLink, UserMenu } from "react-admin";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { logout } from "@/generated/v3/utils";
 
 export const AppBar = (props: AppBarProps) => {
   const CustomUserMenu = (props: any) => (
@@ -14,15 +13,7 @@ export const AppBar = (props: AppBarProps) => {
           window.location.href = "/dashboard";
         }}
       />
-      <MenuItemLink
-        to="#"
-        primaryText="Logout"
-        leftIcon={<Icon name={IconNames.LOGOUT} className="p-0.5" />}
-        onClick={() => {
-          window.location.href = "/auth/login";
-          logout();
-        }}
-      />
+      <Logout redirectTo="/auth/login" />
     </UserMenu>
   );
 
