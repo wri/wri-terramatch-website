@@ -305,29 +305,6 @@ export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
 
-export type GetV2AdminFormsBody = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
 export type PostV2AdminFundingProgrammeStageBody = {
   name?: string;
   funding_programme_id?: number;

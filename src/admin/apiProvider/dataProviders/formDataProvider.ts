@@ -14,7 +14,7 @@ import {
   fetchGetV2FormsUUID,
   fetchPatchV2AdminFormsUUID,
   fetchPostV2AdminForms,
-  GetV2AdminFormsError
+  PostV2AdminFormsError
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
 import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -86,7 +86,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-expect-error
       return { data: normalizeFormObject(response.data) } as CreateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 
@@ -115,7 +115,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as UpdateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 
@@ -140,7 +140,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as GetOneResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 
@@ -162,7 +162,7 @@ export const formDataProvider: FormDataProvider = {
         )
       } as GetManyResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 

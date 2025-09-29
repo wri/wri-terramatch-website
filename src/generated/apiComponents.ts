@@ -1915,137 +1915,6 @@ export const usePostV2AdminForms = (
   );
 };
 
-export type GetV2AdminFormsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsResponse = {
-  data?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2AdminFormsVariables = {
-  body?: RequestBodies.GetV2AdminFormsBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminForms = (variables: GetV2AdminFormsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2AdminFormsResponse, GetV2AdminFormsError, RequestBodies.GetV2AdminFormsBody, {}, {}, {}>({
-    url: "/v2/admin/forms",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminForms = <TData = GetV2AdminFormsResponse>(
-  variables: GetV2AdminFormsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminFormsResponse, GetV2AdminFormsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminFormsResponse, GetV2AdminFormsError, TData>(
-    queryKeyFn({ path: "/v2/admin/forms", operationId: "getV2AdminForms", variables }),
-    ({ signal }) => fetchGetV2AdminForms({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminReportingFrameworksResponse = {
@@ -2875,15 +2744,38 @@ export type GetV2AdminUpdateRequestsResponse = {
   };
 };
 
+export type GetV2AdminUpdateRequestsRequestBody = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+  /**
+   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
+   */
+  sort?: string;
+  /**
+   * number of results (per page) to return
+   */
+  per_page?: number;
+  /**
+   * page number you want results from
+   */
+  page?: number;
+};
+
 export type GetV2AdminUpdateRequestsVariables = {
-  body?: RequestBodies.GetV2AdminFormsBody;
+  body?: GetV2AdminUpdateRequestsRequestBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchGetV2AdminUpdateRequests = (variables: GetV2AdminUpdateRequestsVariables, signal?: AbortSignal) =>
   apiFetch<
     GetV2AdminUpdateRequestsResponse,
     GetV2AdminUpdateRequestsError,
-    RequestBodies.GetV2AdminFormsBody,
+    GetV2AdminUpdateRequestsRequestBody,
     {},
     {},
     {}
@@ -22789,11 +22681,6 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/reports";
       operationId: "getV2ENTITYUUIDReports";
       variables: GetV2ENTITYUUIDReportsVariables;
-    }
-  | {
-      path: "/v2/admin/forms";
-      operationId: "getV2AdminForms";
-      variables: GetV2AdminFormsVariables;
     }
   | {
       path: "/v2/admin/reporting-frameworks";
