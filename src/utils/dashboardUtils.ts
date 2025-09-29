@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 
-import { CHART_TYPES, DEFAULT_POLYGONS_DATA, MONTHS } from "@/constants/dashboardConsts";
+import { CHART_TYPES, DEFAULT_POLYGONS_DATA } from "@/constants/dashboardConsts";
 import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import {
   DashboardProjectsLightDto,
@@ -215,8 +215,6 @@ export const formatDate = (dateString: string): string => {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 };
 
-export const formatMonth = (monthNumber: number): string => MONTHS[monthNumber - 1];
-
 export const countValuesPerYear = (data: DataPoint[]): Record<string, number> => {
   return data.reduce((acc, item) => {
     const year = item.time.split("-")[0];
@@ -246,11 +244,13 @@ export const getRestorationGoalResumeData = (data: TreeRestorationGoalDto) => [
 export const getRestorationGoalDataForChart = (
   data: RestorationData,
   isPercentage: boolean,
-  shouldShowOnlyOneLine: boolean
+  shouldShowOnlyOneLine: boolean,
+  t: typeof useT
 ): ChartCategory[] => {
   const createChartPoints = (
     sourceData: TreeSpeciesData[] | undefined,
-    categoryName: string
+    categoryName: string,
+    t: typeof useT
   ): { sum: number; values: ChartDataPoint[] } => {
     let sum = 0;
     const values =
@@ -259,7 +259,7 @@ export const getRestorationGoalDataForChart = (
         return {
           time: new Date(item.dueDate),
           value: sum,
-          name: categoryName
+          name: t(categoryName)
         };
       }) || [];
 
@@ -281,19 +281,21 @@ export const getRestorationGoalDataForChart = (
   const chartData: ChartCategory[] = [];
 
   if (!shouldShowOnlyOneLine) {
-    const { values } = createChartPoints(data.treesUnderRestorationActualTotal, "Total");
+    const { values } = createChartPoints(data.treesUnderRestorationActualTotal, "Total", t);
     chartData.push({ name: "Total", values });
   }
 
   const { sum: enterpriseSum, values: enterpriseValues } = createChartPoints(
     data.treesUnderRestorationActualForProfit,
-    "Enterprise"
+    "Enterprise",
+    t
   );
   addCategoryToChart(chartData, "Enterprise", enterpriseValues, enterpriseSum);
 
   const { sum: nonProfitSum, values: nonProfitValues } = createChartPoints(
     data.treesUnderRestorationActualNonProfit,
-    "Non Profit"
+    "Non Profit",
+    t
   );
   addCategoryToChart(chartData, "Non Profit", nonProfitValues, nonProfitSum);
 
@@ -462,7 +464,8 @@ const getRestorationStrategyOptions = {
 export const parseHectaresUnderRestorationData = (
   totalHectaresRestored: number,
   numberOfSites: number,
-  hectaresUnderRestoration: HectaresUnderRestoration | undefined
+  hectaresUnderRestoration: HectaresUnderRestoration | undefined,
+  t: typeof useT = (t: string) => t
 ): HectaresUnderRestorationData => {
   if (totalHectaresRestored === undefined || numberOfSites === undefined) {
     return {
@@ -511,8 +514,8 @@ export const parseHectaresUnderRestorationData = (
     return `${Number(value.toFixed(1)).toLocaleString()} ha (${percentage.toFixed(1)}%)`;
   };
 
-  const getLandUseTypeTitle = (value: string | null): string => {
-    if (!value) return "No Type Identified";
+  const getLandUseTypeTitle = (value: string | null, t: typeof useT): string => {
+    if (!value) return t("No Type Identified");
     const option = landUseTypeOptions.find(opt => opt.value === value);
     return option ? option.title : value;
   };
@@ -533,7 +536,7 @@ export const parseHectaresUnderRestorationData = (
       value: hectaresUnderRestoration?.restorationStrategiesRepresented?.["tree-planting"] || 0
     },
     {
-      label: "Multiple Strategies",
+      label: t("Multiple Strategies"),
       value: Object.keys(hectaresUnderRestoration?.restorationStrategiesRepresented || {})
         .filter(
           key => key !== "" && !["direct-seeding", "assisted-natural-regeneration", "tree-planting"].includes(key)
@@ -541,7 +544,7 @@ export const parseHectaresUnderRestorationData = (
         .reduce((sum, key) => sum + (hectaresUnderRestoration?.restorationStrategiesRepresented?.[key] || 0), 0)
     },
     {
-      label: "No Strategy Identified",
+      label: t("No Strategy Identified"),
       value: noStrategyValue
     }
   ].filter(item => item.value > 0);
@@ -549,7 +552,7 @@ export const parseHectaresUnderRestorationData = (
   const graphicTargetLandUseTypes = objectToArray(hectaresUnderRestoration?.targetLandUseTypesRepresented).map(item => {
     const adjustedValue = totalHectaresRestored < item.value ? totalHectaresRestored : item.value;
     return {
-      label: getLandUseTypeTitle(item.label),
+      label: getLandUseTypeTitle(item.label, t),
       value: adjustedValue,
       valueText: formatValueText(adjustedValue)
     };

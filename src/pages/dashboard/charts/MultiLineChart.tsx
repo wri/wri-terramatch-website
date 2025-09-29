@@ -1,8 +1,9 @@
-import React from "react";
+import { useT } from "@transifex/react";
+import React, { useMemo } from "react";
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { COLORS } from "@/constants/dashboardConsts";
-import { formatDate, formatMonth, formatNumberChart } from "@/utils/dashboardUtils";
+import { formatDate, formatNumberChart } from "@/utils/dashboardUtils";
 
 type DataPoint = {
   time: string;
@@ -21,18 +22,41 @@ type ChartProps = {
   isAbsoluteData?: boolean;
 };
 
-const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }) => {
-  if (!active || !payload || !payload.length) return null;
+export const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
+];
 
-  const [year, month] = typeof label === "string" ? label.split("-") : ["", ""];
+export const formatMonth = (monthNumber: number): string => MONTHS[monthNumber - 1];
+
+const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }) => {
+  const t = useT();
+
   const orderedPayload = payload.sort((a: any, b: any) => {
-    const order = ["Total", "Non Profit", "Enterprise"];
+    const order = [t("Total"), t("Non Profit"), t("Enterprise")];
     return order.indexOf(a.name) - order.indexOf(b.name);
   });
 
+  const [year, monthName] = useMemo(() => {
+    const [year, month] = typeof label === "string" ? label.split("-") : ["", ""];
+    return [year, t(MONTHS[Number(month) - 1])];
+  }, [label, t]);
+
+  if (!active || !payload || !payload.length) return null;
+
   return (
     <div className="border-gray-300 custom-tooltip rounded-lg border bg-white p-2">
-      <p className="text-12-bold font-bold text-black">{`${year} - ${formatMonth(Number(month))}`}</p>
+      <p className="text-12-bold font-bold text-black">{`${year} - ${monthName}`}</p>
       {orderedPayload.map((item: any, index: number) => (
         <p key={index} className="text-12">
           <span className="text-12 font-normal text-black">{item.name}: </span>
