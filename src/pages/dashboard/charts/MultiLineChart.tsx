@@ -59,7 +59,7 @@ const CustomTooltip: React.FC<any> = ({ active, payload, label, isAbsoluteData }
       <p className="text-12-bold font-bold text-black">{`${year} - ${monthName}`}</p>
       {orderedPayload.map((item: any, index: number) => (
         <p key={index} className="text-12">
-          <span className="text-12 font-normal text-black">{item.name}: </span>
+          <span className="text-12 font-normal text-black">{t(item.name)}: </span>
           <span className="text-12-bold font-bold text-black">
             {isAbsoluteData ? `${item.value.toFixed(2)}%` : item.value.toLocaleString()}
           </span>
