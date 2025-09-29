@@ -193,7 +193,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
           />
           <TextEntry value={dateOfDisturbance} label={t("Date of Disturbance")} />
           <TextEntry
-            value={monetaryDamage ? `${Number(monetaryDamage).toLocaleString()} $` : t("Answer Not Provided")}
+            value={monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
             label={t("Monetary Damage (USD)")}
           />
         </div>
