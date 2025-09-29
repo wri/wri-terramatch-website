@@ -2657,6 +2657,93 @@ export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetV
   "GET"
 );
 
+export type FormIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type FormIndexResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormLightDto;
+  }[];
+  included?: (
+    | {
+        /**
+         * @example formSections
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormSectionDto;
+      }
+    | {
+        /**
+         * @example formQuestions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormQuestionDto;
+      }
+  )[];
+};
+
+/**
+ * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
+ */
+export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, {}, {}>("/forms/v3/forms", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2669,5 +2756,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formGet }
+  forms: { formGet, formIndex }
 };

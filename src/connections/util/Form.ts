@@ -58,7 +58,7 @@ export const useLinkedFields = connectionHook(linkedFieldsConnection);
 export const loadLinkedFields = connectionLoader(linkedFieldsConnection);
 
 const formConnection = v3Resource("forms", formGet)
-  .singleResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .singleFullResource<FormDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .enabledProp()
   .buildConnection();
 export const useForm = connectionHook(formConnection);

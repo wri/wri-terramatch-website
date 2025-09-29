@@ -32,6 +32,7 @@ import {
   OptionLabelDto,
   LinkedFieldDto,
   FormDto,
+  FormLightDto,
   FormSectionDto,
   FormQuestionDto
 } from "./entityServiceSchemas";
@@ -87,7 +88,7 @@ export type EntityServiceApiResources = {
   stratas: StoreResourceMap<StrataDto>;
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
-  forms: StoreResourceMap<FormDto>;
+  forms: StoreResourceMap<FormDto | FormLightDto>;
   formSections: StoreResourceMap<FormSectionDto>;
   formQuestions: StoreResourceMap<FormQuestionDto>;
 };

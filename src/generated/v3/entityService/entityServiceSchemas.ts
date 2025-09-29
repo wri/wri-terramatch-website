@@ -1926,11 +1926,19 @@ export type LinkedFieldDto = {
 };
 
 export type FormDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   /**
    * Translated form title
    */
   title: string;
+  type: string | null;
+  published: boolean;
+  banner: MediaDto;
+  document: MediaDto;
   /**
    * Translated form subtitle
    */
@@ -1948,7 +1956,6 @@ export type FormDto = {
     | "hbf"
     | "fundo-flora"
     | null;
-  type: string | null;
   documentation: string | null;
   documentationLabel: string | null;
   /**
@@ -1959,7 +1966,6 @@ export type FormDto = {
    * Translated submission message
    */
   submissionMessage: string | null;
-  published: boolean;
   stageId: string | null;
   fundingProgrammeId: string | null;
 };
@@ -2090,4 +2096,20 @@ export type FormQuestionDto = {
   years: number[] | null;
   tableHeaders: FormTableHeaderDto[] | null;
   additionalProps: Record<string, any> | null;
+};
+
+export type FormLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Translated form title
+   */
+  title: string;
+  type: string | null;
+  published: boolean;
+  banner: MediaDto;
+  document: MediaDto;
 };
