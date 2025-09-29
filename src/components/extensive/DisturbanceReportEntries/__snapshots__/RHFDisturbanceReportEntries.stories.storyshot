@@ -348,7 +348,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     aria-expanded={false}
                     aria-haspopup="listbox"
                     aria-labelledby="headlessui-listbox-label-:r3r: headlessui-listbox-button-:r3s:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
+                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer !h-auto min-h-[40px] border-light"
                     data-headlessui-state=""
                     disabled={false}
                     id="headlessui-listbox-button-:r3s:"
@@ -360,7 +360,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       className="flex items-center gap-2"
                     >
                       <p
-                        className="w-full text-14-light"
+                        className="w-full !whitespace-normal !break-words text-14-light"
                         data-testid="txt"
                         title="Seedlings, Trees"
                       >
