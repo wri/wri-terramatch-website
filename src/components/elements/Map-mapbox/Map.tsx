@@ -414,12 +414,10 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
-  // Reset user style change flag when projectUUID changes
   useEffect(() => {
     setUserChangedStyle(false);
   }, [projectUUID]);
 
-  // Auto-switch to satellite view when project is selected (only if user hasn't manually changed style)
   useEffect(() => {
     if (!map.current || !projectUUID || userChangedStyle) return;
 
