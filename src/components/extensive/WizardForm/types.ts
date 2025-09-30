@@ -5,7 +5,6 @@ import { AnySchema } from "yup";
 import { BooleanInputProps } from "@/components/elements/Inputs/BooleanInput/BooleanInput";
 import { ConditionalInputProps } from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { RHFDataTableProps } from "@/components/elements/Inputs/DataTable/RHFDataTable";
-import { RHFDisturbanceReportEntriesProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceReportEntries";
 import { RHFDisturbanceTableProps } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
 import { RHFFundingTypeTableProps } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 import { RHFInvasiveTableProps } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
@@ -82,8 +81,7 @@ export enum FieldType {
   Boolean = "boolean",
   OwnershipStakeDataTable = "OwnershipStakeDataTable",
   StrategyAreaInput = "strategyAreaInput",
-  FinancialTableInput = "financialTableInput",
-  DisturbanceReportEntries = "disturbanceReportEntries"
+  FinancialTableInput = "financialTableInput"
 }
 
 export type InputFormField = FieldTypeBuilder<FieldType.Input, InputProps>;
@@ -176,8 +174,4 @@ export type FormField =
   | FieldTypeBuilder<
       FieldType.FinancialTableInput,
       Omit<RHFFinancialIndicatorsDataTableProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
-    >
-  | FieldTypeBuilder<
-      FieldType.DisturbanceReportEntries,
-      Omit<RHFDisturbanceReportEntriesProps, "formHook" | "onChangeCapture" | keyof UseControllerProps>
     >;

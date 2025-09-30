@@ -5,7 +5,6 @@ import { EntityName } from "@/types/common";
 interface IEntityContext {
   entityUuid?: string;
   entityName?: EntityName;
-  projectUuid?: string;
 }
 
 const EntityContext = createContext<IEntityContext>({});
@@ -13,12 +12,11 @@ const EntityContext = createContext<IEntityContext>({});
 type EntityFrameworkProviderProps = {
   entityUuid: string;
   entityName: EntityName;
-  projectUuid?: string;
   children: ReactNode;
 };
 
-const EntityProvider = ({ children, entityUuid, entityName, projectUuid }: EntityFrameworkProviderProps) => (
-  <EntityContext.Provider value={{ entityUuid, entityName, projectUuid }}>{children}</EntityContext.Provider>
+const EntityProvider = ({ children, entityUuid, entityName }: EntityFrameworkProviderProps) => (
+  <EntityContext.Provider value={{ entityUuid, entityName }}>{children}</EntityContext.Provider>
 );
 
 export const useEntityContext = () => useContext(EntityContext);
