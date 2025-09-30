@@ -200,6 +200,12 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const [isEditing, setIsEditing] = useState(false);
   const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
+  const [userChangedStyle, setUserChangedStyle] = useState(false);
+
+  const handleStyleChange = (newStyle: MapStyle) => {
+    setCurrentStyle(newStyle);
+    setUserChangedStyle(true);
+  };
 
   const {
     polygonsData,
@@ -408,8 +414,15 @@ export const MapContainer = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
+  // Reset user style change flag when projectUUID changes
   useEffect(() => {
-    if (!map.current || !projectUUID) return;
+    setUserChangedStyle(false);
+  }, [projectUUID]);
+
+  // Auto-switch to satellite view when project is selected (only if user hasn't manually changed style)
+  useEffect(() => {
+    if (!map.current || !projectUUID || userChangedStyle) return;
+
     if (map.current.isStyleLoaded()) {
       setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
     } else {
@@ -418,7 +431,7 @@ export const MapContainer = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectUUID, styleLoaded]);
+  }, [projectUUID, userChangedStyle]);
 
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
@@ -745,7 +758,7 @@ export const MapContainer = ({
           </When>
           <When condition={isDashboard !== "dashboard"}>
             <ControlGroup position="top-right">
-              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
           </When>
           <ControlGroup position="top-right" className="top-21">
@@ -818,7 +831,7 @@ export const MapContainer = ({
                 <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
               </When>
               {isDashboard === "dashboard" ? (
-                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               ) : (
                 isDashboard !== "modal" && (
                   <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
