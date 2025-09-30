@@ -46,13 +46,13 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
       return (
         <Fragment>
           <BooleanInput
-            source={getSource("additional_props.with_intensity")}
+            source={getSource("additionalProps.with_intensity")}
             label="Has intensity"
             helperText="When enabled, this will prompt users to specify the intensity of the disturbance, which can be categorized as low, medium, or high."
             defaultValue={false}
           />
           <BooleanInput
-            source={getSource("additional_props.with_extent")}
+            source={getSource("additionalProps.with_extent")}
             label="Has extent (% of site affected)"
             helperText="When enabled, this will prompt users to indicate the extent of the disturbance. Users can choose from the following ranges: 0 - 20%, 21 - 40%, 41 - 60%, 61 - 80%, or 81 - 100%."
             defaultValue={false}
@@ -63,7 +63,7 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
     case "seedings":
       return (
         <BooleanInput
-          source={getSource("additional_props.capture_count")}
+          source={getSource("additionalProps.capture_count")}
           label="Capture Count"
           helperText="To allow users enter count instead of 'Number of seeds in sample' and 'Weight of sample(Kg)'"
           defaultValue={false}
@@ -73,7 +73,7 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
     case "treeSpecies":
       return (
         <BooleanInput
-          source={getSource("additional_props.with_numbers")}
+          source={getSource("additionalProps.with_numbers")}
           label="Has Count"
           helperText="To allow users enter count for each tree species record."
           defaultValue={false}
@@ -83,7 +83,7 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
     case "file":
       return (
         <BooleanInput
-          source={getSource("additional_props.with_private_checkbox")}
+          source={getSource("additionalProps.with_private_checkbox")}
           label="Private or public checkbox"
           helperText="Enable this option to allow project developers to set this file as either private or public."
           defaultValue={false}
@@ -94,13 +94,13 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
       return (
         <>
           <NumberInput
-            source={getSource("min_character_limit")}
+            source={getSource("minCharacterLimit")}
             label="Minimum Character Limit"
             defaultValue={0}
             validate={[minValue(0)]}
           />
           <NumberInput
-            source={getSource("max_character_limit")}
+            source={getSource("maxCharacterLimit")}
             label="Maximum Character Limit"
             defaultValue={90000}
             validate={[maxValue(90000)]}

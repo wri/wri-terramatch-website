@@ -12,19 +12,19 @@ type TableAdditionalOptionsProps = {
 const TableAdditionalOptions: FC<TableAdditionalOptionsProps> = ({ linkedFieldsData, getSource }) => {
   const {
     field: { value: hasTotal }
-  } = useInput({ source: getSource("additional_props.with_numbers") });
+  } = useInput({ source: getSource("additionalProps.with_numbers") });
   return (
     <>
       <Box display="flex" width="100%" gap={2} marginTop={2}>
         <TextInput
-          source={getSource("table_headers.0.label")}
+          source={getSource("tableHeaders.0.label")}
           label="Table Header (Question)"
           helperText=""
           fullWidth
           validate={required()}
         />
         <TextInput
-          source={getSource("table_headers.1.label")}
+          source={getSource("tableHeaders.1.label")}
           label="Table Header (Answer)"
           helperText=""
           fullWidth
@@ -32,13 +32,13 @@ const TableAdditionalOptions: FC<TableAdditionalOptionsProps> = ({ linkedFieldsD
         />
       </Box>
       <BooleanInput
-        source={getSource("additional_props.with_numbers")}
+        source={getSource("additionalProps.with_numbers")}
         label="Has Total"
         helperText="To append total value of answers at the end of 'Table Header (Answer)'. if turned on you'll only be able to select number inputs."
         defaultValue={false}
       />
       <QuestionArrayInput
-        source={getSource("child_form_questions")}
+        source={getSource("children")}
         label="Table Questions"
         title="Child Question"
         linkedFieldsData={linkedFieldsData.filter(

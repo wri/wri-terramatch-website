@@ -65,7 +65,7 @@ export const QuestionArrayInput = ({
   );
 
   return (
-    <div ref={selectRef}>
+    <div ref={selectRef} className="w-full">
       <ArrayInput {...arrayInputProps}>
         <AccordionFormIterator
           accordionSummaryTitle={(index, fields) =>
@@ -86,7 +86,7 @@ export const QuestionArrayInput = ({
           summaryChildren={!isChildQuestion && <PreviewButton onClick={setPreviewQuestion} />}
         >
           <AutocompleteInput
-            source="linked_field_key"
+            source="linkedFieldKey"
             choices={linkedFieldChoices}
             label="Field"
             fullWidth
@@ -122,7 +122,7 @@ export const QuestionArrayInput = ({
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (scopedFormData == null || getSource == null) return null;
-              const field = getFieldById(scopedFormData.linked_field_key);
+              const field = getFieldById(scopedFormData.linkedFieldKey);
               if (field == null) return null;
 
               return <AdditionalOptions {...{ field, getSource, linkedFieldsData, onDeleteQuestion, selectRef }} />;

@@ -1,5 +1,13 @@
 import { isUndefined, omit, omitBy } from "lodash";
-import { CreateResult, DataProvider, GetManyResult, GetOneResult, Identifier, UpdateResult } from "react-admin";
+import {
+  CreateResult,
+  DataProvider,
+  GetListParams,
+  GetManyResult,
+  GetOneParams,
+  Identifier,
+  UpdateResult
+} from "react-admin";
 
 import {
   normalizeFormCreatePayload,
@@ -7,7 +15,14 @@ import {
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
+import {
+  loadForm,
+  loadFormIndex,
+  loadLinkedFields,
+  selectChildQuestions,
+  selectQuestions,
+  selectSections
+} from "@/connections/util/Form";
 import {
   DeleteV2AdminFormsUUIDError,
   fetchDeleteV2AdminFormsUUID,
@@ -17,7 +32,7 @@ import {
   PostV2AdminFormsError
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
-import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormFullDto, FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
@@ -59,6 +74,16 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
   }
 
   return Promise.all(uploadPromises);
+};
+
+// The form editor expects a single structure.
+export type FormEditorForm = FormFullDto & {
+  id: string;
+  sections: (FormSectionDto & {
+    questions: (FormQuestionDto & {
+      children?: FormQuestionDto[];
+    })[];
+  })[];
 };
 
 export const formDataProvider: FormDataProvider = {
@@ -119,29 +144,39 @@ export const formDataProvider: FormDataProvider = {
     }
   },
 
-  //@ts-ignore
-  async getList(_, params) {
+  async getList<RecordType>(_: string, params: GetListParams) {
     const connected = await loadFormIndex(raConnectionProps(params));
     if (connected.loadFailure != null) {
       throw v3ErrorForRA("Form index fetch failed", connected.loadFailure);
     }
 
     return {
-      data: (connected.data?.map(form => ({ ...form, id: form.uuid })) ?? []) as FormLightDto[],
+      data: (connected.data?.map(form => ({ ...form, id: form.uuid })) ?? []) as RecordType[],
       total: connected.indexTotal
     };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2FormsUUID({
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: normalizeFormObject(response.data) } as GetOneResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    // Disable translation for admin data provider; forms must be edited in English so that the
+    // labels that will be translated from the DB are in English as the source language.
+    const connected = await loadForm({ id, translated: false });
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
+
+    const formDto = connected.data!;
+    const form: FormEditorForm = {
+      ...formDto,
+      id: formDto.uuid,
+      sections: selectSections(formDto.uuid).map(section => ({
+        ...section,
+        questions: selectQuestions(section.uuid).map(question => ({
+          ...question,
+          children: selectChildQuestions(question.uuid)
+        }))
+      }))
+    };
+    return { data: form } as RecordType;
   },
 
   async getMany(_, params) {

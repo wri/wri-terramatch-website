@@ -41,7 +41,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       ) : (
         <OptionArrayInput
           label="Options"
-          source={getSource("form_question_options")}
+          source={getSource("options")}
           //@ts-ignore
           defaultValue={defaultOptions}
           dropDownOptions={
@@ -58,7 +58,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       )}
       {allowCreate && field.inputType === "select" && (
         <BooleanInput
-          source={getSource("options_other")}
+          source={getSource("optionsOther")}
           label="Has Other"
           helperText="Enable this option to let users provide a response when they choose 'Other' as an option."
           defaultValue={false}

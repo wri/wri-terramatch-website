@@ -4,7 +4,6 @@ import { camelCase, get } from "lodash";
 import { useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
-import { When } from "react-if";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import {
@@ -23,8 +22,10 @@ import { maxFileSize } from "@/admin/utils/forms";
 import { FormModelType, useLinkedFields } from "@/connections/util/Form";
 import { useDeleteV2AdminFormsQuestionUUID, useDeleteV2AdminFormsSectionUUID } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 
-export const formTypeChoices = [
+type FormType = (typeof Forms.FORM_TYPES)[number];
+export const formTypeChoices: { id: FormType; name: string }[] = [
   { id: "application", name: "Application" },
   { id: "project", name: "Project" },
   { id: "site", name: "Site" },
@@ -89,11 +90,11 @@ export const FormBuilderForm = () => {
         source="type"
         choices={formTypeChoices}
         fullWidth
-        disabled={!!modelTypeValue}
+        disabled={modelTypeValue != null}
         helperText="If you choose the incorrect form type and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
         sx={{ marginBottom: 6 }}
       />
-      <When condition={!!modelTypeValue}>
+      {modelTypeValue == null ? null : (
         <>
           <div>
             <Accordion className="w-full">
@@ -136,7 +137,7 @@ export const FormBuilderForm = () => {
                   }
                 />
                 <TextInput
-                  source="documentation_label"
+                  source="documentationLabel"
                   label="Download Button Title"
                   helperText="Please use the download button title to label the button on the first page of the form. This is typically used to enable project developers to download a PDF containing the form questions."
                   validate={[maxLength(25)]}
@@ -150,7 +151,7 @@ export const FormBuilderForm = () => {
                   fullWidth
                 />
                 <DateTimeInput
-                  source="deadline_at"
+                  source="deadlineAt"
                   label="Deadline(Date)"
                   helperText="Please set a deadline (date and time in Eastern Standard Time) for project developers to complete this form. The deadline will be displayed on the first page of the form and will be automatically adjusted based on the project developers' respective time zones. This field is optional; however, if you are creating a form for an application, it is strongly advised to include a deadline."
                   fullWidth
@@ -159,7 +160,7 @@ export const FormBuilderForm = () => {
             </Accordion>
           </div>
           <ArrayInput
-            source="form_sections"
+            source="sections"
             label="Form Sections"
             validate={minLength(1, "At least one section is required")}
           >
@@ -183,21 +184,21 @@ export const FormBuilderForm = () => {
             >
               <TextInput
                 source="title"
-                label="Form Title"
+                label="Section Title"
                 helperText="The section will be displayed on the form and is used to group questions that belong to the same category together. For example: 'Organizational Details.' This helps in organizing and presenting related questions for better clarity and efficiency."
                 fullWidth
                 validate={required()}
               />
               <RichTextInput
                 source="description"
-                label="Form Description"
+                label="Section Description"
                 helperText="Please add a description to the category. This will assist project developers in understanding the type of questions that fall under that category, providing them with context and guidance."
                 disableLevelSelect
                 disableHorizontalLine
               />
 
               <QuestionArrayInput
-                source="form_questions"
+                source="questions"
                 label="Form Questions"
                 title="Question"
                 linkedFieldsData={fullLinkedFields}
@@ -215,7 +216,7 @@ export const FormBuilderForm = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <RichTextInput
-                  source="submission_message"
+                  source="submissionMessage"
                   label="Submission Message"
                   helperText="Use this box to compose a message that will confirm to project developers that their submission has been sent successfully. Please ensure you include a title, a description, and guidance on the next steps after submission. You can use HTML formatting to customize the message appearance. This message will be used for both the email notification that the project developer will receive and the submission screen displayed after pressing 'Submit' on the form. Make sure the message is clear, informative, and provides any necessary instructions or follow-up actions."
                   validate={required()}
@@ -231,7 +232,7 @@ export const FormBuilderForm = () => {
             onClose={() => setPreviewSection(undefined)}
           />
         </>
-      </When>
+      )}
     </>
   );
 };
