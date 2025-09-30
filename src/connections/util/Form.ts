@@ -71,6 +71,10 @@ export const loadFormIndex = connectionLoader(formIndexConnection);
 const formConnection = v3Resource("forms", formGet)
   .singleFullResource<FormFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .enabledProp()
+  .addProps<{ translated?: boolean }>(
+    ({ translated }) => ({ queryParams: { translated } }),
+    ({ data }, { translated }) => data?.translated === (translated ?? true)
+  )
   .buildConnection();
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);

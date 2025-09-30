@@ -2003,9 +2003,6 @@ export type FormQuestionOptionDto = {
 
 export type FormTableHeaderDto = {
   slug: string | null;
-  /**
-   * Translated header label
-   */
   label: string | null;
   order: number | null;
 };
@@ -2055,17 +2052,8 @@ export type FormQuestionDto = {
     | "volunteers"
     | "workdays";
   name: string | null;
-  /**
-   * Translated question label
-   */
   label: string;
-  /**
-   * Translated question placeholder
-   */
   placeholder: string | null;
-  /**
-   * Translated question description
-   */
   description: string | null;
   validation: Record<string, any> | null;
   multiChoice: boolean;
@@ -2118,12 +2106,10 @@ export type FormFullDto = {
   published: boolean;
   bannerUrl: string | null;
   /**
-   * Translated form subtitle
+   * Indicates whether the text fields in this form response have been translated to the user's locale
    */
+  translated: boolean;
   subtitle: string | null;
-  /**
-   * Translated form description
-   */
   description: string | null;
   frameworkKey:
     | "terrafund"
@@ -2140,9 +2126,6 @@ export type FormFullDto = {
    * @format date-time
    */
   deadlineAt: string | null;
-  /**
-   * Translated submission message
-   */
   submissionMessage: string | null;
   stageId: string | null;
   fundingProgrammeId: string | null;

@@ -2696,6 +2696,13 @@ export type FormGetPathParams = {
   uuid: string;
 };
 
+export type FormGetQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
 export type FormGetError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -2771,6 +2778,7 @@ export type FormGetResponse = {
 
 export type FormGetVariables = {
   pathParams: FormGetPathParams;
+  queryParams?: FormGetQueryParams;
 };
 
 /**
