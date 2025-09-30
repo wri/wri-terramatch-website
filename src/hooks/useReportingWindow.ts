@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { Framework } from "@/context/framework.provider";
 import { useDate } from "@/hooks/useDate";
 
 enum Period {
@@ -15,9 +15,8 @@ enum Period {
  * Must be wrapped in a FrameworkContext in order to determine reporting period.
  * @returns string
  */
-export const useReportingWindow = (dueDate?: string) => {
+export const useReportingWindow = (framework: Framework, dueDate?: string) => {
   const { format, subMonths } = useDate();
-  const { framework } = useFrameworkContext();
   const period = framework === Framework.PPC ? Period.QUARTERLY : Period.BI_ANNUALLY;
 
   return useMemo(() => {
@@ -48,6 +47,5 @@ export const useReportingWindow = (dueDate?: string) => {
     }
 
     return `${start} - ${end} ${year}`;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dueDate]);
+  }, [dueDate, format, period, subMonths]);
 };

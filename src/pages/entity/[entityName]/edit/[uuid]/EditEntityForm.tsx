@@ -32,8 +32,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const router = useRouter();
 
   const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
-  const framework = toFramework(formData?.data.framework_key);
   const entityData = formData?.data;
+  const framework = toFramework(entityData?.framework_key);
 
   const model = useMemo(() => {
     const model = camelCase(
@@ -72,7 +72,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     }
   });
 
-  const reportingWindow = useReportingWindow(entity?.due_at);
+  const reportingWindow = useReportingWindow(framework, entity?.due_at);
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
