@@ -18,7 +18,6 @@ export interface InputProps
   formHook?: UseFormReturn<any>;
   clearable?: boolean;
   iconButtonProps?: IconButtonProps;
-  iconButtonPropsLeft?: IconButtonProps;
   type: HtmlInputType;
   hideErrorMessage?: boolean;
   customVariant?: any;
@@ -58,7 +57,6 @@ const Input = forwardRef(
       clearable,
       className,
       iconButtonProps,
-      iconButtonPropsLeft,
       hideErrorMessage,
       customVariant = {},
       labelClassName,
@@ -211,12 +209,6 @@ const Input = forwardRef(
         classNameError={classNameError}
       >
         <div className={classNames("relative", classNameContainerInput)}>
-          <When condition={!!iconButtonPropsLeft}>
-            <IconButton
-              {...iconButtonPropsLeft!}
-              className="pointer-events-none absolute left-3 top-[50%] translate-y-[-50%]"
-            />
-          </When>
           <input
             {...inputProps}
             {...registeredFormProps}
