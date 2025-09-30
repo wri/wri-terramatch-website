@@ -90,7 +90,7 @@ export const EntityEdit = () => {
     ]
   );
 
-  if (loadError != null || formLoadFailure != null) {
+  if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
   }

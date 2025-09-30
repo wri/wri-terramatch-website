@@ -19,6 +19,7 @@ import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 interface EditEntityFormProps {
   entityName: EntityName;
@@ -30,7 +31,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const t = useT();
   const router = useRouter();
 
-  const { formData, isLoading, loadError } = useEntityForm(entityName, entityUUID);
+  const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
   const framework = toFramework(formData?.data.framework_key);
   const entityData = formData?.data;
 
@@ -123,7 +124,10 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     ]
   );
 
-  if (loadError != null) return notFound();
+  if (loadError || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadError, formLoadFailure });
+    return notFound();
+  }
 
   return (
     <LoadingContainer loading={isLoading || !providerLoaded}>
