@@ -53,7 +53,6 @@ export const TableInputField: FormFieldFactory = {
     tableHeaders: [
       { label: null, order: null },
       { label: null, order: null }
-    ],
-    additionalProps: {}
+    ]
   })
 };

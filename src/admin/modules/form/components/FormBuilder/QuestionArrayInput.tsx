@@ -78,6 +78,7 @@ const LinkedFieldInput: FC<LinkedFieldInputProps> = ({ getLinkedFieldById, ...pr
         description,
         isParentConditionalDefault,
         validation: {},
+        additionalProps: {},
         children: [],
         ...defaults
       };

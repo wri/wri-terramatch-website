@@ -43,5 +43,5 @@ export const SeedingsField: FormFieldFactory = {
     />
   ),
 
-  formBuilderDefaults: ({ collection, formModelType }) => ({ collection, model: formModelType, additionalProps: {} })
+  formBuilderDefaults: ({ collection, formModelType }) => ({ collection, model: formModelType })
 };

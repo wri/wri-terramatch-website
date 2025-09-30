@@ -45,7 +45,5 @@ export const DisturbancesField: FormFieldFactory = {
         defaultValue={false}
       />
     </>
-  ),
-
-  formBuilderDefaults: () => ({ additionalProps: {} })
+  )
 };

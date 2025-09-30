@@ -56,7 +56,6 @@ export const FileField: FormFieldFactory = {
   formBuilderDefaults: ({ collection, multiChoice, formModelType }) => ({
     collection,
     multiChoice: multiChoice ?? undefined,
-    model: formModelType,
-    additionalProps: {}
+    model: formModelType
   })
 };

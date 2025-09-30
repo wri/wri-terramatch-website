@@ -63,7 +63,5 @@ export const TreeSpeciesField: FormFieldFactory = {
       helperText="To allow users enter count for each tree species record."
       defaultValue={false}
     />
-  ),
-
-  formBuilderDefaults: () => ({ additionalProps: {} })
+  )
 };
