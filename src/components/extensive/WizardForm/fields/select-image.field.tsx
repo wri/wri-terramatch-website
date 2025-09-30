@@ -1,3 +1,4 @@
+import SelectAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/SelectAdditionalOptions";
 import RHFSelectImage from "@/components/elements/Inputs/SelectImage/RHFSelectImage";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
@@ -19,5 +20,12 @@ export const SelectImageField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,
+
+  formBuilderDefaults: ({ optionListKey, multiChoice }) => ({
+    optionsList: optionListKey,
+    multiChoice: multiChoice ?? undefined
+  })
 };

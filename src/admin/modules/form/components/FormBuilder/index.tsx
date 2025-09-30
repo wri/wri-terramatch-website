@@ -4,6 +4,7 @@ import { camelCase, get } from "lodash";
 import { useCallback, useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import {
@@ -22,7 +23,7 @@ import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/typ
 import { maxFileSize } from "@/admin/utils/forms";
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useLinkedFields } from "@/connections/util/Form";
-import { LocalSteps } from "@/context/wizardForm.provider";
+import { LocalStep } from "@/context/wizardForm.provider";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 import Log from "@/utils/log";
 
@@ -68,10 +69,20 @@ export const FormBuilderForm = () => {
     [linkedFieldsData]
   );
 
+  const createStep = useCallback(
+    (): LocalStep => ({
+      id: `new-step-${uuidv4()}`,
+      title: "",
+      description: "",
+      fields: []
+    }),
+    []
+  );
+
   const deleteSection = useCallback(
     async (index: number, source: string) => {
       const values = getValues();
-      const uuid = (get(values, source) as LocalSteps)[index]?.id;
+      const uuid = (get(values, source) as LocalStep[])[index]?.id;
       Log.info("deleteSection", { index, values, uuid });
 
       // TODO (NJC) To be replaced in TM-2417 / TM-2418
@@ -180,6 +191,7 @@ export const FormBuilderForm = () => {
                 `Section ${index + 1} of ${fields.length} ${fields[index].title && `(${fields[index].title})`}`
               }
               addButton={<AddItemButton variant="contained" label="Add Section" />}
+              addItemFactory={createStep}
               removeButton={
                 <RemoveItemButton
                   variant="text"
@@ -238,7 +250,6 @@ export const FormBuilderForm = () => {
 
           <FormSectionPreviewDialog
             open={previewSectionId != null}
-            linkedFieldData={appendAdditionalFormQuestionFields(linkedFieldsData ?? [])}
             stepId={previewSectionId}
             onClose={() => setPreviewSectionId(undefined)}
           />

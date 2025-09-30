@@ -19,5 +19,7 @@ export const LeadershipsField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t }) => dataTableEntryValue(getLeadershipsTableColumns(t), field, formValues)
+  getEntryValue: (field, formValues, { t }) => dataTableEntryValue(getLeadershipsTableColumns(t), field, formValues),
+
+  formBuilderDefaults: ({ collection }) => ({ collection })
 };

@@ -42,7 +42,7 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
   .filterResources<LinkedFieldDto, { formModelTypes?: FormModelType[] }>(
     ({ formModelTypes }) => ({ queryParams: { formModelTypes } }),
     ({ formModelTypes }, indexMeta, linkedFields) => {
-      const linkedFieldAttributes = Object.values(linkedFields).map(({ attributes }) => attributes);
+      const linkedFieldAttributes = map(linkedFields, "attributes");
       const relevantValues =
         formModelTypes == null
           ? linkedFieldAttributes
@@ -52,7 +52,7 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
       if (formModelTypes == null) return indexMeta == null ? undefined : relevantValues;
 
       // For this endpoint, we can assume that if we have at least one member of each of the requested form types, we have everything
-      const formTypesInCache = uniq(map(relevantValues, "formType"));
+      const formTypesInCache = uniq(map(relevantValues, "formModelType"));
       return formTypesInCache.length === formModelTypes.length ? relevantValues : undefined;
     }
   )

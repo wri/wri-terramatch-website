@@ -1,5 +1,6 @@
 import * as yup from "yup";
 
+import SelectAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/SelectAdditionalOptions";
 import RHFStrategyAreaDataTable from "@/components/elements/Inputs/DataTable/RHFStrategyAreaDataTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
@@ -65,5 +66,9 @@ export const StrategyAreaField: FormFieldFactory = {
 
         return percent ? `${title} (${percent}%)` : `${title} (${percent})`;
       });
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,
+
+  formBuilderDefaults: ({ optionListKey, collection }) => ({ optionsList: optionListKey, collection })
 };

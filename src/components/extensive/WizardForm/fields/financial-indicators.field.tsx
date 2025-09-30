@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash";
 
+import FinancialIndicatorsAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/FinancialIndicatorsAdditionalOptions";
 import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import { documentationColumnsMap, formatFinancialData } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
@@ -91,5 +92,9 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       .filter(isNotNull)
       .join("");
     return isEmpty(value) ? t("Answer Not Provided") : value;
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ selectRef, getSource }) => (
+    <FinancialIndicatorsAdditionalOptions {...{ selectRef, getSource }} />
+  )
 };

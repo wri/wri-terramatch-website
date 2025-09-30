@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
 
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { LocalSteps } from "@/context/wizardForm.provider";
+import { LocalStep } from "@/context/wizardForm.provider";
 import { FileType, Option } from "@/types/common";
 
-export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps => [
+export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] => [
   {
     id: "orgDetails",
     title: t("Organisation Details"),

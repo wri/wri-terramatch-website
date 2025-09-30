@@ -1,15 +1,19 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { FC, ReactElement, useCallback, useRef, useState } from "react";
+import { get } from "lodash";
+import { FC, ReactElement, useCallback, useMemo, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
   AutocompleteInput,
+  AutocompleteInputProps,
   BooleanInput,
   FormDataConsumer,
   FormDataConsumerRenderParams,
   required,
   TextInput
 } from "react-admin";
+import { useFormContext } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import {
@@ -21,7 +25,9 @@ import { FormQuestionPreviewDialog } from "@/admin/components/Dialogs/FormQuesti
 import { RichTextInput } from "@/admin/components/RichTextInput/RichTextInput";
 import AdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions";
 import { AdditionalInputTypes, Choice } from "@/admin/types/common";
+import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { LocalFieldWithChildren } from "@/context/wizardForm.provider";
 import { LinkedFieldDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
@@ -45,6 +51,45 @@ export const appendAdditionalFormQuestionFields = (originalList: LinkedFieldDto[
   ...originalList
 ];
 
+type LinkedFieldInputProps = AutocompleteInputProps & {
+  getLinkedFieldById: (fieldId: string) => FormQuestionField | undefined;
+};
+
+const LinkedFieldInput: FC<LinkedFieldInputProps> = ({ getLinkedFieldById, ...props }) => {
+  const { setValue, getValues } = useFormContext();
+  const { source } = props;
+
+  // When our linked field changes, we want to replace most of the fields in the editor.
+  const handleChange = useCallback(
+    (value?: string) => {
+      if (source == null) return;
+
+      const sourceBase = source.substring(0, source.lastIndexOf("."));
+      const currentField = get(getValues(), sourceBase) as LocalFieldWithChildren;
+      const { name, label, description, isParentConditionalDefault } = currentField;
+      const linkedField = getLinkedFieldById(value ?? "");
+      const inputType = linkedField?.inputType ?? "empty";
+      const { formBuilderDefaults } = FormFieldFactories[inputType];
+      const defaults = linkedField == null ? undefined : formBuilderDefaults?.(linkedField);
+      const newField: LocalFieldWithChildren = {
+        name,
+        inputType,
+        label,
+        description,
+        isParentConditionalDefault,
+        validation: {},
+        children: [],
+        ...defaults
+      };
+
+      setValue(sourceBase, newField);
+    },
+    [getLinkedFieldById, getValues, setValue, source]
+  );
+
+  return <AutocompleteInput {...props} onChange={handleChange} />;
+};
+
 export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
   title,
   linkedFieldsData,
@@ -56,16 +101,29 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
   ...arrayInputProps
 }) => {
   const [previewQuestionId, setPreviewQuestionId] = useState<string>();
-  const linkedFieldChoices = linkedFieldsData?.map(({ id, name }) => ({ id, name } as Choice)) || [];
+  const linkedFieldChoices = useMemo(
+    () => linkedFieldsData?.map(({ id, name }) => ({ id, name } as Choice)) ?? [],
+    [linkedFieldsData]
+  );
   const selectRef = useRef<HTMLDivElement | null>(null);
 
-  const getFieldById = useCallback(
+  const getLinkedFieldById = useCallback(
     (fieldId: string) => linkedFieldsData.find(({ id }) => id === fieldId),
     [linkedFieldsData]
   );
 
   const onSelectPreview = useCallback(
     (field: Record<any, any>) => setPreviewQuestionId((field as FieldDefinition).name),
+    []
+  );
+
+  const createQuestion = useCallback(
+    (): LocalFieldWithChildren => ({
+      name: `new-field-${uuidv4()}`,
+      inputType: "empty",
+      label: "",
+      children: []
+    }),
     []
   );
 
@@ -77,6 +135,7 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
             `${title} ${index + 1} of ${fields.length} ${fields[index].label ? `(${fields[index].label})` : ""}`
           }
           addButton={<AddItemButton variant="contained" label={`Add ${title}`} />}
+          addItemFactory={createQuestion}
           removeButton={
             <RemoveItemButton
               variant="text"
@@ -90,12 +149,13 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
           }
           summaryChildren={!isChildQuestion && <PreviewButton onClick={onSelectPreview} />}
         >
-          <AutocompleteInput
+          <LinkedFieldInput
             source="linkedFieldKey"
             choices={linkedFieldChoices}
             label="Field"
             fullWidth
             validate={required()}
+            getLinkedFieldById={getLinkedFieldById}
           />
           <TextInput
             source="label"
@@ -127,7 +187,7 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
           <FormDataConsumer>
             {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
               if (scopedFormData == null || getSource == null) return null;
-              const field = getFieldById(scopedFormData.linkedFieldKey);
+              const field = getLinkedFieldById(scopedFormData.linkedFieldKey);
               if (field == null) return null;
 
               return <AdditionalOptions {...{ field, getSource, linkedFieldsData, onDeleteQuestion, selectRef }} />;
@@ -139,7 +199,6 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
       <FormQuestionPreviewDialog
         open={previewQuestionId != null}
         questionId={previewQuestionId}
-        linkedFieldData={linkedFieldsData}
         onClose={() => setPreviewQuestionId(undefined)}
         formTitle={formTitle}
       />

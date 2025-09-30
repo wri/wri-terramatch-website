@@ -1,3 +1,4 @@
+import SelectAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/SelectAdditionalOptions";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
@@ -50,5 +51,12 @@ export const SelectField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,
+
+  formBuilderDefaults: ({ optionListKey, multiChoice }) => ({
+    optionsList: optionListKey,
+    multiChoice: multiChoice ?? undefined
+  })
 };

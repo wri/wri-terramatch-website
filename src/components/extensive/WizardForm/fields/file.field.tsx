@@ -1,3 +1,4 @@
+import { BooleanInput } from "react-admin";
 import * as yup from "yup";
 
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
@@ -41,5 +42,21 @@ export const FileField: FormFieldFactory = {
         csv.pushRow(["", v.title ?? v.file_name ?? "", v.url]);
       });
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <BooleanInput
+      source={getSource("additionalProps.with_private_checkbox")}
+      label="Private or public checkbox"
+      helperText="Enable this option to allow project developers to set this file as either private or public."
+      defaultValue={false}
+    />
+  ),
+
+  formBuilderDefaults: ({ collection, multiChoice, formModelType }) => ({
+    collection,
+    multiChoice: multiChoice ?? undefined,
+    model: formModelType,
+    additionalProps: {}
+  })
 };

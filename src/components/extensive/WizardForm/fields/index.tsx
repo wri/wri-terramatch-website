@@ -5,6 +5,7 @@ import { ConditionalField } from "./conditional.field";
 import { DateField } from "./date.field";
 import { DemographicField } from "./demographic.field";
 import { DisturbancesField } from "./disturbances.field";
+import { EmptyField } from "./empty.field";
 import { FileField } from "./file.field";
 import { FinancialIndicatorsField } from "./financial-indicators.field";
 import { FundingTypeField } from "./funding-type.field";
@@ -62,5 +63,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   allBeneficiaries: DemographicField,
   trainingBeneficiaries: DemographicField,
   indirectBeneficiaries: DemographicField,
-  associates: DemographicField
+  associates: DemographicField,
+
+  empty: EmptyField
 };

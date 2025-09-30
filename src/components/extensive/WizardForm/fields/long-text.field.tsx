@@ -1,3 +1,4 @@
+import { maxValue, minValue, NumberInput } from "react-admin";
 import * as yup from "yup";
 
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
@@ -29,5 +30,22 @@ export const LongTextField: FormFieldFactory = {
 
   renderInput: ({ minCharacterLimit, maxCharacterLimit }, sharedProps) => (
     <TextArea {...sharedProps} minLength={minCharacterLimit ?? undefined} maxLength={maxCharacterLimit ?? undefined} />
+  ),
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <>
+      <NumberInput
+        source={getSource("minCharacterLimit")}
+        label="Minimum Character Limit"
+        defaultValue={0}
+        validate={[minValue(0)]}
+      />
+      <NumberInput
+        source={getSource("maxCharacterLimit")}
+        label="Maximum Character Limit"
+        defaultValue={90000}
+        validate={[maxValue(90000)]}
+      />
+    </>
   )
 };

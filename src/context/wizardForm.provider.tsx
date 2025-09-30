@@ -39,12 +39,11 @@ const StubFormFieldsProvider: FormFieldsProvider = {
   feedbackRequired: () => false
 };
 
-export type LocalSteps = (StepDefinition & {
-  fields: (FieldDefinition & { children?: FieldDefinition[] })[];
-})[];
+export type LocalStep = StepDefinition & { fields: LocalFieldWithChildren[] };
+export type LocalFieldWithChildren = FieldDefinition & { children?: FieldDefinition[] };
 
 const createLocalStepsProvider = (
-  localSteps: LocalSteps,
+  localSteps: LocalStep[],
   feedbackRequired: (fieldId: string) => boolean = () => false
 ): FormFieldsProvider => {
   const stepIds = localSteps.map(({ id }) => id);
@@ -81,7 +80,7 @@ const createLocalStepsProvider = (
   };
 };
 
-export const useLocalStepsProvider = (localSteps: LocalSteps) =>
+export const useLocalStepsProvider = (localSteps: LocalStep[]) =>
   useMemo(() => createLocalStepsProvider(localSteps), [localSteps]);
 
 // Returns a boolean indicating whether the form is loaded, and the fields provider.
@@ -98,7 +97,7 @@ export const useApiFieldsProvider = (
     // result recalculates when the form is done loading.
     () => {
       // Convert the API form to a valid LocalSteps definition.
-      const localSteps: LocalSteps =
+      const localSteps: LocalStep[] =
         form?.uuid == null
           ? []
           : selectSections(form.uuid).reduce((steps, section) => {
@@ -113,7 +112,7 @@ export const useApiFieldsProvider = (
                 children: selectChildQuestions(question.uuid).map(questionDtoToDefinition)
               }));
               return [...steps, { ...step, id: uuid, fields }];
-            }, [] as LocalSteps);
+            }, [] as LocalStep[]);
       return createLocalStepsProvider(localSteps, (fieldId: string) => feedbackFields?.includes(fieldId) ?? false);
     },
     [feedbackFields, fieldFilter, form?.uuid]

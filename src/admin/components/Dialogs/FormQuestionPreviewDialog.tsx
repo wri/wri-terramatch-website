@@ -11,7 +11,6 @@ import {
 import { FC } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 
-import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import FormField from "@/components/extensive/WizardForm/FormField";
@@ -21,25 +20,29 @@ import Log from "@/utils/log";
 
 interface FormQuestionPreviewDialogProps extends DialogProps {
   questionId?: string;
-  linkedFieldData: FormQuestionField[];
   formTitle?: string;
 }
 
-export const FormQuestionPreviewDialog: FC<FormQuestionPreviewDialogProps> = ({
-  linkedFieldData,
-  questionId,
-  formTitle,
-  ...props
-}) => {
+type QuestionPreviewContentProps = {
+  questionId: string;
+};
+
+const QuestionPreviewContent: FC<QuestionPreviewContentProps> = ({ questionId }) => {
   const steps = useFormContext<FormBuilderData>().getValues().steps;
   const fieldsProvider = useLocalStepsProvider(steps ?? []);
-  const field = questionId == null ? undefined : fieldsProvider.fieldById(questionId);
+  const field = fieldsProvider.fieldById(questionId);
   // Create a form hook for the preview so it doesn't try to interact with the form builder data.
   const formHook = useForm();
 
-  if (field == null) return null;
+  return field == null ? null : (
+    <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <FormField field={field} formHook={formHook} onChange={() => Log.debug("FormField onChange")} />
+    </WizardFormProvider>
+  );
+};
 
-  return (
+export const FormQuestionPreviewDialog: FC<FormQuestionPreviewDialogProps> = ({ questionId, formTitle, ...props }) =>
+  questionId == null ? null : (
     <ModalProvider>
       <Dialog {...props} fullWidth sx={{ zIndex: 40 }}>
         {props.open ? (
@@ -54,9 +57,7 @@ export const FormQuestionPreviewDialog: FC<FormQuestionPreviewDialogProps> = ({
             <Divider />
 
             <DialogContent>
-              <WizardFormProvider fieldsProvider={fieldsProvider}>
-                <FormField field={field} formHook={formHook} onChange={() => Log.debug("FormField onChange")} />
-              </WizardFormProvider>
+              <QuestionPreviewContent questionId={questionId} />
             </DialogContent>
 
             <DialogActions sx={{ padding: 3 }}>
@@ -70,4 +71,3 @@ export const FormQuestionPreviewDialog: FC<FormQuestionPreviewDialogProps> = ({
       <ModalRoot />
     </ModalProvider>
   );
-};

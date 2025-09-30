@@ -1921,7 +1921,7 @@ export type LinkedFieldDto = {
     | "volunteers"
     | "workdays";
   optionListKey: string | null;
-  multiChoice: string | null;
+  multiChoice: boolean | null;
   collection: string | null;
 };
 

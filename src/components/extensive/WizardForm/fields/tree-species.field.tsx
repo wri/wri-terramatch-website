@@ -1,3 +1,4 @@
+import { BooleanInput } from "react-admin";
 import * as yup from "yup";
 
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
@@ -53,5 +54,16 @@ export const TreeSpeciesField: FormFieldFactory = {
     const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
     const collection = value[0]?.collection;
     return treeSpeciesEntryValue(collection, entity, field, formValues, fieldsProvider);
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <BooleanInput
+      source={getSource("additionalProps.with_numbers")}
+      label="Has Count"
+      helperText="To allow users enter count for each tree species record."
+      defaultValue={false}
+    />
+  ),
+
+  formBuilderDefaults: () => ({ additionalProps: {} })
 };

@@ -1,3 +1,4 @@
+import TableAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TableAdditionalOptions";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { isNotNull } from "@/utils/array";
@@ -42,5 +43,17 @@ export const TableInputField: FormFieldFactory = {
   normalizeValue: ({ name }, formValues) => {
     const { [name]: tableValues, ...rest } = formValues;
     return { ...rest, ...tableValues };
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ linkedFieldsData, getSource }) => (
+    <TableAdditionalOptions {...{ linkedFieldsData, getSource }} />
+  ),
+
+  formBuilderDefaults: () => ({
+    tableHeaders: [
+      { label: null, order: null },
+      { label: null, order: null }
+    ],
+    additionalProps: {}
+  })
 };

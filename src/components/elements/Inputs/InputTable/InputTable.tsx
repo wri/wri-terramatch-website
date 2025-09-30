@@ -57,34 +57,37 @@ function InputTable({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row, index) => (
-              <tr key={`row-${index}`}>
-                <td className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom" align="center">
-                  <Text variant="text-heading-100" className="first-letter:uppercase">
-                    {row.label}
-                  </Text>
-                </td>
-                <td className="h-[53px] p-0 align-bottom">
-                  <Input
-                    {...row}
-                    ref={null}
-                    name={row.name}
-                    variant="secondary"
-                    placeholder={row.placeholder}
-                    error={errors?.[row.name]}
-                    onChange={e =>
-                      onChange({
-                        ...value,
-                        [row.name]: row.type === "number" ? e.target.valueAsNumber : e.target.value
-                      })
-                    }
-                    value={value?.[row.name]}
-                    hideErrorMessage
-                    className="text-heading-100 text-center"
-                  />
-                </td>
-              </tr>
-            ))}
+            {rows.map((row, index) => {
+              const { label, ...inputRow } = row;
+              return (
+                <tr key={`row-${index}`}>
+                  <td className="h-[53px] border-b border-neutral-400 p-0 pb-1.5 pt-6 align-bottom" align="center">
+                    <Text variant="text-heading-100" className="first-letter:uppercase">
+                      {label}
+                    </Text>
+                  </td>
+                  <td className="h-[53px] p-0 align-bottom">
+                    <Input
+                      {...inputRow}
+                      ref={null}
+                      name={row.name}
+                      variant="secondary"
+                      placeholder={row.placeholder}
+                      error={errors?.[row.name]}
+                      onChange={e =>
+                        onChange({
+                          ...value,
+                          [row.name]: row.type === "number" ? e.target.valueAsNumber : e.target.value
+                        })
+                      }
+                      value={value?.[row.name]}
+                      hideErrorMessage
+                      className="text-heading-100 text-center"
+                    />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
         <ErrorMessage className="mt-6" error={error} />

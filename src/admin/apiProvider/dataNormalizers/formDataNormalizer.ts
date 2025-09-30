@@ -103,8 +103,8 @@ export const normalizeQuestionCreatePayload = (
   linkedFieldData: FormQuestionField[]
 ) => {
   const { form_question_options, table_headers, child_form_questions, ...restOfPayload } = payload;
-  const input_type = linkedFieldData.find(field => field.id === payload.linked_field_key)?.inputType;
   const field = linkedFieldData.find(field => field.id === payload.linked_field_key);
+  const input_type = field?.inputType;
   const output = {
     ...restOfPayload,
     input_type: field?.inputType

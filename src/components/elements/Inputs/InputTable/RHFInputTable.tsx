@@ -2,9 +2,8 @@ import { sortBy } from "lodash";
 import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, TableHeader } from "@/components/extensive/WizardForm/types";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isNotNull } from "@/utils/array";
 
 import InputTable, { InputTableProps, InputTableRow } from "./InputTable";
@@ -14,7 +13,7 @@ export type RHFInputTableProps = Omit<InputTableProps, "value" | "onChange" | "e
   PropsWithChildren<{
     onChangeCapture?: () => void;
     formHook?: UseFormReturn;
-    headers: FormTableHeaderDto[];
+    headers: TableHeader[];
     fieldId: string;
   }>;
 

@@ -60,5 +60,7 @@ export const MapInputField: FormFieldFactory = {
       }
     }
     return formValues;
-  }
+  },
+
+  formBuilderDefaults: ({ formModelType }) => ({ model: formModelType })
 };

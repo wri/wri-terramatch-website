@@ -1,5 +1,6 @@
 import { isBoolean } from "lodash";
 
+import ConditionalAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/ConditionalAdditionalOptions";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
@@ -39,5 +40,9 @@ export const ConditionalField: FormFieldFactory = {
       .childIds(name)
       .map(fieldsProvider.fieldById)
       .filter(isNotNull)
-      .reduce((values, child) => normalizedFormFieldData(values, child, fieldsProvider), formValues)
+      .reduce((values, child) => normalizedFormFieldData(values, child, fieldsProvider), formValues),
+
+  formBuilderAdditionalOptions: ({ linkedFieldsData, getSource, onDeleteQuestion }) => (
+    <ConditionalAdditionalOptions {...{ linkedFieldsData, getSource, onDeleteQuestion }} />
+  )
 };

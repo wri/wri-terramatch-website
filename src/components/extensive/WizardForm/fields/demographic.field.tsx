@@ -67,5 +67,7 @@ export const DemographicField: FormFieldFactory = {
     return (
       <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
     );
-  }
+  },
+
+  formBuilderDefaults: ({ collection }) => ({ collection })
 };

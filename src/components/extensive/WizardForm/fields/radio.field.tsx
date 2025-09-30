@@ -1,3 +1,4 @@
+import { DefaultOptionsSetter } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/DefaultOptionsSetter";
 import RHFSelect from "@/components/elements/Inputs/Select/RHFSelect";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
@@ -19,5 +20,7 @@ export const RadioField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <DefaultOptionsSetter {...{ field, getSource }} />
 };

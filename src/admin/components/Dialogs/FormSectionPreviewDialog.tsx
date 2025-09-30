@@ -11,7 +11,6 @@ import {
 import { FC } from "react";
 import { useForm, useFormContext } from "react-hook-form";
 
-import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
@@ -21,18 +20,26 @@ import Log from "@/utils/log";
 
 interface FormSectionPreviewDialogProps extends DialogProps {
   stepId?: string;
-  linkedFieldData: FormQuestionField[];
 }
 
-export const FormSectionPreviewDialog: FC<FormSectionPreviewDialogProps> = ({ linkedFieldData, stepId, ...props }) => {
+type SectionPreviewContentProps = {
+  stepId: string;
+};
+
+const SectionPreviewContent: FC<SectionPreviewContentProps> = ({ stepId }) => {
   const steps = useFormContext<FormBuilderData>().getValues().steps;
   const fieldsProvider = useLocalStepsProvider(steps ?? []);
   // Create a form hook for the preview so it doesn't try to interact with the form builder data.'
   const formHook = useForm();
-
-  if (stepId == null) return null;
-
   return (
+    <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <FormStep stepId={stepId} formHook={formHook} onChange={() => Log.debug("FormStep onChange")} />
+    </WizardFormProvider>
+  );
+};
+
+export const FormSectionPreviewDialog: FC<FormSectionPreviewDialogProps> = ({ stepId, ...props }) =>
+  stepId == null ? null : (
     <ModalProvider>
       <Dialog {...props} fullWidth maxWidth="lg" sx={{ zIndex: 40 }}>
         {props.open ? (
@@ -47,9 +54,7 @@ export const FormSectionPreviewDialog: FC<FormSectionPreviewDialogProps> = ({ li
             <Divider />
 
             <DialogContent>
-              <WizardFormProvider fieldsProvider={fieldsProvider}>
-                <FormStep stepId={stepId} formHook={formHook} onChange={() => Log.debug("FormStep onChange")} />
-              </WizardFormProvider>
+              <SectionPreviewContent stepId={stepId} />
             </DialogContent>
 
             <DialogActions sx={{ padding: 3 }}>
@@ -63,4 +68,3 @@ export const FormSectionPreviewDialog: FC<FormSectionPreviewDialogProps> = ({ li
       <ModalRoot />
     </ModalProvider>
   );
-};
