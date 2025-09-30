@@ -85,7 +85,7 @@ const getSchemaFields = (fields: FieldDefinition[], t: typeof useT, framework: F
               otherwise: () => yup.mixed().nullable()
             })
             .nullable()
-            .lable(child.label ?? "");
+            .label(child.label ?? "");
 
           if (child.validation?.required === true) {
             schema[child.name] = schema[child.name].required();
