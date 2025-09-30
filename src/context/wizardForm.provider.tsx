@@ -87,7 +87,7 @@ export const useLocalStepsProvider = (localSteps: LocalStep[]) =>
 export const useApiFieldsProvider = (
   formUuid?: string | null,
   feedbackFields?: string[] | null,
-  fieldFilter: (field: FormQuestionDto) => boolean = () => true
+  fieldFilter?: (field: FormQuestionDto) => boolean
 ): [boolean, FormFieldsProvider] => {
   const enabled = formUuid != null;
   const [formLoaded, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
@@ -101,7 +101,8 @@ export const useApiFieldsProvider = (
         form?.uuid == null
           ? []
           : selectSections(form.uuid).reduce((steps, section) => {
-              const filteredQuestions = selectQuestions(section.uuid).filter(fieldFilter);
+              const allQuestions = selectQuestions(section.uuid);
+              const filteredQuestions = fieldFilter == null ? allQuestions : allQuestions.filter(fieldFilter);
               // It's possible our filter included a child question but not its parent.
               const missingParentIds = uniq(
                 filteredQuestions
