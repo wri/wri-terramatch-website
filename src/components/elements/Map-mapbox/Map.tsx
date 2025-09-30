@@ -202,11 +202,6 @@ export const MapContainer = ({
   const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
   const [userChangedStyle, setUserChangedStyle] = useState(false);
 
-  const handleStyleChange = (newStyle: MapStyle) => {
-    setCurrentStyle(newStyle);
-    setUserChangedStyle(true);
-  };
-
   const {
     polygonsData,
     polygonsCentroids,
@@ -249,6 +244,10 @@ export const MapContainer = ({
       setShouldRefetchMediaData(true);
     }
   });
+  const handleStyleChange = (newStyle: MapStyle) => {
+    setCurrentStyle(newStyle);
+    setUserChangedStyle(true);
+  };
   if (!mapFunctions) {
     return null;
   }
@@ -434,7 +433,6 @@ export const MapContainer = ({
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
-
     const handleDelete = (id: string) => {
       deleteFile({ pathParams: { uuid: id } });
       closeModal(ModalId.DELETE_IMAGE);
