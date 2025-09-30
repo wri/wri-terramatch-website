@@ -313,7 +313,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     className="relative"
                   >
                     <button
-                      className="flex items-center justify-center rounded-full hover:bg-opacity-60 absolute left-3 top-[50%] translate-y-[-50%] pointer-events-none"
+                      className="flex items-center justify-center rounded-full hover:bg-opacity-60 pointer-events-none absolute left-3 top-[50%] translate-y-[-50%]"
                     >
                       <div
                         style={
