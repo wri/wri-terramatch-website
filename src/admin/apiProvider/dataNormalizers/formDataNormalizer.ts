@@ -5,31 +5,27 @@ import { Identifier } from "react-admin";
 import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formDataProvider";
 import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { AdditionalInputTypes } from "@/admin/types/common";
+import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
 import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
 import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
-import { FormFullDto, FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-// The form editor expects a single structure.
-export type FormEditorForm = FormFullDto & {
-  id: string;
-  sections: (FormSectionDto & {
-    questions: (FormQuestionDto & {
-      children?: FormQuestionDto[];
-    })[];
-  })[];
-};
-
-export const normalizeV3Form = (form: FormFullDto): FormEditorForm => ({
+export const normalizeV3Form = (form: FormFullDto): FormBuilderData => ({
   ...form,
   id: form.uuid,
-  sections: selectSections(form.uuid).map(section => ({
-    ...section,
-    questions: selectQuestions(section.uuid).map(question => ({
-      ...question,
-      children: selectChildQuestions(question.uuid)
-    }))
-  }))
+  steps: selectSections(form.uuid).map(section => {
+    const { uuid, ...step } = section;
+    return {
+      ...step,
+      id: uuid,
+      fields: selectQuestions(uuid).map(question => ({
+        ...questionDtoToDefinition(question),
+        children: selectChildQuestions(question.uuid).map(questionDtoToDefinition)
+      }))
+    };
+  })
 });
 
 //Response normalizers

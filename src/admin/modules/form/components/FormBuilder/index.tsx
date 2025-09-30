@@ -1,7 +1,7 @@
 import { Delete as DeleteIcon, ExpandMore, UploadFile } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
 import { camelCase, get } from "lodash";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
@@ -18,11 +18,14 @@ import {
   appendAdditionalFormQuestionFields,
   QuestionArrayInput
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { maxFileSize } from "@/admin/utils/forms";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useLinkedFields } from "@/connections/util/Form";
-import { useDeleteV2AdminFormsQuestionUUID, useDeleteV2AdminFormsSectionUUID } from "@/generated/apiComponents";
-import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import { LocalSteps } from "@/context/wizardForm.provider";
+import { FormSectionRead } from "@/generated/apiSchemas";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
+import Log from "@/utils/log";
 
 type FormType = (typeof Forms.FORM_TYPES)[number];
 export const formTypeChoices: { id: FormType; name: string }[] = [
@@ -44,15 +47,16 @@ const toFormModelType = (formTypeChoice: string) => {
 };
 
 export const FormBuilderForm = () => {
-  const { getValues, watch } = useFormContext<FormRead>();
+  const { getValues, watch } = useFormContext<FormBuilderData>();
   const modelTypeValue = watch("type");
   const formModelTypes = useMemo(
     () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
     [modelTypeValue]
   );
 
-  const { mutateAsync: deleteSection } = useDeleteV2AdminFormsSectionUUID();
-  const { mutateAsync: deleteQuestion } = useDeleteV2AdminFormsQuestionUUID();
+  // TODO (NJC) To be replaced in TM-2417 / TM-2418
+  // const { mutateAsync: deleteSectionAsync } = useDeleteV2AdminFormsSectionUUID();
+  // const { mutateAsync: deleteQuestionAsync } = useDeleteV2AdminFormsQuestionUUID();
   const [previewSection, setPreviewSection] = useState<FormSectionRead>();
 
   const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
@@ -61,27 +65,35 @@ export const FormBuilderForm = () => {
     [linkedFieldsData]
   );
 
-  const DeleteSection = async (index: number, source: string) => {
-    const values = getValues();
-    //@ts-ignore
-    const uuid = get(values, source)[index]?.uuid;
+  const deleteSection = useCallback(
+    async (index: number, source: string) => {
+      const values = getValues();
+      const uuid = (get(values, source) as LocalSteps)[index]?.id;
+      Log.info("deleteSection", { index, values, uuid });
 
-    if (uuid) {
-      //@ts-ignore
-      await deleteSection({ pathParams: { uuid } });
-    }
-  };
+      // TODO (NJC) To be replaced in TM-2417 / TM-2418
+      // if (uuid) {
+      //   //@ts-ignore
+      //   await deleteSectionAsync({ pathParams: { uuid } });
+      // }
+    },
+    [getValues]
+  );
 
-  const DeleteQuestion = async (index: number, source: string) => {
-    const values = getValues();
-    //@ts-ignore
-    const uuid = get(values, source)[index]?.uuid;
+  const deleteQuestion = useCallback(
+    async (index: number, source: string) => {
+      const values = getValues();
+      const uuid = (get(values, source) as FieldDefinition[])[index]?.name;
+      Log.info("deleteQuestion", { index, source, values, uuid });
 
-    if (uuid) {
-      //@ts-ignore
-      await deleteQuestion({ pathParams: { uuid } });
-    }
-  };
+      // TODO (NJC) To be replaced in TM-2417 / TM-2418
+      // if (uuid) {
+      //   //@ts-ignore
+      //   await deleteQuestionAsync({ pathParams: { uuid } });
+      // }
+    },
+    [getValues]
+  );
 
   return (
     <>
@@ -159,11 +171,7 @@ export const FormBuilderForm = () => {
               </AccordionDetails>
             </Accordion>
           </div>
-          <ArrayInput
-            source="sections"
-            label="Form Sections"
-            validate={minLength(1, "At least one section is required")}
-          >
+          <ArrayInput source="steps" label="Form Sections" validate={minLength(1, "At least one section is required")}>
             <AccordionFormIterator
               accordionSummaryTitle={(index, fields) =>
                 `Section ${index + 1} of ${fields.length} ${fields[index].title && `(${fields[index].title})`}`
@@ -173,7 +181,7 @@ export const FormBuilderForm = () => {
                 <RemoveItemButton
                   variant="text"
                   label="Delete Section"
-                  onDelete={DeleteSection}
+                  onDelete={deleteSection}
                   modalTitle="Delete Section"
                   modalContent="This is permanent, are you sure you want to delete this section?"
                 >
@@ -198,11 +206,11 @@ export const FormBuilderForm = () => {
               />
 
               <QuestionArrayInput
-                source="questions"
+                source="fields"
                 label="Form Questions"
                 title="Question"
                 linkedFieldsData={fullLinkedFields}
-                onDeleteQuestion={DeleteQuestion}
+                onDeleteQuestion={deleteQuestion}
                 validate={minLength(1, "At least one question is required")}
                 formTitle={getValues()?.title}
               />

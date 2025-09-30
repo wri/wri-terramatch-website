@@ -1,5 +1,5 @@
 import { Delete as DeleteIcon } from "@mui/icons-material";
-import { ReactElement, useCallback, useRef, useState } from "react";
+import { FC, ReactElement, useCallback, useRef, useState } from "react";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -21,7 +21,7 @@ import { FormQuestionPreviewDialog } from "@/admin/components/Dialogs/FormQuesti
 import { RichTextInput } from "@/admin/components/RichTextInput/RichTextInput";
 import AdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions";
 import { AdditionalInputTypes, Choice } from "@/admin/types/common";
-import { FormQuestionRead } from "@/generated/apiSchemas";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { LinkedFieldDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export interface QuestionArrayInputProps extends Omit<ArrayInputProps, "children"> {
@@ -45,7 +45,7 @@ export const appendAdditionalFormQuestionFields = (originalList: LinkedFieldDto[
   ...originalList
 ];
 
-export const QuestionArrayInput = ({
+export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
   title,
   linkedFieldsData,
   onDeleteQuestion,
@@ -54,14 +54,19 @@ export const QuestionArrayInput = ({
   children,
   formTitle,
   ...arrayInputProps
-}: QuestionArrayInputProps) => {
-  const [previewQuestion, setPreviewQuestion] = useState<FormQuestionRead | undefined>();
+}) => {
+  const [previewQuestionId, setPreviewQuestionId] = useState<string>();
   const linkedFieldChoices = linkedFieldsData?.map(({ id, name }) => ({ id, name } as Choice)) || [];
   const selectRef = useRef<HTMLDivElement | null>(null);
 
   const getFieldById = useCallback(
     (fieldId: string) => linkedFieldsData.find(({ id }) => id === fieldId),
     [linkedFieldsData]
+  );
+
+  const onSelectPreview = useCallback(
+    (field: Record<any, any>) => setPreviewQuestionId((field as FieldDefinition).name),
+    []
   );
 
   return (
@@ -83,7 +88,7 @@ export const QuestionArrayInput = ({
               <DeleteIcon />
             </RemoveItemButton>
           }
-          summaryChildren={!isChildQuestion && <PreviewButton onClick={setPreviewQuestion} />}
+          summaryChildren={!isChildQuestion && <PreviewButton onClick={onSelectPreview} />}
         >
           <AutocompleteInput
             source="linkedFieldKey"
@@ -132,10 +137,10 @@ export const QuestionArrayInput = ({
         </AccordionFormIterator>
       </ArrayInput>
       <FormQuestionPreviewDialog
-        open={!!previewQuestion}
-        question={previewQuestion}
-        linkedFieldData={linkedFieldsData as any[]}
-        onClose={() => setPreviewQuestion(undefined)}
+        open={previewQuestionId != null}
+        questionId={previewQuestionId}
+        linkedFieldData={linkedFieldsData}
+        onClose={() => setPreviewQuestionId(undefined)}
         formTitle={formTitle}
       />
     </div>
