@@ -31,7 +31,7 @@ const isLoaded = (
   { byParentCode, fetchFailure }: GadmConnection,
   { level, parentCodes, enabled }: GadmConnectionProps
 ) => {
-  if (!enabled) return true;
+  if (enabled === false) return true;
   if (level > 0 && isEmpty(parentCodes)) return true; // Prevent attempting to load when our props aren't yet valid.
   return filter(Object.values(byParentCode ?? {})).length === (parentCodes?.length ?? 1) || fetchFailure != null;
 };
