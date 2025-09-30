@@ -448,6 +448,10 @@ export const getFormEntries = (
             return `${v.title}: ${formatOptions(v.value ?? "")}`;
           }
 
+          if (v.name === "monetary-damage") {
+            return `${v.title}: ${v.value ? `$${Number(v.value)}` : t("Answer Not Provided")}`;
+          }
+
           return `${v.title}: ${v.value ?? t("Answer Not Provided")}`;
         });
 
