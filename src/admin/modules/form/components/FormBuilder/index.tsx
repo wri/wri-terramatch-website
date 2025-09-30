@@ -20,10 +20,9 @@ import {
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { maxFileSize } from "@/admin/utils/forms";
-import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useLinkedFields } from "@/connections/util/Form";
 import { LocalSteps } from "@/context/wizardForm.provider";
-import { FormSectionRead } from "@/generated/apiSchemas";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 import Log from "@/utils/log";
 
@@ -57,7 +56,11 @@ export const FormBuilderForm = () => {
   // TODO (NJC) To be replaced in TM-2417 / TM-2418
   // const { mutateAsync: deleteSectionAsync } = useDeleteV2AdminFormsSectionUUID();
   // const { mutateAsync: deleteQuestionAsync } = useDeleteV2AdminFormsQuestionUUID();
-  const [previewSection, setPreviewSection] = useState<FormSectionRead>();
+  const [previewSectionId, setPreviewSectionId] = useState<string>();
+  const onSelectPreview = useCallback(
+    (field: Record<any, any>) => setPreviewSectionId((field as StepDefinition).id),
+    []
+  );
 
   const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
   const fullLinkedFields = useMemo(
@@ -188,7 +191,7 @@ export const FormBuilderForm = () => {
                   <DeleteIcon />
                 </RemoveItemButton>
               }
-              summaryChildren={<PreviewButton onClick={setPreviewSection} />}
+              summaryChildren={<PreviewButton onClick={onSelectPreview} />}
             >
               <TextInput
                 source="title"
@@ -234,10 +237,10 @@ export const FormBuilderForm = () => {
           </div>
 
           <FormSectionPreviewDialog
-            open={!!previewSection}
+            open={previewSectionId != null}
             linkedFieldData={appendAdditionalFormQuestionFields(linkedFieldsData ?? [])}
-            section={previewSection}
-            onClose={() => setPreviewSection(undefined)}
+            stepId={previewSectionId}
+            onClose={() => setPreviewSectionId(undefined)}
           />
         </>
       )}
