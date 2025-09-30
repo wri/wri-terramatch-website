@@ -11,28 +11,20 @@ import {
 
 import {
   normalizeFormCreatePayload,
-  normalizeFormObject
+  normalizeFormObject,
+  normalizeV3Form
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import {
-  loadForm,
-  loadFormIndex,
-  loadLinkedFields,
-  selectChildQuestions,
-  selectQuestions,
-  selectSections
-} from "@/connections/util/Form";
+import { loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
 import {
   DeleteV2AdminFormsUUIDError,
   fetchDeleteV2AdminFormsUUID,
-  fetchGetV2FormsUUID,
   fetchPatchV2AdminFormsUUID,
   fetchPostV2AdminForms,
   PostV2AdminFormsError
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
-import { FormFullDto, FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
@@ -74,16 +66,6 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
   }
 
   return Promise.all(uploadPromises);
-};
-
-// The form editor expects a single structure.
-export type FormEditorForm = FormFullDto & {
-  id: string;
-  sections: (FormSectionDto & {
-    questions: (FormQuestionDto & {
-      children?: FormQuestionDto[];
-    })[];
-  })[];
 };
 
 export const formDataProvider: FormDataProvider = {
@@ -164,41 +146,21 @@ export const formDataProvider: FormDataProvider = {
       throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
 
-    const formDto = connected.data!;
-    const form: FormEditorForm = {
-      ...formDto,
-      id: formDto.uuid,
-      sections: selectSections(formDto.uuid).map(section => ({
-        ...section,
-        questions: selectQuestions(section.uuid).map(question => ({
-          ...question,
-          children: selectChildQuestions(question.uuid)
-        }))
-      }))
-    };
-    return { data: form } as RecordType;
+    return { data: normalizeV3Form(connected.data!) } as RecordType;
   },
 
   async getMany(_, params) {
-    try {
-      //can be optimized by having a getMany endpoint from backend
-      const response = await Promise.all(
-        params.ids.map(id =>
-          fetchGetV2FormsUUID({
-            pathParams: { uuid: id as string }
-          })
-        )
-      );
-
-      return {
-        data: response?.map(item =>
-          //@ts-ignore
-          normalizeFormObject(item.data)
-        )
-      } as GetManyResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
+    const response = await Promise.all(
+      params.ids.map(async id => await loadForm({ id: id as string, translated: false }))
+    );
+    const failed = response.find(({ loadFailure }) => loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Form get fetch failed", failed.loadFailure);
     }
+
+    return {
+      data: response.map(({ data }) => normalizeV3Form(data!))
+    } as GetManyResult;
   },
 
   // @ts-ignore

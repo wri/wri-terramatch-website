@@ -10062,124 +10062,6 @@ export const useGetV2AdminFormsSubmissionsUUIDExport = <TData = Record<string, a
   );
 };
 
-export type GetV2FormsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FormsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsUUIDResponse = {
-  id?: number;
-  uuid?: string;
-  type?: string;
-  version?: number;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  framework_key?: string;
-  duration?: string;
-  deadline_at?: string;
-  documentation?: string;
-  documentation_label?: string;
-  submission_message?: string;
-  published?: boolean;
-  stage_id?: string;
-  funding_programme_uuid?: string;
-  funding_programme_framework_key?: string;
-  options_other?: boolean;
-  form_sections?: {
-    order?: number;
-    form_id?: number;
-    form_questions?: {
-      id?: number;
-      uuid?: string;
-      form_section_id?: number;
-      label?: string;
-      validation?: string[];
-      parent_id?: string;
-      linked_field_key?: string;
-      children?: Record<string, any>[];
-      multichoice?: boolean;
-      order?: number;
-      options?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      table_headers?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      additional_text?: string;
-      additional_url?: string;
-      show_on_parent_condition?: boolean;
-      input_type?:
-        | "date"
-        | "text"
-        | "long-text"
-        | "select"
-        | "checkboxes"
-        | "radio"
-        | "number"
-        | "image"
-        | "file"
-        | "conditional";
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  /**
-   * this is a list of key value pairs eg. slug: name
-   */
-  tags?: string[];
-  updated_by?: number;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type GetV2FormsUUIDVariables = {
-  pathParams: GetV2FormsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsUUID = (variables: GetV2FormsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2FormsUUIDResponse, GetV2FormsUUIDError, undefined, {}, {}, GetV2FormsUUIDPathParams>({
-    url: "/v2/forms/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2FormsUUID = <TData = GetV2FormsUUIDResponse>(
-  variables: GetV2FormsUUIDVariables,
-  options?: Omit<reactQuery.UseQueryOptions<GetV2FormsUUIDResponse, GetV2FormsUUIDError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsUUIDResponse, GetV2FormsUUIDError, TData>(
-    queryKeyFn({ path: "/v2/forms/{UUID}", operationId: "getV2FormsUUID", variables }),
-    ({ signal }) => fetchGetV2FormsUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2AdminFundingProgrammeStageError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2AdminFundingProgrammeStageResponse = {
@@ -22816,11 +22698,6 @@ export type QueryOperation =
       path: "/v2/admin/forms/submissions/{UUID}/export";
       operationId: "getV2AdminFormsSubmissionsUUIDExport";
       variables: GetV2AdminFormsSubmissionsUUIDExportVariables;
-    }
-  | {
-      path: "/v2/forms/{UUID}";
-      operationId: "getV2FormsUUID";
-      variables: GetV2FormsUUIDVariables;
     }
   | {
       path: "/v2/funding-programme";

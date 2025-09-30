@@ -6,7 +6,31 @@ import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formData
 import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { AdditionalInputTypes } from "@/admin/types/common";
+import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
 import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
+import { FormFullDto, FormQuestionDto, FormSectionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+// The form editor expects a single structure.
+export type FormEditorForm = FormFullDto & {
+  id: string;
+  sections: (FormSectionDto & {
+    questions: (FormQuestionDto & {
+      children?: FormQuestionDto[];
+    })[];
+  })[];
+};
+
+export const normalizeV3Form = (form: FormFullDto): FormEditorForm => ({
+  ...form,
+  id: form.uuid,
+  sections: selectSections(form.uuid).map(section => ({
+    ...section,
+    questions: selectQuestions(section.uuid).map(question => ({
+      ...question,
+      children: selectChildQuestions(question.uuid)
+    }))
+  }))
+});
 
 //Response normalizers
 /**
