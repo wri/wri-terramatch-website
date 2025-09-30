@@ -31,7 +31,6 @@ import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeS
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { formatOptions } from "@/constants/options/disturbanceReports";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
@@ -408,58 +407,6 @@ export const getFormEntries = (
           t
         );
         outputArr.push(...children);
-        break;
-      }
-
-      case FieldType.DisturbanceReportEntries: {
-        const rawValue = values?.[f.name];
-        const modValue = rawValue?.map((v: any) => {
-          const parsedValue =
-            typeof v.value === "string" && v.value.startsWith("[") && v.value.endsWith("]")
-              ? JSON.parse(v.value)
-              : v.value;
-          if (v.name == "site-affected") {
-            const valueArray = parsedValue;
-            if (Array.isArray(valueArray) && valueArray.length > 0) {
-              const sitesAffectedArray = valueArray.map((site: any) => `-${site?.siteName ?? ""}.`);
-              return `${v.title}:<br/> ${sitesAffectedArray.join("<br/>")}`;
-            }
-            return `${v.title}: ${t("Answer Not Provided")}`;
-          } else if (v.name == "polygon-affected") {
-            const valueArray = parsedValue;
-            if (Array.isArray(valueArray) && valueArray.length > 0) {
-              return `${v.title}:<br/> ${valueArray
-                .map((batch: any) => {
-                  const batchPolygons = batch.map((p: any) => p?.polyName ?? "").join(", ");
-                  return `-${batchPolygons}.`;
-                })
-                .join("<br/>")}`;
-            }
-            return `${v.title}: ${t("Answer Not Provided")}`;
-          }
-
-          if (v.name === "disturbance-subtype" || v.name === "property-affected") {
-            if (Array.isArray(parsedValue)) {
-              return `${v.title}: ${formatOptions(parsedValue).join(", ")}`;
-            }
-          }
-
-          if (v.name === "intensity" || v.name === "disturbance-type") {
-            return `${v.title}: ${formatOptions(v.value ?? "")}`;
-          }
-
-          if (v.name === "monetary-damage") {
-            return `${v.title}: ${v.value ? `$${Number(v.value)}` : t("Answer Not Provided")}`;
-          }
-
-          return `${v.title}: ${v.value ?? t("Answer Not Provided")}`;
-        });
-
-        outputArr.push({
-          title: f.label ?? "",
-          type: f.type,
-          value: modValue.join("<br/>")
-        });
         break;
       }
 

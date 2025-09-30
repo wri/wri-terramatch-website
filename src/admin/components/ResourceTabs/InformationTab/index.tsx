@@ -53,10 +53,6 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
       return <ReportInformationAside type={type} parent={{ label: "Nursery", source: "nurseryName" }} />;
     case "financial-reports":
       return <ReportInformationAside type={type} parent={{ label: "Financial Report", source: "organisationName" }} />;
-    case "disturbance-reports":
-      return (
-        <ReportInformationAside type={type} parent={{ label: "Disturbance Report", source: "organisationName" }} />
-      );
     default:
       return null;
   }
@@ -98,8 +94,6 @@ const InformationTab: FC<IProps> = props => {
         return "Reported Data";
       case "financial-reports":
         return "Financial History";
-      case "disturbance-reports":
-        return "Disturbance Report";
       default:
         return "Information";
     }
