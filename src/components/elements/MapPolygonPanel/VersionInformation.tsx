@@ -103,7 +103,7 @@ const VersionInformation = ({
   const uploadFiles = async () => {
     const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
     const uploadPromises = [];
-    const polygonSelectedUuid = selectedPolyVersion?.uuid ?? editPolygon.primary_uuid;
+    const polygonSelectedUuid = selectedPolyVersion?.primary_uuid ?? editPolygon.primary_uuid;
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();

@@ -91,7 +91,7 @@ const VersionHistory = ({
 
   const uploadFiles = async () => {
     const uploadPromises = [];
-    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const polygonSelectedUuid = selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
     setIsLoadingDropdown(true);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
