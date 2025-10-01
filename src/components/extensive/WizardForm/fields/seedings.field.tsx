@@ -1,0 +1,34 @@
+import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
+import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
+import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import {
+  appendTableAnswers,
+  dataTableEntryValue,
+  treeSpeciesEntryValue
+} from "@/components/extensive/WizardForm/utils";
+import { arrayValidator } from "@/utils/yup";
+
+export const SeedingsField: FormFieldFactory = {
+  createValidator: arrayValidator,
+
+  renderInput: ({ additionalProps, collection, model }, sharedProps) => {
+    if (additionalProps?.capture_count === true) {
+      return <RHFSeedingTableInput {...sharedProps} error={sharedProps.error as any} model={model!} withNumbers />;
+    } else {
+      return <RHFSeedingTable {...sharedProps} collection={collection ?? ""} captureCount={false} />;
+    }
+  },
+
+  appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
+    const headers = getSeedingTableColumns(undefined, additionalProps?.capture_count === true);
+    appendTableAnswers(csv, label, headers, formValues[name]);
+  },
+
+  getEntryValue: (field, formValues, { t, entity, fieldsProvider }) => {
+    if (field.additionalProps?.capture_count === true) {
+      return treeSpeciesEntryValue("seeds", entity, field, formValues, fieldsProvider);
+    } else {
+      return dataTableEntryValue(getSeedingTableColumns(t, false), field, formValues);
+    }
+  }
+};

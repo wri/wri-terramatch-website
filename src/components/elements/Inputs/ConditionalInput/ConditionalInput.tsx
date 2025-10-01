@@ -1,34 +1,44 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
 import List from "@/components/extensive/List/List";
-import { FieldMapper } from "@/components/extensive/WizardForm/FieldMapper";
-import { FormField } from "@/components/extensive/WizardForm/types";
+import FormField from "@/components/extensive/WizardForm/FormField";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValueWithBoolean } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
-export interface ConditionalInputProps extends Omit<InputProps, "defaultValue">, UseControllerProps {
-  fields: FormField[];
+export interface ConditionalInputProps extends Omit<InputProps, "defaultValue" | "type">, UseControllerProps {
+  fieldId: string;
   formHook: UseFormReturn;
   onChangeCapture: () => void;
 }
 
 const ConditionalInput = (props: ConditionalInputProps) => {
-  const { fields, formHook, onChangeCapture, ...inputProps } = props;
+  const { fieldId, formHook, onChangeCapture, ...inputProps } = props;
   const [valueCondition, setValueCondition] = useState<OptionValueWithBoolean>();
   const t = useT();
   const { field } = useController(props);
+  const { childIds, fieldById } = useFieldsProvider();
+
+  const value = formHook.watch(fieldId);
+
+  const children = useMemo(() => childIds(fieldId).map(fieldById).filter(isNotNull), [childIds, fieldById, fieldId]);
+  const displayChildren = useMemo(
+    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value),
+    [children, value]
+  );
 
   useEffect(() => {
-    fields.forEach(field => {
-      if (field.condition == formHook.watch(props.name)) formHook.register(field.name);
+    children.forEach(child => {
+      if (child.showOnParentCondition === value) formHook.register(child.name);
     });
-    formHook.clearErrors(props.name);
+    formHook.clearErrors(fieldId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields, formHook.watch(props.name)]);
+  }, [children, fieldId, value]);
 
   const onChange = (value: OptionValueWithBoolean) => {
     setValueCondition(value);
@@ -50,28 +60,20 @@ const ConditionalInput = (props: ConditionalInputProps) => {
     }
     const values = props?.formHook?.formState?.defaultValues;
     let fieldsCount = 0;
-    fields.forEach(fieldChildren => {
-      if (
-        values &&
-        Array.isArray(values[fieldChildren.name]) &&
-        values[fieldChildren.name]?.length > 0 &&
-        field.value == null
-      ) {
+    children.forEach(child => {
+      if (values && Array.isArray(values[child.name]) && values[child.name]?.length > 0 && field.value == null) {
         field.onChange(true);
         formHook.reset(formHook.getValues());
         return;
       }
       if (values && (field.value == true || field.value == null)) {
-        if (
-          (Array.isArray(values[fieldChildren.name]) && values[fieldChildren.name]?.length < 1) ||
-          values[fieldChildren.name] == null
-        ) {
+        if ((Array.isArray(values[child.name]) && values[child.name]?.length < 1) || values[child.name] == null) {
           fieldsCount++;
         }
       }
     });
 
-    if (fieldsCount == fields?.length) {
+    if (fieldsCount == children.length) {
       field.onChange(false);
     }
   });
@@ -89,10 +91,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
       />
 
       <List
-        items={fields.filter(field => field.condition === formHook.watch(props.name))}
+        items={displayChildren}
         uniqueId="name"
         itemClassName="mt-8"
-        render={field => <FieldMapper field={field} formHook={formHook} onChange={onChangeCapture} />}
+        render={child => <FormField key={child.name} field={child} formHook={formHook} onChange={onChangeCapture} />}
       />
     </>
   );

@@ -108,18 +108,6 @@ const AdditionalOptions: FC<AdditionalOptionsProps> = ({
         </>
       );
 
-    case "number":
-      if (field.id === "pro-pit-long-proposed" || field.id === "pro-pit-lat-proposed") {
-        return (
-          <>
-            <NumberInput source={getSource("min_number_limit")} label="Minimum Number Limit" />
-            <NumberInput source={getSource("max_number_limit")} label="Maximum Number Limit" />
-          </>
-        );
-      } else {
-        return null;
-      }
-
     default:
       return null;
   }

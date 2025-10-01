@@ -1,24 +1,23 @@
-import { defaults } from "lodash";
+import { camelCase } from "lodash";
 import { notFound } from "next/navigation";
 import { useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
+import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import EntityProvider from "@/context/entity.provider";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { FormModelType } from "@/connections/util/Form";
+import { toFramework } from "@/context/framework.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
-import { useEntityForm } from "@/hooks/useFormGet";
+import { singularEntityNameToPlural } from "@/helpers/entity";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
-import { EntityName } from "@/types/common";
+import { EntityName, isSingularEntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 export const EntityEdit = () => {
   const { id } = useParams<"id">();
@@ -43,79 +42,85 @@ export const EntityEdit = () => {
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
 
-  const { formData: formResponse, isLoading, loadError } = useEntityForm(entityName, entityUUID);
+  const {
+    formData: entityResponse,
+    form,
+    isLoading,
+    loadError,
+    formLoadFailure
+  } = useEntityForm(entityName, entityUUID);
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
-  // @ts-ignore
-  const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
-
-  const entity = {
-    entityName: pluralEntityNameToSingular(entityName),
-    entityUUID
-  };
-  const framework = formData?.form?.framework_key as Framework;
-  const formSteps = useGetCustomFormSteps(formData.form, entity, framework);
-
-  const sourceData = useMemo(
-    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    [formData?.answers, formData?.update_request?.content]
-  );
-  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
-
-  // @ts-ignore
-  const { form_title: title } = formData;
-
-  if (loadError) {
-    return notFound();
-  }
+  const model = useMemo(() => {
+    const model = camelCase(
+      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
+    ) as FormModelType;
+    return { model, uuid: entityUUID };
+  }, [entityName, entityUUID]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
+  const framework = toFramework(form?.frameworkKey);
+  const defaultValues = useDefaultValues(entityResponse?.data, fieldsProvider);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${title}`;
+      return `${entityValue?.data?.site?.name} ${entityResponse?.data.form_title}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${title}`;
+      return `${entityValue?.data?.nursery?.name} ${entityResponse?.data.form_title}`;
     }
-    return title;
-  }, [entityName, entityValue, title]);
+    return form?.title;
+  }, [entityName, entityResponse, entityValue, form?.title]);
 
   const organisation = entityValue?.data?.organisation;
 
-  const formSubmissionOrg = {
-    uuid: organisation?.uuid,
-    type: organisation?.type,
-    currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
-    start_month: entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
-  };
+  const orgDetails = useMemo(
+    (): OrgFormDetails => ({
+      uuid: organisation?.uuid,
+      currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
+      startMonth:
+        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
+    }),
+    [
+      entityName,
+      entityValue?.data?.currency,
+      entityValue?.data?.fin_start_month,
+      organisation?.currency,
+      organisation?.fin_start_month,
+      organisation?.uuid
+    ]
+  );
+
+  if (loadError != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadError, formLoadFailure });
+    return notFound();
+  }
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <LoadingContainer loading={isLoading}>
-        <FrameworkProvider frameworkKey={framework}>
-          <EntityProvider entityUuid={entityUUID} entityName={entityName}>
-            <WizardForm
-              steps={formSteps!}
-              errors={error}
-              onBackFirstStep={() => navigate("..")}
-              onChange={data => updateEntity({ answers: normalizedFormData(data, formSteps!) })}
-              formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-              onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-              defaultValues={defaultValues}
-              title={bannerTitle}
-              tabOptions={{
-                markDone: true,
-                disableFutureTabs: true
-              }}
-              summaryOptions={{
-                title: "Review Details",
-                downloadButtonText: "Download"
-              }}
-              roundedCorners
-              hideSaveAndCloseButton
-              formSubmissionOrg={formSubmissionOrg}
-            />
-          </EntityProvider>
-        </FrameworkProvider>
+      <LoadingContainer loading={isLoading || !providerLoaded}>
+        <WizardForm
+          models={model}
+          fieldsProvider={fieldsProvider}
+          framework={framework}
+          errors={error}
+          onBackFirstStep={() => navigate("..")}
+          onChange={data => updateEntity({ answers: normalizedFormData(data, fieldsProvider) })}
+          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
+          defaultValues={defaultValues}
+          title={bannerTitle}
+          tabOptions={{
+            markDone: true,
+            disableFutureTabs: true
+          }}
+          summaryOptions={{
+            title: "Review Details",
+            downloadButtonText: "Download"
+          }}
+          roundedCorners
+          hideSaveAndCloseButton
+          orgDetails={orgDetails}
+        />
       </LoadingContainer>
     </div>
   );

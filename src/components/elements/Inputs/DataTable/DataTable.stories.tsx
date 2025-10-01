@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
 import {
-  getFundingTypeFields,
+  getFundingTypeQuestions,
   getFundingTypeTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
 
@@ -33,7 +33,7 @@ export const Default: Story = {
     description: "Add a description for jobs created.",
     addButtonCaption: "Add funding source",
 
-    fields: getFundingTypeFields(),
+    fields: getFundingTypeQuestions(),
     tableColumns: getFundingTypeTableColumns() as any[]
   }
 };

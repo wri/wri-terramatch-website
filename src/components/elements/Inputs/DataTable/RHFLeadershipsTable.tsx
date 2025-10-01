@@ -2,9 +2,7 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren, useCallback, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
@@ -143,62 +141,40 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
         {
           label: t("Team Member first name"),
           name: "first_name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Team member last name"),
           name: "last_name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Team member Gender"),
           name: "gender",
-          type: FieldType.Dropdown,
-          validation: yup.string().required(),
-          fieldProps: {
-            options: getGenderOptions(t),
-            required: true
-          }
+          inputType: "select",
+          options: getGenderOptions(t),
+          validation: { required: true }
         },
         {
           label: t("Age"),
           name: "age",
-          type: FieldType.Input,
-          validation: yup.number().min(16).max(150).required(),
-          fieldProps: {
-            type: "number",
-            required: true
-          }
+          inputType: "number",
+          validation: { required: true, min: 16, max: 150 }
         },
         {
           label: t("Role"),
           name: "position",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Nationality"),
           name: "nationality",
-          type: FieldType.Dropdown,
-          validation: yup.string().required(),
-          fieldProps: {
-            options: countryOptions ?? [],
-            required: true
-          }
+          inputType: "select",
+          options: countryOptions ?? [],
+          validation: { required: true }
         }
       ]}
     />

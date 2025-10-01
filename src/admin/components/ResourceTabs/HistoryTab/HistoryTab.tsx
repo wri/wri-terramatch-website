@@ -1,14 +1,13 @@
-import { useT } from "@transifex/react";
-import React, { FC } from "react";
+import React, { FC, Fragment, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
-import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
-import { FieldType } from "@/components/extensive/WizardForm/types";
-import { useFrameworkContext } from "@/context/framework.provider";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
+import { FieldInputType } from "@/components/extensive/WizardForm/types";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { formDefaultValues } from "@/helpers/customForms";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
 import FinancialDescriptionsSection from "./components/FinancialDescriptionsSection";
@@ -21,58 +20,69 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   entity?: EntityName;
 }
 
+const SUPPORTED_INPUT_TYPES: FieldInputType[] = ["financialIndicators", "fundingType"];
+
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { isLoading: ctxLoading, record } = useShowContext();
-  const t = useT();
-  const { framework } = useFrameworkContext();
+  // const t = useT();
+  // const { framework } = useFrameworkContext();
   const entityName = entity ?? record?.entity;
   const entityUuid = record?.uuid;
 
   const { formData: response, isLoading: queryLoading } = useEntityForm(entityName, entityUuid);
-  const isLoading = ctxLoading || queryLoading;
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(
+    response?.data.form_uuid,
+    undefined,
+    // We only display data for the types in SUPPORTED_INPUT_TYPES, so speed up this component by
+    // ignoring everything else.
+    ({ inputType, parentId }) => parentId != null || SUPPORTED_INPUT_TYPES.includes(inputType)
+  );
+  const isLoading = ctxLoading || queryLoading || !providerLoaded;
+
+  const values = useMemo(
+    () => formDefaultValues(response?.data.answers!, fieldsProvider),
+    [fieldsProvider, response?.data.answers]
+  );
+
+  const fields = useMemo(
+    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldIds).map(fieldsProvider.fieldById).filter(isNotNull),
+    [fieldsProvider]
+  );
 
   if (isLoading || !record) return null;
-
-  const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
-  const values = record.migrated
-    ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
-    : normalizedFormDefaultValue(response?.data.answers!, formSteps);
 
   return (
     <TabbedShowLayout.Tab label={label ?? "History"} {...rest}>
       <div className="flex flex-col gap-8 p-2">
-        {formSteps.map(step =>
-          step?.fields?.map(field =>
-            field.type === FieldType.FinancialTableInput ? (
-              <>
-                <FinancialMetrics data={values[field.name]} years={field?.fieldProps?.years} />
-                <Accordion
-                  title="Financial Documents per Year"
-                  variant="drawer"
-                  className="rounded-lg bg-white px-6 py-4 shadow-all"
-                >
-                  <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
-                </Accordion>
-                <Accordion
-                  title="Descriptions of Financials per Year"
-                  variant="drawer"
-                  className="rounded-lg bg-white px-6 py-4 shadow-all"
-                >
-                  <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
-                </Accordion>
-              </>
-            ) : field.type === FieldType.FundingTypeDataTable ? (
+        {fields.map(field =>
+          field.inputType === "financialIndicators" ? (
+            <Fragment key={field.name}>
+              <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
               <Accordion
-                title="Major Funding Sources by Year"
+                title="Financial Documents per Year"
                 variant="drawer"
                 className="rounded-lg bg-white px-6 py-4 shadow-all"
               >
-                <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
               </Accordion>
-            ) : (
-              <></>
-            )
-          )
+              <Accordion
+                title="Descriptions of Financials per Year"
+                variant="drawer"
+                className="rounded-lg bg-white px-6 py-4 shadow-all"
+              >
+                <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
+              </Accordion>
+            </Fragment>
+          ) : field.inputType === "fundingType" ? (
+            <Accordion
+              key={field.name}
+              title="Major Funding Sources by Year"
+              variant="drawer"
+              className="rounded-lg bg-white px-6 py-4 shadow-all"
+            >
+              <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+            </Accordion>
+          ) : null
         )}
       </div>
     </TabbedShowLayout.Tab>

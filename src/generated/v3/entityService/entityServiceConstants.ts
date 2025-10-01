@@ -30,7 +30,10 @@ import {
   InvasiveDto,
   StrataDto,
   OptionLabelDto,
-  LinkedFieldDto
+  LinkedFieldDto,
+  FormDto,
+  FormSectionDto,
+  FormQuestionDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -55,7 +58,10 @@ export const ENTITY_SERVICE_RESOURCES = [
   "invasives",
   "stratas",
   "optionLabels",
-  "linkedFields"
+  "linkedFields",
+  "forms",
+  "formSections",
+  "formQuestions"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -81,6 +87,9 @@ export type EntityServiceApiResources = {
   stratas: StoreResourceMap<StrataDto>;
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
+  forms: StoreResourceMap<FormDto>;
+  formSections: StoreResourceMap<FormSectionDto>;
+  formQuestions: StoreResourceMap<FormQuestionDto>;
 };
 
 export const TreeEntityTypes = {

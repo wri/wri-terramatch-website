@@ -1,5 +1,5 @@
 import { Divider, Typography } from "@mui/material";
-import { useT } from "@transifex/react";
+import { FC, useMemo } from "react";
 import {
   LabeledClasses,
   RaRecord,
@@ -13,17 +13,23 @@ import { Else, If, Then, When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import { Framework } from "@/context/framework.provider";
+import WizardFormProvider, {
+  FormModel,
+  useApiFieldsProvider,
+  useFieldsProvider,
+  useFormEntities
+} from "@/context/wizardForm.provider";
 import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
-import { Entity } from "@/types/common";
+import { formDefaultValues } from "@/helpers/customForms";
 
-const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
-  const entries = useGetFormEntries(props);
+const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
+  const entities = useFormEntities();
+  const entries = useGetFormEntries({ ...props, entity: entities[0] });
+  const title = useFieldsProvider().step(props.stepId)?.title;
   return (
     <>
       <Typography variant="h6" component="h3">
-        {props.step.title}
+        {title}
       </Typography>
       <List
         className="my-4 flex flex-col gap-4"
@@ -48,22 +54,24 @@ const ApplicationTabRow = ({ index, ...props }: FormSummaryRowProps) => {
 };
 
 const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
-  const t = useT();
-  const framework = record?.form?.framework_key as Framework;
-  const formSteps = getCustomFormSteps(record?.form!, t, undefined, framework);
-  const values = normalizedFormDefaultValue(record?.answers, formSteps);
-  const currentPitchEntity: Entity = {
-    entityName: "project-pitches",
-    entityUUID: record?.project_pitch_uuid ?? ""
-  };
-  return (
-    <List
-      className="space-y-8"
-      items={formSteps}
-      render={(step, index) => (
-        <ApplicationTabRow index={index} step={step} values={values} steps={formSteps} entity={currentPitchEntity} />
-      )}
-    />
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(record?.form_uuid);
+  const values = useMemo(
+    () => formDefaultValues(record?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, record?.answers]
+  );
+  const model = useMemo<FormModel>(
+    () => ({ model: "projectPitches", uuid: record?.project_pitch_uuid ?? "" }),
+    [record?.project_pitch_uuid]
+  );
+
+  return !providerLoaded ? null : (
+    <WizardFormProvider models={model} fieldsProvider={fieldsProvider}>
+      <List
+        className="space-y-8"
+        items={fieldsProvider.stepIds()}
+        render={stepId => <ApplicationTabRow stepId={stepId} values={values} />}
+      />
+    </WizardFormProvider>
   );
 };
 

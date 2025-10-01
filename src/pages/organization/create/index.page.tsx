@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -9,7 +10,9 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
+import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import {
   useDeleteV2OrganisationsRetractMyDraft,
   useGetV2OrganisationsUUID,
@@ -17,7 +20,7 @@ import {
   usePutV2OrganisationsUUID
 } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
-import { useNormalizedFormDefaultValue } from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
+import { formDefaultValues } from "@/helpers/customForms";
 
 import { getSteps } from "./getCreateOrganisationSteps";
 
@@ -58,8 +61,9 @@ const CreateOrganisationForm = () => {
     }
   });
 
-  const formSteps = getSteps(t, uuid, countryOptions ?? []);
-  const defaultValues = useNormalizedFormDefaultValue(orgData?.data, formSteps);
+  const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
+  const provider = useLocalStepsProvider(formSteps);
+  const defaultValues = useMemo(() => formDefaultValues(orgData?.data ?? {}, provider), [orgData?.data, provider]);
 
   const onBackFirstStep = () => {
     openModal(
@@ -79,11 +83,15 @@ const CreateOrganisationForm = () => {
     );
   };
 
+  const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isFetchingOrgData}>
         <WizardForm
-          steps={formSteps}
+          framework={Framework.UNDEFINED}
+          models={models}
+          fieldsProvider={provider}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
           errors={error}
           defaultValues={defaultValues}

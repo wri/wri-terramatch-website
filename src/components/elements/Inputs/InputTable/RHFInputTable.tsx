@@ -1,21 +1,66 @@
-import { PropsWithChildren, useMemo } from "react";
+import { sortBy } from "lodash";
+import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import InputTable, { InputTableProps } from "./InputTable";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
+import { FormTableHeaderDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
-export interface RHFInputTableProps extends Omit<InputTableProps, "value" | "onChange" | "errors">, UseControllerProps {
-  onChangeCapture?: () => void;
-  formHook?: UseFormReturn;
-}
+import InputTable, { InputTableProps, InputTableRow } from "./InputTable";
 
-/**
- * @param props PropsWithChildren<RHFTreeSpeciesInputProps>
- * @returns React Hook Form Ready TreeSpeciesInput Component
- */
-const RHFInputTable = ({ onChangeCapture, formHook, ...props }: PropsWithChildren<RHFInputTableProps>) => {
+export type RHFInputTableProps = Omit<InputTableProps, "value" | "onChange" | "errors" | "headers" | "rows"> &
+  UseControllerProps &
+  PropsWithChildren<{
+    onChangeCapture?: () => void;
+    formHook?: UseFormReturn;
+    headers: FormTableHeaderDto[];
+    fieldId: string;
+  }>;
+
+const toTableRow = (field?: FieldDefinition): InputTableRow | null => {
+  if (field == null) return null;
+
+  const row = {
+    name: field.name,
+    placeholder: field.placeholder ?? undefined,
+    label: field.label,
+    required: field.validation?.required === true,
+    description: field.description ?? undefined
+  };
+  switch (field.inputType) {
+    case "url":
+    case "date":
+    case "text":
+      return { ...row, type: field.inputType };
+    case "number":
+      if (field.linkedFieldKey?.includes("-lat-")) {
+        return { ...row, type: "number", min: -90, max: 90, allowNegative: true };
+      }
+      if (field.linkedFieldKey?.includes("-long-")) {
+        return { ...row, type: "number", min: -180, max: 180, allowNegative: true };
+      }
+      return { ...row, type: "number", step: field.additionalProps?.step };
+    case "number-percentage":
+      return { ...row, type: "number", min: 0, max: 100 };
+    default:
+      return null;
+  }
+};
+
+const RHFInputTable: FC<RHFInputTableProps> = ({ onChangeCapture, formHook, headers, fieldId, ...props }) => {
   const {
     field: { value, onChange }
   } = useController(props);
+  const propsHeaders = useMemo(() => {
+    const sorted = sortBy(headers, "order").map(({ label }) => label);
+    return [sorted[0] ?? "", sorted[1] ?? ""] as const;
+  }, [headers]);
+  const { childIds, fieldById } = useFieldsProvider();
+  const rows = useMemo(
+    () => childIds(fieldId).map(fieldById).map(toTableRow).filter(isNotNull),
+    [childIds, fieldById, fieldId]
+  );
 
   const _onChange = async (value: any) => {
     onChange(value);
@@ -38,6 +83,8 @@ const RHFInputTable = ({ onChangeCapture, formHook, ...props }: PropsWithChildre
   return (
     <InputTable
       {...props}
+      headers={propsHeaders}
+      rows={rows}
       value={value}
       onChange={_onChange}
       total={total}

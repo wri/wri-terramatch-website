@@ -2438,6 +2438,43 @@ export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
   };
 }>;
 
+export type OptionLabelsGetListResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
 export type OptionLabelsGetListVariables = {
   pathParams: OptionLabelsGetListPathParams;
 };
@@ -2446,23 +2483,23 @@ export type OptionLabelsGetListVariables = {
  * Get a list of option labels by list key
  */
 export const optionLabelsGetList = new V3ApiEndpoint<
-  undefined,
+  OptionLabelsGetListResponse,
   OptionLabelsGetListError,
   OptionLabelsGetListVariables,
   {}
 >("/forms/v3/optionLabels/{listKey}", "GET");
 
 export type LinkedFieldsIndexQueryParams = {
-  formTypes?: (
-    | "organisation"
-    | "financialReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport"
+  formModelTypes?: (
+    | "organisations"
+    | "financialReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
   )[];
 };
 
@@ -2528,6 +2565,98 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
+export type FormGetPathParams = {
+  /**
+   * Form uuid
+   */
+  uuid: string;
+};
+
+export type FormGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormGetResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormDto;
+  };
+  included?: (
+    | {
+        /**
+         * @example formSections
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormSectionDto;
+      }
+    | {
+        /**
+         * @example formQuestions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FormQuestionDto;
+      }
+  )[];
+};
+
+export type FormGetVariables = {
+  pathParams: FormGetPathParams;
+};
+
+/**
+ * Get a form by uuid. Includes all sections and questions within the form.
+ */
+export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "GET"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2539,5 +2668,6 @@ export const operationsByTag = {
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
-  linkedFields: { linkedFieldsIndex }
+  linkedFields: { linkedFieldsIndex },
+  forms: { formGet }
 };

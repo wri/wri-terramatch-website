@@ -1,4 +1,4 @@
-import { assign, Dictionary, isEmpty, merge } from "lodash";
+import { assign, Dictionary, isEmpty, merge, sortBy } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
@@ -45,6 +45,7 @@ type Sideloads<Variables extends QueryVariables> = Required<Variables>["queryPar
 
 export type IdProp = { id?: string };
 export type IdsProp = { ids?: string[] };
+export type ParentIdProp = { parentId?: string };
 export type FilterProp<Filters> = { filter?: Filters };
 export type SideloadsProp<SideloadsType> = { sideloads?: SideloadsType };
 export type EnabledProp = {
@@ -95,6 +96,10 @@ type ResourceSelector<Props, Variables extends QueryVariables> = (
   variablesFactory: VariablesFactory<Variables, Props>,
   resource: ResourceType
 ) => (store: ApiDataStore) => StoreResource<unknown> | undefined;
+
+type ListConnectionFactoryOptions<DTO> = {
+  sortProp?: keyof DTO;
+};
 
 const resourceSelectorById =
   ({ id }: IdProp, _: unknown, resource: ResourceType) =>
@@ -300,6 +305,19 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
     }).loadFailure(),
 
   /**
+   * Creates a connection that does not fetch; it pulls a single resource from the cache by ID.
+   */
+  cachedSingleResource: <DTO>() =>
+    new ApiConnectionFactory<never, DataConnection<DTO>, IdProp, never>(undefined, {
+      resource,
+      selectors: [resourceAttributesSelector<DTO, IdProp, never>(resourceSelectorById)],
+      selectorCacheKeyFactory:
+        () =>
+        ({ id }) =>
+          id ?? ""
+    }),
+
+  /**
    * Creates a connection that fetches a "full" resource from the backend (one that has
    * lightResource: false in its DTO). If the current cached copy of this resource is a light resource,
    * the connection is not complete, and the fetch will occur.
@@ -493,6 +511,30 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
         () =>
         ({ ids }) =>
           ids?.join() ?? ""
+    }),
+
+  /**
+   * Creates a connection that does no fetching; it pulls a list of resources by parent ID / property from the cache.
+   */
+  listByParentId: <DTO>(parentProp: keyof DTO, { sortProp }: ListConnectionFactoryOptions<DTO> = {}) =>
+    new ApiConnectionFactory<never, ListConnection<DTO>, ParentIdProp, never>(undefined, {
+      resource,
+      selectors: [
+        ({ parentId }, _, resource) => {
+          if (parentId == null) return () => ({ data: undefined });
+          return createSelector([resourceMapSelector<DTO>(resource)], resources => {
+            let data = Object.values(resources).filter(resource => resource.attributes[parentProp] === parentId);
+            if (sortProp != null) {
+              data = sortBy(data, sortProp);
+            }
+            return { data: data.map(({ attributes }) => attributes) };
+          });
+        }
+      ],
+      selectorCacheKeyFactory:
+        () =>
+        ({ parentId }) =>
+          parentId ?? ""
     })
 });
 

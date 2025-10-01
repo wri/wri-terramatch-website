@@ -251,8 +251,7 @@ export type ReportsModelNames =
   | "siteReports"
   | "financialReports";
 
-export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
-export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
+export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("Reports");
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";

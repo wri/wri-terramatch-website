@@ -2,9 +2,7 @@ import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import { PropsWithChildren } from "react";
 import { useController, UseControllerProps } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
 import { formatOptionsList } from "@/utils/options";
 
@@ -45,22 +43,15 @@ const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
           label: t("Plant Species"),
           placeholder: t("Add Species (scientific name)"),
           name: "name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Type"),
           name: "type",
-          type: FieldType.Dropdown,
-          validation: yup.string().required(),
-          fieldProps: {
-            options: getInvasiveTypeOptions(),
-            required: true
-          }
+          inputType: "select",
+          options: getInvasiveTypeOptions(),
+          validation: { required: true }
         }
       ]}
     />

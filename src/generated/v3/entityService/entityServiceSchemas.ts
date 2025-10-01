@@ -1864,7 +1864,7 @@ export type OptionLabelDto = {
    */
   label: string;
   /**
-   * Option label text in English
+   * Option image
    */
   imageUrl: string | null;
 };
@@ -1874,21 +1874,22 @@ export type LinkedFieldDto = {
    * Linked field id
    */
   id: string;
-  formType:
-    | "organisation"
-    | "financialReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport";
+  formModelType:
+    | "organisations"
+    | "financialReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports";
   label: string;
   name: string;
   inputType:
     | "boolean"
     | "conditional"
+    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -1922,4 +1923,171 @@ export type LinkedFieldDto = {
   optionListKey: string | null;
   multiChoice: string | null;
   collection: string | null;
+};
+
+export type FormDto = {
+  uuid: string;
+  /**
+   * Translated form title
+   */
+  title: string;
+  /**
+   * Translated form subtitle
+   */
+  subtitle: string | null;
+  /**
+   * Translated form description
+   */
+  description: string | null;
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  type: string | null;
+  documentation: string | null;
+  documentationLabel: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt: string | null;
+  /**
+   * Translated submission message
+   */
+  submissionMessage: string | null;
+  published: boolean;
+  stageId: string | null;
+  fundingProgrammeId: string | null;
+};
+
+export type FormSectionDto = {
+  uuid: string;
+  /**
+   * Form id
+   */
+  formId: string;
+  order: number;
+  /**
+   * Translated section title
+   */
+  title: string | null;
+  /**
+   * Translated section description
+   */
+  description: string | null;
+};
+
+export type FormQuestionOptionDto = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  altValue: string | null;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option image
+   */
+  imageUrl: string | null;
+  order: number;
+};
+
+export type FormTableHeaderDto = {
+  slug: string | null;
+  /**
+   * Translated header label
+   */
+  label: string | null;
+  order: number | null;
+};
+
+export type FormQuestionDto = {
+  uuid: string;
+  /**
+   * Form section id
+   */
+  sectionId: string;
+  /**
+   * UUID of the parent question
+   */
+  parentId: string | null;
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "tableInput"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  name: string | null;
+  /**
+   * Translated question label
+   */
+  label: string;
+  /**
+   * Translated question placeholder
+   */
+  placeholder: string | null;
+  /**
+   * Translated question description
+   */
+  description: string | null;
+  validation: Record<string, any> | null;
+  multiChoice: boolean;
+  collection: string | null;
+  order: number;
+  optionsList: string | null;
+  optionsOther: boolean | null;
+  options: FormQuestionOptionDto[] | null;
+  showOnParentCondition: boolean | null;
+  model:
+    | "organisations"
+    | "financialReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
+    | null;
+  linkedFieldKey: string | null;
+  isParentConditionalDefault: boolean;
+  minCharacterLimit: number | null;
+  maxCharacterLimit: number | null;
+  years: number[] | null;
+  tableHeaders: FormTableHeaderDto[] | null;
+  additionalProps: Record<string, any> | null;
 };

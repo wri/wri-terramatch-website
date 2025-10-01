@@ -3,19 +3,20 @@ import { isEqual } from "lodash";
 import { useMemo } from "react";
 
 import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import { FieldType, FormStepSchema } from "@/components/extensive/WizardForm/types";
-import { normalizedFormDefaultValue } from "@/helpers/customForms";
+import { FieldInputType } from "@/components/extensive/WizardForm/types";
+import { FormFieldsProvider } from "@/context/wizardForm.provider";
+import { formDefaultValues } from "@/helpers/customForms";
 import { Entity } from "@/types/common";
 
 interface FormChange {
   title?: string;
-  type: FieldType;
+  inputType: FieldInputType;
   currentValue: any;
   newValue?: any;
 }
 
 export interface StepChange {
-  step: FormStepSchema;
+  stepTitle: string;
   changes: FormChange[];
 }
 
@@ -32,36 +33,44 @@ const cleanValue = (value: any) => {
 };
 
 export default function useFormChanges(
+  fieldsProvider: FormFieldsProvider,
   current: any,
   changed: any,
-  steps: FormStepSchema[],
   entity: Entity
 ): StepChange[] {
   const t = useT();
-  const currentValues = useMemo(() => normalizedFormDefaultValue(current, steps), [current, steps]);
-  const changedValues = useMemo(() => normalizedFormDefaultValue(changed, steps), [changed, steps]);
+  const currentValues = useMemo(() => formDefaultValues(current, fieldsProvider), [current, fieldsProvider]);
+  const changedValues = useMemo(() => formDefaultValues(changed, fieldsProvider), [changed, fieldsProvider]);
   return useMemo(
     () =>
-      steps.map(step => {
-        const currentEntries = getFormEntries({ values: currentValues, nullText: "-", step, entity }, t);
-        const changedEntries = getFormEntries({ values: changedValues, nullText: "-", step, entity }, t);
+      fieldsProvider.stepIds().map(stepId => {
+        const currentEntries = getFormEntries(
+          fieldsProvider,
+          { values: currentValues, nullText: "-", stepId, entity },
+          t
+        );
+        const changedEntries = getFormEntries(
+          fieldsProvider,
+          { values: changedValues, nullText: "-", stepId, entity },
+          t
+        );
 
         return {
-          step,
+          stepTitle: fieldsProvider.step(stepId)?.title ?? "",
           changes: changedEntries.map(entry => {
             const currentEntry = currentEntries.find(e => e.title === entry.title);
             const currentValue = cleanValue(currentEntry?.value) ?? "-";
             const newValue = cleanValue(entry.value) ?? "-";
 
             return {
-              title: entry.title,
-              type: entry.type,
+              title: entry.title ?? "",
+              inputType: entry.inputType,
               currentValue,
               newValue: isEqual(currentValue, newValue) ? undefined : newValue
             };
           })
         };
       }),
-    [steps, currentValues, entity, t, changedValues]
+    [fieldsProvider, currentValues, entity, t, changedValues]
   );
 }

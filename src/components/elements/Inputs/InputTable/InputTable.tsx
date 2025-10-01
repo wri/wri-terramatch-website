@@ -1,17 +1,20 @@
 import classNames from "classnames";
 import { useMemo } from "react";
 
-import { InputFormField } from "@/components/extensive/WizardForm/types";
-
 import ErrorMessage from "../../ErrorMessage/ErrorMessage";
 import Text from "../../Text/Text";
-import Input from "../Input/Input";
+import Input, { InputProps } from "../Input/Input";
 import InputWrapper, { InputWrapperProps } from "../InputElements/InputWrapper";
+
+export type InputTableRow = Pick<
+  InputProps,
+  "type" | "min" | "max" | "step" | "allowNegative" | "placeholder" | "name" | "label" | "required" | "description"
+>;
 
 export interface InputTableProps extends InputWrapperProps {
   className?: string;
-  headers: [string, string];
-  rows: InputFormField[];
+  headers: readonly [string, string];
+  rows: InputTableRow[];
   value: any;
   onChange: (value: any) => void;
   errors: any;
@@ -63,7 +66,7 @@ function InputTable({
                 </td>
                 <td className="h-[53px] p-0 align-bottom">
                   <Input
-                    {...row.fieldProps}
+                    {...row}
                     ref={null}
                     name={row.name}
                     variant="secondary"
@@ -72,7 +75,7 @@ function InputTable({
                     onChange={e =>
                       onChange({
                         ...value,
-                        [row.name]: row.fieldProps.type === "number" ? e.target.valueAsNumber : e.target.value
+                        [row.name]: row.type === "number" ? e.target.valueAsNumber : e.target.value
                       })
                     }
                     value={value?.[row.name]}

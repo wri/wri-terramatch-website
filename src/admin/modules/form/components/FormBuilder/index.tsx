@@ -20,7 +20,7 @@ import {
   QuestionArrayInput
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { maxFileSize } from "@/admin/utils/forms";
-import { FormType, useLinkedFields } from "@/connections/util/Form";
+import { FormModelType, useLinkedFields } from "@/connections/util/Form";
 import { useDeleteV2AdminFormsQuestionUUID, useDeleteV2AdminFormsSectionUUID } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
 
@@ -35,23 +35,26 @@ export const formTypeChoices = [
   { id: "financial-report", name: "Financial Report" }
 ];
 
+const toFormModelType = (formTypeChoice: string) => {
+  const singular = camelCase(formTypeChoice);
+  if (singular === "projectPitch") return "projectPitches";
+  if (singular === "nursery") return "nurseries";
+  return `${singular}s` as FormModelType;
+};
+
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormRead>();
-  const formTypeValue = watch("type");
-  const formTypes = useMemo(
-    () =>
-      formTypeValue
-        ?.replace("application", "organisation,project-pitch")
-        ?.split(",")
-        .map(formType => camelCase(formType)) as FormType[],
-    [formTypeValue]
+  const modelTypeValue = watch("type");
+  const formModelTypes = useMemo(
+    () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
+    [modelTypeValue]
   );
 
   const { mutateAsync: deleteSection } = useDeleteV2AdminFormsSectionUUID();
   const { mutateAsync: deleteQuestion } = useDeleteV2AdminFormsQuestionUUID();
   const [previewSection, setPreviewSection] = useState<FormSectionRead>();
 
-  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: formTypeValue != null, formTypes: formTypes });
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
   const fullLinkedFields = useMemo(
     () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
     [linkedFieldsData]
@@ -86,11 +89,11 @@ export const FormBuilderForm = () => {
         source="type"
         choices={formTypeChoices}
         fullWidth
-        disabled={!!formTypeValue}
+        disabled={!!modelTypeValue}
         helperText="If you choose the incorrect form type and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
         sx={{ marginBottom: 6 }}
       />
-      <When condition={!!formTypeValue}>
+      <When condition={!!modelTypeValue}>
         <>
           <div>
             <Accordion className="w-full">

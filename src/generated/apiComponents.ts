@@ -2435,8 +2435,9 @@ export type GetV2FormsENTITYUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
@@ -2445,7 +2446,7 @@ export type GetV2FormsENTITYUUIDResponse = {
     framework_key?: string;
     status?: string;
     readable_status?: string;
-    content?: string;
+    content?: Record<string, any>;
     feedback?: string;
     feedback_fields?: string[];
     project?: Record<string, any>;
@@ -2498,8 +2499,9 @@ export type PutV2FormsENTITYUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
@@ -2508,7 +2510,7 @@ export type PutV2FormsENTITYUUIDResponse = {
     framework_key?: string;
     status?: string;
     readable_status?: string;
-    content?: string;
+    content?: Record<string, any>;
     feedback?: string;
     feedback_fields?: string[];
     project?: Record<string, any>;
@@ -2575,8 +2577,9 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
@@ -2585,7 +2588,7 @@ export type PutV2FormsENTITYUUIDSubmitResponse = {
     framework_key?: string;
     status?: string;
     readable_status?: string;
-    content?: string;
+    content?: Record<string, any>;
     feedback?: string;
     feedback_fields?: string[];
     project?: Record<string, any>;
@@ -2635,10 +2638,6 @@ export type PostV2FormsENTITYPathParams = {
    * allowed values projects/sites/nurseries
    */
   entity: string;
-  /**
-   * this is the uuid of the form
-   */
-  uuid: string;
 };
 
 export type PostV2FormsENTITYError = Fetcher.ErrorWrapper<undefined>;
@@ -2647,8 +2646,9 @@ export type PostV2FormsENTITYResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
@@ -2657,7 +2657,7 @@ export type PostV2FormsENTITYResponse = {
     framework_key?: string;
     status?: string;
     readable_status?: string;
-    content?: string;
+    content?: Record<string, any>;
     feedback?: string;
     feedback_fields?: string[];
     project?: Record<string, any>;
@@ -2707,8 +2707,9 @@ export type PostV2FormsProjectsUUIDResponse = {
   uuid?: string;
   name?: string;
   status?: string;
-  form?: Record<string, any>;
+  form_uuid?: string;
   answers?: Record<string, any>;
+  framework_key?: string;
   form_title?: string;
   feedback?: string;
   feedback_fields?: string[];
@@ -2717,7 +2718,7 @@ export type PostV2FormsProjectsUUIDResponse = {
     framework_key?: string;
     status?: string;
     readable_status?: string;
-    content?: string;
+    content?: Record<string, any>;
     feedback?: string;
     feedback_fields?: string[];
     project?: Record<string, any>;
@@ -2966,7 +2967,7 @@ export type PutV2AdminUpdateRequestsUUIDSTATUSResponse = {
   framework_key?: string;
   status?: string;
   readable_status?: string;
-  content?: string;
+  content?: Record<string, any>;
   feedback?: string;
   feedback_fields?: string[];
   project?: Record<string, any>;
@@ -3080,7 +3081,7 @@ export type GetV2UpdateRequestsUUIDResponse = {
   framework_key?: string;
   status?: string;
   readable_status?: string;
-  content?: string;
+  content?: Record<string, any>;
   feedback?: string;
   feedback_fields?: string[];
   project?: Record<string, any>;
@@ -3167,7 +3168,7 @@ export type GetV2UpdateRequestsENTITYUUIDResponse = {
   framework_key?: string;
   status?: string;
   readable_status?: string;
-  content?: string;
+  content?: Record<string, any>;
   feedback?: string;
   feedback_fields?: string[];
   project?: Record<string, any>;
@@ -5386,12 +5387,288 @@ export const useGetV2AdminOrganisationsExport = <TData = undefined>(
 
 export type PostV2OrganisationsError = Fetcher.ErrorWrapper<undefined>;
 
+export type PostV2OrganisationsResponse = {
+  uuid?: string;
+  type?: string;
+  private?: boolean;
+  name?: string;
+  phone?: string;
+  currency?: string;
+  states?: string[];
+  loan_status_types?: string[];
+  land_systems?: string[];
+  fund_utilisation?: string[];
+  detailed_intervention_types?: string[];
+  account_number_1?: string;
+  account_number_2?: string;
+  approach_of_marginalized_communities?: string;
+  community_engagement_numbers_marginalized?: string;
+  founding_date?: string;
+  description?: string;
+  leadership_team?: string;
+  countries?: string[];
+  languages?: string[];
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  web_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  hq_street_1?: string;
+  hq_street_2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_zipcode?: string;
+  hq_country?: string;
+  fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
+  ha_restored_total?: number;
+  /**
+   * @format float
+   */
+  ha_restored_3year?: number;
+  relevant_experience_years?: number;
+  trees_grown_total?: number;
+  trees_grown_3year?: number;
+  tree_care_approach?: string;
+  ft_permanent_employees?: number;
+  pt_permanent_employees?: number;
+  temp_employees?: number;
+  female_employees?: number;
+  male_employees?: number;
+  young_employees?: number;
+  additional_funding_details?: string;
+  community_experience?: string;
+  total_engaged_community_members_3yr?: number;
+  percent_engaged_women_3yr?: number;
+  percent_engaged_men_3yr?: number;
+  percent_engaged_under_35_3yr?: number;
+  percent_engaged_over_35_3yr?: number;
+  percent_engaged_smallholder_3yr?: number;
+  total_trees_grown?: number;
+  avg_tree_survival_rate?: number;
+  tree_maintenance_aftercare_approach?: string;
+  restored_areas_description?: string;
+  monitoring_evaluation_experience?: string;
+  funding_history?: string;
+  engagement_farmers?: string[];
+  engagement_women?: string[];
+  engagement_youth?: string[];
+  engagement_non_youth?: string[];
+  tree_restoration_practices?: string[];
+  business_model?: string;
+  subtype?: string;
+  organisation_revenue_this_year?: number;
+  shapefiles?: {
+    uuid?: string;
+    shapefileable_type?: string;
+    shapefileable_id?: number;
+    geojson?: string;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
+  }[];
+  bank_statements?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  previous_annual_reports?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  logo?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  reference?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_2year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_last_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_this_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_next_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  legal_registration?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  /**
+   * this is a list of key value pairs eg slug: name
+   */
+  tags?: string[];
+};
+
 export type PostV2OrganisationsVariables = {
   body?: RequestBodies.V2PostOrganisationsBody;
 } & ApiContext["fetcherOptions"];
 
 export const fetchPostV2Organisations = (variables: PostV2OrganisationsVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, PostV2OrganisationsError, RequestBodies.V2PostOrganisationsBody, {}, {}, {}>({
+  apiFetch<PostV2OrganisationsResponse, PostV2OrganisationsError, RequestBodies.V2PostOrganisationsBody, {}, {}, {}>({
     url: "/v2/organisations",
     method: "post",
     ...variables,
@@ -5400,12 +5677,12 @@ export const fetchPostV2Organisations = (variables: PostV2OrganisationsVariables
 
 export const usePostV2Organisations = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PostV2OrganisationsError, PostV2OrganisationsVariables>,
+    reactQuery.UseMutationOptions<PostV2OrganisationsResponse, PostV2OrganisationsError, PostV2OrganisationsVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PostV2OrganisationsError, PostV2OrganisationsVariables>(
+  return reactQuery.useMutation<PostV2OrganisationsResponse, PostV2OrganisationsError, PostV2OrganisationsVariables>(
     (variables: PostV2OrganisationsVariables) => fetchPostV2Organisations({ ...fetcherOptions, ...variables }),
     options
   );
@@ -5731,6 +6008,282 @@ export type PutV2OrganisationsUUIDPathParams = {
 
 export type PutV2OrganisationsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
+export type PutV2OrganisationsUUIDResponse = {
+  uuid?: string;
+  type?: string;
+  private?: boolean;
+  name?: string;
+  phone?: string;
+  currency?: string;
+  states?: string[];
+  loan_status_types?: string[];
+  land_systems?: string[];
+  fund_utilisation?: string[];
+  detailed_intervention_types?: string[];
+  account_number_1?: string;
+  account_number_2?: string;
+  approach_of_marginalized_communities?: string;
+  community_engagement_numbers_marginalized?: string;
+  founding_date?: string;
+  description?: string;
+  leadership_team?: string;
+  countries?: string[];
+  languages?: string[];
+  tree_species?: {
+    uuid?: string;
+    name?: string;
+    amount?: number;
+    type?: string;
+    collection?: string;
+  }[];
+  web_url?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  linkedin_url?: string;
+  twitter_url?: string;
+  hq_street_1?: string;
+  hq_street_2?: string;
+  hq_city?: string;
+  hq_state?: string;
+  hq_zipcode?: string;
+  hq_country?: string;
+  fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
+  ha_restored_total?: number;
+  /**
+   * @format float
+   */
+  ha_restored_3year?: number;
+  relevant_experience_years?: number;
+  trees_grown_total?: number;
+  trees_grown_3year?: number;
+  tree_care_approach?: string;
+  ft_permanent_employees?: number;
+  pt_permanent_employees?: number;
+  temp_employees?: number;
+  female_employees?: number;
+  male_employees?: number;
+  young_employees?: number;
+  additional_funding_details?: string;
+  community_experience?: string;
+  total_engaged_community_members_3yr?: number;
+  percent_engaged_women_3yr?: number;
+  percent_engaged_men_3yr?: number;
+  percent_engaged_under_35_3yr?: number;
+  percent_engaged_over_35_3yr?: number;
+  percent_engaged_smallholder_3yr?: number;
+  total_trees_grown?: number;
+  avg_tree_survival_rate?: number;
+  tree_maintenance_aftercare_approach?: string;
+  restored_areas_description?: string;
+  monitoring_evaluation_experience?: string;
+  funding_history?: string;
+  engagement_farmers?: string[];
+  engagement_women?: string[];
+  engagement_youth?: string[];
+  engagement_non_youth?: string[];
+  tree_restoration_practices?: string[];
+  business_model?: string;
+  subtype?: string;
+  organisation_revenue_this_year?: number;
+  shapefiles?: {
+    uuid?: string;
+    shapefileable_type?: string;
+    shapefileable_id?: number;
+    geojson?: string;
+    created_at?: string;
+    updated_at?: string;
+    deleted_at?: string;
+  }[];
+  bank_statements?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  previous_annual_reports?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  logo?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  reference?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  additional?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_2year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_last_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_this_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  op_budget_next_year?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  legal_registration?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+  /**
+   * this is a list of key value pairs eg slug: name
+   */
+  tags?: string[];
+};
+
 export type PutV2OrganisationsUUIDVariables = {
   body?: RequestBodies.V2PostOrganisationsBody;
   pathParams: PutV2OrganisationsUUIDPathParams;
@@ -5738,7 +6291,7 @@ export type PutV2OrganisationsUUIDVariables = {
 
 export const fetchPutV2OrganisationsUUID = (variables: PutV2OrganisationsUUIDVariables, signal?: AbortSignal) =>
   apiFetch<
-    undefined,
+    PutV2OrganisationsUUIDResponse,
     PutV2OrganisationsUUIDError,
     RequestBodies.V2PostOrganisationsBody,
     {},
@@ -5748,12 +6301,20 @@ export const fetchPutV2OrganisationsUUID = (variables: PutV2OrganisationsUUIDVar
 
 export const usePutV2OrganisationsUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, PutV2OrganisationsUUIDError, PutV2OrganisationsUUIDVariables>,
+    reactQuery.UseMutationOptions<
+      PutV2OrganisationsUUIDResponse,
+      PutV2OrganisationsUUIDError,
+      PutV2OrganisationsUUIDVariables
+    >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, PutV2OrganisationsUUIDError, PutV2OrganisationsUUIDVariables>(
+  return reactQuery.useMutation<
+    PutV2OrganisationsUUIDResponse,
+    PutV2OrganisationsUUIDError,
+    PutV2OrganisationsUUIDVariables
+  >(
     (variables: PutV2OrganisationsUUIDVariables) => fetchPutV2OrganisationsUUID({ ...fetcherOptions, ...variables }),
     options
   );
@@ -11768,97 +12329,15 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -11876,6 +12355,17 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -11932,97 +12422,15 @@ export type PostV2FormsSubmissionsResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12040,6 +12448,17 @@ export type PostV2FormsSubmissionsResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12094,97 +12513,15 @@ export type GetV2FormsSubmissionsUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12202,6 +12539,17 @@ export type GetV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12250,97 +12598,15 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12358,6 +12624,17 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12366,11 +12643,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
 
 export type PatchV2FormsSubmissionsUUIDRequestBody = {
   status?: string;
-  answers?: {
-    question_id?: number;
-    value?: string;
-    options?: string[];
-  }[];
+  answers?: Record<string, any>;
 };
 
 export type PatchV2FormsSubmissionsUUIDVariables = {
@@ -12458,97 +12731,15 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12566,6 +12757,17 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12621,97 +12823,15 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
   id?: string;
   uuid?: string;
   name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
+  form_uuid?: string;
+  framework_key?: string;
   stage?: {
     uuid?: string;
     name?: string;
     status?: string;
     readable_status?: string;
   };
-  answers?: string;
+  answers?: Record<string, any>;
   status?: string;
   readable_status?: string;
   audits?: {
@@ -12729,6 +12849,17 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
+  organisation_uuid?: string;
+  organisation_attributes?: {
+    uuid?: string;
+    type?: string;
+    currency?: string;
+    start_month?: string;
+  };
+  feedback?: void;
+  feedback_fields?: string[];
+  translated_feedback_fields?: string[];
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -13233,97 +13364,15 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
     id?: string;
     uuid?: string;
     name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
+    form_uuid?: string;
+    framework_key?: string;
     stage?: {
       uuid?: string;
       name?: string;
       status?: string;
       readable_status?: string;
     };
-    answers?: string;
+    answers?: Record<string, any>;
     status?: string;
     readable_status?: string;
     audits?: {
@@ -13341,6 +13390,17 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
+    organisation_uuid?: string;
+    organisation_attributes?: {
+      uuid?: string;
+      type?: string;
+      currency?: string;
+      start_month?: string;
+    };
+    feedback?: void;
+    feedback_fields?: string[];
+    translated_feedback_fields?: string[];
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -13892,97 +13952,15 @@ export type GetV2ApplicationsUUIDResponse = {
     id?: string;
     uuid?: string;
     name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
+    form_uuid?: string;
+    framework_key?: string;
     stage?: {
       uuid?: string;
       name?: string;
       status?: string;
       readable_status?: string;
     };
-    answers?: string;
+    answers?: Record<string, any>;
     status?: string;
     readable_status?: string;
     audits?: {
@@ -14000,6 +13978,17 @@ export type GetV2ApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
+    organisation_uuid?: string;
+    organisation_attributes?: {
+      uuid?: string;
+      type?: string;
+      currency?: string;
+      start_month?: string;
+    };
+    feedback?: void;
+    feedback_fields?: string[];
+    translated_feedback_fields?: string[];
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -17350,17 +17339,19 @@ export type PostV2GeometryError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2GeometryResponse = {
   /**
-   * The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-   * always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-   * there were Points in the request payload at this index, and the order will be the same.
+   * For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+   * If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+   * contain the UUID of the existing polygon in the database.
+   * For Point geometry, there will be one UUID per point and the order is preserved.
    */
   polygon_uuids?: string[];
   /**
-   * Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+   * Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.
    */
   errors?: {
     [key: string]: {
       key?:
+        | "DUPLICATE_GEOMETRY"
         | "OVERLAPPING_POLYGON"
         | "SELF_INTERSECTION"
         | "COORDINATE_SYSTEM"

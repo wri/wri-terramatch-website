@@ -23,9 +23,15 @@ type GadmConnectionProps = {
   // The code for the enclosing GADM category one level broader than what's being requested on this
   // connection
   parentCodes?: string[];
+  // Whether to load the GADM data for this connection. Defaults to true.
+  enabled?: boolean;
 };
 
-const isLoaded = ({ byParentCode, fetchFailure }: GadmConnection, { level, parentCodes }: GadmConnectionProps) => {
+const isLoaded = (
+  { byParentCode, fetchFailure }: GadmConnection,
+  { level, parentCodes, enabled }: GadmConnectionProps
+) => {
+  if (!enabled) return true;
   if (level > 0 && isEmpty(parentCodes)) return true; // Prevent attempting to load when our props aren't yet valid.
   return filter(Object.values(byParentCode ?? {})).length === (parentCodes?.length ?? 1) || fetchFailure != null;
 };

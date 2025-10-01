@@ -11,7 +11,8 @@ import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
 
 declare module "@tanstack/react-table" {
@@ -25,7 +26,7 @@ declare module "@tanstack/react-table" {
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   modalEditTitle?: string;
-  fields: FormField[];
+  fields: FieldDefinition[];
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
@@ -113,11 +114,14 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         cell: props => (props.getValue() as number) + 1
       },
       ...tableColumns.map(header => {
-        const field = fields.find(field => field.name === header.accessorKey);
-        if (field?.type === FieldType.Dropdown) {
-          if (!header.cell) {
-            header.cell = props =>
-              field.fieldProps.options.find(option => option.value === props.getValue())?.title || props.getValue();
+        const field = fields.find(({ name }) => name === header.accessorKey);
+        if (field?.inputType === "select") {
+          if (header.cell == null) {
+            header.cell = props => {
+              const value = props.getValue();
+              if (field.options == null) return value;
+              return toFormOptions(field.options).find(option => option.value === value)?.title ?? value;
+            };
           }
           header.id = field.name;
         }

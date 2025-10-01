@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { camelCase, isEmpty, remove } from "lodash";
-import { Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
+import { isEmpty, remove } from "lodash";
+import { FC, Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
 import { FieldError, FieldErrors } from "react-hook-form";
 import { Else, If, Then, When } from "react-if";
 import { v4 as uuidv4 } from "uuid";
@@ -13,11 +13,12 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EstablishmentEntity, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
-import { useEntityContext } from "@/context/entity.provider";
+import { FormModelType } from "@/connections/util/Form";
 import { useModalContext } from "@/context/modal.provider";
+import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { isReportModelName } from "@/types/common";
+import { EntityName, isReportModelName } from "@/types/common";
 import { updateArrayState } from "@/utils/array";
 
 import Button from "../../Button/Button";
@@ -39,6 +40,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   onChange: (value: any[]) => void;
   clearErrors: () => void;
   collection?: string;
+  model: FormModelType;
 
   onError?: () => void;
   error?: FieldErrors[];
@@ -70,7 +72,7 @@ const getColumnTitles = ({
   };
 };
 
-const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
+const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const id = useId();
   const t = useT();
   const lastInputRef = useRef<HTMLInputElement>(null);
@@ -89,15 +91,15 @@ const TreeSpeciesInput = (props: TreeSpeciesInputProps) => {
 
   const { onChange, value, clearErrors, collection } = props;
 
-  const { entityUuid, entityName } = useEntityContext();
-  const isEntity = entityName != null && entityUuid != null;
-  const isReport = isEntity && isReportModelName(entityName);
+  const entityUuid = useFormModelUuid(props.model);
+  const isEntity = props.model != null && entityUuid != null;
+  const isReport = isEntity && isReportModelName(props.model as EntityName);
   const handleBaseEntityTrees =
-    props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(entityName)));
+    props.withPreviousCounts && (isReport || (isEntity && ["sites", "nurseries"].includes(props.model)));
   const displayPreviousCounts = props.withPreviousCounts && isReport;
   const { totalReportedColumn, totalToDateColumn } = getColumnTitles({ ...props, isReport });
 
-  const entity = handleBaseEntityTrees ? (camelCase(entityName) as EstablishmentEntity) : undefined;
+  const entity = handleBaseEntityTrees ? (props.model as EstablishmentEntity) : undefined;
   const uuid = handleBaseEntityTrees ? entityUuid : undefined;
   const {
     isLoaded: establishmentLoaded,
