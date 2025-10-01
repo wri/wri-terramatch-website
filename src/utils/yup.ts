@@ -28,7 +28,7 @@ export const stringValidator = ({ validation }: FieldDefinition) => {
 export const selectValidator = ({ multiChoice, validation }: FieldDefinition) => {
   if (multiChoice) {
     const validator = yup.array(yup.string().required());
-    return validation?.required === true ? validator.required() : validator;
+    return validation?.required === true ? validator.min(1).required() : validator;
   } else {
     const validator = yup.string();
     return validation?.required === true ? validator.required() : validator;

@@ -42,7 +42,7 @@ const StubFormFieldsProvider: FormFieldsProvider = {
 export type LocalStep = StepDefinition & { fields: LocalFieldWithChildren[] };
 export type LocalFieldWithChildren = FieldDefinition & { children?: FieldDefinition[] };
 
-const createLocalStepsProvider = (
+export const createLocalStepsProvider = (
   localSteps: LocalStep[],
   feedbackRequired: (fieldId: string) => boolean = () => false
 ): FormFieldsProvider => {
