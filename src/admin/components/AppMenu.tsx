@@ -66,9 +66,6 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
         <Menu.ResourceItem name={modules.impactStories.ResourceName} />
       </div>
-      <div className={classNames({ "Sidebar-active": hash === "disturbanceReport" })}>
-        <Menu.ResourceItem name={modules.disturbanceReport.ResourceName} />
-      </div>
     </Menu>
   );
 };

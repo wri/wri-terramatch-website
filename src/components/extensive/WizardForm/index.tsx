@@ -12,7 +12,6 @@ import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { useModalContext } from "@/context/modal.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
-import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -65,8 +64,6 @@ export interface WizardFormProps {
   roundedCorners?: boolean;
   className?: string;
   formSubmissionOrg?: any;
-  entity?: EntityName;
-  projectUuid?: string;
 }
 
 function WizardForm(props: WizardFormProps) {

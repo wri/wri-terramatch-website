@@ -2,13 +2,12 @@ import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
-  fetchGetV2ProjectsUUIDSitePolygonsAll,
-  fetchGetV2SitesSitePolygon,
   useGetV2IndicatorsEntityUuid,
   useGetV2IndicatorsEntityUuidSlug,
   useGetV2IndicatorsEntityUuidSlugVerify,
@@ -297,8 +296,17 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   }, [entity, entity_uuid, modalOpened]);
 
+  const { data: allPolygonsData, isLoading: isLoadingPolygons } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled: entity != null && entity_uuid != null && modalOpened(ModalId.MODAL_RUN_ANALYSIS),
+    filter: {
+      "polygonStatus[]": ["approved"]
+    }
+  });
+
   useEffect(() => {
-    const fetchRerunData = async () => {
+    const processRerunData = () => {
       if (entity == null || entity_uuid == null || indicatorPolygonsStatus == null) return;
 
       setIsLoadingRerunVerify(true);
@@ -318,28 +326,20 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
         return;
       }
 
-      try {
-        let polygonUuids: string[] = [];
+      if (!allPolygonsData || allPolygonsData.length === 0) {
+        const updateRerunDropdownOptions = () =>
+          DROPDOWN_OPTIONS.map(option => ({
+            ...option,
+            title: `${option.title} (0 polygons available for rerun)`
+          }));
+        setRerunAnalysisToSlug({});
+        setRerunDropdownOptions(updateRerunDropdownOptions);
+        setIsLoadingRerunVerify(false);
+        return;
+      }
 
-        if (entity === "projects") {
-          const response = await fetchGetV2ProjectsUUIDSitePolygonsAll({
-            pathParams: { uuid: entity_uuid }
-          });
-          polygonUuids =
-            response
-              .filter((polygon: any) => polygon.status === "approved")
-              .map((polygon: any) => polygon.uuid)
-              .filter(Boolean) ?? [];
-        } else if (entity === "sites") {
-          const response = await fetchGetV2SitesSitePolygon({
-            pathParams: { site: entity_uuid }
-          });
-          polygonUuids =
-            response
-              .filter((polygon: any) => polygon.status === "approved")
-              .map((polygon: any) => polygon.poly_id)
-              .filter(Boolean) ?? [];
-        }
+      try {
+        const polygonUuids = allPolygonsData.map((polygon: any) => polygon.polygonUuid).filter(Boolean);
 
         const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug) => {
           acc[slug] = polygonUuids;
@@ -355,7 +355,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
         setRerunAnalysisToSlug(rerunSlugToAnalysis);
         setRerunDropdownOptions(updateRerunDropdownOptions);
       } catch (error) {
-        Log.error("Error fetching polygon data for rerun:", error);
+        Log.error("Error processing polygon data for rerun:", error);
         const updateRerunDropdownOptions = () =>
           DROPDOWN_OPTIONS.map(option => ({
             ...option,
@@ -367,10 +367,10 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       setIsLoadingRerunVerify(false);
     };
 
-    if (modalOpened(ModalId.MODAL_RUN_ANALYSIS)) {
-      fetchRerunData();
+    if (modalOpened(ModalId.MODAL_RUN_ANALYSIS) && !isLoadingPolygons) {
+      processRerunData();
     }
-  }, [entity, entity_uuid, indicatorPolygonsStatus, modalOpened]);
+  }, [entity, entity_uuid, indicatorPolygonsStatus, modalOpened, allPolygonsData, isLoadingPolygons]);
 
   return {
     polygonsIndicator: filteredPolygons,
