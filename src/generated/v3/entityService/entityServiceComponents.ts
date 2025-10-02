@@ -2651,30 +2651,6 @@ export type FormIndexResponse = {
     id?: string;
     attributes?: Schemas.FormLightDto;
   }[];
-  included?: (
-    | {
-        /**
-         * @example formSections
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormSectionDto;
-      }
-    | {
-        /**
-         * @example formQuestions
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormQuestionDto;
-      }
-  )[];
 };
 
 export type FormIndexVariables = {
@@ -2750,30 +2726,6 @@ export type FormGetResponse = {
     id?: string;
     attributes?: Schemas.FormFullDto;
   };
-  included?: (
-    | {
-        /**
-         * @example formSections
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormSectionDto;
-      }
-    | {
-        /**
-         * @example formQuestions
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FormQuestionDto;
-      }
-  )[];
 };
 
 export type FormGetVariables = {

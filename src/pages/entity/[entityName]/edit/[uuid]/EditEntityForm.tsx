@@ -97,7 +97,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const initialStepProps = useMemo(() => {
     if (providerLoaded && feedbackFields != null) {
       for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
-        for (const fieldId of fieldsProvider.fieldIds(stepId)) {
+        for (const fieldId of fieldsProvider.fieldNames(stepId)) {
           if (fieldsProvider.feedbackRequired(fieldId)) {
             return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
           }

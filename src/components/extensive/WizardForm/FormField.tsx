@@ -12,8 +12,8 @@ type FormQuestionProps = {
 };
 
 const FormField: FC<FormQuestionProps> = ({ fieldId, formHook, onChange }) => {
-  const { feedbackRequired, fieldById } = useFieldsProvider();
-  const field = fieldById(fieldId);
+  const { feedbackRequired, fieldByName } = useFieldsProvider();
+  const field = fieldByName(fieldId);
   if (field == null) return null;
 
   const sharedProps = useMemo(

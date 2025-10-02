@@ -13,7 +13,7 @@ import { loadGadmCodes } from "@/connections/Gadm";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
-import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { v3Entity } from "@/helpers/entity";
 import { Entity, Option, UploadedFile } from "@/types/common";
@@ -24,7 +24,7 @@ export const getSchema = (
   fieldsProvider: FormFieldsProvider,
   t: typeof useT,
   framework: Framework = Framework.UNDEFINED,
-  fieldIds: string[] = fieldsProvider.stepIds().flatMap(fieldsProvider.fieldIds)
+  fieldIds: string[] = fieldsProvider.stepIds().flatMap(fieldsProvider.fieldNames)
 ) =>
   yup.object(
     fieldIds.reduce((schema, fieldId) => {
@@ -40,17 +40,12 @@ export const addFieldValidation = (
   t: typeof useT,
   framework: Framework
 ) => {
-  const field = fieldsProvider.fieldById(fieldId);
+  const field = fieldsProvider.fieldByName(fieldId);
   if (field == null) return undefined;
 
   FormFieldFactories[field.inputType].addValidation(validations, field, t, framework, fieldsProvider);
   validations[field.name] = (validations[field.name] ?? yup.mixed()).nullable().label(field.label ?? "");
 };
-
-export const questionDtoToDefinition = (question: FormQuestionDto): FieldDefinition => ({
-  ...question,
-  name: question.uuid
-});
 
 const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
   (option as FormQuestionOptionDto).slug != null;
@@ -86,8 +81,8 @@ export const useFilterFieldName = (linkedFieldKey?: string) => {
 export const childIdsWithCondition = (fieldId: string, condition: boolean, fieldsProvider: FormFieldsProvider) =>
   (
     fieldsProvider
-      .childIds(fieldId)
-      .map(childId => fieldsProvider.fieldById(childId))
+      .childNames(fieldId)
+      .map(childId => fieldsProvider.fieldByName(childId))
       .filter(child => child != null && child.showOnParentCondition === condition) as FieldDefinition[]
   ).map(({ name }) => name);
 
@@ -104,7 +99,7 @@ export const loadExternalAnswerSources = async (
   const promises: Promise<unknown>[] = [];
 
   for (const fieldId of fieldIds) {
-    const field = fieldsProvider.fieldById(fieldId);
+    const field = fieldsProvider.fieldByName(fieldId);
     if (field == null) continue;
 
     if (field.inputType === "conditional") {
@@ -170,8 +165,8 @@ export const downloadAnswersCSV = (fieldsProvider: FormFieldsProvider, values: D
   const csv = new CSVGenerator();
   csv.pushRow(["Question", "Answer"]);
   for (const stepId of fieldsProvider.stepIds()) {
-    for (const fieldId of fieldsProvider.fieldIds(stepId)) {
-      const field = fieldsProvider.fieldById(fieldId);
+    for (const fieldId of fieldsProvider.fieldNames(stepId)) {
+      const field = fieldsProvider.fieldByName(fieldId);
       if (field != null) appendAnswersAsCSVRow(csv, field, values, fieldsProvider);
     }
   }

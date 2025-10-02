@@ -83,7 +83,7 @@ function WizardForm(props: WizardFormProps) {
       return {
         id: stepId,
         title: props.fieldsProvider.step(stepId)?.title,
-        validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldIds(stepId))
+        validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
       };
     });
   }, [props.framework, props.fieldsProvider, t]);

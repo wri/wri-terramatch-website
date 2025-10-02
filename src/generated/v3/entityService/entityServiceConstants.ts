@@ -32,9 +32,7 @@ import {
   OptionLabelDto,
   LinkedFieldDto,
   FormLightDto,
-  FormFullDto,
-  FormSectionDto,
-  FormQuestionDto
+  FormFullDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -60,9 +58,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "stratas",
   "optionLabels",
   "linkedFields",
-  "forms",
-  "formSections",
-  "formQuestions"
+  "forms"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -89,8 +85,6 @@ export type EntityServiceApiResources = {
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
   forms: StoreResourceMap<FormLightDto | FormFullDto>;
-  formSections: StoreResourceMap<FormSectionDto>;
-  formQuestions: StoreResourceMap<FormQuestionDto>;
 };
 
 export const TreeEntityTypes = {

@@ -111,7 +111,10 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   );
 
   const headers = useMemo<ColumnDef<TData>[]>(() => {
-    const fields = fieldsProvider.fieldIds(fieldsProvider.stepIds()[0]).map(fieldsProvider.fieldById).filter(isNotNull);
+    const fields = fieldsProvider
+      .fieldNames(fieldsProvider.stepIds()[0])
+      .map(fieldsProvider.fieldByName)
+      .filter(isNotNull);
     return [
       {
         accessorKey: "index",

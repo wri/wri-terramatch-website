@@ -169,10 +169,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         name: "employees",
         inputType: "tableInput",
         label: t("Your employees"),
-        tableHeaders: [
-          { order: 1, label: t("Employee Type") },
-          { order: 2, label: t("Employee Count") }
-        ],
+        tableHeaders: [t("Employee Type"), t("Employee Count")],
         children: [
           {
             name: "ft_permanent_employees",

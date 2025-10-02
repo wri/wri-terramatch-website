@@ -28,7 +28,7 @@ const FormModal: FC<FormModalProps> = ({ title, onSubmit, defaultValues }) => {
   const fieldsProvider = useFieldsProvider();
   const resolver = useMemo(() => yupResolver(getSchema(fieldsProvider, t)), [fieldsProvider, t]);
   const formHook = useForm({ resolver, mode: "onSubmit", defaultValues });
-  const fieldIds = useMemo(() => fieldsProvider.fieldIds(fieldsProvider.stepIds()[0]), [fieldsProvider]);
+  const fieldIds = useMemo(() => fieldsProvider.fieldNames(fieldsProvider.stepIds()[0]), [fieldsProvider]);
 
   return (
     <ModalBase className="w-[800px] p-0">

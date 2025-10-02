@@ -187,10 +187,7 @@ const PROVIDER = createLocalStepsProvider([
         label: "Proposed # of New Paid Jobs to be Created breakdown*",
         description: "Please write the total number broken down by gender.",
         inputType: "tableInput",
-        tableHeaders: [
-          { order: 1, label: "Breakdown" },
-          { order: 2, label: "Percentage (%)" }
-        ],
+        tableHeaders: ["Breakdown", "Percentage (%)"],
         children: [
           {
             label: "% New paid full-time hobs",

@@ -1,7 +1,7 @@
 import { map, uniq } from "lodash";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { connectionHook, connectionLoader, connectionSelector } from "@/connections/util/connectionShortcuts";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   formGet,
   formIndex,
@@ -14,8 +14,6 @@ import {
 import {
   FormFullDto,
   FormLightDto,
-  FormQuestionDto,
-  FormSectionDto,
   LinkedFieldDto,
   OptionLabelDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -77,24 +75,3 @@ const formConnection = v3Resource("forms", formGet)
   .buildConnection();
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);
-
-export const sectionsConnection = v3Resource("formSections")
-  .listByParentId<FormSectionDto>("formId", { sortProp: "order" })
-  .enabledProp()
-  .buildConnection();
-export const questionsConnection = v3Resource("formQuestions")
-  .listByParentId<FormQuestionDto>("sectionId", { sortProp: "order" })
-  .buildConnection();
-const sectionsSelector = connectionSelector(sectionsConnection);
-export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
-const questionsSelector = connectionSelector(questionsConnection);
-export const selectQuestions = (sectionId: string) => questionsSelector({ parentId: sectionId }).data ?? [];
-
-const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
-const questionSelector = connectionSelector(questionConnection);
-export const selectQuestion = (questionUuid: string) => questionSelector({ id: questionUuid }).data;
-export const selectChildQuestions = (questionUuid: string) => {
-  const { sectionId, uuid } = selectQuestion(questionUuid) ?? {};
-  if (sectionId == null || uuid == null) return [];
-  return (selectQuestions(sectionId) ?? []).filter(({ parentId }) => parentId === uuid);
-};

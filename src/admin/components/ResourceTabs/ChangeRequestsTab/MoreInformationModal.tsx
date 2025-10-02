@@ -54,8 +54,8 @@ const ChangeRequestRequestMoreInfoModal = ({
     () =>
       fieldsProvider
         .stepIds()
-        .flatMap(fieldsProvider.fieldIds)
-        .map(fieldsProvider.fieldById)
+        .flatMap(fieldsProvider.fieldNames)
+        .map(fieldsProvider.fieldByName)
         .filter(isNotNull)
         .map(({ label, name }) => ({ name: label ?? "", id: name ?? "" })),
     [fieldsProvider]

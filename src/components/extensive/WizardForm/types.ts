@@ -28,11 +28,6 @@ export type StepDefinition = {
   description?: string | null;
 };
 
-export type TableHeader = {
-  label: string | null;
-  order: number | null;
-};
-
 export type FieldDefinition = {
   inputType: FieldInputType;
   // Functions as the ID for form fields. When the fields come from the API, this is also the UUID.
@@ -52,7 +47,7 @@ export type FieldDefinition = {
   minCharacterLimit?: number | null;
   maxCharacterLimit?: number | null;
   years?: number[] | null;
-  tableHeaders?: TableHeader[] | null;
+  tableHeaders?: string[] | null;
   additionalProps?: Dictionary<any> | null;
   model?: FormQuestionDto["model"];
 };

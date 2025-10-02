@@ -1966,23 +1966,6 @@ export type FormLightDto = {
   bannerUrl: string | null;
 };
 
-export type FormSectionDto = {
-  uuid: string;
-  /**
-   * Form id
-   */
-  formId: string;
-  order: number;
-  /**
-   * Translated section title
-   */
-  title: string | null;
-  /**
-   * Translated section description
-   */
-  description: string | null;
-};
-
 export type FormQuestionOptionDto = {
   /**
    * Option label slug
@@ -1997,26 +1980,11 @@ export type FormQuestionOptionDto = {
    * Option image
    */
   imageUrl: string | null;
-  order: number;
   thumbUrl: string | null;
 };
 
-export type FormTableHeaderDto = {
-  slug: string | null;
-  label: string | null;
-  order: number | null;
-};
-
 export type FormQuestionDto = {
-  uuid: string;
-  /**
-   * Form section id
-   */
-  sectionId: string;
-  /**
-   * UUID of the parent question
-   */
-  parentId: string | null;
+  name: string;
   inputType:
     | "boolean"
     | "conditional"
@@ -2051,14 +2019,12 @@ export type FormQuestionDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays";
-  name: string | null;
   label: string;
   placeholder: string | null;
   description: string | null;
   validation: Record<string, any> | null;
   multiChoice: boolean;
   collection: string | null;
-  order: number;
   optionsList: string | null;
   optionsOther: boolean | null;
   options: FormQuestionOptionDto[] | null;
@@ -2079,8 +2045,22 @@ export type FormQuestionDto = {
   minCharacterLimit: number | null;
   maxCharacterLimit: number | null;
   years: number[] | null;
-  tableHeaders: FormTableHeaderDto[] | null;
+  tableHeaders: string[] | null;
   additionalProps: Record<string, any> | null;
+  children: FormQuestionDto[] | null;
+};
+
+export type FormSectionDto = {
+  id: string;
+  /**
+   * Translated section title
+   */
+  title: string | null;
+  /**
+   * Translated section description
+   */
+  description: string | null;
+  questions: FormQuestionDto[];
 };
 
 export type FormFullDto = {
@@ -2129,4 +2109,5 @@ export type FormFullDto = {
   submissionMessage: string | null;
   stageId: string | null;
   fundingProgrammeId: string | null;
+  sections: FormSectionDto[];
 };

@@ -22,11 +22,14 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const [valueCondition, setValueCondition] = useState<OptionValueWithBoolean>();
   const t = useT();
   const { field } = useController(props);
-  const { childIds, fieldById } = useFieldsProvider();
+  const { childNames, fieldByName } = useFieldsProvider();
 
   const value = formHook.watch(fieldId);
 
-  const children = useMemo(() => childIds(fieldId).map(fieldById).filter(isNotNull), [childIds, fieldById, fieldId]);
+  const children = useMemo(
+    () => childNames(fieldId).map(fieldByName).filter(isNotNull),
+    [childNames, fieldByName, fieldId]
+  );
   const displayChildIds = useMemo(
     () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value).map(({ name }) => name),
     [children, value]

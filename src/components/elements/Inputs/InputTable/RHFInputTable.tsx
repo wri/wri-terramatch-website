@@ -1,8 +1,7 @@
-import { sortBy } from "lodash";
 import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import { FieldDefinition, TableHeader } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { isNotNull } from "@/utils/array";
 
@@ -13,7 +12,7 @@ export type RHFInputTableProps = Omit<InputTableProps, "value" | "onChange" | "e
   PropsWithChildren<{
     onChangeCapture?: () => void;
     formHook?: UseFormReturn;
-    headers: TableHeader[];
+    headers: string[];
     fieldId: string;
   }>;
 
@@ -52,13 +51,13 @@ const RHFInputTable: FC<RHFInputTableProps> = ({ onChangeCapture, formHook, head
     field: { value, onChange }
   } = useController(props);
   const propsHeaders = useMemo(() => {
-    const sorted = sortBy(headers, "order").map(({ label }) => label);
-    return [sorted[0] ?? "", sorted[1] ?? ""] as const;
+    const labels = headers.map(label => label);
+    return [labels[0] ?? "", labels[1] ?? ""] as const;
   }, [headers]);
-  const { childIds, fieldById } = useFieldsProvider();
+  const { childNames, fieldByName } = useFieldsProvider();
   const rows = useMemo(
-    () => childIds(fieldId).map(fieldById).map(toTableRow).filter(isNotNull),
-    [childIds, fieldById, fieldId]
+    () => childNames(fieldId).map(fieldByName).map(toTableRow).filter(isNotNull),
+    [childNames, fieldByName, fieldId]
   );
 
   const _onChange = async (value: any) => {

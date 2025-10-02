@@ -7,25 +7,16 @@ import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { AdditionalInputTypes } from "@/admin/types/common";
-import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
-import { selectChildQuestions, selectQuestions, selectSections } from "@/connections/util/Form";
 import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
 import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export const normalizeV3Form = (form: FormFullDto): FormBuilderData => ({
+export const normalizeV3Form = ({ sections, ...form }: FormFullDto): FormBuilderData => ({
   ...form,
   id: form.uuid,
-  steps: selectSections(form.uuid).map(section => {
-    const { uuid, ...step } = section;
-    return {
-      ...step,
-      id: uuid,
-      fields: selectQuestions(uuid).map(question => ({
-        ...questionDtoToDefinition(question),
-        children: selectChildQuestions(question.uuid).map(questionDtoToDefinition)
-      }))
-    };
-  })
+  steps: sections.map(({ questions, ...step }) => ({
+    ...step,
+    fields: questions.map(({ children, ...field }) => ({ ...field, children: children ?? undefined }))
+  }))
 });
 
 //Response normalizers

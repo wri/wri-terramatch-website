@@ -88,7 +88,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
 
   const [externalSourcesLoaded, setExternalSourcesLoaded] = useState(false);
   useEffect(() => {
-    loadExternalAnswerSources(fieldsProvider.fieldIds(props.stepId), props.values, fieldsProvider).finally(() =>
+    loadExternalAnswerSources(fieldsProvider.fieldNames(props.stepId), props.values, fieldsProvider).finally(() =>
       setExternalSourcesLoaded(true)
     );
   }, [fieldsProvider, props.stepId, props.values]);
@@ -107,7 +107,7 @@ export const getFormEntries = (
   fieldsProvider: FormFieldsProvider,
   { stepId, values, nullText, type, entity }: GetFormEntriesProps,
   t: typeof useT,
-  fieldIds = fieldsProvider.fieldIds(stepId),
+  fieldIds = fieldsProvider.fieldNames(stepId),
   entityPolygonData?: any,
   bbox?: any,
   mapFunctions?: any,
@@ -125,7 +125,7 @@ export const getFormEntries = (
     mapFunctions,
     record
   };
-  for (const field of fieldIds.map(fieldsProvider.fieldById).filter(isNotNull)) {
+  for (const field of fieldIds.map(fieldsProvider.fieldByName).filter(isNotNull)) {
     const { getEntryValue } = FormFieldFactories[field.inputType];
     const value =
       getEntryValue == null

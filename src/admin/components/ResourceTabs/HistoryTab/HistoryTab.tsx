@@ -45,7 +45,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   );
 
   const fields = useMemo(
-    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldIds).map(fieldsProvider.fieldById).filter(isNotNull),
+    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldNames).map(fieldsProvider.fieldByName).filter(isNotNull),
     [fieldsProvider]
   );
 

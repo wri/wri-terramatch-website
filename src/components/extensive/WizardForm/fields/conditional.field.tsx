@@ -12,8 +12,8 @@ import { booleanValidator } from "@/utils/yup";
 export const ConditionalField: FormFieldFactory = {
   addValidation: (validations, field, t, framework, fieldsProvider) => {
     validations[field.name] = booleanValidator(field);
-    for (const childId of fieldsProvider.childIds(field.name)) {
-      const child = fieldsProvider.fieldById(childId);
+    for (const childId of fieldsProvider.childNames(field.name)) {
+      const child = fieldsProvider.fieldByName(childId);
       if (child == null) continue;
 
       addFieldValidation(validations, fieldsProvider, child.name, t, framework);
@@ -30,8 +30,8 @@ export const ConditionalField: FormFieldFactory = {
   appendAnswers: (field, csv, formValues, fieldsProvider) => {
     csv.pushRow([field.label, getFormattedAnswer(field, formValues, fieldsProvider)]);
     fieldsProvider
-      .childIds(field.name)
-      .map(fieldsProvider.fieldById)
+      .childNames(field.name)
+      .map(fieldsProvider.fieldByName)
       .filter(isNotNull)
       .filter(({ showOnParentCondition }) => showOnParentCondition === formValues[field.name])
       .forEach(child => {
@@ -41,8 +41,8 @@ export const ConditionalField: FormFieldFactory = {
 
   defaultValue: ({ name }, formValues, fieldsProvider) =>
     fieldsProvider
-      .childIds(name)
-      .map(fieldsProvider.fieldById)
+      .childNames(name)
+      .map(fieldsProvider.fieldByName)
       .filter(isNotNull)
       .reduce((values, child) => applyFieldDefault(child, values, fieldsProvider), {
         ...formValues,
@@ -51,8 +51,8 @@ export const ConditionalField: FormFieldFactory = {
 
   normalizeValue: ({ name }, formValues, fieldsProvider) =>
     fieldsProvider
-      .childIds(name)
-      .map(fieldsProvider.fieldById)
+      .childNames(name)
+      .map(fieldsProvider.fieldByName)
       .filter(isNotNull)
       .reduce((values, child) => normalizedFormFieldData(values, child, fieldsProvider), formValues),
 

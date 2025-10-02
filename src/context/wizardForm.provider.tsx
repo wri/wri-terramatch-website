@@ -1,10 +1,9 @@
-import { kebabCase, orderBy, uniq } from "lodash";
+import { kebabCase } from "lodash";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
-import { questionDtoToDefinition } from "@/components/extensive/WizardForm/utils";
-import { selectQuestion, selectQuestions, selectSections, useForm } from "@/connections/util/Form";
+import { useForm } from "@/connections/util/Form";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
@@ -30,14 +29,14 @@ export type FormFieldsProvider = {
   step: (id: string) => StepDefinition | undefined;
 
   /**
-   * Get all field IDs in the step in render order. Does _not_ return fields that have a parent.
+   * Get all field names in the step in render order. Does _not_ return fields that have a parent.
    */
-  fieldIds: (stepId: string) => string[];
+  fieldNames: (stepId: string) => string[];
 
   /**
-   * Get the field definition for the given field ID.
+   * Get the field definition for the given field name.
    */
-  fieldById: (id: string) => FieldDefinition | undefined;
+  fieldByName: (name: string) => FieldDefinition | undefined;
 
   /**
    * Returns the first field definition that has the given linkedFieldKey.
@@ -45,9 +44,9 @@ export type FormFieldsProvider = {
   fieldByKey: (linkedFieldKey: string) => FieldDefinition | undefined;
 
   /**
-   * Returns the child field IDs for the given parent field in render order.
+   * Returns the child field names for the given parent field in render order.
    */
-  childIds: (fieldId: string) => string[];
+  childNames: (parentName: string) => string[];
 
   /**
    * Returns true if the given field requires feedback.
@@ -58,10 +57,10 @@ export type FormFieldsProvider = {
 const StubFormFieldsProvider: FormFieldsProvider = {
   stepIds: () => [],
   step: () => undefined,
-  fieldIds: () => [],
-  fieldById: () => undefined,
+  fieldNames: () => [],
+  fieldByName: () => undefined,
   fieldByKey: () => undefined,
-  childIds: () => [],
+  childNames: () => [],
   feedbackRequired: () => false
 };
 
@@ -74,8 +73,8 @@ export const createLocalStepsProvider = (
 ): FormFieldsProvider => {
   const stepIds = localSteps.map(({ id }) => id);
   const stepsById = new Map<string, StepDefinition>(localSteps.map(({ fields, ...step }) => [step.id, step]));
-  const fieldIds = new Map(localSteps.map(({ id, fields }) => [id, fields.map(({ name }) => name)]));
-  const fieldsById = new Map(
+  const fieldNames = new Map(localSteps.map(({ id, fields }) => [id, fields.map(({ name }) => name)]));
+  const fieldsByName = new Map(
     localSteps.flatMap(({ fields }) =>
       fields.flatMap(
         ({ children, ...field }) =>
@@ -84,11 +83,11 @@ export const createLocalStepsProvider = (
     )
   );
   const fieldsByKey = new Map(
-    [...fieldsById.values()]
+    [...fieldsByName.values()]
       .filter(({ linkedFieldKey }) => linkedFieldKey != null)
       .map(field => [field.linkedFieldKey as string, field])
   );
-  const childIds = new Map<string, string[]>(
+  const childNames = new Map<string, string[]>(
     localSteps
       .flatMap(({ fields }) => fields)
       .filter(({ children }) => children != null)
@@ -98,10 +97,10 @@ export const createLocalStepsProvider = (
   return {
     stepIds: () => stepIds ?? [],
     step: (id: string) => stepsById.get(id),
-    fieldIds: (stepIds: string) => fieldIds.get(stepIds) ?? [],
-    fieldById: (id: string) => fieldsById.get(id),
+    fieldNames: (stepId: string) => fieldNames.get(stepId) ?? [],
+    fieldByName: (name: string) => fieldsByName.get(name),
     fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
-    childIds: (fieldId: string) => childIds.get(fieldId) ?? [],
+    childNames: (childName: string) => childNames.get(childName) ?? [],
     feedbackRequired
   };
 };
@@ -123,51 +122,30 @@ export const useApiFieldsProvider = (
 ): [boolean, FormFieldsProvider] => {
   const enabled = formUuid != null;
   const [formLoaded, { data: form }] = useForm({ id: formUuid ?? undefined, enabled: formUuid != null });
-  const provider = useMemo(
-    // It's important that this memoized result depends on the loaded form in some way (here it's
-    // using the UUID from the form response instead of formUuid in the args) so that this memoized
-    // result recalculates when the form is done loading.
-    () => {
-      // Convert the API form to a valid LocalSteps definition.
-      const localSteps: LocalStep[] =
-        form?.uuid == null
-          ? []
-          : selectSections(form.uuid).reduce((steps, section) => {
-              const allQuestions = selectQuestions(section.uuid);
-              const filteredQuestions = fieldFilter == null ? allQuestions : allQuestions.filter(fieldFilter);
-              // It's possible our filter included a child question but not its parent.
-              const missingParentIds = uniq(
-                filteredQuestions
-                  .filter(
-                    ({ parentId }) => parentId != null && filteredQuestions.find(q => q.uuid === parentId) == null
-                  )
-                  .map(({ parentId }) => parentId)
-                  .filter(isNotNull)
-              );
-              const questions =
-                missingParentIds.length === 0
-                  ? filteredQuestions
-                  : orderBy(
-                      [...filteredQuestions, ...missingParentIds.map(id => selectQuestion(id)).filter(isNotNull)],
-                      "order"
-                    );
+  const provider = useMemo(() => {
+    // Convert the API form to a valid LocalSteps definition.
+    const localSteps: LocalStep[] = (form?.sections ?? [])
+      .map(({ id, title, description, questions }): LocalStep | undefined => {
+        const fields = questions
+          .map((question): LocalFieldWithChildren | undefined => {
+            const children =
+              (fieldFilter == null ? question.children : question.children?.filter(fieldFilter)) ?? undefined;
+            if (fieldFilter != null && !fieldFilter(question)) {
+              // If the field filter says no to this question, return null if it has no children,
+              // or if all of its children have been filtered out as well.
+              if (question.children == null || question.children.length === 0) return undefined;
+              if (children?.length === 0) return undefined;
+            }
 
-              // Remove steps that have no questions left after filtering.
-              if (questions.length === 0) return steps;
+            return { ...question, children };
+          })
+          .filter(isNotNull);
 
-              const { uuid, ...step } = section;
-              const fields = questions
-                .filter(({ parentId }) => parentId == null)
-                .map(question => ({
-                  ...questionDtoToDefinition(question),
-                  children: questions.filter(({ parentId }) => parentId === question.uuid).map(questionDtoToDefinition)
-                }));
-              return [...steps, { ...step, id: uuid, fields }];
-            }, [] as LocalStep[]);
-      return createLocalStepsProvider(localSteps, (fieldId: string) => feedbackFields?.includes(fieldId) ?? false);
-    },
-    [feedbackFields, fieldFilter, form?.uuid]
-  );
+        return fields.length === 0 ? undefined : { id, title, description, fields };
+      })
+      .filter(isNotNull);
+    return createLocalStepsProvider(localSteps, (fieldId: string) => feedbackFields?.includes(fieldId) ?? false);
+  }, [feedbackFields, fieldFilter, form?.sections]);
   return [formLoaded && enabled, provider];
 };
 

@@ -22,9 +22,9 @@ export const FormStep = ({
   children,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
-  const { step, fieldIds } = useFieldsProvider();
+  const { step, fieldNames } = useFieldsProvider();
   const stepDefinition = step(stepId);
-  const stepFieldIds = useMemo(() => fieldIds(stepId), [fieldIds, stepId]);
+  const stepFieldIds = useMemo(() => fieldNames(stepId), [fieldNames, stepId]);
 
   useEffect(() => {
     formHook.clearErrors();
