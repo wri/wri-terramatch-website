@@ -2,6 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
+import FormField from "@/components/extensive/WizardForm/FormField";
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import WizardFormProvider, { LocalStep, useLocalStepsProvider } from "@/context/wizardForm.provider";
 
@@ -11,6 +12,10 @@ const meta: Meta<typeof Component> = {
   title: "Components/Extensive/Form/Simple",
   component: Component
 };
+
+// Make sure this gets imported early to avoid circular dependency
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const FORM_FIELD = FormField;
 
 export default meta;
 type Story = StoryObj<typeof Component>;
