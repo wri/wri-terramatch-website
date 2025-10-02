@@ -1,6 +1,6 @@
 import { Delete as DeleteIcon, ExpandMore, UploadFile } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
-import { camelCase, get } from "lodash";
+import { camelCase } from "lodash";
 import { useCallback, useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
@@ -21,11 +21,10 @@ import {
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { maxFileSize } from "@/admin/utils/forms";
-import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
+import { StepDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useLinkedFields } from "@/connections/util/Form";
 import { LocalStep } from "@/context/wizardForm.provider";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
-import Log from "@/utils/log";
 
 type FormType = (typeof Forms.FORM_TYPES)[number];
 export const formTypeChoices: { id: FormType; name: string }[] = [
@@ -54,9 +53,6 @@ export const FormBuilderForm = () => {
     [modelTypeValue]
   );
 
-  // TODO (NJC) To be replaced in TM-2417 / TM-2418
-  // const { mutateAsync: deleteSectionAsync } = useDeleteV2AdminFormsSectionUUID();
-  // const { mutateAsync: deleteQuestionAsync } = useDeleteV2AdminFormsQuestionUUID();
   const [previewSectionId, setPreviewSectionId] = useState<string>();
   const onSelectPreview = useCallback(
     (field: Record<any, any>) => setPreviewSectionId((field as StepDefinition).id),
@@ -77,36 +73,6 @@ export const FormBuilderForm = () => {
       fields: []
     }),
     []
-  );
-
-  const deleteSection = useCallback(
-    async (index: number, source: string) => {
-      const values = getValues();
-      const uuid = (get(values, source) as LocalStep[])[index]?.id;
-      Log.info("deleteSection", { index, values, uuid });
-
-      // TODO (NJC) To be replaced in TM-2417 / TM-2418
-      // if (uuid) {
-      //   //@ts-ignore
-      //   await deleteSectionAsync({ pathParams: { uuid } });
-      // }
-    },
-    [getValues]
-  );
-
-  const deleteQuestion = useCallback(
-    async (index: number, source: string) => {
-      const values = getValues();
-      const uuid = (get(values, source) as FieldDefinition[])[index]?.name;
-      Log.info("deleteQuestion", { index, source, values, uuid });
-
-      // TODO (NJC) To be replaced in TM-2417 / TM-2418
-      // if (uuid) {
-      //   //@ts-ignore
-      //   await deleteQuestionAsync({ pathParams: { uuid } });
-      // }
-    },
-    [getValues]
   );
 
   return (
@@ -196,7 +162,6 @@ export const FormBuilderForm = () => {
                 <RemoveItemButton
                   variant="text"
                   label="Delete Section"
-                  onDelete={deleteSection}
                   modalTitle="Delete Section"
                   modalContent="This is permanent, are you sure you want to delete this section?"
                 >
@@ -225,7 +190,6 @@ export const FormBuilderForm = () => {
                 label="Form Questions"
                 title="Question"
                 linkedFieldsData={fullLinkedFields}
-                onDeleteQuestion={deleteQuestion}
                 validate={minLength(1, "At least one question is required")}
                 formTitle={getValues()?.title}
               />
