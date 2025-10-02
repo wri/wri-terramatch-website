@@ -19,13 +19,39 @@ export type FormModel = {
 export type FormModelsDefinition = FormModel | FormModel[];
 
 export type FormFieldsProvider = {
-  // Returns the step IDs in the order they should be displayed in the form.
+  /**
+   * Get all step IDs in the form in render order.
+   */
   stepIds: () => string[];
+
+  /**
+   * Get the step definition for the given step ID.
+   */
   step: (id: string) => StepDefinition | undefined;
+
+  /**
+   * Get all field IDs in the step in render order. Does _not_ return fields that have a parent.
+   */
   fieldIds: (stepId: string) => string[];
+
+  /**
+   * Get the field definition for the given field ID.
+   */
   fieldById: (id: string) => FieldDefinition | undefined;
+
+  /**
+   * Returns the first field definition that has the given linkedFieldKey.
+   */
   fieldByKey: (linkedFieldKey: string) => FieldDefinition | undefined;
+
+  /**
+   * Returns the child field IDs for the given parent field in render order.
+   */
   childIds: (fieldId: string) => string[];
+
+  /**
+   * Returns true if the given field requires feedback.
+   */
   feedbackRequired: (fieldId: string) => boolean;
 };
 
@@ -80,6 +106,12 @@ export const createLocalStepsProvider = (
   };
 };
 
+/**
+ * Create a FormFieldsProvider using a LocalStep[] array.
+ *
+ * IMPORTANT: `localSteps` is used as a dependency on `useMemo`, and MUST be stable so the provider isn't
+ * recreated on every render.
+ */
 export const useLocalStepsProvider = (localSteps: LocalStep[]) =>
   useMemo(() => createLocalStepsProvider(localSteps), [localSteps]);
 

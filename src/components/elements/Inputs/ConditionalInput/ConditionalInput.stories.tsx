@@ -76,7 +76,7 @@ export const Default: Story = {
     const provider = useLocalStepsProvider(STEPS);
     return (
       <WizardFormProvider fieldsProvider={provider}>
-        <FormField field={provider.fieldById(args.fieldId)!} formHook={formHook} onChange={onChangeCapture} />
+        <FormField fieldId={args.fieldId} formHook={formHook} onChange={onChangeCapture} />
       </WizardFormProvider>
     );
   },

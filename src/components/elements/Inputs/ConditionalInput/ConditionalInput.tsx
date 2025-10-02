@@ -27,8 +27,8 @@ const ConditionalInput = (props: ConditionalInputProps) => {
   const value = formHook.watch(fieldId);
 
   const children = useMemo(() => childIds(fieldId).map(fieldById).filter(isNotNull), [childIds, fieldById, fieldId]);
-  const displayChildren = useMemo(
-    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value),
+  const displayChildIds = useMemo(
+    () => children.filter(({ showOnParentCondition }) => showOnParentCondition === value).map(({ name }) => name),
     [children, value]
   );
 
@@ -91,10 +91,10 @@ const ConditionalInput = (props: ConditionalInputProps) => {
       />
 
       <List
-        items={displayChildren}
+        items={displayChildIds}
         uniqueId="name"
         itemClassName="mt-8"
-        render={child => <FormField key={child.name} field={child} formHook={formHook} onChange={onChangeCapture} />}
+        render={childId => <FormField key={childId} fieldId={childId} formHook={formHook} onChange={onChangeCapture} />}
       />
     </>
   );

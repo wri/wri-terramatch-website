@@ -30,13 +30,12 @@ type QuestionPreviewContentProps = {
 const QuestionPreviewContent: FC<QuestionPreviewContentProps> = ({ questionId }) => {
   const steps = useFormContext<FormBuilderData>().getValues().steps;
   const fieldsProvider = useLocalStepsProvider(steps ?? []);
-  const field = fieldsProvider.fieldById(questionId);
   // Create a form hook for the preview so it doesn't try to interact with the form builder data.
   const formHook = useForm();
 
-  return field == null ? null : (
+  return (
     <WizardFormProvider fieldsProvider={fieldsProvider}>
-      <FormField field={field} formHook={formHook} onChange={() => Log.debug("FormField onChange")} />
+      <FormField fieldId={questionId} formHook={formHook} onChange={() => Log.debug("FormField onChange")} />
     </WizardFormProvider>
   );
 };

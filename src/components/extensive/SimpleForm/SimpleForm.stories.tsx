@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import WizardFormProvider, { LocalStep, useLocalStepsProvider } from "@/context/wizardForm.provider";
 
 import Component, { SimpleFormProps as Props } from "./SimpleForm";
 
@@ -15,7 +16,7 @@ export default meta;
 type Story = StoryObj<typeof Component>;
 
 const client = new QueryClient();
-const fields: FieldDefinition[] = [
+const FIELDS: FieldDefinition[] = [
   {
     name: "text_field",
     label: "Simple text field",
@@ -81,21 +82,24 @@ const fields: FieldDefinition[] = [
     ]
   }
 ];
+const STEPS: LocalStep[] = [{ id: "simpleForm", fields: FIELDS }];
 
 export const Default: Story = {
   render: (args: Props) => {
     const formHook = useForm();
-
+    const fieldsProvider = useLocalStepsProvider(STEPS);
     return (
       <QueryClientProvider client={client}>
         <div className="flex w-full justify-center bg-background px-3">
-          <Component {...args} formHook={formHook} />
+          <WizardFormProvider fieldsProvider={fieldsProvider}>
+            <Component {...args} formHook={formHook} />
+          </WizardFormProvider>
         </div>
       </QueryClientProvider>
     );
   },
   args: {
-    fields: fields,
-    onChange() {}
+    onChange() {},
+    fieldIds: FIELDS.map(({ name }) => name)
   }
 };

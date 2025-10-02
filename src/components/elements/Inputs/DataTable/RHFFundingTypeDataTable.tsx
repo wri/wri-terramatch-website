@@ -1,12 +1,13 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { useDeleteV2FundingTypeUUID, usePatchV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
 import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
@@ -14,7 +15,7 @@ import { formatOptionsList } from "@/utils/options";
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFFundingTypeTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
@@ -67,11 +68,7 @@ export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) 
   }
 ];
 
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns React Hook Form Ready Select Component
- */
-const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
+const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const { field } = useController(props);
   const value = field?.value || [];
@@ -128,6 +125,15 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     amount: currencyInput[currency] ? currencyInput[currency] + " " + item?.amount : item?.amount
   }));
 
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getFundingTypeTableColumns(t),
+      steps: [{ id: "fundingTypeTable", fields: getFundingTypeQuestions(t) }]
+    }),
+    [t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
+
   return (
     <DataTable
       key={tableKey}
@@ -156,8 +162,8 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       }}
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
-      tableColumns={getFundingTypeTableColumns(t)}
-      fields={getFundingTypeQuestions(t)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
       hasPagination={true}
       invertSelectPagination={true}
     />

@@ -1,19 +1,22 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { useDeleteV2LeadershipsUUID, usePatchV2LeadershipsUUID, usePostV2Leaderships } from "@/generated/apiComponents";
 import { V2LeadershipsRead } from "@/generated/apiSchemas";
+import { Option } from "@/types/common";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFLeadershipsTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
@@ -41,11 +44,48 @@ export const getLeadershipsTableColumns = (
   }
 ];
 
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns React Hook Form Ready Select Component
- */
-const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFLeadershipsTableProps>) => {
+const getLeadershipsTableQuestions = (countryOptions: Option[], t: typeof useT): FieldDefinition[] => [
+  {
+    label: t("Team Member first name"),
+    name: "first_name",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Team member last name"),
+    name: "last_name",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Team member Gender"),
+    name: "gender",
+    inputType: "select",
+    options: getGenderOptions(t),
+    validation: { required: true }
+  },
+  {
+    label: t("Age"),
+    name: "age",
+    inputType: "number",
+    validation: { required: true, min: 16, max: 150 }
+  },
+  {
+    label: t("Role"),
+    name: "position",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Nationality"),
+    name: "nationality",
+    inputType: "select",
+    options: countryOptions ?? [],
+    validation: { required: true }
+  }
+];
+
+const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const { field } = useController(props);
   const { formHook, collection } = props;
@@ -114,6 +154,15 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
         }
       : {};
 
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getLeadershipsTableColumns(t),
+      steps: [{ id: "leadershipsTable", fields: getLeadershipsTableQuestions(countryOptions ?? [], t) }]
+    }),
+    [countryOptions, t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
+
   return (
     <DataTable
       key={tableKey}
@@ -136,47 +185,8 @@ const RHFLeadershipsDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       }}
       addButtonCaption={t("Add team member")}
       modalEditTitle={t("Update team member")}
-      tableColumns={getLeadershipsTableColumns(t)}
-      fields={[
-        {
-          label: t("Team Member first name"),
-          name: "first_name",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("Team member last name"),
-          name: "last_name",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("Team member Gender"),
-          name: "gender",
-          inputType: "select",
-          options: getGenderOptions(t),
-          validation: { required: true }
-        },
-        {
-          label: t("Age"),
-          name: "age",
-          inputType: "number",
-          validation: { required: true, min: 16, max: 150 }
-        },
-        {
-          label: t("Role"),
-          name: "position",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("Nationality"),
-          name: "nationality",
-          inputType: "select",
-          options: countryOptions ?? [],
-          validation: { required: true }
-        }
-      ]}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

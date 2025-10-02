@@ -23,12 +23,17 @@ export const DisturbancesField: FormFieldFactory = {
   getAnswer: () => undefined,
 
   appendAnswers: ({ label, name, additionalProps }, csv, formValues) => {
-    const headers = getDisturbanceTableColumns(props(additionalProps));
+    const { with_intensity: hasIntensity, with_extent: hasExtent } = additionalProps ?? {};
+    const headers = getDisturbanceTableColumns(hasIntensity, hasExtent);
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
   getEntryValue: (field, formValues, { t }) =>
-    dataTableEntryValue(getDisturbanceTableColumns(props(field.additionalProps), t), field, formValues),
+    dataTableEntryValue(
+      getDisturbanceTableColumns(field.additionalProps?.with_intensity, field.additionalProps?.with_extent, t),
+      field,
+      formValues
+    ),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
     <>

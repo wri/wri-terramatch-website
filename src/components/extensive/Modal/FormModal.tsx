@@ -8,26 +8,27 @@ import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import SimpleForm from "@/components/extensive/SimpleForm/SimpleForm";
-import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getSchema } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 import { ModalId } from "./ModalConst";
 import { ModalBase } from "./ModalsBases";
 
 export interface FormModalProps {
   title?: string;
-  fields: FieldDefinition[];
   onSubmit: (data: any) => void;
   defaultValues?: Record<string, any>;
 }
 
-const FormModal: FC<FormModalProps> = ({ title, fields, onSubmit, defaultValues }) => {
+const FormModal: FC<FormModalProps> = ({ title, onSubmit, defaultValues }) => {
   const t = useT();
   const { closeModal } = useModalContext();
 
-  const resolver = useMemo(() => yupResolver(getSchema(fields, t)), [fields, t]);
+  const fieldsProvider = useFieldsProvider();
+  const resolver = useMemo(() => yupResolver(getSchema(fieldsProvider, t)), [fieldsProvider, t]);
   const formHook = useForm({ resolver, mode: "onSubmit", defaultValues });
+  const fieldIds = useMemo(() => fieldsProvider.fieldIds(fieldsProvider.stepIds()[0]), [fieldsProvider]);
 
   return (
     <ModalBase className="w-[800px] p-0">
@@ -47,7 +48,7 @@ const FormModal: FC<FormModalProps> = ({ title, fields, onSubmit, defaultValues 
           formHook.reset();
         })}
       >
-        <SimpleForm fields={fields} formHook={formHook} />
+        <SimpleForm fieldIds={fieldIds} formHook={formHook} />
         <Button type="submit" className="m-auto mt-15">
           {t("Save")}
         </Button>

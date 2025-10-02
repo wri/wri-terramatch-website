@@ -23,16 +23,14 @@ import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 export const getSchema = (
   fieldsProvider: FormFieldsProvider,
   t: typeof useT,
-  framework: Framework = Framework.UNDEFINED
+  framework: Framework = Framework.UNDEFINED,
+  fieldIds: string[] = fieldsProvider.stepIds().flatMap(fieldsProvider.fieldIds)
 ) =>
   yup.object(
-    fieldsProvider
-      .stepIds()
-      .flatMap(fieldsProvider.fieldIds)
-      .reduce((schema, fieldId) => {
-        addFieldValidation(schema, fieldsProvider, fieldId, t, framework);
-        return schema;
-      }, {} as Dictionary<yup.AnySchema>)
+    fieldIds.reduce((schema, fieldId) => {
+      addFieldValidation(schema, fieldsProvider, fieldId, t, framework);
+      return schema;
+    }, {} as Dictionary<yup.AnySchema>)
   );
 
 export const addFieldValidation = (

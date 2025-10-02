@@ -6,7 +6,6 @@ import List from "@/components/extensive/List/List";
 import FormField from "@/components/extensive/WizardForm/FormField";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
-import { isNotNull } from "@/utils/array";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   stepId: string;
@@ -23,9 +22,9 @@ export const FormStep = ({
   children,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
-  const { step, fieldIds, fieldById } = useFieldsProvider();
+  const { step, fieldIds } = useFieldsProvider();
   const stepDefinition = step(stepId);
-  const fields = useMemo(() => fieldIds(stepId).map(fieldById).filter(isNotNull), [fieldById, fieldIds, stepId]);
+  const stepFieldIds = useMemo(() => fieldIds(stepId), [fieldIds, stepId]);
 
   useEffect(() => {
     formHook.clearErrors();
@@ -39,12 +38,12 @@ export const FormStep = ({
       title={stepDefinition.title ?? undefined}
       subtitle={stepDefinition.description ?? undefined}
     >
-      {fields.length === 0 ? null : (
+      {stepFieldIds.length === 0 ? null : (
         <List
-          items={fields}
+          items={stepFieldIds}
           uniqueId="name"
           itemClassName="mt-8"
-          render={field => <FormField key={field.name} field={field} formHook={formHook} onChange={onChange} />}
+          render={fieldId => <FormField key={fieldId} fieldId={fieldId} formHook={formHook} onChange={onChange} />}
         />
       )}
       {children}
