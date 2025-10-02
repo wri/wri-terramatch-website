@@ -8,10 +8,10 @@ import {
   dataTableEntryValue,
   treeSpeciesEntryValue
 } from "@/components/extensive/WizardForm/utils";
-import { arrayValidator } from "@/utils/yup";
+import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const SeedingsField: FormFieldFactory = {
-  createValidator: arrayValidator,
+  addValidation: addValidationWith(arrayValidator),
 
   renderInput: ({ additionalProps, collection, model }, sharedProps) => {
     if (additionalProps?.capture_count === true) {

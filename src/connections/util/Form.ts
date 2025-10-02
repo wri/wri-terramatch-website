@@ -19,7 +19,6 @@ import {
   LinkedFieldDto,
   OptionLabelDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useConnection } from "@/hooks/useConnection";
 import { Filter } from "@/types/connection";
 
 export const useOptionLabels = connectionHook(
@@ -90,9 +89,6 @@ const sectionsSelector = connectionSelector(sectionsConnection);
 export const selectSections = (formId: string) => sectionsSelector({ parentId: formId }).data ?? [];
 const questionsSelector = connectionSelector(questionsConnection);
 export const selectQuestions = (sectionId: string) => questionsSelector({ parentId: sectionId }).data ?? [];
-
-const sectionConnection = v3Resource("formSections").cachedSingleResource<FormSectionDto>().buildConnection();
-export const useFormSection = (sectionUuid: string) => useConnection(sectionConnection, { id: sectionUuid })[1]?.data;
 
 const questionConnection = v3Resource("formQuestions").cachedSingleResource<FormQuestionDto>().buildConnection();
 const questionSelector = connectionSelector(questionConnection);

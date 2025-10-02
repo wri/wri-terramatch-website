@@ -6,9 +6,10 @@ import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
+import { addValidationWith } from "@/utils/yup";
 
 export const TreeSpeciesField: FormFieldFactory = {
-  createValidator: ({ additionalProps, validation }) => {
+  addValidation: addValidationWith(({ additionalProps, validation }) => {
     const arrayItemShape =
       additionalProps?.with_numbers === true
         ? yup.object({
@@ -21,7 +22,7 @@ export const TreeSpeciesField: FormFieldFactory = {
 
     const validator = yup.array(arrayItemShape);
     return validation?.required === true ? validator.required() : validator;
-  },
+  }),
 
   renderInput: ({ additionalProps, collection, model }, sharedProps) => (
     <RHFTreeSpeciesInput

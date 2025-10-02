@@ -3,7 +3,6 @@ import { useT } from "@transifex/react";
 import { Dictionary, isEmpty, isFunction } from "lodash";
 import { useMemo } from "react";
 import * as yup from "yup";
-import { AnySchema } from "yup";
 
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import TreeSpeciesTable, { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable";
@@ -11,7 +10,6 @@ import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { Answer, FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { loadGadmCodes } from "@/connections/Gadm";
-import { selectChildQuestions } from "@/connections/util/Form";
 import { getMonthOptions } from "@/constants/options/months";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
@@ -22,8 +20,33 @@ import { Entity, Option, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-export const getSchema = (fields: FieldDefinition[], t: typeof useT, framework: Framework = Framework.UNDEFINED) => {
-  return yup.object(getSchemaFields(fields, t, framework));
+export const getSchema = (
+  fieldsProvider: FormFieldsProvider,
+  t: typeof useT,
+  framework: Framework = Framework.UNDEFINED
+) =>
+  yup.object(
+    fieldsProvider
+      .stepIds()
+      .flatMap(fieldsProvider.fieldIds)
+      .reduce((schema, fieldId) => {
+        addFieldValidation(schema, fieldsProvider, fieldId, t, framework);
+        return schema;
+      }, {} as Dictionary<yup.AnySchema>)
+  );
+
+export const addFieldValidation = (
+  validations: Dictionary<yup.AnySchema>,
+  fieldsProvider: FormFieldsProvider,
+  fieldId: string,
+  t: typeof useT,
+  framework: Framework
+) => {
+  const field = fieldsProvider.fieldById(fieldId);
+  if (field == null) return undefined;
+
+  FormFieldFactories[field.inputType].addValidation(validations, field, t, framework, fieldsProvider);
+  validations[field.name] = (validations[field.name] ?? yup.mixed()).nullable().label(field.label ?? "");
 };
 
 export const questionDtoToDefinition = (question: FormQuestionDto): FieldDefinition => ({
@@ -60,49 +83,6 @@ export const useFilterFieldName = (linkedFieldKey?: string) => {
     () => fieldByKey(SELECT_FILTER_QUESTION[linkedFieldKey ?? ""] ?? "")?.name,
     [fieldByKey, linkedFieldKey]
   );
-};
-
-const selectChildDefinitions = (parentId: string) => selectChildQuestions(parentId).map(questionDtoToDefinition);
-
-const getSchemaFields = (fields: FieldDefinition[], t: typeof useT, framework: Framework) => {
-  let schema: Dictionary<AnySchema> = {};
-
-  for (const field of fields) {
-    if (field.inputType === "tableInput") {
-      schema[field.name] = getSchema(selectChildDefinitions(field.name), t, framework);
-    } else if (field.inputType === "conditional") {
-      schema[field.name] = FormFieldFactories[field.inputType]
-        .createValidator(field, t, framework)!
-        .nullable()
-        .label(field.label);
-      for (const child of selectChildDefinitions(field.name)) {
-        const childValidation = FormFieldFactories[child.inputType].createValidator(child, t, framework);
-        if (childValidation != null) {
-          schema[child.name] = childValidation
-            .when(field.name, {
-              is: child.showOnParentCondition === true,
-              then: schema => schema,
-              otherwise: () => yup.mixed().nullable()
-            })
-            .nullable()
-            .label(child.label ?? "");
-
-          if (child.validation?.required === true) {
-            schema[child.name] = schema[child.name].required();
-          }
-        }
-      }
-    } else {
-      const validation = FormFieldFactories[field.inputType].createValidator(field, t, framework) ?? yup.mixed();
-      schema[field.name] = validation.nullable().label(field.label ?? "");
-    }
-
-    if (field.validation?.required === true && schema[field.name] != null) {
-      schema[field.name] = schema[field.name].required();
-    }
-  }
-
-  return schema;
 };
 
 export const childIdsWithCondition = (fieldId: string, condition: boolean, fieldsProvider: FormFieldsProvider) =>

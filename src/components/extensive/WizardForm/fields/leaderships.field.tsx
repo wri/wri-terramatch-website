@@ -3,10 +3,10 @@ import RHFLeadershipsDataTable, {
 } from "@/components/elements/Inputs/DataTable/RHFLeadershipsTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
-import { arrayValidator } from "@/utils/yup";
+import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const LeadershipsField: FormFieldFactory = {
-  createValidator: arrayValidator,
+  addValidation: addValidationWith(arrayValidator),
 
   renderInput: ({ collection }, sharedProps) => (
     <RHFLeadershipsDataTable {...sharedProps} collection={collection ?? ""} />

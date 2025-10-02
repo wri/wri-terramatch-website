@@ -5,10 +5,10 @@ import { getHardcodedOptions, toFormOptions } from "@/components/extensive/Wizar
 import { findCachedGadmTitle } from "@/connections/Gadm";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { isNotNull, toArray } from "@/utils/array";
-import { selectValidator } from "@/utils/yup";
+import { addValidationWith, selectValidator } from "@/utils/yup";
 
 export const SelectField: FormFieldFactory = {
-  createValidator: selectValidator,
+  addValidation: addValidationWith(selectValidator),
 
   renderInput: ({ optionsList, options, multiChoice, optionsOther, linkedFieldKey }, sharedProps) => (
     <RHFDropdown

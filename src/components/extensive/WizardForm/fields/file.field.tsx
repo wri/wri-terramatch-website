@@ -6,9 +6,10 @@ import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer } from "@/components/extensive/WizardForm/utils";
 import { UploadedFile } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
+import { addValidationWith } from "@/utils/yup";
 
 export const FileField: FormFieldFactory = {
-  createValidator: ({ validation, multiChoice }) => {
+  addValidation: addValidationWith(({ validation, multiChoice }) => {
     if (multiChoice) {
       const validator = yup.array();
       return validation?.required === true ? validator.min(1).required() : validator;
@@ -16,7 +17,7 @@ export const FileField: FormFieldFactory = {
       const validator = yup.object();
       return validation?.required === true ? validator.required() : validator;
     }
-  },
+  }),
 
   renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => (
     <RHFFileInput

@@ -1,15 +1,29 @@
 import { isBoolean } from "lodash";
+import * as yup from "yup";
 
 import ConditionalAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/ConditionalAdditionalOptions";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
+import { addFieldValidation, appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { applyFieldDefault, normalizedFormFieldData } from "@/helpers/customForms";
 import { isNotNull } from "@/utils/array";
 import { booleanValidator } from "@/utils/yup";
 
 export const ConditionalField: FormFieldFactory = {
-  createValidator: booleanValidator,
+  addValidation: (validations, field, t, framework, fieldsProvider) => {
+    validations[field.name] = booleanValidator(field);
+    for (const childId of fieldsProvider.childIds(field.name)) {
+      const child = fieldsProvider.fieldById(childId);
+      if (child == null) continue;
+
+      addFieldValidation(validations, fieldsProvider, child.name, t, framework);
+      validations[child.name] = validations[child.name].when(field.name, {
+        is: child.showOnParentCondition === true,
+        then: schema => schema,
+        otherwise: () => yup.mixed().nullable()
+      });
+    }
+  },
 
   renderInput: ({ name }, sharedProps) => <ConditionalInput {...sharedProps} fieldId={name} id={name} inputId={name} />,
 

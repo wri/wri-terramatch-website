@@ -7,7 +7,7 @@ import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { isNotNull } from "@/utils/array";
 
 export const FinancialIndicatorsField: FormFieldFactory = {
-  createValidator: () => undefined,
+  addValidation: () => undefined,
 
   renderInput: ({ years, collection }, sharedProps) => (
     <RHFFinancialIndicatorsDataTable {...sharedProps} years={years ?? undefined} collection={collection ?? undefined} />

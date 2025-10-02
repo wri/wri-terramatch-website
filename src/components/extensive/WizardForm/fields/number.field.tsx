@@ -3,9 +3,10 @@ import * as yup from "yup";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { addValidationWith } from "@/utils/yup";
 
 export const NumberField: FormFieldFactory = {
-  createValidator: ({ validation, linkedFieldKey }) => {
+  addValidation: addValidationWith(({ validation, linkedFieldKey }) => {
     let validator = yup.number();
     if (validation?.required === true) validator = validator.required();
     if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
@@ -28,7 +29,7 @@ export const NumberField: FormFieldFactory = {
         });
     }
     return validator;
-  },
+  }),
 
   renderInput: ({ linkedFieldKey, additionalProps }, sharedProps) => {
     if (linkedFieldKey?.includes("-lat-")) {

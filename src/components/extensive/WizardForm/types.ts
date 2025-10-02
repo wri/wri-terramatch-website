@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { ReactElement } from "react";
 import { Control, FieldError, UseFormReturn } from "react-hook-form";
-import { AnySchema } from "yup";
+import * as yup from "yup";
 
 import { AdditionalOptionsProps } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
@@ -83,9 +83,15 @@ export type GetEntryValueProps = {
 
 export type FormFieldFactory = {
   /**
-   * Creates a Yup validations schema for this field definition.
+   * Adds Yup validation for this field definition to the provided schema.
    */
-  createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  addValidation: (
+    validations: Dictionary<yup.AnySchema>,
+    field: FieldDefinition,
+    t: typeof useT,
+    framework: Framework,
+    fieldsProvider: FormFieldsProvider
+  ) => void;
 
   /**
    * Renders the form field as a form input.

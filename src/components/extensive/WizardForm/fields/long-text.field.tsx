@@ -3,9 +3,10 @@ import * as yup from "yup";
 
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { addValidationWith } from "@/utils/yup";
 
 export const LongTextField: FormFieldFactory = {
-  createValidator: ({ validation, minCharacterLimit, maxCharacterLimit }, t) => {
+  addValidation: addValidationWith(({ validation, minCharacterLimit, maxCharacterLimit }, t) => {
     let validator = yup.string();
     if (validation?.required === true) validator = validator.required();
     if (minCharacterLimit != null) {
@@ -26,7 +27,7 @@ export const LongTextField: FormFieldFactory = {
       );
     }
     return validator;
-  },
+  }),
 
   renderInput: ({ minCharacterLimit, maxCharacterLimit }, sharedProps) => (
     <TextArea {...sharedProps} minLength={minCharacterLimit ?? undefined} maxLength={maxCharacterLimit ?? undefined} />

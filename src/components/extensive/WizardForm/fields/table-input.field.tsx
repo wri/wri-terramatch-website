@@ -1,11 +1,26 @@
+import { Dictionary } from "lodash";
+import * as yup from "yup";
+
 import TableAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TableAdditionalOptions";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { addFieldValidation } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
-import { objectValidator } from "@/utils/yup";
 
 export const TableInputField: FormFieldFactory = {
-  createValidator: objectValidator,
+  addValidation: (validations, { name, validation }, t, framework, fieldsProvider) => {
+    const validator = yup.object(
+      fieldsProvider
+        .childIds(name)
+        .map(fieldsProvider.fieldById)
+        .filter(isNotNull)
+        .reduce((childSchema, { name: childName }) => {
+          addFieldValidation(childSchema, fieldsProvider, childName, t, framework);
+          return childSchema;
+        }, {} as Dictionary<yup.AnySchema>)
+    );
+    validations[name] = validation?.required === true ? validator.required() : validator;
+  },
 
   renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (
     <RHFInputTable
