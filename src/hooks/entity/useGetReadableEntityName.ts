@@ -31,10 +31,7 @@ export const useGetReadableEntityName = () => {
 
         "financial-report": singular ? t("Financial Report") : t("Financial Reports"),
         "financial-reports": singular ? t("Financial Report") : t("Financial Reports"),
-        financialReports: singular ? t("Financial Report") : t("Financial Reports"),
-        "disturbance-report": singular ? t("Disturbance Report") : t("Disturbance Reports"),
-        "disturbance-reports": singular ? t("Disturbance Report") : t("Disturbance Reports"),
-        disturbanceReports: singular ? t("Disturbance Report") : t("Disturbance Reports")
+        financialReports: singular ? t("Financial Report") : t("Financial Reports")
       };
 
       return mapping[name];

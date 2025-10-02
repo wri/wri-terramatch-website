@@ -1,6 +1,7 @@
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { Button, Link, useCreatePath, useShowContext } from "react-admin";
+import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import { EntityName } from "@/types/common";
@@ -37,19 +38,17 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          {type === "disturbance-reports" ? null : (
-            <Button
-              variant="outlined"
-              component={Link}
-              to={createPath({
-                resource: modules.task.ResourceName,
-                type: "show",
-                id: record?.taskUuid! ?? record?.task_uuid!
-              })}
-              fullWidth
-              label="View Task"
-            />
-          )}
+          <Button
+            variant="outlined"
+            component={Link}
+            to={createPath({
+              resource: modules.task.ResourceName,
+              type: "show",
+              id: record?.taskUuid! ?? record?.task_uuid!
+            })}
+            fullWidth
+            label="View Task"
+          />
           <Button
             variant="outlined"
             component={Link}
@@ -61,7 +60,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
             fullWidth
             label="Back To Project"
           />
-          {type === "site-reports" && (
+          <When condition={type === "site-reports"}>
             <Button
               variant="outlined"
               component={Link}
@@ -69,8 +68,8 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
               fullWidth
               label="Back To Site"
             />
-          )}
-          {type === "nursery-reports" && (
+          </When>
+          <When condition={type === "nursery-reports"}>
             <Button
               variant="outlined"
               component={Link}
@@ -78,18 +77,16 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
               fullWidth
               label="Back To Nursery"
             />
-          )}
-          {type === "project-reports" && (
-            <>
-              <Button variant="outlined" component={Link} to={getReportsPath("siteReport")} label="View Site Reports" />
-              <Button
-                variant="outlined"
-                component={Link}
-                to={getReportsPath("nurseryReport")}
-                label="View Nursery Reports"
-              />
-            </>
-          )}
+          </When>
+          <When condition={type === "project-reports"}>
+            <Button variant="outlined" component={Link} to={getReportsPath("siteReport")} label="View Site Reports" />
+            <Button
+              variant="outlined"
+              component={Link}
+              to={getReportsPath("nurseryReport")}
+              label="View Nursery Reports"
+            />
+          </When>
         </Stack>
       </Box>
     </Card>

@@ -16970,92 +16970,6 @@ export const usePostV2TerrafundValidationPolygon = (
   );
 };
 
-export type GetV2TerrafundValidationCriteriaDataQueryParams = {
-  /**
-   * The UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TerrafundValidationCriteriaDataResponse = {
-  /**
-   * The ID of the polygon
-   */
-  polygon_id?: string;
-  /**
-   * List of validation criteria
-   */
-  criteria_list?: {
-    /**
-     * The ID of the criteria
-     */
-    criteria_id?: number;
-    /**
-     * The latest created at timestamp of the criteria
-     *
-     * @format date-time
-     */
-    latest_created_at?: string;
-    /**
-     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
-     */
-    valid?: number;
-    /**
-     * Extra information about the polygon validation
-     */
-    extra_info?: Record<string, any>;
-  }[];
-};
-
-export type GetV2TerrafundValidationCriteriaDataVariables = {
-  queryParams: GetV2TerrafundValidationCriteriaDataQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TerrafundValidationCriteriaData = (
-  variables: GetV2TerrafundValidationCriteriaDataVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TerrafundValidationCriteriaDataResponse,
-    GetV2TerrafundValidationCriteriaDataError,
-    undefined,
-    {},
-    GetV2TerrafundValidationCriteriaDataQueryParams,
-    {}
-  >({ url: "/v2/terrafund/validation/criteria-data", method: "get", ...variables, signal });
-
-export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundValidationCriteriaDataResponse>(
-  variables: GetV2TerrafundValidationCriteriaDataVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2TerrafundValidationCriteriaDataResponse,
-      GetV2TerrafundValidationCriteriaDataError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2TerrafundValidationCriteriaDataResponse,
-    GetV2TerrafundValidationCriteriaDataError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/terrafund/validation/criteria-data",
-      operationId: "getV2TerrafundValidationCriteriaData",
-      variables
-    }),
-    ({ signal }) => fetchGetV2TerrafundValidationCriteriaData({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -17214,69 +17128,6 @@ export const usePostV2TerrafundValidationSitePolygons = (
     (variables: PostV2TerrafundValidationSitePolygonsVariables) =>
       fetchPostV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2TerrafundValidationSiteQueryParams = {
-  /**
-   * The UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2TerrafundValidationSiteError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TerrafundValidationSiteResponse = {
-  /**
-   * The UUID of the polygon.
-   */
-  uuid?: string;
-  /**
-   * Indicates if the polygon is valid or not.
-   */
-  valid?: boolean;
-  /**
-   * Indicates if the polygon has been checked before or not.
-   */
-  checked?: boolean;
-  /**
-   * List of criteria that are not valid.
-   */
-  nonValidCriteria?: Record<string, any>[];
-}[];
-
-export type GetV2TerrafundValidationSiteVariables = {
-  queryParams: GetV2TerrafundValidationSiteQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TerrafundValidationSite = (
-  variables: GetV2TerrafundValidationSiteVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TerrafundValidationSiteResponse,
-    GetV2TerrafundValidationSiteError,
-    undefined,
-    {},
-    GetV2TerrafundValidationSiteQueryParams,
-    {}
-  >({ url: "/v2/terrafund/validation/site", method: "get", ...variables, signal });
-
-export const useGetV2TerrafundValidationSite = <TData = GetV2TerrafundValidationSiteResponse>(
-  variables: GetV2TerrafundValidationSiteVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>(
-    queryKeyFn({ path: "/v2/terrafund/validation/site", operationId: "getV2TerrafundValidationSite", variables }),
-    ({ signal }) => fetchGetV2TerrafundValidationSite({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -22783,39 +22634,6 @@ export const usePostV2OrganisationsUUIDInvite = (
   );
 };
 
-export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2DisturbanceReportsExport = (
-  variables: GetV2DisturbanceReportsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2DisturbanceReportsExportError, undefined, {}, {}, {}>({
-    url: "/v2/disturbance-reports/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
-  variables: GetV2DisturbanceReportsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2DisturbanceReportsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2DisturbanceReportsExportError, TData>(
-    queryKeyFn({ path: "/v2/disturbance-reports/export", operationId: "getV2DisturbanceReportsExport", variables }),
-    ({ signal }) => fetchGetV2DisturbanceReportsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -23143,16 +22961,6 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDExportVariables;
     }
   | {
-      path: "/v2/terrafund/validation/criteria-data";
-      operationId: "getV2TerrafundValidationCriteriaData";
-      variables: GetV2TerrafundValidationCriteriaDataVariables;
-    }
-  | {
-      path: "/v2/terrafund/validation/site";
-      operationId: "getV2TerrafundValidationSite";
-      variables: GetV2TerrafundValidationSiteVariables;
-    }
-  | {
       path: "/v2/audit-status/{ENTITY}/{UUID}";
       operationId: "getV2AuditStatusENTITYUUID";
       variables: GetV2AuditStatusENTITYUUIDVariables;
@@ -23336,9 +23144,4 @@ export type QueryOperation =
       path: "/v2/financial-reports/export";
       operationId: "getV2FinancialReportsExport";
       variables: GetV2FinancialReportsExportVariables;
-    }
-  | {
-      path: "/v2/disturbance-reports/export";
-      operationId: "getV2DisturbanceReportsExport";
-      variables: GetV2DisturbanceReportsExportVariables;
     };

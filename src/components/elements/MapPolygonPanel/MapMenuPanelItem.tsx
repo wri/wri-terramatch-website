@@ -73,7 +73,7 @@ const MapMenuPanelItem = ({
   const [adjustedValidationStatus, setAdjustedValidationStatus] = useState(validationStatus);
   const isAdminUser = useIsAdmin();
   const adminCheck = isAdmin || isAdminUser;
-  const validationData = usePolygonValidation({ polygonUuid: poly_id ?? "" });
+  const validationData = usePolygonValidation({ polygonUuid: openCollapse ? poly_id ?? "" : "" });
 
   useEffect(() => {
     if (validationData != null) {
