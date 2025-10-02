@@ -2503,19 +2503,7 @@ export type LinkedFieldsIndexQueryParams = {
   )[];
 };
 
-export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<undefined>;
 
 export type LinkedFieldsIndexResponse = {
   meta?: {
