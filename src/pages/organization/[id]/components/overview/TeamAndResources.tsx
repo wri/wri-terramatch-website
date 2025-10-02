@@ -57,7 +57,7 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
               }
             ]}
             // @ts-expect-error
-            data={organization?.leadership_team.map((member, index) => ({
+            data={organization?.leaderships.map((member, index) => ({
               id: (index + 1).toString(),
               firstName: member.first_name,
               lastName: member.last_name,

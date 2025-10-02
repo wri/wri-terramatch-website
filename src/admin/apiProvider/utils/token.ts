@@ -18,9 +18,9 @@ export const setAccessToken = (token: string) => {
 export const removeAccessToken = () => {
   localStorage.removeItem(TOKEN_STORAGE_KEY);
   destroyCookie(null, COOKIE_STORAGE_KEY, {
-    path: "/"
+    path: "/auth/login"
   });
   destroyCookie(null, MiddlewareCacheKey, {
-    path: "/"
+    path: "/auth/login"
   });
 };

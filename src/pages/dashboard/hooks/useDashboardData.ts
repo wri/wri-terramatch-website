@@ -15,7 +15,14 @@ import { HookFilters } from "@/types/connection";
 import { calculateTotalsFromProjects, groupProjectsByCountry } from "@/utils/dashboardUtils";
 import { convertNamesToCodes } from "@/utils/landscapeUtils";
 
-import { HECTARES_UNDER_RESTORATION_TOOLTIP, JOBS_CREATED_TOOLTIP, TREES_PLANTED_TOOLTIP } from "../constants/tooltips";
+export const TREES_PLANTED_TOOLTIP =
+  "Total number of trees planted by funded projects to date, as reported through six-month progress reports.";
+
+export const HECTARES_UNDER_RESTORATION_TOOLTIP =
+  "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects and approved by data quality analysts.";
+
+export const JOBS_CREATED_TOOLTIP =
+  "Number of people newly employed directly by the project. Terrafund defines a job as any individual or person, aged 18 years or older, that is directly compensated by a project at any time to support their restoration activities.";
 
 const DEFAULT_COHORT: string[] = ["terrafund", "terrafund-landscapes"];
 const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [

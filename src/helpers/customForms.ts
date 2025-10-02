@@ -954,6 +954,45 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
+    case "financialIndicators": {
+      validation = yup.array().test("required-documentation", function (value) {
+        if (!Array.isArray(value)) return true;
+
+        const documentationEntries = value.filter(
+          (item: { collection?: string; year?: number | string; documentation?: unknown }) =>
+            item.collection === "description-documents"
+        );
+
+        if (required && documentationEntries.length === 0) {
+          return this.createError({
+            message: "At least one document upload is required. Please upload at least one supporting document."
+          });
+        }
+
+        if (documentationEntries.length === 0) {
+          return true;
+        }
+
+        const missingYears = documentationEntries
+          .filter(entry => !Array.isArray((entry as any).documentation) || (entry as any).documentation.length === 0)
+          .map(entry => entry.year as number | string);
+
+        if (missingYears.length > 0) {
+          return this.createError({
+            message: `Document upload is required for years ${missingYears.join(
+              ", "
+            )}. Please upload at least one supporting document for each year.`
+          });
+        }
+
+        return true;
+      });
+
+      if (required) validation = validation.required();
+
+      return validation;
+    }
+
     default:
       return null;
   }

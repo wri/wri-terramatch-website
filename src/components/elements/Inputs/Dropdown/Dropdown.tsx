@@ -189,7 +189,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
             <>
               {props.label && (
                 <Listbox.Label as={Fragment}>
-                  <div className="flex items-baseline gap-1">
+                  <div className={tw("flex items-baseline gap-1", props.labelClassName)}>
                     <InputLabel
                       required={props.required}
                       feedbackRequired={props.feedbackRequired}
@@ -285,7 +285,7 @@ const Dropdown = (props: PropsWithChildren<DropdownProps>) => {
                         <div className="flex items-center justify-between">
                           <Checkbox
                             name=""
-                            label="Select All"
+                            label={t("Select All")}
                             textClassName={classNames(variant.optionLabelClassName, "whitespace-nowrap")}
                             inputClassName={classNames(variant.optionCheckboxClassName, "checked:bg-dash")}
                             className={tw("flex flex-row-reverse items-center gap-3", variant.optionClassName)}

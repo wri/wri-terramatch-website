@@ -2,17 +2,11 @@ import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
-import {
-  ESTIMATED_AREA_CRITERIA_ID,
-  PLANT_START_DATE_CRITERIA_ID,
-  WITHIN_COUNTRY_CRITERIA_ID
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Button from "@/components/elements/Button/Button";
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -68,7 +62,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
 }) => {
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
-  const { validationData } = useMapAreaContext();
 
   useEffect(() => {
     if (!polygonList) {
@@ -86,39 +79,25 @@ const ModalApprove: FC<ModalApproveProps> = ({
 
     setDisplayedPolygons(
       polygonList.map((polygon: any) => {
-        const validationInfo = validationData?.[polygon.polygonUuid] ?? validationData?.[polygon.uuid];
-
-        const excludedFromValidationCriterias = [
-          ESTIMATED_AREA_CRITERIA_ID,
-          WITHIN_COUNTRY_CRITERIA_ID,
-          PLANT_START_DATE_CRITERIA_ID
-        ];
-
-        let failingCriterias: string[] = [];
-        if (validationInfo?.nonValidCriteria) {
-          const nonValidCriteriasIds = validationInfo.nonValidCriteria.map((r: any) => r.criteria_id);
-          failingCriterias = nonValidCriteriasIds.filter((r: any) => !excludedFromValidationCriterias.includes(r));
-        }
-
         const checked =
           polygon.validationStatus === "passed" ||
           polygon.validationStatus === "partial" ||
           polygon.validationStatus === "failed";
 
-        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, failingCriterias);
+        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, []);
 
         return {
           id: polygon.polygonUuid,
           checked,
           name: polygon.name ?? "Unnamed Polygon",
           canBeApproved,
-          failingCriterias,
+          failingCriterias: [],
           status: polygon.status as StatusEnum,
           validation_status: polygon.validationStatus
         };
       })
     );
-  }, [polygonList, validationData]);
+  }, [polygonList]);
 
   const handleSelectAll = (isChecked: boolean) => {
     if (displayedPolygons) {

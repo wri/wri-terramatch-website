@@ -9,7 +9,11 @@ interface IEntityContext {
 
 const EntityContext = createContext<IEntityContext>({});
 
-type EntityFrameworkProviderProps = { entityUuid: string; entityName: EntityName; children: ReactNode };
+type EntityFrameworkProviderProps = {
+  entityUuid: string;
+  entityName: EntityName;
+  children: ReactNode;
+};
 
 const EntityProvider = ({ children, entityUuid, entityName }: EntityFrameworkProviderProps) => (
   <EntityContext.Provider value={{ entityUuid, entityName }}>{children}</EntityContext.Provider>

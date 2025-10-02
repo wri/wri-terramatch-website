@@ -56,6 +56,17 @@ export interface FormEntry {
   value: any;
 }
 
+const getTableHtml = (body: string, t: typeof useT) => {
+  return (
+    `<table class="w-full"><thead><tr>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Year")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Revenue")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Expenses")}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Profit")}</th>` +
+    `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
+  );
+};
+
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
   let { record } = useShowContext();
@@ -198,6 +209,11 @@ export const getFormEntries = (
 
       case FieldType.FinancialTableInput: {
         const entries = values[f.name];
+        outputArr.push({
+          title: "Local Currency",
+          type: FieldType.Input,
+          value: entries?.find((entry: any) => entry.currency)?.currency ?? t("Answer Not Provided")
+        });
         if (!Array.isArray(entries) || !entries || entries?.length === 0) break;
         const years = f.fieldProps.years;
         const collections = f.fieldProps.model;
@@ -232,7 +248,7 @@ export const getFormEntries = (
 
         const formatted = formatFinancialData(entries, years, "", "");
         const sections = [
-          { title: t("Profit Analysis"), key: "profitAnalysisData" },
+          { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
           { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
           { title: t("Current Ratio"), key: "currentRatioData" },
           { title: t("Documentation"), key: "documentationData" }
@@ -259,7 +275,25 @@ export const getFormEntries = (
 
             if (filteredRows.length === 0) return "";
 
-            const rowsHtml = filteredRows
+            const tableRows = filteredRows.filter((row: Record<string, any>) => {
+              return row["profit"];
+            });
+            const nonTableRows = filteredRows.filter((row: Record<string, any>) => {
+              return !row["profit"];
+            });
+
+            const tableHtml = tableRows
+              .map((row: Record<string, any>) => {
+                const cellValues = columns.map(col => {
+                  return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium">${
+                    isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
+                  }</td>`;
+                });
+                return cellValues.join("");
+              })
+              .join("</tr><tr>");
+
+            const rowsHtml = nonTableRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
                   if (col === "documentation") {
@@ -269,7 +303,7 @@ export const getFormEntries = (
                           if (document.url) {
                             return `<a href="${
                               document.url
-                            }" target="_blank" rel="noopener noreferrer" class="text-primary underline">${
+                            }" target="_blank" rel="noopener noreferrer" class="underline text-primary">${
                               document.file_name ?? ""
                             }</a>`;
                           }
@@ -290,7 +324,8 @@ export const getFormEntries = (
               })
               .join("<br/>");
 
-            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
+            const body = tableRows.length > 0 ? getTableHtml(tableHtml, t) : rowsHtml;
+            return `<strong>${section.title}</strong><br/>${body}<br/><br/>`;
           })
           .filter(Boolean)
           .join("");

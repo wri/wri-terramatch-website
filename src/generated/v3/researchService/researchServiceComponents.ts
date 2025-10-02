@@ -385,7 +385,143 @@ export const boundingBoxGet = new V3ApiEndpoint<
   {}
 >("/boundingBoxes/v3/get", "GET");
 
+export type GetPolygonValidationPathParams = {
+  polygonUuid: string;
+};
+
+export type GetPolygonValidationError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type GetPolygonValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetPolygonValidationVariables = {
+  pathParams: GetPolygonValidationPathParams;
+};
+
+export const getPolygonValidation = new V3ApiEndpoint<
+  GetPolygonValidationResponse,
+  GetPolygonValidationError,
+  GetPolygonValidationVariables,
+  {}
+>("/validations/v3/polygons/{polygonUuid}", "GET");
+
+export type GetSiteValidationPathParams = {
+  siteUuid: string;
+};
+
+export type GetSiteValidationQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Filter validations by criteria ID
+   *
+   * @example 3
+   */
+  criteriaId?: number;
+};
+
+export type GetSiteValidationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSiteValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetSiteValidationVariables = {
+  pathParams: GetSiteValidationPathParams;
+  queryParams?: GetSiteValidationQueryParams;
+};
+
+export const getSiteValidation = new V3ApiEndpoint<
+  GetSiteValidationResponse,
+  GetSiteValidationError,
+  GetSiteValidationVariables,
+  {}
+>("/validations/v3/sites/{siteUuid}", "GET");
+
 export const operationsByTag = {
   sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
-  boundingBoxes: { boundingBoxGet }
+  boundingBoxes: { boundingBoxGet },
+  validations: { getPolygonValidation, getSiteValidation }
 };
