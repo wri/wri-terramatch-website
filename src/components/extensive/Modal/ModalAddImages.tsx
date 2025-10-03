@@ -13,7 +13,9 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
+import { useUploadFile } from "@/connections/Media";
+import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -78,30 +80,42 @@ const ModalAddImages: FC<ModalAddProps> = ({
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
-  const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore swagger issue
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-    },
-    onError(err, variables: any) {
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const file = variables.file;
+  // const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
+  //   onSuccess(data, variables) {
+  //     //@ts-ignore swagger issue
+  //     addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+  //   },
+  //   onError(err, variables: any) {
+  //     if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
+  //       const file = variables.file;
 
-        addFileToValue({
-          collection_name: variables.pathParams.collection,
-          size: file?.size,
-          file_name: file?.name,
-          title: file?.name,
-          mime_type: file?.type,
-          is_cover: false,
-          is_public: true,
-          rawFile: file,
-          uploadState: {
-            isLoading: false,
-            isSuccess: false
-          }
-        });
-      }
+  //       addFileToValue({
+  //         collection_name: variables.pathParams.collection,
+  //         size: file?.size,
+  //         file_name: file?.name,
+  //         title: file?.name,
+  //         mime_type: file?.type,
+  //         is_cover: false,
+  //         is_public: true,
+  //         rawFile: file,
+  //         uploadState: {
+  //           isLoading: false,
+  //           isSuccess: false
+  //         }
+  //       });
+  //     }
+  //   }
+  // });
+
+  const [, { data: uploadedFile, create: uploadFile, isCreating: isUploading, createFailure: uploadFailure }] =
+    useUploadFile({ entity: model as any, collection, uuid: entityData.uuid });
+
+  useRequestComplete(isUploading, () => {
+    console.log("uploadedFile", uploadedFile);
+    if (uploadFailure == null) {
+      console.log("data", uploadedFile);
+    } else {
+      console.log("uploadFailure", uploadFailure);
     }
   });
 
@@ -201,26 +215,22 @@ const ModalAddImages: FC<ModalAddProps> = ({
         }
       });
 
-      const body = new FormData();
-      body.append("upload_file", file);
+      let longitude = 0;
+      let latitude = 0;
 
       try {
         const location = await exifr.gps(file);
 
         if (location) {
-          body.append("lat", location.latitude.toString());
-          body.append("lng", location.longitude.toString());
+          latitude = location.latitude;
+          longitude = location.longitude;
         }
       } catch (e) {
         Log.error(e);
       }
-
-      uploadFile?.({
-        pathParams: { model, collection, uuid: entityData.uuid },
-        file: file,
-        //@ts-ignore swagger issue
-        body
-      });
+      const formData = new FormData();
+      formData.append("uploadFile", file);
+      uploadFile({ isPublic: true, lat: latitude, lng: longitude, formData }, true);
     }
   };
 
