@@ -140,7 +140,7 @@ export const useMessageValidators = () => {
                   { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
                 );
               case "num_trees":
-                return t("{field} {error} is not a valid number", {
+                return t("{field} {error} tree count is missing", {
                   field: FIELDS_TO_VALIDATE[info.field],
                   error: info.error
                 });

@@ -43,7 +43,7 @@ const FundingForm = () => {
 
   const { data: reportingFrameworksData, isLoading: reportingFrameworksLoading } = useGetV2AdminReportingFrameworks({});
   const frameworkChoices: any = reportingFrameworksData?.data?.map(framework => ({
-    id: framework.slug,
+    id: framework.slug == "terrafund-landscapes" ? "landscapes" : framework.slug,
     name: framework.name
   }));
 

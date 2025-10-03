@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { LabeledClasses } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
@@ -21,28 +20,24 @@ const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
           "flex flex-col": type !== "sites"
         })}
         items={entries}
-        render={entry => {
-          return entry.type === "disturbanceReportEntries" ? (
-            <DisturbanceReport values={props?.values} formSteps={props.steps} />
-          ) : (
-            <div>
-              <Typography className={LabeledClasses.label}>
-                <Text as="span" variant="text-14-light" className="capitalize text-grey-700">
-                  {entry.title === "Upload Site Boundary" ? "Site Boundary" : entry.title}
-                </Text>
-              </Typography>
-              {typeof entry.value === "string" || typeof entry.value === "number" ? (
-                <Text
-                  variant="text-14-semibold"
-                  className="text-darkCustom"
-                  dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
-                />
-              ) : (
-                formatEntryValue(entry.value)
-              )}
-            </div>
-          );
-        }}
+        render={entry => (
+          <div>
+            <Typography className={LabeledClasses.label}>
+              <Text as="span" variant="text-14-light" className="capitalize text-grey-700">
+                {entry.title === "Upload Site Boundary" ? "Site Boundary" : entry.title}
+              </Text>
+            </Typography>
+            {typeof entry.value === "string" || typeof entry.value === "number" ? (
+              <Text
+                variant="text-14-semibold"
+                className="text-darkCustom"
+                dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }}
+              />
+            ) : (
+              formatEntryValue(entry.value)
+            )}
+          </div>
+        )}
       />
     </>
   );
