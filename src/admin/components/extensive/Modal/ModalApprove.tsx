@@ -32,16 +32,20 @@ export interface DisplayedPolygonType {
   validation_status?: string | null;
 }
 
-const checkCriteriaCanBeApproved = (validationStatus: string | null, failingCriterias: string[] | undefined) => {
-  if (validationStatus === "passed") {
-    return true;
-  }
-
-  if (validationStatus === "failed") {
+const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: boolean, canBeApproved?: boolean) => {
+  if (!checked) {
     return false;
   }
 
-  return failingCriterias && failingCriterias.length === 0;
+  if (canBeApproved !== undefined) {
+    return canBeApproved;
+  }
+
+  if (validationStatus === "passed" || validationStatus === "partial") {
+    return true;
+  }
+
+  return false;
 };
 
 const ModalApprove: FC<ModalApproveProps> = ({
@@ -84,7 +88,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
           polygon.validationStatus === "partial" ||
           polygon.validationStatus === "failed";
 
-        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, []);
+        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, checked, polygon.canBeApproved);
 
         return {
           id: polygon.polygonUuid,
