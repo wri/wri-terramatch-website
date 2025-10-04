@@ -36,7 +36,7 @@ export const StrategyAreaField: FormFieldFactory = {
       }
     });
 
-    return validation?.required === true ? validator.required() : validator;
+    return validation?.required === true ? validator.required("This fields is required") : validator;
   }),
 
   renderInput: ({ collection, options, linkedFieldKey }, sharedProps) => (

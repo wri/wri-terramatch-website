@@ -3,12 +3,12 @@ import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import { Else, If, Then } from "react-if";
 
-import { ICriteriaCheckItem } from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+import { ICriteriaCheckItem } from "@/types/validation";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
@@ -57,7 +57,7 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
         const existingValidation = existingValidations.get(Number(id));
 
         if (!isAdmin && Number(id) === 14 && existingValidation != null && !existingValidation.status) {
-          const extraInfo = JSON.parse(existingValidation.extra_info ?? "[]");
+          const extraInfo = existingValidation.extra_info ?? [];
           const hasOnlyPlantingStatusError =
             Array.isArray(extraInfo) && extraInfo.length === 1 && extraInfo[0].field === "planting_status";
 
@@ -112,13 +112,13 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
                     name={
                       item.status
                         ? IconNames.CHECK_PROGRESSBAR
-                        : isCompletedDataOrEstimatedArea(item)
+                        : shouldShowAsWarning(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.IC_ERROR_PANEL
                     }
                     className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
                       "text-green-400": item.status,
-                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
                     })}
                   />
                   {t(item.label)}

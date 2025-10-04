@@ -425,6 +425,17 @@ export type PlantingCountDto = {
   amount: number;
 };
 
+export type SpeciesDto = {
+  /**
+   * The scientific name for this tree species
+   */
+  name: string;
+  /**
+   * Taxonomic ID for this tree species row
+   */
+  taxonId: string | null;
+};
+
 /**
  * CONSTANTS
  */
@@ -460,10 +471,10 @@ export type EstablishmentsTreesDto = {
   /**
    * The species that were specified at the establishment of the parent entity keyed by collection. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
    *
-   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
+   * @example {"tree-planted":[{"name":"Aster Peraliens"},{"name":"Circium carniolicum"}],"non-tree":[{"name":"Coffee"}]}
    */
   establishmentTrees: {
-    [key: string]: string[];
+    [key: string]: SpeciesDto[];
   };
   /**
    * If the entity in this request is a report, the sum totals of previous planting by species by collection. Note that for site reports, the seeds planted under previous site reports are included under the collection name "seeds"
@@ -481,10 +492,10 @@ export type TreeReportCountsDto = {
   /**
    * The species that were specified at the establishment of the parent entity grouped by collection. This will be null for projects because projects don't have a parent entity. Note that for site reports, the seeds on the site establishment are included under the collection name "seeds"
    *
-   * @example {"tree-planted":["Aster Peraliens","Circium carniolicum"],"non-tree":["Coffee"]}
+   * @example {"tree-planted":[{"name":"Aster Peraliens"},{"name":"Circium carniolicum"}],"non-tree":[{"name":"Coffee"}]}
    */
   establishmentTrees: {
-    [key: string]: string[];
+    [key: string]: SpeciesDto[];
   } | null;
   /**
    * Returns the planting counts of all species on reports associated with this entity, grouped by collection.If the entity is a project or site, it returns data for all site reports under that Project or Site. If the entity is a project report, it returns data for all site reports within the same reporting task. Note that seeding data is returned on this same endpoint under the collection name "seeds"
@@ -1432,6 +1443,7 @@ export type FundingTypeDto = {
   type: string | null;
   organisationName: string | null;
   organisationUuid: string | null;
+  financialReportId: number | null;
 };
 
 export type FinancialReportFullDto = {

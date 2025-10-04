@@ -200,7 +200,7 @@ exports[`Storyshots Components/Elements/Inputs/Dropdown Single Select With Meta 
   className="space-y-2"
 >
   <div
-    className="flex items-baseline gap-1"
+    className="flex items-baseline gap-1 capitalize"
     data-headlessui-state=""
     id="headlessui-listbox-label-:rp:"
     onClick={[Function]}

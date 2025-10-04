@@ -3,6 +3,7 @@ import { FC } from "react";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
 import FieldView from "@/admin/components/ResourceTabs/ChangeRequestsTab/FieldView";
+import FinancialVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/FinancialVisualDiff";
 import { StepChange } from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import VisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/VisualDiff";
 import List from "@/components/extensive/List/List";
@@ -31,6 +32,8 @@ const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => (
             </Box>
           ) : inputType === "long-text" ? (
             <VisualDiff {...{ inputType, currentValue, newValue }} />
+          ) : inputType === "financialIndicators" ? (
+            <FinancialVisualDiff inputType={inputType} currentValue={currentValue} newValue={newValue} />
           ) : (
             <ChangeBox inputType={inputType} oldView={currentValue} newView={newValue} />
           )}
