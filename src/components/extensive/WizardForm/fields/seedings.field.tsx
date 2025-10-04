@@ -2,6 +2,7 @@ import { BooleanInput } from "react-admin";
 
 import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import {
   appendTableAnswers,
@@ -26,13 +27,13 @@ export const SeedingsField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t, entity, fieldsProvider }) => {
+  addFormEntries: addEntryWith((field, formValues, { t, entity, fieldsProvider }) => {
     if (field.additionalProps?.capture_count === true) {
       return treeSpeciesEntryValue("seeds", entity, field, formValues, fieldsProvider);
     } else {
       return dataTableEntryValue(getSeedingTableColumns(t, false), field, formValues);
     }
-  },
+  }),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
     <BooleanInput

@@ -1,6 +1,7 @@
 import RHFFundingTypeDataTable, {
   getFundingTypeTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFFundingTypeDataTable";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
@@ -17,5 +18,7 @@ export const FundingTypeField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t }) => dataTableEntryValue(getFundingTypeTableColumns(t), field, formValues)
+  addFormEntries: addEntryWith((field, formValues, { t }) =>
+    dataTableEntryValue(getFundingTypeTableColumns(t), field, formValues)
+  )
 };

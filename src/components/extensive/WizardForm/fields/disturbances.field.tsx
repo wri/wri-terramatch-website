@@ -4,6 +4,7 @@ import { BooleanInput } from "react-admin";
 import RHFDisturbanceTable, {
   getDisturbanceTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFDisturbanceTable";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
@@ -28,12 +29,13 @@ export const DisturbancesField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t }) =>
+  addFormEntries: addEntryWith((field, formValues, { t }) =>
     dataTableEntryValue(
       getDisturbanceTableColumns(field.additionalProps?.with_intensity, field.additionalProps?.with_extent, t),
       field,
       formValues
-    ),
+    )
+  ),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
     <>

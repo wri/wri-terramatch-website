@@ -89,7 +89,7 @@ const handleChange = (
   });
 };
 
-const currencyInput = {
+const CURRENCY_INPUT = {
   USD: "$",
   EUR: "€",
   GBP: "£"
@@ -127,7 +127,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       getValueFromData("start_month", orgDetails?.startMonth ?? "")
     );
     const [resetTable, setResetTable] = useState(0);
-    const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
+    const currencyInputValue = CURRENCY_INPUT?.[selectCurrency] ? CURRENCY_INPUT?.[selectCurrency] : "";
     const { openNotification } = useNotificationContext();
     const { setCurrency } = useCurrencyContext();
 
@@ -136,7 +136,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       year: item,
       revenue: 0,
       expenses: 0,
-      profit: `${currencyInput?.[selectCurrency]} 0`,
+      profit: `${CURRENCY_INPUT?.[selectCurrency]} 0`,
       revenueUuid: null,
       expensesUuid: null,
       profitUuid: null
@@ -154,7 +154,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       year: item,
       currentAssets: 0,
       currentLiabilities: 0,
-      currentRatio: `${currencyInput?.[selectCurrency]} 0`,
+      currentRatio: `${CURRENCY_INPUT?.[selectCurrency]} 0`,
       currentAssetsUuid: null,
       currentLiabilitiesUuid: null,
       currentRatioUuid: null
@@ -168,7 +168,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       exchange_rate: null
     })) as any[];
 
-    const formatted = formatFinancialData(value, years, selectCurrency, currencyInput);
+    const formatted = formatFinancialData(value, years, selectCurrency, CURRENCY_INPUT);
     const [forProfitAnalysisData, setForProfitAnalysisData] = useState(
       !isEmpty(formatted?.profitAnalysisData) ? formatted?.profitAnalysisData : initialForProfitAnalysisData
     );
@@ -442,7 +442,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 { value: Number(value), row: row.index, cell: columnOrderIndex },
                 setForProfitAnalysisData,
                 profitAnalysisColumnsMap,
-                currencyInput,
+                CURRENCY_INPUT,
                 selectCurrency
               );
             }
@@ -497,7 +497,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 { value: Number(value), row: row.index, cell: columnOrderIndex },
                 setForProfitAnalysisData,
                 profitAnalysisColumnsMap,
-                currencyInput,
+                CURRENCY_INPUT,
                 selectCurrency
               );
             }
@@ -575,7 +575,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 { value: Number(value), row: row.index, cell: columnOrderIndex },
                 setNonProfitAnalysisData,
                 nonProfitAnalysisColumnsMap,
-                currencyInput,
+                CURRENCY_INPUT,
                 selectCurrency
               );
             }
@@ -641,7 +641,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 { value: Number(value), row: row.index, cell: columnOrderIndex },
                 setCurrentRadioData,
                 currentRatioColumnsMap,
-                currencyInput,
+                CURRENCY_INPUT,
                 selectCurrency
               );
             }
@@ -696,7 +696,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 { value: Number(value), row: row.index, cell: columnOrderIndex },
                 setCurrentRadioData,
                 currentRatioColumnsMap,
-                currencyInput,
+                CURRENCY_INPUT,
                 selectCurrency
               );
             }
@@ -982,7 +982,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     useEffect(() => {
       if (!initialized.current && !isEmpty(value)) {
-        const formatted = formatFinancialData(value, years, selectCurrency, currencyInput);
+        const formatted = formatFinancialData(value, years, selectCurrency, CURRENCY_INPUT);
         setForProfitAnalysisData(formatted.profitAnalysisData ?? initialForProfitAnalysisData);
         setNonProfitAnalysisData(formatted.nonProfitAnalysisData ?? initialNonProfitAnalysisData);
         setCurrentRadioData(formatted.currentRatioData ?? initialCurrentRadioData);
