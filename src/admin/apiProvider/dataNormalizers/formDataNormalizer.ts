@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { isBoolean, sortBy } from "lodash";
+import { cloneDeep, isBoolean, sortBy } from "lodash";
 import { Identifier } from "react-admin";
 
 import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formDataProvider";
@@ -15,7 +15,10 @@ export const normalizeV3Form = ({ sections, ...form }: FormFullDto): FormBuilder
   id: form.uuid,
   steps: sections.map(({ questions, ...step }) => ({
     ...step,
-    fields: questions.map(({ children, ...field }) => ({ ...field, children: children ?? undefined }))
+    fields: questions.map(({ children, ...field }) => ({
+      ...cloneDeep(field),
+      children: cloneDeep(children ?? undefined)
+    }))
   }))
 });
 
