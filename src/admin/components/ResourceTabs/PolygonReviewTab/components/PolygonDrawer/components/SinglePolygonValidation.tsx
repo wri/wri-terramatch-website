@@ -10,6 +10,7 @@ import { usePolygonValidation } from "@/connections/Validation";
 import { parseV3ValidationData, shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
 import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 export interface ICriteriaCheckItemProps extends ICriteriaCheckItem {}
 
@@ -26,6 +27,7 @@ const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
   const [hasOverlaps, setHasOverlaps] = useState(false);
   const [menu, setMenu] = useState<ICriteriaCheckItemProps[]>([]);
   const [status, setStatus] = useState(false);
+  const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getFormatedExtraInfo } = useMessageValidators();
 
@@ -78,23 +80,55 @@ const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
         return record.status === false ? count + 1 : count;
       }, 0);
       setFailedValidationCounter(failedValidationCounter);
+
+      const overlapCriteria = menu.find(item => Number(item.id) === OVERLAPPING_CRITERIA_ID && !item.status);
+      if (overlapCriteria && overlapCriteria.extra_info && Array.isArray(overlapCriteria.extra_info)) {
+        const result = checkPolygonFixability(overlapCriteria.extra_info);
+        setFixabilityResult(result);
+      } else {
+        setFixabilityResult(null);
+      }
     }
   }, [menu]);
 
   return (
     <div>
-      <div className="grid w-[90%] grid-cols-2 gap-2">
-        <Button variant="orange" className="mb-4 flex w-full justify-center" onClick={() => clickedValidation(true)}>
-          Check Polygon
-        </Button>
-        <When condition={hasOverlaps}>
-          <Button
-            variant="orange"
-            className="mb-4 flex w-full justify-center border border-black bg-white text-darkCustom-100 hover:border-primary"
-            onClick={() => clickedRunFixPolygonOverlaps(true)}
-          >
-            <span className=" text-10-bold h-min text-darkCustom-100">Fix Polygon</span>
+      <div className="w-[90%]">
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <Button variant="orange" className="flex w-full justify-center" onClick={() => clickedValidation(true)}>
+            Check Polygon
           </Button>
+          <When condition={hasOverlaps}>
+            <Button
+              variant="orange"
+              className="flex w-full justify-center border border-black bg-white text-darkCustom-100 hover:border-primary disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => clickedRunFixPolygonOverlaps(true)}
+              disabled={fixabilityResult != null && !fixabilityResult.canBeFixed}
+              title={
+                fixabilityResult != null
+                  ? fixabilityResult.canBeFixed
+                    ? "This polygon can be fixed automatically"
+                    : fixabilityResult.reasons.join(". ")
+                  : "Checking fixability..."
+              }
+            >
+              <span className=" text-10-bold h-min text-darkCustom-100">Fix Polygon</span>
+            </Button>
+          </When>
+        </div>
+        <When condition={hasOverlaps && fixabilityResult != null && fixabilityResult.reasons.length > 0}>
+          <div className="mb-4">
+            <Text variant="text-10-semibold" className="mb-2 text-darkCustom">
+              Fix Polygon Notes:
+            </Text>
+            <div className="bg-gray-50 rounded p-2">
+              <Text variant="text-8-light" className="text-gray-700">
+                {fixabilityResult?.canBeFixed
+                  ? "✓ Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)"
+                  : `✗ ${fixabilityResult?.reasons.join(". ")}`}
+              </Text>
+            </div>
+          </div>
         </When>
       </div>
       <If condition={status}>

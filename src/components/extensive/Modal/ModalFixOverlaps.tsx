@@ -10,6 +10,7 @@ import Text from "@/components/elements/Text/Text";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -31,6 +32,7 @@ interface DisplayedPolygonType {
   checked: boolean | undefined;
   canBeApproved: boolean | undefined;
   failingCriterias: string[] | undefined;
+  fixabilityResult?: PolygonFixabilityResult;
 }
 
 const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
@@ -57,6 +59,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   const t = useT();
 
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
+  const [canFixAnyPolygon, setCanFixAnyPolygon] = useState(false);
 
   useEffect(() => {
     if (site?.uuid != null) {
@@ -79,17 +82,29 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
       );
     }
 
-    setDisplayedPolygons(
-      overlappingPolygons.map(polygon => {
-        return {
-          id: polygon.uuid,
-          checked: true,
-          name: polygon.poly_name ?? t("Unnamed Polygon"),
-          canBeApproved: false,
-          failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`]
-        };
-      })
-    );
+    const polygons = overlappingPolygons.map(polygon => {
+      const validation = overlapValidations.find(v => v.polygonId === polygon.poly_id);
+      const overlapCriteria = validation?.criteriaList.find(
+        criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
+      );
+      const fixabilityResult = overlapCriteria?.extraInfo
+        ? checkPolygonFixability(overlapCriteria.extraInfo)
+        : undefined;
+
+      return {
+        id: polygon.uuid,
+        checked: true,
+        name: polygon.poly_name ?? t("Unnamed Polygon"),
+        canBeApproved: false,
+        failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
+        fixabilityResult
+      };
+    });
+
+    setDisplayedPolygons(polygons);
+
+    const canFixAny = polygons.some(polygon => polygon.fixabilityResult?.canBeFixed === true);
+    setCanFixAnyPolygon(canFixAny);
   }, [polygonList, overlapValidations, t, selectedUUIDs]);
 
   return (
@@ -123,6 +138,9 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
             <Text variant="text-12" className="flex flex-1 items-center justify-start">
               {t("Polygon Check")}
             </Text>
+            <Text variant="text-12" className="flex flex-1 items-center justify-start">
+              {t("Fixable Status")}
+            </Text>
           </header>
           {displayedPolygons?.map((item, index) => (
             <div key={item.id ?? index} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
@@ -144,6 +162,44 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
                   </When>
                 </div>
               </div>
+              <div className="flex flex-1 items-center justify-start">
+                <When condition={item.fixabilityResult != null}>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4">
+                        <Icon
+                          name={
+                            item.fixabilityResult?.canBeFixed ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS
+                          }
+                          width={16}
+                          height={16}
+                          className={item.fixabilityResult?.canBeFixed ? "text-green-500" : "text-red-500"}
+                        />
+                      </div>
+                      <Text
+                        variant="text-10-light"
+                        className={item.fixabilityResult?.canBeFixed ? "text-green-700" : "text-red-700"}
+                      >
+                        {item.fixabilityResult?.canBeFixed ? t("Can be fixed") : t("Cannot be fixed")}
+                      </Text>
+                    </div>
+                    <When condition={item.fixabilityResult?.reasons && item.fixabilityResult.reasons.length > 0}>
+                      <div className="pl-6">
+                        <Text variant="text-8-light" className="text-gray-600">
+                          {item.fixabilityResult?.canBeFixed
+                            ? t("Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)")
+                            : item.fixabilityResult?.reasons.join(". ")}
+                        </Text>
+                      </div>
+                    </When>
+                  </div>
+                </When>
+                <When condition={item.fixabilityResult == null}>
+                  <Text variant="text-10-light" className="text-gray-500">
+                    {t("No data")}
+                  </Text>
+                </When>
+              </div>
             </div>
           ))}
         </div>
@@ -156,7 +212,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
+        <Button {...primaryButtonProps} disabled={!canFixAnyPolygon}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
