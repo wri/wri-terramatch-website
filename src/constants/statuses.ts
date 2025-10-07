@@ -1,4 +1,5 @@
 export const DRAFT = "draft";
+export const RESTORATION_IN_PROGRESS = "restoration-in-progress";
 export const NEEDS_MORE_INFORMATION = "needs-more-information";
 export const APPROVED = "approved";
 export const SUBMITTED = "submitted";

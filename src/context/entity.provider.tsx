@@ -13,8 +13,8 @@ const EntityContext = createContext<IEntityContext>({});
 type EntityFrameworkProviderProps = {
   entityUuid: string;
   entityName: EntityName;
-  projectUuid?: string;
   children: ReactNode;
+  projectUuid?: string;
 };
 
 const EntityProvider = ({ children, entityUuid, entityName, projectUuid }: EntityFrameworkProviderProps) => (

@@ -242,7 +242,8 @@ export enum IconNames {
   ARROW = "arrow",
   FILE = "file",
   DISTURBANCE_REPORT = "disturbance-report",
-  IMAGE_FILL = "image-fill"
+  IMAGE_FILL = "image-fill",
+  DOLLAR_SIGN = "dollar"
 }
 
 export interface IconProps {

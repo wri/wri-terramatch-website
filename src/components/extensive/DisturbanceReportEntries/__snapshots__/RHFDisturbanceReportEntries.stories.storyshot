@@ -137,7 +137,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     aria-expanded={false}
                     aria-haspopup="listbox"
                     aria-labelledby="headlessui-listbox-label-:r3j: headlessui-listbox-button-:r3k:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
+                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer !h-auto min-h-[40px] border-light"
                     data-headlessui-state=""
                     disabled={false}
                     id="headlessui-listbox-button-:r3k:"
@@ -149,7 +149,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       className="flex items-center gap-2"
                     >
                       <p
-                        className="w-full text-14-light"
+                        className="w-full !whitespace-normal !break-words text-14-light"
                         data-testid="txt"
                         title="Flooding, Fire"
                       >
@@ -307,15 +307,27 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     data-testid="txt"
                     htmlFor=":r3q:"
                   >
-                    Monetary Damage *
+                    Monetary Damage (USD) *
                   </label>
                   <div
                     className="relative"
                   >
+                    <button
+                      className="flex items-center justify-center rounded-full hover:bg-opacity-60 pointer-events-none absolute left-3 top-[50%] translate-y-[-50%]"
+                    >
+                      <div
+                        style={
+                          Object {
+                            "height": undefined,
+                            "width": 24,
+                          }
+                        }
+                      />
+                    </button>
                     <input
                       aria-describedby=":r3q:-description"
                       aria-invalid={false}
-                      className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
+                      className="pl-8 w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
                       id=":r3q:"
                       name="monetary-damage"
                       onChange={[Function]}
@@ -348,7 +360,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                     aria-expanded={false}
                     aria-haspopup="listbox"
                     aria-labelledby="headlessui-listbox-label-:r3r: headlessui-listbox-button-:r3s:"
-                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer border-light"
+                    className="flex h-10 items-center justify-between gap-3 rounded-lg px-3 py-2 hover:cursor-pointer !h-auto min-h-[40px] border-light"
                     data-headlessui-state=""
                     disabled={false}
                     id="headlessui-listbox-button-:r3s:"
@@ -360,7 +372,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       className="flex items-center gap-2"
                     >
                       <p
-                        className="w-full text-14-light"
+                        className="w-full !whitespace-normal !break-words text-14-light"
                         data-testid="txt"
                         title="Seedlings, Trees"
                       >
@@ -397,6 +409,7 @@ exports[`Storyshots Components/Extensive/RHFDisturbanceReportEntries Default 1`]
                       aria-invalid={false}
                       className="w-full outline-none transition-all duration-300 ease-in-out focus:ring-transparent px-3 py-[9px] rounded-lg focus:border-primary-500 border border-neutral-200"
                       id=":r3t:"
+                      lang="en-GB"
                       name="date-of-disturbance"
                       onChange={[Function]}
                       placeholder="Select date"

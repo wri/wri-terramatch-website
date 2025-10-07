@@ -27,6 +27,10 @@ exports[`snapShot test getLandUseTypeOptions 1`] = `
     "value": "urban-forest",
   },
   {
+    "title": "Peatland",
+    "value": "peatland",
+  },
+  {
     "title": "Woodlot or Plantation",
     "value": "woodlot-or-plantation",
   },

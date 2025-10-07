@@ -5,6 +5,7 @@ import Accordion from "@/components/elements/Accordion/Accordion";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import { DisturbanceAffectedSites } from "@/components/extensive/WizardForm/DisturbanceAffectedSites";
 import {
   DISTURBANCE_EXTENT_OPTIONS,
@@ -223,6 +224,8 @@ const RHFDisturbanceReportEntries = ({
                   multiSelect
                   value={convertToOptionValues(getFieldValue("disturbance-subtype") ?? [], disturbanceSubtypeOptions)}
                   onChange={handleDisturbanceSubtypeChange}
+                  className="!h-auto min-h-[40px]"
+                  titleClassname="!whitespace-normal !break-words"
                 />
               </div>
               <div>
@@ -261,10 +264,17 @@ const RHFDisturbanceReportEntries = ({
                   type="number"
                   name="monetary-damage"
                   placeholder="Enter amount"
-                  label="Monetary Damage"
+                  label="Monetary Damage (USD)"
                   required
                   value={getFieldValue("monetary-damage") ?? ""}
                   onChange={handleMonetaryDamageChange}
+                  className="pl-8"
+                  iconButtonPropsLeft={{
+                    iconProps: {
+                      name: IconNames.DOLLAR_SIGN,
+                      className: "fill-neutral-700"
+                    }
+                  }}
                 />
               </div>
               <div>
@@ -279,10 +289,13 @@ const RHFDisturbanceReportEntries = ({
                     DISTURBANCE_PROPERTY_AFFECTED_OPTIONS
                   )}
                   onChange={handlePropertyAffectedChange}
+                  className="!h-auto min-h-[40px]"
+                  titleClassname="!whitespace-normal !break-words"
                 />
               </div>
               <div>
                 <Input
+                  lang="en-GB"
                   type="date"
                   name="date-of-disturbance"
                   placeholder="Select date"

@@ -966,12 +966,6 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
       return validation;
     }
 
-    case "disturbanceReportEntries": {
-      validation = yup.array();
-      if (required) validation = validation.required();
-      return validation;
-    }
-
     case "financialIndicators": {
       validation = yup.array().test("required-documentation", function (value) {
         if (!Array.isArray(value)) return true;
@@ -1008,6 +1002,12 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
       if (required) validation = validation.required();
 
+      return validation;
+    }
+
+    case "disturbanceReportEntries": {
+      validation = yup.array();
+      if (required) validation = validation.required();
       return validation;
     }
 

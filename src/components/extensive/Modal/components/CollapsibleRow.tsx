@@ -88,7 +88,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
             name=""
             checked={!!polygonsSelected?.[index]}
             disabled={type === "modalApprove" ? !canBeApproved() : false}
-            onClick={() => {
+            onChange={e => {
               setPolygonsSelected(prev => {
                 const newSelected = [...prev];
                 newSelected[index] = !prev[index];
