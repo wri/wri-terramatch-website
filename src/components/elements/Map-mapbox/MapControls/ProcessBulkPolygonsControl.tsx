@@ -285,7 +285,7 @@ const ProcessBulkPolygonsControl = ({
             className="text-10-bold my-2 flex w-full justify-center rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-primary
             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("fix")}
-            disabled={isLoadingDelayedJob || !fixabilityResult.canFixAny}
+            disabled={isLoadingDelayedJob}
             title={
               fixabilityResult.canFixAny
                 ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)

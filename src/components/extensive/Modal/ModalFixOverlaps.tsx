@@ -59,6 +59,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   const t = useT();
 
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
+  const [canFixAnyPolygon, setCanFixAnyPolygon] = useState(false);
 
   useEffect(() => {
     if (site?.uuid != null) {
@@ -81,26 +82,29 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
       );
     }
 
-    setDisplayedPolygons(
-      overlappingPolygons.map(polygon => {
-        const validation = overlapValidations.find(v => v.polygonId === polygon.poly_id);
-        const overlapCriteria = validation?.criteriaList.find(
-          criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
-        );
-        const fixabilityResult = overlapCriteria?.extraInfo
-          ? checkPolygonFixability(overlapCriteria.extraInfo)
-          : undefined;
+    const polygons = overlappingPolygons.map(polygon => {
+      const validation = overlapValidations.find(v => v.polygonId === polygon.poly_id);
+      const overlapCriteria = validation?.criteriaList.find(
+        criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
+      );
+      const fixabilityResult = overlapCriteria?.extraInfo
+        ? checkPolygonFixability(overlapCriteria.extraInfo)
+        : undefined;
 
-        return {
-          id: polygon.uuid,
-          checked: true,
-          name: polygon.poly_name ?? t("Unnamed Polygon"),
-          canBeApproved: false,
-          failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
-          fixabilityResult
-        };
-      })
-    );
+      return {
+        id: polygon.uuid,
+        checked: true,
+        name: polygon.poly_name ?? t("Unnamed Polygon"),
+        canBeApproved: false,
+        failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
+        fixabilityResult
+      };
+    });
+
+    setDisplayedPolygons(polygons);
+
+    const canFixAny = polygons.some(polygon => polygon.fixabilityResult?.canBeFixed === true);
+    setCanFixAnyPolygon(canFixAny);
   }, [polygonList, overlapValidations, t, selectedUUIDs]);
 
   return (
@@ -208,7 +212,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
             </Text>
           </Button>
         </When>
-        <Button {...primaryButtonProps}>
+        <Button {...primaryButtonProps} disabled={!canFixAnyPolygon}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}
           </Text>
