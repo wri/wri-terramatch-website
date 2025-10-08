@@ -22,7 +22,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   3: "nursery",
   4: "project-reports",
   5: "site-reports",
-  6: "nursery-reports"
+  6: "nursery-reports",
+  7: "disturbance-reports"
 };
 
 interface AuditLogActionsResponse {
@@ -53,7 +54,11 @@ const useAuditLogActions = ({
   isProjectReport?: boolean;
 }): AuditLogActionsResponse => {
   const t = useT();
-  const reportEntityTypes = ReverseButtonStates2[buttonToggle!].includes("reports")
+  const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
+  const isToggleDisturbanceReport = buttonToggle === AuditLogButtonStates.DISTURBANCE_REPORT;
+  const reportEntityTypes = ReverseButtonStates2[isToggleDisturbanceReport ? buttonToggle - 1 : buttonToggle!].includes(
+    "reports"
+  )
     ? AuditLogButtonStates.REPORT
     : buttonToggle;
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(reportEntityTypes!);
@@ -71,7 +76,9 @@ const useAuditLogActions = ({
     isProjectReport
   });
 
-  const verifyEntity = ["reports", "nursery"].some(word => ReverseButtonStates2[entityLevel!].includes(word));
+  const verifyEntity = ["reports", "nursery"].some(word =>
+    ReverseButtonStates2[isLevelDisturbanceReport ? entityLevel - 1 : entityLevel!].includes(word)
+  );
 
   useEffect(() => {
     const fetchCheckPolygons = async () => {
@@ -151,7 +158,7 @@ const useAuditLogActions = ({
     isLoading
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
-      entity: ReverseButtonStates2[buttonToggle!],
+      entity: ReverseButtonStates2[isToggleDisturbanceReport ? buttonToggle - 1 : buttonToggle!],
       uuid: entityHandlers.selectedEntityItem?.uuid
     }
   });

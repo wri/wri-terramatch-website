@@ -37,6 +37,12 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
         { index: 6, name: t("Nursery Report") }
       ];
     }
+    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT) {
+      return [
+        { index: 0, name: t("Project Status") },
+        { index: 8, name: t("Disturbance Status") }
+      ];
+    }
     if (isReport) {
       let tabsReport = [t("Project Report"), t("Site Report")];
       if (!doesNotHaveNurseries && existNurseries) {

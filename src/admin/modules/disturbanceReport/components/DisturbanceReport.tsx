@@ -184,7 +184,7 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
             </div>
           )}
           <TextEntry value={extent} label={t("Extent")} />
-          <TextEntry value={peopleAffected} label={t("People Affected")} />
+          <TextEntry value={Number(peopleAffected).toLocaleString()} label={t("People Affected")} />
           <TextEntry
             value={formattedPropertyAffected}
             label={t("Property Affected")}
