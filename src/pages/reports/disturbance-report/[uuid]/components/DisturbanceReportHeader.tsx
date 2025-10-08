@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -43,12 +42,12 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
       hasBackButton={false}
     >
       <div className="flex gap-4">
-        <When condition={!disturbanceReport.nothingToReport}>
+        {!disturbanceReport.nothingToReport && (
           <Button variant="secondary" onClick={handleExport}>
             {t("Export")}
             <InlineLoader loading={exportLoader} />
           </Button>
-        </When>
+        )}
         <Button onClick={handleEdit}>{t("Edit")}</Button>
       </div>
     </PageHeader>
