@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
@@ -71,6 +71,58 @@ const VersionHistory = ({
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
 
+  const getPolygonSelectedUuid = useCallback(() => {
+    return selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
+  }, [selectPolygonVersion, selectedPolygon]);
+
+  const getPolygonSelectedUuidForVersion = useCallback(() => {
+    return selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+  }, [selectPolygonVersion, selectedPolygon]);
+
+  const updatePolygonData = useCallback(
+    async (polygonData: SitePolygon | undefined) => {
+      if (polygonData != null) {
+        if (setSelectedPolygonData != null) {
+          setSelectedPolygonData(polygonData);
+        }
+        if (setSelectedPolygonToDrawer != null) {
+          setSelectedPolygonToDrawer({
+            id: selectedPolygonIndex as string,
+            status: polygonData?.status as string,
+            label: polygonData?.poly_name as string,
+            uuid: polygonData?.poly_id as string
+          });
+        }
+        setPolygonFromMap({ isOpen: true, uuid: polygonData?.poly_id ?? "" });
+        if (setStatusSelectedPolygon != null) {
+          setStatusSelectedPolygon(polygonData?.status ?? "");
+        }
+      }
+    },
+    [
+      setSelectedPolygonData,
+      setSelectedPolygonToDrawer,
+      selectedPolygonIndex,
+      setPolygonFromMap,
+      setStatusSelectedPolygon
+    ]
+  );
+
+  const handleError = useCallback((error: unknown, defaultMessage: string) => {
+    if (error != null && typeof error === "object" && "message" in error) {
+      try {
+        const parsedMessage = JSON.parse(error.message as string);
+        if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          return parsedMessage.message as string;
+        }
+      } catch {
+        return error.message as string;
+      }
+      return error.message as string;
+    }
+    return defaultMessage;
+  }, []);
+
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +143,7 @@ const VersionHistory = ({
 
   const uploadFiles = async () => {
     const uploadPromises = [];
-    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const polygonSelectedUuid = getPolygonSelectedUuid();
     setIsLoadingDropdown(true);
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
@@ -117,7 +169,7 @@ const VersionHistory = ({
       }
     }
     try {
-      const polygonSelectedPrimaryUuid = selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
+      const polygonSelectedPrimaryUuid = getPolygonSelectedUuid();
 
       await Promise.all(uploadPromises);
       await refetch();
@@ -127,29 +179,13 @@ const VersionHistory = ({
         pathParams: { uuid: polygonSelectedPrimaryUuid as string }
       })) as SitePolygon[];
       const polygonActive = polygonVersionData?.find(item => item.is_active);
-      setSelectedPolygonData(polygonActive);
-      setSelectedPolygonToDrawer?.({
-        id: selectedPolygonIndex as string,
-        status: polygonActive?.status as string,
-        label: polygonActive?.poly_name as string,
-        uuid: polygonActive?.poly_id as string
-      });
-      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
-      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      await updatePolygonData(polygonActive);
       setIsLoadingDropdown(false);
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message as string;
-        const parsedMessage = JSON.parse(errorMessage);
-        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          errorMessage = parsedMessage.message;
-        }
-        openNotification("error", errorMessage, t("Error uploading file"));
-      } else {
-        openNotification("error", t("An unknown error occurred"), t("Error uploading file"));
-      }
+      const errorMessage = handleError(error, t("An unknown error occurred"));
+      openNotification("error", errorMessage, t("Error uploading file"));
     }
   };
 
@@ -182,7 +218,7 @@ const VersionHistory = ({
     }
   });
   const createNewVersion = async () => {
-    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const polygonSelectedUuid = getPolygonSelectedUuidForVersion();
     try {
       setIsLoadingDropdown(true);
 
@@ -192,15 +228,7 @@ const VersionHistory = ({
       await refetch();
       await refreshSiteData?.();
       await refreshPolygonList?.();
-      setSelectedPolygonData(newVersion);
-      setSelectedPolygonToDrawer?.({
-        id: selectedPolygonIndex as string,
-        status: newVersion?.status as string,
-        label: newVersion?.poly_name as string,
-        uuid: newVersion?.poly_id as string
-      });
-      setPolygonFromMap({ isOpen: true, uuid: newVersion?.poly_id ?? "" });
-      setStatusSelectedPolygon(newVersion?.status ?? "");
+      await updatePolygonData(newVersion);
       setIsLoadingDropdown(false);
       openNotification("success", "Success!", "New version created successfully");
     } catch (error) {
@@ -216,7 +244,7 @@ const VersionHistory = ({
   });
 
   const makeActivePolygon = async () => {
-    const polygonSelectedUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const polygonSelectedUuid = getPolygonSelectedUuidForVersion();
     const polygonUuid = selectPolygonVersion?.polygonUuid ?? selectedPolygon.polygonUuid;
     const versionActive = (data as SitePolygonsDataResponse)?.find(item => item?.uuid == polygonSelectedUuid);
     if (!versionActive?.is_active) {
@@ -226,12 +254,16 @@ const VersionHistory = ({
       await refetch();
       await refreshPolygonList?.();
       await refreshSiteData?.();
-      setSelectedPolygonData(selectPolygonVersion);
+      if (setSelectedPolygonData != null) {
+        setSelectedPolygonData(selectPolygonVersion);
+      }
       const element = wrapperRef.current as HTMLElement;
       element.scrollTo({
         top: 1000000
       });
-      setStatusSelectedPolygon(selectPolygonVersion?.status ?? "");
+      if (setStatusSelectedPolygon != null) {
+        setStatusSelectedPolygon(selectPolygonVersion?.status ?? "");
+      }
       setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "" });
       return;
     }
