@@ -10,7 +10,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import Container from "@/components/generic/Layout/Container";
 import { formatOptions } from "@/constants/options/disturbanceReports";
@@ -110,55 +109,52 @@ const DisturbanceReportOverviewTab = ({ report }: DisturbanceReportOverviewTabPr
     : [];
 
   return (
-    <>
-      <PageBody className="pb-12">
-        <PageRow className="gap-12">
-          <PageColumn>
-            <PageCard title={t("Reported Data")} gap={8}>
-              <LongTextField title={t("Disturbance Type")}>{formatOptions(disturbanceType)}</LongTextField>
-              <LongTextField title={t("Disturbance Subtype")}>
-                {formatOptions(disturbanceSubtype)?.join(", ")}
-              </LongTextField>
-              <LongTextField title={t("Extent")}>{extent}%</LongTextField>
-              <LongTextField title={t("People Affected")}>
-                {peopleAffected ? Number(peopleAffected).toLocaleString() : "N/A"}
-              </LongTextField>
-              <LongTextField title={t("Monetary Damage (USD)")}>
-                {monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
-              </LongTextField>
-              <LongTextField title={t("Property Affected")}>
-                {formatOptions(propertyAffected)?.join(", ")}
-              </LongTextField>
-              <LongTextField title={t("Date of Disturbance")}>{format(report?.dateOfDisturbance!)}</LongTextField>
-              <LongTextField title={t("Intensity")}>
-                <Intensity intensity={intensity?.toLowerCase() as IntensityEnum} className="mb-2" />
-              </LongTextField>
-            </PageCard>
-          </PageColumn>
+    <PageBody>
+      <PageRow className="gap-12">
+        <PageColumn>
+          <PageCard title={t("Reported Data")} gap={8}>
+            <LongTextField title={t("Disturbance Type")}>{formatOptions(disturbanceType)}</LongTextField>
+            <LongTextField title={t("Disturbance Subtype")}>
+              {formatOptions(disturbanceSubtype)?.join(", ")}
+            </LongTextField>
+            <LongTextField title={t("Extent")}>{extent ? `${extent}%` : null}</LongTextField>
+            <LongTextField title={t("People Affected")}>
+              {peopleAffected ? Number(peopleAffected)?.toLocaleString() : null}
+            </LongTextField>
+            <LongTextField title={t("Monetary Damage (USD)")}>
+              {monetaryDamage ? `$${Number(monetaryDamage)?.toLocaleString()}` : null}
+            </LongTextField>
+            <LongTextField title={t("Property Affected")}>{formatOptions(propertyAffected)?.join(", ")}</LongTextField>
+            <LongTextField title={t("Date of Disturbance")}>{format(report?.dateOfDisturbance!)}</LongTextField>
+            <LongTextField title={t("Intensity")}>
+              {intensity ? <Intensity intensity={intensity?.toLowerCase() as IntensityEnum} className="mb-2" /> : null}
+            </LongTextField>
+          </PageCard>
+        </PageColumn>
 
-          <PageColumn>
-            <PageCard title={t("Description")} gap={8} className="h-full">
-              <LongTextField title={t("Description")}>{report?.description}</LongTextField>
-              <LongTextField title={t("Action Description")}>{report?.actionDescription}</LongTextField>
-            </PageCard>
-          </PageColumn>
-        </PageRow>
-        <PageRow>
-          <PageColumn>
-            <PageCard title={t("Sites Affected")} gap={8}>
-              <Table
-                data={disturbanceReportData}
-                columns={columns}
-                hasPagination={false}
-                invertSelectPagination={false}
-                variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
-              />
-            </PageCard>
-          </PageColumn>
-        </PageRow>
-      </PageBody>
-      <PageFooter />
-    </>
+        <PageColumn>
+          <PageCard title={t("Description")} gap={8} className="h-full">
+            <LongTextField title={t("Description")}>{report?.description}</LongTextField>
+            <LongTextField title={t("Action Description")}>{report?.actionDescription}</LongTextField>
+          </PageCard>
+        </PageColumn>
+      </PageRow>
+      <PageRow>
+        <PageColumn>
+          <PageCard title={t("Sites Affected")} gap={8}>
+            <Table
+              data={disturbanceReportData}
+              columns={columns}
+              hasPagination={false}
+              invertSelectPagination={false}
+              variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+            />
+          </PageCard>
+        </PageColumn>
+      </PageRow>
+      <br />
+      <br />
+    </PageBody>
   );
 };
 

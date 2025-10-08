@@ -4,14 +4,15 @@ import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullDisturbanceReport } from "@/connections/Entity";
 import FrameworkProvider from "@/context/framework.provider";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
-import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 
 import DisturbanceReportHeader from "./components/DisturbanceReportHeader";
 import AuditLog from "./tabs/AuditLog";
+import GalleryTab from "./tabs/Gallery";
 import FinancialReportOverviewTab from "./tabs/Overview";
 import UploadedFilesTab from "./tabs/UploadedFiles";
 
@@ -54,7 +55,7 @@ const DisturbanceReportDetailPage = () => {
                   modelName="disturbanceReports"
                   modelUUID={disturbanceReport?.uuid as string}
                   modelTitle={t("Disturbance Report")}
-                  entityData={undefined}
+                  entityData={disturbanceReport}
                   emptyStateContent={t(
                     "Your gallery is currently empty. Add images by using the 'Edit' button on this disturbance report."
                   )}
@@ -70,6 +71,7 @@ const DisturbanceReportDetailPage = () => {
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full  overflow-y-hidden"
         />
+        <PageFooter />
       </LoadingContainer>
     </FrameworkProvider>
   );
