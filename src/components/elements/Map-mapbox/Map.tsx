@@ -16,6 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { deleteMedia } from "@/connections/Media";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -27,7 +28,6 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
@@ -239,11 +239,7 @@ export const MapContainer = ({
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
-  const { mutateAsync: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      setShouldRefetchMediaData(true);
-    }
-  });
+
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
     setUserChangedStyle(true);
@@ -433,8 +429,13 @@ export const MapContainer = ({
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
-    const handleDelete = (id: string) => {
-      deleteFile({ pathParams: { uuid: id } });
+    const handleDelete = async (id: string) => {
+      try {
+        await deleteMedia(id);
+        setShouldRefetchMediaData(true);
+      } catch (error) {
+        Log.error(error);
+      }
       closeModal(ModalId.DELETE_IMAGE);
     };
 

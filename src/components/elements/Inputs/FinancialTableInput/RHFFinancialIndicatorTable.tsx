@@ -10,15 +10,12 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
+import { deleteMedia } from "@/connections/Media";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  useDeleteV2FilesUUID,
-  usePatchV2FinancialIndicators,
-  usePostV2FileUploadMODELCOLLECTIONUUID
-} from "@/generated/apiComponents";
+import { usePatchV2FinancialIndicators, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
 import { OptionValue, UploadedFile } from "@/types/common";
 import { getErrorMessages } from "@/utils/errors";
 import Log from "@/utils/log";
@@ -266,15 +263,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       }
     });
 
-    const { mutate: deleteFile } = useDeleteV2FilesUUID({
-      onSuccess(data) {
-        setResetTable(prev => prev + 1);
-        //@ts-ignore
-        removeFileFromValue(data.data);
-        onChangeCapture?.();
-      }
-    });
-
     const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
         if (data && Array.isArray(data)) {
@@ -384,7 +372,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       });
     };
 
-    const onDeleteFile = (file: Partial<UploadedFile>) => {
+    const onDeleteFile = async (file: Partial<UploadedFile>) => {
       if (file.uuid) {
         addFileToValue({
           ...file,
@@ -394,7 +382,15 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             isDeleting: true
           }
         });
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        try {
+          await deleteMedia(file.uuid);
+          setResetTable(prev => prev + 1);
+          //@ts-ignore
+          removeFileFromValue(file);
+          onChangeCapture?.();
+        } catch (error) {
+          Log.error(error);
+        }
       } else if (file.file_name) {
         removeFileFromValue(file);
       }

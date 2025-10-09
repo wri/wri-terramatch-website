@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Confirm, ImageField, ImageInput, ImageInputProps } from "react-admin";
 
-import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { deleteMedia } from "@/connections/Media";
 import { FileType, UploadedFile } from "@/types/common";
 
 export const ImageUploadInput = (props: ImageInputProps) => {
   const [removeImage, setRemoveImage] = useState<any>(null);
   const [showModal, setShowModal] = useState<any>(false);
-
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({});
 
   return (
     <>
@@ -24,7 +22,7 @@ export const ImageUploadInput = (props: ImageInputProps) => {
               setRemoveImage({
                 fileName: file.file_name,
                 delete: () => {
-                  deleteFile({ pathParams: { uuid: file.uuid } });
+                  deleteMedia(file.uuid);
                   return resolve(true);
                 },
                 cancel: () => reject(false)

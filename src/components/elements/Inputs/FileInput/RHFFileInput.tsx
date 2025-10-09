@@ -4,11 +4,8 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import {
-  useDeleteV2FilesUUID,
-  usePostV2FileUploadMODELCOLLECTIONUUID,
-  usePutV2FilesUUID
-} from "@/generated/apiComponents";
+import { deleteMedia } from "@/connections/Media";
+import { usePostV2FileUploadMODELCOLLECTIONUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
@@ -85,14 +82,6 @@ const RHFFileInput = ({
   });
 
   const { mutate: update } = usePutV2FilesUUID();
-
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess(data) {
-      //@ts-ignore swagger issue
-      removeFileFromValue(data.data);
-      onChangeCapture?.();
-    }
-  });
 
   const addFileToValue = (file: Partial<UploadedFile>) => {
     setFiles(value => {
@@ -210,7 +199,7 @@ const RHFFileInput = ({
     });
   };
 
-  const onDeleteFile = (file: Partial<UploadedFile>) => {
+  const onDeleteFile = async (file: Partial<UploadedFile>) => {
     if (file.uuid) {
       addFileToValue({
         ...file,
@@ -220,7 +209,13 @@ const RHFFileInput = ({
           isDeleting: true
         }
       });
-      deleteFile({ pathParams: { uuid: file.uuid } });
+      try {
+        await deleteMedia(file.uuid);
+        removeFileFromValue(file);
+        onChangeCapture?.();
+      } catch (error) {
+        Log.error(error);
+      }
     } else if (file.file_name) {
       removeFileFromValue(file);
     }

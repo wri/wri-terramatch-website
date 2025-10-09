@@ -13,7 +13,8 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useDeleteV2FilesUUID, usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
+import { deleteMedia } from "@/connections/Media";
+import { usePostV2FileUploadMODELCOLLECTIONUUID } from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -105,16 +106,6 @@ const ModalAddImages: FC<ModalAddProps> = ({
     }
   });
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess(data) {
-      //@ts-ignore swagger issue
-      removeFileFromValue(data.data);
-    },
-    onError(err) {
-      setErrorMessage?.(`Error deleting file: ${err}`);
-    }
-  });
-
   useEffect(() => {
     if (setFile) {
       setFile(files);
@@ -157,7 +148,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
     });
   };
 
-  const handleDeleteFile = (file: Partial<UploadedFile>) => {
+  const handleDeleteFile = async (file: Partial<UploadedFile>) => {
     if (file.uuid) {
       addFileToValue({
         ...file,
@@ -167,7 +158,13 @@ const ModalAddImages: FC<ModalAddProps> = ({
           isDeleting: true
         }
       });
-      deleteFile({ pathParams: { uuid: file.uuid } });
+      try {
+        await deleteMedia(file.uuid);
+        removeFileFromValue(file);
+      } catch (error) {
+        Log.error(error);
+        setErrorMessage?.(`Error deleting file: ${error}`);
+      }
     } else {
       removeFileFromValue(file);
     }
@@ -225,13 +222,19 @@ const ModalAddImages: FC<ModalAddProps> = ({
   };
 
   const deleteAllFiles = useCallback(() => {
-    files.forEach(file => {
+    files.forEach(async file => {
       if (file.uuid) {
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        try {
+          await deleteMedia(file.uuid);
+          removeFileFromValue(file);
+        } catch (error) {
+          Log.error(error);
+          setErrorMessage?.(`Error deleting file: ${error}`);
+        }
       }
     });
     setFiles([]);
-  }, [files, deleteFile]);
+  }, [files, setErrorMessage]);
 
   const handleClose = useCallback(() => {
     deleteAllFiles();
