@@ -493,6 +493,31 @@ const DataCard = ({
       meta: { style: { top: `${topHeaderSecondTable}`, borderBottomWidth: 0 } },
       columns: [
         {
+          accessorKey: "data.2010",
+          header: "2010",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2011",
+          header: "2011",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2012",
+          header: "2012",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2013",
+          header: "2013",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2014",
+          header: "2014",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
           accessorKey: "data.2015",
           header: "2015",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
@@ -540,6 +565,11 @@ const DataCard = ({
         {
           accessorKey: "data.2024",
           header: "2024",
+          meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
+        },
+        {
+          accessorKey: "data.2025",
+          header: "2025",
           meta: { style: { top: `${topHeaderFirstTable}`, width: "5.4%" } }
         }
       ]
@@ -631,7 +661,7 @@ const DataCard = ({
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "11.45%" } }
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "data.afrotropical",
@@ -640,16 +670,25 @@ const DataCard = ({
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "11.05%" } }
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "data.paleartic",
-      header: "Paleartic11",
+      header: "Paleartic",
       cell: (props: any) => {
         const value = props.getValue();
         return value ?? "-";
       },
-      meta: { style: { width: "10.33%" } }
+      meta: { style: { width: "9.5%" } }
+    },
+    {
+      accessorKey: "data.neotropical",
+      header: "Neotropical",
+      cell: (props: any) => {
+        const value = props.getValue();
+        return value ?? "-";
+      },
+      meta: { style: { width: "9.5%" } }
     },
     {
       accessorKey: "more",

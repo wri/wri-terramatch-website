@@ -54,10 +54,6 @@ type MapAreaType = {
   setPolygonData: (value: any[]) => void;
   validFilter: string;
   setValidFilter: (value: string) => void;
-  validationData: Record<string, any>;
-  setValidationData: (value: Record<string, any>) => void;
-  validationDataTimestamp: number;
-  setValidationDataTimestamp: (value: number) => void;
   isFetchingValidationData: boolean;
   setIsFetchingValidationData: (value: boolean) => void;
 };
@@ -105,12 +101,8 @@ const defaultValue: MapAreaType = {
   setPolygonCriteriaMap: () => {},
   polygonData: [],
   setPolygonData: () => {},
-  validFilter: "",
+  validFilter: "all",
   setValidFilter: () => {},
-  validationData: {},
-  setValidationData: () => {},
-  validationDataTimestamp: 0,
-  setValidationDataTimestamp: () => {},
   isFetchingValidationData: false,
   setIsFetchingValidationData: () => {}
 };
@@ -134,9 +126,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [selectedPolygonsInCheckbox, setSelectedPolygonsInCheckbox] = useState<string[]>([]);
   const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
   const [polygonData, setPolygonData] = useState<any[]>([]);
-  const [validFilter, setValidFilter] = useState<string>("");
-  const [validationData, setValidationData] = useState<Record<string, any>>({});
-  const [validationDataTimestamp, setValidationDataTimestamp] = useState<number>(0);
+  const [validFilter, setValidFilter] = useState<string>("all");
   const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
   const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
@@ -210,10 +200,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPolygonData,
     validFilter,
     setValidFilter,
-    validationData,
-    setValidationData,
-    validationDataTimestamp,
-    setValidationDataTimestamp,
     isFetchingValidationData,
     setIsFetchingValidationData
   };

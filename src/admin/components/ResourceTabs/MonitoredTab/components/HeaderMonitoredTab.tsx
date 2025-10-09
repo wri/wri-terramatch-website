@@ -17,7 +17,8 @@ import { useMonitoredData } from "../hooks/useMonitoredData";
 const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
   const { openModal, closeModal } = useModalContext();
   const { record } = useShowContext();
-  const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis } = useMonitoredData(type, record?.uuid);
+  const { headerBarPolygonStatus, totalPolygonsStatus, polygonMissingAnalysis, totalPolygonsForRerun } =
+    useMonitoredData(type, record?.uuid);
   const { loadingAnalysis } = useMonitoredDataContext();
 
   const openRunAnalysis = () => {
@@ -55,7 +56,10 @@ const HeaderMonitoredTab = ({ type }: { type?: EntityName }) => {
         title="Notes"
         content={`Baseline Analysis Underway: There are ${totalPolygonsStatus} approved polygons for this project 
 that are ready for analysis and ${polygonMissingAnalysis} that have been analyzed already. Update the 
-graphs and tables below by clicking update analysis button to your right. `}
+graphs and tables below by clicking update analysis button to your right. 
+
+Note: If you need to rerun analysis for polygons that already have data (e.g., missing values or incorrect calculations), 
+use the "Rerun existing analysis" option in the analysis modal. This will overwrite existing data for ${totalPolygonsForRerun} polygons.`}
         primaryButtonText="Close"
         primaryButtonProps={{
           className: "px-8 py-3",

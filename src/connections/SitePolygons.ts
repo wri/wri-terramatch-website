@@ -1,5 +1,5 @@
 import { isEmpty } from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import {
@@ -9,8 +9,11 @@ import {
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
 import { PendingError } from "@/store/apiSlice";
+import ApiSlice from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
+
+const ALL_POLYGONS_PAGE_SIZE = 100;
 
 export type Indicator = Required<SitePolygonsIndexQueryParams>["presentIndicator[]"] extends Array<infer T> ? T : never;
 export type PolygonStatus = Required<SitePolygonsIndexQueryParams>["polygonStatus[]"] extends Array<infer T>
@@ -29,34 +32,45 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
   })
   .buildConnection();
 
-const ALL_POLYGONS_PAGE_SIZE = 100;
-
 export const useAllSitePolygons = (
-  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize">
+  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
+    sortField?: string;
+    sortDirection?: "ASC" | "DESC";
+  }
 ) => {
   const [allPolygons, setAllPolygons] = useState<SitePolygonLightDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<PendingError | null>(null);
+  const [progress, setProgress] = useState<number>(0);
+  const [total, setTotal] = useState<number>(0);
 
   const stableProps = useStableProps(props);
 
-  useEffect(() => {
-    if (!stableProps.enabled || isEmpty(stableProps.entityUuid)) {
-      setIsLoading(false);
-      setAllPolygons([]);
-      return;
-    }
-
-    const fetchAllPages = async () => {
+  const fetchAllPages = useCallback(
+    async (clearCache: boolean = false) => {
       setIsLoading(true);
       setError(null);
       setAllPolygons([]);
+      setProgress(0);
+      setTotal(0);
 
       try {
+        if (clearCache) {
+          ApiSlice.pruneCache("sitePolygons");
+
+          const currentState = ApiSlice.currentState;
+          const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};
+          Object.keys(sitePolygonsIndices).forEach(indexKey => {
+            ApiSlice.pruneIndex("sitePolygons", indexKey);
+          });
+        }
+
         const firstPageResponse = await loadConnection(sitePolygonsConnection, {
           ...stableProps,
           pageSize: ALL_POLYGONS_PAGE_SIZE,
-          pageNumber: 1
+          pageNumber: 1,
+          sortField: stableProps.sortField,
+          sortDirection: stableProps.sortDirection ?? "ASC"
         });
 
         if (firstPageResponse.loadFailure) {
@@ -64,39 +78,41 @@ export const useAllSitePolygons = (
         }
 
         const polygons = firstPageResponse.data ?? [];
-        const total = firstPageResponse.indexTotal ?? 0;
+        const totalCount = firstPageResponse.indexTotal ?? 0;
 
-        if (total === 0) {
+        setTotal(totalCount);
+        setProgress(Math.min(ALL_POLYGONS_PAGE_SIZE, totalCount));
+
+        if (totalCount === 0) {
           setAllPolygons([]);
           setIsLoading(false);
           return;
         }
 
-        const totalPages = Math.ceil(total / ALL_POLYGONS_PAGE_SIZE);
-
-        if (totalPages === 1) {
+        if (totalCount <= ALL_POLYGONS_PAGE_SIZE) {
           setAllPolygons(polygons);
           setIsLoading(false);
           return;
         }
 
-        const remainingPageNumbers = Array.from({ length: totalPages - 1 }, (_, i) => i + 2);
-        const pagePromises = remainingPageNumbers.map(pageNumber =>
-          loadConnection(sitePolygonsConnection, {
+        const totalPages = Math.ceil(totalCount / ALL_POLYGONS_PAGE_SIZE);
+        let allFetchedPolygons = [...polygons];
+
+        for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+          const pageResponse = await loadConnection(sitePolygonsConnection, {
             ...stableProps,
             pageSize: ALL_POLYGONS_PAGE_SIZE,
-            pageNumber: pageNumber
-          })
-        );
+            pageNumber: pageNumber,
+            sortField: stableProps.sortField,
+            sortDirection: stableProps.sortDirection ?? "ASC"
+          });
 
-        const remainingPages = await Promise.all(pagePromises);
-
-        let allFetchedPolygons = [...polygons];
-        for (const page of remainingPages) {
-          if (page.loadFailure) {
-            throw page.loadFailure;
+          if (pageResponse.loadFailure) {
+            throw pageResponse.loadFailure;
           }
-          allFetchedPolygons.push(...(page.data ?? []));
+
+          allFetchedPolygons.push(...(pageResponse.data ?? []));
+          setProgress(Math.min(allFetchedPolygons.length, totalCount));
         }
 
         setAllPolygons(allFetchedPolygons);
@@ -105,10 +121,32 @@ export const useAllSitePolygons = (
       } finally {
         setIsLoading(false);
       }
-    };
+    },
+    [stableProps]
+  );
+
+  const refetch = useCallback(() => {
+    fetchAllPages(true);
+  }, [fetchAllPages]);
+
+  useEffect(() => {
+    if (!stableProps.enabled || isEmpty(stableProps.entityUuid)) {
+      setIsLoading(false);
+      setAllPolygons([]);
+      setProgress(0);
+      setTotal(0);
+      return;
+    }
 
     fetchAllPages();
-  }, [stableProps]);
+  }, [stableProps, fetchAllPages]);
 
-  return { data: allPolygons, isLoading, error };
+  return {
+    data: allPolygons,
+    isLoading,
+    error,
+    progress,
+    total,
+    refetch
+  };
 };

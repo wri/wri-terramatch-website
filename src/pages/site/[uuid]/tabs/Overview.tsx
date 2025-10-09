@@ -22,6 +22,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -31,8 +32,7 @@ import {
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
-  fetchPutV2SitePolygonStatusBulk,
-  useGetV2SitesSitePolygon
+  fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -100,11 +100,14 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
-  const { data: sitePolygonData, refetch } = useGetV2SitesSitePolygon<SitePolygonsDataResponse>({
-    pathParams: {
-      site: site.uuid
-    }
+  const { data: sitePolygonDataV3, refetch: refetchV3 } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: !!site.uuid
   });
+  const reload = () => {
+    refetchV3();
+  };
   useEffect(() => {
     setSiteData(site);
     if (site.projectUuid) {
@@ -396,7 +399,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.SITE);
 
   return (
-    <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
+    <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageBody>
         <PageRow>
           <PageCard

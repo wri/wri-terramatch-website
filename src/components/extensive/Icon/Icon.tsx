@@ -240,7 +240,10 @@ export enum IconNames {
   CHECK_LANGUAGES = "check-laguages",
   NO_CHECK_LANGUAGES = "no-check-laguages",
   ARROW = "arrow",
-  FILE = "file"
+  FILE = "file",
+  DISTURBANCE_REPORT = "disturbance-report",
+  IMAGE_FILL = "image-fill",
+  DOLLAR_SIGN = "dollar"
 }
 
 export interface IconProps {

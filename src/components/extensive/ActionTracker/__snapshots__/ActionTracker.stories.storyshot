@@ -43,10 +43,10 @@ exports[`Storyshots Components/Extensive/ActionTracker/ActionTrackerCard Default
               Card 1
             </p>
             <div
-              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-tertiary-50 w-fit"
+              className="flex items-center justify-center rounded-xl py-1 px-[6px] bg-blue-200 w-fit"
             >
               <p
-                className="flex w-fit items-center justify-center gap-[6px] text-center text-tertiary-600 text-12-semibold"
+                className="flex w-fit items-center justify-center gap-[6px] text-center text-blue text-12-semibold"
                 data-testid="txt"
               >
                 Awaiting Approval

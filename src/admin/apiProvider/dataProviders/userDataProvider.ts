@@ -4,27 +4,20 @@ import {
   DeleteV2AdminUsersUUIDError,
   fetchDeleteV2AdminUsersUUID,
   fetchGetV2AdminUsers,
-  fetchGetV2AdminUsersExport,
   fetchGetV2AdminUsersMulti,
   fetchGetV2AdminUsersUUID,
   fetchPostV2AdminUsersCreate,
   fetchPutV2AdminUsersUUID,
   GetV2AdminUsersError,
-  GetV2AdminUsersExportError,
   GetV2AdminUsersMultiError,
   GetV2AdminUsersUUIDError,
   PostV2AdminUsersCreateError,
   PutV2AdminUsersUUIDError
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
-import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA } from "../utils/error";
 import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-
-export interface UserDataProvider extends DataProvider {
-  export: (resource: string) => Promise<void>;
-}
 
 const normalizeUserObject = (item: V2AdminUserRead) => ({
   ...item,
@@ -35,7 +28,7 @@ const normalizeUserObject = (item: V2AdminUserRead) => ({
   monitoring_organisations: item?.monitoring_organisations?.map(item => item.uuid)
 });
 
-export const userDataProvider: UserDataProvider = {
+export const userDataProvider: DataProvider = {
   //@ts-ignore
   async create(__, params) {
     try {
@@ -147,15 +140,5 @@ export const userDataProvider: UserDataProvider = {
     } catch (err) {
       throw getFormattedErrorForRA(err as PutV2AdminUsersUUIDError);
     }
-  },
-
-  export() {
-    return fetchGetV2AdminUsersExport({})
-      .then((response: any) => {
-        downloadFileBlob(response, "Users.csv");
-      })
-      .catch(e => {
-        throw getFormattedErrorForRA(e as GetV2AdminUsersExportError);
-      });
   }
 };

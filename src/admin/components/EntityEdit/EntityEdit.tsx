@@ -35,7 +35,8 @@ export const EntityEdit = () => {
     [modules.projectReport.ResourceName]: "project-reports",
     [modules.siteReport.ResourceName]: "site-reports",
     [modules.nurseryReport.ResourceName]: "nursery-reports",
-    [modules.financialReport.ResourceName]: "financial-reports"
+    [modules.financialReport.ResourceName]: "financial-reports",
+    [modules.disturbanceReport.ResourceName]: "disturbance-reports"
   };
 
   const entityName = ResourceEntityMapping[resource] as EntityName;
@@ -92,7 +93,11 @@ export const EntityEdit = () => {
     <div className="mx-auto w-full max-w-7xl">
       <LoadingContainer loading={isLoading}>
         <FrameworkProvider frameworkKey={framework}>
-          <EntityProvider entityUuid={entityUUID} entityName={entityName}>
+          <EntityProvider
+            entityUuid={entityUUID}
+            entityName={entityName}
+            projectUuid={entityValue?.data?.project?.uuid}
+          >
             <WizardForm
               steps={formSteps!}
               errors={error}

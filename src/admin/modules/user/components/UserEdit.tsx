@@ -15,6 +15,7 @@ import {
   directFrameworkChoices,
   frameworkAdminPrimaryRoleChoices,
   frameworkChoices,
+  localeChoices,
   userPrimaryRoleChoices
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
@@ -52,6 +53,7 @@ const UserEdit = () => {
         <TextInput source="email_address" label="Professional Email Address" fullWidth type="email" />
         <TextInput source="phone_number" label="Professional Phone Number" fullWidth type="tel" />
         <TextInput source="job_role" label="Job Title" fullWidth />
+        <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
         <ReferenceInput
           label="Organisation"
           source="organisation.uuid"

@@ -1,125 +1,80 @@
-import { useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
-import { fetchGetV2EntityPolygons, fetchGetV2EntityPolygonsCount } from "@/generated/apiComponents";
-import { useOnMount } from "@/hooks/useOnMount";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+
+const VALID_ENTITY_TYPES = ["sites", "projects"] as const;
+const VALID_FILTER_ALL = "all" as const;
 
 interface LoadSitePolygonsDataHook {
-  data: any[];
+  data: SitePolygonLightDto[];
   loading: boolean;
   total: number;
   progress: number;
   refetch: () => void;
-  updateSingleSitePolygonData: (poly_id: string, updatedData: any) => void;
-  polygonCriteriaMap: any;
-  setPolygonCriteriaMap: (polygonCriteriaMap: any) => void;
+  polygonCriteriaMap: Record<string, unknown>;
+  setPolygonCriteriaMap: (polygonCriteriaMap: Record<string, unknown>) => void;
 }
 
 const useLoadSitePolygonsData = (
-  entity_uuid: string,
-  entity_type: string,
-  statuses: any = null,
-  sortOrder: string = "created_at",
+  entityUuid: string,
+  entityType: string,
+  statuses: string | null = null,
+  sortField: string = "createdAt",
+  sortDirection: "ASC" | "DESC" = "ASC",
   validFilter: string = ""
 ): LoadSitePolygonsDataHook => {
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [total, setTotal] = useState<number>(0);
-  const [progress, setProgress] = useState<number>(0);
-  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<any>({});
-  const abortControllerRef = useRef<AbortController | null>(null);
-
-  const loadInBatches = async () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
+  // Validate entity type
+  const entityName = useMemo(() => {
+    if (!entityType || !VALID_ENTITY_TYPES.includes(entityType as any)) {
+      throw new Error(`Invalid entityType: ${entityType}. Must be one of: ${VALID_ENTITY_TYPES.join(", ")}`);
     }
+    return entityType as "sites" | "projects";
+  }, [entityType]);
 
-    abortControllerRef.current = new AbortController();
-    const signal = abortControllerRef.current.signal;
+  // Build filter object for the new API
+  const filter = useMemo(() => {
+    const filterObj: Record<string, unknown> = {};
 
-    try {
-      setLoading(true);
-
-      if (signal.aborted) return;
-
-      const { count } = await fetchGetV2EntityPolygonsCount({
-        queryParams: {
-          uuid: entity_uuid,
-          type: entity_type,
-          status: statuses ?? "",
-          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
-          ...(validFilter !== "all" && { valid: validFilter })
-        }
-      });
-      if (signal.aborted) return;
-
-      setTotal(count!);
-      let result: any[] = [];
-      const limit = 500;
-      let offset = 0;
-
-      while (offset < count! && !signal.aborted) {
-        const queryParams: any = {
-          limit: limit,
-          offset: offset,
-          uuid: entity_uuid,
-          type: entity_type,
-          status: statuses ?? "",
-          lightResource: true,
-          [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc",
-          ...(validFilter !== "all" && { valid: validFilter })
-        };
-
-        const partialResponse = (await fetchGetV2EntityPolygons({
-          queryParams
-        })) as any;
-
-        if (signal.aborted) return;
-
-        result = result.concat(partialResponse);
-        setData(result as any);
-
-        setProgress(Math.min(offset + limit, count!));
-        offset += limit;
-      }
-    } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError") {
-        console.error("Error in loadInBatches:", error);
-      }
-    } finally {
-      if (!signal.aborted) {
-        setLoading(false);
+    if (statuses) {
+      const statusArray = statuses.split(",").filter(Boolean);
+      if (statusArray.length > 0) {
+        filterObj.polygonStatus = statusArray;
       }
     }
-  };
 
-  const refetch = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-      abortControllerRef.current = null;
+    if (validFilter && validFilter !== VALID_FILTER_ALL) {
+      filterObj.validationStatus = [validFilter];
     }
 
-    setProgress(0);
-    setTotal(0);
-    setData([]);
-    loadInBatches();
-  };
+    return filterObj;
+  }, [statuses, validFilter]);
 
-  const updateSingleSitePolygonData = async (old_id: string, updatedData: any) => {
-    setData((prevData: any) => prevData.map((item: any) => (item.uuid === old_id ? updatedData : item)));
-  };
+  const {
+    data: sitePolygonsData,
+    isLoading,
+    total,
+    progress,
+    refetch
+  } = useAllSitePolygons({
+    entityName,
+    entityUuid,
+    enabled: entityUuid != null,
+    filter,
+    sortField,
+    sortDirection
+  });
 
-  useOnMount(loadInBatches);
+  const [polygonCriteriaMap, setPolygonCriteriaMap] = useState<Record<string, unknown>>({});
 
   return {
-    data,
-    loading,
+    data: sitePolygonsData,
+    loading: isLoading,
     total,
     progress,
     refetch,
     polygonCriteriaMap,
-
-    setPolygonCriteriaMap,
-    updateSingleSitePolygonData
+    setPolygonCriteriaMap
   };
 };
 

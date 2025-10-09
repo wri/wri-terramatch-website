@@ -200,6 +200,7 @@ export const MapContainer = ({
   const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
   const [isEditing, setIsEditing] = useState(false);
   const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
+  const [userChangedStyle, setUserChangedStyle] = useState(false);
 
   const {
     polygonsData,
@@ -220,7 +221,7 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContext = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContext ?? {};
-  const { updateSingleSitePolygonData } = context ?? {};
+  const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
@@ -243,6 +244,10 @@ export const MapContainer = ({
       setShouldRefetchMediaData(true);
     }
   });
+  const handleStyleChange = (newStyle: MapStyle) => {
+    setCurrentStyle(newStyle);
+    setUserChangedStyle(true);
+  };
   if (!mapFunctions) {
     return null;
   }
@@ -409,7 +414,12 @@ export const MapContainer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLandscapes, styleLoaded, sourcesAdded]);
   useEffect(() => {
-    if (!map.current || !projectUUID) return;
+    setUserChangedStyle(false);
+  }, [projectUUID]);
+
+  useEffect(() => {
+    if (!map.current || !projectUUID || userChangedStyle) return;
+
     if (map.current.isStyleLoaded()) {
       setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
     } else {
@@ -418,12 +428,11 @@ export const MapContainer = ({
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectUUID, styleLoaded]);
+  }, [projectUUID, userChangedStyle]);
 
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
-
     const handleDelete = (id: string) => {
       deleteFile({ pathParams: { uuid: id } });
       closeModal(ModalId.DELETE_IMAGE);
@@ -586,7 +595,7 @@ export const MapContainer = ({
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon?.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                reloadSiteData?.();
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
@@ -693,8 +702,9 @@ export const MapContainer = ({
       const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const nameFile = record?.organisation?.name || "polygons";
       link.href = url;
-      link.download = `polygons-${new Date().toISOString().slice(0, 10)}.geojson`;
+      link.download = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.geojson`;
       link.click();
       URL.revokeObjectURL(url);
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
@@ -744,7 +754,7 @@ export const MapContainer = ({
           </When>
           <When condition={isDashboard !== "dashboard"}>
             <ControlGroup position="top-right">
-              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
           </When>
           <ControlGroup position="top-right" className="top-21">
@@ -817,7 +827,7 @@ export const MapContainer = ({
                 <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
               </When>
               {isDashboard === "dashboard" ? (
-                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={setCurrentStyle} />
+                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               ) : (
                 isDashboard !== "modal" && (
                   <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />

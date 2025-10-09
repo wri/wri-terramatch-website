@@ -26,13 +26,16 @@ export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
+  boundingBoxes: researchServiceUrl,
+  validations: researchServiceUrl,
   entities: entityServiceUrl,
+  forms: entityServiceUrl,
+  dashboard: dashboardServiceUrl,
   jobs: jobServiceUrl,
+  organisations: userServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
-  users: userServiceUrl,
-  dashboard: dashboardServiceUrl,
-  boundingBoxes: researchServiceUrl
+  users: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
@@ -62,8 +65,9 @@ export const getStableQuery = (queryParams?: FetchParams, replaceEmptyBrackets =
     if (queryParams[key] == null) delete queryParams[key];
   }
   // guarantee order of array query params.
-  for (const value of Object.values(queryParams)) {
-    if (Array.isArray(value)) value.sort();
+  for (const [key, value] of Object.entries(queryParams)) {
+    // Copy the array in case the original is read only.
+    if (Array.isArray(value)) queryParams[key] = [...value].sort() as FetchParamValue[] | FetchParams[];
   }
 
   const query = qs.stringify(queryParams, { arrayFormat: "indices", sort: (a, b) => a.localeCompare(b) });

@@ -14,8 +14,9 @@ import {
   useListContext
 } from "react-admin";
 
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
+import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
@@ -114,6 +115,7 @@ export const OrganisationsList = () => {
     openToast(t("successfully exported"));
     downloadFileBlob(response, `organisations.csv`);
   };
+  const { isSuperAdmin } = useGetUserRole();
 
   const onError = () => {
     openToast(t("Something went wrong!"), ToastType.ERROR);
@@ -146,7 +148,7 @@ export const OrganisationsList = () => {
         </Text>
       </Stack>
       <List
-        actions={<ListActions onExport={handleExport} />}
+        actions={<ListActionsCreateFilter canCreate={isSuperAdmin} onExport={handleExport} />}
         filters={filters}
         filterDefaultValues={{ status: tabs[0].id }}
       >

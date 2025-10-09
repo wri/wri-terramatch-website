@@ -17,9 +17,12 @@ const ReportInformationAside: FC<ReportInformationAsideProps> = ({ type, parent 
     <Stack gap={2}>
       <ReportOverview parent={parent} />
 
-      <ReportQuickActions type={type} />
-
-      <HighLevelMetrics />
+      {type !== "financial-reports" && (
+        <>
+          <ReportQuickActions type={type} />
+          {type !== "disturbance-reports" && <HighLevelMetrics />}
+        </>
+      )}
     </Stack>
   );
 };

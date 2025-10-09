@@ -6,33 +6,46 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { usePolygonValidation } from "@/connections/Validation";
+import { parseV3ValidationData, shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
-import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
-
-export interface ICriteriaCheckItemProps {
-  id: string;
-  status: boolean;
-  label: string;
-  date?: string;
-  extra_info?: string;
-}
+export interface ICriteriaCheckItemProps extends ICriteriaCheckItem {}
 
 export interface ICriteriaCheckProps {
-  menu: ICriteriaCheckItemProps[];
+  polygonUuid: string;
   clickedValidation: (value: boolean) => void;
   clickedRunFixPolygonOverlaps: (value: boolean) => void;
-  status: boolean;
 }
 
-const PolygonValidation = (props: ICriteriaCheckProps) => {
-  const { clickedValidation, clickedRunFixPolygonOverlaps, status, menu } = props;
+const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
+  const { clickedValidation, clickedRunFixPolygonOverlaps, polygonUuid } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [menu, setMenu] = useState<ICriteriaCheckItemProps[]>([]);
+  const [status, setStatus] = useState(false);
+  const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getFormatedExtraInfo } = useMessageValidators();
+
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid
+  });
+
+  useEffect(() => {
+    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+      const processedMenu = parseV3ValidationData(v3ValidationData);
+      setMenu(processedMenu);
+      setStatus(true);
+    } else {
+      setMenu([]);
+      setStatus(false);
+    }
+  }, [v3ValidationData]);
+
   const formattedDate = (dateObject: Date) => {
     const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
     return `${localDate.toLocaleTimeString("en-US", {
@@ -67,23 +80,55 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
         return record.status === false ? count + 1 : count;
       }, 0);
       setFailedValidationCounter(failedValidationCounter);
+
+      const overlapCriteria = menu.find(item => Number(item.id) === OVERLAPPING_CRITERIA_ID && !item.status);
+      if (overlapCriteria && overlapCriteria.extra_info && Array.isArray(overlapCriteria.extra_info)) {
+        const result = checkPolygonFixability(overlapCriteria.extra_info);
+        setFixabilityResult(result);
+      } else {
+        setFixabilityResult(null);
+      }
     }
   }, [menu]);
 
   return (
     <div>
-      <div className="grid w-[90%] grid-cols-2 gap-2">
-        <Button variant="orange" className="mb-4 flex w-full justify-center" onClick={() => clickedValidation(true)}>
-          Check Polygon
-        </Button>
-        <When condition={hasOverlaps}>
-          <Button
-            variant="orange"
-            className="mb-4 flex w-full justify-center border border-black bg-white text-darkCustom-100 hover:border-primary"
-            onClick={() => clickedRunFixPolygonOverlaps(true)}
-          >
-            <span className=" text-10-bold h-min text-darkCustom-100">Fix Polygon</span>
+      <div className="w-[90%]">
+        <div className="mb-4 grid grid-cols-2 gap-2">
+          <Button variant="orange" className="flex w-full justify-center" onClick={() => clickedValidation(true)}>
+            Check Polygon
           </Button>
+          <When condition={hasOverlaps}>
+            <Button
+              variant="orange"
+              className="flex w-full justify-center border border-black bg-white text-darkCustom-100 hover:border-primary disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => clickedRunFixPolygonOverlaps(true)}
+              disabled={fixabilityResult != null && !fixabilityResult.canBeFixed}
+              title={
+                fixabilityResult != null
+                  ? fixabilityResult.canBeFixed
+                    ? "This polygon can be fixed automatically"
+                    : fixabilityResult.reasons.join(". ")
+                  : "Checking fixability..."
+              }
+            >
+              <span className=" text-10-bold h-min text-darkCustom-100">Fix Polygon</span>
+            </Button>
+          </When>
+        </div>
+        <When condition={hasOverlaps && fixabilityResult != null && fixabilityResult.reasons.length > 0}>
+          <div className="mb-4">
+            <Text variant="text-10-semibold" className="mb-2 text-darkCustom">
+              Fix Polygon Notes:
+            </Text>
+            <div className="bg-gray-50 rounded p-2">
+              <Text variant="text-8-light" className="text-gray-700">
+                {fixabilityResult?.canBeFixed
+                  ? "✓ Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)"
+                  : `✗ ${fixabilityResult?.reasons.join(". ")}`}
+              </Text>
+            </div>
+          </div>
         </When>
       </div>
       <If condition={status}>
@@ -107,12 +152,12 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
                     name={
                       item.status
                         ? IconNames.ROUND_GREEN_TICK
-                        : isCompletedDataOrEstimatedArea(item)
+                        : shouldShowAsWarning(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.ROUND_RED_CROSS
                     }
                     className={classNames("h-4 w-4", {
-                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
                     })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
@@ -142,4 +187,4 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   );
 };
 
-export default PolygonValidation;
+export default SinglePolygonValidation;

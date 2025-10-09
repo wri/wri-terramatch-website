@@ -29,6 +29,10 @@ export type SitePolygonsIndexQueryParams = {
    */
   ["polygonStatus[]"]?: ("draft" | "submitted" | "needs-more-information" | "approved")[];
   /**
+   * Filter results by validation status
+   */
+  ["validationStatus[]"]?: string[];
+  /**
    * Filter results by project UUID(s). May not be used with siteId[], projectCohort or landscape
    */
   ["projectId[]"]?: string[];
@@ -40,6 +44,10 @@ export type SitePolygonsIndexQueryParams = {
    * Filter results by site UUID(s). May not be used with projectId[], projectCohort or landscape
    */
   ["siteId[]"]?: string[];
+  /**
+   * Filter results by polygon UUID(s)
+   */
+  ["polygonUuid[]"]?: string[];
   /**
    * Filter results by project cohorts. May not be used with projectId[] or siteId[]
    */
@@ -149,19 +157,19 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The cursor for the first record on this page.
            */
           cursor?: string;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -200,19 +208,19 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -332,19 +340,6 @@ export type BoundingBoxGetError = Fetcher.ErrorWrapper<
       };
     }
   | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
       status: 404;
       payload: {
         /**
@@ -390,7 +385,143 @@ export const boundingBoxGet = new V3ApiEndpoint<
   {}
 >("/boundingBoxes/v3/get", "GET");
 
+export type GetPolygonValidationPathParams = {
+  polygonUuid: string;
+};
+
+export type GetPolygonValidationError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type GetPolygonValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetPolygonValidationVariables = {
+  pathParams: GetPolygonValidationPathParams;
+};
+
+export const getPolygonValidation = new V3ApiEndpoint<
+  GetPolygonValidationResponse,
+  GetPolygonValidationError,
+  GetPolygonValidationVariables,
+  {}
+>("/validations/v3/polygons/{polygonUuid}", "GET");
+
+export type GetSiteValidationPathParams = {
+  siteUuid: string;
+};
+
+export type GetSiteValidationQueryParams = {
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  /**
+   * Filter validations by criteria ID
+   *
+   * @example 3
+   */
+  criteriaId?: number;
+};
+
+export type GetSiteValidationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSiteValidationResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type GetSiteValidationVariables = {
+  pathParams: GetSiteValidationPathParams;
+  queryParams?: GetSiteValidationQueryParams;
+};
+
+export const getSiteValidation = new V3ApiEndpoint<
+  GetSiteValidationResponse,
+  GetSiteValidationError,
+  GetSiteValidationVariables,
+  {}
+>("/validations/v3/sites/{siteUuid}", "GET");
+
 export const operationsByTag = {
   sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
-  boundingBoxes: { boundingBoxGet }
+  boundingBoxes: { boundingBoxGet },
+  validations: { getPolygonValidation, getSiteValidation }
 };

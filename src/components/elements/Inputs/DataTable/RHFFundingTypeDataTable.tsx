@@ -1,13 +1,13 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback, useState } from "react";
+import { PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import * as yup from "yup";
 
 import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
-import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
-import { useDeleteV2FundingTypeUUID, usePatchV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
+import { useCurrencyContext } from "@/context/currency.provider";
+import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -89,83 +89,84 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
 const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
   const t = useT();
   const { field } = useController(props);
-  const value = field?.value || [];
+  const value = useMemo(() => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
   const [tableKey, setTableKey] = useState(0);
 
-  const [, { organisationId }] = useMyOrg();
+  const { currency } = useCurrencyContext();
 
   const refreshTable = () => {
     setTableKey(prev => prev + 1);
   };
 
-  const { mutate: createTeamMember } = usePostV2FundingType({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
-
-  const { mutate: removeTeamMember } = useDeleteV2FundingTypeUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
-
-  const { mutate: updateTeamMember } = usePatchV2FundingTypeUUID({
-    onSuccess(data, variables) {
-      const _tmp = [...value];
-      //@ts-ignore
-      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
-
-      if (index !== -1) {
-        //@ts-ignore
-        _tmp[index] = data.data;
-        field.onChange(_tmp);
-        onChangeCapture?.();
-        props?.formHook?.reset(props?.formHook.getValues());
-        clearErrors();
-        refreshTable();
-      }
-    }
-  });
-
   const clearErrors = useCallback(() => {
     props?.formHook?.clearErrors(props.name);
   }, [props?.formHook, props.name]);
 
+  const createItem = useCallback(
+    (data: any) => {
+      const next = [...value, data];
+      field.onChange(next);
+      onChangeCapture?.();
+      clearErrors();
+      refreshTable();
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
+
+  const removeItem = useCallback(
+    (uuid?: string) => {
+      if (!uuid) return;
+      const next = (value as any[]).filter(item => item?.uuid !== uuid);
+      field.onChange(next);
+      onChangeCapture?.();
+      clearErrors();
+      refreshTable();
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
+
+  const updateItem = useCallback(
+    (data: any) => {
+      if (!data?.uuid) return;
+      const next = [...value];
+      const index = next.findIndex((item: any) => item?.uuid === data.uuid);
+      if (index !== -1) {
+        next[index] = { ...next[index], ...data };
+        field.onChange(next);
+        onChangeCapture?.();
+        clearErrors();
+        refreshTable();
+      }
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
+
+  const tableColumnsWithCurrency: AccessorKeyColumnDef<any>[] = getFundingTypeTableColumns(t).map(col =>
+    col.accessorKey === "amount"
+      ? {
+          ...col,
+          cell: (props: any) =>
+            (currencyInput[currency] ? currencyInput[currency] + " " : "") + (props.getValue() ?? "")
+        }
+      : col
+  );
   return (
     <DataTable
       key={tableKey}
       {...props}
-      value={value || []}
+      value={value ?? []}
       handleCreate={data => {
-        createTeamMember({
-          body: {
-            ...data,
-            organisation_id: organisationId
-          }
-        });
+        createItem(data);
       }}
       handleDelete={uuid => {
-        if (uuid) {
-          removeTeamMember({ pathParams: { uuid } });
-        }
+        removeItem(uuid);
       }}
       handleUpdate={data => {
-        if (data.uuid) {
-          updateTeamMember({
-            pathParams: { uuid: data.uuid },
-            body: { ...data }
-          });
-        }
+        updateItem(data);
       }}
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
-      tableColumns={getFundingTypeTableColumns(t)}
+      tableColumns={tableColumnsWithCurrency}
       fields={getFundingTypeFields(t)}
       hasPagination={true}
       invertSelectPagination={true}

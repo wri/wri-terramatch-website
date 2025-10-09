@@ -102,22 +102,24 @@ export function formatFinancialData(
     documentationData: {}
   };
 
-  rawData?.forEach((item: any) => {
-    const { year, collection } = item;
+  if (Array.isArray(rawData)) {
+    rawData.forEach((item: any) => {
+      const { year, collection } = item;
 
-    if (profitCollections.includes(collection)) {
-      if (!groupedData.profitAnalysisData[year]) groupedData.profitAnalysisData[year] = {};
-      groupedData.profitAnalysisData[year][collection] = item;
-    } else if (nonProfitCollections.includes(collection)) {
-      if (!groupedData.nonProfitAnalysisData[year]) groupedData.nonProfitAnalysisData[year] = {};
-      groupedData.nonProfitAnalysisData[year][collection] = item;
-    } else if (ratioCollections.includes(collection)) {
-      if (!groupedData.currentRatioData[year]) groupedData.currentRatioData[year] = {};
-      groupedData.currentRatioData[year][collection] = item;
-    } else if (documentationCollections.includes(collection)) {
-      groupedData.documentationData[year] = { ...item };
-    }
-  });
+      if (profitCollections.includes(collection)) {
+        if (!groupedData.profitAnalysisData[year]) groupedData.profitAnalysisData[year] = {};
+        groupedData.profitAnalysisData[year][collection] = item;
+      } else if (nonProfitCollections.includes(collection)) {
+        if (!groupedData.nonProfitAnalysisData[year]) groupedData.nonProfitAnalysisData[year] = {};
+        groupedData.nonProfitAnalysisData[year][collection] = item;
+      } else if (ratioCollections.includes(collection)) {
+        if (!groupedData.currentRatioData[year]) groupedData.currentRatioData[year] = {};
+        groupedData.currentRatioData[year][collection] = item;
+      } else if (documentationCollections.includes(collection)) {
+        groupedData.documentationData[year] = { ...item };
+      }
+    });
+  }
 
   const formatCurrency = (value: number) =>
     value ? `${currencyInput?.[selectCurrency] ?? ""} ${Number(value).toLocaleString()}` : undefined;
@@ -152,7 +154,7 @@ export function formatFinancialData(
         year,
         currentAssets: row["current-assets"]?.amount ?? 0,
         currentLiabilities: row["current-liabilities"]?.amount ?? 0,
-        currentRatio: formatCurrency(row["current-ratio"]?.amount) ?? 0,
+        currentRatio: row["current-ratio"]?.amount ?? 0,
         currentAssetsUuid: row["current-assets"]?.uuid,
         currentLiabilitiesUuid: row["current-liabilities"]?.uuid,
         currentRatioUuid: row["current-ratio"]?.uuid

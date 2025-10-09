@@ -9,8 +9,7 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import { ModalProps } from "./Modal";
 import { ModalBaseSubmit } from "./ModalsBases";
@@ -19,7 +18,7 @@ export interface ModalDeleteBulkPolygonsProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
-  sitePolygonData: SitePolygonsDataResponse;
+  sitePolygonData: SitePolygonLightDto[];
   selectedPolygonsInCheckbox: string[];
   refetch?: () => void;
   onClick?: (currentSelectedUuids: any) => void;
@@ -56,22 +55,21 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
   const [currentSelectedUuids, setCurrentSelectedUuids] = useState<string[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const { validationData } = useMapAreaContext();
 
   useEffect(() => {
     if (sitePolygonData) {
       const initialSelection = sitePolygonData.map((polygon: any) =>
-        selectedPolygonsInCheckbox.includes(polygon.poly_id)
+        selectedPolygonsInCheckbox.includes(polygon.polygonUuid)
       );
       setCurrentSelectedUuids(selectedPolygonsInCheckbox);
       setPolygonsSelected(initialSelection);
-      const polygonsData = sitePolygonData.map((polygon: SitePolygon) => {
+      const polygonsData = sitePolygonData.map((polygon: SitePolygonLightDto) => {
         const polygonValidationStatus =
-          polygon.validation_status === undefined ? null : String(polygon.validation_status);
+          polygon.validationStatus === undefined ? null : String(polygon.validationStatus);
 
         return {
-          id: polygon.poly_id,
-          name: polygon.poly_name ?? t("Unnamed Polygon"),
+          id: polygon.polygonUuid,
+          name: polygon.name ?? t("Unnamed Polygon"),
           checked:
             polygonValidationStatus === "passed" ||
             polygonValidationStatus === "partial" ||
@@ -83,11 +81,11 @@ const ModalProcessBulkPolygons: FC<ModalDeleteBulkPolygonsProps> = ({
 
       setDisplayedPolygons(polygonsData);
     }
-  }, [sitePolygonData, selectedPolygonsInCheckbox, validationData, t]);
+  }, [sitePolygonData, selectedPolygonsInCheckbox, t]);
 
   useEffect(() => {
     const uuids = polygonsSelected
-      .map((isSelected, index) => (isSelected ? sitePolygonData[index].poly_id : null))
+      .map((isSelected, index) => (isSelected ? sitePolygonData[index].polygonUuid : null))
       .filter(uuid => uuid !== null) as string[];
 
     setCurrentSelectedUuids(uuids);

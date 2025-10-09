@@ -43,6 +43,7 @@ const App = () => {
               list={modules.organisation.List}
               show={modules.organisation.Show}
               edit={modules.organisation.Edit}
+              create={modules.organisation.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.ORGANISATIONS} />}
               recordRepresentation={record => record?.name}
             />
@@ -162,6 +163,15 @@ const App = () => {
           edit={modules.financialReport.Edit}
           icon={() => <Icon className="h-8 w-6" name={IconNames.FINANCIAL_REPORTS} />}
           options={{ label: "Financial Reports" }}
+          recordRepresentation={record => record?.title}
+        />
+        <Resource
+          name={modules.disturbanceReport.ResourceName}
+          list={modules.disturbanceReport.List}
+          show={modules.disturbanceReport.Show}
+          edit={modules.disturbanceReport.Edit}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.DISTURBANCE_REPORT} />}
+          options={{ label: "Disturbance Reports" }}
           recordRepresentation={record => record?.title}
         />
         {isAdmin && (

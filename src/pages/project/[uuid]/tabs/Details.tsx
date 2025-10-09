@@ -110,7 +110,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
       <PageRow>
         <PageColumn>
           <PageCard title={t("Project Information")}>
-            <LongTextField title={t("Description of Timeline")}>{project.descriptionOfProjectTimeline}</LongTextField>
+            <LongTextField title={t("Description of Timeline")}>{project.description}</LongTextField>
             <LongTextField title={t("History of Project Area")}>{project.history}</LongTextField>
             <SelectImageListField
               title={t("Target Land Use Types")}
@@ -134,7 +134,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             <LongTextField title={t("Environmental Goals")}>{project.environmentalGoals}</LongTextField>
             <LongTextField title={t("Socioeconomic Goals")}>{project.socioeconomicGoals}</LongTextField>
             <LongTextField frameworksHide={[Framework.HBF]} title={t("Community Engagement Strategy")}>
-              {project.landholderCommEngage}
+              {project.communityIncentives}
             </LongTextField>
             <SelectImageListField
               title={t("Land Tenure")}

@@ -12,6 +12,7 @@ import { useParams } from "react-router-dom";
 
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   useDeleteV2FilesUUID,
@@ -83,7 +84,7 @@ const handleChange = (
       const assets = Number(currentRow.currentAssets ?? 0);
       const liabilities = Number(currentRow.currentLiabilities ?? 0);
       const ratio = liabilities !== 0 ? (assets / liabilities).toLocaleString() : "0";
-      currentRow.currentRatio = `${currencyInput?.[selectCurrency] ?? ""}${ratio}`;
+      currentRow.currentRatio = ratio;
     }
 
     updated[row] = currentRow;
@@ -110,11 +111,28 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const value = field?.value || [];
     const [files, setFiles] = useState<Partial<UploadedFile>[]>();
     const { years, formSubmissionOrg, model } = props;
-    const [selectCurrency, setSelectCurrency] = useState<OptionValue>(formSubmissionOrg?.currency ?? "");
-    const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(formSubmissionOrg?.start_month ?? "");
+
+    const getValueFromData = (fieldName: string, fallbackValue: OptionValue): OptionValue => {
+      if (value && Array.isArray(value) && value.length > 0) {
+        const firstItem = value[0];
+        if (firstItem[fieldName] !== null && firstItem[fieldName] !== undefined) {
+          return firstItem[fieldName];
+        }
+      }
+      return fallbackValue;
+    };
+
+    const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
+      getValueFromData("currency", formSubmissionOrg?.currency ?? "")
+    );
+    const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(
+      getValueFromData("start_month", formSubmissionOrg?.start_month ?? "")
+    );
     const [resetTable, setResetTable] = useState(0);
     const currencyInputValue = currencyInput?.[selectCurrency] ? currencyInput?.[selectCurrency] : "";
     const { openNotification } = useNotificationContext();
+    const { setCurrency } = useCurrencyContext();
+
     const initialForProfitAnalysisData = years?.map((item, index) => ({
       uuid: null,
       year: item,
@@ -166,10 +184,39 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       !isEmpty(formatted?.documentationData) ? formatted?.documentationData : initialDocumentationData
     );
 
+    useEffect(() => {
+      setCurrency(selectCurrency);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectCurrency]);
+
     const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
       onSuccess(data, variables) {
-        //@ts-ignore
-        addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
+        const updatedFile = {
+          //@ts-ignore
+          ...data.data,
+          //@ts-ignore
+          rawFile: variables.file,
+          uploadState: { isSuccess: true, isLoading: false }
+        };
+        addFileToValue(updatedFile);
+        setDocumentationData((prev: any) => {
+          const updated = [...prev];
+
+          updated.forEach(row => {
+            if (row.documentation && Array.isArray(row.documentation)) {
+              row.documentation = row.documentation.map((file: any) => {
+                //@ts-ignore
+                if (file.file_name === variables.file.name && !file.uuid) {
+                  return { ...file, ...updatedFile };
+                }
+                return file;
+              });
+            }
+          });
+
+          return updated;
+        });
+
         onChangeCapture?.();
       },
       onError(err, variables: any) {
@@ -185,7 +232,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
         openNotification("error", t("Error uploading file"), t(errorMessage));
 
-        addFileToValue({
+        const errorFile = {
           collection_name: variables.pathParams.collection,
           size: file?.size,
           file_name: file?.name,
@@ -197,6 +244,24 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             isSuccess: false,
             error: errorMessage
           }
+        };
+
+        addFileToValue(errorFile);
+        setDocumentationData((prev: any) => {
+          const updated = [...prev];
+
+          updated.forEach(row => {
+            if (row.documentation && Array.isArray(row.documentation)) {
+              row.documentation = row.documentation.map((file: any) => {
+                if (file.file_name === variables.file.name && !file.uuid) {
+                  return { ...file, ...errorFile };
+                }
+                return file;
+              });
+            }
+          });
+
+          return updated;
         });
       }
     });
@@ -212,9 +277,20 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
-        // @ts-ignore
-        const _tmp = data ?? [];
-        field.onChange(_tmp);
+        if (data && Array.isArray(data)) {
+          const currentData = value;
+
+          const newData = data.filter((responseItem: any) => {
+            const exists = currentData.some((currentItem: any) => currentItem.uuid === responseItem.uuid);
+
+            return !exists;
+          });
+
+          if (newData.length > 0) {
+            const updatedData = [...currentData, ...newData];
+            field.onChange(updatedData);
+          }
+        }
       }
     });
 
@@ -247,7 +323,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     };
 
     const onSelectFile = async (file: File, context: any) => {
-      addFileToValue({
+      const fileObject: Partial<UploadedFile> = {
         collection_name: "documentation",
         size: file.size,
         file_name: file.name,
@@ -257,6 +333,17 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         uploadState: {
           isLoading: true
         }
+      };
+
+      addFileToValue(fileObject);
+      setDocumentationData((prev: any) => {
+        const updated = [...prev];
+        const row = { ...updated[context.rowIndex] };
+        const prevFiles = row[context.field] ?? [];
+
+        row[context.field] = [...prevFiles, fileObject];
+        updated[context.rowIndex] = row;
+        return updated;
       });
 
       const body = new FormData();
@@ -327,39 +414,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       });
     };
 
-    const onSelectFileWithContext = async (
-      file: File,
-      context: {
-        collection: string;
-        year: string | number;
-        field: string;
-        rowIndex: number;
-      }
-    ) => {
-      const uploaded: Partial<UploadedFile> = {
-        collection_name: context.collection,
-        size: file.size,
-        file_name: file.name,
-        title: file.name,
-        mime_type: file.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: true
-        }
-      };
-
-      setDocumentationData((prev: any) => {
-        const updated = [...prev];
-        const row = { ...updated[context.rowIndex] };
-        const prevFiles = row[context.field] ?? [];
-
-        row[context.field] = [...prevFiles, uploaded];
-        updated[context.rowIndex] = row;
-        return updated;
-      });
-    };
-
     const forProfitAnalysisColumns = [
       {
         header: t("Year"),
@@ -397,9 +451,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -454,9 +506,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -498,7 +548,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const nonProfitAnalysisColumns = [
       {
-        header: "Year",
+        header: t("Year"),
         accessorKey: "year",
         enableSorting: false,
         meta: {
@@ -506,7 +556,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       },
       {
-        header: "Budget",
+        header: t("Budget"),
         accessorKey: "budget",
         enableSorting: false,
         cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
@@ -534,9 +584,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -602,9 +650,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -659,9 +705,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
 
           return (
-            <InputWrapper
-              error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
-            >
+            <InputWrapper required={props.required}>
               <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                 <div className="flex items-center gap-2">
                   {currencyInputValue}
@@ -841,11 +885,15 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
           const files = documentationData?.[rowIndex]?.[columnKey] ?? [];
 
+          // Check if this year has documentation entries but no files uploaded
+          const hasDocumentationEntry =
+            documentationData?.[rowIndex] && documentationData[rowIndex].year === row.original.year;
+          const hasFiles = files && files.length > 0;
+          const showError = hasDocumentationEntry && !hasFiles;
+
           const handleSelectFile = async (file: File) => {
             await onSelectFile(file, {
-              uuid: row.id
-            });
-            await onSelectFileWithContext(file, {
+              uuid: row.id,
               collection: "documentation",
               year: row.original.year,
               field: columnKey,
@@ -854,19 +902,30 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           };
 
           return (
-            <FileInput
-              key={rowIndex}
-              files={files as Partial<UploadedFile>[]}
-              onDelete={file =>
-                handleDeleteFile(file, {
-                  collection: "documentation",
-                  year: row.original.year,
-                  field: columnKey,
-                  rowIndex: row.index
-                })
+            <InputWrapper
+              error={
+                showError
+                  ? {
+                      message: `Document upload is required for year ${row.original.year}. Please upload at least one supporting document.`,
+                      type: "manual"
+                    }
+                  : undefined
               }
-              onChange={newFiles => newFiles.forEach(handleSelectFile)}
-            />
+            >
+              <FileInput
+                key={rowIndex}
+                files={files as Partial<UploadedFile>[]}
+                onDelete={file =>
+                  handleDeleteFile(file, {
+                    collection: "documentation",
+                    year: row.original.year,
+                    field: columnKey,
+                    rowIndex: row.index
+                  })
+                }
+                onChange={newFiles => newFiles.forEach(handleSelectFile)}
+              />
+            </InputWrapper>
           );
         }
       }
@@ -886,8 +945,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         non_profit_analysis_data: nonProfitAnalysisData,
         current_radio_data: currentRadioData,
         documentation_data: documentationData,
-        local_currency: selectCurrency as string,
-        financial_year_start_month: selectFinancialMonth as number,
+        currency: selectCurrency as string,
+        start_month: selectFinancialMonth as number,
         financial_report_id: id ?? router.query.uuid
       };
 
@@ -916,17 +975,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-      forProfitAnalysisData,
-      nonProfitAnalysisData,
-      currentRadioData,
-      documentationData,
-      selectCurrency,
-      selectFinancialMonth,
-      formSubmissionOrg?.uuid,
-      formSubmissionOrg?.type,
-      files
-    ]);
+    }, []);
 
     const initialized = useRef(false);
     const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
@@ -940,14 +989,203 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         setNonProfitAnalysisData(formatted.nonProfitAnalysisData ?? initialNonProfitAnalysisData);
         setCurrentRadioData(formatted.currentRatioData ?? initialCurrentRadioData);
         setDocumentationData(formatted.documentationData ?? initialDocumentationData);
+
+        if (value && Array.isArray(value) && value.length > 0) {
+          const firstItem = value[0];
+
+          if (firstItem.local_currency && firstItem.local_currency !== selectCurrency) {
+            setSelectCurrency(firstItem.local_currency);
+          }
+
+          if (
+            firstItem.start_month !== null &&
+            firstItem.start_month !== undefined &&
+            firstItem.start_month !== selectFinancialMonth
+          ) {
+            setSelectFinancialMonth(firstItem.start_month);
+          }
+        }
+
         initialized.current = true;
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [value]);
 
-    // Placeholder para sincronizar la tabla de documentación
+    useEffect(() => {
+      if (initialized.current) {
+        const payload: Array<{
+          collection: string;
+          amount: number | null;
+          year: number;
+          financial_report_id: string | string[] | undefined;
+          start_month: OptionValue;
+          currency: OptionValue;
+          organisation_id: string | undefined;
+          uuid: string | null;
+          description: string | null;
+          documentation: Partial<UploadedFile>[];
+          exchange_rate: number | null;
+        }> = [];
+
+        if (model?.includes("profit") && forProfitAnalysisData && forProfitAnalysisData.length > 0) {
+          forProfitAnalysisData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "revenue",
+              amount: item.revenue,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.revenueUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "expenses",
+              amount: item.expenses,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.expensesUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "profit",
+              amount: item.revenue - item.expenses,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.profitUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (model?.includes("budget") && nonProfitAnalysisData && nonProfitAnalysisData.length > 0) {
+          nonProfitAnalysisData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "budget",
+              amount: item.budget,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.budgetUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (model?.includes("current-ratio") && currentRadioData && currentRadioData.length > 0) {
+          currentRadioData.forEach((item, index) => {
+            const year = Number(item.year);
+            if (isNaN(year)) return;
+
+            payload.push({
+              collection: "current-assets",
+              amount: item.currentAssets,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentAssetsUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "current-liabilities",
+              amount: item.currentLiabilities,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentLiabilitiesUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+
+            payload.push({
+              collection: "current-ratio",
+              amount: Number((item.currentAssets / item.currentLiabilities).toFixed(2)),
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.currentRatioUuid ?? null,
+              description: null,
+              documentation: [],
+              exchange_rate: null
+            });
+          });
+        }
+
+        if (documentationData && documentationData.length > 0) {
+          documentationData.forEach((item, index) => {
+            const year = Number(item.year);
+
+            payload.push({
+              collection: "description-documents",
+              amount: null,
+              year: year,
+              financial_report_id: id ?? router.query.uuid,
+              start_month: selectFinancialMonth,
+              currency: selectCurrency,
+              organisation_id: formSubmissionOrg?.uuid,
+              uuid: item.uuid ?? null,
+              description: item.description ?? null,
+              documentation: item.documentation ?? [],
+              exchange_rate: item.exchange_rate
+            });
+          });
+        }
+
+        field.onChange(payload);
+
+        props.formHook?.clearErrors(props.name);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+      forProfitAnalysisData,
+      nonProfitAnalysisData,
+      currentRadioData,
+      documentationData,
+      selectCurrency,
+      selectFinancialMonth,
+      props.formHook,
+      props.name,
+      initialized,
+      id,
+      router.query.uuid,
+      formSubmissionOrg?.uuid,
+      model
+    ]);
+
     const syncDocumentationTable = () => {
-      // Forzar blur en todos los inputs/textareas de la tabla de documentación
       const inputs = document.querySelectorAll('[data-sync-blur="documentation"]');
       inputs.forEach(input => {
         (input as HTMLElement).blur();
@@ -966,6 +1204,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         description={props.description}
         inputId={id}
         feedbackRequired={props.feedbackRequired}
+        error={{ message: props?.formHook?.formState?.errors?.[props.name]?.message as string, type: "manual" }}
       >
         <div className="mb-10 space-y-6">
           <Dropdown
@@ -1033,7 +1272,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             description={t(
               isFundoFloraNonProfitOrEnterprise
                 ? "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Budgets must detail your entire organisation's expenses. Audited budgets are preferred, if available, but are not required at this stage.<br><br>Include in the financial statements, if possible: Income Statement (DRE) or Statement of Surplus and Losses (DSP) - in the case of non-profit organisations, Balance Sheet and Cash Flow Statement."
-                : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position."
+                : "Please provide supporting documentation for each year’s financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
             )}
             tableColumns={documentationColumns}
             value={documentationData ?? []}

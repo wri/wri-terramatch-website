@@ -97,7 +97,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     ctaText: t("View Report"),
     onClick: () => {},
     statusText: report.status,
-    updatedAt: report.updated_at ? `Due: ${new Date(report.updated_at).toLocaleDateString()}` : "",
+    updatedAt: report.due_at ? `Due: ${new Date(report.due_at).toLocaleDateString()}` : "",
     updatedBy: report.updated_by || ""
   }));
 
@@ -187,7 +187,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               <Text variant="text-24-bold" className="mb-2">
                 {t("Current Ratio by Year")}
               </Text>
-              <FinancialCurrentRatioChart data={financialData} />
+              <FinancialCurrentRatioChart data={financialData} currency={organization?.currency} />
             </div>
             <div className="flex h-full flex-col justify-center">
               <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">

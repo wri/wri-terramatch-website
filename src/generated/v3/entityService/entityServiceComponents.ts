@@ -77,19 +77,19 @@ export type ProjectPitchIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -208,7 +208,7 @@ export type ImpactStoryIndexQueryParams = {
    */
   ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
   projectUuid?: string;
-  category?: string;
+  category?: string[];
   title?: string;
   status?: string;
   /**
@@ -249,19 +249,19 @@ export type ImpactStoryIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -408,19 +408,19 @@ export type TaskIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -824,6 +824,26 @@ export type TreeScientificNamesSearchResponse = {
      * @example treeSpeciesScientificNames
      */
     resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
   };
   data?: {
     /**
@@ -853,7 +873,14 @@ export type EstablishmentTreesFindPathParams = {
   /**
    * Entity type for which to retrieve the establishment tree data.
    */
-  entity: "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entity:
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -921,7 +948,15 @@ export type TreeReportCountsFindPathParams = {
   /**
    * Entity type for which to retrieve the associated report count data.
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for which to retrieve the associated report count data.
    */
@@ -1062,19 +1097,19 @@ export type DemographicsIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -1170,19 +1205,19 @@ export type DisturbanceIndexResponse = {
        */
       requestPath?: string;
       /**
-       * The total number of records available.
-       *
-       * @example 42
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
        */
-      total?: number;
+      ids?: string[];
       /**
        * The current page number.
        */
       pageNumber?: number;
       /**
-       * The ordered set of resource IDs for this page of this index search.
+       * The total number of records available.
+       *
+       * @example 42
        */
-      ids?: string[];
+      total?: number;
     }[];
   };
   data?: {
@@ -1213,7 +1248,15 @@ export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -1304,19 +1347,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1347,19 +1390,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1390,19 +1433,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1433,19 +1476,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1476,19 +1519,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1519,19 +1562,19 @@ export const entityIndex = new V3ApiEndpoint<
            */
           requestPath?: string;
           /**
-           * The total number of records available.
-           *
-           * @example 42
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
            */
-          total?: number;
+          ids?: string[];
           /**
            * The current page number.
            */
           pageNumber?: number;
           /**
-           * The ordered set of resource IDs for this page of this index search.
+           * The total number of records available.
+           *
+           * @example 42
            */
-          ids?: string[];
+          total?: number;
         }[];
       };
       data?: {
@@ -1545,6 +1588,92 @@ export const entityIndex = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.SiteReportLightDto;
       }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example financialReports
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+      };
+      data?: {
+        /**
+         * @example financialReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialReportLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbanceReports
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+      };
+      data?: {
+        /**
+         * @example disturbanceReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceReportLightDto;
+      }[];
     },
   EntityIndexError,
   EntityIndexVariables,
@@ -1555,7 +1684,15 @@ export type EntityGetPathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1728,6 +1865,44 @@ export const entityGet = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.SiteReportFullDto;
       };
+    }
+  | {
+      meta?: {
+        /**
+         * @example financialReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example financialReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbanceReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example disturbanceReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceReportFullDto;
+      };
     },
   EntityGetError,
   EntityGetVariables,
@@ -1738,7 +1913,15 @@ export type EntityDeletePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1797,7 +1980,15 @@ export type EntityUpdatePathParams = {
   /**
    * Entity type to retrieve
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "nurseryReports" | "siteReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1860,7 +2051,15 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
    */
-  entity: "projects" | "sites" | "nurseries" | "projectReports" | "siteReports" | "nurseryReports";
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports";
   /**
    * Entity UUID for association
    */
@@ -1982,6 +2181,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example demographics
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2001,6 +2220,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example seedings
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2020,6 +2259,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example treeSpecies
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2039,6 +2298,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example media
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2058,6 +2337,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example disturbances
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2077,6 +2376,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example invasives
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2096,6 +2415,26 @@ export const entityAssociationIndex = new V3ApiEndpoint<
          * @example stratas
          */
         resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
       };
       data?: {
         /**
@@ -2114,6 +2453,199 @@ export const entityAssociationIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/{association}", "GET");
 
+export type OptionLabelsIndexQueryParams = {
+  ids: string[];
+};
+
+export type OptionLabelsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OptionLabelsIndexResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
+export type OptionLabelsIndexVariables = {
+  queryParams: OptionLabelsIndexQueryParams;
+};
+
+export const optionLabelsIndex = new V3ApiEndpoint<
+  OptionLabelsIndexResponse,
+  OptionLabelsIndexError,
+  OptionLabelsIndexVariables,
+  {}
+>("/forms/v3/optionLabels", "GET");
+
+export type OptionLabelsGetListPathParams = {
+  /**
+   * The list key
+   */
+  listKey: string;
+};
+
+export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * @example 404
+     */
+    statusCode: number;
+    /**
+     * @example Not Found
+     */
+    message: string;
+  };
+}>;
+
+export type OptionLabelsGetListVariables = {
+  pathParams: OptionLabelsGetListPathParams;
+};
+
+/**
+ * Get a list of option labels by list key
+ */
+export const optionLabelsGetList = new V3ApiEndpoint<
+  undefined,
+  OptionLabelsGetListError,
+  OptionLabelsGetListVariables,
+  {}
+>("/forms/v3/optionLabels/{listKey}", "GET");
+
+export type LinkedFieldsIndexQueryParams = {
+  formTypes?: (
+    | "organisation"
+    | "financialReport"
+    | "disturbanceReport"
+    | "nursery"
+    | "nurseryReport"
+    | "project"
+    | "projectPitch"
+    | "projectReport"
+    | "site"
+    | "siteReport"
+  )[];
+};
+
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type LinkedFieldsIndexResponse = {
+  meta?: {
+    /**
+     * @example linkedFields
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example linkedFields
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.LinkedFieldDto;
+  }[];
+};
+
+export type LinkedFieldsIndexVariables = {
+  queryParams?: LinkedFieldsIndexQueryParams;
+};
+
+export const linkedFieldsIndex = new V3ApiEndpoint<
+  LinkedFieldsIndexResponse,
+  LinkedFieldsIndexError,
+  LinkedFieldsIndexVariables,
+  {}
+>("/forms/v3/linkedFields", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2123,5 +2655,7 @@ export const operationsByTag = {
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityGet, entityDelete, entityUpdate },
-  entityAssociations: { entityAssociationIndex }
+  entityAssociations: { entityAssociationIndex },
+  optionLabels: { optionLabelsIndex, optionLabelsGetList },
+  linkedFields: { linkedFieldsIndex }
 };

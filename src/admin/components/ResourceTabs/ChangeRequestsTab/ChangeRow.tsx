@@ -3,6 +3,7 @@ import { Case, Default, Switch } from "react-if";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
 import FieldView from "@/admin/components/ResourceTabs/ChangeRequestsTab/FieldView";
+import FinancialVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/FinancialVisualDiff";
 import { StepChange } from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import VisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/VisualDiff";
 import List from "@/components/extensive/List/List";
@@ -36,6 +37,9 @@ export default function ChangeRow({ stepChange }: IChangeRowProps) {
                 </Case>
                 <Case condition={type === FieldType.TextArea}>
                   <VisualDiff type={type} {...{ currentValue, newValue }} />
+                </Case>
+                <Case condition={type === FieldType.FinancialTableInput}>
+                  <FinancialVisualDiff type={type} currentValue={currentValue} newValue={newValue} />
                 </Case>
                 <Default>
                   <ChangeBox type={type} oldView={currentValue} newView={newValue} />

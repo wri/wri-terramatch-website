@@ -158,11 +158,30 @@ export type SitePolygonFullDto = {
    * The name of the associated Site.
    */
   siteName: string | null;
-  geometry: Record<string, any> | null;
+  versionName: string | null;
   practice: string | null;
   targetSys: string | null;
   distr: string | null;
   numTrees: number | null;
+  /**
+   * Source of the site polygon
+   */
+  source: string | null;
+  /**
+   * Validation status of the site polygon
+   *
+   * @maxLength 255
+   */
+  validationStatus: string | null;
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
+  geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
    */
@@ -218,6 +237,29 @@ export type SitePolygonLightDto = {
    * The name of the associated Site.
    */
   siteName: string | null;
+  versionName: string | null;
+  practice: string | null;
+  targetSys: string | null;
+  distr: string | null;
+  numTrees: number | null;
+  /**
+   * Source of the site polygon
+   */
+  source: string | null;
+  /**
+   * Validation status of the site polygon
+   *
+   * @maxLength 255
+   */
+  validationStatus: string | null;
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
 };
 
 export type SitePolygonUpdateAttributes = {
@@ -257,4 +299,45 @@ export type BoundingBoxDto = {
    * @example 13.47775425
    */
   bbox: number[];
+};
+
+export type ValidationCriteriaDto = {
+  /**
+   * The criteria ID that was validated
+   *
+   * @example 3
+   */
+  criteriaId: number;
+  /**
+   * Whether the polygon passed this validation criteria
+   *
+   * @example true
+   */
+  valid: boolean;
+  /**
+   * When this validation was last run
+   *
+   * @format date-time
+   * @example 2025-02-20T22:01:31Z
+   */
+  createdAt: string;
+  /**
+   * Additional information about the validation result
+   *
+   * @example null
+   */
+  extraInfo?: Record<string, any>;
+};
+
+export type ValidationDto = {
+  /**
+   * The UUID of the polygon that was validated
+   *
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonId: string;
+  /**
+   * List of validation criteria results for this polygon
+   */
+  criteriaList: ValidationCriteriaDto[];
 };

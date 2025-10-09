@@ -12,12 +12,18 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useGadmChoices } from "@/connections/Gadm";
 import { useMyUser } from "@/connections/User";
-import { CHART_TYPES, JOBS_CREATED_CHART_TYPE, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
+import { CHART_TYPES, ORGANIZATIONS_TYPES, TEXT_TYPES } from "@/constants/dashboardConsts";
 import { CountriesProps, useDashboardContext } from "@/context/dashboard.provider";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { logout } from "@/generated/v3/utils";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { formatCohortDisplay, parseDataToObjetive, parseHectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import {
+  formatCohortDisplay,
+  parseDataToObjetive,
+  parseHectaresUnderRestorationData,
+  parseJobCreatedByType,
+  parseVolunteersByType
+} from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./components/ContentDashboardWrapper";
 import ContentOverview, { IMPACT_STORIES_TOOLTIP } from "./components/ContentOverview";
@@ -30,8 +36,9 @@ export const ACTIVE_COUNTRIES_TOOLTIP =
 export const ACTIVE_PROJECTS_TOOLTIP =
   "For each project, this table shows the number of trees planted, hectares under restoration, jobs created, and volunteers engaged to date. Those with access to individual project pages can click directly on table rows to dive deep.";
 export const JOBS_CREATED_BY_AGE_TOOLTIP =
-  "Total number of employees broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
-export const JOBS_CREATED_BY_GENDER_TOOLTIP = "Total number of employees broken down by gender.";
+  "Total number of employees broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
+export const JOBS_CREATED_BY_GENDER_TOOLTIP =
+  "Total number of employees broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 export const NEW_FULL_TIME_JOBS_TOOLTIP =
   "Number of full-time jobs created to date. TerraFund defines a full-time employee as people that are regularly paid for their work on the project and are working more than 35 hours per week throughout the year.";
 export const NEW_PART_TIME_JOBS_TOOLTIP =
@@ -44,8 +51,9 @@ export const TOP_5_PROJECTS_WITH_MOST_PLANTED_TREES_TOOLTIP =
 export const TOTAL_VOLUNTEERS_TOOLTIP =
   "Number of unpaid volunteers contributing to the project. A volunteer is an individual that freely dedicates their time to the project because they see value in doing so but does not receive payment for their work.";
 export const VOLUNTEERS_CREATED_BY_AGE_TOOLTIP =
-  "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old.";
-export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP = "Total number of volunteers broken down by gender.";
+  "Total number of volunteers broken down by age group. Youth is defined as 18-35 years old. Non-youth is defined as older than 35 years old. 'Unknown' refers to number of people whose age has not been specified.";
+export const VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP =
+  "Total number of volunteers broken down by gender. 'Unknown' refers to number of people whose gender has not been specified.";
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";
 
@@ -93,33 +101,6 @@ const getOrganizationByUuid = (projects: any[], uuid: string) => {
   if (!project) return "Unknown Organization";
 
   return project.organisationName || "Unknown Organization";
-};
-
-const parseJobCreatedByType = (data: any, type: string) => {
-  if (!data) return { type, chartData: [] };
-
-  const ptWomen = data.total_pt_women ?? 0;
-  const ptMen = data.total_pt_men ?? 0;
-  const ptYouth = data.total_pt_youth ?? 0;
-  const ptNonYouth = data.total_pt_non_youth ?? 0;
-  const maxValue = Math.max(ptWomen, ptMen, ptYouth, ptNonYouth);
-  const chartData = [
-    {
-      name: "Part-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`total_pt_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
-    },
-    {
-      name: "Full-Time",
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Women" : "Youth"]:
-        data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "women" : "youth"}`],
-      [type === JOBS_CREATED_CHART_TYPE.gender ? "Men" : "Non-Youth"]:
-        data[`total_ft_${type === JOBS_CREATED_CHART_TYPE.gender ? "men" : "non_youth"}`]
-    }
-  ];
-  return { type, chartData, total: data.totalJobsCreated, maxValue };
 };
 
 const Dashboard = () => {
@@ -194,7 +175,7 @@ const Dashboard = () => {
   const COLUMN_ACTIVE_PROGRAMME = useMemo(
     () => [
       {
-        header: "Country",
+        header: t("Country"),
         cell: (props: any) => {
           const value = props.getValue().split("_");
           return (
@@ -208,22 +189,22 @@ const Dashboard = () => {
         enableSorting: false
       },
       {
-        header: "Projects",
+        header: t("Projects"),
         accessorKey: "project",
         enableSorting: false
       },
       {
-        header: "Trees Planted",
+        header: t("Trees Planted"),
         accessorKey: "treesPlanted",
         enableSorting: false
       },
       {
-        header: "Hectares",
+        header: t("Hectares"),
         accessorKey: "restorationHectares",
         enableSorting: false
       },
       {
-        header: "Jobs Created",
+        header: t("Jobs Created"),
         accessorKey: "jobsCreated",
         enableSorting: false
       },
@@ -263,7 +244,7 @@ const Dashboard = () => {
             }
           ])
     ],
-    [isMobile, setFilters, countryChoices]
+    [isMobile, setFilters, countryChoices, t]
   );
 
   const COLUMN_ACTIVE_COUNTRY = useMemo(
@@ -365,13 +346,16 @@ const Dashboard = () => {
   );
 
   const jobsCreatedByGenderData = useMemo(
-    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.gender),
-    [jobsCreatedData]
+    () => parseJobCreatedByType(jobsCreatedData, "gender", t),
+    [jobsCreatedData, t]
   );
-  const jobsCreatedByAgeData = useMemo(
-    () => parseJobCreatedByType(jobsCreatedData, JOBS_CREATED_CHART_TYPE.age),
-    [jobsCreatedData]
+  const jobsCreatedByAgeData = useMemo(() => parseJobCreatedByType(jobsCreatedData, "age", t), [jobsCreatedData, t]);
+
+  const volunteersByGenderData = useMemo(
+    () => parseVolunteersByType(jobsCreatedData, "gender", t),
+    [jobsCreatedData, t]
   );
+  const volunteersByAgeData = useMemo(() => parseVolunteersByType(jobsCreatedData, "age", t), [jobsCreatedData, t]);
 
   const projectCounts = useMemo(
     () => ({
@@ -615,15 +599,15 @@ const Dashboard = () => {
             )}
           >
             <SecDashboard
-              title={t("New Part-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_pt }}
+              title={t("Part-Time Jobs Created")}
+              data={{ value: jobsCreatedData?.totalPt }}
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_PART_TIME_JOBS_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
             />
             <SecDashboard
-              title={t("New Full-Time Jobs")}
-              data={{ value: jobsCreatedData?.total_ft }}
+              title={t("Full-Time Jobs Created")}
+              data={{ value: jobsCreatedData?.totalFt }}
               className="pl-12 mobile:pl-0 mobile:pt-4"
               classNameBody="w-full place-content-center"
               tooltip={t(NEW_FULL_TIME_JOBS_TOOLTIP)}
@@ -652,6 +636,37 @@ const Dashboard = () => {
               tooltip={t(JOBS_CREATED_BY_AGE_TOOLTIP)}
               isUserAllowed={isUserAllowed?.allowed}
               isLoading={isLoadingJobsCreated}
+            />
+          </div>
+
+          <SecDashboard
+            title={t("Total Volunteers")}
+            data={{ value: jobsCreatedData?.totalVolunteers }}
+            tooltip={t(TOTAL_VOLUNTEERS_TOOLTIP)}
+            isUserAllowed={isUserAllowed?.allowed}
+          />
+          <div className="grid w-full grid-cols-2 gap-12">
+            <SecDashboard
+              title={t("Volunteers Engaged by Gender")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={volunteersByGenderData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(VOLUNTEERS_CREATED_BY_GENDER_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={false}
+            />
+            <SecDashboard
+              title={t("Volunteers Engaged by Age")}
+              data={{}}
+              chartType={CHART_TYPES.doughnutChart}
+              dataForChart={volunteersByAgeData}
+              classNameHeader="!justify-center"
+              classNameBody="w-full place-content-center !justify-center flex-col gap-5"
+              tooltip={t(VOLUNTEERS_CREATED_BY_AGE_TOOLTIP)}
+              isUserAllowed={isUserAllowed?.allowed}
+              isLoading={false}
             />
           </div>
         </PageCard>
@@ -684,6 +699,7 @@ const Dashboard = () => {
         projectCounts={projectCounts}
         transformedStories={transformedStories}
         isLoading={isLoadingImpactStories}
+        hasAccess={singleDashboardProject?.hasAccess}
       />
     </div>
   );

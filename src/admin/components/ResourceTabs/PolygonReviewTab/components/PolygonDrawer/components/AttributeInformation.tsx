@@ -8,7 +8,6 @@ import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import {
-  dropdownOptionsPlantingStatus,
   dropdownOptionsRestoration,
   dropdownOptionsTarget,
   dropdownOptionsTree
@@ -20,23 +19,12 @@ import {
   usePostV2TerrafundNewSitePolygonUuidNewVersion
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
-const AttributeInformation = ({
-  selectedPolygon,
-  updateSingleSitePolygonData,
-  setSelectedPolygonData,
-  setStatusSelectedPolygon,
-  refetchPolygonVersions,
-  isLoadingVersions,
-  setSelectedPolygonToDrawer,
-  selectedPolygonIndex,
-  setPolygonFromMap,
-  setIsLoadingDropdownVersions,
-  setIsOpenPolygonDrawer
-}: {
-  selectedPolygon: SitePolygon;
-  updateSingleSitePolygonData: (poly_id: string, updatedData: any) => void | undefined;
+interface AttributeInformationProps {
+  selectedPolygon: SitePolygonLightDto;
+  sitePolygonRefresh: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
   refetchPolygonVersions: () => void;
@@ -46,15 +34,28 @@ const AttributeInformation = ({
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
   setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
   setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
-}) => {
+}
+
+const AttributeInformation = ({
+  selectedPolygon,
+  sitePolygonRefresh,
+  setSelectedPolygonData,
+  setStatusSelectedPolygon,
+  refetchPolygonVersions,
+  isLoadingVersions,
+  setSelectedPolygonToDrawer,
+  selectedPolygonIndex,
+  setPolygonFromMap,
+  setIsLoadingDropdownVersions,
+  setIsOpenPolygonDrawer
+}: AttributeInformationProps) => {
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
-  const [plantingStatus, setPlantingStatus] = useState<string[]>([]);
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
   const [targetLandUseSystem, setTargetLandUseSystem] = useState<string[]>([]);
   const [treeDistribution, setTreeDistribution] = useState<string[]>([]);
-  const [treesPlanted, setTreesPlanted] = useState<number>(selectedPolygon?.num_trees ?? 0);
-  const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calc_area ?? 0);
+  const [treesPlanted, setTreesPlanted] = useState<number>(selectedPolygon?.numTrees ?? 0);
+  const [calculatedArea, setCalculatedArea] = useState<number>(selectedPolygon?.calcArea ?? 0);
   const [formattedArea, setFormattedArea] = useState<string>();
   const { mutate: sendSiteData } = usePostV2TerrafundNewSitePolygonUuidNewVersion();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState<boolean>(true);
@@ -71,10 +72,10 @@ const AttributeInformation = ({
       }
     };
     refreshEntity();
-    setPolygonName(selectedPolygon?.poly_name ?? "");
-    setPlantStartDate(selectedPolygon?.plantstart ?? "");
-    setTreesPlanted(selectedPolygon?.num_trees ?? 0);
-    setCalculatedArea(selectedPolygon?.calc_area ?? 0);
+    setPolygonName(selectedPolygon?.name ?? "");
+    setPlantStartDate(selectedPolygon?.plantStart ?? "");
+    setTreesPlanted(selectedPolygon?.numTrees ?? 0);
+    setCalculatedArea(selectedPolygon?.calcArea ?? 0);
     const restorationPracticeArray = selectedPolygon?.practice
       ? selectedPolygon?.practice.split(",").map(function (item) {
           return item.trim();
@@ -82,8 +83,8 @@ const AttributeInformation = ({
       : [];
     setRestorationPractice(restorationPracticeArray);
 
-    const targetLandUseSystemArray = selectedPolygon?.target_sys
-      ? selectedPolygon?.target_sys.split(",").map(function (item) {
+    const targetLandUseSystemArray = selectedPolygon?.targetSys
+      ? selectedPolygon?.targetSys.split(",").map(function (item) {
           return item.trim();
         })
       : [];
@@ -95,7 +96,6 @@ const AttributeInformation = ({
         })
       : [];
     setTreeDistribution(treeDistributionArray);
-    setPlantingStatus([selectedPolygon?.planting_status ?? ""]);
   }, [selectedPolygon]);
 
   useEffect(() => {
@@ -109,7 +109,6 @@ const AttributeInformation = ({
       const restorationPracticeToSend = restorationPractice.join(", ");
       const landUseSystemToSend = targetLandUseSystem.join(", ");
       const treeDistributionToSend = treeDistribution.join(", ");
-      const plantingStatusToSend = plantingStatus.join(", ");
       const updatedPolygonData = {
         poly_name: polygonName,
         plantstart: plantStartDate,
@@ -117,7 +116,6 @@ const AttributeInformation = ({
         target_sys: landUseSystemToSend,
         distr: treeDistributionToSend,
         num_trees: treesPlanted,
-        planting_status: plantingStatusToSend,
         adminUpdate: true
       };
       try {
@@ -132,11 +130,11 @@ const AttributeInformation = ({
               await refetchPolygonVersions();
               await refetch();
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: selectedPolygon.primary_uuid as string }
+                pathParams: { uuid: selectedPolygon.primaryUuid as string }
               })) as SitePolygonsDataResponse;
               const polygonActive = polygonVersionData?.find(item => item.is_active);
               if (selectedPolygon.uuid) {
-                await updateSingleSitePolygonData?.(selectedPolygon.uuid, polygonActive);
+                sitePolygonRefresh();
               }
 
               setSelectedPolygonData(polygonActive);
@@ -206,15 +204,6 @@ const AttributeInformation = ({
         />
       </label>
       <When condition={!isLoadingVersions && !isLoadingDropdown}>
-        <Dropdown
-          label="Planting Status"
-          labelClassName="capitalize"
-          labelVariant="text-14-light"
-          placeholder="Select Planting Status"
-          value={plantingStatus}
-          onChange={e => setPlantingStatus(e as string[])}
-          options={dropdownOptionsPlantingStatus}
-        />
         <Dropdown
           label="Restoration Practice"
           labelClassName="capitalize"

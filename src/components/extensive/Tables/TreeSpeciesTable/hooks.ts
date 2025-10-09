@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index";
-import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
+import { PlantDto, SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
 
@@ -21,7 +21,9 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
           : "noGoal";
 
       case "nursery-seedling":
-        return entity === "projects" || entity === "nurseryReports" ? "noGoal" : "treeCountGoal";
+        return entity === "projects" || entity === "nurseryReports" || entity === "projectReports"
+          ? "noGoal"
+          : "treeCountGoal";
 
       case "tree-planted":
         if (entity === "projects" && (framework === Framework.HBF || isTerrafund(framework))) {
@@ -70,12 +72,15 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   });
 
   return useMemo(() => {
-    if (entity.endsWith("Reports")) {
-      return sumBy(plants, "amount");
-    } else {
-      return sumBy(Object.values(reportCounts ?? {}), "amount");
-    }
-  }, [entity, plants, reportCounts]);
+    const usesReportCounts =
+      !entity.endsWith("Reports") ||
+      // Special case: for projectReports with "replanting" collection, data comes within reportCounts
+      (entity === "projectReports" && collection === "replanting");
+
+    const records = usesReportCounts ? Object.values(reportCounts ?? {}) : plants;
+
+    return sumBy(records as PlantDto[], "amount");
+  }, [entity, plants, reportCounts, collection]);
 };
 
 export const usePlantSpeciesCount = ({ entity, entityUuid, collection }: AggregateTreeHookProps) => {
@@ -133,7 +138,7 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
         collection !== "seeds" &&
         establishmentTrees != null &&
         name != null &&
-        !establishmentTrees.includes(name)
+        establishmentTrees.find(species => species.name === name) == null
       ) {
         speciesTypes.push("new");
       }
@@ -150,7 +155,8 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
       if (entity.endsWith("Reports")) {
         return { ...tableRowData, treeCount: amount };
       }
-      return { ...tableRowData, treeCount: getReportAmount(name) ?? 0 };
+      // The getReportAmount(name) function was looking for data in reportCounts, which is only populated for report entities, not applications
+      return { ...tableRowData, treeCount: amount ?? 0 };
     });
     const reportPlants: TreeSpeciesTableRowData[] = reportCountEntries
       .filter(
@@ -159,7 +165,11 @@ export const useTableData = ({ entity, entityUuid, collection, tableType, plants
       .map(([name, { amount, taxonId }]) => {
         const speciesTypes = [];
         if (taxonId == null && collection !== "seeds") speciesTypes.push("non-scientific");
-        if (entity !== "projectReports" && collection !== "seeds" && !establishmentTrees?.includes(name)) {
+        if (
+          entity !== "projectReports" &&
+          collection !== "seeds" &&
+          establishmentTrees?.find(species => species.name === name) == null
+        ) {
           speciesTypes.push("new");
         }
         const tableRowData = { name: [name, speciesTypes] as [string, string[]], uuid: name };

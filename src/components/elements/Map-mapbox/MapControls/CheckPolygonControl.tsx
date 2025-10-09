@@ -1,31 +1,28 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
-import {
-  ESTIMATED_AREA_CRITERIA_ID,
-  OVERLAPPING_CRITERIA_ID,
-  PLANT_START_DATE_CRITERIA_ID,
-  WITHIN_COUNTRY_CRITERIA_ID
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
+import { useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  useGetV2TerrafundValidationSite,
   usePostV2TerrafundClipPolygonsSiteUuid,
   usePostV2TerrafundValidationSitePolygons
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import JobsSlice from "@/store/jobsSlice";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
+import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -40,119 +37,47 @@ export interface CheckSitePolygonProps {
   setAlertTitle?: (value: string) => void;
 }
 
-interface CheckedPolygon {
-  uuid: string;
-  valid: boolean;
-  checked: boolean;
-  nonValidCriteria: Record<string, any>[];
-}
-
-interface TransformedData {
-  id: number;
-  valid: boolean;
-  checked: boolean;
-  label: string | null;
-  showWarning: boolean;
-}
-
-const VALIDATION_CACHE_TIME = 5 * 60 * 1000;
-
-const getTransformedData = (
-  sitePolygonData: SitePolygonsDataResponse | undefined,
-  currentValidationSite: CheckedPolygon[]
-) => {
-  return currentValidationSite.map((checkedPolygon, index) => {
-    const matchingPolygon = Array.isArray(sitePolygonData)
-      ? sitePolygonData.find((polygon: SitePolygon) => polygon.poly_id === checkedPolygon.uuid)
-      : null;
-    const excludedFromValidationCriterias = [
-      ESTIMATED_AREA_CRITERIA_ID,
-      WITHIN_COUNTRY_CRITERIA_ID,
-      PLANT_START_DATE_CRITERIA_ID
-    ];
-    const nonValidCriteriasIds = checkedPolygon?.nonValidCriteria?.map(r => r.criteria_id);
-    const failingCriterias = nonValidCriteriasIds?.filter(r => !excludedFromValidationCriterias.includes(r));
-    let isValid = false;
-    if (checkedPolygon?.nonValidCriteria?.length === 0) {
-      isValid = true;
-    } else if (failingCriterias?.length === 0) {
-      isValid = true;
-    }
-    return {
-      id: index + 1,
-      valid: checkedPolygon.checked && isValid,
-      checked: checkedPolygon.checked,
-      label: matchingPolygon?.poly_name ?? null,
-      showWarning:
-        nonValidCriteriasIds?.includes(ESTIMATED_AREA_CRITERIA_ID) ||
-        nonValidCriteriasIds?.includes(WITHIN_COUNTRY_CRITERIA_ID)
-    };
-  });
-};
-
 const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const { siteRecord, polygonCheck, setIsLoadingDelayedJob, isLoadingDelayedJob, setAlertTitle } = props;
   const siteUuid = siteRecord?.uuid;
   const [openCollapse, setOpenCollapse] = useState(false);
-  const [sitePolygonCheckData, setSitePolygonCheckData] = useState<TransformedData[]>([]);
   const [clickedValidation, setClickedValidation] = useState(false);
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [fixabilityResult, setFixabilityResult] = useState<{
+    fixableCount: number;
+    totalCount: number;
+    canFixAny: boolean;
+  }>({ fixableCount: 0, totalCount: 0, canFixAny: false });
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const { hideLoader } = useLoading();
-  const {
-    setShouldRefetchValidation,
-    setShouldRefetchPolygonData,
-    setSelectedPolygonsInCheckbox,
-    validationData,
-    setValidationData,
-    validationDataTimestamp,
-    setValidationDataTimestamp,
-    setIsFetchingValidationData
-  } = useMapAreaContext();
+  const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
+    useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
   const t = useT();
   const { openNotification } = useNotificationContext();
 
-  const shouldFetchValidationData = useCallback(() => {
-    const now = Date.now();
-    return !validationData[siteUuid ?? ""] || now - validationDataTimestamp > VALIDATION_CACHE_TIME;
-  }, [siteUuid, validationData, validationDataTimestamp]);
-
-  const { data: currentValidationSite, refetch: reloadSitePolygonValidation } = useGetV2TerrafundValidationSite<
-    CheckedPolygon[]
-  >(
-    {
-      queryParams: {
-        uuid: siteUuid ?? ""
-      }
-    },
-    {
-      enabled: !!siteUuid && shouldFetchValidationData(),
-      staleTime: VALIDATION_CACHE_TIME,
-      onSuccess: data => {
-        if (data && siteUuid) {
-          setValidationData((prev: Record<string, any>) => ({
-            ...prev,
-            [siteUuid]: data
-          }));
-          setValidationDataTimestamp(Date.now());
-          setIsFetchingValidationData(false);
-        }
-      }
-    }
-  );
+  const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
+    useAllSiteValidations(siteUuid ?? "", OVERLAPPING_CRITERIA_ID);
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
     openNotification(type, title, message);
   };
 
   const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
     onSuccess: () => {
-      reloadSitePolygonValidation();
+      fetchOverlapValidations(true);
       setClickedValidation(false);
       hideLoader();
       setShouldRefetchValidation(true);
+      if (Array.isArray(sitePolygonData)) {
+        const polygonUuids = sitePolygonData
+          .map(polygon => polygon.polygonUuid)
+          .filter((uuid): uuid is string => Boolean(uuid));
+        if (polygonUuids.length > 0) {
+          ApiSlice.pruneCache("validations", polygonUuids);
+        }
+      }
       displayNotification(
         t("Please update and re-run if any polygons fail."),
         "success",
@@ -182,6 +107,14 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
+        if (Array.isArray(sitePolygonData)) {
+          const polygonUuids = sitePolygonData
+            .map(polygon => polygon.polygonUuid)
+            .filter((uuid): uuid is string => Boolean(uuid));
+          if (polygonUuids.length > 0) {
+            ApiSlice.pruneCache("validations", polygonUuids);
+          }
+        }
         const updatedPolygonNames = data.updated_polygons
           ?.map(p => p.poly_name)
           .filter(Boolean)
@@ -199,17 +132,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       setIsLoadingDelayedJob?.(false);
     }
   });
-
-  const checkHasOverlaps = (validationData: CheckedPolygon[]) => {
-    for (const record of validationData) {
-      for (const criteria of record.nonValidCriteria) {
-        if (criteria.criteria_id === OVERLAPPING_CRITERIA_ID && criteria.valid === 0) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
 
   const runFixPolygonOverlaps = () => {
     if (siteUuid) {
@@ -249,31 +171,32 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   };
 
   useEffect(() => {
-    const getCurrentValidationData = () => {
-      if (currentValidationSite) {
-        return currentValidationSite;
-      }
+    setHasOverlaps(overlapValidations.length > 0);
 
-      if (siteUuid && validationData[siteUuid]) {
-        return validationData[siteUuid];
-      }
+    if (overlapValidations.length > 0) {
+      const polygonsWithOverlaps = overlapValidations.map(validation => {
+        const overlapCriteria = validation.criteriaList.find(
+          criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
+        );
+        return {
+          extra_info: overlapCriteria?.extraInfo
+        };
+      });
 
-      return [];
-    };
-
-    const validationDataToUse = getCurrentValidationData();
-
-    if (validationDataToUse.length > 0) {
-      setHasOverlaps(checkHasOverlaps(validationDataToUse));
-      const transformedData = getTransformedData(sitePolygonData, validationDataToUse);
-      setSitePolygonCheckData(transformedData);
+      const result = checkPolygonsFixability(polygonsWithOverlaps);
+      setFixabilityResult({
+        fixableCount: result.fixableCount,
+        totalCount: result.totalCount,
+        canFixAny: result.fixableCount > 0
+      });
+    } else {
+      setFixabilityResult({ fixableCount: 0, totalCount: 0, canFixAny: false });
     }
-  }, [currentValidationSite, sitePolygonData, validationData, siteUuid]);
+  }, [overlapValidations]);
 
   useValueChanged(sitePolygonData, () => {
-    if (sitePolygonData && siteUuid) {
-      setValidationDataTimestamp(0);
-      reloadSitePolygonValidation();
+    if (sitePolygonData && siteUuid != null) {
+      fetchOverlapValidations();
     }
   });
 
@@ -308,6 +231,11 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
              disabled:cursor-not-allowed disabled:opacity-60"
             onClick={openFormModalHandlerSubmitPolygon}
             disabled={isLoadingDelayedJob}
+            title={
+              fixabilityResult.canFixAny
+                ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)
+                : t("No polygons can be fixed. Overlaps exceed the fixable limits (≤3.5% and ≤0.1 ha).")
+            }
           >
             {t("Fix Polygons")}
           </Button>
@@ -335,27 +263,22 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           </button>
           {openCollapse && (
             <div className="flex min-h-0 grow flex-col gap-2 overflow-auto">
-              {sitePolygonCheckData.map(polygon => (
-                <div key={polygon.id} className="flex items-start gap-2">
-                  <div>
-                    <Icon
-                      name={
-                        polygon.valid
-                          ? polygon.showWarning
-                            ? IconNames.EXCLAMATION_CIRCLE_FILL
-                            : IconNames.ROUND_GREEN_TICK
-                          : IconNames.ROUND_RED_CROSS
-                      }
-                      className={classNames("h-4 w-4", {
-                        "text-yellow-700": polygon.showWarning
-                      })}
-                    />
-                  </div>
-                  <Text variant="text-10-light" className="mt-[2px] w-fit-content leading-tight text-white lg:mt-0">
-                    {`${polygon.label ?? t("Unnamed Polygon")} ${polygon.checked ? "" : t("(not checked yet)")}`}
+              <Text variant="text-10-light" className="text-white">
+                {hasOverlaps
+                  ? fixabilityResult.canFixAny
+                    ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)
+                    : t(
+                        "Overlapping polygons detected but cannot be fixed. Overlaps exceed the fixable limits (≤3.5% and ≤0.1 ha)."
+                      )
+                  : t("No overlapping polygons found.")}
+              </Text>
+              <When condition={hasOverlaps && fixabilityResult.totalCount > 0}>
+                <div className="rounded bg-white bg-opacity-10 p-2">
+                  <Text variant="text-8-light" className="text-white">
+                    {t("Fixable criteria: ≤3.5% overlap AND ≤0.1 ha area")}
                   </Text>
                 </div>
-              ))}
+              </When>
             </div>
           )}
         </div>

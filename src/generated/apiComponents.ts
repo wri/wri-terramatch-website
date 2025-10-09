@@ -3214,134 +3214,6 @@ export const useGetV2UpdateRequestsENTITYUUID = <TData = GetV2UpdateRequestsENTI
   );
 };
 
-export type GetV2FormsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsResponse = {
-  data?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
-export type GetV2FormsVariables = {
-  body?: RequestBodies.GetV2AdminFormsBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2Forms = (variables: GetV2FormsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2FormsResponse, GetV2FormsError, RequestBodies.GetV2AdminFormsBody, {}, {}, {}>({
-    url: "/v2/forms",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2Forms = <TData = GetV2FormsResponse>(
-  variables: GetV2FormsVariables,
-  options?: Omit<reactQuery.UseQueryOptions<GetV2FormsResponse, GetV2FormsError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsResponse, GetV2FormsError, TData>(
-    queryKeyFn({ path: "/v2/forms", operationId: "getV2Forms", variables }),
-    ({ signal }) => fetchGetV2Forms({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PatchV2AdminFormsUUIDPublishError = Fetcher.ErrorWrapper<undefined>;
 
 export type PatchV2AdminFormsUUIDPublishResponse = {
@@ -3460,202 +3332,6 @@ export const usePatchV2AdminFormsUUIDPublish = (
   >(
     (variables: PatchV2AdminFormsUUIDPublishVariables) =>
       fetchPatchV2AdminFormsUUIDPublish({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2AdminFormsSectionError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminFormsSectionResponse = {
-  order?: number;
-  form_id?: number;
-  form_questions?: {
-    id?: number;
-    uuid?: string;
-    form_section_id?: number;
-    label?: string;
-    validation?: string[];
-    parent_id?: string;
-    linked_field_key?: string;
-    children?: Record<string, any>[];
-    multichoice?: boolean;
-    order?: number;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    additional_text?: string;
-    additional_url?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-};
-
-export type PostV2AdminFormsSectionRequestBody = {
-  order?: number;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  form_questions?: {
-    additional_props?: Record<string, any>[];
-    child_form_questions?: {
-      id?: number;
-      uuid?: string;
-      form_section_id?: number;
-      label?: string;
-      validation?: string[];
-      parent_id?: string;
-      linked_field_key?: string;
-      children?: Record<string, any>[];
-      multichoice?: boolean;
-      order?: number;
-      options?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      table_headers?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      additional_text?: string;
-      additional_url?: string;
-      show_on_parent_condition?: boolean;
-      input_type?:
-        | "date"
-        | "text"
-        | "long-text"
-        | "select"
-        | "checkboxes"
-        | "radio"
-        | "number"
-        | "image"
-        | "file"
-        | "conditional";
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    linked_field_key?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    label?: string;
-    placeholder?: string;
-    description?: string;
-    validation?: Record<string, any>;
-    multichoice?: boolean;
-    order?: number;
-    options_list?: string;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-};
-
-export type PostV2AdminFormsSectionVariables = {
-  body?: PostV2AdminFormsSectionRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminFormsSection = (variables: PostV2AdminFormsSectionVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PostV2AdminFormsSectionResponse,
-    PostV2AdminFormsSectionError,
-    PostV2AdminFormsSectionRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/forms/section", method: "post", ...variables, signal });
-
-export const usePostV2AdminFormsSection = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2AdminFormsSectionResponse,
-      PostV2AdminFormsSectionError,
-      PostV2AdminFormsSectionVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2AdminFormsSectionResponse,
-    PostV2AdminFormsSectionError,
-    PostV2AdminFormsSectionVariables
-  >(
-    (variables: PostV2AdminFormsSectionVariables) => fetchPostV2AdminFormsSection({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -3841,108 +3517,6 @@ export const useDeleteV2AdminFormsSectionUUID = (
   );
 };
 
-export type PatchV2AdminFormsSectionUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2AdminFormsSectionUUIDResponse = {
-  order?: number;
-  form_id?: number;
-  form_questions?: {
-    id?: number;
-    uuid?: string;
-    form_section_id?: number;
-    label?: string;
-    validation?: string[];
-    parent_id?: string;
-    linked_field_key?: string;
-    children?: Record<string, any>[];
-    multichoice?: boolean;
-    order?: number;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    additional_text?: string;
-    additional_url?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-};
-
-export type PatchV2AdminFormsSectionUUIDRequestBody = {
-  order?: number;
-};
-
-export type PatchV2AdminFormsSectionUUIDVariables = {
-  body?: PatchV2AdminFormsSectionUUIDRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPatchV2AdminFormsSectionUUID = (
-  variables: PatchV2AdminFormsSectionUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PatchV2AdminFormsSectionUUIDResponse,
-    PatchV2AdminFormsSectionUUIDError,
-    PatchV2AdminFormsSectionUUIDRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/forms/section/{uuid}", method: "patch", ...variables, signal });
-
-export const usePatchV2AdminFormsSectionUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2AdminFormsSectionUUIDResponse,
-      PatchV2AdminFormsSectionUUIDError,
-      PatchV2AdminFormsSectionUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2AdminFormsSectionUUIDResponse,
-    PatchV2AdminFormsSectionUUIDError,
-    PatchV2AdminFormsSectionUUIDVariables
-  >(
-    (variables: PatchV2AdminFormsSectionUUIDVariables) =>
-      fetchPatchV2AdminFormsSectionUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type DeleteV2AdminFormsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type DeleteV2AdminFormsUUIDVariables = ApiContext["fetcherOptions"];
@@ -4097,130 +3671,6 @@ export const usePatchV2AdminFormsUUID = (
   >(
     (variables: PatchV2AdminFormsUUIDVariables) => fetchPatchV2AdminFormsUUID({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2FormsLinkedFieldListingQueryParams = {
-  /**
-   * array of form types
-   */
-  form_types?: string[];
-};
-
-export type GetV2FormsLinkedFieldListingError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsLinkedFieldListingResponse = {
-  uuid?: string;
-  name?: string;
-  input_type?: string;
-  model_key?: string;
-  option_list_key?: string;
-  options?: string[];
-};
-
-export type GetV2FormsLinkedFieldListingVariables = {
-  queryParams?: GetV2FormsLinkedFieldListingQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsLinkedFieldListing = (
-  variables: GetV2FormsLinkedFieldListingVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2FormsLinkedFieldListingResponse,
-    GetV2FormsLinkedFieldListingError,
-    undefined,
-    {},
-    GetV2FormsLinkedFieldListingQueryParams,
-    {}
-  >({ url: "/v2/forms/linked-field-listing", method: "get", ...variables, signal });
-
-export const useGetV2FormsLinkedFieldListing = <TData = GetV2FormsLinkedFieldListingResponse>(
-  variables: GetV2FormsLinkedFieldListingVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsLinkedFieldListingResponse, GetV2FormsLinkedFieldListingError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsLinkedFieldListingResponse, GetV2FormsLinkedFieldListingError, TData>(
-    queryKeyFn({ path: "/v2/forms/linked-field-listing", operationId: "getV2FormsLinkedFieldListing", variables }),
-    ({ signal }) => fetchGetV2FormsLinkedFieldListing({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminFormsCommonOptionsBUCKETPathParams = {
-  /**
-   * name of the bucket/collection of common options
-   */
-  bucket: string;
-};
-
-export type GetV2AdminFormsCommonOptionsBUCKETQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-};
-
-export type GetV2AdminFormsCommonOptionsBUCKETError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsCommonOptionsBUCKETResponse = {
-  uuid?: string;
-  slug?: string;
-  alt_value?: string;
-  label?: string;
-};
-
-export type GetV2AdminFormsCommonOptionsBUCKETVariables = {
-  pathParams: GetV2AdminFormsCommonOptionsBUCKETPathParams;
-  queryParams?: GetV2AdminFormsCommonOptionsBUCKETQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsCommonOptionsBUCKET = (
-  variables: GetV2AdminFormsCommonOptionsBUCKETVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminFormsCommonOptionsBUCKETResponse,
-    GetV2AdminFormsCommonOptionsBUCKETError,
-    undefined,
-    {},
-    GetV2AdminFormsCommonOptionsBUCKETQueryParams,
-    GetV2AdminFormsCommonOptionsBUCKETPathParams
-  >({ url: "/v2/admin/forms/common-options/{bucket}", method: "get", ...variables, signal });
-
-export const useGetV2AdminFormsCommonOptionsBUCKET = <TData = GetV2AdminFormsCommonOptionsBUCKETResponse>(
-  variables: GetV2AdminFormsCommonOptionsBUCKETVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2AdminFormsCommonOptionsBUCKETResponse,
-      GetV2AdminFormsCommonOptionsBUCKETError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2AdminFormsCommonOptionsBUCKETResponse,
-    GetV2AdminFormsCommonOptionsBUCKETError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/admin/forms/common-options/{BUCKET}",
-      operationId: "getV2AdminFormsCommonOptionsBUCKET",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsCommonOptionsBUCKET({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -8169,33 +7619,6 @@ export const usePostV2AdminUsersCreate = (
   );
 };
 
-export type GetV2AdminUsersExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminUsersExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminUsersExport = (variables: GetV2AdminUsersExportVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, GetV2AdminUsersExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/users/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminUsersExport = <TData = undefined>(
-  variables: GetV2AdminUsersExportVariables,
-  options?: Omit<reactQuery.UseQueryOptions<undefined, GetV2AdminUsersExportError, TData>, "queryKey" | "queryFn">
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2AdminUsersExportError, TData>(
-    queryKeyFn({ path: "/v2/admin/users/export", operationId: "getV2AdminUsersExport", variables }),
-    ({ signal }) => fetchGetV2AdminUsersExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PutV2AdminUsersResetPasswordUUIDPathParams = {
   uuid: string;
 };
@@ -8612,6 +8035,7 @@ export type PostV2FundingTypeError = Fetcher.ErrorWrapper<undefined>;
 export type PostV2FundingTypeResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -8658,6 +8082,7 @@ export type PatchV2FundingTypeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type PatchV2FundingTypeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -8714,6 +8139,7 @@ export type DeleteV2FundingTypeUUIDError = Fetcher.ErrorWrapper<undefined>;
 export type DeleteV2FundingTypeUUIDResponse = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -9728,139 +9154,6 @@ export const useGetV2ENTITYUUID = <TData = GetV2ENTITYUUIDResponse>(
   );
 };
 
-export type GetV2FormsSitesUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FormsSitesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsSitesUUIDResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    status?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    answers?: {
-      question_id?: number;
-      value?: string;
-      options?: string[];
-    }[];
-  }[];
-};
-
-export type GetV2FormsSitesUUIDVariables = {
-  pathParams: GetV2FormsSitesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsSitesUUID = (variables: GetV2FormsSitesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2FormsSitesUUIDResponse, GetV2FormsSitesUUIDError, undefined, {}, {}, GetV2FormsSitesUUIDPathParams>({
-    url: "/v2/forms/sites/{uuid}",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2FormsSitesUUID = <TData = GetV2FormsSitesUUIDResponse>(
-  variables: GetV2FormsSitesUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsSitesUUIDResponse, GetV2FormsSitesUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsSitesUUIDResponse, GetV2FormsSitesUUIDError, TData>(
-    queryKeyFn({ path: "/v2/forms/sites/{UUID}", operationId: "getV2FormsSitesUUID", variables }),
-    ({ signal }) => fetchGetV2FormsSitesUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminProjectPitchesExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminProjectPitchesExportVariables = ApiContext["fetcherOptions"];
@@ -10274,214 +9567,6 @@ export const useDeleteV2ProjectPitchesUUID = (
   );
 };
 
-export type GetV2AdminFormsSubmissionsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2AdminFormsSubmissionsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsSubmissionsUUIDResponse = {
-  id?: string;
-  uuid?: string;
-  name?: string;
-  form?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-  stage?: {
-    uuid?: string;
-    name?: string;
-    status?: string;
-    readable_status?: string;
-  };
-  answers?: string;
-  status?: string;
-  readable_status?: string;
-  audits?: {
-    id?: number;
-    event?: string;
-    user_id?: number;
-    user_uuid?: string;
-    old_values?: Record<string, any>;
-    new_values?: Record<string, any>;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  /**
-   * this is a list of key value pairs eg slug: name
-   */
-  tags?: string[];
-  project_pitch_uuid?: string;
-  updated_by?: string;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type GetV2AdminFormsSubmissionsUUIDVariables = {
-  pathParams: GetV2AdminFormsSubmissionsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsSubmissionsUUID = (
-  variables: GetV2AdminFormsSubmissionsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2AdminFormsSubmissionsUUIDResponse,
-    GetV2AdminFormsSubmissionsUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2AdminFormsSubmissionsUUIDPathParams
-  >({ url: "/v2/admin/forms/submissions/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2AdminFormsSubmissionsUUID = <TData = GetV2AdminFormsSubmissionsUUIDResponse>(
-  variables: GetV2AdminFormsSubmissionsUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminFormsSubmissionsUUIDResponse, GetV2AdminFormsSubmissionsUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminFormsSubmissionsUUIDResponse, GetV2AdminFormsSubmissionsUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/submissions/{UUID}",
-      operationId: "getV2AdminFormsSubmissionsUUID",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsSubmissionsUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type DeleteV2AdminFormsSubmissionsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2AdminFormsSubmissionsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2AdminFormsSubmissionsUUIDVariables = {
-  pathParams: DeleteV2AdminFormsSubmissionsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2AdminFormsSubmissionsUUID = (
-  variables: DeleteV2AdminFormsSubmissionsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    DeleteV2AdminFormsSubmissionsUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2AdminFormsSubmissionsUUIDPathParams
-  >({ url: "/v2/admin/forms/submissions/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2AdminFormsSubmissionsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      DeleteV2AdminFormsSubmissionsUUIDError,
-      DeleteV2AdminFormsSubmissionsUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    undefined,
-    DeleteV2AdminFormsSubmissionsUUIDError,
-    DeleteV2AdminFormsSubmissionsUUIDVariables
-  >(
-    (variables: DeleteV2AdminFormsSubmissionsUUIDVariables) =>
-      fetchDeleteV2AdminFormsSubmissionsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2AdminFormsSubmissionsUUIDExportPathParams = {
   uuid: string;
 };
@@ -10520,388 +9605,6 @@ export const useGetV2AdminFormsSubmissionsUUIDExport = <TData = Record<string, a
       variables
     }),
     ({ signal }) => fetchGetV2AdminFormsSubmissionsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2AdminFormsSubmissionsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2AdminFormsSubmissionsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsSubmissionsResponse = {
-  data?: {
-    id?: string;
-    uuid?: string;
-    name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    stage?: {
-      uuid?: string;
-      name?: string;
-      status?: string;
-      readable_status?: string;
-    };
-    answers?: string;
-    status?: string;
-    readable_status?: string;
-    audits?: {
-      id?: number;
-      event?: string;
-      user_id?: number;
-      user_uuid?: string;
-      old_values?: Record<string, any>;
-      new_values?: Record<string, any>;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-    project_pitch_uuid?: string;
-    updated_by?: string;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2AdminFormsSubmissionsVariables = {
-  queryParams?: GetV2AdminFormsSubmissionsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsSubmissions = (variables: GetV2AdminFormsSubmissionsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2AdminFormsSubmissionsResponse,
-    GetV2AdminFormsSubmissionsError,
-    undefined,
-    {},
-    GetV2AdminFormsSubmissionsQueryParams,
-    {}
-  >({ url: "/v2/admin/forms/submissions", method: "get", ...variables, signal });
-
-export const useGetV2AdminFormsSubmissions = <TData = GetV2AdminFormsSubmissionsResponse>(
-  variables: GetV2AdminFormsSubmissionsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminFormsSubmissionsResponse, GetV2AdminFormsSubmissionsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminFormsSubmissionsResponse, GetV2AdminFormsSubmissionsError, TData>(
-    queryKeyFn({ path: "/v2/admin/forms/submissions", operationId: "getV2AdminFormsSubmissions", variables }),
-    ({ signal }) => fetchGetV2AdminFormsSubmissions({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2FormsMySubmissionsQueryParams = {
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2FormsMySubmissionsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsMySubmissionsResponse = {
-  data?: {
-    id?: string;
-    uuid?: string;
-    name?: string;
-    form?: {
-      id?: number;
-      uuid?: string;
-      type?: string;
-      version?: number;
-      title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
-      published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    stage?: {
-      uuid?: string;
-      name?: string;
-      status?: string;
-      readable_status?: string;
-    };
-    answers?: string;
-    status?: string;
-    readable_status?: string;
-    audits?: {
-      id?: number;
-      event?: string;
-      user_id?: number;
-      user_uuid?: string;
-      old_values?: Record<string, any>;
-      new_values?: Record<string, any>;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-    project_pitch_uuid?: string;
-    updated_by?: string;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2FormsMySubmissionsVariables = {
-  queryParams?: GetV2FormsMySubmissionsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsMySubmissions = (variables: GetV2FormsMySubmissionsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FormsMySubmissionsResponse,
-    GetV2FormsMySubmissionsError,
-    undefined,
-    {},
-    GetV2FormsMySubmissionsQueryParams,
-    {}
-  >({ url: "/v2/forms/my/submissions", method: "get", ...variables, signal });
-
-export const useGetV2FormsMySubmissions = <TData = GetV2FormsMySubmissionsResponse>(
-  variables: GetV2FormsMySubmissionsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsMySubmissionsResponse, GetV2FormsMySubmissionsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsMySubmissionsResponse, GetV2FormsMySubmissionsError, TData>(
-    queryKeyFn({ path: "/v2/forms/my/submissions", operationId: "getV2FormsMySubmissions", variables }),
-    ({ signal }) => fetchGetV2FormsMySubmissions({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -16288,97 +14991,6 @@ export const usePostAuthLogin = (
   );
 };
 
-export type GetV2AdminFormsSubmissionsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsSubmissionsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsSubmissionsExport = (
-  variables: GetV2AdminFormsSubmissionsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2AdminFormsSubmissionsExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/forms/submissions/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminFormsSubmissionsExport = <TData = Record<string, any>>(
-  variables: GetV2AdminFormsSubmissionsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2AdminFormsSubmissionsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2AdminFormsSubmissionsExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/submissions/export",
-      operationId: "getV2AdminFormsSubmissionsExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsSubmissionsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2FormsOptionLabelsQueryParams = {
-  /**
-   * the option keys you want to retrieve
-   */
-  keys?: string;
-  /**
-   * the language to use for the label translation
-   */
-  lang?: string;
-};
-
-export type GetV2FormsOptionLabelsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsOptionLabelsResponse = {
-  uuid?: string;
-  name?: string;
-  input_type?: string;
-  model_key?: string;
-  option_list_key?: string;
-  options?: string[];
-};
-
-export type GetV2FormsOptionLabelsVariables = {
-  queryParams?: GetV2FormsOptionLabelsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsOptionLabels = (variables: GetV2FormsOptionLabelsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FormsOptionLabelsResponse,
-    GetV2FormsOptionLabelsError,
-    undefined,
-    {},
-    GetV2FormsOptionLabelsQueryParams,
-    {}
-  >({ url: "/v2/forms/option-labels", method: "get", ...variables, signal });
-
-export const useGetV2FormsOptionLabels = <TData = GetV2FormsOptionLabelsResponse>(
-  variables: GetV2FormsOptionLabelsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsOptionLabelsResponse, GetV2FormsOptionLabelsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsOptionLabelsResponse, GetV2FormsOptionLabelsError, TData>(
-    queryKeyFn({ path: "/v2/forms/option-labels", operationId: "getV2FormsOptionLabels", variables }),
-    ({ signal }) => fetchGetV2FormsOptionLabels({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PatchAuthChangeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PatchAuthChangeVariables = {
@@ -17094,7 +15706,6 @@ export type GetV2SitesUUIDPolygonsResponse = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
-  planting_status?: string;
 }[];
 
 export type GetV2SitesUUIDPolygonsVariables = {
@@ -18359,92 +16970,6 @@ export const usePostV2TerrafundValidationPolygon = (
   );
 };
 
-export type GetV2TerrafundValidationCriteriaDataQueryParams = {
-  /**
-   * The UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TerrafundValidationCriteriaDataResponse = {
-  /**
-   * The ID of the polygon
-   */
-  polygon_id?: string;
-  /**
-   * List of validation criteria
-   */
-  criteria_list?: {
-    /**
-     * The ID of the criteria
-     */
-    criteria_id?: number;
-    /**
-     * The latest created at timestamp of the criteria
-     *
-     * @format date-time
-     */
-    latest_created_at?: string;
-    /**
-     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
-     */
-    valid?: number;
-    /**
-     * Extra information about the polygon validation
-     */
-    extra_info?: Record<string, any>;
-  }[];
-};
-
-export type GetV2TerrafundValidationCriteriaDataVariables = {
-  queryParams: GetV2TerrafundValidationCriteriaDataQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TerrafundValidationCriteriaData = (
-  variables: GetV2TerrafundValidationCriteriaDataVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TerrafundValidationCriteriaDataResponse,
-    GetV2TerrafundValidationCriteriaDataError,
-    undefined,
-    {},
-    GetV2TerrafundValidationCriteriaDataQueryParams,
-    {}
-  >({ url: "/v2/terrafund/validation/criteria-data", method: "get", ...variables, signal });
-
-export const useGetV2TerrafundValidationCriteriaData = <TData = GetV2TerrafundValidationCriteriaDataResponse>(
-  variables: GetV2TerrafundValidationCriteriaDataVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2TerrafundValidationCriteriaDataResponse,
-      GetV2TerrafundValidationCriteriaDataError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2TerrafundValidationCriteriaDataResponse,
-    GetV2TerrafundValidationCriteriaDataError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/terrafund/validation/criteria-data",
-      operationId: "getV2TerrafundValidationCriteriaData",
-      variables
-    }),
-    ({ signal }) => fetchGetV2TerrafundValidationCriteriaData({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -18606,69 +17131,6 @@ export const usePostV2TerrafundValidationSitePolygons = (
   );
 };
 
-export type GetV2TerrafundValidationSiteQueryParams = {
-  /**
-   * The UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2TerrafundValidationSiteError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2TerrafundValidationSiteResponse = {
-  /**
-   * The UUID of the polygon.
-   */
-  uuid?: string;
-  /**
-   * Indicates if the polygon is valid or not.
-   */
-  valid?: boolean;
-  /**
-   * Indicates if the polygon has been checked before or not.
-   */
-  checked?: boolean;
-  /**
-   * List of criteria that are not valid.
-   */
-  nonValidCriteria?: Record<string, any>[];
-}[];
-
-export type GetV2TerrafundValidationSiteVariables = {
-  queryParams: GetV2TerrafundValidationSiteQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2TerrafundValidationSite = (
-  variables: GetV2TerrafundValidationSiteVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2TerrafundValidationSiteResponse,
-    GetV2TerrafundValidationSiteError,
-    undefined,
-    {},
-    GetV2TerrafundValidationSiteQueryParams,
-    {}
-  >({ url: "/v2/terrafund/validation/site", method: "get", ...variables, signal });
-
-export const useGetV2TerrafundValidationSite = <TData = GetV2TerrafundValidationSiteResponse>(
-  variables: GetV2TerrafundValidationSiteVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2TerrafundValidationSiteResponse, GetV2TerrafundValidationSiteError, TData>(
-    queryKeyFn({ path: "/v2/terrafund/validation/site", operationId: "getV2TerrafundValidationSite", variables }),
-    ({ signal }) => fetchGetV2TerrafundValidationSite({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2GeometryValidateError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: {
@@ -18742,17 +17204,19 @@ export type PostV2GeometryError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2GeometryResponse = {
   /**
-   * The UUIDs generated by the system for the uploaded geometry at this index. For a polygon geometry, this
-   * always be an array with 1 member. For Point geometry, there will be the same number of UUIDS associated as
-   * there were Points in the request payload at this index, and the order will be the same.
+   * For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+   * If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+   * contain the UUID of the existing polygon in the database.
+   * For Point geometry, there will be one UUID per point and the order is preserved.
    */
   polygon_uuids?: string[];
   /**
-   * Mapping of polygon UUID to the errors associated with the polygon. The geometry was saved in the DB and must be updated instead of created once the issues are resolved.
+   * Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.
    */
   errors?: {
     [key: string]: {
       key?:
+        | "DUPLICATE_GEOMETRY"
         | "OVERLAPPING_POLYGON"
         | "SELF_INTERSECTION"
         | "COORDINATE_SYSTEM"
@@ -19181,7 +17645,6 @@ export type GetV2SitesSitePolygonResponse = {
   is_active?: boolean;
   version_name?: string;
   validation_status?: boolean;
-  planting_status?: string;
 }[];
 
 export type GetV2SitesSitePolygonVariables = {
@@ -19416,6 +17879,7 @@ export type GetV2TerrafundPolygonUuidResponse = {
      */
     updated_at?: string;
     uuid?: string;
+    planting_status?: string;
   };
 };
 
@@ -22105,7 +20569,6 @@ export type GetV2TypeEntityResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   }[];
 };
 
@@ -22138,200 +20601,6 @@ export const useGetV2TypeEntity = <TData = GetV2TypeEntityResponse>(
   return reactQuery.useQuery<GetV2TypeEntityResponse, GetV2TypeEntityError, TData>(
     queryKeyFn({ path: "/v2/type-entity", operationId: "getV2TypeEntity", variables }),
     ({ signal }) => fetchGetV2TypeEntity({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2EntityPolygonsCountQueryParams = {
-  /**
-   * UUID of the entity
-   */
-  uuid: string;
-  /**
-   * type of the entity
-   */
-  type: string;
-  /**
-   * Comma-separated list of status values to filter by
-   */
-  status?: string;
-  /**
-   * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
-   */
-  sort?: string;
-  /**
-   * Valid value to filter by
-   */
-  valid?: string;
-};
-
-export type GetV2EntityPolygonsCountError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2EntityPolygonsCountResponse = {
-  count?: number;
-};
-
-export type GetV2EntityPolygonsCountVariables = {
-  queryParams: GetV2EntityPolygonsCountQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Determine the type of entity based on UUID.
- */
-export const fetchGetV2EntityPolygonsCount = (variables: GetV2EntityPolygonsCountVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2EntityPolygonsCountResponse,
-    GetV2EntityPolygonsCountError,
-    undefined,
-    {},
-    GetV2EntityPolygonsCountQueryParams,
-    {}
-  >({ url: "/v2/entity/polygons/count", method: "get", ...variables, signal });
-
-/**
- * Determine the type of entity based on UUID.
- */
-export const useGetV2EntityPolygonsCount = <TData = GetV2EntityPolygonsCountResponse>(
-  variables: GetV2EntityPolygonsCountVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2EntityPolygonsCountResponse, GetV2EntityPolygonsCountError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2EntityPolygonsCountResponse, GetV2EntityPolygonsCountError, TData>(
-    queryKeyFn({ path: "/v2/entity/polygons/count", operationId: "getV2EntityPolygonsCount", variables }),
-    ({ signal }) => fetchGetV2EntityPolygonsCount({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2EntityPolygonsQueryParams = {
-  /**
-   * UUID of the entity
-   */
-  uuid: string;
-  /**
-   * type of the entity
-   */
-  type: string;
-  /**
-   * Comma-separated list of status values to filter by
-   */
-  status?: string;
-  /**
-   * Sort criteria in the format `sort[poly_name]=asc or sort[status]=desc`
-   */
-  sort?: string;
-  /**
-   * Valid value to filter by
-   */
-  valid?: string;
-};
-
-export type GetV2EntityPolygonsError = Fetcher.ErrorWrapper<{
-  status: 500;
-  payload: {
-    /**
-     * Error message
-     */
-    error?: string;
-  };
-}>;
-
-export type GetV2EntityPolygonsResponse = {
-  /**
-   * Type of the entity ('project', 'site', 'unknown')
-   */
-  type?: string;
-  /**
-   * UUID of the entity
-   *
-   * @format uuid
-   */
-  uuid?: string;
-  polygonsData?: {
-    id?: number;
-    uuid?: string;
-    primary_uuid?: string;
-    project_id?: string;
-    proj_name?: string;
-    org_name?: string;
-    poly_id?: string;
-    poly_name?: string;
-    site_id?: string;
-    site_name?: string;
-    /**
-     * @format date
-     */
-    plantstart?: string;
-    practice?: string;
-    target_sys?: string;
-    distr?: string;
-    num_trees?: number;
-    /**
-     * @format float
-     */
-    calc_area?: number;
-    created_by?: string;
-    last_modified_by?: string;
-    /**
-     * @format date-time
-     */
-    deleted_at?: string;
-    /**
-     * @format date-time
-     */
-    created_at?: string;
-    /**
-     * @format date-time
-     */
-    updated_at?: string;
-    status?: string;
-    source?: string;
-    country?: string;
-    is_active?: boolean;
-    version_name?: string;
-    validation_status?: boolean;
-    planting_status?: string;
-  }[];
-};
-
-export type GetV2EntityPolygonsVariables = {
-  queryParams: GetV2EntityPolygonsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Determine the type of entity based on UUID.
- */
-export const fetchGetV2EntityPolygons = (variables: GetV2EntityPolygonsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, undefined, {}, GetV2EntityPolygonsQueryParams, {}>({
-    url: "/v2/entity/polygons",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-/**
- * Determine the type of entity based on UUID.
- */
-export const useGetV2EntityPolygons = <TData = GetV2EntityPolygonsResponse>(
-  variables: GetV2EntityPolygonsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2EntityPolygonsResponse, GetV2EntityPolygonsError, TData>(
-    queryKeyFn({ path: "/v2/entity/polygons", operationId: "getV2EntityPolygons", variables }),
-    ({ signal }) => fetchGetV2EntityPolygons({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -22561,7 +20830,6 @@ export type PutV2SitePolygonStatusBulkResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   }[];
 };
 
@@ -22664,7 +20932,6 @@ export type GetV2SitePolygonUuidResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   };
 };
 
@@ -22753,7 +21020,6 @@ export type GetV2SitePolygonUuidVersionsResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   }[];
 };
 
@@ -22847,7 +21113,6 @@ export type PostV2SitePolygonUuidNewVersionResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   };
 };
 
@@ -22945,7 +21210,6 @@ export type PutV2SitePolygonUuidMakeActiveResponse = {
     is_active?: boolean;
     version_name?: string;
     validation_status?: boolean;
-    planting_status?: string;
   };
 };
 
@@ -23353,7 +21617,22 @@ export type PostV2IndicatorsSlugResponse = {
 };
 
 export type PostV2IndicatorsSlugRequestBody = {
+  /**
+   * Array of polygon UUIDs to process. If not provided, all eligible polygons will be processed.
+   */
   uuids?: string[];
+  /**
+   * Force rerun even if records already exist for this polygon and indicator.
+   *
+   * @default false
+   */
+  force?: boolean;
+  /**
+   * Update existing records instead of skipping them.
+   *
+   * @default false
+   */
+  update_existing?: boolean;
 };
 
 export type PostV2IndicatorsSlugVariables = {
@@ -24257,771 +22536,6 @@ export const usePatchV2FinancialIndicators = (
   );
 };
 
-export type GetV2FinancialReportsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-last_name
-   */
-  sort?: string;
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2FinancialReportsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FinancialReportsResponse = {
-  data?: {
-    uuid?: string;
-    status?: string;
-    name?: string;
-    year_of_report?: number;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2FinancialReportsVariables = {
-  queryParams?: GetV2FinancialReportsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Currently available sort is status, name, year, created_at
- */
-export const fetchGetV2FinancialReports = (variables: GetV2FinancialReportsVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FinancialReportsResponse,
-    GetV2FinancialReportsError,
-    undefined,
-    {},
-    GetV2FinancialReportsQueryParams,
-    {}
-  >({ url: "/v2/financial-reports", method: "get", ...variables, signal });
-
-/**
- * Currently available sort is status, name, year, created_at
- */
-export const useGetV2FinancialReports = <TData = GetV2FinancialReportsResponse>(
-  variables: GetV2FinancialReportsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FinancialReportsResponse, GetV2FinancialReportsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FinancialReportsResponse, GetV2FinancialReportsError, TData>(
-    queryKeyFn({ path: "/v2/financial-reports", operationId: "getV2FinancialReports", variables }),
-    ({ signal }) => fetchGetV2FinancialReports({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2FinancialReportsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FinancialReportsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FinancialReportsUUIDResponse = {
-  uuid?: string;
-  status?: string;
-  name?: string;
-  year_of_report?: number;
-  created_at?: string;
-  updated_at?: string;
-  organisation?: {
-    uuid?: string;
-    type?: string;
-    private?: boolean;
-    name?: string;
-    phone?: string;
-    currency?: string;
-    states?: string[];
-    loan_status_types?: string[];
-    land_systems?: string[];
-    fund_utilisation?: string[];
-    detailed_intervention_types?: string[];
-    account_number_1?: string;
-    account_number_2?: string;
-    approach_of_marginalized_communities?: string;
-    community_engagement_numbers_marginalized?: string;
-    founding_date?: string;
-    description?: string;
-    leadership_team?: string;
-    countries?: string[];
-    languages?: string[];
-    tree_species?: {
-      uuid?: string;
-      name?: string;
-      amount?: number;
-      type?: string;
-      collection?: string;
-    }[];
-    web_url?: string;
-    facebook_url?: string;
-    instagram_url?: string;
-    linkedin_url?: string;
-    twitter_url?: string;
-    hq_street_1?: string;
-    hq_street_2?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_zipcode?: string;
-    hq_country?: string;
-    fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
-    ha_restored_total?: number;
-    /**
-     * @format float
-     */
-    ha_restored_3year?: number;
-    relevant_experience_years?: number;
-    trees_grown_total?: number;
-    trees_grown_3year?: number;
-    tree_care_approach?: string;
-    ft_permanent_employees?: number;
-    pt_permanent_employees?: number;
-    temp_employees?: number;
-    female_employees?: number;
-    male_employees?: number;
-    young_employees?: number;
-    additional_funding_details?: string;
-    community_experience?: string;
-    total_engaged_community_members_3yr?: number;
-    percent_engaged_women_3yr?: number;
-    percent_engaged_men_3yr?: number;
-    percent_engaged_under_35_3yr?: number;
-    percent_engaged_over_35_3yr?: number;
-    percent_engaged_smallholder_3yr?: number;
-    total_trees_grown?: number;
-    avg_tree_survival_rate?: number;
-    tree_maintenance_aftercare_approach?: string;
-    restored_areas_description?: string;
-    monitoring_evaluation_experience?: string;
-    funding_history?: string;
-    engagement_farmers?: string[];
-    engagement_women?: string[];
-    engagement_youth?: string[];
-    engagement_non_youth?: string[];
-    tree_restoration_practices?: string[];
-    business_model?: string;
-    subtype?: string;
-    organisation_revenue_this_year?: number;
-    shapefiles?: {
-      uuid?: string;
-      shapefileable_type?: string;
-      shapefileable_id?: number;
-      geojson?: string;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    bank_statements?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    previous_annual_reports?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    logo?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    reference?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    additional?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_2year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_last_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_this_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_next_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    legal_registration?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-  };
-  currency?: string;
-  fin_start_month?: number;
-  financial_collection?: Record<string, any>[][];
-  funding_types?: {
-    uuid?: string;
-    organisation_id?: string;
-    amount?: number;
-    year?: number;
-    type?: string;
-  }[];
-};
-
-export type GetV2FinancialReportsUUIDVariables = {
-  pathParams: GetV2FinancialReportsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FinancialReportsUUID = (variables: GetV2FinancialReportsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FinancialReportsUUIDResponse,
-    GetV2FinancialReportsUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2FinancialReportsUUIDPathParams
-  >({ url: "/v2/financial-reports/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2FinancialReportsUUID = <TData = GetV2FinancialReportsUUIDResponse>(
-  variables: GetV2FinancialReportsUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FinancialReportsUUIDResponse, GetV2FinancialReportsUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FinancialReportsUUIDResponse, GetV2FinancialReportsUUIDError, TData>(
-    queryKeyFn({ path: "/v2/financial-reports/{UUID}", operationId: "getV2FinancialReportsUUID", variables }),
-    ({ signal }) => fetchGetV2FinancialReportsUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type DeleteV2FinancialReportsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2FinancialReportsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2FinancialReportsUUIDResponse = {
-  uuid?: string;
-  status?: string;
-  name?: string;
-  year_of_report?: number;
-  created_at?: string;
-  updated_at?: string;
-  organisation?: {
-    uuid?: string;
-    type?: string;
-    private?: boolean;
-    name?: string;
-    phone?: string;
-    currency?: string;
-    states?: string[];
-    loan_status_types?: string[];
-    land_systems?: string[];
-    fund_utilisation?: string[];
-    detailed_intervention_types?: string[];
-    account_number_1?: string;
-    account_number_2?: string;
-    approach_of_marginalized_communities?: string;
-    community_engagement_numbers_marginalized?: string;
-    founding_date?: string;
-    description?: string;
-    leadership_team?: string;
-    countries?: string[];
-    languages?: string[];
-    tree_species?: {
-      uuid?: string;
-      name?: string;
-      amount?: number;
-      type?: string;
-      collection?: string;
-    }[];
-    web_url?: string;
-    facebook_url?: string;
-    instagram_url?: string;
-    linkedin_url?: string;
-    twitter_url?: string;
-    hq_street_1?: string;
-    hq_street_2?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_zipcode?: string;
-    hq_country?: string;
-    fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
-    ha_restored_total?: number;
-    /**
-     * @format float
-     */
-    ha_restored_3year?: number;
-    relevant_experience_years?: number;
-    trees_grown_total?: number;
-    trees_grown_3year?: number;
-    tree_care_approach?: string;
-    ft_permanent_employees?: number;
-    pt_permanent_employees?: number;
-    temp_employees?: number;
-    female_employees?: number;
-    male_employees?: number;
-    young_employees?: number;
-    additional_funding_details?: string;
-    community_experience?: string;
-    total_engaged_community_members_3yr?: number;
-    percent_engaged_women_3yr?: number;
-    percent_engaged_men_3yr?: number;
-    percent_engaged_under_35_3yr?: number;
-    percent_engaged_over_35_3yr?: number;
-    percent_engaged_smallholder_3yr?: number;
-    total_trees_grown?: number;
-    avg_tree_survival_rate?: number;
-    tree_maintenance_aftercare_approach?: string;
-    restored_areas_description?: string;
-    monitoring_evaluation_experience?: string;
-    funding_history?: string;
-    engagement_farmers?: string[];
-    engagement_women?: string[];
-    engagement_youth?: string[];
-    engagement_non_youth?: string[];
-    tree_restoration_practices?: string[];
-    business_model?: string;
-    subtype?: string;
-    organisation_revenue_this_year?: number;
-    shapefiles?: {
-      uuid?: string;
-      shapefileable_type?: string;
-      shapefileable_id?: number;
-      geojson?: string;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    bank_statements?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    previous_annual_reports?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    logo?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    reference?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    additional?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_2year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_last_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_this_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_next_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    legal_registration?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-  };
-  currency?: string;
-  fin_start_month?: number;
-  financial_collection?: Record<string, any>[][];
-  funding_types?: {
-    uuid?: string;
-    organisation_id?: string;
-    amount?: number;
-    year?: number;
-    type?: string;
-  }[];
-};
-
-export type DeleteV2FinancialReportsUUIDVariables = {
-  pathParams: DeleteV2FinancialReportsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2FinancialReportsUUID = (
-  variables: DeleteV2FinancialReportsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    DeleteV2FinancialReportsUUIDResponse,
-    DeleteV2FinancialReportsUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2FinancialReportsUUIDPathParams
-  >({ url: "/v2/financial-reports/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2FinancialReportsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      DeleteV2FinancialReportsUUIDResponse,
-      DeleteV2FinancialReportsUUIDError,
-      DeleteV2FinancialReportsUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    DeleteV2FinancialReportsUUIDResponse,
-    DeleteV2FinancialReportsUUIDError,
-    DeleteV2FinancialReportsUUIDVariables
-  >(
-    (variables: DeleteV2FinancialReportsUUIDVariables) =>
-      fetchDeleteV2FinancialReportsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2FinancialReportsExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2FinancialReportsExportVariables = ApiContext["fetcherOptions"];
@@ -25120,6 +22634,39 @@ export const usePostV2OrganisationsUUIDInvite = (
   );
 };
 
+export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2DisturbanceReportsExport = (
+  variables: GetV2DisturbanceReportsExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Record<string, any>, GetV2DisturbanceReportsExportError, undefined, {}, {}, {}>({
+    url: "/v2/disturbance-reports/export",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
+  variables: GetV2DisturbanceReportsExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2DisturbanceReportsExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2DisturbanceReportsExportError, TData>(
+    queryKeyFn({ path: "/v2/disturbance-reports/export", operationId: "getV2DisturbanceReportsExport", variables }),
+    ({ signal }) => fetchGetV2DisturbanceReportsExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -25202,21 +22749,6 @@ export type QueryOperation =
       variables: GetV2UpdateRequestsENTITYUUIDVariables;
     }
   | {
-      path: "/v2/forms";
-      operationId: "getV2Forms";
-      variables: GetV2FormsVariables;
-    }
-  | {
-      path: "/v2/forms/linked-field-listing";
-      operationId: "getV2FormsLinkedFieldListing";
-      variables: GetV2FormsLinkedFieldListingVariables;
-    }
-  | {
-      path: "/v2/admin/forms/common-options/{BUCKET}";
-      operationId: "getV2AdminFormsCommonOptionsBUCKET";
-      variables: GetV2AdminFormsCommonOptionsBUCKETVariables;
-    }
-  | {
       path: "/v2/admin/organisations";
       operationId: "getV2AdminOrganisations";
       variables: GetV2AdminOrganisationsVariables;
@@ -25277,11 +22809,6 @@ export type QueryOperation =
       variables: GetV2AdminUsersMultiVariables;
     }
   | {
-      path: "/v2/admin/users/export";
-      operationId: "getV2AdminUsersExport";
-      variables: GetV2AdminUsersExportVariables;
-    }
-  | {
       path: "/v2/{MODEL}/{UUID}/image/locations";
       operationId: "getV2MODELUUIDImageLocations";
       variables: GetV2MODELUUIDImageLocationsVariables;
@@ -25307,34 +22834,14 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDVariables;
     }
   | {
-      path: "/v2/forms/sites/{UUID}";
-      operationId: "getV2FormsSitesUUID";
-      variables: GetV2FormsSitesUUIDVariables;
-    }
-  | {
       path: "/v2/admin/project-pitches/export";
       operationId: "getV2AdminProjectPitchesExport";
       variables: GetV2AdminProjectPitchesExportVariables;
     }
   | {
-      path: "/v2/admin/forms/submissions/{UUID}";
-      operationId: "getV2AdminFormsSubmissionsUUID";
-      variables: GetV2AdminFormsSubmissionsUUIDVariables;
-    }
-  | {
       path: "/v2/admin/forms/submissions/{UUID}/export";
       operationId: "getV2AdminFormsSubmissionsUUIDExport";
       variables: GetV2AdminFormsSubmissionsUUIDExportVariables;
-    }
-  | {
-      path: "/v2/admin/forms/submissions";
-      operationId: "getV2AdminFormsSubmissions";
-      variables: GetV2AdminFormsSubmissionsVariables;
-    }
-  | {
-      path: "/v2/forms/my/submissions";
-      operationId: "getV2FormsMySubmissions";
-      variables: GetV2FormsMySubmissionsVariables;
     }
   | {
       path: "/v2/forms/{UUID}";
@@ -25417,16 +22924,6 @@ export type QueryOperation =
       variables: GetAuthMeVariables;
     }
   | {
-      path: "/v2/admin/forms/submissions/export";
-      operationId: "getV2AdminFormsSubmissionsExport";
-      variables: GetV2AdminFormsSubmissionsExportVariables;
-    }
-  | {
-      path: "/v2/forms/option-labels";
-      operationId: "getV2FormsOptionLabels";
-      variables: GetV2FormsOptionLabelsVariables;
-    }
-  | {
       path: "/auth/mail";
       operationId: "getAuthMail";
       variables: GetAuthMailVariables;
@@ -25495,16 +22992,6 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/export";
       operationId: "getV2ENTITYUUIDExport";
       variables: GetV2ENTITYUUIDExportVariables;
-    }
-  | {
-      path: "/v2/terrafund/validation/criteria-data";
-      operationId: "getV2TerrafundValidationCriteriaData";
-      variables: GetV2TerrafundValidationCriteriaDataVariables;
-    }
-  | {
-      path: "/v2/terrafund/validation/site";
-      operationId: "getV2TerrafundValidationSite";
-      variables: GetV2TerrafundValidationSiteVariables;
     }
   | {
       path: "/v2/audit-status/{ENTITY}/{UUID}";
@@ -25627,16 +23114,6 @@ export type QueryOperation =
       variables: GetV2TypeEntityVariables;
     }
   | {
-      path: "/v2/entity/polygons/count";
-      operationId: "getV2EntityPolygonsCount";
-      variables: GetV2EntityPolygonsCountVariables;
-    }
-  | {
-      path: "/v2/entity/polygons";
-      operationId: "getV2EntityPolygons";
-      variables: GetV2EntityPolygonsVariables;
-    }
-  | {
       path: "/v2/projects/{UUID}/site-polygons/all";
       operationId: "getV2ProjectsUUIDSitePolygonsAll";
       variables: GetV2ProjectsUUIDSitePolygonsAllVariables;
@@ -25697,17 +23174,12 @@ export type QueryOperation =
       variables: GetV2ImpactStoriesIdVariables;
     }
   | {
-      path: "/v2/financial-reports";
-      operationId: "getV2FinancialReports";
-      variables: GetV2FinancialReportsVariables;
-    }
-  | {
-      path: "/v2/financial-reports/{UUID}";
-      operationId: "getV2FinancialReportsUUID";
-      variables: GetV2FinancialReportsUUIDVariables;
-    }
-  | {
       path: "/v2/financial-reports/export";
       operationId: "getV2FinancialReportsExport";
       variables: GetV2FinancialReportsExportVariables;
+    }
+  | {
+      path: "/v2/disturbance-reports/export";
+      operationId: "getV2DisturbanceReportsExport";
+      variables: GetV2DisturbanceReportsExportVariables;
     };

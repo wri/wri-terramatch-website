@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useRef, useState } from "react";
+import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
@@ -10,16 +10,20 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useDate } from "@/hooks/useDate";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
-import MapMenuPanelItem, { MapMenuPanelItemProps } from "../MapPolygonPanel/MapMenuPanelItem";
+import MapMenuPanelItem from "../MapPolygonPanel/MapMenuPanelItem";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM } from "../Menu/MenuVariant";
 
 export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title: string;
-  items: MapMenuPanelItemProps[];
+  items: SitePolygonLightDto[];
   onSearch?: (query: string) => void;
   onLoadMore?: () => void;
   emptyText?: string;
@@ -27,6 +31,9 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   checkedValues: string[];
   onCheckboxChange: (value: string, checked: boolean) => void;
   setSortOrder: React.Dispatch<React.SetStateAction<string>>;
+  sortField: string;
+  sortDirection: "ASC" | "DESC";
+  setSortDirection: React.Dispatch<React.SetStateAction<"ASC" | "DESC">>;
   type: string;
   recallEntityData?: any;
   entityUuid?: string;
@@ -43,25 +50,43 @@ const MapSidePanel = ({
   checkedValues,
   onCheckboxChange,
   setSortOrder,
+  sortField,
+  sortDirection,
+  setSortDirection,
   type,
   recallEntityData,
   entityUuid,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
+  const { format } = useDate();
   const menuCheckboxRef = useRef<HTMLDivElement>(null);
-  const [selected, setSelected] = useState<MapMenuPanelItemProps>();
+  const [selected, setSelected] = useState<SitePolygonLightDto>();
   const refContainer = useRef<HTMLDivElement>(null);
   const [openMenu, setOpenMenu] = useState(false);
   const [clickedButton, setClickedButton] = useState<string>("");
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
+
+  const filteredItems = useMemo(() => {
+    if (checkedValues.length === 0) {
+      return items;
+    }
+    return items.filter(item => checkedValues.includes(item.status));
+  }, [items, checkedValues]);
+
+  const { currentPage, setCurrentPage, totalPages, startIndex, endIndex, currentPageItems } = usePolygonsPagination(
+    filteredItems,
+    [checkedValues]
+  );
+
   const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
+  const isAdmin = useIsAdmin();
 
-  const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.poly_id });
+  const selectedPolygonBbox = useBoundingBox({ polygonUuid: selected?.polygonUuid ?? "" });
 
   const flyToPolygonBounds = async () => {
-    if (!map.current || !selectedPolygonBbox) {
+    if (!map.current || selectedPolygonBbox == null) {
       return;
     }
     map.current.fitBounds(selectedPolygonBbox, {
@@ -93,24 +118,21 @@ const MapSidePanel = ({
 
   useEffect(() => {
     if (clickedButton === "site") {
-      const siteUrl = `/site/${selected?.site_id}`;
+      const siteUrl = `/site/${entityUuid}`;
       window.open(siteUrl, "_blank");
       setClickedButton("");
     } else if (clickedButton === "zoomTo") {
       flyToPolygonBounds();
       setClickedButton("");
     } else if (clickedButton === "download") {
-      downloadGeoJsonPolygon(
-        selected?.poly_id ?? "",
-        selected?.poly_name ? formatStringName(selected.poly_name) : "polygon"
-      );
+      downloadGeoJsonPolygon(selected?.polygonUuid ?? "", selected?.name ? formatStringName(selected.name) : "polygon");
       setClickedButton("");
     } else if (clickedButton === "delete") {
-      deletePolygon(selected?.poly_id ?? "");
+      deletePolygon(selected?.polygonUuid ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
-      setEditPolygon?.({ isOpen: true, uuid: selected?.poly_id ?? "", primary_uuid: selected?.primary_uuid ?? "" });
-      if (selected?.poly_id) {
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      if (selected?.polygonUuid) {
         flyToPolygonBounds();
       }
       setClickedButton("");
@@ -134,25 +156,67 @@ const MapSidePanel = ({
     {
       id: "1",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("poly_name")}>
-          Name
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("name")}>
+            Name
+          </Text>
+          {sortField === "name" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     },
     {
       id: "2",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("status")}>
-          Status
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("status")}>
+            Status
+          </Text>
+          {sortField === "status" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     },
     {
       id: "3",
       render: () => (
-        <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("created_at")}>
-          Date Created
-        </Text>
+        <div className="flex w-full items-center justify-between">
+          <Text variant="text-14-semibold" className="flex items-center" onClick={() => setSortOrder("createdAt")}>
+            Date Created
+          </Text>
+          {sortField === "createdAt" && (
+            <Button
+              variant="text"
+              onClick={() => setSortDirection(sortDirection === "ASC" ? "DESC" : "ASC")}
+              className="ml-2 p-1"
+            >
+              <Icon
+                name={sortDirection === "ASC" ? IconNames.IC_A_TO_Z_CUSTOM : IconNames.IC_Z_TO_A_CUSTOM}
+                className="h-3 w-3"
+              />
+            </Button>
+          )}
+        </div>
       )
     }
   ];
@@ -209,23 +273,48 @@ const MapSidePanel = ({
           </div>
         </div>
       </div>
+      {filteredItems.length > 0 && (
+        <div className="mb-4 flex items-center justify-between">
+          <Text variant="text-12" className="text-white">
+            Showing {(startIndex + 1).toLocaleString()}-{Math.min(endIndex, filteredItems.length).toLocaleString()} of{" "}
+            {filteredItems.length.toLocaleString()} polygons
+          </Text>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage <= 1}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_LEFT} className="h-3 w-3 text-white" />
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage >= totalPages}
+              className="flex h-6 w-6 items-center justify-center rounded border border-white/30 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name={IconNames.CHEVRON_RIGHT} className="h-3 w-3 text-white" />
+            </button>
+          </div>
+        </div>
+      )}
       <div className="min-h-0 grow overflow-auto rounded-bl-lg">
         {items.length === 0 && (
           <Text variant="text-16-light" className="mt-8 text-white">
-            {emptyText || t("No result")}
+            {emptyText ?? t("No result")}
           </Text>
         )}
         <div ref={refContainer} className="h-full space-y-4 overflow-y-auto pr-1">
           <List
             as={Fragment}
-            items={items}
+            items={currentPageItems}
             itemAs={Fragment}
+            uniqueId="uuid"
             render={item => (
               <MapMenuPanelItem
                 key={item.uuid}
                 uuid={item.uuid}
-                title={item.title}
-                subtitle={item.subtitle}
+                title={item.name ?? t("Unnamed Polygon")}
+                subtitle={t("Created {date}", { date: format(item.plantStart ?? "") })}
                 status={item.status}
                 onClick={() => {
                   setSelected(item);
@@ -237,9 +326,10 @@ const MapSidePanel = ({
                 isSelected={selected?.uuid === item.uuid}
                 refContainer={refContainer}
                 type={type}
-                poly_id={item.poly_id}
+                poly_id={item.polygonUuid ?? ""}
                 site_id={entityUuid}
-                validationStatus={item.validationStatus}
+                validationStatus={item.validationStatus ?? "notChecked"}
+                isAdmin={isAdmin}
               />
             )}
           />

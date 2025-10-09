@@ -1,9 +1,11 @@
 import { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { useNotify } from "react-admin";
 
-import { fetchGetV2AdminFormsUUIDExport } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
+import {
+  fetchGetV2AdminFormsApplicationsUUIDExport,
+  fetchGetV2AdminFormsSubmissionsUUIDExport
+} from "@/generated/apiComponents";
 import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
 
 type ExportType = {
@@ -75,7 +77,7 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
       );
     } else if (data.export_choice === "stage" && data.form_uuid) {
       return exporter(fileName, () =>
-        fetchGetV2AdminFormsUUIDExport({
+        fetchGetV2AdminFormsSubmissionsUUIDExport({
           pathParams: {
             uuid: data.form_uuid || ""
           }
