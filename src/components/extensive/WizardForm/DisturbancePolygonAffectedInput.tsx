@@ -2,7 +2,10 @@ import { useCallback, useMemo } from "react";
 import { ControllerRenderProps } from "react-hook-form";
 
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { useLightDisturbanceReport } from "@/connections/Entity";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { useEntityContext } from "@/context/entity.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OptionValue } from "@/types/common";
 
 export interface DisturbancePolygonAffectedInputProps {
@@ -22,6 +25,9 @@ export const DisturbancePolygonAffectedInput = ({
   value: polygonAffectedValue,
   field
 }: DisturbancePolygonAffectedInputProps) => {
+  const { entityUuid } = useEntityContext();
+  const [, { data: disturbanceReport }] = useLightDisturbanceReport({ id: entityUuid! });
+
   const { data: polygonsData } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
@@ -34,13 +40,17 @@ export const DisturbancePolygonAffectedInput = ({
     if (polygonsData == null || siteUuid == null) return [];
 
     return polygonsData
-      .filter((polygon: any) => polygon.status === "approved")
-      .map((polygon: any) => ({
+      .filter(
+        (polygon: SitePolygonLightDto) =>
+          polygon.status === "approved" &&
+          (polygon.disturbanceableId === disturbanceReport?.disturbanceableId || polygon.disturbanceableId === null)
+      )
+      .map((polygon: SitePolygonLightDto) => ({
         title: polygon.name || `Polygon ${polygon.uuid}`,
         value: polygon.uuid,
         meta: { practice: polygon.practice ?? "" }
       }));
-  }, [polygonsData, siteUuid]);
+  }, [polygonsData, siteUuid, disturbanceReport]);
 
   if (fieldUuid == null) {
     return null;

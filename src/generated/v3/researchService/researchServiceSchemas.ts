@@ -181,6 +181,7 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  disturbanceableId: number | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -260,6 +261,7 @@ export type SitePolygonLightDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  disturbanceableId: number | null;
 };
 
 export type SitePolygonUpdateAttributes = {
@@ -303,28 +305,25 @@ export type BoundingBoxDto = {
 
 export type ValidationCriteriaDto = {
   /**
-   * The criteria ID that was validated
-   *
-   * @example 3
+   * The polygon UUID that was validated (optional for historic data)
    */
-  criteriaId: number;
+  polygonUuid?: string;
   /**
-   * Whether the polygon passed this validation criteria
-   *
-   * @example true
+   * The validation criteria ID
+   */
+  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15;
+  /**
+   * Whether the polygon passed this validation
    */
   valid: boolean;
   /**
    * When this validation was last run
    *
    * @format date-time
-   * @example 2025-02-20T22:01:31Z
    */
   createdAt: string;
   /**
    * Additional information about the validation result
-   *
-   * @example null
    */
   extraInfo?: Record<string, any>;
 };
@@ -340,4 +339,28 @@ export type ValidationDto = {
    * List of validation criteria results for this polygon
    */
   criteriaList: ValidationCriteriaDto[];
+};
+
+export type Object = {};
+
+export type ValidationRequestDto = {
+  /**
+   * Array of polygon UUIDs to validate
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonUuids: any[][];
+  /**
+   * Array of validation types to run
+   */
+  ["validationTypes[]"]: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+  )[];
 };

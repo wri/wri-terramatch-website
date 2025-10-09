@@ -108,7 +108,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   };
 
   return (
-    <EntityProvider entityUuid={entityUUID} entityName={entityName}>
+    <EntityProvider entityUuid={entityUUID} entityName={entityName} projectUuid={entity?.project?.uuid}>
       <CurrencyProvider>
         <WizardForm
           formSubmissionOrg={formSubmissionOrg}
