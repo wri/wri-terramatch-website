@@ -19,6 +19,7 @@ import Table from "../../Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "../../Table/TableVariants";
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
+import { useMedia } from "@/connections/Media";
 
 export interface FilePreviewTableProps {
   items: Partial<UploadedFile>[];
@@ -36,6 +37,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
   const { showLoader, hideLoader } = useLoading();
 
   const { mutate: updateMedia } = usePatchV2MediaUuid();
+  const [,{ update: updateMediaProject }] = useMedia({ id: entityData.uuid });
   const { mutateAsync: updateIsCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   const openModalImageDetail = (item: any) => {
@@ -172,7 +174,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
                 checked={props.getValue().is_public}
                 name={""}
                 onChange={e => {
-                  handleUpdateIsPublic(props.getValue(), e.target.checked);
+                  updateMediaProject(props.getValue());
                 }}
               />
             ),
