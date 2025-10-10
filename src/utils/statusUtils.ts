@@ -18,11 +18,9 @@ export function getValueForStatusSite(status: string): number {
     case "started":
       return 0;
     case "awaiting-approval":
-      return 25;
+      return 34;
     case "needs-more-information":
-      return 50;
-    case "restoration-in-progress":
-      return 75;
+      return 67;
     case "approved":
       return 100;
     default:

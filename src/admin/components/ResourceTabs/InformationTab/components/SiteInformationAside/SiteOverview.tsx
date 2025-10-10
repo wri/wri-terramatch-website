@@ -95,13 +95,6 @@ const SiteOverview: FC = () => {
             </Button>
             <Button
               className="button-aside-page-admin"
-              disabled={record?.status === "restoration-in-progress"}
-              onClick={() => setStatusModal("restoration-in-progress")}
-            >
-              Restoration in Progress
-            </Button>
-            <Button
-              className="button-aside-page-admin"
               startIcon={<Check />}
               disabled={record?.status === "approved" || !checkPolygons}
               onClick={() => setStatusModal("approved")}
