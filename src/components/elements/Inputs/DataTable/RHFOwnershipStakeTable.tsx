@@ -1,10 +1,12 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import {
   useDeleteV2OwnershipStakeUUID,
   usePatchV2OwnershipStakeUUID,
@@ -15,7 +17,7 @@ import { formatOptionsList } from "@/utils/options";
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFOwnershipStakeTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
@@ -34,11 +36,47 @@ export const getOwnershipTableColumns = (t: typeof useT | Function = (t: string)
   { accessorKey: "year_of_birth", header: t("Year of birth") }
 ];
 
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns React Hook Form Ready Select Component
- */
-const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFOwnershipStakeTableProps>) => {
+const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
+  {
+    label: t("first name"),
+    name: "first_name",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("last name"),
+    name: "last_name",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Gender"),
+    name: "gender",
+    inputType: "select",
+    options: getGenderOptions(t),
+    validation: { required: true }
+  },
+  {
+    label: t("Title"),
+    name: "title",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Year of birth"),
+    name: "year_of_birth",
+    inputType: "number",
+    validation: { required: true, min: 1900, max: 2050 }
+  },
+  {
+    label: t("Percent Ownership"),
+    name: "percent_ownership",
+    inputType: "number",
+    validation: { required: true, min: 1, max: 100 }
+  }
+];
+
+const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const { field } = useController(props);
   const value = field?.value || [];
@@ -89,6 +127,15 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
     props?.formHook?.clearErrors(props.name);
   }, [props?.formHook, props.name]);
 
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getOwnershipTableColumns(t),
+      steps: [{ id: "ownershipStakeTable", fields: getOwnershipTableQuestions(t) }]
+    }),
+    [t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
+
   return (
     <DataTable
       key={tableKey}
@@ -117,46 +164,8 @@ const RHFOwnershipStakeTable = ({ onChangeCapture, ...props }: PropsWithChildren
       }}
       addButtonCaption={t("Add Ownership Stake")}
       modalEditTitle={t("Update Ownership Stake")}
-      tableColumns={getOwnershipTableColumns(t)}
-      fields={[
-        {
-          label: t("first name"),
-          name: "first_name",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("last name"),
-          name: "last_name",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("Gender"),
-          name: "gender",
-          inputType: "select",
-          options: getGenderOptions(t),
-          validation: { required: true }
-        },
-        {
-          label: t("Title"),
-          name: "title",
-          inputType: "text",
-          validation: { required: true }
-        },
-        {
-          label: t("Year of birth"),
-          name: "year_of_birth",
-          inputType: "number",
-          validation: { required: true, min: 1900, max: 2050 }
-        },
-        {
-          label: t("Percent Ownership"),
-          name: "percent_ownership",
-          inputType: "number",
-          validation: { required: true, min: 1, max: 100 }
-        }
-      ]}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

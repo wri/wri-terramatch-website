@@ -1921,64 +1921,49 @@ export type LinkedFieldDto = {
     | "volunteers"
     | "workdays";
   optionListKey: string | null;
-  multiChoice: string | null;
+  multiChoice: boolean | null;
   collection: string | null;
 };
 
-export type FormDto = {
+/**
+ * CONSTANTS
+ */
+export type Forms = {
+  /**
+   * @example application
+   * @example financial-report
+   * @example project
+   * @example project-report
+   * @example site
+   * @example site-report
+   * @example nursery
+   * @example nursery-report
+   */
+  FORM_TYPES: string[];
+};
+
+export type FormLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   /**
    * Translated form title
    */
   title: string;
-  /**
-   * Translated form subtitle
-   */
-  subtitle: string | null;
-  /**
-   * Translated form description
-   */
-  description: string | null;
-  frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
-    | "epa-ghana-pilot"
-    | "ppc"
-    | "hbf"
-    | "fundo-flora"
+  type:
+    | "application"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
     | null;
-  type: string | null;
-  documentation: string | null;
-  documentationLabel: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt: string | null;
-  /**
-   * Translated submission message
-   */
-  submissionMessage: string | null;
   published: boolean;
-  stageId: string | null;
-  fundingProgrammeId: string | null;
-};
-
-export type FormSectionDto = {
-  uuid: string;
-  /**
-   * Form id
-   */
-  formId: string;
-  order: number;
-  /**
-   * Translated section title
-   */
-  title: string | null;
-  /**
-   * Translated section description
-   */
-  description: string | null;
+  bannerUrl: string | null;
 };
 
 export type FormQuestionOptionDto = {
@@ -1995,28 +1980,11 @@ export type FormQuestionOptionDto = {
    * Option image
    */
   imageUrl: string | null;
-  order: number;
-};
-
-export type FormTableHeaderDto = {
-  slug: string | null;
-  /**
-   * Translated header label
-   */
-  label: string | null;
-  order: number | null;
+  thumbUrl: string | null;
 };
 
 export type FormQuestionDto = {
-  uuid: string;
-  /**
-   * Form section id
-   */
-  sectionId: string;
-  /**
-   * UUID of the parent question
-   */
-  parentId: string | null;
+  name: string;
   inputType:
     | "boolean"
     | "conditional"
@@ -2051,23 +2019,12 @@ export type FormQuestionDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays";
-  name: string | null;
-  /**
-   * Translated question label
-   */
   label: string;
-  /**
-   * Translated question placeholder
-   */
   placeholder: string | null;
-  /**
-   * Translated question description
-   */
   description: string | null;
   validation: Record<string, any> | null;
   multiChoice: boolean;
   collection: string | null;
-  order: number;
   optionsList: string | null;
   optionsOther: boolean | null;
   options: FormQuestionOptionDto[] | null;
@@ -2088,6 +2045,69 @@ export type FormQuestionDto = {
   minCharacterLimit: number | null;
   maxCharacterLimit: number | null;
   years: number[] | null;
-  tableHeaders: FormTableHeaderDto[] | null;
+  tableHeaders: string[] | null;
   additionalProps: Record<string, any> | null;
+  children: FormQuestionDto[] | null;
+};
+
+export type FormSectionDto = {
+  id: string;
+  /**
+   * Translated section title
+   */
+  title: string | null;
+  /**
+   * Translated section description
+   */
+  description: string | null;
+  questions: FormQuestionDto[];
+};
+
+export type FormFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Translated form title
+   */
+  title: string;
+  type:
+    | "application"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
+  published: boolean;
+  bannerUrl: string | null;
+  /**
+   * Indicates whether the text fields in this form response have been translated to the user's locale
+   */
+  translated: boolean;
+  subtitle: string | null;
+  description: string | null;
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  documentation: string | null;
+  documentationLabel: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt: string | null;
+  submissionMessage: string | null;
+  stageId: string | null;
+  fundingProgrammeId: string | null;
+  sections: FormSectionDto[];
 };

@@ -1,26 +1,33 @@
 import { isUndefined, omit, omitBy } from "lodash";
-import { CreateResult, DataProvider, GetManyResult, GetOneResult, Identifier, UpdateResult } from "react-admin";
+import {
+  CreateResult,
+  DataProvider,
+  GetListParams,
+  GetManyResult,
+  GetOneParams,
+  Identifier,
+  UpdateResult
+} from "react-admin";
 
 import {
   normalizeFormCreatePayload,
-  normalizeFormObject
+  normalizeFormObject,
+  normalizeV3Form
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { loadLinkedFields } from "@/connections/util/Form";
+import { loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
 import {
   DeleteV2AdminFormsUUIDError,
   fetchDeleteV2AdminFormsUUID,
-  fetchGetV2AdminForms,
-  fetchGetV2FormsUUID,
   fetchPatchV2AdminFormsUUID,
   fetchPostV2AdminForms,
-  GetV2AdminFormsError
+  PostV2AdminFormsError
 } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
 export interface FormDataProvider extends Partial<DataProvider> {}
 
@@ -86,7 +93,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-expect-error
       return { data: normalizeFormObject(response.data) } as CreateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 
@@ -115,54 +122,45 @@ export const formDataProvider: FormDataProvider = {
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as UpdateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
     }
   },
 
-  async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminForms({
-        queryParams: raListParamsToQueryParams(params, [], [], [], { light: true })
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+  async getList<RecordType>(_: string, params: GetListParams) {
+    const connected = await loadFormIndex(raConnectionProps(params));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form index fetch failed", connected.loadFailure);
     }
+
+    return {
+      data: (connected.data?.map(form => ({ ...form, id: form.uuid })) ?? []) as RecordType[],
+      total: connected.indexTotal
+    };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2FormsUUID({
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: normalizeFormObject(response.data) } as GetOneResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    // Disable translation for admin data provider; forms must be edited in English so that the
+    // labels that will be translated from the DB are in English as the source language.
+    const connected = await loadForm({ id, translated: false });
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
+
+    return { data: normalizeV3Form(connected.data!) } as RecordType;
   },
 
   async getMany(_, params) {
-    try {
-      //can be optimized by having a getMany endpoint from backend
-      const response = await Promise.all(
-        params.ids.map(id =>
-          fetchGetV2FormsUUID({
-            pathParams: { uuid: id as string }
-          })
-        )
-      );
-
-      return {
-        data: response?.map(item =>
-          //@ts-ignore
-          normalizeFormObject(item.data)
-        )
-      } as GetManyResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+    const response = await Promise.all(
+      params.ids.map(async id => await loadForm({ id: id as string, translated: false }))
+    );
+    const failed = response.find(({ loadFailure }) => loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Form get fetch failed", failed.loadFailure);
     }
+
+    return {
+      data: response.map(({ data }) => normalizeV3Form(data!))
+    } as GetManyResult;
   },
 
   // @ts-ignore

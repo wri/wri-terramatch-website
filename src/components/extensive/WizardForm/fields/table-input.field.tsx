@@ -1,10 +1,26 @@
+import { Dictionary } from "lodash";
+import * as yup from "yup";
+
+import TableAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TableAdditionalOptions";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { addFieldValidation } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
-import { objectValidator } from "@/utils/yup";
 
 export const TableInputField: FormFieldFactory = {
-  createValidator: objectValidator,
+  addValidation: (validations, { name, validation }, t, framework, fieldsProvider) => {
+    const validator = yup.object(
+      fieldsProvider
+        .childNames(name)
+        .map(fieldsProvider.fieldByName)
+        .filter(isNotNull)
+        .reduce((childSchema, { name: childName }) => {
+          addFieldValidation(childSchema, fieldsProvider, childName, t, framework);
+          return childSchema;
+        }, {} as Dictionary<yup.AnySchema>)
+    );
+    validations[name] = validation?.required === true ? validator.required() : validator;
+  },
 
   renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (
     <RHFInputTable
@@ -17,23 +33,23 @@ export const TableInputField: FormFieldFactory = {
 
   getAnswer: () => undefined,
 
-  appendAnswers: ({ label, name, tableHeaders }, csv, formValues, { childIds, fieldById }) => {
-    csv.pushRow([label, tableHeaders?.[0]?.label ?? undefined, tableHeaders?.[1]?.label ?? undefined]);
-    for (const row of childIds(name).map(fieldById).filter(isNotNull)) {
+  appendAnswers: ({ label, name, tableHeaders }, csv, formValues, { childNames, fieldByName }) => {
+    csv.pushRow([label, tableHeaders?.[0] ?? undefined, tableHeaders?.[1] ?? undefined]);
+    for (const row of childNames(name).map(fieldByName).filter(isNotNull)) {
       csv.pushRow(["", row.label, formValues[row.name] ?? ""]);
     }
   },
 
-  getEntryValue: ({ name }, formValues, { fieldsProvider: { childIds, fieldById }, t }) =>
-    childIds(name)
-      .map(fieldById)
+  getEntryValue: ({ name }, formValues, { fieldsProvider: { childNames, fieldByName }, t }) =>
+    childNames(name)
+      .map(fieldByName)
       .filter(isNotNull)
       .map(row => `${row.label}: ${formValues[name]?.[row.name ?? ""] ?? t("Answer Not Provided")}`)
       .join("<br/>"),
 
-  defaultValue: ({ name }, formValues, { childIds, fieldById }) => {
-    const value = childIds(name)
-      .map(fieldById)
+  defaultValue: ({ name }, formValues, { childNames, fieldByName }) => {
+    const value = childNames(name)
+      .map(fieldByName)
       .filter(isNotNull)
       .reduce((value, child) => ({ ...value, [child.name]: formValues[child.name] }), {});
     return { ...formValues, [name]: value };
@@ -42,5 +58,13 @@ export const TableInputField: FormFieldFactory = {
   normalizeValue: ({ name }, formValues) => {
     const { [name]: tableValues, ...rest } = formValues;
     return { ...rest, ...tableValues };
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ linkedFieldsData, getSource }) => (
+    <TableAdditionalOptions {...{ linkedFieldsData, getSource }} />
+  ),
+
+  formBuilderDefaults: () => ({
+    tableHeaders: ["", ""]
+  })
 };

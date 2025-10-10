@@ -523,11 +523,10 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
         ({ parentId }, _, resource) => {
           if (parentId == null) return () => ({ data: undefined });
           return createSelector([resourceMapSelector<DTO>(resource)], resources => {
-            let data = Object.values(resources).filter(resource => resource.attributes[parentProp] === parentId);
-            if (sortProp != null) {
-              data = sortBy(data, sortProp);
-            }
-            return { data: data.map(({ attributes }) => attributes) };
+            const data = Object.values(resources)
+              .filter(resource => resource.attributes[parentProp] === parentId)
+              .map(({ attributes }) => attributes);
+            return sortProp == null ? { data } : { data: sortBy(data, sortProp) };
           });
         }
       ],

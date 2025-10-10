@@ -35,7 +35,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     undefined,
     // We only display data for the types in SUPPORTED_INPUT_TYPES, so speed up this component by
     // ignoring everything else.
-    ({ inputType, parentId }) => parentId != null || SUPPORTED_INPUT_TYPES.includes(inputType)
+    ({ inputType }) => SUPPORTED_INPUT_TYPES.includes(inputType)
   );
   const isLoading = ctxLoading || queryLoading || !providerLoaded;
 
@@ -45,7 +45,7 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   );
 
   const fields = useMemo(
-    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldIds).map(fieldsProvider.fieldById).filter(isNotNull),
+    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldNames).map(fieldsProvider.fieldByName).filter(isNotNull),
     [fieldsProvider]
   );
 

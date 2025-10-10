@@ -1,10 +1,12 @@
+import { maxValue, minValue, NumberInput } from "react-admin";
 import * as yup from "yup";
 
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { addValidationWith } from "@/utils/yup";
 
 export const LongTextField: FormFieldFactory = {
-  createValidator: ({ validation, minCharacterLimit, maxCharacterLimit }, t) => {
+  addValidation: addValidationWith(({ validation, minCharacterLimit, maxCharacterLimit }, t) => {
     let validator = yup.string();
     if (validation?.required === true) validator = validator.required();
     if (minCharacterLimit != null) {
@@ -25,9 +27,26 @@ export const LongTextField: FormFieldFactory = {
       );
     }
     return validator;
-  },
+  }),
 
   renderInput: ({ minCharacterLimit, maxCharacterLimit }, sharedProps) => (
     <TextArea {...sharedProps} minLength={minCharacterLimit ?? undefined} maxLength={maxCharacterLimit ?? undefined} />
+  ),
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <>
+      <NumberInput
+        source={getSource("minCharacterLimit")}
+        label="Minimum Character Limit"
+        defaultValue={0}
+        validate={[minValue(0)]}
+      />
+      <NumberInput
+        source={getSource("maxCharacterLimit")}
+        label="Maximum Character Limit"
+        defaultValue={90000}
+        validate={[maxValue(90000)]}
+      />
+    </>
   )
 };

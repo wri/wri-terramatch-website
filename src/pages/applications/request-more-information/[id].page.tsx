@@ -65,10 +65,9 @@ const RequestMoreInformationPage = () => {
     [submission?.translated_feedback_fields]
   );
   const requestedInformationFilter = useCallback(
-    // Include all questions that have a parent in case the parent is included
     // TODO: this should not be using the label. It will require an API change and a data migration
     //  in the DB to fix this.
-    ({ label, parentId }: FormQuestionDto) => parentId != null || feedbackFields.includes(label),
+    ({ label }: FormQuestionDto) => feedbackFields.includes(label),
     [feedbackFields]
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(

@@ -1,12 +1,26 @@
 import { format } from "date-fns";
-import { isBoolean, sortBy } from "lodash";
+import { cloneDeep, isBoolean, sortBy } from "lodash";
 import { Identifier } from "react-admin";
 
 import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formDataProvider";
 import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { AdditionalInputTypes } from "@/admin/types/common";
 import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
+import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+
+export const normalizeV3Form = ({ sections, ...form }: FormFullDto): FormBuilderData => ({
+  ...form,
+  id: form.uuid,
+  steps: sections.map(({ questions, ...step }) => ({
+    ...step,
+    fields: questions.map(({ children, ...field }) => ({
+      ...cloneDeep(field),
+      children: cloneDeep(children ?? undefined)
+    }))
+  }))
+});
 
 //Response normalizers
 /**
@@ -83,8 +97,8 @@ export const normalizeQuestionCreatePayload = (
   linkedFieldData: FormQuestionField[]
 ) => {
   const { form_question_options, table_headers, child_form_questions, ...restOfPayload } = payload;
-  const input_type = linkedFieldData.find(field => field.id === payload.linked_field_key)?.inputType;
   const field = linkedFieldData.find(field => field.id === payload.linked_field_key);
+  const input_type = field?.inputType;
   const output = {
     ...restOfPayload,
     input_type: field?.inputType

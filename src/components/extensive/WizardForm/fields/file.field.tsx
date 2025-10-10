@@ -1,3 +1,4 @@
+import { BooleanInput } from "react-admin";
 import * as yup from "yup";
 
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
@@ -5,9 +6,10 @@ import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer } from "@/components/extensive/WizardForm/utils";
 import { UploadedFile } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
+import { addValidationWith } from "@/utils/yup";
 
 export const FileField: FormFieldFactory = {
-  createValidator: ({ validation, multiChoice }) => {
+  addValidation: addValidationWith(({ validation, multiChoice }) => {
     if (multiChoice) {
       const validator = yup.array();
       return validation?.required === true ? validator.min(1).required() : validator;
@@ -15,7 +17,7 @@ export const FileField: FormFieldFactory = {
       const validator = yup.object();
       return validation?.required === true ? validator.required() : validator;
     }
-  },
+  }),
 
   renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => (
     <RHFFileInput
@@ -41,5 +43,20 @@ export const FileField: FormFieldFactory = {
         csv.pushRow(["", v.title ?? v.file_name ?? "", v.url]);
       });
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <BooleanInput
+      source={getSource("additionalProps.with_private_checkbox")}
+      label="Private or public checkbox"
+      helperText="Enable this option to allow project developers to set this file as either private or public."
+      defaultValue={false}
+    />
+  ),
+
+  formBuilderDefaults: ({ collection, multiChoice, formModelType }) => ({
+    collection,
+    multiChoice: multiChoice ?? undefined,
+    model: formModelType
+  })
 };

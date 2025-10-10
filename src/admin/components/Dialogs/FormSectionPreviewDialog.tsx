@@ -1,57 +1,70 @@
-import { DialogProps } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogProps,
+  DialogTitle,
+  Divider
+} from "@mui/material";
+import { FC } from "react";
+import { useForm, useFormContext } from "react-hook-form";
 
-import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { FormSectionRead } from "@/generated/apiSchemas";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
+import ModalRoot from "@/components/extensive/Modal/ModalRoot";
+import { FormStep } from "@/components/extensive/WizardForm/FormStep";
+import ModalProvider from "@/context/modal.provider";
+import WizardFormProvider, { useLocalStepsProvider } from "@/context/wizardForm.provider";
+import Log from "@/utils/log";
 
-interface ConfirmationDialogProps extends DialogProps {
-  section?: FormSectionRead;
-  linkedFieldData: FormQuestionField[];
+interface FormSectionPreviewDialogProps extends DialogProps {
+  stepId?: string;
 }
 
-// TODO will be adapted in TM-2418
-export const FormSectionPreviewDialog = ({ linkedFieldData, section: _section, ...props }: ConfirmationDialogProps) => {
-  return null;
-  // const formHook = useForm();
-  //
-  // const step = useMemo(() => {
-  //   if (!_section) return null;
-  //   const section = sectionPayloadToFormSectionRead(_section, linkedFieldData);
-  //
-  //   return apiFormSectionToFormStep(section, (t: typeof useT) => t);
-  // }, [_section, linkedFieldData]);
-  //
-  // if (!step) return null;
-  //
-  // return (
-  //   <ModalProvider>
-  //     <Dialog {...props} fullWidth maxWidth="lg" sx={{ zIndex: 40 }}>
-  //       <DialogTitle>
-  //         Field Preview
-  //         <DialogContentText>
-  //           This preview serves for illustrative purposes only, and certain fields may not have full functionality.
-  //         </DialogContentText>
-  //       </DialogTitle>
-  //
-  //       <Divider />
-  //
-  //       <DialogContent>
-  //         <FormStep {...step} formHook={formHook} onChange={() => Log.debug("FormStep onChange")} />
-  //       </DialogContent>
-  //
-  //       <DialogActions sx={{ padding: 3 }}>
-  //         <Button variant="outlined" onClick={e => props.onClose?.(e, "escapeKeyDown")}>
-  //           Close
-  //         </Button>
-  //       </DialogActions>
-  //     </Dialog>
-  //     <ModalRoot />
-  //   </ModalProvider>
-  // );
+type SectionPreviewContentProps = {
+  stepId: string;
 };
 
-// const sectionPayloadToFormSectionRead = (section: any, linkedFieldData: FormQuestionField[]) => {
-//   section.form_questions = section.form_questions.map((question: any) =>
-//     preparePreviewField(question, linkedFieldData)
-//   );
-//   return section;
-// };
+const SectionPreviewContent: FC<SectionPreviewContentProps> = ({ stepId }) => {
+  const steps = useFormContext<FormBuilderData>().getValues().steps;
+  const fieldsProvider = useLocalStepsProvider(steps ?? []);
+  // Create a form hook for the preview so it doesn't try to interact with the form builder data.'
+  const formHook = useForm();
+  return (
+    <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <FormStep stepId={stepId} formHook={formHook} onChange={() => Log.debug("FormStep onChange")} />
+    </WizardFormProvider>
+  );
+};
+
+export const FormSectionPreviewDialog: FC<FormSectionPreviewDialogProps> = ({ stepId, ...props }) =>
+  stepId == null ? null : (
+    <ModalProvider>
+      <Dialog {...props} fullWidth maxWidth="lg" sx={{ zIndex: 40 }}>
+        {props.open ? (
+          <>
+            <DialogTitle>
+              Field Preview
+              <DialogContentText>
+                This preview serves for illustrative purposes only, and certain fields may not have full functionality.
+              </DialogContentText>
+            </DialogTitle>
+
+            <Divider />
+
+            <DialogContent>
+              <SectionPreviewContent stepId={stepId} />
+            </DialogContent>
+
+            <DialogActions sx={{ padding: 3 }}>
+              <Button variant="outlined" onClick={e => props.onClose?.(e, "escapeKeyDown")}>
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        ) : null}
+      </Dialog>
+      <ModalRoot />
+    </ModalProvider>
+  );

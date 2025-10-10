@@ -8,9 +8,10 @@ import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { Framework } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { addValidationWith } from "@/utils/yup";
 
 export const DemographicField: FormFieldFactory = {
-  createValidator: ({ validation, inputType }, t, framework) => {
+  addValidation: addValidationWith(({ validation, inputType }, t, framework) => {
     const type = inputType as DemographicType;
     const validator = yup
       .array()
@@ -48,7 +49,7 @@ export const DemographicField: FormFieldFactory = {
       );
 
     return validation?.required === true ? validator.required() : validator;
-  },
+  }),
 
   renderInput: ({ inputType, collection }, sharedProps) => (
     <RHFDemographicsTable
@@ -67,5 +68,7 @@ export const DemographicField: FormFieldFactory = {
     return (
       <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
     );
-  }
+  },
+
+  formBuilderDefaults: ({ collection }) => ({ collection })
 };

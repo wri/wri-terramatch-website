@@ -1,10 +1,10 @@
 import RHFInvasiveTable, { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
-import { arrayValidator } from "@/utils/yup";
+import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const InvasiveField: FormFieldFactory = {
-  createValidator: arrayValidator,
+  addValidation: addValidationWith(arrayValidator),
 
   renderInput: (field, sharedProps) => <RHFInvasiveTable {...sharedProps} />,
 

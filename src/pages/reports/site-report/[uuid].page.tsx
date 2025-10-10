@@ -29,7 +29,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
+import FrameworkProvider, { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -72,7 +72,7 @@ const SiteReportDetailPage = () => {
     collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
   });
 
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(siteReport?.frameworkKey), task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   const totalFiles = useMemo(
@@ -81,7 +81,7 @@ const SiteReportDetailPage = () => {
   );
 
   return (
-    <FrameworkProvider frameworkKey={siteReport?.frameworkKey!}>
+    <FrameworkProvider frameworkKey={siteReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>

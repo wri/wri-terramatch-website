@@ -20,7 +20,7 @@ export const SELECT_FILTER_QUESTION: Dictionary<string> = {
 
 export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
   for (const stepId of fieldsProvider.stepIds()) {
-    for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
+    for (const field of fieldsProvider.fieldNames(stepId).map(fieldsProvider.fieldByName).filter(isNotNull)) {
       values = normalizedFormFieldData(values, field, fieldsProvider);
     }
   }
@@ -39,7 +39,7 @@ export const normalizedFormFieldData = (
  */
 export function formDefaultValues(values: Dictionary<any>, fieldsProvider: FormFieldsProvider) {
   for (const stepId of fieldsProvider.stepIds()) {
-    for (const field of fieldsProvider.fieldIds(stepId).map(fieldsProvider.fieldById).filter(isNotNull)) {
+    for (const field of fieldsProvider.fieldNames(stepId).map(fieldsProvider.fieldByName).filter(isNotNull)) {
       values = applyFieldDefault(field, values, fieldsProvider);
     }
   }

@@ -16,7 +16,6 @@ import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { isNotNull } from "@/utils/array";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -84,14 +83,7 @@ function WizardForm(props: WizardFormProps) {
       return {
         id: stepId,
         title: props.fieldsProvider.step(stepId)?.title,
-        validation: getSchema(
-          props.fieldsProvider
-            .fieldIds(stepId)
-            .map(fieldId => props.fieldsProvider.fieldById(fieldId))
-            .filter(isNotNull),
-          t,
-          props.framework
-        )
+        validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
       };
     });
   }, [props.framework, props.fieldsProvider, t]);

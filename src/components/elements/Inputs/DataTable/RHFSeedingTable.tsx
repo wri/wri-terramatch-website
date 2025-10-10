@@ -1,14 +1,15 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFSeedingProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   formHook?: UseFormReturn;
   collection: string;
@@ -102,11 +103,20 @@ export const getSeedingsQuestions = (
         }
       ];
 
-const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildren<RHFSeedingProps>) => {
+const RHFSeedingTable: FC<PropsWithChildren<RHFSeedingProps>> = ({ collection, captureCount, ...props }) => {
   const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getSeedingTableColumns(t, captureCount),
+      steps: [{ id: "seedingTable", fields: getSeedingsQuestions(t, captureCount) }]
+    }),
+    [captureCount, t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
     <DataTable
@@ -116,8 +126,8 @@ const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildr
       generateUuids={true}
       additionalValues={{ collection }}
       addButtonCaption={t("Add Species or mix")}
-      tableColumns={getSeedingTableColumns(t, captureCount)}
-      fields={getSeedingsQuestions(t, captureCount)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

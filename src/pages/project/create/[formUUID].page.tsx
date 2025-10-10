@@ -42,6 +42,7 @@ const ProjectIntroPage = () => {
           {form == null ? null : (
             <WizardFormIntro
               title={form.title}
+              imageSrc={form.bannerUrl ?? undefined}
               description={form.description ?? undefined}
               deadline={form.deadlineAt ?? undefined}
               ctaProps={{

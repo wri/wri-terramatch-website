@@ -19,6 +19,7 @@ import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName, isSingularEntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 interface EditEntityFormProps {
   entityName: EntityName;
@@ -30,9 +31,9 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const t = useT();
   const router = useRouter();
 
-  const { formData, isLoading, loadError } = useEntityForm(entityName, entityUUID);
-  const framework = toFramework(formData?.data.framework_key);
+  const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
   const entityData = formData?.data;
+  const framework = toFramework(entityData?.framework_key);
 
   const model = useMemo(() => {
     const model = camelCase(
@@ -71,7 +72,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     }
   });
 
-  const reportingWindow = useReportingWindow(entity?.due_at);
+  const reportingWindow = useReportingWindow(framework, entity?.due_at);
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
@@ -96,7 +97,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const initialStepProps = useMemo(() => {
     if (providerLoaded && feedbackFields != null) {
       for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
-        for (const fieldId of fieldsProvider.fieldIds(stepId)) {
+        for (const fieldId of fieldsProvider.fieldNames(stepId)) {
           if (fieldsProvider.feedbackRequired(fieldId)) {
             return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
           }
@@ -123,7 +124,10 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     ]
   );
 
-  if (loadError != null) return notFound();
+  if (loadError || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadError, formLoadFailure });
+    return notFound();
+  }
 
   return (
     <LoadingContainer loading={isLoading || !providerLoaded}>

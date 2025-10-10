@@ -1,3 +1,5 @@
+import { BooleanInput } from "react-admin";
+
 import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
@@ -6,10 +8,10 @@ import {
   dataTableEntryValue,
   treeSpeciesEntryValue
 } from "@/components/extensive/WizardForm/utils";
-import { arrayValidator } from "@/utils/yup";
+import { addValidationWith, arrayValidator } from "@/utils/yup";
 
 export const SeedingsField: FormFieldFactory = {
-  createValidator: arrayValidator,
+  addValidation: addValidationWith(arrayValidator),
 
   renderInput: ({ additionalProps, collection, model }, sharedProps) => {
     if (additionalProps?.capture_count === true) {
@@ -30,5 +32,16 @@ export const SeedingsField: FormFieldFactory = {
     } else {
       return dataTableEntryValue(getSeedingTableColumns(t, false), field, formValues);
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ getSource }) => (
+    <BooleanInput
+      source={getSource("additionalProps.capture_count")}
+      label="Capture Count"
+      helperText="To allow users enter count instead of 'Number of seeds in sample' and 'Weight of sample(Kg)'"
+      defaultValue={false}
+    />
+  ),
+
+  formBuilderDefaults: ({ collection, formModelType }) => ({ collection, model: formModelType })
 };

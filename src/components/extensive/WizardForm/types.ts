@@ -2,23 +2,25 @@ import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { ReactElement } from "react";
 import { Control, FieldError, UseFormReturn } from "react-hook-form";
-import { AnySchema } from "yup";
+import * as yup from "yup";
 
+import { AdditionalOptionsProps } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions";
+import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
-import {
-  FormQuestionDto,
-  FormQuestionOptionDto,
-  FormTableHeaderDto
-} from "@/generated/v3/entityService/entityServiceSchemas";
+import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, EntityName, Option, UploadedFile } from "@/types/common";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
-// There are a couple of types that are supported by the hardcoded client side forms (like org creation),
-// but aren't in use in any wizard forms.
-export type FieldInputType = FormQuestionDto["inputType"] | "tel";
+export type FieldInputType =
+  | FormQuestionDto["inputType"]
+  // "tel" is only used in FE hardcoded forms, and cannot be selected as a type in FormBuilder
+  | "tel"
+  // "empty" is a placeholder used in the FormBuilder for a new question that hasn't selected a
+  // linked field key yet.
+  | "empty";
 
 export type StepDefinition = {
   id: string;
@@ -45,7 +47,7 @@ export type FieldDefinition = {
   minCharacterLimit?: number | null;
   maxCharacterLimit?: number | null;
   years?: number[] | null;
-  tableHeaders?: FormTableHeaderDto[] | null;
+  tableHeaders?: string[] | null;
   additionalProps?: Dictionary<any> | null;
   model?: FormQuestionDto["model"];
 };
@@ -76,9 +78,15 @@ export type GetEntryValueProps = {
 
 export type FormFieldFactory = {
   /**
-   * Creates a Yup validations schema for this field definition.
+   * Adds Yup validation for this field definition to the provided schema.
    */
-  createValidator: (field: FieldDefinition, t: typeof useT, framework: Framework) => AnySchema | undefined;
+  addValidation: (
+    validations: Dictionary<yup.AnySchema>,
+    field: FieldDefinition,
+    t: typeof useT,
+    framework: Framework,
+    fieldsProvider: FormFieldsProvider
+  ) => void;
 
   /**
    * Renders the form field as a form input.
@@ -132,6 +140,10 @@ export type FormFieldFactory = {
     formValues: Dictionary<any>,
     fieldsProvider: FormFieldsProvider
   ) => Dictionary<any>;
+
+  formBuilderAdditionalOptions?: (props: AdditionalOptionsProps) => ReactElement;
+
+  formBuilderDefaults?: (linkedField: FormQuestionField) => Partial<FieldDefinition>;
 };
 
 export type Answer = string | string[] | boolean | UploadedFile[] | TreeSpeciesValue[] | undefined;

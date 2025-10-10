@@ -19,7 +19,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider from "@/context/framework.provider";
+import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -39,11 +39,11 @@ const NurseryReportDetailPage = () => {
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";
 
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(nurseryReport?.frameworkKey), task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   return (
-    <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey!}>
+    <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>

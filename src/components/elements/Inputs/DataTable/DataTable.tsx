@@ -11,9 +11,10 @@ import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
+import WizardFormProvider, { FormFieldsProvider } from "@/context/wizardForm.provider";
+import { isNotNull } from "@/utils/array";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -26,7 +27,7 @@ declare module "@tanstack/react-table" {
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   modalEditTitle?: string;
-  fields: FieldDefinition[];
+  fieldsProvider: FormFieldsProvider;
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
@@ -44,7 +45,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
   const {
-    fields,
+    fieldsProvider,
     addButtonCaption,
     tableColumns,
     value,
@@ -63,7 +64,9 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   const openFormModalHandler = () => {
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        <FormModal title={props.modalTitle || props.addButtonCaption} onSubmit={onAddNewEntry} />
+      </WizardFormProvider>
     );
   };
 
@@ -71,15 +74,16 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     const rowValues = props.row.original;
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal
-        title={modalEditTitle}
-        fields={fields}
-        defaultValues={rowValues}
-        onSubmit={updatedValues => {
-          handleUpdate?.({ ...rowValues, ...updatedValues });
-          closeModal(ModalId.FORM_MODAL);
-        }}
-      />
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        <FormModal
+          title={modalEditTitle}
+          defaultValues={rowValues}
+          onSubmit={updatedValues => {
+            handleUpdate?.({ ...rowValues, ...updatedValues });
+            closeModal(ModalId.FORM_MODAL);
+          }}
+        />
+      </WizardFormProvider>
     );
   };
 
@@ -107,6 +111,10 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   );
 
   const headers = useMemo<ColumnDef<TData>[]>(() => {
+    const fields = fieldsProvider
+      .fieldNames(fieldsProvider.stepIds()[0])
+      .map(fieldsProvider.fieldByName)
+      .filter(isNotNull);
     return [
       {
         accessorKey: "index",
@@ -157,7 +165,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       }
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields, tableColumns]);
+  }, [fieldsProvider, tableColumns]);
 
   return (
     <InputWrapper {...inputWrapperProps}>

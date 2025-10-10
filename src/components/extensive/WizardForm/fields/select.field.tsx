@@ -1,13 +1,14 @@
+import SelectAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/SelectAdditionalOptions";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getHardcodedOptions, toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { findCachedGadmTitle } from "@/connections/Gadm";
 import { SELECT_FILTER_QUESTION } from "@/helpers/customForms";
 import { isNotNull, toArray } from "@/utils/array";
-import { selectValidator } from "@/utils/yup";
+import { addValidationWith, selectValidator } from "@/utils/yup";
 
 export const SelectField: FormFieldFactory = {
-  createValidator: selectValidator,
+  addValidation: addValidationWith(selectValidator),
 
   renderInput: ({ optionsList, options, multiChoice, optionsOther, linkedFieldKey }, sharedProps) => (
     <RHFDropdown
@@ -50,5 +51,12 @@ export const SelectField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <SelectAdditionalOptions {...{ field, getSource }} />,
+
+  formBuilderDefaults: ({ optionListKey, multiChoice }) => ({
+    optionsList: optionListKey,
+    multiChoice: multiChoice ?? undefined
+  })
 };

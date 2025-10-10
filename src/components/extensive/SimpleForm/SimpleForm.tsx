@@ -4,25 +4,23 @@ import { UseFormReturn } from "react-hook-form";
 import FormField from "@/components/extensive/WizardForm/FormField";
 
 import List from "../List/List";
-import { FieldDefinition } from "../WizardForm/types";
 
 export interface SimpleFormProps {
-  fields: FieldDefinition[];
+  fieldIds: string[];
   formHook: UseFormReturn;
   onChange?: () => void;
 }
 
-const SimpleForm: FC<SimpleFormProps> = ({ fields, formHook, onChange }) => {
-  if (process.env.NODE_ENV === "test") return null; //Hacky test fix. TODO: find the actual cause for this!
+const SimpleForm: FC<SimpleFormProps> = ({ fieldIds, formHook, onChange }) => {
   const _onChange = useCallback(() => onChange?.(), [onChange]);
   return (
-    <List<FieldDefinition, FormHTMLAttributes<HTMLFormElement>>
+    <List<string, FormHTMLAttributes<HTMLFormElement>>
       as="div"
       className="w-full space-y-8"
-      items={fields}
+      items={fieldIds}
       itemAs={Fragment}
       uniqueId="name"
-      render={field => <FormField key={field.name} field={field} formHook={formHook} onChange={_onChange} />}
+      render={fieldId => <FormField key={fieldId} fieldId={fieldId} formHook={formHook} onChange={_onChange} />}
     />
   );
 };

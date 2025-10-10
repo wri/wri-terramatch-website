@@ -1,11 +1,12 @@
+import { DefaultOptionsSetter } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/DefaultOptionsSetter";
 import RHFSelect from "@/components/elements/Inputs/Select/RHFSelect";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
-import { stringValidator } from "@/utils/yup";
+import { addValidationWith, stringValidator } from "@/utils/yup";
 
 export const RadioField: FormFieldFactory = {
-  createValidator: stringValidator,
+  addValidation: addValidationWith(stringValidator),
 
   renderInput: ({ options, linkedFieldKey }, sharedProps) => (
     <RHFSelect {...sharedProps} options={options ?? []} linkedFieldKey={linkedFieldKey ?? undefined} />
@@ -19,5 +20,7 @@ export const RadioField: FormFieldFactory = {
     } else {
       return formOptions.find(o => o.value === value)?.title ?? value;
     }
-  }
+  },
+
+  formBuilderAdditionalOptions: ({ field, getSource }) => <DefaultOptionsSetter {...{ field, getSource }} />
 };

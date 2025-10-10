@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
@@ -9,12 +9,13 @@ import {
   getDisturbanceIntensityOptions,
   getDisturbanceTypeOptions
 } from "@/constants/options/disturbance";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFDisturbanceTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
@@ -23,7 +24,8 @@ export interface RHFDisturbanceTableProps
 }
 
 export const getDisturbanceTableColumns = (
-  props: { hasIntensity?: boolean; hasExtent?: boolean },
+  hasIntensity?: boolean,
+  hasExtent?: boolean,
   t: typeof useT | Function = (t: string) => t
 ) => {
   const columns: AccessorKeyColumnDef<any>[] = [
@@ -34,7 +36,7 @@ export const getDisturbanceTableColumns = (
     }
   ];
 
-  if (props.hasIntensity) {
+  if (hasIntensity) {
     columns.push({
       accessorKey: "intensity",
       header: t("Intensity"),
@@ -42,7 +44,7 @@ export const getDisturbanceTableColumns = (
     });
   }
 
-  if (props.hasExtent) {
+  if (hasExtent) {
     columns.push({
       accessorKey: "extent",
       header: t("Extent (% Of Site Affected)"),
@@ -56,7 +58,8 @@ export const getDisturbanceTableColumns = (
 };
 
 export const getDisturbanceTableQuestions = (
-  props: { hasIntensity?: boolean; hasExtent?: boolean },
+  hasIntensity?: boolean,
+  hasExtent?: boolean,
   t: typeof useT | Function = (t: string) => t
 ) => {
   const questions: FieldDefinition[] = [
@@ -69,7 +72,7 @@ export const getDisturbanceTableQuestions = (
     }
   ];
 
-  if (props.hasIntensity) {
+  if (hasIntensity) {
     questions.push({
       label: t("Intensity"),
       name: "intensity",
@@ -79,7 +82,7 @@ export const getDisturbanceTableQuestions = (
     });
   }
 
-  if (props.hasExtent) {
+  if (hasExtent) {
     questions.push({
       label: t("Extent (% Of Site Affected)"),
       name: "extent",
@@ -99,11 +102,20 @@ export const getDisturbanceTableQuestions = (
   return questions;
 };
 
-const RHFDisturbanceTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
+const RHFDisturbanceTable: FC<PropsWithChildren<RHFDisturbanceTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getDisturbanceTableColumns(props.hasIntensity, props.hasExtent, t),
+      steps: [{ id: "disturbanceTable", fields: getDisturbanceTableQuestions(props.hasIntensity, props.hasExtent, t) }]
+    }),
+    [props.hasExtent, props.hasIntensity, t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
     <DataTable
@@ -112,8 +124,8 @@ const RHFDisturbanceTable = ({ onChangeCapture, ...props }: PropsWithChildren<RH
       generateUuids={true}
       onChange={onChange}
       addButtonCaption={t("Add Disturbance")}
-      tableColumns={getDisturbanceTableColumns(props, t)}
-      fields={getDisturbanceTableQuestions(props, t)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

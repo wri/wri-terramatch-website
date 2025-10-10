@@ -105,15 +105,15 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const { formData: formResponse } = useEntityForm(resourceName, record.id);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formResponse?.data.form_uuid);
   const feedbackChoices = useMemo<Choice[]>(() => {
-    const { stepIds, fieldIds, fieldById, childIds } = fieldsProvider;
+    const { stepIds, fieldNames, fieldByName, childNames } = fieldsProvider;
     const fieldToChoice = ({ label, name }: FieldDefinition): Choice => ({ id: name, name: label });
     return stepIds()
-      .flatMap(fieldIds)
+      .flatMap(fieldNames)
       .flatMap(fieldId => {
-        const field = fieldById(fieldId);
+        const field = fieldByName(fieldId);
         if (field == null) return [];
 
-        return [fieldToChoice(field), ...childIds(fieldId).map(fieldById).filter(isNotNull).map(fieldToChoice)];
+        return [fieldToChoice(field), ...childNames(fieldId).map(fieldByName).filter(isNotNull).map(fieldToChoice)];
       });
   }, [fieldsProvider]);
 

@@ -10,10 +10,10 @@ import { getLanguageOptions } from "@/constants/options/languages";
 import { getMonthOptions } from "@/constants/options/months";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { LocalSteps } from "@/context/wizardForm.provider";
+import { LocalStep } from "@/context/wizardForm.provider";
 import { FileType, Option } from "@/types/common";
 
-export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps => [
+export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] => [
   {
     id: "orgDetails",
     title: t("Organization Details"),
@@ -169,10 +169,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalSteps =
         name: "employees",
         inputType: "tableInput",
         label: t("Your employees"),
-        tableHeaders: [
-          { slug: null, order: 1, label: t("Employee Type") },
-          { slug: null, order: 2, label: t("Employee Count") }
-        ],
+        tableHeaders: [t("Employee Type"), t("Employee Count")],
         children: [
           {
             name: "ft_permanent_employees",
