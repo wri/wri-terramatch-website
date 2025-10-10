@@ -3,8 +3,14 @@ import * as yup from "yup";
 
 import ConditionalAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/ConditionalAdditionalOptions";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
+import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
-import { addFieldValidation, appendAnswersAsCSVRow, getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
+import {
+  addFieldValidation,
+  appendAnswersAsCSVRow,
+  childIdsWithCondition,
+  getFormattedAnswer
+} from "@/components/extensive/WizardForm/utils";
 import { applyFieldDefault, normalizedFormFieldData } from "@/helpers/customForms";
 import { isNotNull } from "@/utils/array";
 import { booleanValidator } from "@/utils/yup";
@@ -58,5 +64,21 @@ export const ConditionalField: FormFieldFactory = {
 
   formBuilderAdditionalOptions: ({ linkedFieldsData, getSource, onDeleteQuestion }) => (
     <ConditionalAdditionalOptions {...{ linkedFieldsData, getSource, onDeleteQuestion }} />
-  )
+  ),
+
+  addFormEntries: (entries, field, formValues, props) => {
+    entries.push({
+      title: field.label ?? "",
+      inputType: field.inputType,
+      value: getFormattedAnswer(field, formValues, props.fieldsProvider)
+    });
+    entries.push(
+      ...getFormEntries(
+        props.fieldsProvider,
+        { ...props, values: formValues },
+        props.t,
+        childIdsWithCondition(field.name, formValues[field.name], props.fieldsProvider)
+      )
+    );
+  }
 };

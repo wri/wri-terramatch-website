@@ -1,6 +1,7 @@
 import RHFOwnershipStakeTable, {
   getOwnershipTableColumns
 } from "@/components/elements/Inputs/DataTable/RHFOwnershipStakeTable";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
@@ -17,5 +18,7 @@ export const OwnershipStakeField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t }) => dataTableEntryValue(getOwnershipTableColumns(t), field, formValues)
+  addFormEntries: addEntryWith((field, formValues, { t }) =>
+    dataTableEntryValue(getOwnershipTableColumns(t), field, formValues)
+  )
 };

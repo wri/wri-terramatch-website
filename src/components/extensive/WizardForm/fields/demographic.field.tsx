@@ -5,6 +5,7 @@ import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollaps
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { Framework } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -63,12 +64,12 @@ export const DemographicField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  getEntryValue: ({ name, inputType }, formValues) => {
+  addFormEntries: addEntryWith(({ name, inputType }, formValues) => {
     const entries = ((formValues[name]?.[0] ?? {}).demographics ?? []) as DemographicEntryDto[];
     return (
       <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
     );
-  },
+  }),
 
   formBuilderDefaults: ({ collection }) => ({ collection })
 };

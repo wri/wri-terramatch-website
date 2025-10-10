@@ -4,11 +4,9 @@ import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
-import { useMyOrg } from "@/connections/Organisation";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { useDeleteV2FundingTypeUUID, usePatchV2FundingTypeUUID, usePostV2FundingType } from "@/generated/apiComponents";
 import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
@@ -21,9 +19,17 @@ export interface RHFFundingTypeTableProps
   formHook?: UseFormReturn;
 }
 
+type FundingTypeData = {
+  uuid: string;
+  year: number;
+  type: string;
+  source: string;
+  amount: number;
+};
+
 export const getFundingTypeTableColumns = (
   t: typeof useT | Function = (t: string) => t
-): AccessorKeyColumnDef<any>[] => [
+): AccessorKeyColumnDef<FundingTypeData>[] => [
   { accessorKey: "year", header: t("Funding year") },
   {
     accessorKey: "type",
@@ -71,95 +77,83 @@ export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) 
 const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const { field } = useController(props);
-  const value = field?.value || [];
+  const value = useMemo((): FundingTypeData[] => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
   const [tableKey, setTableKey] = useState(0);
 
-  const [, { organisationId }] = useMyOrg();
   const { currency } = useCurrencyContext();
 
   const refreshTable = () => {
     setTableKey(prev => prev + 1);
   };
 
-  const { mutate: createTeamMember } = usePostV2FundingType({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(data.data);
-      field.onChange(_tmp);
-    }
-  });
-
-  const { mutate: removeTeamMember } = useDeleteV2FundingTypeUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
-
-  const { mutate: updateTeamMember } = usePatchV2FundingTypeUUID({
-    onSuccess(data, variables) {
-      const _tmp = [...value];
-      //@ts-ignore
-      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
-
-      if (index !== -1) {
-        //@ts-ignore
-        _tmp[index] = data.data;
-        field.onChange(_tmp);
-        onChangeCapture?.();
-        props?.formHook?.reset(props?.formHook.getValues());
-        clearErrors();
-        refreshTable();
-      }
-    }
-  });
-
   const clearErrors = useCallback(() => {
     props?.formHook?.clearErrors(props.name);
   }, [props?.formHook, props.name]);
 
-  const formattedValue = value.map((item: any) => ({
-    ...item,
-    amount: currencyInput[currency] ? currencyInput[currency] + " " + item?.amount : item?.amount
-  }));
+  const createItem = useCallback(
+    (data: any) => {
+      const next = [...value, data];
+      field.onChange(next);
+      onChangeCapture?.();
+      clearErrors();
+      refreshTable();
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
+
+  const removeItem = useCallback(
+    (uuid?: string) => {
+      if (!uuid) return;
+      const next = (value as any[]).filter(item => item?.uuid !== uuid);
+      field.onChange(next);
+      onChangeCapture?.();
+      clearErrors();
+      refreshTable();
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
+
+  const updateItem = useCallback(
+    (data: any) => {
+      if (!data?.uuid) return;
+      const next = [...value];
+      const index = next.findIndex((item: any) => item?.uuid === data.uuid);
+      if (index !== -1) {
+        next[index] = { ...next[index], ...data };
+        field.onChange(next);
+        onChangeCapture?.();
+        clearErrors();
+        refreshTable();
+      }
+    },
+    [value, field, onChangeCapture, clearErrors]
+  );
 
   const { columns, steps } = useMemo(
     () => ({
-      columns: getFundingTypeTableColumns(t),
+      columns: getFundingTypeTableColumns(t).map(col =>
+        col.accessorKey === "amount"
+          ? {
+              ...col,
+              cell: (props: any) =>
+                (currencyInput[currency] ? currencyInput[currency] + " " : "") + (props.getValue() ?? "")
+            }
+          : col
+      ),
       steps: [{ id: "fundingTypeTable", fields: getFundingTypeQuestions(t) }]
     }),
-    [t]
+    [currency, t]
   );
   const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
-    <DataTable
+    <DataTable<FundingTypeData>
       key={tableKey}
       {...props}
-      value={formattedValue || []}
-      handleCreate={data => {
-        createTeamMember({
-          body: {
-            ...data,
-            organisation_id: organisationId
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeTeamMember({ pathParams: { uuid } });
-        }
-      }}
-      handleUpdate={data => {
-        if (data.uuid) {
-          updateTeamMember({
-            pathParams: { uuid: data.uuid },
-            body: { ...data }
-          });
-        }
-      }}
+      value={value}
+      handleCreate={createItem}
+      handleDelete={removeItem}
+      handleUpdate={updateItem}
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
       tableColumns={columns}

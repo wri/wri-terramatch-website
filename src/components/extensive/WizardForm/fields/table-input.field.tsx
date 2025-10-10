@@ -3,6 +3,7 @@ import * as yup from "yup";
 
 import TableAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TableAdditionalOptions";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addFieldValidation } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
@@ -40,12 +41,13 @@ export const TableInputField: FormFieldFactory = {
     }
   },
 
-  getEntryValue: ({ name }, formValues, { fieldsProvider: { childNames, fieldByName }, t }) =>
+  addFormEntries: addEntryWith(({ name }, formValues, { fieldsProvider: { childNames, fieldByName }, t }) =>
     childNames(name)
       .map(fieldByName)
       .filter(isNotNull)
       .map(row => `${row.label}: ${formValues[name]?.[row.name ?? ""] ?? t("Answer Not Provided")}`)
-      .join("<br/>"),
+      .join("<br/>")
+  ),
 
   defaultValue: ({ name }, formValues, { childNames, fieldByName }) => {
     const value = childNames(name)

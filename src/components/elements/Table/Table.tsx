@@ -35,6 +35,10 @@ declare module "@tanstack/react-table" {
     width?: string;
     className?: string;
     style?: React.CSSProperties;
+    cellStyles?: {
+      className?: string;
+      style?: React.CSSProperties;
+    };
   }
 }
 
@@ -332,10 +336,17 @@ function TableCell<TData extends RowData>({ cell, variant }: { cell: Cell<TData,
   );
 
   const isSticky = cell.column.columnDef.meta?.sticky;
+  const cellStyles = cell.column.columnDef.meta?.cellStyles;
 
   return (
     <td
-      className={classNames("text-normal-subtitle-400", variant.tdBody, { [variant.tdBodySticky || ""]: isSticky })}
+      className={classNames(
+        "text-normal-subtitle-400",
+        variant.tdBody,
+        { [variant.tdBodySticky || ""]: isSticky },
+        cellStyles?.className
+      )}
+      style={cellStyles?.style}
       //@ts-ignore
       align={cell.column.columnDef.meta?.align || "left"}
     >

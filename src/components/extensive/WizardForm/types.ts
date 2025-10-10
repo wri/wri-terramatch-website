@@ -8,6 +8,7 @@ import { AdditionalOptionsProps } from "@/admin/modules/form/components/FormBuil
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
+import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -65,7 +66,7 @@ export type SharedFieldProps = {
   feedbackRequired: boolean;
 };
 
-export type GetEntryValueProps = {
+export type GetEntryValueProps = Omit<GetFormEntriesProps, "values"> & {
   fieldsProvider: FormFieldsProvider;
   t: typeof useT;
   entity?: Entity;
@@ -116,10 +117,17 @@ export type FormFieldFactory = {
   ) => void;
 
   /**
-   * Generate a FormEntry value for the given field with the given values and supplementary information.
-   * The default uses `getFormattedAnswer`.
+   * Add FormEntry values to the given output array for the given field with teh given values and
+   * supplementary information. The default uses `getFormattedAnswer` and puts in a single row.
+   *
+   * In order to add nothing for a given input type, override this function nad NOOP.
    */
-  getEntryValue?: (field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => any;
+  addFormEntries?: (
+    entries: FormEntry[],
+    field: FieldDefinition,
+    formValues: Dictionary<any>,
+    additional: GetEntryValueProps
+  ) => void;
 
   /**
    * Using the current values in the given dictionary, set the correct default value for this field.

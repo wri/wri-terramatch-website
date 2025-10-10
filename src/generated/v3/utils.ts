@@ -27,6 +27,7 @@ export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
+  validations: researchServiceUrl,
   entities: entityServiceUrl,
   forms: entityServiceUrl,
   dashboard: dashboardServiceUrl,

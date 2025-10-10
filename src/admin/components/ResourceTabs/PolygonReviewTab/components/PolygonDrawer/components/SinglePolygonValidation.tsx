@@ -6,33 +6,44 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon from "@/components/extensive/Icon/Icon";
 import { IconNames } from "@/components/extensive/Icon/Icon";
-import { isCompletedDataOrEstimatedArea } from "@/helpers/polygonValidation";
+import { usePolygonValidation } from "@/connections/Validation";
+import { parseV3ValidationData, shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
+import { ICriteriaCheckItem, OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
-import { OVERLAPPING_CRITERIA_ID } from "../PolygonDrawer";
-
-export interface ICriteriaCheckItemProps {
-  id: string;
-  status: boolean;
-  label: string;
-  date?: string;
-  extra_info?: string;
-}
+export interface ICriteriaCheckItemProps extends ICriteriaCheckItem {}
 
 export interface ICriteriaCheckProps {
-  menu: ICriteriaCheckItemProps[];
+  polygonUuid: string;
   clickedValidation: (value: boolean) => void;
   clickedRunFixPolygonOverlaps: (value: boolean) => void;
-  status: boolean;
 }
 
-const PolygonValidation = (props: ICriteriaCheckProps) => {
-  const { clickedValidation, clickedRunFixPolygonOverlaps, status, menu } = props;
+const SinglePolygonValidation = (props: ICriteriaCheckProps) => {
+  const { clickedValidation, clickedRunFixPolygonOverlaps, polygonUuid } = props;
   const [failedValidationCounter, setFailedValidationCounter] = useState(0);
   const [lastValidationDate, setLastValidationDate] = useState(new Date("1970-01-01"));
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [menu, setMenu] = useState<ICriteriaCheckItemProps[]>([]);
+  const [status, setStatus] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { getFormatedExtraInfo } = useMessageValidators();
+
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid
+  });
+
+  useEffect(() => {
+    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+      const processedMenu = parseV3ValidationData(v3ValidationData);
+      setMenu(processedMenu);
+      setStatus(true);
+    } else {
+      setMenu([]);
+      setStatus(false);
+    }
+  }, [v3ValidationData]);
+
   const formattedDate = (dateObject: Date) => {
     const localDate = new Date(dateObject.getTime() - dateObject.getTimezoneOffset() * 60000);
     return `${localDate.toLocaleTimeString("en-US", {
@@ -107,12 +118,12 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
                     name={
                       item.status
                         ? IconNames.ROUND_GREEN_TICK
-                        : isCompletedDataOrEstimatedArea(item)
+                        : shouldShowAsWarning(item)
                         ? IconNames.EXCLAMATION_CIRCLE_FILL
                         : IconNames.ROUND_RED_CROSS
                     }
                     className={classNames("h-4 w-4", {
-                      "text-yellow-700": !item.status && isCompletedDataOrEstimatedArea(item)
+                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
                     })}
                   />
                   <Text variant="text-14-light">{item.label}</Text>
@@ -142,4 +153,4 @@ const PolygonValidation = (props: ICriteriaCheckProps) => {
   );
 };
 
-export default PolygonValidation;
+export default SinglePolygonValidation;

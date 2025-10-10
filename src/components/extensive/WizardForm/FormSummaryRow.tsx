@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
@@ -10,7 +11,7 @@ import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { FieldInputType, GetEntryValueProps } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, FieldInputType, GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
@@ -20,7 +21,7 @@ import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
 import List from "../List/List";
-import { childIdsWithCondition, getFormattedAnswer, loadExternalAnswerSources } from "./utils";
+import { getFormattedAnswer, loadExternalAnswerSources } from "./utils";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
@@ -29,15 +30,27 @@ export interface FormSummaryRowProps extends FormSummaryProps {
   nullText?: string;
 }
 
-type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit" | "formUuid"> & {
+export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit" | "formUuid"> & {
   entity?: Entity;
 };
 
-type FormEntry = {
+export type FormEntry = {
   title?: string;
   inputType: FieldInputType;
   value: any;
 };
+
+type EntryFactory = (field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => any;
+
+export const addEntryWith =
+  (factory: EntryFactory) =>
+  (entries: FormEntry[], field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => {
+    entries.push({
+      title: field.label ?? "",
+      inputType: field.inputType,
+      value: factory(field, formValues, additional)
+    });
+  };
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
@@ -113,7 +126,7 @@ export const getFormEntries = (
   mapFunctions?: any,
   record?: any
 ) => {
-  const outputArr: FormEntry[] = [];
+  const entries: FormEntry[] = [];
 
   const props: GetEntryValueProps = {
     fieldsProvider,
@@ -123,33 +136,24 @@ export const getFormEntries = (
     entityPolygonData,
     bbox,
     mapFunctions,
-    record
+    record,
+    stepId,
+    nullText
   };
   for (const field of fieldIds.map(fieldsProvider.fieldByName).filter(isNotNull)) {
-    const { getEntryValue } = FormFieldFactories[field.inputType];
-    const value =
-      getEntryValue == null
-        ? getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")
-        : getEntryValue(field, values, props);
-    if (value == null) continue;
-
-    outputArr.push({ title: field.label ?? "", inputType: field.inputType, value });
-
-    // Special case handling for conditional. It's done here instead of the field factory in order
-    // to keep the signature and use of getEntryValue simpler.
-    if (field.inputType === "conditional") {
-      outputArr.push(
-        ...getFormEntries(
-          fieldsProvider,
-          { values, nullText, stepId, type, entity },
-          t,
-          childIdsWithCondition(field.name, values[field.name], fieldsProvider)
-        )
-      );
+    const { addFormEntries } = FormFieldFactories[field.inputType];
+    if (addFormEntries == null) {
+      entries.push({
+        title: field.label ?? "",
+        inputType: field.inputType,
+        value: getFormattedAnswer(field, values, fieldsProvider) ?? nullText ?? t("Answer Not Provided")
+      });
+    } else {
+      addFormEntries(entries, field, values, props);
     }
   }
 
-  return outputArr;
+  return entries;
 };
 
 // Make this a pure function that doesn't call hooks

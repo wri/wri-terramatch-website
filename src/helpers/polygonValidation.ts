@@ -1,22 +1,23 @@
+import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
+import { ValidationCriteriaDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import {
+  COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
   ICriteriaCheckItem,
   PLANT_START_DATE_CRITERIA_ID,
   WITHIN_COUNTRY_CRITERIA_ID
-} from "@/admin/components/ResourceTabs/PolygonReviewTab/components/PolygonDrawer/PolygonDrawer";
-import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
+} from "@/types/validation";
 
-export const parseValidationData = (criteriaData: any) => {
-  const transformedData: ICriteriaCheckItem[] = criteriaData.criteria_list.map((criteria: any) => {
+export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaCheckItem[] => {
+  return criteriaData.criteriaList.map((criteria: ValidationCriteriaDto): ICriteriaCheckItem => {
     return {
-      id: criteria.criteria_id,
-      date: criteria.latest_created_at,
-      status: criteria.valid === 1,
-      label: validationLabels[criteria.criteria_id],
-      extra_info: criteria.extra_info
+      id: criteria.criteriaId,
+      date: criteria.createdAt,
+      status: criteria.valid,
+      label: validationLabels[criteria.criteriaId],
+      extra_info: criteria.extraInfo
     };
   });
-  return transformedData;
 };
 
 export const parseValidationDataFromContext = (polygonValidation: any) => {
@@ -37,25 +38,74 @@ export const parseValidationDataFromContext = (polygonValidation: any) => {
   return transformedData;
 };
 
-export const isValidCriteriaData = (criteriaData: any) => {
-  if (!criteriaData?.criteria_list?.length) {
+const EXCLUDED_CRITERIA_IDS = [ESTIMATED_AREA_CRITERIA_ID, WITHIN_COUNTRY_CRITERIA_ID, PLANT_START_DATE_CRITERIA_ID];
+
+interface ExtraInfoItem {
+  exists: boolean;
+  field: string;
+  error?: string;
+}
+
+export const isOnlyNumTreesMissing = (extraInfo: any): boolean => {
+  if (extraInfo == null) return false;
+
+  try {
+    const infoArray: ExtraInfoItem[] = extraInfo;
+
+    const dataFields = infoArray.filter(info =>
+      ["poly_name", "practice", "target_sys", "distr", "num_trees", "plantstart"].includes(info.field)
+    );
+
+    if (dataFields.length === 0) return false;
+
+    // A field is invalid if it's missing (!exists) OR has an error value
+    const invalidFields = dataFields.filter(info => !info.exists || info.error != null);
+
+    // Only exclude DATA_CRITERIA_ID if EXACTLY num_trees is the only invalid field
+    return invalidFields.length === 1 && invalidFields[0].field === "num_trees";
+  } catch {
+    return false;
+  }
+};
+
+export const getExcludedCriteriaIds = (criteriaData: ValidationDto): number[] => {
+  const baseExcludedIds = [...EXCLUDED_CRITERIA_IDS];
+
+  if (criteriaData?.criteriaList?.length) {
+    const dataCompletedCriteria = criteriaData.criteriaList.find(
+      criteria => criteria.criteriaId === COMPLETED_DATA_CRITERIA_ID
+    );
+
+    if (
+      dataCompletedCriteria &&
+      !dataCompletedCriteria.valid &&
+      isOnlyNumTreesMissing(dataCompletedCriteria.extraInfo)
+    ) {
+      baseExcludedIds.push(COMPLETED_DATA_CRITERIA_ID);
+    }
+  }
+
+  return baseExcludedIds;
+};
+
+export const isValidCriteriaData = (criteriaData: ValidationDto): boolean => {
+  if (!criteriaData?.criteriaList?.length) {
     return true;
   }
-  return !criteriaData.criteria_list.some(
-    (criteria: any) =>
-      criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID &&
-      criteria.criteria_id !== WITHIN_COUNTRY_CRITERIA_ID &&
-      criteria.criteria_id !== PLANT_START_DATE_CRITERIA_ID &&
-      criteria.valid !== 1
+
+  const excludedCriteriaIds = getExcludedCriteriaIds(criteriaData);
+
+  return !criteriaData.criteriaList.some(
+    ({ criteriaId, valid }) => !valid && !excludedCriteriaIds.includes(criteriaId)
   );
 };
 
 export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: any) => {
-  if (!criteriaData?.criteria_list?.length) {
+  if (!criteriaData?.criteriaList?.length) {
     return false;
   }
 
-  return criteriaData.criteria_list.some(
+  return criteriaData.criteriaList.some(
     (criteria: any) =>
       (criteria.criteria_id === ESTIMATED_AREA_CRITERIA_ID ||
         criteria.criteria_id === WITHIN_COUNTRY_CRITERIA_ID ||
@@ -64,10 +114,36 @@ export const hasCompletedDataWhitinStimatedAreaCriteriaInvalid = (criteriaData: 
   );
 };
 
-export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem) => {
+export const hasCompletedDataWhitinStimatedAreaCriteriaInvalidV3 = (criteriaData: ValidationDto): boolean => {
+  if (!criteriaData?.criteriaList?.length) {
+    return false;
+  }
+
+  const excludedCriteriaIds = getExcludedCriteriaIds(criteriaData);
+
+  return criteriaData.criteriaList.some(
+    ({ criteriaId, valid }) => excludedCriteriaIds.includes(criteriaId) && valid === false
+  );
+};
+
+export const isCompletedDataOrEstimatedArea = (item: ICriteriaCheckItem): boolean => {
   return (
     +item.id === ESTIMATED_AREA_CRITERIA_ID ||
     +item.id === WITHIN_COUNTRY_CRITERIA_ID ||
     +item.id === PLANT_START_DATE_CRITERIA_ID
   );
+};
+
+export const shouldShowAsWarning = (item: ICriteriaCheckItem): boolean => {
+  // Always show as warning for estimated area, country, and plant start date
+  if (isCompletedDataOrEstimatedArea(item)) {
+    return true;
+  }
+
+  // For Data Completed validation, only show as warning if only num_trees is missing
+  if (+item.id === COMPLETED_DATA_CRITERIA_ID && !item.status) {
+    return isOnlyNumTreesMissing(item.extra_info);
+  }
+
+  return false;
 };

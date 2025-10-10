@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
@@ -12,18 +13,19 @@ interface EmploymentOpportunitiesProps {
 }
 
 const EmploymentOpportunities: FC<EmploymentOpportunitiesProps> = ({ reportData }) => {
+  const t = useT();
   const total =
     reportData.employment.fullTimeJobs + reportData.employment.partTimeJobs + reportData.employment.volunteers;
 
   const chartData = [
-    { name: "Full-Time Jobs Created", value: reportData.employment.fullTimeJobs, color: "#F59E0C" },
-    { name: "Part-Time Jobs Created", value: reportData.employment.partTimeJobs, color: "#FACC14" },
-    { name: "Volunteers Created", value: reportData.employment.volunteers, color: "#15B8A6" }
+    { name: t("Full-Time Jobs Created"), value: reportData.employment.fullTimeJobs, color: "#F59E0C" },
+    { name: t("Part-Time Jobs Created"), value: reportData.employment.partTimeJobs, color: "#FACC14" },
+    { name: t("Volunteers Created"), value: reportData.employment.volunteers, color: "#15B8A6" }
   ];
 
   return (
     <div className="section-container h-fit grid-cols-3 border-b border-black/10">
-      <HeaderSecReportGemeration title="Employment Opportunities Created" />
+      <HeaderSecReportGemeration title={t("Employment Opportunities Created")} />
 
       <div className="grid grid-cols-2 gap-y-6 gap-x-2 py-6">
         <ReportPieChart

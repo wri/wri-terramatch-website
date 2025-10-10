@@ -1,4 +1,5 @@
 import RHFStrataTable, { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";
@@ -15,5 +16,7 @@ export const StratasField: FormFieldFactory = {
     appendTableAnswers(csv, label, headers, formValues[name]);
   },
 
-  getEntryValue: (field, formValues, { t }) => dataTableEntryValue(getStrataTableColumns(t), field, formValues)
+  addFormEntries: addEntryWith((field, formValues, { t }) =>
+    dataTableEntryValue(getStrataTableColumns(t), field, formValues)
+  )
 };

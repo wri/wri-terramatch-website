@@ -1,13 +1,17 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import Modal from "@/components/extensive/Modal/Modal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
@@ -59,6 +63,35 @@ const SubmissionPage = () => {
     [formData?.data?.organisation_attributes]
   );
 
+  const { openModal, closeModal } = useModalContext();
+  const handleSubmit = useCallback(() => {
+    openModal(
+      ModalId.MODAL_CONFIRM,
+      <Modal
+        iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
+        title={t("Are you ready to submit your application?")}
+        content={t(
+          "If you are ready to submit your application for review, please confirm by pressing the “Submit” button. You will not be able to edit your application after submission, unless the review team reopens it with a request for more information.\n\nIf you are not ready to submit your application, press “Cancel” to return to your draft."
+        )}
+        primaryButtonProps={{
+          children: t("Submit"),
+          onClick: () => {
+            closeModal(ModalId.MODAL_CONFIRM);
+            submitFormSubmission({
+              pathParams: {
+                uuid: submissionUUID
+              }
+            });
+          }
+        }}
+        secondaryButtonProps={{
+          children: t("Cancel"),
+          onClick: () => closeModal(ModalId.MODAL_CONFIRM)
+        }}
+      />
+    );
+  }, [closeModal, openModal, submissionUUID, submitFormSubmission, t]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading || !providerLoaded}>
@@ -76,13 +109,7 @@ const SubmissionPage = () => {
             })
           }
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitFormSubmission({
-              pathParams: {
-                uuid: submissionUUID
-              }
-            })
-          }
+          onSubmit={handleSubmit}
           submitButtonDisable={isSubmitting}
           defaultValues={defaultValues}
           title={form?.title}

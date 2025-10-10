@@ -9,12 +9,11 @@ import {
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
+import { ESTIMATED_AREA_CRITERIA_ID } from "@/types/validation";
 import { getValueForStatusEntityReport, getValueForStatusNursery } from "@/utils/statusUtils";
 
 import useLoadEntityList from "./useLoadEntityList";
 import { useStatusActionsMap } from "./useStatusActionsMap";
-
-const ESTIMATED_AREA_CRITERIA_ID = 12;
 
 const ReverseButtonStates2: { [key: number]: string } = {
   0: "project",

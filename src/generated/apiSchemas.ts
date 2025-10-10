@@ -2855,6 +2855,7 @@ export type V2FundingTypeCreate = {
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
+  financial_report_id?: string;
   amount?: number;
   year?: number;
   type?: string;
@@ -11678,7 +11679,22 @@ export type UserCreateComplete = {
 };
 
 export type IndicatorPost = {
+  /**
+   * Array of polygon UUIDs to process. If not provided, all eligible polygons will be processed.
+   */
   uuids?: string[];
+  /**
+   * Force rerun even if records already exist for this polygon and indicator.
+   *
+   * @default false
+   */
+  force?: boolean;
+  /**
+   * Update existing records instead of skipping them.
+   *
+   * @default false
+   */
+  update_existing?: boolean;
 };
 
 export type Indicators = {
@@ -12078,6 +12094,7 @@ export type V2FinancialReportRead = {
   funding_types?: {
     uuid?: string;
     organisation_id?: string;
+    financial_report_id?: string;
     amount?: number;
     year?: number;
     type?: string;

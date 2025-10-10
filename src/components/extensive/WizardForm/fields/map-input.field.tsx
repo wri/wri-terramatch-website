@@ -2,6 +2,7 @@ import { isString } from "lodash";
 
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import Log from "@/utils/log";
@@ -22,7 +23,7 @@ export const MapInputField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  getEntryValue: (field, formValues, { entityPolygonData, bbox, type, mapFunctions, record }) => {
+  addFormEntries: addEntryWith((field, formValues, { entityPolygonData, bbox, type, mapFunctions, record }) => {
     if (Object.keys(entityPolygonData ?? {}).length === 0) return null;
     return (
       <MapContainer
@@ -37,7 +38,7 @@ export const MapInputField: FormFieldFactory = {
         record={record}
       />
     );
-  },
+  }),
 
   defaultValue: ({ name }, formValues) => {
     const value = formValues[name];

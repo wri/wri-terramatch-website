@@ -87,12 +87,12 @@ const SecDashboard = ({
 
   const tableColumns = [
     {
-      header: isTableProject ? "Organization" : "Specie",
+      header: isTableProject ? t("Organization") : t("Specie"),
       accessorKey: "label",
       enableSorting: false
     },
     {
-      header: "Count",
+      header: t("Count"),
       accessorKey: "valueText",
       enableSorting: false
     }
@@ -113,14 +113,14 @@ const SecDashboard = ({
       return;
     }
     if (dataForChart && chartType === CHART_TYPES.multiLineChart) {
-      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, shouldShowOnlyOneLine);
+      const data = getRestorationGoalDataForChart(dataForChart, toggleValue === 1, shouldShowOnlyOneLine, t);
       setTreesPlantedByYear(data);
     }
     if (dataForChart && chartType === CHART_TYPES.treesPlantedBarChart) {
       const data = getRestorationGoalResumeData(dataForChart);
       setRestorationGoalResume(data);
     }
-  }, [chartType, dataForChart, shouldShowOnlyOneLine, toggleValue]);
+  }, [chartType, dataForChart, shouldShowOnlyOneLine, toggleValue, t]);
 
   return (
     <div className={className}>
