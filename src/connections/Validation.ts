@@ -3,11 +3,13 @@ import { useCallback, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import {
+  createPolygonValidations,
+  createSiteValidation,
   getPolygonValidation,
   GetPolygonValidationPathParams,
   getSiteValidation
 } from "@/generated/v3/researchService/researchServiceComponents";
-import { ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { DelayedJobDto, ValidationDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { loadConnection } from "@/utils/loadConnection";
@@ -123,5 +125,117 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
     allValidations,
     fetchAllValidationPages,
     total
+  };
+};
+
+type CreatePolygonValidationProps = {
+  polygonUuids: string[];
+  onSuccess?: (data: ValidationDto) => void;
+  onError?: (error: any) => void;
+};
+
+export const useCreatePolygonValidation = ({ polygonUuids, onSuccess, onError }: CreatePolygonValidationProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
+  const [data, setData] = useState<ValidationDto | null>(null);
+
+  const mutate = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    setData(null);
+
+    try {
+      await createPolygonValidations.fetch({
+        body: {
+          polygonUuids: polygonUuids
+        } as any
+      });
+
+      // The API stores the response in Redux, so we need to get it from there
+      if (polygonUuids.length === 1) {
+        const validationData = ApiSlice.currentState.validations[polygonUuids[0]];
+        if (validationData?.attributes) {
+          const validationDto = validationData.attributes as ValidationDto;
+          setData(validationDto);
+          onSuccess?.(validationDto);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err);
+      setIsLoading(false);
+      onError?.(err);
+    }
+  }, [polygonUuids, onSuccess, onError]);
+
+  return {
+    mutate,
+    isLoading,
+    error,
+    data
+  };
+};
+
+// Mutation connection for creating site validation
+type CreateSiteValidationProps = {
+  siteUuid: string;
+  onSuccess?: (data: DelayedJobDto) => void;
+  onError?: (error: any) => void;
+};
+
+export const useCreateSiteValidation = ({ siteUuid, onSuccess, onError }: CreateSiteValidationProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<any>(null);
+  const [data, setData] = useState<DelayedJobDto | null>(null);
+
+  const mutate = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    setData(null);
+
+    try {
+      await createSiteValidation.fetch({
+        pathParams: { siteUuid },
+        body: {}
+      });
+
+      // The API stores the delayed job in Redux
+      const delayedJobs = Object.values(ApiSlice.currentState.delayedJobs || {});
+      if (delayedJobs.length > 0) {
+        // Find the latest job that matches "Site Polygon Validation" or "Polygon Validation"
+        const latestJob = delayedJobs
+          .filter(
+            job => job.attributes?.name === "Site Polygon Validation" || job.attributes?.name === "Polygon Validation"
+          )
+          .sort((a, b) => {
+            // We don't have a reliable way to sort, just take the first match
+            return 0;
+          })[0];
+
+        if (latestJob?.attributes) {
+          const delayedJobDto = latestJob.attributes as DelayedJobDto;
+          setData(delayedJobDto);
+          onSuccess?.(delayedJobDto);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      setIsLoading(false);
+    } catch (err: any) {
+      setError(err);
+      setIsLoading(false);
+      onError?.(err);
+    }
+  }, [siteUuid, onSuccess, onError]);
+
+  return {
+    mutate,
+    isLoading,
+    error,
+    data
   };
 };
