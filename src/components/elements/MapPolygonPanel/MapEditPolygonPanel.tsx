@@ -95,7 +95,7 @@ const MapEditPolygonPanel = ({
       );
       setHasOverlaps(hasOverlapsV3);
       const transformedData: V2TerrafundCriteriaData = {
-        polygon_id: polygonValidationData.polygonId,
+        polygon_id: polygonValidationData.polygonUuid,
         criteria_list: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
           criteria_id: criteria.criteriaId,
           valid: criteria.valid ? 1 : 0,

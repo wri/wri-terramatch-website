@@ -6,16 +6,13 @@ import { When } from "react-if";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
-import { useAllSiteValidations } from "@/connections/Validation";
+import { triggerSiteValidation, useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  usePostV2TerrafundClipPolygonsSiteUuid,
-  usePostV2TerrafundValidationSitePolygons
-} from "@/generated/apiComponents";
+import { usePostV2TerrafundClipPolygonsSiteUuid } from "@/generated/apiComponents";
 import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -51,7 +48,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const { hideLoader } = useLoading();
+  const { showLoader, hideLoader } = useLoading();
   const { setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox } =
     useMapAreaContext();
   const { openModal, closeModal } = useModalContext();
@@ -64,8 +61,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     openNotification(type, title, message);
   };
 
-  const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
-    onSuccess: () => {
+  const runSiteValidation = async () => {
+    if (!siteUuid) return;
+
+    try {
+      showLoader();
+      await triggerSiteValidation(siteUuid);
+
       fetchOverlapValidations(true);
       setClickedValidation(false);
       hideLoader();
@@ -85,14 +87,13 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       );
       setIsLoadingDelayedJob?.(false);
       JobsSlice.reset();
-    },
-    onError: () => {
+    } catch (error) {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
-  });
+  };
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
     onSuccess: (data: ClippedPolygonResponse) => {
@@ -204,7 +205,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     if (clickedValidation) {
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Check Polygons");
-      getValidations({ queryParams: { uuid: siteUuid ?? "" } });
+      runSiteValidation();
     }
   });
 
