@@ -303,28 +303,21 @@ export type BoundingBoxDto = {
 
 export type ValidationCriteriaDto = {
   /**
-   * The criteria ID that was validated
-   *
-   * @example 3
+   * The validation criteria ID
    */
-  criteriaId: number;
+  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15;
   /**
-   * Whether the polygon passed this validation criteria
-   *
-   * @example true
+   * Whether the polygon passed this validation
    */
   valid: boolean;
   /**
    * When this validation was last run
    *
    * @format date-time
-   * @example 2025-02-20T22:01:31Z
    */
   createdAt: string;
   /**
    * Additional information about the validation result
-   *
-   * @example null
    */
   extraInfo?: Record<string, any>;
 };
@@ -335,9 +328,145 @@ export type ValidationDto = {
    *
    * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
    */
-  polygonId: string;
+  polygonUuid: string;
   /**
    * List of validation criteria results for this polygon
    */
   criteriaList: ValidationCriteriaDto[];
+};
+
+export type Object = {};
+
+export type ValidationRequestAttributes = {
+  /**
+   * Array of polygon UUIDs to validate
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonUuids: string[];
+  /**
+   * Array of validation types to run. If not provided or empty, all validation types will be run.
+   */
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "OVERLAPPING"
+    | "WITHIN_COUNTRY"
+  )[];
+};
+
+export type ValidationRequestData = {
+  type: "validations";
+  attributes: ValidationRequestAttributes;
+};
+
+export type ValidationRequestBody = {
+  data: ValidationRequestData;
+};
+
+export type ValidationSummaryDto = {
+  /**
+   * The UUID of the site that was validated
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  siteUuid: string;
+  /**
+   * Total number of polygons in the site
+   */
+  totalPolygons: number;
+  /**
+   * Number of polygons that were validated
+   */
+  validatedPolygons: number;
+  /**
+   * Summary of validation results by validation type
+   */
+  validationSummary: {
+    [key: string]: {
+      valid?: number;
+      invalid?: number;
+    };
+  };
+  /**
+   * When the validation was completed
+   *
+   * @format date-time
+   */
+  completedAt: string;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+};
+
+export type SiteValidationRequestAttributes = {
+  /**
+   * Array of validation types to run on all polygons in the site. If not provided or empty, all validation types will be run.
+   */
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "OVERLAPPING"
+    | "WITHIN_COUNTRY"
+  )[];
+};
+
+export type SiteValidationRequestData = {
+  type: "validations";
+  attributes: SiteValidationRequestAttributes;
+};
+
+export type SiteValidationRequestBody = {
+  data: SiteValidationRequestData;
 };
