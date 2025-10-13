@@ -1,6 +1,6 @@
 import cn from "classnames";
 import classNames from "classnames";
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useEffect, useId } from "react";
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
@@ -186,6 +186,10 @@ const Input = forwardRef(
       inputProps.onChange ? inputProps.onChange(e) : formHook?.setValue(inputWrapperProps.name, e.target.value);
     };
 
+    // Get the current form value and normalize it for date inputs
+    const formValue = formHook?.getValues(inputWrapperProps.name);
+    const normalizedFormValue = isDateLike && typeof formValue === "string" ? formatDateValue(formValue) : formValue;
+
     // Normalize incoming value/defaultValue for date-like inputs on initial render
     const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
     const valueProps: Record<string, any> = {};
@@ -193,14 +197,10 @@ const Input = forwardRef(
     else if ("defaultValue" in (inputProps as any))
       valueProps.defaultValue = normalize((inputProps as any).defaultValue);
 
-    useEffect(() => {
-      if (isDateLike) {
-        formHook?.resetField(inputWrapperProps.name);
-        formHook?.getValues(inputWrapperProps.name);
-        formHook?.setValue(inputWrapperProps.name, formatDateValue(formHook?.getValues(inputWrapperProps.name)));
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isDateLike, formHook, inputWrapperProps.name]);
+    // Update form with normalized value if needed (without useEffect to avoid loops)
+    if (isDateLike && formValue && formValue !== normalizedFormValue) {
+      formHook?.setValue(inputWrapperProps.name, normalizedFormValue, { shouldValidate: false, shouldDirty: false });
+    }
     return (
       <InputWrapper
         inputId={id}
