@@ -1,6 +1,6 @@
 import cn from "classnames";
 import classNames from "classnames";
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useEffect, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
@@ -192,6 +192,15 @@ const Input = forwardRef(
     if ("value" in (inputProps as any)) valueProps.value = normalize((inputProps as any).value);
     else if ("defaultValue" in (inputProps as any))
       valueProps.defaultValue = normalize((inputProps as any).defaultValue);
+
+    useEffect(() => {
+      if (isDateLike) {
+        formHook?.resetField(inputWrapperProps.name);
+        formHook?.getValues(inputWrapperProps.name);
+        formHook?.setValue(inputWrapperProps.name, formatDateValue(formHook?.getValues(inputWrapperProps.name)));
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isDateLike, formHook, inputWrapperProps.name]);
     return (
       <InputWrapper
         inputId={id}
