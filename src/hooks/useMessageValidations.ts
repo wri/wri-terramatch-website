@@ -5,19 +5,37 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
 interface IntersectionInfo {
-  intersectSmaller: boolean;
-  percentage: number;
-  poly_name: string | null;
-  site_name: string | null;
+  // V2 format (snake_case)
+  intersectSmaller?: boolean;
+  percentage?: number;
+  poly_name?: string | null;
+  site_name?: string | null;
+  // V3 format (camelCase)
+  polyUuid?: string | null;
+  polyName?: string | null;
+  siteName?: string | null;
+  intersectionArea?: number;
 }
 
 interface ProjectGoalInfo {
-  sum_area_project: number;
-  percentage_project: number;
-  total_area_project: number;
-  sum_area_site: number;
-  percentage_site: number;
-  total_area_site: number;
+  // V2 format (snake_case)
+  sum_area_project?: number;
+  percentage_project?: number;
+  total_area_project?: number;
+  sum_area_site?: number;
+  percentage_site?: number;
+  total_area_site?: number;
+  // V3 format (camelCase)
+  sumAreaProject?: number;
+  percentageProject?: number;
+  totalAreaProject?: number;
+  sumAreaSite?: number;
+  percentageSite?: number;
+  totalAreaSite?: number;
+  lowerBoundSite?: number;
+  upperBoundSite?: number;
+  lowerBoundProject?: number;
+  upperBoundProject?: number;
 }
 
 interface ExtraInfoItem {
@@ -27,10 +45,11 @@ interface ExtraInfoItem {
 }
 
 interface PlantStartDateInfo {
-  error_type: string;
-  polygon_uuid: string;
-  polygon_name: string;
-  site_name: string;
+  // V2 format (snake_case)
+  error_type?: string;
+  polygon_uuid?: string;
+  polygon_name?: string;
+  site_name?: string;
   provided_value?: string;
   min_date?: string;
   current_date?: string;
@@ -40,6 +59,20 @@ interface PlantStartDateInfo {
     max: string;
   };
   error_details?: string;
+  // V3 format (camelCase)
+  errorType?: string;
+  polygonUuid?: string;
+  polygonName?: string;
+  siteName?: string;
+  providedValue?: string;
+  minDate?: string;
+  currentDate?: string;
+  siteStartDate?: string;
+  allowedRange?: {
+    min: string;
+    max: string;
+  };
+  errorDetails?: string;
 }
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
@@ -61,24 +94,38 @@ export const useMessageValidators = () => {
       (extraInfo: any): string[] => {
         if (extraInfo == null) return [];
         try {
-          return extraInfo.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
-            return intersectSmaller
+          return extraInfo.map((info: IntersectionInfo) => {
+            // Support both V2 (snake_case) and V3 (camelCase) formats
+            const polyName = info.polyName || info.poly_name || "Unnamed Polygon";
+            const siteName = info.siteName || info.site_name || "Unnamed Site";
+            const percentage = info.percentage ?? 0;
+            const isSmaller = info.intersectSmaller ?? false;
+            const overlapArea = info.intersectionArea;
+
+            let message = isSmaller
               ? t(
-                  "Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name}) [in site: {site_name}]",
+                  "Geometries intersect: approx. {percentage}% of another, smaller polygon ({polyName}) [in site: {siteName}]",
                   {
-                    percentage,
-                    poly_name: poly_name || "Unnamed Polygon",
-                    site_name: site_name || "Unnamed Site"
+                    percentage: percentage.toFixed(2),
+                    polyName,
+                    siteName
                   }
                 )
               : t(
-                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by polygon: {poly_name} [in site: {site_name}]",
+                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by polygon: {polyName} [in site: {siteName}]",
                   {
-                    percentage,
-                    poly_name: poly_name || "Unnamed Polygon",
-                    site_name: site_name || "Unnamed Site"
+                    percentage: percentage.toFixed(2),
+                    polyName,
+                    siteName
                   }
                 );
+
+            // Add overlap area info if available (V3 format)
+            if (overlapArea != null) {
+              message += ` (${overlapArea.toFixed(4)} ha)`;
+            }
+
+            return message;
           });
         } catch (error) {
           Log.error("Failed to get intersection messages", error);
@@ -95,8 +142,9 @@ export const useMessageValidators = () => {
         try {
           // Handle both V2 (string) and V3 (object) data formats
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
-          if (infoObject && typeof infoObject === "object" && "country_name" in infoObject) {
-            const countryName = infoObject.country_name || "Unknown Country";
+          if (infoObject && typeof infoObject === "object") {
+            // Support both V2 (country_name) and V3 (countryName) formats
+            const countryName = infoObject.countryName || infoObject.country_name || "Unknown Country";
             return [
               t("Target Country: The polygon should be located inside {country}", {
                 country: countryName
@@ -116,7 +164,9 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        const infoArray: ExtraInfoItem[] = extraInfo;
+        // V3 format has validationErrors array
+        const infoArray: ExtraInfoItem[] = extraInfo.validationErrors || extraInfo;
+
         return infoArray
           .filter(info => {
             if (!isAdmin && info.field === "planting_status") {
@@ -125,32 +175,38 @@ export const useMessageValidators = () => {
             return true;
           })
           .map(info => {
+            // Convert camelCase fields to snake_case for consistent handling
+            const field = info.field;
+            const fieldName = FIELDS_TO_VALIDATE[field] || field;
+
             if (!info.exists) {
-              return t("{field} is missing", { field: FIELDS_TO_VALIDATE[info.field] });
+              return t("{field} is missing", { field: fieldName });
             }
-            switch (info.field) {
+            switch (field) {
               case "target_sys":
+              case "targetSys":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['agroforest', 'natural-forest', 'mangrove', 'peatland', 'riparian-area-or-wetland', 'silvopasture', 'woodlot-or-plantation', 'urban-forest']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldName, error: info.error }
                 );
               case "distr":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['single-line', 'partial', 'full']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldName, error: info.error }
                 );
               case "num_trees":
+              case "numTrees":
                 return t("{field} {error} tree count is missing", {
-                  field: FIELDS_TO_VALIDATE[info.field],
-                  error: info.error
+                  field: fieldName,
+                  error: info.error || ""
                 });
               case "practice":
                 return t(
                   "{field}: {error} is not a valid {field} because it is not one of ['tree-planting', 'direct-seeding', 'assisted-natural-regeneration']",
-                  { field: FIELDS_TO_VALIDATE[info.field], error: info.error }
+                  { field: fieldName, error: info.error }
                 );
               default:
-                return null;
+                return info.error ? t("{field}: {error}", { field: fieldName, error: info.error }) : null;
             }
           })
           .filter((message): message is string => message !== null);
@@ -166,25 +222,25 @@ export const useMessageValidators = () => {
       if (extraInfo == null) return [];
       try {
         const infoArray: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
-        const {
-          sum_area_project,
-          percentage_project,
-          total_area_project,
-          sum_area_site,
-          percentage_site,
-          total_area_site
-        } = infoArray;
+
+        // Support both V2 (snake_case) and V3 (camelCase) formats
+        const sumAreaSite = infoArray.sumAreaSite ?? infoArray.sum_area_site;
+        const percentageSite = infoArray.percentageSite ?? infoArray.percentage_site;
+        const totalAreaSite = infoArray.totalAreaSite ?? infoArray.total_area_site;
+        const sumAreaProject = infoArray.sumAreaProject ?? infoArray.sum_area_project;
+        const percentageProject = infoArray.percentageProject ?? infoArray.percentage_project;
+        const totalAreaProject = infoArray.totalAreaProject ?? infoArray.total_area_project;
+
         const messages: string[] = [];
 
-        if (total_area_site === null) {
+        if (totalAreaSite === null) {
           messages.push(t("Site Goal: A goal has not been specified."));
-        } else if (sum_area_site !== undefined && percentage_site !== undefined && total_area_site !== undefined) {
+        } else if (sumAreaSite !== undefined && percentageSite !== undefined && totalAreaSite !== undefined) {
           // Ensure numeric values are properly formatted
-          const formattedSumAreaSite = typeof sum_area_site === "number" ? sum_area_site.toFixed(2) : sum_area_site;
+          const formattedSumAreaSite = typeof sumAreaSite === "number" ? sumAreaSite.toFixed(2) : sumAreaSite;
           const formattedPercentageSite =
-            typeof percentage_site === "number" ? percentage_site.toFixed(2) : percentage_site;
-          const formattedTotalAreaSite =
-            typeof total_area_site === "number" ? total_area_site.toFixed(2) : total_area_site;
+            typeof percentageSite === "number" ? percentageSite.toFixed(2) : percentageSite;
+          const formattedTotalAreaSite = typeof totalAreaSite === "number" ? totalAreaSite.toFixed(2) : totalAreaSite;
 
           messages.push(
             t(
@@ -198,20 +254,16 @@ export const useMessageValidators = () => {
           );
         }
 
-        if (total_area_project === null) {
+        if (totalAreaProject === null) {
           messages.push(t("Project Goal: A goal has not been specified."));
-        } else if (
-          sum_area_project !== undefined &&
-          percentage_project !== undefined &&
-          total_area_project !== undefined
-        ) {
+        } else if (sumAreaProject !== undefined && percentageProject !== undefined && totalAreaProject !== undefined) {
           // Ensure numeric values are properly formatted
           const formattedSumAreaProject =
-            typeof sum_area_project === "number" ? sum_area_project.toFixed(2) : sum_area_project;
+            typeof sumAreaProject === "number" ? sumAreaProject.toFixed(2) : sumAreaProject;
           const formattedPercentageProject =
-            typeof percentage_project === "number" ? percentage_project.toFixed(2) : percentage_project;
+            typeof percentageProject === "number" ? percentageProject.toFixed(2) : percentageProject;
           const formattedTotalAreaProject =
-            typeof total_area_project === "number" ? total_area_project.toFixed(2) : total_area_project;
+            typeof totalAreaProject === "number" ? totalAreaProject.toFixed(2) : totalAreaProject;
 
           messages.push(
             t(
@@ -240,12 +292,22 @@ export const useMessageValidators = () => {
         // Handle both V2 (string) and V3 (object) data formats
         const info: PlantStartDateInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
 
-        switch (info.error_type) {
+        // Support both V2 (snake_case) and V3 (camelCase) formats
+        const errorType = info.errorType || info.error_type;
+        const polygonName = info.polygonName || info.polygon_name || "Unnamed Polygon";
+        const siteName = info.siteName || info.site_name || "Unnamed Site";
+        const providedValue = info.providedValue || info.provided_value;
+        const minDate = info.minDate || info.min_date;
+        const currentDate = info.currentDate || info.current_date;
+        const siteStartDate = info.siteStartDate || info.site_start_date;
+        const allowedRange = info.allowedRange || info.allowed_range;
+
+        switch (errorType) {
           case "MISSING_VALUE":
             return [
               t("Plant Start Date is missing for polygon {polygon_name} in site {site_name}", {
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+                polygon_name: polygonName,
+                site_name: siteName
               })
             ];
           case "INVALID_FORMAT":
@@ -253,9 +315,9 @@ export const useMessageValidators = () => {
               t(
                 "Invalid format for Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site"
+                  provided_value: providedValue,
+                  polygon_name: polygonName,
+                  site_name: siteName
                 }
               )
             ];
@@ -264,10 +326,10 @@ export const useMessageValidators = () => {
               t(
                 "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is before the minimum allowed date ({min_date})",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  min_date: info.min_date
+                  provided_value: providedValue,
+                  polygon_name: polygonName,
+                  site_name: siteName,
+                  min_date: minDate
                 }
               )
             ];
@@ -276,10 +338,10 @@ export const useMessageValidators = () => {
               t(
                 "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is in the future (current date: {current_date})",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  current_date: info.current_date
+                  provided_value: providedValue,
+                  polygon_name: polygonName,
+                  site_name: siteName,
+                  current_date: currentDate
                 }
               )
             ];
@@ -288,28 +350,28 @@ export const useMessageValidators = () => {
               t(
                 "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} should be within two years of the site's establishment date ({site_start_date}). Allowed range: {min_date} to {max_date}",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  site_start_date: info.site_start_date,
-                  min_date: info.allowed_range?.min,
-                  max_date: info.allowed_range?.max
+                  provided_value: providedValue,
+                  polygon_name: polygonName,
+                  site_name: siteName,
+                  site_start_date: siteStartDate,
+                  min_date: allowedRange?.min,
+                  max_date: allowedRange?.max
                 }
               )
             ];
           case "PARSE_ERROR":
             return [
               t("Error parsing Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}", {
-                provided_value: info.provided_value,
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+                provided_value: providedValue,
+                polygon_name: polygonName,
+                site_name: siteName
               })
             ];
           default:
             return [
               t("Invalid Plant Start Date for polygon {polygon_name} in site {site_name}", {
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+                polygon_name: polygonName,
+                site_name: siteName
               })
             ];
         }

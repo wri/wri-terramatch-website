@@ -10,6 +10,7 @@ import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/M
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useCreatePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -20,8 +21,7 @@ import {
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid,
-  usePostV2TerrafundValidationPolygon
+  usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -83,15 +83,15 @@ const PolygonDrawer = ({
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
-  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: async (data: any) => {
+  const { mutate: getValidations } = useCreatePolygonValidation({
+    polygonUuids: [polygonSelected],
+    onSuccess: async data => {
       setCheckPolygonValidation(false);
       setPolygonCriteriaMap((oldPolygonMap: any) => ({
         ...oldPolygonMap,
-        [data.polygon_id]: data
+        [data.polygonUuid]: data
       }));
-
-      if (data.polygon_id) {
+      if (data.polygonUuid) {
         context?.reloadSiteData?.();
         ApiSlice.pruneCache("validations", [polygonSelected]);
       }
@@ -159,7 +159,7 @@ const PolygonDrawer = ({
   useEffect(() => {
     if (checkPolygonValidation) {
       showLoader();
-      getValidations({ queryParams: { uuid: polygonSelected } });
+      getValidations();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);

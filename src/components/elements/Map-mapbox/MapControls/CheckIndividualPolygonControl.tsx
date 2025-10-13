@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
-import { usePolygonValidation } from "@/connections/Validation";
+import { useCreatePolygonValidation, usePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid,
-  usePostV2TerrafundValidationPolygon
+  usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
@@ -45,7 +44,9 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
     openNotification(type, title, message);
   };
-  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
+
+  const { mutate: getValidations } = useCreatePolygonValidation({
+    polygonUuids: [editPolygon?.uuid ?? ""],
     onSuccess: () => {
       setShouldRefetchValidation(true);
       setClickedValidation(false);
@@ -105,7 +106,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
       showLoader();
-      getValidations({ queryParams: { uuid: editPolygon.uuid } });
+      getValidations();
     }
   });
 

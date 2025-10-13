@@ -6,20 +6,16 @@ import { When } from "react-if";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
-import { useAllSiteValidations } from "@/connections/Validation";
+import { useAllSiteValidations, useCreateSiteValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  usePostV2TerrafundClipPolygonsSiteUuid,
-  usePostV2TerrafundValidationSitePolygons
-} from "@/generated/apiComponents";
+import { usePostV2TerrafundClipPolygonsSiteUuid } from "@/generated/apiComponents";
 import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
-import JobsSlice from "@/store/jobsSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
@@ -64,27 +60,19 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     openNotification(type, title, message);
   };
 
-  const { mutate: getValidations } = usePostV2TerrafundValidationSitePolygons({
-    onSuccess: () => {
-      fetchOverlapValidations(true);
+  const { mutate: getValidations } = useCreateSiteValidation({
+    siteUuid: siteUuid || "",
+    onSuccess: delayedJob => {
+      // Site validation returns a delayed job, so we don't immediately refetch
+      // The job progress is tracked by FloatNotification component
       setClickedValidation(false);
-      hideLoader();
-      setShouldRefetchValidation(true);
-      if (Array.isArray(sitePolygonData)) {
-        const polygonUuids = sitePolygonData
-          .map(polygon => polygon.polygonUuid)
-          .filter((uuid): uuid is string => Boolean(uuid));
-        if (polygonUuids.length > 0) {
-          ApiSlice.pruneCache("validations", polygonUuids);
-        }
-      }
-      displayNotification(
-        t("Please update and re-run if any polygons fail."),
-        "success",
-        t("Success! TerraMatch reviewed all polygons")
-      );
       setIsLoadingDelayedJob?.(false);
-      JobsSlice.reset();
+
+      displayNotification(
+        t("Validation is in progress. You will be notified when it completes."),
+        "success",
+        t("Site validation started")
+      );
     },
     onError: () => {
       hideLoader();
@@ -204,7 +192,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     if (clickedValidation) {
       setIsLoadingDelayedJob?.(true);
       setAlertTitle?.("Check Polygons");
-      getValidations({ queryParams: { uuid: siteUuid ?? "" } });
+      getValidations();
     }
   });
 
