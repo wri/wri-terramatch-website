@@ -1,11 +1,12 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 import { triggerSiteValidation, useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -40,6 +41,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [openCollapse, setOpenCollapse] = useState(false);
   const [clickedValidation, setClickedValidation] = useState(false);
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [pendingSiteValidation, setPendingSiteValidation] = useState(false);
   const [fixabilityResult, setFixabilityResult] = useState<{
     fixableCount: number;
     totalCount: number;
@@ -57,9 +59,14 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
     useAllSiteValidations(siteUuid ?? "", OVERLAPPING_CRITERIA_ID);
-  const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
-    openNotification(type, title, message);
-  };
+  const [, { delayedJobs }] = useDelayedJobs();
+
+  const displayNotification = useCallback(
+    (message: string, type: "success" | "error" | "warning", title: string) => {
+      openNotification(type, title, message);
+    },
+    [openNotification]
+  );
 
   const runSiteValidation = async () => {
     if (!siteUuid) return;
@@ -68,32 +75,51 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       showLoader();
       await triggerSiteValidation(siteUuid);
 
-      fetchOverlapValidations(true);
+      setPendingSiteValidation(true);
       setClickedValidation(false);
       hideLoader();
-      setShouldRefetchValidation(true);
-      if (Array.isArray(sitePolygonData)) {
-        const polygonUuids = sitePolygonData
-          .map(polygon => polygon.polygonUuid)
-          .filter((uuid): uuid is string => Boolean(uuid));
-        if (polygonUuids.length > 0) {
-          ApiSlice.pruneCache("validations", polygonUuids);
-        }
-      }
-      displayNotification(
-        t("Please update and re-run if any polygons fail."),
-        "success",
-        t("Success! TerraMatch reviewed all polygons")
-      );
-      setIsLoadingDelayedJob?.(false);
-      JobsSlice.reset();
     } catch (error) {
       hideLoader();
       setIsLoadingDelayedJob?.(false);
       setClickedValidation(false);
+      setPendingSiteValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
   };
+
+  const handleSiteValidationComplete = useCallback(() => {
+    if (!siteUuid) return;
+    fetchOverlapValidations(true);
+    setShouldRefetchValidation(true);
+    ApiSlice.pruneCache("sitePolygons");
+
+    if (Array.isArray(sitePolygonData)) {
+      const polygonUuids = sitePolygonData
+        .map(polygon => polygon.polygonUuid)
+        .filter((uuid): uuid is string => Boolean(uuid));
+      if (polygonUuids.length > 0) {
+        ApiSlice.pruneCache("validations", polygonUuids);
+      }
+    }
+
+    displayNotification(
+      t("Please update and re-run if any polygons fail."),
+      "success",
+      t("Success! TerraMatch reviewed all polygons")
+    );
+
+    setIsLoadingDelayedJob?.(false);
+    setPendingSiteValidation(false);
+    JobsSlice.reset();
+  }, [
+    siteUuid,
+    fetchOverlapValidations,
+    setShouldRefetchValidation,
+    sitePolygonData,
+    displayNotification,
+    t,
+    setIsLoadingDelayedJob
+  ]);
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
     onSuccess: (data: ClippedPolygonResponse) => {
@@ -196,7 +222,7 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   }, [overlapValidations]);
 
   useValueChanged(sitePolygonData, () => {
-    if (sitePolygonData && siteUuid != null) {
+    if (sitePolygonData && siteUuid != null && !pendingSiteValidation) {
       fetchOverlapValidations();
     }
   });
@@ -208,6 +234,22 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
       runSiteValidation();
     }
   });
+
+  useEffect(() => {
+    if (pendingSiteValidation && delayedJobs && delayedJobs.length > 0) {
+      const completedValidationJob = delayedJobs.find(job => {
+        const isCompleted = job.status === "succeeded" || job.status === "failed";
+        const isPolygonValidation = job.name === "Polygon Validation";
+        const matchesSite = job.payload?.siteUuid === siteUuid;
+
+        return isCompleted && isPolygonValidation && matchesSite;
+      });
+
+      if (completedValidationJob) {
+        handleSiteValidationComplete();
+      }
+    }
+  }, [delayedJobs, pendingSiteValidation, handleSiteValidationComplete, siteUuid]);
 
   return (
     <div className="grid gap-2">
