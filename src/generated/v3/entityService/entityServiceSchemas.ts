@@ -187,6 +187,38 @@ export type ImpactStoryFullDto = {
   content: string | null;
 };
 
+export type MediaUpdateAttributes = {
+  /**
+   * The name of the media
+   */
+  name: string;
+  /**
+   * The title of the media
+   */
+  title: string;
+  /**
+   * The photographer of the media
+   */
+  photographer: string;
+  /**
+   * The public status of the media
+   */
+  isPublic: boolean;
+  /**
+   * The cover of the project
+   */
+  isCover: boolean;
+};
+
+export type MediaData = {
+  type: "medias";
+  attributes: MediaUpdateAttributes;
+};
+
+export type MediaUpdateBody = {
+  data: MediaData;
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.

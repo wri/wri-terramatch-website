@@ -355,6 +355,85 @@ export const impactStoryGet = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories/{uuid}", "GET");
 
+export type MediaUpdatePathParams = {
+  /**
+   * Media UUID for media to retrieve
+   */
+  uuid: string;
+};
+
+export type MediaUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaUpdateResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export type MediaUpdateVariables = {
+  body: Schemas.MediaUpdateBody;
+  pathParams: MediaUpdatePathParams;
+};
+
+export const mediaUpdate = new V3ApiEndpoint<MediaUpdateResponse, MediaUpdateError, MediaUpdateVariables, {}>(
+  "/entities/v3/medias/{uuid}",
+  "PATCH"
+);
+
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -2649,6 +2728,7 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
+  medias: { mediaUpdate },
   tasks: { taskIndex, taskGet, taskUpdate },
   fileUpload: { uploadFile },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
