@@ -43,7 +43,7 @@ export const DisturbancePolygonAffectedInput = ({
       .filter(
         (polygon: SitePolygonLightDto) =>
           polygon.status === "approved" &&
-          (polygon.disturbanceableId === disturbanceReport?.disturbanceableId || polygon.disturbanceableId === null)
+          (polygon.disturbanceableId === disturbanceReport?.reportId || polygon.disturbanceableId === null)
       )
       .map((polygon: SitePolygonLightDto) => ({
         title: polygon.name || `Polygon ${polygon.uuid}`,

@@ -884,7 +884,7 @@ export type DisturbanceReportLightDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
-  disturbanceableId: number;
+  reportId: number;
 };
 
 export type ProjectFullDto = {
@@ -1623,7 +1623,7 @@ export type DisturbanceReportFullDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
-  disturbanceableId: number;
+  reportId: number;
   title: string | null;
   /**
    * @format date-time
