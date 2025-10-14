@@ -884,6 +884,7 @@ export type DisturbanceReportLightDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
 };
 
 export type ProjectFullDto = {
@@ -1252,6 +1253,7 @@ export type ProjectReportFullDto = {
   seedlingsGrown: number;
   communityProgress: string | null;
   localEngagement: string | null;
+  plantingStatus: string | null;
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
@@ -1438,6 +1440,7 @@ export type SiteReportFullDto = {
   totalTreeReplantingCount: number | null;
   totalTreesPlantedCount: number | null;
   totalSeedsPlantedCount: number | null;
+  plantingStatus: string | null;
   survivalCalculation: string | null;
   survivalDescription: string | null;
   maintenanceActivities: string | null;
@@ -1620,6 +1623,7 @@ export type DisturbanceReportFullDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
   title: string | null;
   /**
    * @format date-time
@@ -1641,6 +1645,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  media: MediaDto[];
 };
 
 export type ProjectUpdateAttributes = {

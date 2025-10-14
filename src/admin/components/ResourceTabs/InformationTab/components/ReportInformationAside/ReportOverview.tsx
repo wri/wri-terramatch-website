@@ -82,9 +82,11 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
-            <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
-              Reminder
-            </Button>
+            {parent?.label !== "Disturbance Report" && (
+              <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
+                Reminder
+              </Button>
+            )}
           </Stack>
         </Stack>
       </Card>

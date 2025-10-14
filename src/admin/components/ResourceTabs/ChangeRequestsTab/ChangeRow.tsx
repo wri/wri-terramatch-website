@@ -2,6 +2,7 @@ import { Box, Card, Typography } from "@mui/material";
 import { Case, Default, Switch } from "react-if";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
+import DisturbanceReportEntriesVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/DisturbanceReportEntriesVisualDiff";
 import FieldView from "@/admin/components/ResourceTabs/ChangeRequestsTab/FieldView";
 import FinancialVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/FinancialVisualDiff";
 import { StepChange } from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
@@ -40,6 +41,9 @@ export default function ChangeRow({ stepChange }: IChangeRowProps) {
                 </Case>
                 <Case condition={type === FieldType.FinancialTableInput}>
                   <FinancialVisualDiff type={type} currentValue={currentValue} newValue={newValue} />
+                </Case>
+                <Case condition={type === FieldType.DisturbanceReportEntries}>
+                  <DisturbanceReportEntriesVisualDiff type={type} currentValue={currentValue} newValue={newValue} />
                 </Case>
                 <Default>
                   <ChangeBox type={type} oldView={currentValue} newView={newValue} />
