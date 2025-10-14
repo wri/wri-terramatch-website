@@ -10,7 +10,11 @@ import {
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import { ESTIMATED_AREA_CRITERIA_ID } from "@/types/validation";
-import { getValueForStatusEntityReport, getValueForStatusNursery } from "@/utils/statusUtils";
+import {
+  getValueForStatusDisturbanceReport,
+  getValueForStatusEntityReport,
+  getValueForStatusNursery
+} from "@/utils/statusUtils";
 
 import useLoadEntityList from "./useLoadEntityList";
 import { useStatusActionsMap } from "./useStatusActionsMap";
@@ -168,8 +172,19 @@ const useAuditLogActions = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle, record, entityListItem, selected]);
 
+  const buttonStates = ReverseButtonStates2[isLevelDisturbanceReport ? entityLevel - 1 : entityLevel!];
   const getValuesStatusEntity = (() => {
-    if (ReverseButtonStates2[entityLevel!]?.includes("Report")) {
+    if (buttonStates == "disturbance-reports") {
+      return {
+        getValueForStatus: getValueForStatusDisturbanceReport,
+        statusLabels: [
+          { id: "1", label: t("Started") },
+          { id: "2", label: t("Awaiting Approval") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Approved") }
+        ]
+      };
+    } else if (buttonStates?.includes("Report")) {
       return {
         getValueForStatus: getValueForStatusEntityReport,
         statusLabels: [
@@ -180,7 +195,7 @@ const useAuditLogActions = ({
           { id: "5", label: t("Approved") }
         ]
       };
-    } else if (ReverseButtonStates2[entityLevel!] == "Nursery") {
+    } else if (buttonStates == "Nursery") {
       return {
         getValueForStatus: getValueForStatusNursery,
         statusLabels: [

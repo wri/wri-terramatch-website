@@ -62,6 +62,21 @@ export function getValueForStatusEntityReport(status: string): number {
   }
 }
 
+export function getValueForStatusDisturbanceReport(status: string): number {
+  switch (status) {
+    case "started":
+      return 0;
+    case "needs-more-information":
+      return 34;
+    case "awaiting-approval":
+      return 67;
+    case "approved":
+      return 100;
+    default:
+      return 0;
+  }
+}
+
 export function getValueForStatusNursery(status: string): number {
   switch (status) {
     case "started":
