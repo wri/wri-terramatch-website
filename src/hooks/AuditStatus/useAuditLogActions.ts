@@ -179,8 +179,8 @@ const useAuditLogActions = ({
         getValueForStatus: getValueForStatusDisturbanceReport,
         statusLabels: [
           { id: "1", label: t("Started") },
-          { id: "2", label: t("Awaiting Approval") },
-          { id: "3", label: t("Needs More Information") },
+          { id: "2", label: t("Needs More Information") },
+          { id: "3", label: t("Awaiting Approval") },
           { id: "4", label: t("Approved") }
         ]
       };

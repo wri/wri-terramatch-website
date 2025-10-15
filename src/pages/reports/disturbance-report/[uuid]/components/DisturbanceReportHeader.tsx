@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 
+import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
@@ -36,7 +37,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
     <PageHeader
       className="h-[203px]"
       title={`Disturbance Report ${
-        disturbanceReport?.createdAt ? new Date(disturbanceReport?.createdAt).toLocaleDateString() : ""
+        disturbanceReport?.dateOfDisturbance ? formatDateForEnGb(disturbanceReport?.dateOfDisturbance) : ""
       }`}
       subtitles={subtitles}
       hasBackButton={false}

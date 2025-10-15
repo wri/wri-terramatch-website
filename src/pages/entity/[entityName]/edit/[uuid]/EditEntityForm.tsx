@@ -3,6 +3,7 @@ import { defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import { pruneEntityCache } from "@/connections/Entity";
 import { CurrencyProvider } from "@/context/currency.provider";
@@ -69,11 +70,14 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
+  const disturbanceReportDate = entity?.entries.find((entry: any) => entry.name === "date-of-disturbance")?.value;
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
       : entityName === "financial-reports"
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
+      : entityName === "disturbance-reports"
+      ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
