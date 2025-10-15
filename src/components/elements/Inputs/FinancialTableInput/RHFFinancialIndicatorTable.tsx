@@ -961,7 +961,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       };
 
-      if (!props?.formHook?.formState?.errors?.[props.name] && formSubmissionOrg?.uuid) {
+      if (formSubmissionOrg?.uuid) {
         sendRequest();
         if (selectCurrency === formSubmissionOrg?.currency) {
           setSelectCurrency(formSubmissionOrg?.currency ?? "");

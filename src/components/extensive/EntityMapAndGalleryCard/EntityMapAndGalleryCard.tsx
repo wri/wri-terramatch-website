@@ -187,30 +187,32 @@ const EntityMapAndGalleryCard = ({
 
   return (
     <>
-      <PageCard title={`${modelTitle} ${t("Area")}`}>
-        <MapContainer
-          polygonsData={polygonDataMap}
-          sitePolygonData={sitePolygonData?.polygonsData}
-          bbox={mapBbox}
-          className="rounded-lg"
-          imageLayerGeojson={imagesGeoJson}
-          onDeleteImage={async uuid => {
-            try {
-              await deleteMedia(uuid);
-              refetch?.();
-            } catch (error) {
-              Log.error(error);
-            }
-          }}
-          mapFunctions={mapFunctions}
-          showLegend
-          hasControls
-          showPopups
-          modelFilesData={mediaList}
-          entityData={entityData}
-          imageGalleryRef={imageGalleryRef}
-        />
-      </PageCard>
+      {modelName !== "disturbanceReports" && (
+        <PageCard title={`${modelTitle} ${t("Area")}`}>
+          <MapContainer
+            polygonsData={polygonDataMap}
+            sitePolygonData={sitePolygonData?.polygonsData}
+            bbox={mapBbox}
+            className="rounded-lg"
+            imageLayerGeojson={imagesGeoJson}
+            onDeleteImage={async uuid => {
+              try {
+                await deleteMedia(uuid);
+                refetch?.();
+              } catch (error) {
+                Log.error(error);
+              }
+            }}
+            mapFunctions={mapFunctions}
+            showLegend
+            hasControls
+            showPopups
+            modelFilesData={mediaList}
+            entityData={entityData}
+            imageGalleryRef={imageGalleryRef}
+          />
+        </PageCard>
+      )}
       <If condition={indexTotal === 0}>
         <Then>
           <EmptyState
