@@ -2,8 +2,8 @@ export interface OverlapExtraInfo {
   poly_uuid: string;
   poly_name: string;
   percentage: number;
-  intersection_area: number;
-  intersect_smaller: boolean;
+  intersectionArea: number;
+  intersectSmaller: boolean;
   site_name: string;
 }
 
@@ -32,7 +32,7 @@ export const checkPolygonFixability = (
 
   for (const overlap of overlapDetails) {
     const percentageValid = overlap.percentage <= 3.5;
-    const areaValid = overlap.intersection_area ? overlap.intersection_area <= 0.1 : true;
+    const areaValid = overlap.intersectionArea ? overlap.intersectionArea <= 0.1 : true;
 
     if (!percentageValid) {
       canBeFixed = false;
@@ -41,10 +41,10 @@ export const checkPolygonFixability = (
       );
     }
 
-    if (overlap.intersection_area && !areaValid) {
+    if (overlap.intersectionArea && !areaValid) {
       canBeFixed = false;
       reasons.push(
-        `Overlap area (${overlap.intersection_area.toFixed(4)} ha) exceeds 0.1 ha limit for polygon "${
+        `Overlap area (${overlap.intersectionArea.toFixed(4)} ha) exceeds 0.1 ha limit for polygon "${
           overlap.poly_name
         }"`
       );

@@ -5,7 +5,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
 interface IntersectionInfo {
-  intersect_smaller: boolean;
+  intersectSmaller: boolean;
   percentage: number;
   poly_name: string | null;
   site_name: string | null;
@@ -61,8 +61,8 @@ export const useMessageValidators = () => {
       (extraInfo: any): string[] => {
         if (extraInfo == null) return [];
         try {
-          return extraInfo.map(({ intersect_smaller, percentage, poly_name, site_name }: IntersectionInfo) => {
-            return intersect_smaller
+          return extraInfo.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
+            return intersectSmaller
               ? t(
                   "Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name}) [in site: {site_name}]",
                   {
