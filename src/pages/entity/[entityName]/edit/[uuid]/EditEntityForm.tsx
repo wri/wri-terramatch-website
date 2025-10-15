@@ -70,7 +70,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
 
   const reportingWindow = useReportingWindow(entity?.due_at);
-  const disturbanceReportDate = entity?.entries.find((entry: any) => entry.name === "date-of-disturbance")?.value;
+  const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
