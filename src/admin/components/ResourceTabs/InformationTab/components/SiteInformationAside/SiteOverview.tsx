@@ -1,6 +1,6 @@
 import { Check } from "@mui/icons-material";
 import { Button, Card, Grid, Stack } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { BooleanField, FunctionField, Labeled, TextField, useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -8,26 +8,13 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
-import { fetchGetV2SitesSiteCheckApprove } from "@/generated/apiComponents";
 
 const SiteOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<
     "approved" | "needs-more-information" | "restoration-in-progress" | undefined
   >();
-  const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
 
   const { record } = useShowContext();
-
-  useEffect(() => {
-    const fetchCheckPolygons = async () => {
-      const result = await fetchGetV2SitesSiteCheckApprove({
-        pathParams: { site: record?.uuid }
-      });
-      setCheckPolygons(result.data?.can_approve);
-    };
-
-    fetchCheckPolygons();
-  }, [record]);
 
   const isPPC = record.frameworkKey === "ppc";
 
@@ -96,7 +83,7 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               startIcon={<Check />}
-              disabled={record?.status === "approved" || checkPolygons}
+              disabled={record?.status === "approved"}
               onClick={() => setStatusModal("approved")}
             >
               Approve
