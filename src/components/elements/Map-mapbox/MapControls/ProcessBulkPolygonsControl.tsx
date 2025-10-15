@@ -67,7 +67,7 @@ const ProcessBulkPolygonsControl = ({
   useEffect(() => {
     if (selectedPolygonsInCheckbox.length > 0 && overlapValidations.length > 0) {
       const selectedPolygonsWithOverlaps = overlapValidations
-        .filter(validation => selectedPolygonsInCheckbox.includes(validation.polygonId ?? ""))
+        .filter(validation => selectedPolygonsInCheckbox.includes(validation.polygonUuid ?? ""))
         .map(validation => {
           const overlapCriteria = validation.criteriaList.find(
             criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
