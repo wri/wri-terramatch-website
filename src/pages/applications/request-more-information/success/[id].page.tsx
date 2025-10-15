@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -12,6 +13,7 @@ const RequestMoreInformationSuccessPage = () => {
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
+  const isSendRequest = router.query.isSendRequest as string;
 
   return (
     <BackgroundLayout>
@@ -20,7 +22,10 @@ const RequestMoreInformationSuccessPage = () => {
           <Icon name={IconNames.CHECK_CIRCLE} className="stroke-success" width={60} />
           <div className="flex flex-col gap-4">
             <Text variant="text-heading-700" className="text-center uppercase">
-              {t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}
+              <If condition={isSendRequest}>
+                <Then>{t("THANK YOU FOR SENDING YOUR APPLICATION!")}</Then>
+                <Else>{t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}</Else>
+              </If>
             </Text>
             <Text variant="text-body-1000" className="text-center">
               {t("The WRI team will review your changes and will be in touch with updates.")}
