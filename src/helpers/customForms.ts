@@ -616,6 +616,18 @@ export const apiFormQuestionToFormField = (
       };
     }
 
+    case "disturbanceReportEntries":
+      return {
+        ...sharedProps,
+        type: FieldType.DisturbanceReportEntries,
+
+        fieldProps: {
+          required,
+          id: question.uuid,
+          inputId: question.uuid
+        }
+      };
+
     default:
       return null;
   }
@@ -990,6 +1002,12 @@ const getFieldValidation = (question: FormQuestionRead, t: typeof useT, framewor
 
       if (required) validation = validation.required();
 
+      return validation;
+    }
+
+    case "disturbanceReportEntries": {
+      validation = yup.array();
+      if (required) validation = validation.required();
       return validation;
     }
 

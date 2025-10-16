@@ -21,7 +21,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
         </Typography>
 
         <Stack gap={3}>
-          {parent && parent.label !== "Financial Report" && (
+          {parent && parent.label !== "Financial Report" && parent.label !== "Disturbance Report" && (
             <Labeled label={parent.label}>
               <TextField source={parent.source} />
             </Labeled>
@@ -57,7 +57,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
               </Labeled>
             </Grid>
 
-            {record?.dueAt && (
+            {record?.dueAt && parent?.label !== "Disturbance Report" && (
               <Grid xs={4} item>
                 <Labeled label="Due Date">
                   <DateField source="dueAt" label="Due Date" locales="en-GB" />
@@ -82,7 +82,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
-            {(!parent || parent.label !== "Financial Report") && (
+            {parent?.label !== "Disturbance Report" && (
               <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
                 Reminder
               </Button>

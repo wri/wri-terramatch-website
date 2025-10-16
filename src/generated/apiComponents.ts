@@ -11879,6 +11879,7 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12043,6 +12044,7 @@ export type PostV2FormsSubmissionsResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12205,6 +12207,7 @@ export type GetV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12361,6 +12364,7 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12569,6 +12573,7 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -12732,6 +12737,7 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
    */
   tags?: string[];
   project_pitch_uuid?: string;
+  application_uuid?: string;
   updated_by?: string;
   deleted_at?: string;
   created_at?: string;
@@ -13344,6 +13350,7 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -14003,6 +14010,7 @@ export type GetV2ApplicationsUUIDResponse = {
      */
     tags?: string[];
     project_pitch_uuid?: string;
+    application_uuid?: string;
     updated_by?: string;
     deleted_at?: string;
     created_at?: string;
@@ -22634,6 +22642,39 @@ export const usePostV2OrganisationsUUIDInvite = (
   );
 };
 
+export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2DisturbanceReportsExport = (
+  variables: GetV2DisturbanceReportsExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Record<string, any>, GetV2DisturbanceReportsExportError, undefined, {}, {}, {}>({
+    url: "/v2/disturbance-reports/export",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
+  variables: GetV2DisturbanceReportsExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2DisturbanceReportsExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2DisturbanceReportsExportError, TData>(
+    queryKeyFn({ path: "/v2/disturbance-reports/export", operationId: "getV2DisturbanceReportsExport", variables }),
+    ({ signal }) => fetchGetV2DisturbanceReportsExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -23144,4 +23185,9 @@ export type QueryOperation =
       path: "/v2/financial-reports/export";
       operationId: "getV2FinancialReportsExport";
       variables: GetV2FinancialReportsExportVariables;
+    }
+  | {
+      path: "/v2/disturbance-reports/export";
+      operationId: "getV2DisturbanceReportsExport";
+      variables: GetV2DisturbanceReportsExportVariables;
     };
