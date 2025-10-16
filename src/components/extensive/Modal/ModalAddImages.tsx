@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import exifr from "exifr";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
@@ -16,7 +15,7 @@ import Text from "@/components/elements/Text/Text";
 import { useUploadFile } from "@/connections/Media";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
-import { FileType, UploadedFile } from "@/types/common";
+import { FileType, mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -111,11 +110,15 @@ const ModalAddImages: FC<ModalAddProps> = ({
     useUploadFile({ entity: model as any, collection, uuid: entityData.uuid });
 
   useRequestComplete(isUploading, () => {
-    console.log("uploadedFile", uploadedFile);
     if (uploadFailure == null) {
-      console.log("data", uploadedFile);
+      if (uploadedFile == null) {
+        Log.error("Upload request complete with no error, but media is missing");
+      } else {
+        addFileToValue(mediaToUploadedFile(uploadedFile, variables.file, { isSuccess: true, isLoading: false }));
+      }
     } else {
-      console.log("uploadFailure", uploadFailure);
+      Log.error("uploadFailure", uploadFailure);
+      addFileToValue();
     }
   });
 
@@ -135,33 +138,31 @@ const ModalAddImages: FC<ModalAddProps> = ({
     }
   }, [files, setFile]);
 
-  const addFileToValue = (file: Partial<UploadedFile>) => {
-    setFiles(value => {
-      if (Array.isArray(value) && allowMultiple) {
-        const tmp = [...value];
-        const index = tmp.findIndex(item => {
-          if (!!file.uuid && file.uuid === item.uuid) {
-            return true;
-          } else if (!!file.rawFile && item.rawFile === file.rawFile) {
-            return true;
+  const addFileToValue = useCallback(
+    (file: Partial<UploadedFile>) => {
+      setFiles(value => {
+        if (Array.isArray(value) && allowMultiple) {
+          const tmp = [...value];
+          const index = tmp.findIndex(
+            item =>
+              (file.uuid != null && file.uuid === item.uuid) || (file.rawFile != null && file.rawFile === item.rawFile)
+          );
+
+          if (index === -1) {
+            return [...tmp, file as UploadedFile];
           } else {
-            return false;
+            tmp.splice(index, 1, file as UploadedFile);
+            return tmp;
           }
-        });
-
-        if (index === -1) {
-          return [...tmp, file as UploadedFile];
         } else {
-          tmp.splice(index, 1, file as UploadedFile);
-          return tmp;
+          return [file as UploadedFile];
         }
-      } else {
-        return [file as UploadedFile];
-      }
-    });
-  };
+      });
+    },
+    [allowMultiple]
+  );
 
-  const removeFileFromValue = (file: Partial<UploadedFile>) => {
+  const removeFileFromValue = useCallback((file: Partial<UploadedFile>) => {
     setFiles(value => {
       if (Array.isArray(value)) {
         return value.filter(v => v.uuid !== file.uuid);
@@ -169,70 +170,75 @@ const ModalAddImages: FC<ModalAddProps> = ({
         return [];
       }
     });
-  };
+  }, []);
 
-  const handleDeleteFile = (file: Partial<UploadedFile>) => {
-    if (file.uuid) {
-      addFileToValue({
-        ...file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          isDeleting: true
-        }
-      });
-      deleteFile({ pathParams: { uuid: file.uuid } });
-    } else {
-      removeFileFromValue(file);
-    }
-  };
-
-  const handleFileChange = async (newFiles: File[]) => {
-    const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
-
-    for (const file of newFiles) {
-      if (
-        acceptedFileTypes.length > 0 &&
-        !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
-      ) {
-        setErrorMessage?.(t(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`));
-        continue;
+  const handleDeleteFile = useCallback(
+    (file: Partial<UploadedFile>) => {
+      if (file.uuid) {
+        addFileToValue({
+          ...file,
+          uploadState: {
+            isLoading: false,
+            isSuccess: false,
+            isDeleting: true
+          }
+        });
+        deleteFile({ pathParams: { uuid: file.uuid } });
+      } else {
+        removeFileFromValue(file);
       }
-      if (file.size > maxFileSize) {
-        setErrorMessage?.(t(`File size exceeds the limit of ${maxFileSize / 1048576} MB`));
-        continue;
-      }
+    },
+    [addFileToValue, deleteFile, removeFileFromValue]
+  );
 
-      addFileToValue({
-        collection_name: collection,
-        size: file.size,
-        file_name: file.name,
-        title: file.name,
-        mime_type: file.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: true
+  const handleFileChange = useCallback(
+    async (newFiles: File[]) => {
+      const acceptedFileTypes = (acceptedTypes ?? []).map(type => `${type}`.trim());
+
+      for (const file of newFiles) {
+        if (
+          acceptedFileTypes.length > 0 &&
+          !acceptedFileTypes.some(type => file.type === type || file.name.endsWith(type))
+        ) {
+          setErrorMessage?.(t(`Unsupported file type. Please upload files of type: ${acceptedFileTypes.join(", ")}`));
+          continue;
         }
-      });
-
-      let longitude = 0;
-      let latitude = 0;
-
-      try {
-        const location = await exifr.gps(file);
-
-        if (location) {
-          latitude = location.latitude;
-          longitude = location.longitude;
+        if (file.size > maxFileSize) {
+          setErrorMessage?.(t(`File size exceeds the limit of ${maxFileSize / 1048576} MB`));
+          continue;
         }
-      } catch (e) {
-        Log.error(e);
+
+        addFileToValue({
+          collectionName: collection,
+          size: file.size,
+          fileName: file.name,
+          mimeType: file.type,
+          rawFile: file,
+          uploadState: {
+            isLoading: true
+          }
+        });
+
+        let longitude = 0;
+        let latitude = 0;
+
+        try {
+          const location = await exifr.gps(file);
+
+          if (location) {
+            latitude = location.latitude;
+            longitude = location.longitude;
+          }
+        } catch (e) {
+          Log.error(e);
+        }
+        const formData = new FormData();
+        formData.append("uploadFile", file);
+        uploadFile({ isPublic: true, lat: latitude, lng: longitude, formData }, true);
       }
-      const formData = new FormData();
-      formData.append("uploadFile", file);
-      uploadFile({ isPublic: true, lat: latitude, lng: longitude, formData }, true);
-    }
-  };
+    },
+    [acceptedTypes, addFileToValue, collection, maxFileSize, setErrorMessage, t, uploadFile]
+  );
 
   const deleteAllFiles = useCallback(() => {
     files.forEach(file => {
@@ -248,44 +254,41 @@ const ModalAddImages: FC<ModalAddProps> = ({
     onClose?.();
   }, [deleteAllFiles, onClose]);
 
-  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
-    setFiles(prevFiles => {
-      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
-      return updatedFiles;
-    });
-  };
+  const updateFileInValue = useCallback((updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file)));
+  }, []);
 
   return (
     <ModalAddBase {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
         <div className="flex items-center">
-          <When condition={status}>
-            <Status status={status ?? StatusEnum.DRAFT} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
-          </When>
+          {status == null ? null : (
+            <Status status={status} className="rounded px-2 py-[2px]" textVariant="text-14-bold" />
+          )}
           <button onClick={handleClose} className="ml-2 rounded p-1 hover:bg-grey-800">
             <Icon name={IconNames.CLEAR} width={16} height={16} className="text-darkCustom-100" />
           </button>
         </div>
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps == null ? null : (
           <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={twMerge("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+            {...iconProps}
+            width={iconProps.width ?? 40}
+            className={twMerge("mb-8", iconProps.className)}
+            style={{ minHeight: iconProps.height ?? iconProps.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
-        <When condition={!!content}>
+        {content == null ? null : (
           <Text variant="text-12-light" className="mt-1 mb-4">
             {content}
           </Text>
-        </When>
-        <When condition={!!btnDownload}>
+        )}
+        {!btnDownload ? null : (
           <Button
             variant="white-page-admin"
             className="mb-4 flex-1"
@@ -297,17 +300,17 @@ const ModalAddImages: FC<ModalAddProps> = ({
           >
             {t("Download")}
           </Button>
-        </When>
-        <When condition={!!secondTitle}>
+        )}
+        {secondTitle == null ? null : (
           <div className="flex items-center justify-between">
             <Text variant="text-24-bold">{secondTitle}</Text>
           </div>
-        </When>
-        <When condition={!!secondContent}>
+        )}
+        {secondContent == null ? null : (
           <Text variant="text-12-light" className="mt-1 mb-4">
             {secondContent}
           </Text>
-        </When>
+        )}
         <FileInput
           previewAsTable={previewAsTable}
           descriptionInput={descriptionInput}
@@ -325,13 +328,13 @@ const ModalAddImages: FC<ModalAddProps> = ({
         {children}
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+        {secondaryButtonProps == null ? null : (
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button {...primaryButtonProps}>
           <Text variant="text-14-bold" className="capitalize text-white">
             {primaryButtonText}

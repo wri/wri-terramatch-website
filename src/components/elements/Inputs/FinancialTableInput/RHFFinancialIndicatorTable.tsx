@@ -324,11 +324,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     const onSelectFile = async (file: File, context: any) => {
       const fileObject: Partial<UploadedFile> = {
-        collection_name: "documentation",
+        collectionName: "documentation",
         size: file.size,
-        file_name: file.name,
-        title: file.name,
-        mime_type: file.type,
+        fileName: file.name,
+        mimeType: file.type,
         rawFile: file,
         uploadState: {
           isLoading: true
@@ -375,7 +374,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           if (file.uuid) {
             _.remove(tmp, v => v.uuid === file.uuid);
           } else {
-            _.remove(tmp, v => v.file_name === file.file_name);
+            _.remove(tmp, v => v.fileName === file.fileName);
           }
           return tmp;
         } else {
@@ -395,7 +394,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           }
         });
         deleteFile({ pathParams: { uuid: file.uuid } });
-      } else if (file.file_name) {
+      } else if (file.fileName) {
         removeFileFromValue(file);
       }
     };

@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import exifr from "exifr";
 import _ from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import {
@@ -69,11 +69,10 @@ const RHFFileInput = ({
       }
 
       addFileToValue({
-        collection_name: variables.pathParams.collection,
+        collectionName: variables.pathParams.collection,
         size: file?.size,
-        file_name: file?.name,
-        title: file?.name,
-        mime_type: file?.type,
+        fileName: file?.name,
+        mimeType: file?.type,
         rawFile: file,
         uploadState: {
           isLoading: false,
@@ -94,144 +93,151 @@ const RHFFileInput = ({
     }
   });
 
-  const addFileToValue = (file: Partial<UploadedFile>) => {
-    setFiles(value => {
-      if (Array.isArray(value) && fileInputProps.allowMultiple) {
-        const tmp = [...value];
+  const addFileToValue = useCallback(
+    (file: Partial<UploadedFile>) => {
+      setFiles(value => {
+        if (Array.isArray(value) && fileInputProps.allowMultiple) {
+          const tmp = [...value];
 
-        const index = tmp.findIndex(item => {
-          if (!!file.uuid && file.uuid === item.uuid) {
-            return true;
-          } else if (!!file.rawFile && item.rawFile === file.rawFile) {
-            return true;
+          const index = tmp.findIndex(item => {
+            if (!!file.uuid && file.uuid === item.uuid) {
+              return true;
+            } else if (!!file.rawFile && item.rawFile === file.rawFile) {
+              return true;
+            } else {
+              return false;
+            }
+          });
+
+          if (index === -1) {
+            return [...tmp, file];
           } else {
-            return false;
+            tmp.splice(index, 1, file);
+
+            return tmp;
           }
-        });
-
-        if (index === -1) {
-          return [...tmp, file];
         } else {
-          tmp.splice(index, 1, file);
-
-          return tmp;
+          return [file];
         }
-      } else {
-        return [file];
-      }
-    });
-  };
+      });
+    },
+    [fileInputProps.allowMultiple]
+  );
 
-  const removeFileFromValue = (file: Partial<UploadedFile>) => {
+  const removeFileFromValue = useCallback((file: Partial<UploadedFile>) => {
     setFiles(value => {
       if (Array.isArray(value)) {
         const tmp = [...value];
         if (file.uuid) {
           _.remove(tmp, v => v.uuid === file.uuid);
         } else {
-          _.remove(tmp, v => v.file_name === file.file_name);
+          _.remove(tmp, v => v.fileName === file.fileName);
         }
         return tmp;
       } else {
         return [];
       }
     });
-  };
+  }, []);
 
-  const onSelectFile = async (file: File) => {
-    const maxSize = fileInputProps.maxFileSize;
+  const onSelectFile = useCallback(
+    async (file: File) => {
+      const maxSize = fileInputProps.maxFileSize;
 
-    if (maxSize && file.size > maxSize * 1024 * 1024) {
-      const error = getErrorMessages(t, "UPLOAD_ERROR", { max: maxSize });
-      formHook?.setError(fileInputProps.name, error);
+      if (maxSize && file.size > maxSize * 1024 * 1024) {
+        const error = getErrorMessages(t, "UPLOAD_ERROR", { max: maxSize });
+        formHook?.setError(fileInputProps.name, error);
+
+        addFileToValue({
+          collectionName: collection,
+          size: file.size,
+          fileName: file.name,
+          mimeType: file.type,
+          rawFile: file,
+          uploadState: {
+            isLoading: false,
+            isSuccess: false,
+            error: error.message
+          }
+        });
+        return;
+      }
 
       addFileToValue({
-        collection_name: collection,
+        collectionName: collection,
         size: file.size,
-        file_name: file.name,
-        title: file.name,
-        mime_type: file.type,
+        fileName: file.name,
+        mimeType: file.type,
         rawFile: file,
         uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          error: error.message
+          isLoading: true
         }
       });
-      return;
-    }
 
-    addFileToValue({
-      collection_name: collection,
-      size: file.size,
-      file_name: file.name,
-      title: file.name,
-      mime_type: file.type,
-      rawFile: file,
-      uploadState: {
-        isLoading: true
+      const body = new FormData();
+      body.append("upload_file", file);
+
+      try {
+        const location = await exifr.gps(file);
+
+        if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
+          body.append("lat", location.latitude.toString());
+          body.append("lng", location.longitude.toString());
+        }
+      } catch (e) {
+        Log.error("Failed to append geotagging information", e);
       }
-    });
 
-    const body = new FormData();
-    body.append("upload_file", file);
+      upload?.({
+        pathParams: { model, collection, uuid },
+        file: file,
+        //@ts-ignore swagger issue
+        body
+      });
+      formHook?.clearErrors(fileInputProps.name);
+    },
+    [addFileToValue, collection, fileInputProps.maxFileSize, fileInputProps.name, formHook, model, t, upload, uuid]
+  );
 
-    try {
-      const location = await exifr.gps(file);
+  const handleFileUpdate = useCallback(
+    (file: Partial<UploadedFile>, isPrivate: boolean) => {
+      if (file.uuid == null) return;
 
-      if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
-        body.append("lat", location.latitude.toString());
-        body.append("lng", location.longitude.toString());
-      }
-    } catch (e) {
-      Log.error("Failed to append geotagging information", e);
-    }
-
-    upload?.({
-      pathParams: { model, collection, uuid },
-      file: file,
-      //@ts-ignore swagger issue
-      body
-    });
-    formHook?.clearErrors(fileInputProps.name);
-  };
-
-  const handleFileUpdate = (file: Partial<UploadedFile>, isPrivate: boolean) => {
-    if (!file.uuid || !file.title) return;
-
-    update({
-      pathParams: {
-        uuid: file.uuid
-      },
-      body: {
-        title: file.title,
-        is_public: !isPrivate
-      }
-    });
-  };
-
-  const onDeleteFile = (file: Partial<UploadedFile>) => {
-    if (file.uuid) {
-      addFileToValue({
-        ...file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          isDeleting: true
+      update({
+        pathParams: {
+          uuid: file.uuid
+        },
+        body: {
+          title: file.fileName ?? "",
+          is_public: !isPrivate
         }
       });
-      deleteFile({ pathParams: { uuid: file.uuid } });
-    } else if (file.file_name) {
-      removeFileFromValue(file);
-    }
-  };
+    },
+    [update]
+  );
 
-  const updateFileInValue = (updatedFile: Partial<UploadedFile>) => {
-    setFiles(prevFiles => {
-      const updatedFiles = prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file));
-      return updatedFiles;
-    });
-  };
+  const onDeleteFile = useCallback(
+    (file: Partial<UploadedFile>) => {
+      if (file.uuid) {
+        addFileToValue({
+          ...file,
+          uploadState: {
+            isLoading: false,
+            isSuccess: false,
+            isDeleting: true
+          }
+        });
+        deleteFile({ pathParams: { uuid: file.uuid } });
+      } else if (file.fileName) {
+        removeFileFromValue(file);
+      }
+    },
+    [addFileToValue, deleteFile, removeFileFromValue]
+  );
+
+  const updateFileInValue = useCallback((updatedFile: Partial<UploadedFile>) => {
+    setFiles(prevFiles => prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file)));
+  }, []);
 
   useEffect(() => {
     const tmp = toArray(files)
