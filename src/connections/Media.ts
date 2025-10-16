@@ -1,4 +1,4 @@
-import { connectionHook, connectionSelector } from "@/connections/util/connectionShortcuts";
+import { connectionHook } from "@/connections/util/connectionShortcuts";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
@@ -30,4 +30,3 @@ export const uploadFileConnection = v3Resource("media", uploadFile)
   .buildConnection();
 
 export const useUploadFile = connectionHook(uploadFileConnection);
-export const selectUploadFile = connectionSelector(uploadFileConnection);
