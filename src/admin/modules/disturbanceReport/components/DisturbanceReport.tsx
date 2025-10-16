@@ -12,7 +12,6 @@ import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS, formatOptions } from "@/constants/options/disturbanceReports";
 import { TextVariants } from "@/types/common";
 
-import DownloadMediaItem from "./DownloadMediaItem";
 import Intensity from "./Intensity";
 
 const parseFieldValue = (value: any) => {
@@ -105,7 +104,6 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
   const monetaryDamage = getFieldValue("monetary-damage");
   const sitesAffected = getFieldValue("site-affected");
   const polygonsAffected = getFieldValue("polygon-affected");
-  const mediaAssets = getFieldValue("media-assets");
 
   const formatValuesWithOptions = (values: string[], options: Array<{ value: string; title: string }>) => {
     if (!Array.isArray(values)) return values;
@@ -162,70 +160,53 @@ const DisturbanceReport = (props: DisturbanceReportProps) => {
       <div className="flex flex-col gap-4">
         <Text variant="text-20-bold" className="leading-none" />
         <div className="grid grid-cols-3 gap-x-4 gap-y-6">
-          <TextEntry value={disturbanceType} label={t("Disturbance Type")} />
+          <TextEntry value={disturbanceType ?? t("Answer Not Provided")} label={t("Disturbance Type")} />
           <TextEntry
-            value={formattedSubtype}
+            value={formattedSubtype ?? t("Answer Not Provided")}
             label={t("Disturbance Subtype")}
             classNameContainer="col-span-2 flex flex-col gap-2"
             className="text-blueCustom-900"
           />
-          {intensity == null ? null : (
-            <div className="flex flex-col gap-2">
-              <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-                {t("Intensity")}
+
+          <div className="flex flex-col gap-2">
+            <Text variant="text-14-light" className="leading-none text-darkCustom-300">
+              {t("Intensity")}
+            </Text>
+            {["low", "medium", "high"].includes(intensity?.toLowerCase()) ? (
+              <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
+            ) : (
+              <Text variant="text-14" className="leading-none text-blueCustom-900">
+                {t("Answer Not Provided")}
               </Text>
-              {["low", "medium", "high"].includes(intensity?.toLowerCase()) ? (
-                <Intensity className="text-blueCustom-900" intensity={intensity?.toLowerCase()} />
-              ) : (
-                <Text variant="text-14" className="leading-none text-blueCustom-900">
-                  {t("Answer Not Provided")}
-                </Text>
-              )}
-            </div>
-          )}
-          <TextEntry value={extent} label={t("Extent")} />
-          <TextEntry value={peopleAffected} label={t("People Affected")} />
+            )}
+          </div>
+
+          <TextEntry value={extent ?? t("Answer Not Provided")} label={t("Extent")} />
           <TextEntry
-            value={formattedPropertyAffected}
+            value={peopleAffected ? Number(peopleAffected).toLocaleString() : t("Answer Not Provided")}
+            label={t("People Affected")}
+          />
+          <TextEntry
+            value={formattedPropertyAffected ?? t("Answer Not Provided")}
             label={t("Property Affected")}
             classNameContainer="col-span-3 flex flex-col gap-2"
             className="text-blueCustom-900"
           />
-          <TextEntry value={dateOfDisturbance} label={t("Date of Disturbance")} />
+          <TextEntry value={dateOfDisturbance ?? t("Answer Not Provided")} label={t("Date of Disturbance")} />
           <TextEntry
             value={monetaryDamage ? `$${Number(monetaryDamage).toLocaleString()}` : t("Answer Not Provided")}
             label={t("Monetary Damage (USD)")}
           />
         </div>
       </div>
-      {disturbanceReportData.length > 0 && (
-        <Table
-          data={disturbanceReportData}
-          columns={columns}
-          hasPagination={false}
-          invertSelectPagination={false}
-          variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
-        />
-      )}
 
-      {mediaAssets == null ? null : (
-        <div className="flex flex-col gap-4">
-          <Text variant="text-14-light" className="leading-none text-darkCustom-300">
-            {t("Download Media Assets")}
-          </Text>
-          {Array.isArray(mediaAssets) && mediaAssets.length > 0 ? (
-            <div className="grid grid-cols-3 gap-2">
-              {mediaAssets.map((media: any, mediaIndex: number) => (
-                <DownloadMediaItem key={mediaIndex} name={media.title || `Media-${mediaIndex + 1}`} src={media.url} />
-              ))}
-            </div>
-          ) : (
-            <Text variant="text-14" className="leading-none text-blueCustom-900">
-              {t("Answer Not Provided")}
-            </Text>
-          )}
-        </div>
-      )}
+      <Table
+        data={disturbanceReportData}
+        columns={columns}
+        hasPagination={false}
+        invertSelectPagination={false}
+        variant={VARIANT_TABLE_AIRTABLE_DASHBOARD}
+      />
     </div>
   );
 };
