@@ -14,7 +14,7 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useUploadFile } from "@/connections/Media";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
-import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import { UploadFilePathParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { FileType, mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -22,7 +22,7 @@ import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalAddBase } from "./ModalsBases";
 
-export interface ModalAddProps extends ModalProps {
+interface ModalAddImageProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   descriptionInput?: string;
@@ -41,12 +41,12 @@ export interface ModalAddProps extends ModalProps {
   btnDownloadProps?: IButtonProps;
   setErrorMessage?: (message: string) => void;
   previewAsTable?: boolean;
-  model: string;
+  model: UploadFilePathParams["entity"];
   collection: string;
   entityData: any;
 }
 
-const ModalAddImages: FC<ModalAddProps> = ({
+const ModalAddImages: FC<ModalAddImageProps> = ({
   iconProps,
   title,
   secondTitle,
@@ -78,49 +78,7 @@ const ModalAddImages: FC<ModalAddProps> = ({
 }) => {
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
-
-  // const { mutate: uploadFile } = usePostV2FileUploadMODELCOLLECTIONUUID({
-  //   onSuccess(data, variables) {
-  //     //@ts-ignore swagger issue
-  //     addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-  //   },
-  //   onError(err, variables: any) {
-  //     if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-  //       const file = variables.file;
-
-  //       addFileToValue({
-  //         collection_name: variables.pathParams.collection,
-  //         size: file?.size,
-  //         file_name: file?.name,
-  //         title: file?.name,
-  //         mime_type: file?.type,
-  //         is_cover: false,
-  //         is_public: true,
-  //         rawFile: file,
-  //         uploadState: {
-  //           isLoading: false,
-  //           isSuccess: false
-  //         }
-  //       });
-  //     }
-  //   }
-  // });
-
-  const [, { data: uploadedFile, create: uploadFile, isCreating: isUploading, createFailure: uploadFailure }] =
-    useUploadFile({ entity: model as any, collection, uuid: entityData.uuid });
-
-  useRequestComplete(isUploading, () => {
-    if (uploadFailure == null) {
-      if (uploadedFile == null) {
-        Log.error("Upload request complete with no error, but media is missing");
-      } else {
-        addFileToValue(mediaToUploadedFile(uploadedFile, variables.file, { isSuccess: true, isLoading: false }));
-      }
-    } else {
-      Log.error("uploadFailure", uploadFailure);
-      addFileToValue();
-    }
-  });
+  const uploadFile = useUploadFile({ pathParams: { entity: model, collection, uuid: entityData.uuid } });
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess(data) {
@@ -221,7 +179,6 @@ const ModalAddImages: FC<ModalAddProps> = ({
 
         let longitude = 0;
         let latitude = 0;
-
         try {
           const location = await exifr.gps(file);
 
@@ -230,11 +187,39 @@ const ModalAddImages: FC<ModalAddProps> = ({
             longitude = location.longitude;
           }
         } catch (e) {
-          Log.error(e);
+          Log.error("Error decoding EXIF data", e);
         }
+
         const formData = new FormData();
         formData.append("uploadFile", file);
-        uploadFile({ isPublic: true, lat: latitude, lng: longitude, formData }, true);
+        uploadFile(
+          { isPublic: true, lat: latitude, lng: longitude, formData },
+          {
+            isMultipart: true,
+            onSuccess: response => {
+              if (response.data?.attributes == null) {
+                Log.error("No media response from file upload", response);
+              } else {
+                addFileToValue(
+                  mediaToUploadedFile(response.data.attributes, file, { isSuccess: true, isLoading: false })
+                );
+              }
+            },
+            onError: error => {
+              Log.error("Error uploading file", error);
+              addFileToValue({
+                collectionName: collection,
+                size: file.size,
+                fileName: file.name,
+                mimeType: file.type,
+                isCover: false,
+                isPublic: true,
+                rawFile: file,
+                uploadState: { isLoading: false, isSuccess: false }
+              });
+            }
+          }
+        );
       }
     },
     [acceptedTypes, addFileToValue, collection, maxFileSize, setErrorMessage, t, uploadFile]

@@ -73,7 +73,7 @@ type UpdateBody<U extends UpdateData = UpdateData> = {
   };
 };
 type CreateData<Attributes = unknown> = { type: ResourceType; attributes: Attributes };
-type CreateAttributes<T> = T extends CreateBody<infer D> ? (D extends CreateData<infer A> ? A : never) : never;
+export type CreateAttributes<T> = T extends CreateBody<infer D> ? (D extends CreateData<infer A> ? A : never) : never;
 export type CreateBody<C extends CreateData = CreateData> = {
   body: {
     data: C;
@@ -450,18 +450,17 @@ export const v3Resource = <TResponse, TError, TVariables extends RequestVariable
                   });
                 }
 
-                const create = (attributes: CreateAttributes<TVariables>, isMultipart?: boolean) => {
+                const create = (attributes: CreateAttributes<TVariables>, isMultipart = false) => {
                   if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
 
-                  let headers: HeadersInit = {
+                  const headers: HeadersInit = {
                     "Content-Type": isMultipart ? "multipart/form-data" : "application/json"
                   };
 
                   if (isMultipart) {
-                    // @ts-ignore
-                    const { formData, ...restAttributes } = attributes;
+                    const { formData, ...restAttributes } = attributes as { formData: FormData };
                     formData.append("type", resource);
                     formData.append("data", JSON.stringify({ attributes: restAttributes }));
                     createEndpoint.fetch({ ...variables, body: formData }, headers as THeaders);
