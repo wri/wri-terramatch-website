@@ -1,18 +1,16 @@
 import { useT } from "@transifex/react";
-import exifr from "exifr";
 import _ from "lodash";
 import { useCallback, useEffect, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
-import {
-  useDeleteV2FilesUUID,
-  usePostV2FileUploadMODELCOLLECTIONUUID,
-  usePutV2FilesUUID
-} from "@/generated/apiComponents";
-import { UploadedFile } from "@/types/common";
+import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
+import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
+import { useDeleteV2FilesUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
+import { isTranslatableError } from "@/generated/v3/utils";
+import { v3EntityName } from "@/helpers/entity";
+import { EntityName, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
-import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
@@ -49,39 +47,8 @@ const RHFFileInput = ({
   const value = field.value as UploadedFile | UploadedFile[];
   const onChange = field.onChange;
   const [files, setFiles] = useState<Partial<UploadedFile>[]>(toArray(value));
-  const { mutate: upload } = usePostV2FileUploadMODELCOLLECTIONUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore swagger issue
-      addFileToValue({ ...data.data, rawFile: variables.file, uploadState: { isSuccess: true, isLoading: false } });
-    },
-    onError(err, variables: any) {
-      const file = variables.file;
-      let errorMessage = t("UPLOAD ERROR UNKNOWN: An unknown error occurred during upload. Please try again.");
-
-      if (err?.statusCode === 422 && Array.isArray(err?.errors)) {
-        const error = err?.errors[0];
-        const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
-        formHook?.setError(fileInputProps.name, formError);
-        errorMessage = formError.message;
-      } else if (err?.statusCode === 413 || err?.statusCode === -1) {
-        errorMessage = t("UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file.");
-        formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
-      }
-
-      addFileToValue({
-        collectionName: variables.pathParams.collection,
-        size: file?.size,
-        fileName: file?.name,
-        mimeType: file?.type,
-        rawFile: file,
-        uploadState: {
-          isLoading: false,
-          isSuccess: false,
-          error: errorMessage
-        }
-      });
-    }
-  });
+  const entity = v3EntityName(model as EntityName) as FileUploadEntity;
+  const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid } });
 
   const { mutate: update } = usePutV2FilesUUID();
 
@@ -174,29 +141,35 @@ const RHFFileInput = ({
         }
       });
 
-      const body = new FormData();
-      body.append("upload_file", file);
+      uploadFile(
+        await prepareFileForUpload(file),
+        fileUploadOptions(file, collection, addFileToValue, error => {
+          if (isTranslatableError(error)) {
+            const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
+            formHook?.setError(fileInputProps.name, formError);
+            return formError.message;
+          } else {
+            const errorMessage = t(
+              "UPLOAD ERROR: An error occurred during upload. Please try again or upload a smaller file."
+            );
+            formHook?.setError(fileInputProps.name, { type: "manual", message: errorMessage });
+            return errorMessage;
+          }
+        })
+      );
 
-      try {
-        const location = await exifr.gps(file);
-
-        if (location && !isNaN(location.latitude) && !isNaN(location.longitude)) {
-          body.append("lat", location.latitude.toString());
-          body.append("lng", location.longitude.toString());
-        }
-      } catch (e) {
-        Log.error("Failed to append geotagging information", e);
-      }
-
-      upload?.({
-        pathParams: { model, collection, uuid },
-        file: file,
-        //@ts-ignore swagger issue
-        body
-      });
       formHook?.clearErrors(fileInputProps.name);
     },
-    [addFileToValue, collection, fileInputProps.maxFileSize, fileInputProps.name, formHook, model, t, upload, uuid]
+    [
+      addFileToValue,
+      collection,
+      fileInputProps.label,
+      fileInputProps.maxFileSize,
+      fileInputProps.name,
+      formHook,
+      t,
+      uploadFile
+    ]
   );
 
   const handleFileUpdate = useCallback(

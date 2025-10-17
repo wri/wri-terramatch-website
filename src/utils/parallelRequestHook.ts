@@ -1,10 +1,13 @@
+import { useCallback } from "react";
+
 import { CreateAttributes } from "@/connections/util/apiConnectionFactory";
-import { ErrorWrapper, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import { ErrorPayload, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import { useStableProps } from "@/hooks/useStableProps";
 import { ResourceType } from "@/store/apiSlice";
 
-type RequestOptions<TResponse, TError, TVariables extends RequestVariables> = {
+export type RequestOptions<TResponse, TError extends ErrorPayload | undefined, TVariables extends RequestVariables> = {
   onSuccess?: (response: TResponse, attributes: CreateAttributes<TVariables>) => void;
-  onError?: (error: ErrorWrapper<TError>, attributes: CreateAttributes<TVariables>) => void;
+  onError?: (error: TError, attributes: CreateAttributes<TVariables>) => void;
   isMultipart?: boolean;
 };
 
@@ -16,31 +19,36 @@ type RequestOptions<TResponse, TError, TVariables extends RequestVariables> = {
  * to run in parallel (such as file upload).
  */
 export const parallelRequestHook =
-  <TResponse, TError, TVariables extends RequestVariables, THeaders extends {}>(
+  <TResponse, TError extends ErrorPayload | undefined, TVariables extends RequestVariables, THeaders extends {}>(
     resource: ResourceType,
     endpoint: V3ApiEndpoint<TResponse, TError, TVariables, THeaders>
   ) =>
-  (urlVariables: Omit<TVariables, "body">) =>
-  (attributes: CreateAttributes<TVariables>, options: RequestOptions<TResponse, TError, TVariables> = {}) => {
-    const headers: HeadersInit = {
-      "Content-Type": options.isMultipart ? "multipart/form-data" : "application/json"
-    };
+  (urlVariables: Omit<TVariables, "body">) => {
+    const stableVariables = useStableProps(urlVariables);
+    return useCallback(
+      (attributes: CreateAttributes<TVariables>, options: RequestOptions<TResponse, TError, TVariables> = {}) => {
+        const headers: HeadersInit = {
+          "Content-Type": options.isMultipart ? "multipart/form-data" : "application/json"
+        };
 
-    let variables: TVariables;
-    if (options.isMultipart) {
-      const { formData, ...restAttributes } = attributes as { formData: FormData };
-      formData.append("type", resource);
-      formData.append("data", JSON.stringify({ attributes: restAttributes }));
-      variables = { ...urlVariables, body: formData } as unknown as TVariables;
-    } else {
-      variables = { ...urlVariables, body: { data: { type: resource, attributes } } } as unknown as TVariables;
-    }
-    endpoint.fetchParallel(variables, headers as THeaders).then(
-      response => {
-        options.onSuccess?.(response, attributes);
+        let variables: TVariables;
+        if (options.isMultipart) {
+          const { formData, ...restAttributes } = attributes as { formData: FormData };
+          formData.append("type", resource);
+          formData.append("data", JSON.stringify({ attributes: restAttributes }));
+          variables = { ...stableVariables, body: formData } as unknown as TVariables;
+        } else {
+          variables = { ...stableVariables, body: { data: { type: resource, attributes } } } as unknown as TVariables;
+        }
+        endpoint.fetchParallel(variables, headers as THeaders).then(
+          response => {
+            options.onSuccess?.(response, attributes);
+          },
+          error => {
+            options.onError?.(error as TError, attributes);
+          }
+        );
       },
-      error => {
-        options.onError?.(error as ErrorWrapper<TError>, attributes);
-      }
+      [stableVariables]
     );
   };

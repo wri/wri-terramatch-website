@@ -22,7 +22,14 @@ import { DelayedJobDto } from "./jobService/jobServiceSchemas";
 import JobsSlice from "@/store/jobsSlice";
 import { resolveUrl as resolveV3Url } from "./utils";
 
-export type ErrorWrapper<TError> = TError | { statusCode: -1; message: string };
+export type ErrorPayload = { statusCode: number; message: string };
+export type ErrorWrapper<TError extends undefined | { payload: ErrorPayload }> =
+  | (TError extends undefined ? undefined : NonNullable<TError>["payload"])
+  | { statusCode: -1; message: string };
+
+export type TranslatableError = ErrorPayload & { code: string; variables?: Dictionary<any> };
+export const isTranslatableError = (payload: ErrorPayload): payload is TranslatableError =>
+  (payload as TranslatableError).code != null;
 
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
@@ -97,7 +104,7 @@ export type RequestVariables<
 
 export class V3ApiEndpoint<
   TResponse = unknown,
-  TError = unknown,
+  TError extends ErrorPayload | undefined = ErrorPayload,
   TVariables extends RequestVariables = RequestVariables,
   THeaders extends {} = {}
 > {
@@ -201,7 +208,7 @@ export class V3ApiEndpoint<
       delete requestHeaders["Content-Type"];
     }
 
-    return await dispatchRequest<TResponse, TError>(fullUrl, {
+    return await dispatchRequest<TResponse>(fullUrl, {
       method: this.method,
       body:
         variables.body == null
@@ -233,7 +240,7 @@ export const logout = () => {
   ApiSlice.clearApiCache();
 };
 
-async function dispatchRequest<TData, TError>(url: string, requestInit: RequestInit) {
+async function dispatchRequest<TData>(url: string, requestInit: RequestInit) {
   const actionPayload = { url, method: requestInit.method as Method };
   ApiSlice.fetchStarting(actionPayload);
 

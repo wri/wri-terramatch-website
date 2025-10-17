@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import exifr from "exifr";
 import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -12,15 +11,16 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useUploadFile } from "@/connections/Media";
+import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { UploadFilePathParams } from "@/generated/v3/entityService/entityServiceComponents";
-import { FileType, mediaToUploadedFile, UploadedFile } from "@/types/common";
-import Log from "@/utils/log";
+import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
 import { ModalAddBase } from "./ModalsBases";
+
+export type FileUploadEntity = UploadFilePathParams["entity"];
 
 interface ModalAddImageProps extends ModalProps {
   primaryButtonText?: string;
@@ -41,7 +41,7 @@ interface ModalAddImageProps extends ModalProps {
   btnDownloadProps?: IButtonProps;
   setErrorMessage?: (message: string) => void;
   previewAsTable?: boolean;
-  model: UploadFilePathParams["entity"];
+  entity: FileUploadEntity;
   collection: string;
   entityData: any;
 }
@@ -71,14 +71,14 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
   btnDownloadProps,
   setErrorMessage,
   previewAsTable,
-  model,
+  entity,
   collection,
   entityData,
   ...rest
 }) => {
   const t = useT();
   const [files, setFiles] = useState<UploadedFile[]>([]);
-  const uploadFile = useUploadFile({ pathParams: { entity: model, collection, uuid: entityData.uuid } });
+  const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: entityData.uuid } });
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess(data) {
@@ -177,49 +177,7 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
           }
         });
 
-        let longitude = 0;
-        let latitude = 0;
-        try {
-          const location = await exifr.gps(file);
-
-          if (location) {
-            latitude = location.latitude;
-            longitude = location.longitude;
-          }
-        } catch (e) {
-          Log.error("Error decoding EXIF data", e);
-        }
-
-        const formData = new FormData();
-        formData.append("uploadFile", file);
-        uploadFile(
-          { isPublic: true, lat: latitude, lng: longitude, formData },
-          {
-            isMultipart: true,
-            onSuccess: response => {
-              if (response.data?.attributes == null) {
-                Log.error("No media response from file upload", response);
-              } else {
-                addFileToValue(
-                  mediaToUploadedFile(response.data.attributes, file, { isSuccess: true, isLoading: false })
-                );
-              }
-            },
-            onError: error => {
-              Log.error("Error uploading file", error);
-              addFileToValue({
-                collectionName: collection,
-                size: file.size,
-                fileName: file.name,
-                mimeType: file.type,
-                isCover: false,
-                isPublic: true,
-                rawFile: file,
-                uploadState: { isLoading: false, isSuccess: false }
-              });
-            }
-          }
-        );
+        uploadFile(await prepareFileForUpload(file), fileUploadOptions(file, collection, addFileToValue));
       }
     },
     [acceptedTypes, addFileToValue, collection, maxFileSize, setErrorMessage, t, uploadFile]

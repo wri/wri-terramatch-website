@@ -2,7 +2,14 @@ import { assign, Dictionary, isEmpty, merge } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
-import { FetchParams, getStableQuery, RequestVariables, resolveUrl, V3ApiEndpoint } from "@/generated/v3/utils";
+import {
+  ErrorPayload,
+  FetchParams,
+  getStableQuery,
+  RequestVariables,
+  resolveUrl,
+  V3ApiEndpoint
+} from "@/generated/v3/utils";
 import ApiSlice, {
   ApiDataStore,
   ApiFilteredIndexCache,
@@ -270,7 +277,9 @@ const withDebugLogging = <V extends QueryVariables, S, P extends Record<string, 
   selectorCacheKeyFactory
 });
 
-const requireEndpoint = <R, E, V extends RequestVariables, H extends {}>(endpoint?: V3ApiEndpoint<R, E, V, H>) => {
+const requireEndpoint = <R, E extends ErrorPayload | undefined, V extends RequestVariables, H extends {}>(
+  endpoint?: V3ApiEndpoint<R, E, V, H>
+) => {
   if (endpoint == null) throw new ApiConnectionFactoryError("Endpoint not defined for this factory");
   return endpoint;
 };
@@ -279,7 +288,12 @@ const requireEndpoint = <R, E, V extends RequestVariables, H extends {}>(endpoin
  * Begins the ApiConnectionFactory chain for a given resource type and V3ApiEndpoint. For most of the
  * connection type functions provided off of v3Endpoint, the `endpoint` parameter is required.
  */
-export const v3Resource = <TResponse, TError, TVariables extends RequestVariables, THeaders extends {}>(
+export const v3Resource = <
+  TResponse,
+  TError extends ErrorPayload | undefined,
+  TVariables extends RequestVariables,
+  THeaders extends {}
+>(
   resource: ResourceType,
   endpoint?: V3ApiEndpoint<TResponse, TError, TVariables, THeaders>
 ) => ({
@@ -637,7 +651,7 @@ class ApiConnectionFactory<
    * of body data. In that case, both must be provided. See Entity.ts for an example.
    */
   public update<Attributes extends UpdateAttributes<UpdateVariables>, UpdateVariables extends Variables>(
-    endpoint: V3ApiEndpoint<unknown, unknown, UpdateVariables>
+    endpoint: V3ApiEndpoint<unknown, ErrorPayload, UpdateVariables>
   ) {
     return this.chain<UpdateConnection<Attributes>, IdProp & Props>({
       selectors: [
