@@ -80,6 +80,7 @@ export type EntityServiceApiResources = {
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
+  srpReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
