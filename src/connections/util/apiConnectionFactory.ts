@@ -464,26 +464,12 @@ export const v3Resource = <
                   });
                 }
 
-                const create = (attributes: CreateAttributes<TVariables>, isMultipart = false) => {
+                const create = (attributes: CreateAttributes<TVariables>) => {
                   if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
 
-                  const headers: HeadersInit = {
-                    "Content-Type": isMultipart ? "multipart/form-data" : "application/json"
-                  };
-
-                  if (isMultipart) {
-                    const { formData, ...restAttributes } = attributes as { formData: FormData };
-                    formData.append("type", resource);
-                    formData.append("data", JSON.stringify({ attributes: restAttributes }));
-                    createEndpoint.fetch({ ...variables, body: formData }, headers as THeaders);
-                  } else {
-                    createEndpoint.fetch(
-                      { ...variables, body: { data: { type: resource, attributes } } },
-                      headers as THeaders
-                    );
-                  }
+                  createEndpoint.fetch({ ...variables, body: { data: { type: resource, attributes } } });
                 };
 
                 return {

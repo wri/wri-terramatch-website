@@ -49,7 +49,7 @@ const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: 
           uploadPromises.push(
             upload(payloadOption.image.rawFile, {
               collection: "image",
-              model: "form-question-option",
+              entity: "formQuestionOptions",
               uuid: option.id
             })
           );
@@ -74,14 +74,12 @@ export const formDataProvider: FormDataProvider = {
         body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData))
       });
 
-      //@ts-expect-error
+      // @ts-expect-error
       await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
+      // @ts-expect-error
+      const uuid = response.data.uuid;
 
-      await handleUploads(params, uploadKeys, {
-        model: "form",
-        //@ts-expect-error
-        uuid: response.data.uuid
-      });
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid });
 
       //@ts-expect-error
       return { data: normalizeFormObject(response.data) } as CreateResult;
@@ -106,11 +104,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-expect-error
       await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
 
-      await handleUploads(params, uploadKeys, {
-        model: "form",
-        //@ts-ignore
-        uuid: params.id
-      });
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: String(params.id) });
 
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as UpdateResult;

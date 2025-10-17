@@ -102,6 +102,10 @@ export type RequestVariables<
   TBody extends {} | FormData | undefined | null = {}
 > = UrlVariables<TQueryParams, TPathParams> & { body?: TBody };
 
+type RequestBody = {
+  data?: { type: ResourceType; attributes?: Dictionary<unknown> };
+};
+
 export class V3ApiEndpoint<
   TResponse = unknown,
   TError extends ErrorPayload | undefined = ErrorPayload,
@@ -127,7 +131,6 @@ export class V3ApiEndpoint<
    *  - This method ignores the pending store when dispatching the request. This means that the
    *    selectors provided on V3ApiEndpoint are not useful for these requests because if multiple
    *    requests are in flight at once, they will overwrite each other's state in the pending store
-   *  - This should _only_ be called via parallelRequestHook - it is not meant to be called directly
    *  - This method will throw an error without executing the request if it is used with an endpoint
    *    that uses a method other than POST
    *  - Most endpoints should be using the fetch() method above via the apiConnectionFactory. This
@@ -184,10 +187,22 @@ export class V3ApiEndpoint<
 
   private async executeRequest(variables: TVariables, headers?: THeaders) {
     const fullUrl = resolveUrl(this.url, variables);
-    const requestHeaders: HeadersInit = {
-      "Content-Type": "application/json",
-      ...headers
-    };
+
+    // If the attributes of the request body includes a FormData member, stuff the rest of the attributes
+    // into the formdata and replace the body with the form data instance.
+    if (variables.body != null && (variables.body as RequestBody).data?.attributes?.formData instanceof FormData) {
+      const { type, attributes } = (variables.body as RequestBody).data!;
+      const { formData, ...otherAttributes } = attributes as { formData: FormData };
+      formData.append("type", type);
+      formData.append("data", JSON.stringify(otherAttributes));
+      variables.body = formData;
+    }
+
+    const requestHeaders: HeadersInit = { ...headers };
+    // As the fetch API is being used, when multipart/form-data is specified the Content-Type header
+    // must be left off so that the browser can set the correct boundary.
+    // https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
+    if (!(variables.body instanceof FormData)) requestHeaders["Content-Type"] = "application/json";
 
     // Note: there's a race condition that I haven't figured out yet: the middleware in apiSlice that
     // sets the access token in localStorage is firing _after_ the action has been merged into the
@@ -200,10 +215,6 @@ export class V3ApiEndpoint<
       requestHeaders.Authorization = `Bearer ${token}`;
     }
 
-    // As the fetch API is being used, when multipart/form-data is specified
-    // the Content-Type header must be deleted so that the browser can set
-    // the correct boundary.
-    // https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects#sending_files_using_a_formdata_object
     if (requestHeaders["Content-Type"].toLowerCase().includes("multipart/form-data")) {
       delete requestHeaders["Content-Type"];
     }

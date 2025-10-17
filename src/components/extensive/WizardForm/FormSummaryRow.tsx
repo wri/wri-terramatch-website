@@ -247,7 +247,7 @@ export const getFormEntries = (
           delete columnMaps.currentRatioData;
         }
 
-        const formatted = formatFinancialData(entries, years, "", "");
+        const formatted = formatFinancialData(entries, years, "");
         const sections = [
           { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
           { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },

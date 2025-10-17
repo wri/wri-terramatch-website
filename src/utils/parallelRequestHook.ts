@@ -9,7 +9,6 @@ import { ResourceType } from "@/store/apiSlice";
 export type RequestOptions<TResponse, TError extends ErrorPayload | undefined, TVariables extends RequestVariables> = {
   onSuccess?: (response: TResponse, attributes: CreateAttributes<TVariables>) => void;
   onError?: (error: TError, attributes: CreateAttributes<TVariables>) => void;
-  isMultipart?: boolean;
   urlVariablesOverride?: {
     pathParams?: Partial<TVariables["pathParams"]>;
     queryParams?: Partial<TVariables["queryParams"]>;
@@ -32,23 +31,11 @@ export const parallelRequestHook =
     const stableVariables = useStableProps(urlVariables);
     return useCallback(
       (attributes: CreateAttributes<TVariables>, options: RequestOptions<TResponse, TError, TVariables> = {}) => {
-        const headers: HeadersInit = {
-          "Content-Type": options.isMultipart ? "multipart/form-data" : "application/json"
+        const variables: TVariables = {
+          ...defaultsDeep(options.urlVariablesOverride ?? {}, stableVariables),
+          body: { data: { type: resource, attributes } }
         };
-
-        let variables: TVariables;
-        if (options.isMultipart) {
-          const { formData, ...restAttributes } = attributes as { formData: FormData };
-          formData.append("type", resource);
-          formData.append("data", JSON.stringify({ attributes: restAttributes }));
-          variables = { ...stableVariables, ...options.urlVariablesOverride, body: formData } as unknown as TVariables;
-        } else {
-          variables = {
-            ...defaultsDeep(options.urlVariablesOverride ?? {}, stableVariables),
-            body: { data: { type: resource, attributes } }
-          } as unknown as TVariables;
-        }
-        endpoint.fetchParallel(variables, headers as THeaders).then(
+        endpoint.fetchParallel(variables).then(
           response => {
             options.onSuccess?.(response, attributes);
           },

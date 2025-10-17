@@ -12,18 +12,17 @@ import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
 
 export const prepareFileForUpload = async (file: File, isPublic = true): Promise<ExtraMediaRequest> => {
+  let location: Awaited<ReturnType<typeof exifr.gps>> | undefined = undefined;
   try {
-    const location = await exifr.gps(file);
-    const { latitude, longitude } = location ?? { latitude: 0, longitude: 0 };
-
-    const formData = new FormData();
-    formData.append("uploadFile", file);
-
-    return { isPublic, lat: latitude, lng: longitude, formData };
+    location = await exifr.gps(file);
   } catch (e) {
-    Log.error("Error decoding EXIF data", e);
-    throw e;
+    // NOOP
   }
+
+  const formData = new FormData();
+  formData.append("uploadFile", file);
+  const { latitude, longitude } = location ?? { latitude: null, longitude: null };
+  return { isPublic, lat: latitude, lng: longitude, formData };
 };
 
 export const fileUploadOptions = (
@@ -39,7 +38,6 @@ export const fileUploadOptions = (
     getErrorMessage?: (error: UploadFileError) => string | undefined;
   } = {}
 ): RequestOptions<UploadFileResponse, UploadFileError, UploadFileVariables> => ({
-  isMultipart: true,
   onSuccess: response => {
     if (response.data?.attributes == null) {
       Log.error("No media response from file upload", response);
