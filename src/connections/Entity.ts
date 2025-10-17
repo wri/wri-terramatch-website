@@ -287,8 +287,6 @@ export const useFullEntity = (entity: SupportedEntity, id: string) => {
       return useFullFinancialReport({ id });
     case "disturbanceReports":
       return useFullDisturbanceReport({ id });
-    case "srpReports":
-      return useFullProjectReport({ id });
     default:
       throw new Error(`Unsupported entity type [${entity}]`);
   }
