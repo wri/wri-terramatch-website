@@ -8951,6 +8951,7 @@ export type SiteReportRead = {
     has_monitoring_data?: boolean;
   };
   status?: string;
+  planting_status?: string;
   readable_status?: string;
   approved_at?: string;
   created_by?: {
@@ -9893,6 +9894,7 @@ export type ProjectReportRead = {
   title?: string;
   framework_key?: string;
   status?: string;
+  planting_status?: string;
   readable_status?: string;
   workdays_paid?: number;
   workdays_volunteer?: number;

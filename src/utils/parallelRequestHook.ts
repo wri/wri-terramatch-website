@@ -1,3 +1,4 @@
+import { defaultsDeep } from "lodash";
 import { useCallback } from "react";
 
 import { CreateAttributes } from "@/connections/util/apiConnectionFactory";
@@ -9,6 +10,10 @@ export type RequestOptions<TResponse, TError extends ErrorPayload | undefined, T
   onSuccess?: (response: TResponse, attributes: CreateAttributes<TVariables>) => void;
   onError?: (error: TError, attributes: CreateAttributes<TVariables>) => void;
   isMultipart?: boolean;
+  urlVariablesOverride?: {
+    pathParams?: Partial<TVariables["pathParams"]>;
+    queryParams?: Partial<TVariables["queryParams"]>;
+  };
 };
 
 /**
@@ -36,9 +41,12 @@ export const parallelRequestHook =
           const { formData, ...restAttributes } = attributes as { formData: FormData };
           formData.append("type", resource);
           formData.append("data", JSON.stringify({ attributes: restAttributes }));
-          variables = { ...stableVariables, body: formData } as unknown as TVariables;
+          variables = { ...stableVariables, ...options.urlVariablesOverride, body: formData } as unknown as TVariables;
         } else {
-          variables = { ...stableVariables, body: { data: { type: resource, attributes } } } as unknown as TVariables;
+          variables = {
+            ...defaultsDeep(options.urlVariablesOverride ?? {}, stableVariables),
+            body: { data: { type: resource, attributes } }
+          } as unknown as TVariables;
         }
         endpoint.fetchParallel(variables, headers as THeaders).then(
           response => {

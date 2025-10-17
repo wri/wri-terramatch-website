@@ -29,29 +29,40 @@ export const prepareFileForUpload = async (file: File, isPublic = true): Promise
 export const fileUploadOptions = (
   file: File,
   collection: string,
-  addFileToValue: (file: Partial<UploadedFile>) => void,
-  getErrorMessage?: (error: UploadFileError) => string
+  {
+    onSuccess,
+    onError,
+    getErrorMessage
+  }: {
+    onSuccess?: (successFile: Partial<UploadedFile>) => void;
+    onError?: (errorFile: Partial<UploadedFile>, errorMessage: string) => void;
+    getErrorMessage?: (error: UploadFileError) => string | undefined;
+  } = {}
 ): RequestOptions<UploadFileResponse, UploadFileError, UploadFileVariables> => ({
   isMultipart: true,
   onSuccess: response => {
     if (response.data?.attributes == null) {
       Log.error("No media response from file upload", response);
     } else {
-      addFileToValue(mediaToUploadedFile(response.data.attributes, file, { isSuccess: true, isLoading: false }));
+      onSuccess?.(mediaToUploadedFile(response.data.attributes, file, { isSuccess: true, isLoading: false }));
     }
   },
   onError: error => {
     Log.error("Error uploading file", error);
-    addFileToValue({
-      collectionName: collection,
-      size: file.size,
-      fileName: file.name,
-      mimeType: file.type,
-      isCover: false,
-      isPublic: true,
-      rawFile: file,
-      uploadState: { isLoading: false, isSuccess: false, error: getErrorMessage?.(error) ?? error.message }
-    });
+    const message = getErrorMessage?.(error) ?? error.message;
+    onError?.(
+      {
+        collectionName: collection,
+        size: file.size,
+        fileName: file.name,
+        mimeType: file.type,
+        isCover: false,
+        isPublic: true,
+        rawFile: file,
+        uploadState: { isLoading: false, isSuccess: false, error: message }
+      },
+      message
+    );
   }
 });
 

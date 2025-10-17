@@ -14,11 +14,11 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import {
-  currentRatioColumnsMap,
-  documentationColumnsMap,
+  CURRENT_RATIO_COLUMNS,
+  DOCUMENTATION_COLUMNS,
   formatFinancialData,
-  nonProfitAnalysisColumnsMap,
-  profitAnalysisColumnsMap
+  NON_PROFILE_ANALYSIS_COLUMNS,
+  PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -219,10 +219,10 @@ export const getFormEntries = (
         const years = f.fieldProps.years;
         const collections = f.fieldProps.model;
         const columnMaps: Record<string, string[]> = {
-          profitAnalysisData: profitAnalysisColumnsMap,
-          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
-          currentRatioData: currentRatioColumnsMap,
-          documentationData: documentationColumnsMap
+          profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
+          nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
+          currentRatioData: CURRENT_RATIO_COLUMNS,
+          documentationData: DOCUMENTATION_COLUMNS
         };
 
         const profitCollections = ["revenue", "expenses", "profit"];

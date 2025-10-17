@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import React, { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import React, { FC, ReactNode, useCallback, useEffect } from "react";
 import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
@@ -12,8 +12,9 @@ import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { UploadFilePathParams } from "@/generated/v3/entityService/entityServiceComponents";
+import { useFiles } from "@/hooks/useFiles";
 import { FileType, UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -77,13 +78,12 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
   ...rest
 }) => {
   const t = useT();
-  const [files, setFiles] = useState<UploadedFile[]>([]);
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: entityData.uuid } });
+  const { files, addFile, removeFile, updateFile } = useFiles(allowMultiple ?? false);
 
   const { mutate: deleteFile } = useDeleteV2FilesUUID({
     onSuccess(data) {
-      //@ts-ignore swagger issue
-      removeFileFromValue(data.data);
+      removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
     },
     onError(err) {
       setErrorMessage?.(`Error deleting file: ${err}`);
@@ -96,44 +96,10 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
     }
   }, [files, setFile]);
 
-  const addFileToValue = useCallback(
-    (file: Partial<UploadedFile>) => {
-      setFiles(value => {
-        if (Array.isArray(value) && allowMultiple) {
-          const tmp = [...value];
-          const index = tmp.findIndex(
-            item =>
-              (file.uuid != null && file.uuid === item.uuid) || (file.rawFile != null && file.rawFile === item.rawFile)
-          );
-
-          if (index === -1) {
-            return [...tmp, file as UploadedFile];
-          } else {
-            tmp.splice(index, 1, file as UploadedFile);
-            return tmp;
-          }
-        } else {
-          return [file as UploadedFile];
-        }
-      });
-    },
-    [allowMultiple]
-  );
-
-  const removeFileFromValue = useCallback((file: Partial<UploadedFile>) => {
-    setFiles(value => {
-      if (Array.isArray(value)) {
-        return value.filter(v => v.uuid !== file.uuid);
-      } else {
-        return [];
-      }
-    });
-  }, []);
-
   const handleDeleteFile = useCallback(
     (file: Partial<UploadedFile>) => {
       if (file.uuid) {
-        addFileToValue({
+        addFile({
           ...file,
           uploadState: {
             isLoading: false,
@@ -143,10 +109,10 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
         });
         deleteFile({ pathParams: { uuid: file.uuid } });
       } else {
-        removeFileFromValue(file);
+        removeFile(file);
       }
     },
-    [addFileToValue, deleteFile, removeFileFromValue]
+    [addFile, deleteFile, removeFile]
   );
 
   const handleFileChange = useCallback(
@@ -166,7 +132,7 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
           continue;
         }
 
-        addFileToValue({
+        addFile({
           collectionName: collection,
           size: file.size,
           fileName: file.name,
@@ -177,10 +143,13 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
           }
         });
 
-        uploadFile(await prepareFileForUpload(file), fileUploadOptions(file, collection, addFileToValue));
+        uploadFile(
+          await prepareFileForUpload(file),
+          fileUploadOptions(file, collection, { onSuccess: addFile, onError: addFile })
+        );
       }
     },
-    [acceptedTypes, addFileToValue, collection, maxFileSize, setErrorMessage, t, uploadFile]
+    [acceptedTypes, addFile, collection, maxFileSize, setErrorMessage, t, uploadFile]
   );
 
   const deleteAllFiles = useCallback(() => {
@@ -189,17 +158,12 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
         deleteFile({ pathParams: { uuid: file.uuid } });
       }
     });
-    setFiles([]);
   }, [files, deleteFile]);
 
   const handleClose = useCallback(() => {
     deleteAllFiles();
     onClose?.();
   }, [deleteAllFiles, onClose]);
-
-  const updateFileInValue = useCallback((updatedFile: Partial<UploadedFile>) => {
-    setFiles(prevFiles => prevFiles.map(file => (file.uuid === updatedFile.uuid ? { ...file, ...updatedFile } : file)));
-  }, []);
 
   return (
     <ModalAddBase {...rest}>
@@ -265,7 +229,7 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
           onChange={handleFileChange}
           files={files}
           allowMultiple={allowMultiple}
-          updateFile={updateFileInValue}
+          updateFile={updateFile}
           entityData={entityData}
         />
         {children}

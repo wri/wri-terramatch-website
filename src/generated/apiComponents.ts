@@ -8005,12 +8005,16 @@ export type DeleteV2FilesUUIDPathParams = {
 
 export type DeleteV2FilesUUIDError = Fetcher.ErrorWrapper<undefined>;
 
+export type DeleteV2FilesUUIDResponse = {
+  uuid?: string;
+};
+
 export type DeleteV2FilesUUIDVariables = {
   pathParams: DeleteV2FilesUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchDeleteV2FilesUUID = (variables: DeleteV2FilesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2FilesUUIDError, undefined, {}, {}, DeleteV2FilesUUIDPathParams>({
+  apiFetch<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, undefined, {}, {}, DeleteV2FilesUUIDPathParams>({
     url: "/v2/files/{uuid}",
     method: "delete",
     ...variables,
@@ -8019,12 +8023,12 @@ export const fetchDeleteV2FilesUUID = (variables: DeleteV2FilesUUIDVariables, si
 
 export const useDeleteV2FilesUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>,
+    reactQuery.UseMutationOptions<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
+  return reactQuery.useMutation<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
     (variables: DeleteV2FilesUUIDVariables) => fetchDeleteV2FilesUUID({ ...fetcherOptions, ...variables }),
     options
   );
