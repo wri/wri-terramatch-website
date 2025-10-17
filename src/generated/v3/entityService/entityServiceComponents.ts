@@ -1692,7 +1692,8 @@ export type EntityGetPathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
