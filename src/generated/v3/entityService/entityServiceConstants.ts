@@ -53,6 +53,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseries",
   "financialReports",
   "disturbanceReports",
+  "srpReports",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -109,7 +110,8 @@ export const SupportedEntities = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports"
+    "disturbanceReports",
+    "srpReports"
   ] as const
 } as const;
 
