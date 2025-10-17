@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -43,22 +42,20 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
 
   return (
     <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
-      <If condition={socioEconomicReport?.status === "started"}>
-        <Then>
-          <Button as={Link} href={`/entity/project-reports/edit/${socioEconomicReport?.uuid}`}>
-            {t("Continue Report")}
+      {socioEconomicReport?.status === "started" && (
+        <Button as={Link} href={`/entity/project-reports/edit/${socioEconomicReport?.uuid}`}>
+          {t("Continue Report")}
+        </Button>
+      )}
+      {socioEconomicReport?.status !== "started" && (
+        <div className="flex gap-4">
+          <Button variant="secondary" onClick={handleExport}>
+            {t("Export")}
+            <InlineLoader loading={exportLoader} />
           </Button>
-        </Then>
-        <Else>
-          <div className="flex gap-4">
-            <Button variant="secondary" onClick={handleExport}>
-              {t("Export")}
-              <InlineLoader loading={exportLoader} />
-            </Button>
-            <Button onClick={handleEdit}>{t("Edit")}</Button>
-          </div>
-        </Else>
-      </If>
+          <Button onClick={handleEdit}>{t("Edit")}</Button>
+        </div>
+      )}
     </PageHeader>
   );
 };
