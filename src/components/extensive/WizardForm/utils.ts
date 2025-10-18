@@ -183,7 +183,7 @@ export const getFormattedAnswer = (field: FormField, values: any): string | unde
   if (Array.isArray(answer) && field.type === FieldType.FileUpload) {
     return (answer as UploadedFile[])
       .filter(file => !!file)
-      ?.map(file => `<a href="${file.url}" target="_blank">${file.file_name}</a>`)
+      ?.map(file => `<a href="${file.url}" target="_blank">${file.fileName}</a>`)
       .join(", ");
   } else if (Array.isArray(answer)) {
     return answer.length > 0 ? answer.join(", ") : undefined;
@@ -230,7 +230,7 @@ const appendAnswersAsCSVRow = (csv: CSVGenerator, field: FormField, values: any)
         csv.pushRow([field.label, "FileName", "File Url"]);
 
         value.forEach(v => {
-          csv.pushRow(["", v?.title || v?.file_name || "", v.url]);
+          csv.pushRow(["", v.fileName ?? "", v.url ?? ""]);
         });
       }
       break;

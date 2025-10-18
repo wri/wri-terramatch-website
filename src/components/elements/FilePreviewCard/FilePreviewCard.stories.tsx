@@ -14,14 +14,13 @@ export const Default: Story = {
   args: {
     file: {
       url: "https://s3-eu-west-1.amazonaws.com/wri-restoration-marketplace-api-test/8V/Ds/8VDszG5DDB6flK1mYgtKqtWySlhXVCjpWEdnpfbOd0WmbgpRYyoWQtFjlre31Ojl.jpg",
-      file_name: "File Name",
-      mime_type: "image/png",
+      fileName: "File Name",
+      mimeType: "image/png",
       uuid: "aosidjoa8asdoiajodiajso",
-      collection_name: "",
-      created_at: "",
+      collectionName: "",
+      createdAt: "",
       size: 234234,
-      title: "file title",
-      is_public: true
+      isPublic: true
     },
     accessLevel: "public"
   }

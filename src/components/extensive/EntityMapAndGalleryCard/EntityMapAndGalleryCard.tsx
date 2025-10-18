@@ -25,7 +25,7 @@ import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
 
-import ModalAddImages from "../Modal/ModalAddImages";
+import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
 
 export interface EntityMapAndGalleryCardProps {
@@ -180,7 +180,7 @@ const EntityMapAndGalleryCard = ({
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        model={modelName}
+        entity={modelName as FileUploadEntity}
         collection="media"
         entityData={entityData}
         setErrorMessage={message => {

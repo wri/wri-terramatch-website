@@ -415,6 +415,36 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type FormData = {};
+
+export type ExtraMediaRequest = {
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+  /**
+   * The form data of the media
+   */
+  formData: FormData;
+};
+
+export type ExtraMediaRequestData = {
+  type: "media";
+  attributes: ExtraMediaRequest;
+};
+
+export type ExtraMediaRequestBody = {
+  data: ExtraMediaRequestData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row

@@ -96,7 +96,7 @@ const VersionInformation = ({
   }, [files, saveFlags]);
 
   const getFileType = (file: UploadedFile) => {
-    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
     return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
 

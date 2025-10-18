@@ -1,15 +1,13 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { ChangeEvent, Fragment, ReactNode, useId, useMemo, useRef } from "react";
+import { ChangeEvent, FC, Fragment, ReactNode, useCallback, useId, useMemo, useRef } from "react";
 import { useDropzone } from "react-dropzone";
 import { UseFormReturn } from "react-hook-form";
-import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
-import { APIError } from "@/generated/apiFetcher";
 import { FileType, UploadedFile } from "@/types/common";
 
 import Text from "../../Text/Text";
@@ -38,21 +36,12 @@ export type FileInputProps = InputWrapperProps & {
   classNameTextOr?: string;
 };
 
-export interface FileStatus {
-  rawFile?: File;
-
-  isLoading?: boolean;
-  isSuccess?: boolean;
-  isError?: boolean;
-  error?: APIError;
-}
-
 /**
  * Notice: Please use RHFFileInput with React Hook Form
  * @param props FileInputProps
  * @returns FileInput component
  */
-const FileInput = (props: FileInputProps) => {
+const FileInput: FC<FileInputProps> = props => {
   const id = useId();
   const t = useT();
 
@@ -90,22 +79,26 @@ const FileInput = (props: FileInputProps) => {
     else return t("Upload File");
   }, [t, accept, props.maxFileSize]);
 
+  const { onChange } = props;
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (files: File[]) => {
-      props.onChange?.(files);
+      onChange?.(files);
     }
   });
 
-  const onSelectFile = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files;
+  const onSelectFile = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files;
 
-    if (file) {
-      props.onChange?.(Array.from(file));
-    }
-  };
+      if (file) {
+        onChange?.(Array.from(file));
+      }
+    },
+    [onChange]
+  );
 
   return (
-    <Fragment>
+    <>
       <InputWrapper
         inputId={id}
         label={props.label}
@@ -132,76 +125,74 @@ const FileInput = (props: FileInputProps) => {
             multiple={props.allowMultiple}
             accept={accept}
           />
-          <When condition={!variant.snapshotPanel}>
+          {variant.snapshotPanel ? (
+            <>
+              <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
+              <div className="flex flex-col">
+                <Text variant="text-12-bold" className="text-center text-primary">
+                  {t("Click to upload")}
+                </Text>
+                <Text variant="text-12-light" className={classNames("text-center", props.classNameTextOr)}>
+                  {t("or")}
+                </Text>
+                {typeof props.descriptionInput === "string" ? (
+                  <Text variant="text-12-light" className="max-w-[210px] text-center">
+                    {props.descriptionInput}
+                  </Text>
+                ) : (
+                  props.descriptionInput
+                )}
+              </div>
+            </>
+          ) : (
             <div className="m-auto flex w-fit items-center justify-center gap-3">
               <FileCardContent
                 title={labelText}
                 subtitle={t("Drag and drop or {browse}", {
-                  browse: `<span className="underline text-primary">${t("browse your device")}</span>`
+                  browse: `<span class="underline text-primary">${t("browse your device")}</span>`
                 })}
                 thumbnailClassName="fill-primary"
                 thumbnailContainerClassName="bg-primary-100"
               />
             </div>
-          </When>
-          <When condition={variant.snapshotPanel}>
-            <Icon name={IconNames.UPLOAD_CLOUD} className="mb-4 h-5 w-5" />
-            <div className="flex flex-col">
-              <Text variant="text-12-bold" className="text-center text-primary">
-                {t("Click to upload")}
-              </Text>
-              <Text variant="text-12-light" className={classNames("text-center", props.classNameTextOr)}>
-                {t("or")}
-              </Text>
-              <When condition={props.descriptionInput === "string"}>
-                <Text variant="text-12-light" className="max-w-[210px] text-center">
-                  {t(props.descriptionInput)}
-                </Text>
-              </When>
-              <When condition={props.descriptionInput !== "string"}>{props.descriptionInput}</When>
-            </div>
-          </When>
+          )}
         </div>
       </InputWrapper>
-      <When condition={variant.listPreviewDescription}>
+      {variant.listPreviewDescription == null ? null : (
         <div className={variant.listPreviewDescription}>
           {props.descriptionList}
           <Text variant="text-12-bold" className="mt-9 pr-5 text-primary">
             {t(props.descriptionListStatus)}
           </Text>
         </div>
-      </When>
-      <If condition={props.previewAsTable}>
-        <Then>
-          <FilePreviewTable
-            items={props.files}
-            onDelete={props.onDelete}
-            onPrivateChange={props.onPrivateChange}
-            formHook={props.formHook}
-            updateFile={props.updateFile}
-            entityData={props.entityData}
-          />
-        </Then>
-        <Else>
-          <List
-            as="div"
-            itemAs={Fragment}
-            className={variant.listPreview}
-            items={props.files}
-            render={item => (
-              <FilePreviewCard
-                variant={variant.filePreviewVariant}
-                fileStatus={item.status}
-                file={item}
-                onDelete={file => props.onDelete?.(file)}
-                onPrivateChange={props.onPrivateChange}
-                showPrivateCheckbox={props.showPrivateCheckbox}
-              />
-            )}
-          />
-        </Else>
-      </If>
-    </Fragment>
+      )}
+      {props.previewAsTable ? (
+        <FilePreviewTable
+          items={props.files}
+          onDelete={props.onDelete}
+          onPrivateChange={props.onPrivateChange}
+          formHook={props.formHook}
+          updateFile={props.updateFile}
+          entityData={props.entityData}
+        />
+      ) : (
+        <List
+          as="div"
+          itemAs={Fragment}
+          className={variant.listPreview}
+          items={props.files}
+          render={item => (
+            <FilePreviewCard
+              variant={variant.filePreviewVariant}
+              file={item}
+              onDelete={file => props.onDelete?.(file)}
+              onPrivateChange={props.onPrivateChange}
+              showPrivateCheckbox={props.showPrivateCheckbox}
+            />
+          )}
+        />
+      )}
+    </>
   );
 };
 

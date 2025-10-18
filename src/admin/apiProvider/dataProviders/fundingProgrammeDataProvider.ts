@@ -91,10 +91,7 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
       const uploadKeys = ["cover"];
       const { stages, ...body } = lo.omit(params.data, uploadKeys) as any;
 
-      await handleUploads(params, uploadKeys, {
-        uuid,
-        model: "funding-programme"
-      });
+      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
 
       // TODO: For each stage - update
 
@@ -152,11 +149,10 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
           }
         });
       }
-      await handleUploads(params, uploadKeys, {
-        //@ts-ignore
-        uuid: resp.data.uuid,
-        model: "funding-programme"
-      });
+
+      // @ts-expect-error
+      const uuid = resp.data.uuid;
+      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
 
       // TODO: For each stage - create
 

@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { format } from "date-fns";
-import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes, useCallback, useMemo } from "react";
 
 import { MenuItemProps } from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
@@ -31,15 +31,11 @@ export type ImageGalleryItemData = {
   isGeotagged?: boolean;
   isPublic: boolean;
   isCover?: boolean;
-  created_by?: any;
-  photographer?: any;
-  raw?: Record<any, any>;
 };
 
 export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   data: MediaDto;
   entityData?: any;
-  onClickGalleryItem?: (data: MediaDto) => void;
   onDelete?: (id: string) => void;
   reloadGalleryImages?: () => void;
 }
@@ -47,7 +43,6 @@ export interface ImageGalleryItemProps extends DetailedHTMLProps<HTMLAttributes<
 const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   data,
   entityData,
-  onClickGalleryItem,
   onDelete,
   className,
   reloadGalleryImages,
@@ -60,10 +55,10 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
   const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     onDelete?.(data.uuid);
-  };
-  const setImageCover = async () => {
+  }, [data.uuid, onDelete]);
+  const setImageCover = useCallback(async () => {
     const result = await updateIsCoverAsync({
       pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
     });
@@ -73,8 +68,8 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     } else {
       openNotification("error", t("Error!"), t("Failed to set image as cover"));
     }
-  };
-  const openModalImageDetail = () => {
+  }, [data.uuid, entityData.uuid, openNotification, reloadGalleryImages, t, updateIsCoverAsync]);
+  const openModalImageDetail = useCallback(() => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
       <ModalImageDetails
@@ -87,9 +82,9 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       />,
       true
     );
-  };
+  }, [closeModal, data, entityData, handleDelete, openModal, reloadGalleryImages]);
 
-  const handleDownload = async (): Promise<void> => {
+  const handleDownload = useCallback(async (): Promise<void> => {
     showLoader();
     try {
       const response = await mutateAsync({
@@ -121,55 +116,58 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       Log.error("Download error:", error);
       hideLoader();
     }
-  };
+  }, [data?.fileName, data.uuid, hideLoader, mutateAsync, openNotification, showLoader, t]);
 
-  const galeryMenu: MenuItemProps[] = [
-    {
-      id: "1",
-      render: () => (
-        <Text variant="text-12-bold" className="pr-3">
-          {t("Edit Attributes")}
-        </Text>
-      ),
-      onClick: openModalImageDetail
-    },
-    {
-      id: "2",
-      render: () => (
-        <Text variant="text-12-bold" className="pr-3">
-          {t("Download")}
-        </Text>
-      ),
-      onClick: handleDownload
-    },
-    ...(!entityData?.project
-      ? [
-          {
-            id: "3",
-            render: () => (
-              <Text variant="text-12-bold" className="pr-3">
-                {t("Make Cover")}
-              </Text>
-            ),
-            onClick: setImageCover
-          }
-        ]
-      : []),
-    {
-      id: "4",
-      render: () => null,
-      type: "line"
-    },
-    {
-      id: "5",
-      render: () => (
-        <Text variant="text-12-bold" className="pr-3">
-          {t("Delete")}
-        </Text>
-      ),
-      onClick: handleDelete
-    }
-  ];
+  const galleryMenu: MenuItemProps[] = useMemo(
+    () => [
+      {
+        id: "1",
+        render: () => (
+          <Text variant="text-12-bold" className="pr-3">
+            {t("Edit Attributes")}
+          </Text>
+        ),
+        onClick: openModalImageDetail
+      },
+      {
+        id: "2",
+        render: () => (
+          <Text variant="text-12-bold" className="pr-3">
+            {t("Download")}
+          </Text>
+        ),
+        onClick: handleDownload
+      },
+      ...(!entityData?.project
+        ? [
+            {
+              id: "3",
+              render: () => (
+                <Text variant="text-12-bold" className="pr-3">
+                  {t("Make Cover")}
+                </Text>
+              ),
+              onClick: setImageCover
+            }
+          ]
+        : []),
+      {
+        id: "4",
+        render: () => null,
+        type: "line"
+      },
+      {
+        id: "5",
+        render: () => (
+          <Text variant="text-12-bold" className="pr-3">
+            {t("Delete")}
+          </Text>
+        ),
+        onClick: handleDelete
+      }
+    ],
+    [entityData?.project, handleDelete, handleDownload, openModalImageDetail, setImageCover, t]
+  );
 
   return (
     <div {...rest} className={classNames("relative overflow-hidden rounded-xl bg-background", className)}>
@@ -193,7 +191,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
             {/* Right */}
 
             <div className="ml-auto flex items-center">
-              <Menu menu={galeryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
+              <Menu menu={galleryMenu} placement={MENU_PLACEMENT_BOTTOM_RIGHT}>
                 <Icon
                   name={IconNames.ELIPSES}
                   className="h-8 w-8 rotate-90 cursor-pointer rounded-full bg-[#6f6d6d80] p-1 text-white hover:text-primary"

@@ -246,7 +246,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       country: undefined,
       is_active: undefined,
       version_name: polygon.versionName ?? undefined,
-      validation_status: polygon.validationStatus ? true : false
+      validation_status: polygon.validationStatus != null
     }));
   };
 
@@ -412,7 +412,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   const getFileType = (file: UploadedFile) => {
-    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
     return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
   const openFormModalHandlerAddPolygon = () => {
