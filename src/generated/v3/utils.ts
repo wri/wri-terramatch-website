@@ -189,12 +189,13 @@ export class V3ApiEndpoint<
     const fullUrl = resolveUrl(this.url, variables);
 
     // If the attributes of the request body includes a FormData member, stuff the rest of the attributes
-    // into the formdata and replace the body with the form data instance.
+    // into the FormData and replace the body with the form data instance.
     if (variables.body != null && (variables.body as RequestBody).data?.attributes?.formData instanceof FormData) {
       const { type, attributes } = (variables.body as RequestBody).data!;
       const { formData, ...otherAttributes } = attributes as { formData: FormData };
-      formData.append("type", type);
-      formData.append("data", JSON.stringify(otherAttributes));
+      // FormDtoInterceptor handles decoding this into an object that can be validated using the normal
+      // class validation mechanic
+      formData.append("dto", JSON.stringify({ data: { type, attributes: otherAttributes } }));
       variables.body = formData;
     }
 
@@ -213,10 +214,6 @@ export class V3ApiEndpoint<
     if (!requestHeaders?.Authorization && token != null) {
       // Always include the JWT access token if we have one.
       requestHeaders.Authorization = `Bearer ${token}`;
-    }
-
-    if (requestHeaders["Content-Type"].toLowerCase().includes("multipart/form-data")) {
-      delete requestHeaders["Content-Type"];
     }
 
     return await dispatchRequest<TResponse>(fullUrl, {
