@@ -87,6 +87,23 @@ const getStablePathAndQuery = (url: string, queryParams: FetchParams = {}, pathP
   return `${url.replace(/\{\w*}/g, key => pathParams[key.slice(1, -1)] as string)}${query}`;
 };
 
+export const getStableIndexPath = (url: string, variables: RequestVariables) => {
+  // Some query params get specified as a single indexed key like `page[number]`, and some get
+  // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
+  // what we get through qs stringify / parse will normalize it.
+  const normalizedQuery = qs.parse(qs.stringify(variables.queryParams), { arrayLimit: 1000 });
+  const queryKeys = Object.keys(normalizedQuery);
+  const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
+  if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
+    delete (normalizedQuery.page as ParsedQs).number;
+  }
+  if (queryKeys.includes("sideloads")) {
+    delete normalizedQuery.sideloads;
+  }
+
+  return { stableUrl: getStablePathAndQuery(url, normalizedQuery, variables.pathParams), pageNumber };
+};
+
 export const resolveUrl = <TQueryParams extends {}, TPathParams extends {}>(
   url: string,
   { queryParams, pathParams }: UrlVariables<TQueryParams, TPathParams> = {}
@@ -160,20 +177,7 @@ export class V3ApiEndpoint<
   }
 
   indexMetaSelector(resource: ResourceType, variables: Omit<RequestVariables, "body">) {
-    // Some query params get specified as a single indexed key like `page[number]`, and some get
-    // specified as a complex object like `sideloads: [{ entity: "sites", pageSize: 5 }]`, and running
-    // what we get through qs stringify / parse will normalize it.
-    const normalizedQuery = qs.parse(qs.stringify(variables.queryParams), { arrayLimit: 1000 });
-    const queryKeys = Object.keys(normalizedQuery);
-    const pageNumber = Number(queryKeys.includes("page") ? (normalizedQuery.page as ParsedQs).number : 1);
-    if (queryKeys.includes("page") && (normalizedQuery.page as ParsedQs).number != null) {
-      delete (normalizedQuery.page as ParsedQs).number;
-    }
-    if (queryKeys.includes("sideloads")) {
-      delete normalizedQuery.sideloads;
-    }
-
-    const stableUrl = getStablePathAndQuery(this.url, normalizedQuery, variables.pathParams);
+    const { stableUrl, pageNumber } = getStableIndexPath(this.url, variables);
     return (store: ApiDataStore) => store.meta.indices[resource][stableUrl]?.[pageNumber];
   }
 

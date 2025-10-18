@@ -468,7 +468,6 @@ export const v3Resource = <
                   if (createFailure != null || createCompleted != null) {
                     ApiSlice.clearPending(resolveUrl(createEndpoint.url, variables), createEndpoint.method);
                   }
-
                   createEndpoint.fetch({ ...variables, body: { data: { type: resource, attributes } } });
                 };
 
