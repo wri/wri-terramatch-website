@@ -6,12 +6,16 @@ import {
   UploadFileResponse,
   UploadFileVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { ExtraMediaRequest } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { WithFormData } from "@/generated/v3/utils";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
 
-export const prepareFileForUpload = async (file: File, isPublic = true): Promise<ExtraMediaRequest> => {
+export const prepareFileForUpload = async (
+  file: File,
+  isPublic = true
+): Promise<WithFormData<MediaRequestAttributes>> => {
   let location: Awaited<ReturnType<typeof exifr.gps>> | undefined = undefined;
   try {
     location = await exifr.gps(file);

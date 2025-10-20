@@ -118,6 +118,7 @@ export type RequestVariables<
   TPathParams extends {} = {},
   TBody extends {} | FormData | undefined | null = {}
 > = UrlVariables<TQueryParams, TPathParams> & { body?: TBody };
+export type WithFormData<Attributes> = Attributes & { formData: FormData };
 
 type RequestBody = {
   data?: { type: ResourceType; attributes?: Dictionary<unknown> };

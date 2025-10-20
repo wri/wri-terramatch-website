@@ -809,7 +809,7 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
-  body: Schemas.ExtraMediaRequestBody;
+  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 

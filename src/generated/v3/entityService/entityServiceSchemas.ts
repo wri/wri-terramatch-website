@@ -415,9 +415,7 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
-export type FormData = {};
-
-export type ExtraMediaRequest = {
+export type MediaRequestAttributes = {
   /**
    * Whether the media is public
    */
@@ -430,19 +428,15 @@ export type ExtraMediaRequest = {
    * The longitude of the media
    */
   lng: number | null;
-  /**
-   * The form data of the media
-   */
-  formData: FormData;
 };
 
-export type ExtraMediaRequestData = {
+export type MediaRequestData = {
   type: "media";
-  attributes: ExtraMediaRequest;
+  attributes: MediaRequestAttributes;
 };
 
-export type ExtraMediaRequestBody = {
-  data: ExtraMediaRequestData;
+export type MediaRequestBody = {
+  data: MediaRequestData;
 };
 
 export type PlantingCountDto = {
@@ -914,6 +908,7 @@ export type DisturbanceReportLightDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
 };
 
 export type ProjectFullDto = {
@@ -1652,6 +1647,7 @@ export type DisturbanceReportFullDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
   title: string | null;
   /**
    * @format date-time
@@ -1673,6 +1669,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  media: MediaDto[];
 };
 
 export type ProjectUpdateAttributes = {
