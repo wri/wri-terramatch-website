@@ -16,13 +16,12 @@ export const ImageUploadInput = (props: ImageInputProps) => {
         {...props}
         accept={FileType.Image}
         maxSize={10 * 1024 * 1024}
-        //@ts-ignore
         validateFileRemoval={async (file: UploadedFile) => {
           if (file.uuid) {
             setShowModal(true);
             return new Promise((resolve, reject) => {
               setRemoveImage({
-                fileName: file.file_name,
+                fileName: file.fileName,
                 delete: () => {
                   deleteFile({ pathParams: { uuid: file.uuid } });
                   return resolve(true);
@@ -35,10 +34,8 @@ export const ImageUploadInput = (props: ImageInputProps) => {
           }
         }}
       >
-        <>
-          <ImageField source="url" />
-          <ImageField source="src" />
-        </>
+        <ImageField source="url" />
+        <ImageField source="src" />
       </ImageInput>
       <Confirm
         isOpen={showModal}
