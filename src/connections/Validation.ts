@@ -2,7 +2,9 @@ import { isEmpty } from "lodash";
 import { useCallback, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { resourceCreator } from "@/connections/util/resourceCreator";
 import {
+  createPolygonValidations,
   getPolygonValidation,
   GetPolygonValidationPathParams,
   getSiteValidation
@@ -125,3 +127,9 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
     total
   };
 };
+
+const createPolygonValidationConnection = v3Resource("validations", createPolygonValidations)
+  .create<ValidationDto>()
+  .buildConnection();
+
+export const createPolygonValidation = resourceCreator(createPolygonValidationConnection);
