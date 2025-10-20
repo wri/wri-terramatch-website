@@ -11,7 +11,7 @@ const PageRow = ({ children, className, ...props }: PageRowProps) => (
   <div
     {...props}
     className={twMerge(
-      "gap-8, mx-auto flex max-w-[82vw] flex-wrap mobile:m-0 mobile:w-full mobile:max-w-[100%]",
+      "mx-auto flex max-w-[82vw] flex-wrap gap-8 mobile:m-0 mobile:w-full mobile:max-w-[100%]",
       className
     )}
   >
