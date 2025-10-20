@@ -3,6 +3,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
+import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject, useFullProjectReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
@@ -43,67 +45,73 @@ const ProjectReportDetailPage = () => {
         <ProjectReportBreadcrumbs title={reportTitle} report={report} task={task} />
         <ProjectReportHeader report={report} title={reportTitle} />
         <StatusBar entityName="project-reports" entity={report} />
-        <SecondaryTabs
-          tabItems={[
-            {
-              key: "report-data",
-              title: t("Report Data"),
-              body: <ReportDataTab report={report} dueAt={task?.dueAt} />
-            },
-            {
-              key: "gallery",
-              title: t("Gallery"),
-              body: (
-                <GalleryTab
-                  modelName="projectReports"
-                  modelUUID={report.uuid}
-                  modelTitle={t("Report")}
-                  entityData={project}
-                  emptyStateContent={t(
-                    "Your gallery is currently empty. Add images by using the 'Edit' button on this report."
-                  )}
-                  sharedDriveLink={report?.sharedDriveLink!}
-                />
-              )
-            },
-            {
-              key: "socioeconomic",
-              title: t("Socioeconomic Data"),
-              body: (
-                <>
-                  <ContextCondition frameworksShow={[Framework.PPC]}>
-                    <PPCSocioeconomicTab report={report} />
-                  </ContextCondition>
-                  <ContextCondition frameworksHide={[Framework.PPC]}>
-                    <TFSocioeconomicTab report={report} />
-                  </ContextCondition>
-                </>
-              )
-            },
-            {
-              key: "site-reports",
-              title: t("Site reports"),
-              body: <SiteReportsTab taskUuid={projectReport?.taskUuid!} />
-            },
-            {
-              key: "nursery-reports",
-              title: t("Nursery reports"),
-              body: <NurseryReportsTab taskUuid={projectReport?.taskUuid!} />,
-              hide: [Framework.PPC]
-            },
-            {
-              key: "uploaded-files",
-              title: t("Uploaded Files"),
-              body: <UploadedFilesTab report={report} />
-            },
-            {
-              key: "audit-log",
-              title: t("Audit Log"),
-              body: <AuditLog projectReport={report} />
-            }
-          ]}
-          containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
-        />
+        <PageBody className="pt-0">
+          <SecondaryTabs
+            tabItems={[
+              {
+                key: "report-data",
+                title: t("Report Data"),
+                body: <ReportDataTab report={report} dueAt={task?.dueAt} />
+              },
+              {
+                key: "gallery",
+                title: t("Gallery"),
+                body: (
+                  <GalleryTab
+                    modelName="projectReports"
+                    modelUUID={report.uuid}
+                    modelTitle={t("Report")}
+                    entityData={project}
+                    emptyStateContent={t(
+                      "Your gallery is currently empty. Add images by using the 'Edit' button on this report."
+                    )}
+                    sharedDriveLink={report?.sharedDriveLink!}
+                  />
+                )
+              },
+              {
+                key: "socioeconomic",
+                title: t("Socioeconomic Data"),
+                body: (
+                  <>
+                    <ContextCondition frameworksShow={[Framework.PPC]}>
+                      <PPCSocioeconomicTab report={report} />
+                    </ContextCondition>
+                    <ContextCondition frameworksHide={[Framework.PPC]}>
+                      <TFSocioeconomicTab report={report} />
+                    </ContextCondition>
+                  </>
+                )
+              },
+              {
+                key: "site-reports",
+                title: t("Site reports"),
+                body: <SiteReportsTab taskUuid={projectReport?.taskUuid!} />
+              },
+              {
+                key: "nursery-reports",
+                title: t("Nursery reports"),
+                body: <NurseryReportsTab taskUuid={projectReport?.taskUuid!} />,
+                hide: [Framework.PPC]
+              },
+              {
+                key: "uploaded-files",
+                title: t("Uploaded Files"),
+                body: <UploadedFilesTab report={report} />
+              },
+              {
+                key: "audit-log",
+                title: t("Audit Log"),
+                body: <AuditLog projectReport={report} />
+              }
+            ]}
+            containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
+          />
+          <br />
+          <br />
+          <br />
+          <PageFooter />
+        </PageBody>
       </LoadingContainer>
     </FrameworkProvider>
   );

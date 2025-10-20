@@ -123,7 +123,8 @@ export const UserShowAside = () => {
                   body: {
                     //@ts-ignore
                     uuid,
-                    callback_url: window.location.origin + "/auth/verify/email/"
+                    callback_url: window.location.origin + "/auth/verify/email/",
+                    email_address: record?.email_address
                   }
                 })
               }

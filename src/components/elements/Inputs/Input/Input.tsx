@@ -188,12 +188,21 @@ const Input = forwardRef(
       inputProps.onChange ? inputProps.onChange(e) : formHook?.setValue(inputWrapperProps.name, e.target.value);
     };
 
+    // Get the current form value and normalize it for date inputs
+    const formValue = formHook?.getValues(inputWrapperProps.name);
+    const normalizedFormValue = isDateLike && typeof formValue === "string" ? formatDateValue(formValue) : formValue;
+
     // Normalize incoming value/defaultValue for date-like inputs on initial render
     const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
     const valueProps: Record<string, any> = {};
     if ("value" in (inputProps as any)) valueProps.value = normalize((inputProps as any).value);
     else if ("defaultValue" in (inputProps as any))
       valueProps.defaultValue = normalize((inputProps as any).defaultValue);
+
+    // Update form with normalized value if needed (without useEffect to avoid loops)
+    if (isDateLike && formValue && formValue !== normalizedFormValue) {
+      formHook?.setValue(inputWrapperProps.name, normalizedFormValue, { shouldValidate: false, shouldDirty: false });
+    }
     return (
       <InputWrapper
         inputId={id}

@@ -12,6 +12,7 @@ const RequestMoreInformationSuccessPage = () => {
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
+  const isSendRequest = router.query.isSendRequest as string;
 
   return (
     <BackgroundLayout>
@@ -20,7 +21,9 @@ const RequestMoreInformationSuccessPage = () => {
           <Icon name={IconNames.CHECK_CIRCLE} className="stroke-success" width={60} />
           <div className="flex flex-col gap-4">
             <Text variant="text-heading-700" className="text-center uppercase">
-              {t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}
+              {isSendRequest
+                ? t("THANK YOU FOR SENDING YOUR APPLICATION!")
+                : t("THANK YOU FOR RESUBMITTING YOUR APPLICATION!")}
             </Text>
             <Text variant="text-body-1000" className="text-center">
               {t("The WRI team will review your changes and will be in touch with updates.")}
