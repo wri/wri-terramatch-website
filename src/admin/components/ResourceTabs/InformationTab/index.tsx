@@ -33,6 +33,7 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
+import SRPReportAside from "./components/SRPReportAside";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: Exclude<EntityName, "project-pitches">;
@@ -57,6 +58,8 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
       return (
         <ReportInformationAside type={type} parent={{ label: "Disturbance Report", source: "organisationName" }} />
       );
+    case "srp-reports":
+      return <SRPReportAside />;
     default:
       return null;
   }
@@ -100,6 +103,8 @@ const InformationTab: FC<IProps> = props => {
         return "Financial History";
       case "disturbance-reports":
         return "Disturbance Report";
+      case "srp-reports":
+        return "SRP Report";
       default:
         return "Information";
     }

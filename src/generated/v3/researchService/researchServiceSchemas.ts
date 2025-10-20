@@ -181,6 +181,7 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  disturbanceableId: number | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -260,6 +261,7 @@ export type SitePolygonLightDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  disturbanceableId: number | null;
 };
 
 export type SitePolygonUpdateAttributes = {
