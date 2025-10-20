@@ -884,6 +884,7 @@ export type DisturbanceReportLightDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
 };
 
 export type ProjectFullDto = {
@@ -1622,6 +1623,7 @@ export type DisturbanceReportFullDto = {
    */
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
   title: string | null;
   /**
    * @format date-time
@@ -1643,6 +1645,7 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  media: MediaDto[];
 };
 
 export type ProjectUpdateAttributes = {

@@ -298,6 +298,66 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type DeleteSitePolygonPathParams = {
+  uuid: string;
+};
+
+export type DeleteSitePolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteSitePolygonResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteSitePolygonVariables = {
+  pathParams: DeleteSitePolygonPathParams;
+};
+
+/**
+ * Deletes a site polygon and all its associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons.
+ */
+export const deleteSitePolygon = new V3ApiEndpoint<
+  DeleteSitePolygonResponse,
+  DeleteSitePolygonError,
+  DeleteSitePolygonVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}", "DELETE");
+
 export type BoundingBoxGetQueryParams = {
   /**
    * UUID of a polygon to get its bounding box
@@ -661,7 +721,7 @@ export const createSiteValidation = new V3ApiEndpoint<
 >("/validations/v3/sites/{siteUuid}/validation", "POST");
 
 export const operationsByTag = {
-  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
+  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
   validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation }
 };
