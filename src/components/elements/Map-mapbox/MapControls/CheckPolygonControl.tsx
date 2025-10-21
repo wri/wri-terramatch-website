@@ -42,10 +42,6 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
     setAlertTitle
   });
 
-  const handleValidationClick = () => {
-    setClickedValidation(true);
-  };
-
   const openFormModalHandlerSubmitPolygon = () => {
     openModal(
       ModalId.FIX_POLYGONS,
@@ -77,18 +73,19 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
           polygonCheck={polygonCheck}
           isLoadingDelayedJob={isLoadingDelayedJob}
           onClick={() => {
-            handleValidationClick();
+            setClickedValidation(true);
             setSelectedPolygonsInCheckbox([]);
           }}
         />
-        <FixPolygonButton
-          hasOverlaps={hasOverlaps}
-          isLoadingDelayedJob={isLoadingDelayedJob}
-          canFixAny={fixabilityResult.canFixAny}
-          fixableCount={fixabilityResult.fixableCount}
-          totalCount={fixabilityResult.totalCount}
-          onClick={openFormModalHandlerSubmitPolygon}
-        />
+        {hasOverlaps && (
+          <FixPolygonButton
+            isLoadingDelayedJob={isLoadingDelayedJob}
+            canFixAny={fixabilityResult.canFixAny}
+            fixableCount={fixabilityResult.fixableCount}
+            totalCount={fixabilityResult.totalCount}
+            onClick={openFormModalHandlerSubmitPolygon}
+          />
+        )}
       </div>
       <When condition={polygonCheck}>
         <PolygonChecksPanel

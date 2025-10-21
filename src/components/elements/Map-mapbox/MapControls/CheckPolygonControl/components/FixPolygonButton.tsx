@@ -4,7 +4,6 @@ import Button from "@/components/elements/Button/Button";
 import { getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 interface FixPolygonButtonProps {
-  hasOverlaps: boolean;
   isLoadingDelayedJob?: boolean;
   canFixAny: boolean;
   fixableCount: number;
@@ -13,7 +12,6 @@ interface FixPolygonButtonProps {
 }
 
 export const FixPolygonButton = ({
-  hasOverlaps,
   isLoadingDelayedJob,
   canFixAny,
   fixableCount,
@@ -21,8 +19,6 @@ export const FixPolygonButton = ({
   onClick
 }: FixPolygonButtonProps) => {
   const t = useT();
-
-  if (!hasOverlaps) return null;
 
   return (
     <Button

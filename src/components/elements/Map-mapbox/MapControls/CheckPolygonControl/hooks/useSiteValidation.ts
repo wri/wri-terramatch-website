@@ -91,18 +91,20 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
   ]);
 
   useEffect(() => {
-    if (pendingSiteValidation && delayedJobs && delayedJobs.length > 0) {
-      const completedValidationJob = delayedJobs.find(job => {
-        const isCompleted = job.status === "succeeded" || job.status === "failed";
-        const isPolygonValidation = job.name === "Polygon Validation";
-        const matchesSite = job.payload?.siteUuid === siteUuid;
+    if (!(pendingSiteValidation && delayedJobs && delayedJobs.length > 0)) {
+      return;
+    }
 
-        return isCompleted && isPolygonValidation && matchesSite;
-      });
+    const completedValidationJob = delayedJobs.find(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      const isPolygonValidation = job.name === "Polygon Validation";
+      const matchesSite = job.payload?.siteUuid === siteUuid;
 
-      if (completedValidationJob) {
-        handleSiteValidationComplete();
-      }
+      return isCompleted && isPolygonValidation && matchesSite;
+    });
+
+    if (completedValidationJob) {
+      handleSiteValidationComplete();
     }
   }, [delayedJobs, pendingSiteValidation, handleSiteValidationComplete, siteUuid]);
 
