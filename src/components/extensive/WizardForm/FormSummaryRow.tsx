@@ -284,7 +284,6 @@ export const getFormEntries = (
 
             if (filteredRows.length === 0) return "";
 
-            // Para profitAnalysisData, siempre mostrar como tabla si hay datos
             const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
 
             if (shouldShowAsTable) {
@@ -293,10 +292,8 @@ export const getFormEntries = (
                   const cellValues = columns.map(col => {
                     let displayValue;
                     if (col === "year") {
-                      // Para años, mostrar como entero sin formato de número
                       displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                     } else {
-                      // Para otros valores numéricos, usar toLocaleString
                       displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                     }
 
@@ -309,7 +306,6 @@ export const getFormEntries = (
               return `<strong>${section.title}</strong><br/>${getTableHtml(tableHtml, t)}<br/><br/>`;
             }
 
-            // Para otras secciones, mostrar como filas de texto
             const rowsHtml = filteredRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
