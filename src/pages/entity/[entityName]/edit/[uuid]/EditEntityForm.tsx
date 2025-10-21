@@ -5,14 +5,13 @@ import { useRouter } from "next/router";
 import { useMemo } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { pruneEntityCache } from "@/connections/Entity";
 import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
-import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
@@ -128,6 +127,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     ]
   );
 
+  const projectDetails = useMemo((): ProjectFormDetails => ({ uuid: entity?.project?.uuid }), [entity?.project?.uuid]);
+
   if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -142,6 +143,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             models={model}
             fieldsProvider={fieldsProvider}
             orgDetails={orgDetails}
+            projectDetails={projectDetails}
             errors={error}
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}

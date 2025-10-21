@@ -27,8 +27,8 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
         })}
         items={entries}
         render={entry => {
-          return entry.type === "disturbanceReportEntries" ? (
-            <DisturbanceReport values={props?.values} formSteps={props.steps} />
+          return entry.inputType === "disturbanceReportEntries" ? (
+            <DisturbanceReport values={props?.values} />
           ) : (
             <div>
               <Typography className={LabeledClasses.label}>

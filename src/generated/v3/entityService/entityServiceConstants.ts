@@ -182,6 +182,7 @@ export const DemographicCollections = {
 export const Forms = {
   FORM_TYPES: [
     "application",
+    "disturbance-report",
     "financial-report",
     "project",
     "project-report",

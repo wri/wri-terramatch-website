@@ -5,13 +5,17 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "reac
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import WizardFormProvider, { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
+import WizardFormProvider, {
+  FormFieldsProvider,
+  FormModelsDefinition,
+  OrgFormDetails,
+  ProjectFormDetails
+} from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -29,8 +33,10 @@ import { getSchema } from "./utils";
 export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
   models: FormModelsDefinition;
-  framework: Framework;
   orgDetails?: OrgFormDetails;
+  projectDetails?: ProjectFormDetails;
+
+  framework: Framework;
 
   defaultValues?: any;
   onStepChange?: (values: any) => void;
@@ -287,7 +293,12 @@ function WizardForm(props: WizardFormProps) {
   return (
     <div>
       <FrameworkProvider frameworkKey={props.framework}>
-        <WizardFormProvider models={props.models} fieldsProvider={props.fieldsProvider} orgDetails={orgDetails}>
+        <WizardFormProvider
+          models={props.models}
+          fieldsProvider={props.fieldsProvider}
+          orgDetails={orgDetails}
+          projectDetails={props.projectDetails}
+        >
           {!props.header?.hide && (
             <WizardFormHeader
               currentStep={selectedStepIndex + 1}

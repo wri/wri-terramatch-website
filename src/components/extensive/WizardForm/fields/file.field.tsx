@@ -40,7 +40,7 @@ export const FileField: FormFieldFactory = {
       csv.pushRow([field.label, "FileName", "File Url"]);
 
       value.forEach(v => {
-        csv.pushRow(["", v.title ?? v.file_name ?? "", v.url]);
+        csv.pushRow(["", v.fileName ?? "", v.url]);
       });
     }
   },

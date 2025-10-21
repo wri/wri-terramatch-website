@@ -3,13 +3,12 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
-import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
   useGetV2ApplicationsUUID,
   usePatchV2FormsSubmissionsUUID,

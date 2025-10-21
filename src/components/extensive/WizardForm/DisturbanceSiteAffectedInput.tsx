@@ -4,7 +4,7 @@ import { ControllerRenderProps } from "react-hook-form";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { indexSiteConnection } from "@/connections/Entity";
 import { APPROVED, RESTORATION_IN_PROGRESS } from "@/constants/statuses";
-import { useEntityContext } from "@/context/entity.provider";
+import { useProjectFormDetails } from "@/context/wizardForm.provider";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { OptionValue } from "@/types/common";
@@ -27,7 +27,7 @@ export const DisturbanceSiteAffectedInput = ({
   value: siteAffectedValue,
   field
 }: DisturbanceSiteAffectedInputProps) => {
-  const { projectUuid } = useEntityContext();
+  const projectUuid = useProjectFormDetails()?.uuid;
   const [, sitesData] = useConnection(indexSiteConnection, {
     filter: { projectUuid: projectUuid },
     pageSize: 100,

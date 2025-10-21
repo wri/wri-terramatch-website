@@ -2,17 +2,15 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
@@ -22,14 +20,14 @@ const SubmissionPage = () => {
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { isLoading, formData } = useFormSubmission(submissionUUID);
+  const { isLoading, formData, form } = useFormSubmission(submissionUUID);
   const application_uuid = formData?.data?.application_uuid as string;
 
   const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
 
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess() {
-      if (formData?.data?.form?.type === "application") {
+      if (form?.type === "application") {
         router.push(`/applications/request-more-information/success/${application_uuid}?isSendRequest=true`);
       } else {
         router.push(`/form/submission/${submissionUUID}/confirm`);
@@ -49,7 +47,6 @@ const SubmissionPage = () => {
     }
     return models;
   }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
-  const [, { data: form }] = useForm({ id: formData?.data.form_uuid, enabled: formData?.data.form_uuid != null });
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid);
   const defaultValues = useMemo(
     () => formDefaultValues(formData?.data?.answers ?? {}, fieldsProvider),
