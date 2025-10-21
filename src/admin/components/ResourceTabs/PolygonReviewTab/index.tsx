@@ -30,8 +30,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -57,6 +55,16 @@ import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
+
+// Field mapping moved outside component to avoid recreation
+const FIELD_MAPPING: Record<string, string> = {
+  "polygon-name": "name",
+  "restoration-practice": "practice",
+  "target-land-use-system": "targetSys",
+  "tree-distribution": "distr",
+  "planting-start-date": "plantStart",
+  source: "source"
+};
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -173,8 +181,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [pageSize, setPageSize] = useState<number>(10);
+  const [sortField, setSortField] = useState<string>("createdAt");
+  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
   const t = useT();
 
   const { openNotification } = useNotificationContext();
@@ -190,11 +198,19 @@ const PolygonReviewTab: FC<IProps> = props => {
     loading,
     total,
     progress
-  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, sortField, sortDirection, validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
+
+  const handleSortingChange = (tableState: any) => {
+    const sort = tableState?.sorting?.[0];
+    if (sort?.id) {
+      setSortField(FIELD_MAPPING[sort.id] || sort.id);
+      setSortDirection(sort.desc ? "DESC" : "ASC");
+    }
+  };
 
   const flyToPolygonBounds = useCallback(async (uuid: string) => {
     setCurrentPolygonUuid(uuid);
@@ -260,12 +276,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     uuid: data?.polygonUuid,
     ellipse: index === ((sitePolygonData ?? []) as SitePolygonLightDto[]).length - 1
   }));
-
-  const totalItems = sitePolygonDataTable.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const startIndex = (currentPage - 1) * pageSize;
-  const endIndex = startIndex + pageSize;
-  const paginatedData = sitePolygonDataTable.slice(startIndex, endIndex);
 
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
@@ -338,13 +348,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [sitePolygonData]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [pageSize]);
   const uploadFiles = async () => {
     const uploadPromises = [];
     closeModal(ModalId.ADD_POLYGON);
@@ -775,9 +778,11 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                  hasPagination={false}
-                  visibleRows={10000000}
+                  hasPagination={true}
+                  visibleRows={10}
                   classNameWrapper="max-h-[560px]"
+                  onTableStateChange={handleSortingChange}
+                  initialTableState={{ sorting: [{ id: "polygon-name", desc: false }] }}
                   columns={[
                     { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
                     {
@@ -831,27 +836,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                       )
                     }
                   ]}
-                  data={paginatedData}
+                  data={sitePolygonDataTable}
                 ></Table>
-                <div className="mt-4 mb-20">
-                  <div className="relative">
-                    <Pagination
-                      pageIndex={currentPage - 1}
-                      nextPage={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      getCanNextPage={() => currentPage < totalPages}
-                      previousPage={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      getCanPreviousPage={() => currentPage > 1}
-                      getPageCount={() => totalPages}
-                      setPageIndex={(index: number) => setCurrentPage(index + 1)}
-                      hasPageSizeSelector={true}
-                      defaultPageSize={pageSize}
-                      setPageSize={setPageSize}
-                      variant={VARIANT_PAGINATION_DASHBOARD}
-                      containerClassName="justify-between"
-                      invertSelect={true}
-                    />
-                  </div>
-                </div>
               </div>
             </Stack>
           </Grid>
