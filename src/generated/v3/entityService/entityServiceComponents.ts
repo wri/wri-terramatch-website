@@ -2857,6 +2857,74 @@ export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetV
   "GET"
 );
 
+export type FormDeletePathParams = {
+  uuid: string;
+};
+
+export type FormDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDeleteResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type FormDeleteVariables = {
+  pathParams: FormDeletePathParams;
+};
+
+export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError, FormDeleteVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "DELETE"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2869,5 +2937,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formGet }
+  forms: { formIndex, formGet, formDelete }
 };

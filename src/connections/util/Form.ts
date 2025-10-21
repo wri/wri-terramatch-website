@@ -2,7 +2,9 @@ import { map, uniq } from "lodash";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  formDelete,
   formGet,
   formIndex,
   FormIndexQueryParams,
@@ -75,3 +77,4 @@ const formConnection = v3Resource("forms", formGet)
   .buildConnection();
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);
+export const deleteForm = deleterAsync("forms", formDelete, uuid => ({ pathParams: { uuid } }));

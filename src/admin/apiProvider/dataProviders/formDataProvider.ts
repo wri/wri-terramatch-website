@@ -2,6 +2,7 @@ import { isUndefined, omit, omitBy } from "lodash";
 import {
   CreateResult,
   DataProvider,
+  DeleteParams,
   GetListParams,
   GetManyResult,
   GetOneParams,
@@ -16,14 +17,8 @@ import {
 } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
-import {
-  DeleteV2AdminFormsUUIDError,
-  fetchDeleteV2AdminFormsUUID,
-  fetchPatchV2AdminFormsUUID,
-  fetchPostV2AdminForms,
-  PostV2AdminFormsError
-} from "@/generated/apiComponents";
+import { deleteForm, loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
+import { fetchPatchV2AdminFormsUUID, fetchPostV2AdminForms, PostV2AdminFormsError } from "@/generated/apiComponents";
 import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
@@ -157,16 +152,12 @@ export const formDataProvider: FormDataProvider = {
     } as GetManyResult;
   },
 
-  // @ts-ignore
-  async delete(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
     try {
-      await fetchDeleteV2AdminFormsUUID({
-        // @ts-ignore issue with docs
-        pathParams: { uuid: params.id as string }
-      });
-      return { data: { id: params.id } };
+      await deleteForm(id as string);
+      return { data: { id } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsUUIDError);
+      throw v3ErrorForRA("Form delete fetch failed", err);
     }
   }
 };
