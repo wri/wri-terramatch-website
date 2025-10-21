@@ -1,24 +1,30 @@
 import { useT } from "@transifex/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { When } from "react-if";
 
+import Tooltip from "@/components/elements/Tooltip/Tooltip";
+import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid,
-  usePostV2TerrafundValidationPolygon
+  usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
+import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
 
 const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSuport: boolean }) => {
   const [clickedValidation, setClickedValidation] = useState(false);
+  const [canBeFixed, setCanBeFixed] = useState(false);
+  const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
   const {
     editPolygon,
     setEditPolygon,
@@ -31,11 +37,22 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
 
+  const v3ValidationData = usePolygonValidation({
+    polygonUuid: editPolygon?.uuid || ""
+  });
+
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
     openNotification(type, title, message);
   };
-  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: () => {
+
+  const runPolygonValidation = async () => {
+    try {
+      showLoader();
+      const polygonUuid = editPolygon?.uuid ?? "";
+      await createPolygonValidation({
+        polygonUuids: [polygonUuid]
+      });
+
       setShouldRefetchValidation(true);
       setClickedValidation(false);
       if (editPolygon?.uuid != null) {
@@ -47,13 +64,12 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
         "success",
         t("Success! TerraMatch reviewed the polygon")
       );
-    },
-    onError: () => {
+    } catch (error) {
       hideLoader();
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
-  });
+  };
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
     onSuccess: async (data: ClippedPolygonResponse) => {
@@ -93,10 +109,36 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
 
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
-      showLoader();
-      getValidations({ queryParams: { uuid: editPolygon.uuid } });
+      runPolygonValidation();
     }
   });
+
+  useEffect(() => {
+    if (v3ValidationData?.criteriaList && v3ValidationData.criteriaList.length > 0) {
+      const processedMenu = parseV3ValidationData(v3ValidationData);
+
+      const hasOverlapsInData = processedMenu.some(item => Number(item.id) === OVERLAPPING_CRITERIA_ID && !item.status);
+
+      if (hasOverlapsInData) {
+        const overlapCriteria = processedMenu.find(item => Number(item.id) === OVERLAPPING_CRITERIA_ID && !item.status);
+
+        if (overlapCriteria && overlapCriteria.extra_info && Array.isArray(overlapCriteria.extra_info)) {
+          const result = checkPolygonFixability(overlapCriteria.extra_info);
+          setFixabilityResult(result);
+          setCanBeFixed(result.canBeFixed);
+        } else {
+          setFixabilityResult(null);
+          setCanBeFixed(false);
+        }
+      } else {
+        setFixabilityResult(null);
+        setCanBeFixed(false);
+      }
+    } else {
+      setFixabilityResult(null);
+      setCanBeFixed(false);
+    }
+  }, [v3ValidationData]);
 
   return (
     <div className="flex gap-2">
@@ -117,16 +159,32 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
         {t("Check Polygon")}
       </Button>
       <When condition={hasOverlaps}>
-        <Button
-          variant="text"
-          className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-black"
-          onClick={() => {
-            showLoader();
-            clipPolygons({ pathParams: { uuid: editPolygon.uuid } });
-          }}
+        <Tooltip
+          content={
+            fixabilityResult != null
+              ? fixabilityResult.canBeFixed
+                ? t("✓ This polygon can be fixed automatically - meets all criteria (≤3.5% overlap, ≤0.1 ha area)")
+                : `✗ Cannot be fixed: ${fixabilityResult.reasons.join(". ")}`
+              : t("Checking fixability...")
+          }
+          placement="top"
+          width="max-w-xs"
+          colorBackground="black"
         >
-          {t("Fix Polygon")}
-        </Button>
+          <div className="relative flex items-center">
+            <Button
+              variant="text"
+              className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-black disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => {
+                showLoader();
+                clipPolygons({ pathParams: { uuid: editPolygon.uuid } });
+              }}
+              disabled={!canBeFixed}
+            >
+              {t("Fix Polygon")}
+            </Button>
+          </div>
+        </Tooltip>
       </When>
     </div>
   );

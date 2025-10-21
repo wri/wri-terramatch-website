@@ -165,6 +165,15 @@ const App = () => {
           options={{ label: "Financial Reports" }}
           recordRepresentation={record => record?.title}
         />
+        <Resource
+          name={modules.disturbanceReport.ResourceName}
+          list={modules.disturbanceReport.List}
+          show={modules.disturbanceReport.Show}
+          edit={modules.disturbanceReport.Edit}
+          icon={() => <Icon className="h-8 w-8" name={IconNames.DISTURBANCE_REPORT} />}
+          options={{ label: "Disturbance Reports" }}
+          recordRepresentation={record => record?.title}
+        />
         {isAdmin && (
           <>
             <Resource name={modules.audit.ResourceName} />
@@ -183,6 +192,14 @@ const App = () => {
           edit={modules.impactStories.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "Impact Stories" }}
+        />
+        <Resource
+          name={modules.srpReport.ResourceName}
+          list={modules.srpReport.List}
+          show={modules.srpReport.Show}
+          edit={modules.srpReport.Edit}
+          icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
+          options={{ label: "SRP Reports" }}
         />
       </Admin>
     </LoadingProvider>

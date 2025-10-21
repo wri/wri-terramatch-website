@@ -20,10 +20,10 @@ import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
-import ReportingTasksTab from "@/pages/project/[uuid]/tabs/ReportingTasks";
 
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
+import ProgressReportTab from "./tabs/ProgressReport";
 
 const ButtonStates = {
   PROJECTS: 0,
@@ -75,7 +75,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           {
             key: "reporting-tasks",
             title: t("Reporting Tasks"),
-            body: <ReportingTasksTab projectUUID={project.uuid} />
+            body: <ProgressReportTab projectUUID={project.uuid} />
           },
           {
             key: "audit-log",

@@ -23,12 +23,17 @@ const SubmissionPage = () => {
   const submissionUUID = router.query.submissionUUID as string;
 
   const { isLoading, formData } = useFormSubmission(submissionUUID);
+  const application_uuid = formData?.data?.application_uuid as string;
 
   const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
 
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess() {
-      router.push(`/form/submission/${submissionUUID}/confirm`);
+      if (formData?.data?.form?.type === "application") {
+        router.push(`/applications/request-more-information/success/${application_uuid}?isSendRequest=true`);
+      } else {
+        router.push(`/form/submission/${submissionUUID}/confirm`);
+      }
     }
   });
 

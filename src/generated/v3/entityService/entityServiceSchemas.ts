@@ -114,6 +114,7 @@ export type MediaDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -414,6 +415,30 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaRequestAttributes = {
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestData = {
+  type: "media";
+  attributes: MediaRequestAttributes;
+};
+
+export type MediaRequestBody = {
+  data: MediaRequestData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -447,6 +472,7 @@ export type TreeEntityTypes = {
    * @example siteReports
    * @example nurseryReports
    * @example financialReports
+   * @example disturbanceReports
    */
   ESTABLISHMENT_ENTITIES: string[];
   /**
@@ -528,6 +554,7 @@ export type DemographicDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -567,6 +594,7 @@ export type DisturbanceDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -618,6 +646,7 @@ export type EntitySideload = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
+    | "disturbanceReports"
     | "demographics"
     | "seedings"
     | "treeSpecies"
@@ -643,6 +672,7 @@ export type SupportedEntities = {
    * @example siteReports
    * @example nurseryReports
    * @example financialReports
+   * @example disturbanceReports
    */
   ENTITY_TYPES: string[];
 };
@@ -807,6 +837,78 @@ export type FinancialReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+};
+
+export type DisturbanceReportEntryDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  name: string;
+  inputType: string;
+  title: string | null;
+  subtitle: string | null;
+  value: string | null;
+};
+
+export type DisturbanceReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * @format date-time
+   */
+  intensity: string | null;
+  /**
+   * @format date-time
+   */
+  dateOfDisturbance: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
 };
 
 export type ProjectFullDto = {
@@ -1175,6 +1277,7 @@ export type ProjectReportFullDto = {
   seedlingsGrown: number;
   communityProgress: string | null;
   localEngagement: string | null;
+  plantingStatus: string | null;
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
   nonTreeTotal: number | null;
@@ -1361,6 +1464,7 @@ export type SiteReportFullDto = {
   totalTreeReplantingCount: number | null;
   totalTreesPlantedCount: number | null;
   totalSeedsPlantedCount: number | null;
+  plantingStatus: string | null;
   survivalCalculation: string | null;
   survivalDescription: string | null;
   maintenanceActivities: string | null;
@@ -1393,6 +1497,7 @@ export type FinancialIndicatorDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1425,6 +1530,7 @@ export type FundingTypeDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1502,6 +1608,68 @@ export type FinancialReportFullDto = {
    */
   organisationStatus: string | null;
   fundingTypes: FundingTypeDto[] | null;
+};
+
+export type DisturbanceReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * @format date-time
+   */
+  intensity: string | null;
+  /**
+   * @format date-time
+   */
+  dateOfDisturbance: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  entries: DisturbanceReportEntryDto[] | null;
+  reportId: number;
+  title: string | null;
+  /**
+   * @format date-time
+   */
+  approvedAt: string | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  completion: number | null;
+  nothingToReport: boolean | null;
+  frameworkKey: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: string | null;
+  description: string | null;
+  actionDescription: string | null;
+  media: MediaDto[];
 };
 
 export type ProjectUpdateAttributes = {
@@ -1635,6 +1803,15 @@ export type FinancialReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type DisturbanceReportUpdateData = {
+  type: "disturbanceReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1643,7 +1820,8 @@ export type EntityUpdateBody = {
     | ProjectReportUpdateData
     | SiteReportUpdateData
     | NurseryReportUpdateData
-    | FinancialReportUpdateData;
+    | FinancialReportUpdateData
+    | DisturbanceReportUpdateData;
 };
 
 /**
@@ -1752,6 +1930,7 @@ export type SeedingDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1784,6 +1963,7 @@ export type TreeSpeciesDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1815,6 +1995,7 @@ export type InvasiveDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1843,6 +2024,7 @@ export type StrataDto = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
+    | "disturbanceReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1876,7 +2058,7 @@ export type OptionLabelDto = {
    */
   label: string;
   /**
-   * Option image
+   * Option label text in English
    */
   imageUrl: string | null;
 };
@@ -1886,22 +2068,22 @@ export type LinkedFieldDto = {
    * Linked field id
    */
   id: string;
-  formModelType:
-    | "organisations"
-    | "financialReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports";
+  formType:
+    | "organisation"
+    | "financialReport"
+    | "disturbanceReport"
+    | "nursery"
+    | "nurseryReport"
+    | "project"
+    | "projectPitch"
+    | "projectReport"
+    | "site"
+    | "siteReport";
   label: string;
   name: string;
   inputType:
     | "boolean"
     | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -1916,6 +2098,7 @@ export type LinkedFieldDto = {
     | "file"
     | "allBeneficiaries"
     | "associates"
+    | "disturbanceReportEntries"
     | "disturbances"
     | "employees"
     | "financialIndicators"
@@ -1933,193 +2116,6 @@ export type LinkedFieldDto = {
     | "volunteers"
     | "workdays";
   optionListKey: string | null;
-  multiChoice: boolean | null;
+  multiChoice: string | null;
   collection: string | null;
-};
-
-/**
- * CONSTANTS
- */
-export type Forms = {
-  /**
-   * @example application
-   * @example financial-report
-   * @example project
-   * @example project-report
-   * @example site
-   * @example site-report
-   * @example nursery
-   * @example nursery-report
-   */
-  FORM_TYPES: string[];
-};
-
-export type FormLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  /**
-   * Translated form title
-   */
-  title: string;
-  type:
-    | "application"
-    | "financial-report"
-    | "project"
-    | "project-report"
-    | "site"
-    | "site-report"
-    | "nursery"
-    | "nursery-report"
-    | null;
-  published: boolean;
-  bannerUrl: string | null;
-};
-
-export type FormQuestionOptionDto = {
-  /**
-   * Option label slug
-   */
-  slug: string;
-  altValue: string | null;
-  /**
-   * Option label text in requesting user's locale, if available
-   */
-  label: string;
-  /**
-   * Option image
-   */
-  imageUrl: string | null;
-  thumbUrl: string | null;
-};
-
-export type FormQuestionDto = {
-  name: string;
-  inputType:
-    | "boolean"
-    | "conditional"
-    | "tableInput"
-    | "date"
-    | "long-text"
-    | "mapInput"
-    | "number"
-    | "number-percentage"
-    | "radio"
-    | "select"
-    | "select-image"
-    | "strategy-area"
-    | "text"
-    | "url"
-    | "file"
-    | "allBeneficiaries"
-    | "associates"
-    | "disturbances"
-    | "employees"
-    | "financialIndicators"
-    | "fundingType"
-    | "indirectBeneficiaries"
-    | "invasive"
-    | "jobs"
-    | "leaderships"
-    | "ownershipStake"
-    | "restorationPartners"
-    | "seedings"
-    | "stratas"
-    | "trainingBeneficiaries"
-    | "treeSpecies"
-    | "volunteers"
-    | "workdays";
-  label: string;
-  placeholder: string | null;
-  description: string | null;
-  validation: Record<string, any> | null;
-  multiChoice: boolean;
-  collection: string | null;
-  optionsList: string | null;
-  optionsOther: boolean | null;
-  options: FormQuestionOptionDto[] | null;
-  showOnParentCondition: boolean | null;
-  model:
-    | "organisations"
-    | "financialReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
-    | null;
-  linkedFieldKey: string | null;
-  isParentConditionalDefault: boolean;
-  minCharacterLimit: number | null;
-  maxCharacterLimit: number | null;
-  years: number[] | null;
-  tableHeaders: string[] | null;
-  additionalProps: Record<string, any> | null;
-  children: FormQuestionDto[] | null;
-};
-
-export type FormSectionDto = {
-  id: string;
-  /**
-   * Translated section title
-   */
-  title: string | null;
-  /**
-   * Translated section description
-   */
-  description: string | null;
-  questions: FormQuestionDto[];
-};
-
-export type FormFullDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  /**
-   * Translated form title
-   */
-  title: string;
-  type:
-    | "application"
-    | "financial-report"
-    | "project"
-    | "project-report"
-    | "site"
-    | "site-report"
-    | "nursery"
-    | "nursery-report"
-    | null;
-  published: boolean;
-  bannerUrl: string | null;
-  /**
-   * Indicates whether the text fields in this form response have been translated to the user's locale
-   */
-  translated: boolean;
-  subtitle: string | null;
-  description: string | null;
-  frameworkKey:
-    | "terrafund"
-    | "terrafund-landscapes"
-    | "enterprises"
-    | "epa-ghana-pilot"
-    | "ppc"
-    | "hbf"
-    | "fundo-flora"
-    | null;
-  documentation: string | null;
-  documentationLabel: string | null;
-  /**
-   * @format date-time
-   */
-  deadlineAt: string | null;
-  submissionMessage: string | null;
-  stageId: string | null;
-  fundingProgrammeId: string | null;
-  sections: FormSectionDto[];
 };

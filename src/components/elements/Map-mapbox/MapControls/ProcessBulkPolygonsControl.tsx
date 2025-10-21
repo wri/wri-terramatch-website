@@ -1,10 +1,13 @@
 import { useT } from "@transifex/react";
+import { useEffect, useState } from "react";
+import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
 import ModalProcessBulkPolygons from "@/components/extensive/Modal/ModalProcessBulkPolygons";
+import { useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -17,6 +20,8 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import JobsSlice from "@/store/jobsSlice";
+import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 const ProcessBulkPolygonsControl = ({
   entityData,
@@ -50,6 +55,42 @@ const ProcessBulkPolygonsControl = ({
   const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygonLightDto>;
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
+
+  const [fixabilityResult, setFixabilityResult] = useState<{
+    fixableCount: number;
+    totalCount: number;
+    canFixAny: boolean;
+  }>({ fixableCount: 0, totalCount: 0, canFixAny: false });
+
+  const { allValidations: overlapValidations } = useAllSiteValidations(entityData?.uuid ?? "", OVERLAPPING_CRITERIA_ID);
+
+  useEffect(() => {
+    if (selectedPolygonsInCheckbox.length > 0 && overlapValidations.length > 0) {
+      const selectedPolygonsWithOverlaps = overlapValidations
+        .filter(validation => selectedPolygonsInCheckbox.includes(validation.polygonUuid ?? ""))
+        .map(validation => {
+          const overlapCriteria = validation.criteriaList.find(
+            criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
+          );
+          return {
+            extra_info: overlapCriteria?.extraInfo
+          };
+        });
+
+      if (selectedPolygonsWithOverlaps.length > 0) {
+        const result = checkPolygonsFixability(selectedPolygonsWithOverlaps);
+        setFixabilityResult({
+          fixableCount: result.fixableCount,
+          totalCount: result.totalCount,
+          canFixAny: result.fixableCount > 0
+        });
+      } else {
+        setFixabilityResult({ fixableCount: 0, totalCount: 0, canFixAny: false });
+      }
+    } else {
+      setFixabilityResult({ fixableCount: 0, totalCount: 0, canFixAny: false });
+    }
+  }, [selectedPolygonsInCheckbox, overlapValidations]);
 
   const openFormModalHandlerProcessBulkPolygons = () => {
     openModal(
@@ -208,6 +249,18 @@ const ProcessBulkPolygonsControl = ({
         <Text variant="text-10-bold" className="text-white">
           {t("Click below to process the selected polygons")}
         </Text>
+        <When condition={selectedPolygonsInCheckbox.length > 0 && fixabilityResult.totalCount > 0}>
+          <div className="mt-2 rounded bg-white bg-opacity-10 p-2">
+            <Text variant="text-8-light" className="text-white">
+              {fixabilityResult.canFixAny
+                ? t("{count} of {total} selected polygons can be fixed", {
+                    count: fixabilityResult.fixableCount,
+                    total: fixabilityResult.totalCount
+                  })
+                : t("None of the selected polygons can be fixed")}
+            </Text>
+          </div>
+        </When>
         <div className="grid grid-cols-3 gap-2">
           <Button
             variant="text"
@@ -233,6 +286,11 @@ const ProcessBulkPolygonsControl = ({
             disabled:cursor-not-allowed disabled:opacity-60"
             onClick={() => handleOpen("fix")}
             disabled={isLoadingDelayedJob}
+            title={
+              fixabilityResult.canFixAny
+                ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)
+                : t("No selected polygons can be fixed. Overlaps exceed the fixable limits (≤3.5% and ≤0.1 ha).")
+            }
           >
             {t("Fix")}
           </Button>

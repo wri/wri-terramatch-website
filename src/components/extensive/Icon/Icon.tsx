@@ -241,7 +241,10 @@ export enum IconNames {
   NO_CHECK_LANGUAGES = "no-check-laguages",
   ARROW = "arrow",
   FILE = "file",
-  IMAGE_FILL = "image-fill"
+  DISTURBANCE_REPORT = "disturbance-report",
+  IMAGE_FILL = "image-fill",
+  DOLLAR_SIGN = "dollar",
+  SRP_REPORT = "srp-report"
 }
 
 export interface IconProps {

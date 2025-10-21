@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
+import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -73,11 +74,14 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   });
 
   const reportingWindow = useReportingWindow(framework, entity?.due_at);
+  const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
       : entityName === "financial-reports"
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
+      : entityName === "disturbance-reports"
+      ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;

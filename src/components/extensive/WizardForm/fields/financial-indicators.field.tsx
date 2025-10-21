@@ -109,7 +109,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       delete columnMaps.currentRatioData;
     }
 
-    const formatted = formatFinancialData(values, years ?? undefined, "", "");
+    const formatted = formatFinancialData(values, years ?? undefined, "");
     const sections = [
       { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },

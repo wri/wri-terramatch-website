@@ -298,6 +298,66 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type DeleteSitePolygonPathParams = {
+  uuid: string;
+};
+
+export type DeleteSitePolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteSitePolygonResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteSitePolygonVariables = {
+  pathParams: DeleteSitePolygonPathParams;
+};
+
+/**
+ * Deletes a site polygon and all its associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons.
+ */
+export const deleteSitePolygon = new V3ApiEndpoint<
+  DeleteSitePolygonResponse,
+  DeleteSitePolygonError,
+  DeleteSitePolygonVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}", "DELETE");
+
 export type BoundingBoxGetQueryParams = {
   /**
    * UUID of a polygon to get its bounding box
@@ -453,10 +513,8 @@ export type GetSiteValidationQueryParams = {
   ["page[number]"]?: number;
   /**
    * Filter validations by criteria ID
-   *
-   * @example 3
    */
-  criteriaId?: number;
+  criteriaId?: Schemas.Object;
 };
 
 export type GetSiteValidationError = Fetcher.ErrorWrapper<
@@ -520,8 +578,150 @@ export const getSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}", "GET");
 
+export type CreatePolygonValidationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreatePolygonValidationsResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type CreatePolygonValidationsVariables = {
+  body: Schemas.ValidationRequestBody;
+};
+
+export const createPolygonValidations = new V3ApiEndpoint<
+  CreatePolygonValidationsResponse,
+  CreatePolygonValidationsError,
+  CreatePolygonValidationsVariables,
+  {}
+>("/validations/v3/polygonValidations", "POST");
+
+export type CreateSiteValidationPathParams = {
+  siteUuid: string;
+};
+
+export type CreateSiteValidationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSiteValidationVariables = {
+  body: Schemas.SiteValidationRequestBody;
+  pathParams: CreateSiteValidationPathParams;
+};
+
+export const createSiteValidation = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example validationSummaries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example validationSummaries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ValidationSummaryDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  CreateSiteValidationError,
+  CreateSiteValidationVariables,
+  {}
+>("/validations/v3/sites/{siteUuid}/validation", "POST");
+
 export const operationsByTag = {
-  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
+  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation, getSiteValidation }
+  validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation }
 };
