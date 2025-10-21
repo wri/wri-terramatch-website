@@ -264,6 +264,12 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
   }
 };
 
+const invalidateIndices = (state: WritableDraft<ApiDataStore>, action: PayloadAction<{ resource: ResourceType }>) => {
+  const { resource } = action.payload;
+  // Clear all indices for this resource type
+  state.meta.indices[resource] = {};
+};
+
 const isLogin = ({ url, method }: { url: string; method: Method }) =>
   url.endsWith("auth/v3/logins") && method === "POST";
 
@@ -378,6 +384,8 @@ export const apiSlice = createSlice({
 
     pruneCache,
 
+    invalidateIndices,
+
     clearApiCache
   },
 
@@ -449,6 +457,10 @@ export default class ApiSlice {
 
   static pruneIndex(resource: ResourceType, searchQuery: string) {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, searchQuery }));
+  }
+
+  static invalidateIndices(resource: ResourceType) {
+    this.redux.dispatch(apiSlice.actions.invalidateIndices({ resource }));
   }
 
   static clearPending(urlPrefix: string, method: Method) {

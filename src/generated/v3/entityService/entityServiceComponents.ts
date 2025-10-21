@@ -750,14 +750,6 @@ export type UploadFileError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
-        /**
-         * A code to lookup the error message translation string on the client.
-         */
-        code?: string;
-        /**
-         * A set of variables to pass to the translation service.
-         */
-        variables?: Record<string, any>;
       };
     }
   | {
@@ -809,7 +801,6 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
-  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 
@@ -1688,6 +1679,213 @@ export const entityIndex = new V3ApiEndpoint<
   EntityIndexVariables,
   {}
 >("/entities/v3/{entity}", "GET");
+
+export type EntityCreatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
+};
+
+export type EntityCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityCreateVariables = {
+  body: Schemas.EntityCreateBody;
+  pathParams: EntityCreatePathParams;
+};
+
+export const entityCreate = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example projects
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example projects
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sites
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sites
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example nurseries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example projectReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example projectReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ProjectReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example nurseryReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example nurseryReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.NurseryReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example siteReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example siteReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SiteReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example financialReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example financialReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialReportFullDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example disturbanceReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example disturbanceReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DisturbanceReportFullDto;
+      };
+    },
+  EntityCreateError,
+  EntityCreateVariables,
+  {}
+>("/entities/v3/{entity}", "POST");
 
 export type EntityGetPathParams = {
   /**
@@ -2663,7 +2861,7 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
-  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex }

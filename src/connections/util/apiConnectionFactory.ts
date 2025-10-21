@@ -666,6 +666,41 @@ class ApiConnectionFactory<
   }
 
   /**
+   * Adds a create method and create progress / failure members to the final selected connection shape.
+   *
+   * The generic parameters may be left to be inferred unless the endpoint accepts more than one type
+   * of body data. In that case, both must be provided.
+   */
+  public create<Attributes extends CreateAttributes<CreateVariables>, CreateVariables extends Variables>(
+    endpoint: V3ApiEndpoint<unknown, ErrorPayload, CreateVariables>
+  ) {
+    return this.chain<CreateConnection<unknown, Attributes>, Props>({
+      selectors: [
+        (props, variablesFactory, resource) => {
+          const variables = variablesFactory(props);
+          if (variables == null) {
+            const create = () => {};
+            return () => ({ data: undefined, isCreating: false, createFailure: undefined, create });
+          }
+
+          // Avoid creating inline in the createSelector call so that the function has the same identity on every
+          // state update, preventing some possible re-renders when the function is a dependency in useEffect.
+          const create = (attributes: Attributes) => {
+            endpoint.fetch({
+              ...variables,
+              body: { data: { type: resource, attributes } }
+            } as unknown as CreateVariables);
+          };
+          return createSelector(
+            [endpoint.isFetchingSelector(variables), endpoint.fetchFailedSelector(variables)],
+            (isCreating, createFailure) => ({ data: undefined, isCreating, createFailure, create })
+          );
+        }
+      ]
+    });
+  }
+
+  /**
    * Extracts the type of the sideloads query param from the Variables generic parameter on the factory
    * and adds that type to the connection props for addition to the final query.
    */
