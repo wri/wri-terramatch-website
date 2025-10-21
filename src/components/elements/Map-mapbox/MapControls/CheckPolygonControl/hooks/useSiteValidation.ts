@@ -106,14 +106,12 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     }
   }, [delayedJobs, pendingSiteValidation, handleSiteValidationComplete, siteUuid]);
 
-  // Handle site polygon data changes
   useValueChanged(sitePolygonData, () => {
     if (sitePolygonData && siteUuid != null && !pendingSiteValidation) {
       fetchOverlapValidations();
     }
   });
 
-  // Handle validation button click
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
       setIsLoadingDelayedJob?.(true);
