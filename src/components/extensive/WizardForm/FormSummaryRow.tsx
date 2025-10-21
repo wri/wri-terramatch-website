@@ -60,11 +60,19 @@ export interface FormEntry {
 const getTableHtml = (body: string, t: typeof useT) => {
   return (
     `<table class="w-full"><thead><tr>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Year")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Revenue")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Expenses")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Profit")}</th>` +
-    `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Year"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Revenue"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Expenses"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Profit"
+    )}</th>` +
+    `</tr></thead><tbody>${body}</tbody></table>`
   );
 };
 
@@ -276,25 +284,33 @@ export const getFormEntries = (
 
             if (filteredRows.length === 0) return "";
 
-            const tableRows = filteredRows.filter((row: Record<string, any>) => {
-              return row["profit"];
-            });
-            const nonTableRows = filteredRows.filter((row: Record<string, any>) => {
-              return !row["profit"];
-            });
+            // Para profitAnalysisData, siempre mostrar como tabla si hay datos
+            const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
 
-            const tableHtml = tableRows
-              .map((row: Record<string, any>) => {
-                const cellValues = columns.map(col => {
-                  return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium">${
-                    isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
-                  }</td>`;
-                });
-                return cellValues.join("");
-              })
-              .join("</tr><tr>");
+            if (shouldShowAsTable) {
+              const tableHtml = filteredRows
+                .map((row: Record<string, any>) => {
+                  const cellValues = columns.map(col => {
+                    let displayValue;
+                    if (col === "year") {
+                      // Para años, mostrar como entero sin formato de número
+                      displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
+                    } else {
+                      // Para otros valores numéricos, usar toLocaleString
+                      displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                    }
 
-            const rowsHtml = nonTableRows
+                    return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium text-center">${displayValue}</td>`;
+                  });
+                  return `<tr>${cellValues.join("")}</tr>`;
+                })
+                .join("");
+
+              return `<strong>${section.title}</strong><br/>${getTableHtml(tableHtml, t)}<br/><br/>`;
+            }
+
+            // Para otras secciones, mostrar como filas de texto
+            const rowsHtml = filteredRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
                   if (col === "documentation") {
@@ -325,8 +341,7 @@ export const getFormEntries = (
               })
               .join("<br/>");
 
-            const body = tableRows.length > 0 ? getTableHtml(tableHtml, t) : rowsHtml;
-            return `<strong>${section.title}</strong><br/>${body}<br/><br/>`;
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
           })
           .filter(Boolean)
           .join("");
