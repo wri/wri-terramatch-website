@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import { useGadmChoices } from "@/connections/Gadm";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
@@ -55,6 +56,7 @@ const FIELDS_TO_VALIDATE: Record<string, string> = {
 export const useMessageValidators = () => {
   const t = useT();
   const isAdmin = useIsAdmin();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const getIntersectionMessages = useMemo(
     () =>
@@ -97,9 +99,10 @@ export const useMessageValidators = () => {
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
           if (infoObject && typeof infoObject === "object" && "countryName" in infoObject) {
             const countryName = infoObject.countryName || "Unknown Country";
+            const country = countryChoices.find(choice => choice.id === countryName);
             return [
               t("Target Country: The polygon should be located inside {country}", {
-                country: countryName
+                country: country?.name
               })
             ];
           } else {
@@ -110,7 +113,7 @@ export const useMessageValidators = () => {
           return [t("Error parsing extra info.")];
         }
       },
-    [t]
+    [t, countryChoices]
   );
   const getDataMessage = useMemo(
     () => (extraInfo: any) => {
