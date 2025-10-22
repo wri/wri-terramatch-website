@@ -2,7 +2,7 @@ import { BooleanInput } from "react-admin";
 
 import RHFSeedingTable, { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import RHFSeedingTableInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFSeedingTableInput";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import {
   appendTableAnswers,

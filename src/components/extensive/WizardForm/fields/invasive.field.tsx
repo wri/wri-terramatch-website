@@ -1,5 +1,5 @@
 import RHFInvasiveTable, { getInvasiveTableColumns } from "@/components/elements/Inputs/DataTable/RHFInvasiveTable";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { appendTableAnswers, dataTableEntryValue } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith, arrayValidator } from "@/utils/yup";

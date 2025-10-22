@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 import ConditionalAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/ConditionalAdditionalOptions";
 import ConditionalInput from "@/components/elements/Inputs/ConditionalInput/ConditionalInput";
-import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import {
   addFieldValidation,

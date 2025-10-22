@@ -12,7 +12,8 @@ import { Else, If, Then, When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
-import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import WizardFormProvider, {
   FormModel,
   useApiFieldsProvider,

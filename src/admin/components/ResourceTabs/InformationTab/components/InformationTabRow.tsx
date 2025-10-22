@@ -7,7 +7,8 @@ import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index">;

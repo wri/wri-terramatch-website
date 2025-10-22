@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 import TableAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/TableAdditionalOptions";
 import RHFInputTable from "@/components/elements/Inputs/InputTable/RHFInputTable";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addFieldValidation } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";

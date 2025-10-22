@@ -2,7 +2,7 @@ import { isString } from "lodash";
 
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import Log from "@/utils/log";

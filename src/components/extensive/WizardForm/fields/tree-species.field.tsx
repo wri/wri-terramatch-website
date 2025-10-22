@@ -3,7 +3,7 @@ import * as yup from "yup";
 
 import RHFTreeSpeciesInput from "@/components/elements/Inputs/TreeSpeciesInput/RHFTreeSpeciesInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";

@@ -5,7 +5,7 @@ import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollaps
 import { GRID_VARIANT_NARROW } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import { calculateTotals } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
-import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { Framework } from "@/context/framework.provider";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";

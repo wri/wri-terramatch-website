@@ -1,56 +1,20 @@
 import { useT } from "@transifex/react";
-import { Dictionary } from "lodash";
 import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
-import { Else, If, Then } from "react-if";
 
-import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import Accordion from "@/components/elements/Accordion/Accordion";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
-import Text from "@/components/elements/Text/Text";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
-import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
-import { FieldDefinition, FieldInputType, GetEntryValueProps } from "@/components/extensive/WizardForm/types";
+import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import { GetEntryValueProps } from "@/components/extensive/WizardForm/types";
+import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/extensive/WizardForm/utils";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { FormFieldsProvider, useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { pluralEntityNameToSingular } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
-
-import List from "../List/List";
-import { getFormattedAnswer, loadExternalAnswerSources } from "./utils";
-
-export interface FormSummaryRowProps extends FormSummaryProps {
-  type?: EntityName;
-  stepId: string;
-  index: number;
-  nullText?: string;
-}
-
-export type GetFormEntriesProps = Omit<FormSummaryRowProps, "index" | "onEdit" | "formUuid"> & {
-  entity?: Entity;
-};
-
-export type FormEntry = {
-  title?: string;
-  inputType: FieldInputType;
-  value: any;
-};
-
-type EntryFactory = (field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => any;
-
-export const addEntryWith =
-  (factory: EntryFactory) =>
-  (entries: FormEntry[], field: FieldDefinition, formValues: Dictionary<any>, additional: GetEntryValueProps) => {
-    entries.push({
-      title: field.label ?? "",
-      inputType: field.inputType,
-      value: factory(field, formValues, additional)
-    });
-  };
 
 export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const t = useT();
@@ -179,46 +143,3 @@ const getEntityPolygonData = (
 
   return null;
 };
-
-const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
-  const t = useT();
-  const { title } = useFieldsProvider().step(stepId) ?? {};
-  const entities = useFormEntities();
-  const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
-  return (
-    <Accordion
-      variant="secondary"
-      title={title ?? ""}
-      ctaButtonProps={
-        props.onEdit
-          ? {
-              text: t("Edit"),
-              onClick: () => props.onEdit?.(index)
-            }
-          : undefined
-      }
-    >
-      <List
-        className="flex flex-col gap-4"
-        items={entries}
-        render={entry => (
-          <div className="flex items-start gap-12 transition-all delay-300 duration-300">
-            <Text variant="text-body-500" className="flex-1">
-              {entry.title}
-            </Text>
-            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-              <Then>
-                <Text variant="text-body-300" className="flex-1" containHtml>
-                  {formatEntryValue(entry.value)}
-                </Text>
-              </Then>
-              <Else>{formatEntryValue(entry.value)}</Else>
-            </If>
-          </div>
-        )}
-      />
-    </Accordion>
-  );
-};
-
-export default FormSummaryRow;

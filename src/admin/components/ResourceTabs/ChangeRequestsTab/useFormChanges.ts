@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import { isEqual } from "lodash";
 import { useMemo } from "react";
 
-import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { FieldInputType } from "@/components/extensive/WizardForm/types";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";

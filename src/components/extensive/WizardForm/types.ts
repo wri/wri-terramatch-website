@@ -8,7 +8,7 @@ import { AdditionalOptionsProps } from "@/admin/modules/form/components/FormBuil
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
-import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { Framework } from "@/context/framework.provider";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
