@@ -3229,31 +3229,6 @@ export const usePatchV2AdminFormsUUIDPublish = (
   );
 };
 
-export type DeleteV2AdminFormsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2AdminFormsUUIDVariables = ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2AdminFormsUUID = (variables: DeleteV2AdminFormsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2AdminFormsUUIDError, undefined, {}, {}, {}>({
-    url: "/v2/admin/forms/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2AdminFormsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2AdminFormsUUIDError, DeleteV2AdminFormsUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2AdminFormsUUIDError, DeleteV2AdminFormsUUIDVariables>(
-    (variables: DeleteV2AdminFormsUUIDVariables) => fetchDeleteV2AdminFormsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PatchV2AdminFormsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
 export type PatchV2AdminFormsUUIDResponse = {
