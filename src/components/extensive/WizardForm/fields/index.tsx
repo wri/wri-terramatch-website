@@ -4,6 +4,7 @@ import { BooleanField } from "./boolean.field";
 import { ConditionalField } from "./conditional.field";
 import { DateField } from "./date.field";
 import { DemographicField } from "./demographic.field";
+import { DisturbanceReportEntriesField } from "./disturbance-report-entries.field";
 import { DisturbancesField } from "./disturbances.field";
 import { EmptyField } from "./empty.field";
 import { FileField } from "./file.field";
@@ -42,6 +43,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   ownershipStake: OwnershipStakeField,
   stratas: StratasField,
   disturbances: DisturbancesField,
+  disturbanceReportEntries: DisturbanceReportEntriesField,
   invasive: InvasiveField,
   seedings: SeedingsField,
   fundingType: FundingTypeField,

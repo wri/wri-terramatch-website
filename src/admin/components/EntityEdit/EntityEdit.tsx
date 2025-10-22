@@ -5,12 +5,11 @@ import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { FormModelType } from "@/connections/util/Form";
 import { toFramework } from "@/context/framework.provider";
-import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { singularEntityNameToPlural } from "@/helpers/entity";
@@ -90,6 +89,11 @@ export const EntityEdit = () => {
     ]
   );
 
+  const projectDetails = useMemo(
+    (): ProjectFormDetails => ({ uuid: entityValue?.data?.project?.uuid }),
+    [entityValue?.data?.project?.uuid]
+  );
+
   if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -120,6 +124,7 @@ export const EntityEdit = () => {
           roundedCorners
           hideSaveAndCloseButton
           orgDetails={orgDetails}
+          projectDetails={projectDetails}
         />
       </LoadingContainer>
     </div>

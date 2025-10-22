@@ -25,6 +25,8 @@ import {
   NurseryFullDto,
   FinancialReportLightDto,
   FinancialReportFullDto,
+  DisturbanceReportLightDto,
+  DisturbanceReportFullDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
@@ -52,6 +54,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "sites",
   "nurseries",
   "financialReports",
+  "disturbanceReports",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -78,6 +81,7 @@ export type EntityServiceApiResources = {
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
+  disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
@@ -94,7 +98,8 @@ export const TreeEntityTypes = {
     "projectReports",
     "siteReports",
     "nurseryReports",
-    "financialReports"
+    "financialReports",
+    "disturbanceReports"
   ] as const,
   REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;
@@ -107,7 +112,8 @@ export const SupportedEntities = {
     "projectReports",
     "siteReports",
     "nurseryReports",
-    "financialReports"
+    "financialReports",
+    "disturbanceReports"
   ] as const
 } as const;
 
@@ -176,6 +182,7 @@ export const DemographicCollections = {
 export const Forms = {
   FORM_TYPES: [
     "application",
+    "disturbance-report",
     "financial-report",
     "project",
     "project-report",

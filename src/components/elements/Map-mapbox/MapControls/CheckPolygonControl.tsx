@@ -22,6 +22,7 @@ import ApiSlice from "@/store/apiSlice";
 import JobsSlice from "@/store/jobsSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import Log from "@/utils/log";
+import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -42,6 +43,11 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
   const [openCollapse, setOpenCollapse] = useState(false);
   const [clickedValidation, setClickedValidation] = useState(false);
   const [hasOverlaps, setHasOverlaps] = useState(false);
+  const [fixabilityResult, setFixabilityResult] = useState<{
+    fixableCount: number;
+    totalCount: number;
+    canFixAny: boolean;
+  }>({ fixableCount: 0, totalCount: 0, canFixAny: false });
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
@@ -166,6 +172,26 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
 
   useEffect(() => {
     setHasOverlaps(overlapValidations.length > 0);
+
+    if (overlapValidations.length > 0) {
+      const polygonsWithOverlaps = overlapValidations.map(validation => {
+        const overlapCriteria = validation.criteriaList.find(
+          criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
+        );
+        return {
+          extra_info: overlapCriteria?.extraInfo
+        };
+      });
+
+      const result = checkPolygonsFixability(polygonsWithOverlaps);
+      setFixabilityResult({
+        fixableCount: result.fixableCount,
+        totalCount: result.totalCount,
+        canFixAny: result.fixableCount > 0
+      });
+    } else {
+      setFixabilityResult({ fixableCount: 0, totalCount: 0, canFixAny: false });
+    }
   }, [overlapValidations]);
 
   useValueChanged(sitePolygonData, () => {
@@ -205,6 +231,11 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
              disabled:cursor-not-allowed disabled:opacity-60"
             onClick={openFormModalHandlerSubmitPolygon}
             disabled={isLoadingDelayedJob}
+            title={
+              fixabilityResult.canFixAny
+                ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)
+                : t("No polygons can be fixed. Overlaps exceed the fixable limits (≤3.5% and ≤0.1 ha).")
+            }
           >
             {t("Fix Polygons")}
           </Button>
@@ -234,9 +265,20 @@ const CheckPolygonControl = (props: CheckSitePolygonProps) => {
             <div className="flex min-h-0 grow flex-col gap-2 overflow-auto">
               <Text variant="text-10-light" className="text-white">
                 {hasOverlaps
-                  ? t("Overlapping polygons detected. Use 'Fix Polygons' to resolve.")
+                  ? fixabilityResult.canFixAny
+                    ? getFixabilitySummaryMessage(fixabilityResult.fixableCount, fixabilityResult.totalCount, t)
+                    : t(
+                        "Overlapping polygons detected but cannot be fixed. Overlaps exceed the fixable limits (≤3.5% and ≤0.1 ha)."
+                      )
                   : t("No overlapping polygons found.")}
               </Text>
+              <When condition={hasOverlaps && fixabilityResult.totalCount > 0}>
+                <div className="rounded bg-white bg-opacity-10 p-2">
+                  <Text variant="text-8-light" className="text-white">
+                    {t("Fixable criteria: ≤3.5% overlap AND ≤0.1 ha area")}
+                  </Text>
+                </div>
+              </When>
             </div>
           )}
         </div>

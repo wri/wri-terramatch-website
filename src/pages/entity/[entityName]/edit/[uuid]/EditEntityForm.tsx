@@ -4,14 +4,14 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
 
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
+import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { pruneEntityCache } from "@/connections/Entity";
 import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
-import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
@@ -73,11 +73,14 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   });
 
   const reportingWindow = useReportingWindow(framework, entity?.due_at);
+  const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;
   const formTitle =
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: entity.site.name })
       : entityName === "financial-reports"
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
+      : entityName === "disturbance-reports"
+      ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
@@ -124,6 +127,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     ]
   );
 
+  const projectDetails = useMemo((): ProjectFormDetails => ({ uuid: entity?.project?.uuid }), [entity?.project?.uuid]);
+
   if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -138,6 +143,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             models={model}
             fieldsProvider={fieldsProvider}
             orgDetails={orgDetails}
+            projectDetails={projectDetails}
             errors={error}
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}

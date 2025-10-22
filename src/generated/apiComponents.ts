@@ -8027,87 +8027,6 @@ export const useGetV2MODELUUIDImageLocations = <TData = GetV2MODELUUIDImageLocat
   );
 };
 
-export type PostV2FileUploadMODELCOLLECTIONUUIDPathParams = {
-  /**
-   * Currently only organisation, funding-programme, project-pitch, project, site, nursery, project-report, site-report, nursery-report, project-monitoring and site-monitoring are set up
-   */
-  model: string;
-  collection: string;
-  uuid: string;
-};
-
-export type PostV2FileUploadMODELCOLLECTIONUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2FileUploadMODELCOLLECTIONUUIDResponse = {
-  uuid?: string;
-  url?: string;
-  thumb_url?: string;
-  collection_name?: string;
-  title?: string;
-  file_name?: string;
-  mime_type?: string;
-  size?: number;
-  lat?: number;
-  lng?: number;
-  is_public?: boolean;
-  is_cover?: boolean;
-  created_at?: string;
-};
-
-export type PostV2FileUploadMODELCOLLECTIONUUIDRequestBody = {
-  title?: string;
-  /**
-   * @format binary
-   */
-  upload_file?: Blob;
-  lat?: number;
-  lng?: number;
-  /**
-   * @default true
-   */
-  is_public?: boolean;
-};
-
-export type PostV2FileUploadMODELCOLLECTIONUUIDVariables = {
-  body?: PostV2FileUploadMODELCOLLECTIONUUIDRequestBody;
-  pathParams: PostV2FileUploadMODELCOLLECTIONUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2FileUploadMODELCOLLECTIONUUID = (
-  variables: PostV2FileUploadMODELCOLLECTIONUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2FileUploadMODELCOLLECTIONUUIDResponse,
-    PostV2FileUploadMODELCOLLECTIONUUIDError,
-    PostV2FileUploadMODELCOLLECTIONUUIDRequestBody,
-    {},
-    {},
-    PostV2FileUploadMODELCOLLECTIONUUIDPathParams
-  >({ url: "/v2/file/upload/{model}/{collection}/{uuid}", method: "post", ...variables, signal });
-
-export const usePostV2FileUploadMODELCOLLECTIONUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2FileUploadMODELCOLLECTIONUUIDResponse,
-      PostV2FileUploadMODELCOLLECTIONUUIDError,
-      PostV2FileUploadMODELCOLLECTIONUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2FileUploadMODELCOLLECTIONUUIDResponse,
-    PostV2FileUploadMODELCOLLECTIONUUIDError,
-    PostV2FileUploadMODELCOLLECTIONUUIDVariables
-  >(
-    (variables: PostV2FileUploadMODELCOLLECTIONUUIDVariables) =>
-      fetchPostV2FileUploadMODELCOLLECTIONUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PostV2FileUploadSitePhotosUUIDBulkUrlPathParams = {
   uuid: string;
 };
@@ -8277,12 +8196,16 @@ export type DeleteV2FilesUUIDPathParams = {
 
 export type DeleteV2FilesUUIDError = Fetcher.ErrorWrapper<undefined>;
 
+export type DeleteV2FilesUUIDResponse = {
+  uuid?: string;
+};
+
 export type DeleteV2FilesUUIDVariables = {
   pathParams: DeleteV2FilesUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
 export const fetchDeleteV2FilesUUID = (variables: DeleteV2FilesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2FilesUUIDError, undefined, {}, {}, DeleteV2FilesUUIDPathParams>({
+  apiFetch<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, undefined, {}, {}, DeleteV2FilesUUIDPathParams>({
     url: "/v2/files/{uuid}",
     method: "delete",
     ...variables,
@@ -8291,12 +8214,12 @@ export const fetchDeleteV2FilesUUID = (variables: DeleteV2FilesUUIDVariables, si
 
 export const useDeleteV2FilesUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>,
+    reactQuery.UseMutationOptions<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
+  return reactQuery.useMutation<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
     (variables: DeleteV2FilesUUIDVariables) => fetchDeleteV2FilesUUID({ ...fetcherOptions, ...variables }),
     options
   );
@@ -22216,6 +22139,39 @@ export const usePostV2OrganisationsUUIDInvite = (
   );
 };
 
+export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2DisturbanceReportsExport = (
+  variables: GetV2DisturbanceReportsExportVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<Record<string, any>, GetV2DisturbanceReportsExportError, undefined, {}, {}, {}>({
+    url: "/v2/disturbance-reports/export",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
+  variables: GetV2DisturbanceReportsExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2DisturbanceReportsExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2DisturbanceReportsExportError, TData>(
+    queryKeyFn({ path: "/v2/disturbance-reports/export", operationId: "getV2DisturbanceReportsExport", variables }),
+    ({ signal }) => fetchGetV2DisturbanceReportsExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -22716,4 +22672,9 @@ export type QueryOperation =
       path: "/v2/financial-reports/export";
       operationId: "getV2FinancialReportsExport";
       variables: GetV2FinancialReportsExportVariables;
+    }
+  | {
+      path: "/v2/disturbance-reports/export";
+      operationId: "getV2DisturbanceReportsExport";
+      variables: GetV2DisturbanceReportsExportVariables;
     };

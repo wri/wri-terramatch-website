@@ -150,7 +150,7 @@ export const getFormattedAnswer = (
   if (Array.isArray(answer) && field.inputType === "file") {
     return (answer as UploadedFile[])
       .filter(file => !!file)
-      ?.map(file => `<a href="${file.url}" target="_blank">${file.file_name}</a>`)
+      ?.map(file => `<a href="${file.url}" target="_blank">${file.fileName}</a>`)
       .join(", ");
   } else if (Array.isArray(answer)) {
     return answer.length > 0 ? answer.join(", ") : undefined;

@@ -1,7 +1,6 @@
 import { kebabCase } from "lodash";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
-import { OrgFormDetails } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { useForm } from "@/connections/util/Form";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -149,16 +148,29 @@ export const useApiFieldsProvider = (
   return [formLoaded && enabled, provider];
 };
 
+export type OrgFormDetails = {
+  uuid?: string;
+  currency?: string;
+  startMonth?: string | number;
+  title?: string;
+};
+
+export type ProjectFormDetails = {
+  uuid?: string;
+};
+
 type IFormFieldsContext = {
   models: FormModel[];
   fieldsProvider: FormFieldsProvider;
   orgDetails?: OrgFormDetails;
+  projectDetails?: ProjectFormDetails;
 };
 
 type WizardFormProviderProps = {
   models?: FormModelsDefinition;
   fieldsProvider: FormFieldsProvider;
   orgDetails?: OrgFormDetails;
+  projectDetails?: ProjectFormDetails;
 };
 
 const WizardFormContext = createContext<IFormFieldsContext>({ models: [], fieldsProvider: StubFormFieldsProvider });
@@ -197,5 +209,7 @@ export const useFormEntities = () => {
 };
 
 export const useOrgFormDetails = () => useContext(WizardFormContext).orgDetails;
+
+export const useProjectFormDetails = () => useContext(WizardFormContext).projectDetails;
 
 export default WizardFormProvider;

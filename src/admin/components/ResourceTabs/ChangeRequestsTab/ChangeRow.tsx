@@ -2,6 +2,7 @@ import { Box, Card, Typography } from "@mui/material";
 import { FC } from "react";
 
 import ChangeBox from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeBox";
+import DisturbanceReportEntriesVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/DisturbanceReportEntriesVisualDiff";
 import FieldView from "@/admin/components/ResourceTabs/ChangeRequestsTab/FieldView";
 import FinancialVisualDiff from "@/admin/components/ResourceTabs/ChangeRequestsTab/FinancialVisualDiff";
 import { StepChange } from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
@@ -34,6 +35,8 @@ const ChangeRow: FC<IChangeRowProps> = ({ stepChange }) => (
             <VisualDiff {...{ inputType, currentValue, newValue }} />
           ) : inputType === "financialIndicators" ? (
             <FinancialVisualDiff inputType={inputType} currentValue={currentValue} newValue={newValue} />
+          ) : inputType === "disturbanceReportEntries" ? (
+            <DisturbanceReportEntriesVisualDiff inputType={inputType} currentValue={currentValue} newValue={newValue} />
           ) : (
             <ChangeBox inputType={inputType} oldView={currentValue} newView={newValue} />
           )}

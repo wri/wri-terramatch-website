@@ -6,6 +6,7 @@ import modules from "@/admin/modules";
 
 import { applicationDataProvider } from "./applicationDataProvider";
 import { auditDataProvider } from "./auditDataProvider";
+import { disturbanceReportDataProvider } from "./disturbanceReportDataProvider";
 import { financialReportDataProvider } from "./financialReportDataProvider";
 import { formDataProvider } from "./formDataProvider";
 import { fundingProgrammeDataProvider } from "./fundingProgrammeDataProvider";
@@ -77,6 +78,12 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.impactStories.ResourceName:
       return impactStoriesDataProvider;
+
+    case modules.disturbanceReport.ResourceName:
+      return disturbanceReportDataProvider;
+
+    case modules.srpReport.ResourceName:
+      return projectReportDataProvider;
 
     default:
       throw new Error(`Unknown resource: ${resource}`);

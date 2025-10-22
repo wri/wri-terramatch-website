@@ -35,7 +35,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
           { id: "1", label: t("Started") },
           { id: "2", label: t("Awaiting Approval") },
           { id: "3", label: t("Needs More Info") },
-          { id: "4", label: t("Restoration in Progress") },
           { id: "5", label: t("Approved") }
         ],
         entityType: SITE

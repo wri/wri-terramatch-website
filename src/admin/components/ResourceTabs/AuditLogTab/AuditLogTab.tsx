@@ -5,7 +5,7 @@ import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
+import { DISTURBANCE_REPORT, NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
@@ -27,7 +27,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   3: "nursery",
   4: "project-reports",
   5: "site-reports",
-  6: "nursery-reports"
+  6: "nursery-reports",
+  7: "disturbance-reports"
 };
 
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
@@ -36,7 +37,9 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const basename = useBasename();
   const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
   const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
-  const showOpenEntity = ["nursery-reports", "site-reports"].includes(ReverseButtonStates2[entity!]);
+  const showOpenEntity = ["nursery-reports", "site-reports", "disturbance-reports"].includes(
+    ReverseButtonStates2[entity!]
+  );
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
 
   const {
@@ -88,13 +91,23 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
   const verifyEntityReport = () => {
-    switch (ReverseButtonStates2[isProjectReport || showOpenEntity ? buttonToggle! : entity!]) {
+    switch (
+      ReverseButtonStates2[
+        isProjectReport || showOpenEntity
+          ? buttonToggle == AuditLogButtonStates.DISTURBANCE_REPORT
+            ? buttonToggle! - 1
+            : buttonToggle!
+          : entity!
+      ]
+    ) {
       case "project-reports":
         return PROJECT_REPORT;
       case "site-reports":
         return SITE_REPORT;
       case "nursery-reports":
         return NURSERY_REPORT;
+      case "disturbance-reports":
+        return DISTURBANCE_REPORT;
       default:
         return entityType;
     }
@@ -105,22 +118,25 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
           <Grid xs={8}>
             <Stack gap={4} className="pl-8 pt-9">
-              {!verifyEntity && entity != AuditLogButtonStates.SITE_REPORT && (
-                <AuditLogSiteTabSelection
-                  buttonToggle={buttonToggle!}
-                  setButtonToggle={setButtonToggle}
-                  framework={record?.framework_key ?? record?.frameworkKey}
-                  isReport={isProjectReport}
-                  entityLevel={entity}
-                  existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
-                />
-              )}
+              {!verifyEntity &&
+                entity != AuditLogButtonStates.SITE_REPORT &&
+                entity != AuditLogButtonStates.DISTURBANCE_REPORT - 1 && (
+                  <AuditLogSiteTabSelection
+                    buttonToggle={buttonToggle!}
+                    setButtonToggle={setButtonToggle}
+                    framework={record?.framework_key ?? record?.frameworkKey}
+                    isReport={isProjectReport}
+                    entityLevel={entity}
+                    existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
+                  />
+                )}
               {showOpenEntity && (
                 <AuditLogSiteTabSelection
                   buttonToggle={buttonToggle!}
                   setButtonToggle={setButtonToggle}
                   framework={record?.framework_key ?? record?.frameworkKey}
                   entityLevel={entity}
+                  isAdmin={true}
                 />
               )}
               <When condition={buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity}>
@@ -136,7 +152,13 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   label="OPEN PROJECT REPORT AUDIT LOG"
                 />
               </When>
-              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && record?.project && !verifyEntity}>
+              <When
+                condition={
+                  ((buttonToggle === AuditLogButtonStates.PROJECT && record?.project) ||
+                    (buttonToggle === AuditLogButtonStates.PROJECT && record?.projectName)) &&
+                  !verifyEntity
+                }
+              >
                 <Text variant="text-24-bold">Project Status</Text>
                 <Text variant="text-14-light" className="mb-4">
                   Update the site status, view updates, or add comments
@@ -144,12 +166,21 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                 <Button
                   className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
                   component={Link}
-                  to={`${basename}/${modules.project.ResourceName}/${record?.project?.uuid}/show/5`}
+                  to={`${basename}/${modules.project.ResourceName}/${
+                    record?.project?.uuid || record?.projectUuid
+                  }/show/5`}
                   fullWidth
                   label="OPEN PROJECT AUDIT LOG"
                 />
               </When>
-              <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
+              <When
+                condition={
+                  buttonToggle === AuditLogButtonStates.PROJECT &&
+                  !record?.project &&
+                  buttonToggle === AuditLogButtonStates.PROJECT &&
+                  !record?.projectName
+                }
+              >
                 <SiteAuditLogProjectStatus
                   record={record}
                   auditLogData={auditLogData}
@@ -190,7 +221,14 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Grid>
         </Grid>
         <div className="px-2 py-2">
-          <When condition={buttonToggle === AuditLogButtonStates.PROJECT && !record?.project}>
+          <When
+            condition={
+              buttonToggle === AuditLogButtonStates.PROJECT &&
+              !record?.project &&
+              buttonToggle === AuditLogButtonStates.PROJECT &&
+              !record?.projectName
+            }
+          >
             <Text variant="text-16-bold" className="mb-6">
               History and Discussion for {record && record?.name}
             </Text>

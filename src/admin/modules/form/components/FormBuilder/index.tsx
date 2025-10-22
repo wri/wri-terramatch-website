@@ -35,7 +35,8 @@ export const formTypeChoices: { id: FormType; name: string }[] = [
   { id: "project-report", name: "Project Report" },
   { id: "site-report", name: "Site Report" },
   { id: "nursery-report", name: "Nursery Report" },
-  { id: "financial-report", name: "Financial Report" }
+  { id: "financial-report", name: "Financial Report" },
+  { id: "disturbance-report", name: "Disturbance Report" }
 ];
 
 const toFormModelType = (formTypeChoice: string) => {
@@ -48,7 +49,7 @@ const toFormModelType = (formTypeChoice: string) => {
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormBuilderData>();
   const modelTypeValue = watch("type");
-  const formModelTypes = useMemo(
+  const formTypes = useMemo(
     () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
     [modelTypeValue]
   );
@@ -59,7 +60,7 @@ export const FormBuilderForm = () => {
     []
   );
 
-  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formTypes });
   const fullLinkedFields = useMemo(
     () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
     [linkedFieldsData]

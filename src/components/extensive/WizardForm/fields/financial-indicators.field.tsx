@@ -5,11 +5,11 @@ import * as yup from "yup";
 import FinancialIndicatorsAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/FinancialIndicatorsAdditionalOptions";
 import RHFFinancialIndicatorsDataTable from "@/components/elements/Inputs/FinancialTableInput/RHFFinancialIndicatorTable";
 import {
-  currentRatioColumnsMap,
-  documentationColumnsMap,
+  CURRENT_RATIO_COLUMNS,
+  DOCUMENTATION_COLUMNS,
   formatFinancialData,
-  nonProfitAnalysisColumnsMap,
-  profitAnalysisColumnsMap
+  NON_PROFILE_ANALYSIS_COLUMNS,
+  PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addValidationWith } from "@/utils/yup";
@@ -81,10 +81,10 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const years = field.years;
     const collections = field.model;
     const columnMaps: Record<string, string[]> = {
-      profitAnalysisData: profitAnalysisColumnsMap,
-      nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
-      currentRatioData: currentRatioColumnsMap,
-      documentationData: documentationColumnsMap
+      profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
+      nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
+      currentRatioData: CURRENT_RATIO_COLUMNS,
+      documentationData: DOCUMENTATION_COLUMNS
     };
 
     const profitCollections = ["revenue", "expenses", "profit"];
@@ -109,7 +109,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       delete columnMaps.currentRatioData;
     }
 
-    const formatted = formatFinancialData(values, years ?? undefined, "", "");
+    const formatted = formatFinancialData(values, years ?? undefined, "");
     const sections = [
       { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
