@@ -1724,168 +1724,35 @@ export type EntityCreateError = Fetcher.ErrorWrapper<
     }
 >;
 
+export type EntityCreateResponse = {
+  meta?: {
+    /**
+     * @example disturbanceReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example disturbanceReports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceReportFullDto;
+  };
+};
+
 export type EntityCreateVariables = {
   body: Schemas.EntityCreateBody;
   pathParams: EntityCreatePathParams;
 };
 
-export const entityCreate = new V3ApiEndpoint<
-  | {
-      meta?: {
-        /**
-         * @example projects
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example projects
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.ProjectFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example sites
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example sites
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.SiteFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example nurseries
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example nurseries
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.NurseryFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example projectReports
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example projectReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.ProjectReportFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example nurseryReports
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example nurseryReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.NurseryReportFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example siteReports
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example siteReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.SiteReportFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example financialReports
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example financialReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.FinancialReportFullDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example disturbanceReports
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example disturbanceReports
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.DisturbanceReportFullDto;
-      };
-    },
-  EntityCreateError,
-  EntityCreateVariables,
-  {}
->("/entities/v3/{entity}", "POST");
+export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreateError, EntityCreateVariables, {}>(
+  "/entities/v3/{entity}",
+  "POST"
+);
 
 export type EntityGetPathParams = {
   /**

@@ -18,30 +18,23 @@ import {
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
-  FinancialReportCreateData,
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
-  NurseryCreateData,
   NurseryFullDto,
   NurseryLightDto,
-  NurseryReportCreateData,
   NurseryReportFullDto,
   NurseryReportLightDto,
   NurseryReportUpdateData,
   NurseryUpdateData,
-  ProjectCreateData,
   ProjectFullDto,
   ProjectLightDto,
-  ProjectReportCreateData,
   ProjectReportFullDto,
   ProjectReportLightDto,
   ProjectReportUpdateData,
   ProjectUpdateData,
-  SiteCreateData,
   SiteFullDto,
   SiteLightDto,
-  SiteReportCreateData,
   SiteReportFullDto,
   SiteReportLightDto,
   SiteReportUpdateData,
@@ -81,15 +74,7 @@ export type EntityUpdateData =
   | FinancialReportUpdateData
   | DisturbanceReportUpdateData;
 
-export type EntityCreateData =
-  | ProjectCreateData
-  | SiteCreateData
-  | NurseryCreateData
-  | ProjectReportCreateData
-  | SiteReportCreateData
-  | NurseryReportCreateData
-  | FinancialReportCreateData
-  | DisturbanceReportCreateData;
+export type EntityCreateData = DisturbanceReportCreateData;
 
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<Filter<EntityIndexQueryParams>> &
@@ -133,7 +118,6 @@ const createEntityDeleter = (entity: SupportedEntity) =>
 const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
   return v3Resource(entity, entityCreate)
     .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
-    .refetch(() => ApiSlice.invalidateIndices(entity))
     .buildConnection();
 };
 

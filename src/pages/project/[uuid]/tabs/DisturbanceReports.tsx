@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -16,15 +15,9 @@ interface DisturbanceReportsProps {
 
 const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
   const t = useT();
-  const [, { isCreating, create, refetch }] = useCreateDisturbanceReport({
-    entityUuid: projectUUID
+  const [, { isCreating, create }] = useCreateDisturbanceReport({
+    parentUuid: projectUUID
   });
-
-  useEffect(() => {
-    if (!isCreating) {
-      refetch();
-    }
-  }, [isCreating, refetch]);
 
   return (
     <PageBody>
@@ -38,7 +31,7 @@ const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
             )}
             subtitleMore
             headerChildren={
-              <Button disabled={isCreating} onClick={() => create({ entityUuid: projectUUID })}>
+              <Button disabled={isCreating} onClick={() => create({ parentUuid: projectUUID })}>
                 <Icon name={IconNames.PLUS} className="h-3 w-3" />
                 <>{t("Add Report")}</>
               </Button>

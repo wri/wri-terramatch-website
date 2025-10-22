@@ -1804,42 +1804,7 @@ export type EntityCreateAttributes = {
   /**
    * UUID of the entity related to the report
    */
-  entityUuid: string;
-};
-
-export type ProjectCreateData = {
-  type: "projects";
-  attributes: EntityCreateAttributes;
-};
-
-export type SiteCreateData = {
-  type: "sites";
-  attributes: EntityCreateAttributes;
-};
-
-export type NurseryCreateData = {
-  type: "nurseries";
-  attributes: EntityCreateAttributes;
-};
-
-export type ProjectReportCreateData = {
-  type: "projectReports";
-  attributes: EntityCreateAttributes;
-};
-
-export type SiteReportCreateData = {
-  type: "siteReports";
-  attributes: EntityCreateAttributes;
-};
-
-export type NurseryReportCreateData = {
-  type: "nurseryReports";
-  attributes: EntityCreateAttributes;
-};
-
-export type FinancialReportCreateData = {
-  type: "financialReports";
-  attributes: EntityCreateAttributes;
+  parentUuid: string;
 };
 
 export type DisturbanceReportCreateData = {
@@ -1848,15 +1813,7 @@ export type DisturbanceReportCreateData = {
 };
 
 export type EntityCreateBody = {
-  data:
-    | ProjectCreateData
-    | SiteCreateData
-    | NurseryCreateData
-    | ProjectReportCreateData
-    | SiteReportCreateData
-    | NurseryReportCreateData
-    | FinancialReportCreateData
-    | DisturbanceReportCreateData;
+  data: DisturbanceReportCreateData;
 };
 
 /**
