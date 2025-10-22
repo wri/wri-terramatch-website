@@ -1,71 +1,10 @@
 import { format } from "date-fns";
-import { cloneDeep, isBoolean, sortBy } from "lodash";
-import { Identifier } from "react-admin";
+import { isBoolean } from "lodash";
 
-import { NormalizedFormObject } from "@/admin/apiProvider/dataProviders/formDataProvider";
 import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { AdditionalInputTypes } from "@/admin/types/common";
 import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
-import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-
-export const normalizeV3Form = ({ sections, ...form }: FormFullDto): FormBuilderData => ({
-  ...form,
-  id: form.uuid,
-  steps: sections.map(({ questions, ...step }) => ({
-    ...step,
-    fields: questions.map(({ children, ...field }) => ({
-      ...cloneDeep(field),
-      children: cloneDeep(children ?? undefined)
-    }))
-  }))
-});
-
-//Response normalizers
-/**
- * add replace `id` with `uuid`, sort sections and question based on order attribute
- * @param form api response
- * @returns normalized version of api response
- */
-export const normalizeFormObject = (form: FormRead): NormalizedFormObject => ({
-  ...form,
-  id: form.uuid as Identifier,
-  deadline_at: form.deadline_at ? new Date(form.deadline_at!).toLocaleString("en-US", { timeZone: "EST" }) : undefined,
-
-  form_sections: sortBy(
-    form.form_sections?.map(section => ({
-      ...section,
-      form_questions: sortBy(section.form_questions?.map(normalizeFormQuestion), ["order"])
-    })),
-    ["order"]
-  )
-});
-
-const normalizeFormQuestion = (question: any) => {
-  const {
-    children,
-    options,
-    with_numbers,
-    with_intensity,
-    with_extent,
-    with_private_checkbox,
-    capture_count,
-    ...output
-  }: any = question;
-
-  if (children) {
-    output.child_form_questions = sortBy(children.map(normalizeFormQuestion), ["order"]);
-  }
-
-  if (options) {
-    output.form_question_options = sortBy(options, ["order"]);
-  }
-
-  output.additional_props = { with_numbers, with_intensity, with_extent, with_private_checkbox, capture_count };
-
-  return output;
-};
 
 // Payload normalizer
 /**

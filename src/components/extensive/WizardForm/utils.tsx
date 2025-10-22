@@ -47,7 +47,7 @@ export const addFieldValidation = (
   validations[field.name] = (validations[field.name] ?? yup.mixed()).nullable().label(field.label ?? "");
 };
 
-const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
+export const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>
   (option as FormQuestionOptionDto).slug != null;
 
 export const toFormOptions = (options?: FormQuestionOptionDto[] | Option[] | null) =>

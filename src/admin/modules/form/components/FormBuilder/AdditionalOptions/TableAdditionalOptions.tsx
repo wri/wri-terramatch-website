@@ -17,14 +17,14 @@ const TableAdditionalOptions: FC<TableAdditionalOptionsProps> = ({ linkedFieldsD
     <>
       <Box display="flex" width="100%" gap={2} marginTop={2}>
         <TextInput
-          source={getSource("tableHeaders.0.label")}
+          source={getSource("tableHeaders.0")}
           label="Table Header (Question)"
           helperText=""
           fullWidth
           validate={required()}
         />
         <TextInput
-          source={getSource("tableHeaders.1.label")}
+          source={getSource("tableHeaders.1")}
           label="Table Header (Answer)"
           helperText=""
           fullWidth
