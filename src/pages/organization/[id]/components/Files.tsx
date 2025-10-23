@@ -23,7 +23,14 @@ const Files = ({ files, title }: FilesProps) => {
       <List
         className="grid w-full grid-cols-2 gap-5"
         items={files}
-        render={file => <FilePreviewCard file={file as UploadedFile} onDownload={f => downloadFile(f.url)} />}
+        render={file => (
+          <FilePreviewCard
+            file={file as UploadedFile}
+            onDownload={f => {
+              if (f.url != null) downloadFile(f.url);
+            }}
+          />
+        )}
       />
     </section>
   );

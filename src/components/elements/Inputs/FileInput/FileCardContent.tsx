@@ -35,9 +35,9 @@ export const FileCardContent = ({
   onPrivateChange
 }: FileCardContentProps) => {
   const t = useT();
-  const [isPublic, setIsPublic] = useState<boolean>(!!file?.is_public);
+  const [isPublic, setIsPublic] = useState<boolean>(!!file?.isPublic);
 
-  const hasPreview = file?.url && file.mime_type?.includes("image");
+  const hasPreview = file?.url && file.mimeType?.includes("image");
 
   const handlePrivateChange = (event: ChangeEvent<HTMLInputElement>) => {
     setIsPublic(!event.target.checked);

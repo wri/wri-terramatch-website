@@ -110,7 +110,7 @@ export const PolygonHandler = () => {
   };
 
   const getFileType = (file: UploadedFile) => {
-    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
     if (fileType === "geojson") return "geojson";
     if (fileType === "zip") return "shapefile";
     if (fileType === "kml") return "kml";
