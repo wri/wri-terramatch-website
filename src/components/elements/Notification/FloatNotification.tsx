@@ -20,6 +20,7 @@ const FloatNotification = () => {
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
+  const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
 
   const clearJobs = () => {
     if (delayedJobs === undefined) return;
@@ -39,6 +40,14 @@ const FloatNotification = () => {
 
   useValueChanged(delayedJobs, () => {
     if (!delayedJobs) return;
+
+    const newCachedNames = { ...cachedSiteNames };
+    delayedJobs.forEach(job => {
+      if (job.entityName && job.uuid) {
+        newCachedNames[job.uuid] = job.entityName;
+      }
+    });
+    setCachedSiteNames(newCachedNames);
 
     setNotAcknowledgedJobs(delayedJobs);
     if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
@@ -129,7 +138,7 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{item.entityName}</b>
+                      Site: <b>{item.entityName ?? cachedSiteNames[item.uuid]}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (
