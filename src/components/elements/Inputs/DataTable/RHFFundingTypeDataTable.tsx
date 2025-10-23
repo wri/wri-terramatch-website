@@ -86,7 +86,7 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
  * @param props PropsWithChildren<RHFSelectProps>
  * @returns React Hook Form Ready Select Component
  */
-const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
+const RHFFundingTypeDataTable = ({ ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
   const t = useT();
   const { field } = useController(props);
   const value = useMemo(() => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
@@ -106,11 +106,10 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     (data: any) => {
       const next = [...value, data];
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const removeItem = useCallback(
@@ -118,11 +117,10 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       if (!uuid) return;
       const next = (value as any[]).filter(item => item?.uuid !== uuid);
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const updateItem = useCallback(
@@ -133,12 +131,11 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       if (index !== -1) {
         next[index] = { ...next[index], ...data };
         field.onChange(next);
-        onChangeCapture?.();
         clearErrors();
         refreshTable();
       }
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const tableColumnsWithCurrency: AccessorKeyColumnDef<any>[] = getFundingTypeTableColumns(t).map(col =>
