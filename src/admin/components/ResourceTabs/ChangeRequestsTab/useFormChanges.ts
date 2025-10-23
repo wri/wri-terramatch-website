@@ -40,7 +40,7 @@ export default function useFormChanges(
 ): StepChange[] {
   const t = useT();
   const currentValues = useMemo(() => formDefaultValues(current, fieldsProvider), [current, fieldsProvider]);
-  const changedValues = useMemo(() => formDefaultValues(changed, fieldsProvider), [changed, fieldsProvider]);
+  const changedValues = useMemo(() => formDefaultValues(changed ?? {}, fieldsProvider), [changed, fieldsProvider]);
   return useMemo(
     () =>
       fieldsProvider.stepIds().map(stepId => {
