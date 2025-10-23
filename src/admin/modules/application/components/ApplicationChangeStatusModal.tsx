@@ -7,7 +7,7 @@ import {
   DialogProps,
   DialogTitle
 } from "@mui/material";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, RaRecord, TextInput, useNotify, useRefresh, useShowContext } from "react-admin";
 import { If } from "react-if";
 import * as yup from "yup";
@@ -48,6 +48,7 @@ const ApplicationRequestMoreInfoModal = ({
   const notify = useNotify();
   const { record } = useShowContext<FormSubmissionRead & RaRecord>();
   const uuid = record?.current_submission?.uuid as string;
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
   const questions: Option[] | undefined = useMemo(
     () =>
@@ -74,15 +75,6 @@ const ApplicationRequestMoreInfoModal = ({
 
   const handleSave = async (data: any) => {
     if (status) {
-      const body: any = {
-        status,
-        feedback_fields: data.feedback_fields
-      };
-
-      if (data.feedback) {
-        body.feedback = data.feedback;
-      }
-
       await requestMoreInfo({
         // @ts-ignore client error
         pathParams: {
@@ -92,7 +84,7 @@ const ApplicationRequestMoreInfoModal = ({
           feedback: data.feedback,
           status,
           //@ts-ignore
-          feedback_fields: data.feedback_fields
+          feedback_fields: isAllSelected ? feebdackFields.map(f => f.id) : data.feedback_fields
         }
       });
     }
@@ -105,7 +97,7 @@ const ApplicationRequestMoreInfoModal = ({
       <Form
         onSubmit={handleSave}
         validate={validateForm(
-          status === "requires-more-information" ? moreInfoValidationSchema : genericValidationSchema
+          status === "requires-more-information" && !isAllSelected ? moreInfoValidationSchema : genericValidationSchema
         )}
       >
         <If condition={status}>
@@ -113,7 +105,7 @@ const ApplicationRequestMoreInfoModal = ({
         </If>
         <DialogContent>
           <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
-          <If condition={status === "requires-more-information" && feebdackFields.length > 0}>
+          <If condition={status === "requires-more-information" && feebdackFields.length > 0 && !isAllSelected}>
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
@@ -122,9 +114,17 @@ const ApplicationRequestMoreInfoModal = ({
               margin="dense"
             />
           </If>
+          {isAllSelected && (
+            <div>
+              All Fields selected | <button onClick={() => setIsAllSelected(false)}>Clear</button>
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
+          {status === "requires-more-information" && !isAllSelected && (
+            <Button onClick={() => setIsAllSelected(true)}>Select All</Button>
+          )}
           <Button variant="contained" type="submit" disabled={isLoading}>
             <If condition={isLoading}>
               <CircularProgress size={18} sx={{ marginRight: 1 }} />

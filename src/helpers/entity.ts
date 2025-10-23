@@ -20,13 +20,9 @@ export const pluralEntityNameToSingular = (plural: EntityName): SingularEntityNa
   else return plural.substring(0, plural.length - 1) as SingularEntityName;
 };
 
-export const v3Entity = (entity?: Entity) => {
-  if (entity == null) return undefined;
-  const name = isSingularEntityName(entity.entityName)
-    ? singularEntityNameToPlural(entity.entityName)
-    : entity.entityName;
-  return camelCase(name);
-};
+export const v3Entity = (entity?: Entity) => (entity == null ? undefined : v3EntityName(entity.entityName));
+export const v3EntityName = (name: EntityName | SingularEntityName) =>
+  camelCase(isSingularEntityName(name) ? singularEntityNameToPlural(name) : name);
 
 export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, singular?: boolean) => {
   const mapping: any = {

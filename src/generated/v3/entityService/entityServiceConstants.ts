@@ -53,7 +53,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseries",
   "financialReports",
   "disturbanceReports",
-  "srpReports",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -80,7 +79,6 @@ export type EntityServiceApiResources = {
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
-  srpReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
@@ -111,8 +109,7 @@ export const SupportedEntities = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports",
-    "srpReports"
+    "disturbanceReports"
   ] as const
 } as const;
 
