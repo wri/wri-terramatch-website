@@ -119,7 +119,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
 
       case "rejected":
         return {
-          title: t("Status: Rejected"),
+          title: t("Status: Not Selected"),
           //@ts-ignore
           subtitle: currentSubmission.feedback,
           color: "error",
