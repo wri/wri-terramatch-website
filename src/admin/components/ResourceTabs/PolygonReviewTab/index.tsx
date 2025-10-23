@@ -1,8 +1,9 @@
 import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import { SortingState } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -21,7 +22,7 @@ import {
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
-import Table from "@/components/elements/Table/Table";
+import Table, { TableState } from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
@@ -175,6 +176,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const t = useT();
 
   const { openNotification } = useNotificationContext();
@@ -250,22 +252,68 @@ const PolygonReviewTab: FC<IProps> = props => {
     }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index) => ({
-    "polygon-name": data?.name ?? `Unnamed Polygon`,
-    "restoration-practice": data?.practice ?? "",
-    "target-land-use-system": data?.targetSys ?? "",
-    "tree-distribution": data?.distr ?? "",
-    "planting-start-date": data?.plantStart ?? "",
-    source: data?.source ?? "",
-    uuid: data?.polygonUuid,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygonLightDto[]).length - 1
-  }));
+  type SitePolygonRow = {
+    "polygon-name": string;
+    "restoration-practice": string;
+    "target-land-use-system": string;
+    "tree-distribution": string;
+    "planting-start-date": string;
+    source: string;
+    uuid?: string;
+    ellipse: boolean;
+  };
 
-  const totalItems = sitePolygonDataTable.length;
+  const sitePolygonDataTable: SitePolygonRow[] = (sitePolygonData ?? []).map(
+    (data: SitePolygonLightDto, index): SitePolygonRow => ({
+      "polygon-name": data?.name ?? `Unnamed Polygon`,
+      "restoration-practice": data?.practice ?? "",
+      "target-land-use-system": data?.targetSys ?? "",
+      "tree-distribution": data?.distr ?? "",
+      "planting-start-date": data?.plantStart ?? "",
+      source: data?.source ?? "",
+      uuid: data?.polygonUuid ?? undefined,
+      ellipse: index === (sitePolygonData ?? []).length - 1
+    })
+  );
+
+  // Stable client-side sorting across the full dataset, then paginate
+  const sortedData = useMemo<SitePolygonRow[]>(() => {
+    if (!sorting?.length) return sitePolygonDataTable;
+
+    const sorters = sorting.map(s => ({ id: s.id, desc: s.desc }));
+
+    // Normalize values for consistent comparisons (numbers, ISO dates, strings)
+    const getComparable = (value: unknown): string | number => {
+      if (value == null) return "";
+      if (typeof value === "number") return value;
+      const str = String(value);
+      const timestamp = Date.parse(str);
+      if (!Number.isNaN(timestamp) && /\d{4}-\d{2}-\d{2}/.test(str)) return timestamp;
+      return str.toLowerCase();
+    };
+
+    const dataWithIndex = sitePolygonDataTable.map((row, idx) => ({ row, idx }));
+
+    dataWithIndex.sort((a, b) => {
+      for (const s of sorters) {
+        const key = s.id as keyof SitePolygonRow;
+        const av = getComparable(a.row[key]);
+        const bv = getComparable(b.row[key]);
+        if (av < bv) return s.desc ? 1 : -1;
+        if (av > bv) return s.desc ? -1 : 1;
+      }
+      // stable fallback
+      return a.idx - b.idx;
+    });
+
+    return dataWithIndex.map(d => d.row);
+  }, [sitePolygonDataTable, sorting]);
+
+  const totalItems = sortedData.length;
   const totalPages = Math.ceil(totalItems / pageSize);
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
-  const paginatedData = sitePolygonDataTable.slice(startIndex, endIndex);
+  const paginatedData = sortedData.slice(startIndex, endIndex);
 
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
@@ -337,6 +385,11 @@ const PolygonReviewTab: FC<IProps> = props => {
       setShouldRefetchValidation(false);
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
+
+  // Reset to first page when sorting changes to keep UX predictable
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [sorting]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -778,8 +831,22 @@ const PolygonReviewTab: FC<IProps> = props => {
                   hasPagination={false}
                   visibleRows={10000000}
                   classNameWrapper="max-h-[560px]"
+                  serverSideData
+                  onTableStateChange={useCallback(
+                    (state: TableState) => {
+                      // TanStack Table envía ids de columnas como accessorKey
+                      const nextSorting =
+                        typeof state.sorting === "function" ? state.sorting(sorting) : (state.sorting as SortingState);
+                      setSorting(nextSorting);
+                    },
+                    [sorting]
+                  )}
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
+                    {
+                      header: "Polygon Name",
+                      accessorKey: "polygon-name",
+                      meta: { style: { width: "14.63%" }, className: "whitespace-nowrap pr-6" }
+                    },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
