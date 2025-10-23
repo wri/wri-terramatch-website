@@ -278,89 +278,89 @@ const ReportingTaskPage = () => {
     }
   ];
 
-  const tableColumnsSRP: ColumnDef<RowData>[] = [
-    {
-      accessorKey: "parentName",
-      header: t("Report")
-    },
-    {
-      accessorKey: "completionStatus",
-      header: t("Status"),
-      cell: props => {
-        const value = props.getValue() as string;
-        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
-        if (!status) return null;
+  // const tableColumnsSRP: ColumnDef<RowData>[] = [
+  //   {
+  //     accessorKey: "parentName",
+  //     header: t("Report")
+  //   },
+  //   {
+  //     accessorKey: "completionStatus",
+  //     header: t("Status"),
+  //     cell: props => {
+  //       const value = props.getValue() as string;
+  //       const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
+  //       if (!status) return null;
 
-        return (
-          <StatusPill status={status} className="w-fit">
-            <Text variant="text-bold-caption-100">{statusText}</Text>
-          </StatusPill>
-        );
-      }
-    },
-    {
-      accessorKey: "completion",
-      header: t("Completion"),
-      cell: props => {
-        return `${props.getValue()}%`;
-      }
-    },
-    {
-      accessorKey: "updatedAt",
-      header: t("Last Update")
-    },
-    {
-      accessorKey: "completionStatus",
-      id: "uuid",
-      header: "",
-      enableSorting: false,
-      cell: props => {
-        const record = props.row.original as TaskReport;
-        const { index } = props.row;
-        const { status, completion, uuid, completionStatus } = record;
-        const type = "socio-economic-report";
-        const shouldShowButton =
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
-          !(type === "socio-economic-report" || completion === 100);
+  //       return (
+  //         <StatusPill status={status} className="w-fit">
+  //           <Text variant="text-bold-caption-100">{statusText}</Text>
+  //         </StatusPill>
+  //       );
+  //     }
+  //   },
+  //   {
+  //     accessorKey: "completion",
+  //     header: t("Completion"),
+  //     cell: props => {
+  //       return `${props.getValue()}%`;
+  //     }
+  //   },
+  //   {
+  //     accessorKey: "updatedAt",
+  //     header: t("Last Update")
+  //   },
+  //   {
+  //     accessorKey: "completionStatus",
+  //     id: "uuid",
+  //     header: "",
+  //     enableSorting: false,
+  //     cell: props => {
+  //       const record = props.row.original as TaskReport;
+  //       const { index } = props.row;
+  //       const { status, completion, uuid, completionStatus } = record;
+  //       const type = "socio-economic-report";
+  //       const shouldShowButton =
+  //         NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
+  //         !(type === "socio-economic-report" || completion === 100);
 
-        const handleClick = useCallback(() => {
-          nothingToReportHandler("socio-economic-reports" as ReportsModelNames, uuid);
-        }, [uuid]);
+  //       const handleClick = useCallback(() => {
+  //         nothingToReportHandler("socio-economic-reports" as ReportsModelNames, uuid);
+  //       }, [uuid]);
 
-        return (
-          <div className="flex justify-end gap-4">
-            {shouldShowButton ? (
-              <Button id={`nothing-to-report-button-${index}`} variant="secondary" onClick={handleClick}>
-                {t("Nothing to report")}
-              </Button>
-            ) : null}
-            <Switch>
-              <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
-                <Button as={Link} href={`/entity/${type}s/create/framework?entity_uuid=${uuid}`}>
-                  {t("Write report")}
-                </Button>
-              </Case>
-              <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Completed Report")}
-                </Button>
-              </Case>
-              <Case condition={completionStatus === "needs-more-information"}>
-                <Button as={Link} href={`/reports/${type}/${uuid}`}>
-                  {t("View Feedback")}
-                </Button>
-              </Case>
-              <Default>
-                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
-                  {t("Continue report")}
-                </Button>
-              </Default>
-            </Switch>
-          </div>
-        );
-      }
-    }
-  ];
+  //       return (
+  //         <div className="flex gap-4 justify-end">
+  //           {shouldShowButton ? (
+  //             <Button id={`nothing-to-report-button-${index}`} variant="secondary" onClick={handleClick}>
+  //               {t("Nothing to report")}
+  //             </Button>
+  //           ) : null}
+  //           <Switch>
+  //             <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
+  //               <Button as={Link} href={`/entity/${type}s/create/framework?entity_uuid=${uuid}`}>
+  //                 {t("Write report")}
+  //               </Button>
+  //             </Case>
+  //             <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
+  //               <Button as={Link} href={`/reports/${type}/${uuid}`}>
+  //                 {t("View Completed Report")}
+  //               </Button>
+  //             </Case>
+  //             <Case condition={completionStatus === "needs-more-information"}>
+  //               <Button as={Link} href={`/reports/${type}/${uuid}`}>
+  //                 {t("View Feedback")}
+  //               </Button>
+  //             </Case>
+  //             <Default>
+  //               <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+  //                 {t("Continue report")}
+  //               </Button>
+  //             </Default>
+  //           </Switch>
+  //         </div>
+  //       );
+  //     }
+  //   }
+  // ];
 
   return (
     projectLoaded && (
@@ -374,11 +374,11 @@ const ReportingTaskPage = () => {
                 <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
               </PageCard>
             </PageSection>
-            <PageSection>
+            {/* <PageSection>
               <PageCard title={t("SRP Reports")}>
                 <Table data={reports.mandatory} hasPagination={false} columns={tableColumnsSRP} />
               </PageCard>
-            </PageSection>
+            </PageSection> */}
             <PageSection>
               <PageCard title={t("Additional Reports")}>
                 <Table
