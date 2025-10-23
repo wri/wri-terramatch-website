@@ -14,13 +14,24 @@ import {
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addValidationWith } from "@/utils/yup";
 
-const getTableHtml = (body: string, t: typeof useT) =>
-  `<table class="w-full"><thead><tr>` +
-  `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Year")}</th>` +
-  `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Revenue")}</th>` +
-  `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Expenses")}</th>` +
-  `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Profit")}</th>` +
-  `</tr></thead><tbody><tr>${body}</tr></tbody></table>`;
+const getTableHtml = (body: string, t: typeof useT) => {
+  return (
+    `<table class="w-full"><thead><tr>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Year"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Revenue"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Expenses"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Profit"
+    )}</th>` +
+    `</tr></thead><tbody>${body}</tbody></table>`
+  );
+};
 
 export const FinancialIndicatorsField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation }) => {
@@ -139,23 +150,29 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
         if (filteredRows.length === 0) return "";
 
-        const tableRows = filteredRows.filter(row => row.profit != null);
-        const nonTableRows = filteredRows.filter(row => row.profit == null);
+        const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
 
-        const tableHtml = tableRows
-          .map(row =>
-            columns
-              .map(
-                col =>
-                  `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium">${
-                    isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
-                  }</td>`
-              )
-              .join("")
-          )
-          .join("</tr><tr>");
+        if (shouldShowAsTable) {
+          const tableHtml = filteredRows
+            .map((row: Record<string, any>) => {
+              const cellValues = columns.map(col => {
+                let displayValue;
+                if (col === "year") {
+                  displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
+                } else {
+                  displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                }
 
-        const rowsHtml = nonTableRows
+                return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium text-center">${displayValue}</td>`;
+              });
+              return `<tr>${cellValues.join("")}</tr>`;
+            })
+            .join("");
+
+          return `<strong>${section.title}</strong><br/>${getTableHtml(tableHtml, t)}<br/><br/>`;
+        }
+
+        const rowsHtml = filteredRows
           .map((row: Record<string, any>) => {
             const cellValues = columns.map(col => {
               if (col === "documentation") {
@@ -186,8 +203,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
           })
           .join("<br/>");
 
-        const body = tableRows.length > 0 ? getTableHtml(tableHtml, t) : rowsHtml;
-        return `<strong>${section.title}</strong><br/>${body}<br/><br/>`;
+        return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
       })
       .filter(Boolean)
       .join("");
