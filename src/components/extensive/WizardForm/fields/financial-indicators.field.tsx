@@ -90,7 +90,6 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     if (!Array.isArray(values) || values?.length === 0) return;
 
     const years = field.years;
-    const collections = field.model;
     const columnMaps: Record<string, string[]> = {
       profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
       nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
@@ -103,7 +102,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
 
     const presentCollections = new Set(values.map(({ collection }) => collection));
-    const selectedCollections = new Set(JSON.parse(collections ?? "[]"));
+    const selectedCollections = new Set(JSON.parse(field.collection ?? "[]"));
 
     const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
     const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
@@ -133,7 +132,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
         const trimmed = val.trim();
         return trimmed === "" || trimmed === "-";
       }
-      return value == null;
+      return val == null;
     };
 
     const value = sections
