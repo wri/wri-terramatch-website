@@ -23,11 +23,12 @@ const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
   const prevIsCreatingRef = useRef(isCreating);
 
   useEffect(() => {
-    if (prevIsCreatingRef.current && !isCreating && !createFailure) {
+    if (prevIsCreatingRef.current && isCreating == false && createFailure == null) {
       refetch();
     }
     prevIsCreatingRef.current = isCreating;
   }, [isCreating, createFailure, refetch]);
+
   return (
     <PageBody>
       <PageRow>
