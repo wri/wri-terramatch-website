@@ -58,12 +58,6 @@ const menuSiteOptions = [
     viewPd: false
   },
   {
-    title: "Restoration in Progress",
-    status: "restoration-in-progress",
-    value: 4,
-    viewPd: false
-  },
-  {
     title: "Approved",
     status: "approved",
     value: 5,

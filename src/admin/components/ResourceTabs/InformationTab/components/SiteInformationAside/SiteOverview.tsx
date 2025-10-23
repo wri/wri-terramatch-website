@@ -10,9 +10,7 @@ import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
 
 const SiteOverview: FC = () => {
-  const [statusModal, setStatusModal] = useState<
-    "approved" | "needs-more-information" | "restoration-in-progress" | undefined
-  >();
+  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
 
   const { record } = useShowContext();
 
