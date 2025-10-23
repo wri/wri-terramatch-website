@@ -1,8 +1,9 @@
 import { Grid, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
+import { SortingState } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -19,7 +20,7 @@ import {
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_RIGHT_BOTTOM, MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
+import { MENU_PLACEMENT_RIGHT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
@@ -30,6 +31,8 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import Pagination from "@/components/extensive/Pagination";
+import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -55,16 +58,6 @@ import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
-
-// Field mapping moved outside component to avoid recreation
-const FIELD_MAPPING: Record<string, string> = {
-  "polygon-name": "name",
-  "restoration-practice": "practice",
-  "target-land-use-system": "targetSys",
-  "tree-distribution": "distr",
-  "planting-start-date": "plantStart",
-  source: "source"
-};
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -181,8 +174,10 @@ const PolygonReviewTab: FC<IProps> = props => {
   } = useMapAreaContext();
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
-  const [sortField, setSortField] = useState<string>("createdAt");
-  const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
+  // Local table pagination/sorting over the full dataset already loaded for the map
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(20);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const t = useT();
 
   const { openNotification } = useNotificationContext();
@@ -198,19 +193,11 @@ const PolygonReviewTab: FC<IProps> = props => {
     loading,
     total,
     progress
-  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, sortField, sortDirection, validFilter);
+  } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
   const onSave = (geojson: any, record: any) => {
     storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
   };
   const mapFunctions = useMap(onSave);
-
-  const handleSortingChange = (tableState: any) => {
-    const sort = tableState?.sorting?.[0];
-    if (sort?.id) {
-      setSortField(FIELD_MAPPING[sort.id] || sort.id);
-      setSortDirection(sort.desc ? "DESC" : "ASC");
-    }
-  };
 
   const flyToPolygonBounds = useCallback(async (uuid: string) => {
     setCurrentPolygonUuid(uuid);
@@ -266,16 +253,65 @@ const PolygonReviewTab: FC<IProps> = props => {
     }));
   };
 
-  const sitePolygonDataTable = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index) => ({
-    "polygon-name": data?.name ?? `Unnamed Polygon`,
-    "restoration-practice": data?.practice ?? "",
-    "target-land-use-system": data?.targetSys ?? "",
-    "tree-distribution": data?.distr ?? "",
-    "planting-start-date": data?.plantStart ?? "",
-    source: data?.source ?? "",
-    uuid: data?.polygonUuid,
-    ellipse: index === ((sitePolygonData ?? []) as SitePolygonLightDto[]).length - 1
-  }));
+  type SitePolygonRow = {
+    "polygon-name": string;
+    "restoration-practice": string;
+    "target-land-use-system": string;
+    "tree-distribution": string;
+    "planting-start-date": string;
+    source: string;
+    uuid?: string;
+    ellipse: boolean;
+  };
+
+  const sitePolygonDataTable: SitePolygonRow[] = useMemo(
+    () =>
+      (sitePolygonData ?? []).map(
+        (data: SitePolygonLightDto, index): SitePolygonRow => ({
+          "polygon-name": data?.name ?? `Unnamed Polygon`,
+          "restoration-practice": data?.practice ?? "",
+          "target-land-use-system": data?.targetSys ?? "",
+          "tree-distribution": data?.distr ?? "",
+          "planting-start-date": data?.plantStart ?? "",
+          source: data?.source ?? "",
+          uuid: data?.polygonUuid ?? undefined,
+          ellipse: index === (sitePolygonData ?? []).length - 1
+        })
+      ),
+    [sitePolygonData]
+  );
+
+  // Stable client-side sorting across the full dataset, then paginate
+  const sortedData = useMemo<SitePolygonRow[]>(() => {
+    if (!sorting?.length) return sitePolygonDataTable;
+    const sorters = sorting.map(s => ({ id: s.id, desc: s.desc }));
+    const getComparable = (value: unknown): string | number => {
+      if (value == null) return "";
+      if (typeof value === "number") return value;
+      const str = String(value);
+      const timestamp = Date.parse(str);
+      if (!Number.isNaN(timestamp) && /\d{4}-\d{2}-\d{2}/.test(str)) return timestamp;
+      return str.toLowerCase();
+    };
+    const dataWithIndex = sitePolygonDataTable.map((row, idx) => ({ row, idx }));
+    dataWithIndex.sort((a, b) => {
+      for (const s of sorters) {
+        const key = s.id as keyof SitePolygonRow;
+        const av = getComparable(a.row[key]);
+        const bv = getComparable(b.row[key]);
+        if (av < bv) return s.desc ? 1 : -1;
+        if (av > bv) return s.desc ? -1 : 1;
+      }
+      return a.idx - b.idx;
+    });
+    return dataWithIndex.map(d => d.row);
+  }, [sitePolygonDataTable, sorting]);
+
+  const totalItems = sortedData.length;
+  const totalPages = Math.ceil(Math.max(1, totalItems) / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedData = sortedData.slice(startIndex, endIndex);
 
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
@@ -348,6 +384,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
+  // Table pagination handled by ConnectionTable; no local pagination state
   const uploadFiles = async () => {
     const uploadPromises = [];
     closeModal(ModalId.ADD_POLYGON);
@@ -778,25 +815,22 @@ const PolygonReviewTab: FC<IProps> = props => {
                 </div>
                 <Table
                   variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                  hasPagination={true}
-                  visibleRows={10}
-                  classNameWrapper="max-h-[560px]"
-                  onTableStateChange={handleSortingChange}
-                  initialTableState={{ sorting: [{ id: "polygon-name", desc: false }] }}
+                  hasPagination={false}
+                  visibleRows={10000000}
+                  classNameWrapper=""
+                  serverSideData
+                  onTableStateChange={state =>
+                    setSorting(typeof state.sorting === "function" ? state.sorting(sorting) : state.sorting)
+                  }
                   columns={[
-                    { header: "Polygon Name", accessorKey: "polygon-name", meta: { style: { width: "14.63%" } } },
+                    {
+                      header: "Polygon Name",
+                      accessorKey: "polygon-name",
+                      meta: { style: { width: "14.63%" }, className: "whitespace-nowrap pr-6" }
+                    },
                     {
                       header: "Restoration Practice",
                       accessorKey: "restoration-practice",
-                      cell: props => {
-                        const placeholder = props.getValue() as string;
-                        return (
-                          <input
-                            placeholder={placeholder}
-                            className="text-14 w-full px-[10px] outline-primary placeholder:text-[currentColor]"
-                          />
-                        );
-                      },
                       meta: { style: { width: "17.63%" } }
                     },
                     {
@@ -822,9 +856,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                       cell: props => (
                         <Menu
                           menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
-                          placement={
-                            (props.getValue() as boolean) ? MENU_PLACEMENT_RIGHT_TOP : MENU_PLACEMENT_RIGHT_BOTTOM
-                          }
+                          placement={MENU_PLACEMENT_RIGHT_BOTTOM}
                         >
                           <div className="rounded p-1 hover:bg-primary-200">
                             <Icon
@@ -836,8 +868,30 @@ const PolygonReviewTab: FC<IProps> = props => {
                       )
                     }
                   ]}
-                  data={sitePolygonDataTable}
-                ></Table>
+                  data={paginatedData}
+                />
+                <div className="mt-4 mb-20">
+                  <div className="relative">
+                    <Pagination
+                      pageIndex={currentPage - 1}
+                      nextPage={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      getCanNextPage={() => currentPage < totalPages}
+                      previousPage={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      getCanPreviousPage={() => currentPage > 1}
+                      getPageCount={() => totalPages}
+                      setPageIndex={(index: number) => setCurrentPage(index + 1)}
+                      hasPageSizeSelector
+                      defaultPageSize={pageSize}
+                      setPageSize={size => {
+                        setCurrentPage(1);
+                        setPageSize(size);
+                      }}
+                      variant={VARIANT_PAGINATION_DASHBOARD}
+                      containerClassName="justify-between"
+                      invertSelect
+                    />
+                  </div>
+                </div>
               </div>
             </Stack>
           </Grid>
