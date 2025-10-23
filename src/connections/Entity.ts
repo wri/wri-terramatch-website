@@ -118,7 +118,14 @@ const createEntityDeleter = (entity: SupportedEntity) =>
 const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
   return v3Resource(entity, entityCreate)
     .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
-    .refetch(() => ApiSlice.pruneCache(entity))
+    .refetch(() => {
+      // Prune all indices of this resource to force a reload
+      const currentState = ApiSlice.currentState;
+      const indices = currentState.meta.indices[entity] ?? {};
+      Object.keys(indices).forEach(indexKey => {
+        ApiSlice.pruneIndex(entity, indexKey);
+      });
+    })
     .buildConnection();
 };
 
