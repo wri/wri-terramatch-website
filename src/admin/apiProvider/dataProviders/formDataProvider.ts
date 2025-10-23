@@ -10,7 +10,7 @@ import {
   formDtoToBuilder
 } from "@/admin/modules/form/components/FormBuilder/types";
 import { createForm, deleteForm, loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
-import { fetchPatchV2AdminFormsUUID, PostV2AdminFormsError } from "@/generated/apiComponents";
+import { fetchPatchV2AdminFormsUUID, PatchV2AdminFormsUUIDError } from "@/generated/apiComponents";
 import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Option } from "@/types/common";
 
@@ -81,7 +81,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as UpdateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PatchV2AdminFormsUUIDError);
     }
   },
 
