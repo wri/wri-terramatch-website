@@ -8,6 +8,7 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbanceReportsTable from "@/components/extensive/Tables/DisturbanceReportsTable";
 import { useCreateDisturbanceReport } from "@/connections/Entity";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 interface DisturbanceReportsProps {
   projectUUID: string;
@@ -15,9 +16,11 @@ interface DisturbanceReportsProps {
 
 const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
   const t = useT();
-  const [, { isCreating, create }] = useCreateDisturbanceReport({
+  const [, { isCreating, createFailure, refetch, create }] = useCreateDisturbanceReport({
     parentUuid: projectUUID
   });
+
+  useRequestSuccess(isCreating, createFailure, refetch);
 
   return (
     <PageBody>

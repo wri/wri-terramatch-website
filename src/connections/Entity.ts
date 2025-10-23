@@ -118,6 +118,7 @@ const createEntityDeleter = (entity: SupportedEntity) =>
 const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
   return v3Resource(entity, entityCreate)
     .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
+    .refetch(() => ApiSlice.pruneCache(entity))
     .buildConnection();
 };
 
