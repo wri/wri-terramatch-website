@@ -1,7 +1,8 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Lottie from "lottie-react";
-import { Else, If, Then, When } from "react-if";
+import { useCallback } from "react";
+import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import SpinnerLottie from "@/assets/animations/spinner.json";
@@ -19,7 +20,6 @@ import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./Fil
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;
-  fileStatus?: boolean;
   className?: string;
   variant?: FilePreviewCardVariant;
   showPrivateCheckbox?: boolean;
@@ -29,43 +29,43 @@ export interface FilePreviewCardProps {
 
 const FilePreviewCard = ({
   file,
-  fileStatus,
   className,
   showPrivateCheckbox,
   onDelete,
   onPrivateChange,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
 }: FilePreviewCardProps) => {
-  const handlePrivateChange = (checked: boolean) => {
-    if (!file) return;
+  const handlePrivateChange = useCallback(
+    (checked: boolean) => {
+      if (file == null) return;
 
-    onPrivateChange?.(file, checked);
-  };
+      onPrivateChange?.(file, checked);
+    },
+    [file, onPrivateChange]
+  );
   const t = useT();
+
+  const geotagged = file.lat != null && file.lng != null && (file.lat != 0 || file.lng != 0);
 
   return (
     <div className={tw(variant.fileWrapper, className)}>
       <div className={variant.fileCardContent}>
-        <When condition={file.uuid || file.uploadState?.isSuccess}>
+        {file.uuid != null || file.uploadState?.isSuccess ? (
           <Uploaded
-            title={file?.title || file?.file_name || ""}
+            title={file.fileName ?? ""}
             file={file as UploadedFile}
             showPrivateCheckbox={showPrivateCheckbox}
             onPrivateChange={handlePrivateChange}
             variant={variant}
           />
-        </When>
-        <When condition={file?.uploadState?.isLoading}>
-          <Uploading title={file?.title || file?.file_name || ""} file={file as UploadedFile} variant={variant} />
-        </When>
+        ) : null}
+        {file.uploadState?.isLoading ? (
+          <Uploading title={file.fileName ?? ""} file={file as UploadedFile} variant={variant} />
+        ) : null}
 
-        <When condition={!!file.uploadState?.error}>
-          <Failed
-            title={file?.title || file?.file_name || ""}
-            errorMessage={file.uploadState?.error!}
-            variant={variant}
-          />
-        </When>
+        {file.uploadState?.error == null ? null : (
+          <Failed title={file.fileName ?? ""} errorMessage={file.uploadState.error} variant={variant} />
+        )}
       </div>
       <If condition={file.uploadState?.isLoading || file.uploadState?.isDeleting}>
         <Then>
@@ -84,28 +84,26 @@ const FilePreviewCard = ({
                 width: 32
               }}
             />
-            <When condition={variant.type === "image" && fileStatus}>
+            {variant.type === "image" ? (
               <div
                 className={classNames("flex items-center justify-center rounded border py-2", {
-                  "border-blue": fileStatus,
-                  "border-red": !fileStatus,
+                  "border-blue": geotagged,
+                  "border-red": !geotagged,
                   "w-[146px]": variant.typeModal === "UploadImage"
                 })}
               >
                 <Text
                   variant="text-12-bold"
                   className={classNames("text-center", {
-                    "text-blue": fileStatus,
-                    "text-red": !fileStatus
+                    "text-blue": geotagged,
+                    "text-red": !geotagged
                   })}
                 >
-                  {fileStatus ? t("GeoTagged Verified") : t("Not Verified")}
+                  {geotagged ? t("GeoTagged Verified") : t("Not Verified")}
                 </Text>
               </div>
-            </When>
-            <When condition={variant.type === "geoFile"}>
-              <Icon name={IconNames.CHECK_POLYGON} className="h-6 w-6" />
-            </When>
+            ) : null}
+            {variant.type === "geoFile" ? <Icon name={IconNames.CHECK_POLYGON} className="h-6 w-6" /> : null}
           </div>
         </Else>
       </If>
