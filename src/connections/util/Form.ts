@@ -4,6 +4,7 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  formCreate,
   formDelete,
   formGet,
   formIndex,
@@ -20,6 +21,8 @@ import {
   OptionLabelDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Filter } from "@/types/connection";
+
+import { resourceCreator } from "./resourceCreator";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -78,3 +81,5 @@ const formConnection = v3Resource("forms", formGet)
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);
 export const deleteForm = deleterAsync("forms", formDelete, uuid => ({ pathParams: { uuid } }));
+
+export const createForm = resourceCreator(v3Resource("forms", formCreate).create<FormFullDto>().buildConnection());

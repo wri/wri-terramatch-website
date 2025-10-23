@@ -2781,6 +2781,67 @@ export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, Fo
   "GET"
 );
 
+export type FormCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormCreateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormCreateVariables = {
+  body: Schemas.StoreFormBody;
+};
+
+/**
+ * Create a new form
+ */
+export const formCreate = new V3ApiEndpoint<FormCreateResponse, FormCreateError, FormCreateVariables, {}>(
+  "/forms/v3/forms",
+  "POST"
+);
+
 export type FormGetPathParams = {
   /**
    * Form uuid
@@ -2937,5 +2998,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formGet, formDelete }
+  forms: { formIndex, formCreate, formGet, formDelete }
 };

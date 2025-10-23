@@ -1,64 +1,45 @@
 import { isUndefined, omit, omitBy } from "lodash";
-import {
-  CreateResult,
-  DataProvider,
-  DeleteParams,
-  GetListParams,
-  GetManyResult,
-  GetOneParams,
-  Identifier,
-  UpdateResult
-} from "react-admin";
+import { CreateResult, DataProvider, DeleteParams, GetListParams, GetManyResult, GetOneParams } from "react-admin";
 
-import {
-  normalizeFormCreatePayload,
-  normalizeFormObject,
-  normalizeV3Form
-} from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
+import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { deleteForm, loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
-import { fetchPatchV2AdminFormsUUID, fetchPostV2AdminForms, PostV2AdminFormsError } from "@/generated/apiComponents";
-import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import {
+  FormBuilderData,
+  formBuilderToAttributes,
+  formDtoToBuilder
+} from "@/admin/modules/form/components/FormBuilder/types";
+import { createForm, deleteForm, loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
+import { fetchPatchV2AdminFormsUUID, PatchV2AdminFormsUUIDError } from "@/generated/apiComponents";
+import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Option } from "@/types/common";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 
 export interface FormDataProvider extends Partial<DataProvider> {}
 
-export type NormalizedFormObject = Omit<FormRead, "id"> & { id: Identifier };
+const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderData) => {
+  const uploadPromises: Promise<unknown>[] = [];
 
-const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: any) => {
-  const sections = response.form_sections || [];
-  const uploadPromises = [];
+  (form.sections ?? []).forEach((section, sectionIndex) => {
+    const payloadSection = payload.steps[sectionIndex] ?? {};
+    (section.questions ?? []).forEach((question, questionIndex) => {
+      const payloadQuestion = payloadSection.fields?.[questionIndex] ?? {};
+      (question.options ?? []).forEach((option, optionIndex) => {
+        const payloadOption = (payloadQuestion.options?.[optionIndex] ?? {}) as Option;
+        if (payloadOption.meta?.rawFile == null) return;
 
-  for (let sectionIndex = 0; sectionIndex < sections?.length; sectionIndex++) {
-    const section: FormSectionRead = response.form_sections?.[sectionIndex] || {};
-    const payloadSection = payload.form_sections?.[sectionIndex] || {};
-    const questions = section.form_questions || [];
-
-    for (let questionIndex = 0; questionIndex < questions?.length; questionIndex++) {
-      const question = questions[questionIndex] || {};
-      const payloadQuestion = payloadSection.form_questions?.[questionIndex] || {};
-      //@ts-ignore
-      const options = question.form_question_options || [];
-
-      for (let optionIndex = 0; optionIndex < options?.length; optionIndex++) {
-        const option = options[optionIndex] || {};
-        const payloadOption = payloadQuestion.form_question_options?.[optionIndex] || {};
-
-        if (payloadOption.image?.rawFile) {
-          uploadPromises.push(
-            upload(payloadOption.image.rawFile, {
-              collection: "image",
-              entity: "formQuestionOptions",
-              uuid: option.id
-            })
-          );
-        }
-      }
-    }
-  }
+        uploadPromises.push(
+          upload(payloadOption.meta.rawFile, {
+            collection: "image",
+            entity: "formQuestionOptions",
+            uuid: option.id
+          })
+        );
+      });
+    });
+  });
 
   return Promise.all(uploadPromises);
 };
@@ -67,26 +48,15 @@ export const formDataProvider: FormDataProvider = {
   async create(_, params) {
     try {
       const uploadKeys = ["banner"];
-      const body = omit(params.data, uploadKeys);
+      const body = omit(params.data, uploadKeys) as FormBuilderData;
+      const form = await createForm(formBuilderToAttributes(body));
 
-      const { data: linkedFieldsData } = await loadLinkedFields({});
+      await handleOptionFilesUpload(form, body);
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: form.uuid });
 
-      const response = await fetchPostV2AdminForms({
-        // @ts-expect-error the v2 post endpoint is not correctly defined.
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData))
-      });
-
-      // @ts-expect-error
-      await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
-      // @ts-expect-error
-      const uuid = response.data.uuid;
-
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid });
-
-      //@ts-expect-error
-      return { data: normalizeFormObject(response.data) } as CreateResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
+      return { data: { id: form.uuid } } as CreateResult;
+    } catch (createFailure) {
+      throw v3ErrorForRA("Form creation failed", createFailure);
     }
   },
 
@@ -111,7 +81,7 @@ export const formDataProvider: FormDataProvider = {
       //@ts-ignore
       return { data: normalizeFormObject(response.data) } as UpdateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFormsError);
+      throw getFormattedErrorForRA(err as PatchV2AdminFormsUUIDError);
     }
   },
 
@@ -135,7 +105,7 @@ export const formDataProvider: FormDataProvider = {
       throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
 
-    return { data: normalizeV3Form(connected.data!) } as RecordType;
+    return { data: formDtoToBuilder(connected.data!) } as RecordType;
   },
 
   async getMany(_, params) {
@@ -148,7 +118,7 @@ export const formDataProvider: FormDataProvider = {
     }
 
     return {
-      data: response.map(({ data }) => normalizeV3Form(data!))
+      data: response.map(({ data }) => formDtoToBuilder(data!))
     } as GetManyResult;
   },
 

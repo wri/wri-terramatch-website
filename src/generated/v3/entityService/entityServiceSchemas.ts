@@ -2060,7 +2060,7 @@ export type OptionLabelDto = {
   /**
    * Option image
    */
-  imageUrl: string | null;
+  imageUrl?: string | null;
 };
 
 export type LinkedFieldDto = {
@@ -2149,7 +2149,7 @@ export type FormLightDto = {
    * Translated form title
    */
   title: string;
-  type:
+  type?:
     | "application"
     | "disturbance-report"
     | "financial-report"
@@ -2177,7 +2177,8 @@ export type FormQuestionOptionDto = {
   /**
    * Option image
    */
-  imageUrl: string | null;
+  imageUrl?: string | null;
+  id: string;
   thumbUrl: string | null;
 };
 
@@ -2219,15 +2220,15 @@ export type FormQuestionDto = {
     | "volunteers"
     | "workdays";
   label: string;
-  placeholder: string | null;
-  description: string | null;
-  validation: Record<string, any> | null;
+  placeholder?: string | null;
+  description?: string | null;
+  validation?: Record<string, any> | null;
   multiChoice: boolean;
-  collection: string | null;
-  optionsList: string | null;
-  optionsOther: boolean | null;
+  collection?: string | null;
+  optionsList?: string | null;
+  optionsOther?: boolean | null;
   options: FormQuestionOptionDto[] | null;
-  showOnParentCondition: boolean | null;
+  showOnParentCondition?: boolean | null;
   model:
     | "organisations"
     | "financialReports"
@@ -2240,13 +2241,13 @@ export type FormQuestionDto = {
     | "sites"
     | "siteReports"
     | null;
-  linkedFieldKey: string | null;
+  linkedFieldKey?: string | null;
   isParentConditionalDefault: boolean;
-  minCharacterLimit: number | null;
-  maxCharacterLimit: number | null;
-  years: number[] | null;
-  tableHeaders: string[] | null;
-  additionalProps: Record<string, any> | null;
+  minCharacterLimit?: number | null;
+  maxCharacterLimit?: number | null;
+  years?: number[] | null;
+  tableHeaders?: string[] | null;
+  additionalProps?: Record<string, any> | null;
   children: FormQuestionDto[] | null;
 };
 
@@ -2255,11 +2256,11 @@ export type FormSectionDto = {
   /**
    * Translated section title
    */
-  title: string | null;
+  title?: string | null;
   /**
    * Translated section description
    */
-  description: string | null;
+  description?: string | null;
   questions: FormQuestionDto[];
 };
 
@@ -2273,7 +2274,7 @@ export type FormFullDto = {
    * Translated form title
    */
   title: string;
-  type:
+  type?:
     | "application"
     | "disturbance-report"
     | "financial-report"
@@ -2290,9 +2291,9 @@ export type FormFullDto = {
    * Indicates whether the text fields in this form response have been translated to the user's locale
    */
   translated: boolean;
-  subtitle: string | null;
-  description: string | null;
-  frameworkKey:
+  subtitle?: string | null;
+  description?: string | null;
+  frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
     | "enterprises"
@@ -2301,14 +2302,144 @@ export type FormFullDto = {
     | "hbf"
     | "fundo-flora"
     | null;
-  documentation: string | null;
-  documentationLabel: string | null;
+  documentation?: string | null;
+  documentationLabel?: string | null;
   /**
    * @format date-time
    */
-  deadlineAt: string | null;
-  submissionMessage: string | null;
-  stageId: string | null;
+  deadlineAt?: string | null;
+  submissionMessage: string;
+  stageId?: string | null;
   fundingProgrammeId: string | null;
   sections: FormSectionDto[];
+};
+
+export type StoreFormQuestionOptionAttributes = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option image
+   */
+  imageUrl?: string | null;
+};
+
+export type StoreFormQuestionAttributes = {
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "tableInput"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbanceReportEntries"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  label: string;
+  placeholder?: string | null;
+  description?: string | null;
+  validation?: Record<string, any> | null;
+  collection?: string | null;
+  optionsList?: string | null;
+  optionsOther?: boolean | null;
+  showOnParentCondition?: boolean | null;
+  linkedFieldKey?: string | null;
+  minCharacterLimit?: number | null;
+  maxCharacterLimit?: number | null;
+  years?: number[] | null;
+  tableHeaders?: string[] | null;
+  additionalProps?: Record<string, any> | null;
+  name?: string;
+  multiChoice?: boolean;
+  children?: StoreFormQuestionAttributes[];
+  options?: StoreFormQuestionOptionAttributes[];
+};
+
+export type StoreFormSectionAttributes = {
+  /**
+   * Translated section title
+   */
+  title?: string | null;
+  /**
+   * Translated section description
+   */
+  description?: string | null;
+  questions?: StoreFormQuestionAttributes[];
+};
+
+export type StoreFormAttributes = {
+  /**
+   * Translated form title
+   */
+  title: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
+  subtitle?: string | null;
+  description?: string | null;
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  documentation?: string | null;
+  documentationLabel?: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt?: string | null;
+  submissionMessage: string;
+  stageId?: string | null;
+  sections?: StoreFormSectionAttributes[];
+};
+
+export type StormFormData = {
+  type: "forms";
+  attributes: StoreFormAttributes;
+};
+
+export type StoreFormBody = {
+  data: StormFormData;
 };
