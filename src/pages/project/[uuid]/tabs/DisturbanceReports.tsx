@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { useEffect, useRef } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -8,7 +9,6 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbanceReportsTable from "@/components/extensive/Tables/DisturbanceReportsTable";
 import { useCreateDisturbanceReport } from "@/connections/Entity";
-import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 interface DisturbanceReportsProps {
   projectUUID: string;
@@ -20,8 +20,14 @@ const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
     parentUuid: projectUUID
   });
 
-  useRequestSuccess(isCreating, createFailure, refetch);
+  const prevIsCreatingRef = useRef(isCreating);
 
+  useEffect(() => {
+    if (prevIsCreatingRef.current && !isCreating && !createFailure) {
+      refetch();
+    }
+    prevIsCreatingRef.current = isCreating;
+  }, [isCreating, createFailure, refetch]);
   return (
     <PageBody>
       <PageRow>
