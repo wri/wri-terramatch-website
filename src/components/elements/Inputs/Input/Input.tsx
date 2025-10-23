@@ -194,10 +194,12 @@ const Input = forwardRef(
 
     // Normalize incoming value/defaultValue for date-like inputs on initial render
     const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
-    const valueProps: Record<string, any> = {};
-    if ("value" in (inputProps as any)) valueProps.value = normalize((inputProps as any).value);
-    else if ("defaultValue" in (inputProps as any))
-      valueProps.defaultValue = normalize((inputProps as any).defaultValue);
+    const valueProps: Record<string, any> = { value: normalizedFormValue };
+    if ("value" in inputProps) {
+      valueProps.value = normalize(inputProps.value);
+    } else if ("defaultValue" in inputProps) {
+      valueProps.defaultValue = normalize(inputProps.defaultValue);
+    }
 
     // Update form with normalized value if needed (without useEffect to avoid loops)
     if (isDateLike && formValue && formValue !== normalizedFormValue) {
