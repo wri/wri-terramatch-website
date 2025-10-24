@@ -156,10 +156,15 @@ const Input = forwardRef(
       }
     });
 
-    useEventListener(id, "wheel", function () {
-      //@ts-ignore
-      document.activeElement?.blur();
-    });
+    useEventListener(
+      id,
+      "wheel",
+      function () {
+        //@ts-ignore
+        document.activeElement?.blur();
+      },
+      { passive: true }
+    );
 
     const clearableIconProps = useMemo(
       () => ({
