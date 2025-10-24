@@ -2,7 +2,6 @@ import cn from "classnames";
 import classNames from "classnames";
 import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { When } from "react-if";
 import { IconNames } from "src/components/extensive/Icon/Icon";
 
 import { useEventListener } from "@/hooks/useEventListener";
@@ -205,6 +204,7 @@ const Input = forwardRef(
     if (isDateLike && formValue && formValue !== normalizedFormValue) {
       formHook?.setValue(inputWrapperProps.name, normalizedFormValue, { shouldValidate: false, shouldDirty: false });
     }
+
     return (
       <InputWrapper
         inputId={id}
@@ -222,7 +222,7 @@ const Input = forwardRef(
         classNameError={classNameError}
       >
         <div className={classNames("relative", classNameContainerInput)}>
-          {iconButtonPropsLeft && (
+          {iconButtonPropsLeft == null ? null : (
             <IconButton
               {...iconButtonPropsLeft!}
               className="pointer-events-none absolute left-3 top-[50%] translate-y-[-50%]"
@@ -241,9 +241,9 @@ const Input = forwardRef(
             aria-describedby={`${id}-description`}
             {...valueProps}
           />
-          <When condition={!!iconButtonProps}>
+          {iconButtonProps == null ? null : (
             <IconButton {...iconButtonProps!} className="absolute right-3 top-[50%] translate-y-[-50%]" />
-          </When>
+          )}
         </div>
       </InputWrapper>
     );

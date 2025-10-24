@@ -10,22 +10,22 @@ export interface RadioProps extends InputHTMLAttributes<HTMLInputElement> {
   labelRadio?: string;
 }
 
-const Radio = (props: RadioProps) => {
+const Radio = ({ label, variantText, labelRadio, ...inputProps }: RadioProps) => {
   const id = useId();
 
-  if (typeof props.label !== "string") {
+  if (typeof label !== "string") {
     return (
-      <label htmlFor={id} className={classNames("relative", props.className, props.labelRadio)}>
-        {props.label}
-        <input {...props} id={id} type="radio" className="absolute top-0 opacity-0" />
+      <label htmlFor={id} className={classNames("relative", inputProps.className, labelRadio)}>
+        {label}
+        <input {...inputProps} id={id} type="radio" className="absolute top-0 opacity-0" />
       </label>
     );
   }
 
   return (
-    <label htmlFor={id} className={classNames("flex items-center", props.className, props.labelRadio)}>
-      <Text variant={props.variantText ? props.variantText : "text-light-caption-200"}>{props.label}</Text>
-      <input {...props} id={id} type="radio" />
+    <label htmlFor={id} className={classNames("flex items-center", inputProps.className, labelRadio)}>
+      <Text variant={variantText != null ? variantText : "text-light-caption-200"}>{label}</Text>
+      <input {...inputProps} id={id} type="radio" />
     </label>
   );
 };
