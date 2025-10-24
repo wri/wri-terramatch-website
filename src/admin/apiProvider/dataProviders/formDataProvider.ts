@@ -1,20 +1,25 @@
 import { isUndefined, omit, omitBy } from "lodash";
-import { CreateResult, DataProvider, DeleteParams, GetListParams, GetManyResult, GetOneParams } from "react-admin";
+import {
+  CreateResult,
+  DataProvider,
+  DeleteParams,
+  GetListParams,
+  GetManyResult,
+  GetOneParams,
+  UpdateParams
+} from "react-admin";
 
-import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
-import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import {
   FormBuilderData,
   formBuilderToAttributes,
   formDtoToBuilder
 } from "@/admin/modules/form/components/FormBuilder/types";
-import { createForm, deleteForm, loadForm, loadFormIndex, loadLinkedFields } from "@/connections/util/Form";
-import { fetchPatchV2AdminFormsUUID, PatchV2AdminFormsUUIDError } from "@/generated/apiComponents";
+import { createForm, deleteForm, loadForm, loadFormIndex, updateForm } from "@/connections/util/Form";
 import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Option } from "@/types/common";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 
 export interface FormDataProvider extends Partial<DataProvider> {}
@@ -60,28 +65,18 @@ export const formDataProvider: FormDataProvider = {
     }
   },
 
-  async update(_, params) {
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     try {
       const uploadKeys = ["banner"];
-      const body = omitBy(omit(params.data, uploadKeys), isUndefined);
+      const body = omitBy(omit(params.data, uploadKeys), isUndefined) as FormBuilderData;
+      const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string, translated: false });
 
-      const { data: linkedFieldsData } = await loadLinkedFields({});
+      await handleOptionFilesUpload(form, body);
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: form.uuid });
 
-      const response = await fetchPatchV2AdminFormsUUID({
-        // @ts-expect-error the v2 form update endpoint is not correctly defined.
-        pathParams: { uuid: params.id },
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData ?? []))
-      });
-
-      //@ts-expect-error
-      await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
-
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid: String(params.id) });
-
-      //@ts-ignore
-      return { data: normalizeFormObject(response.data) } as UpdateResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PatchV2AdminFormsUUIDError);
+      return { data: formDtoToBuilder(form) } as RecordType;
+    } catch (updateFailure) {
+      throw v3ErrorForRA("Form get fetch failed", updateFailure);
     }
   },
 

@@ -727,7 +727,8 @@ export type UploadFilePathParams = {
     | "formQuestionOptions"
     | "fundingProgrammes"
     | "impactStories"
-    | "financialIndicators";
+    | "financialIndicators"
+    | "projectPitches";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2831,7 +2832,7 @@ export type FormCreateResponse = {
 };
 
 export type FormCreateVariables = {
-  body: Schemas.StoreFormBody;
+  body: Schemas.CreateFormBody;
 };
 
 /**
@@ -2986,6 +2987,85 @@ export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError,
   "DELETE"
 );
 
+export type FormUpdatePathParams = {
+  uuid: string;
+};
+
+export type FormUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormUpdateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormUpdateVariables = {
+  body: Schemas.UpdateFormBody;
+  pathParams: FormUpdatePathParams;
+};
+
+/**
+ * Update a form
+ */
+export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError, FormUpdateVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "PUT"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2998,5 +3078,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete }
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
 };

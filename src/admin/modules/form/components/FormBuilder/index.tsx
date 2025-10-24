@@ -76,6 +76,8 @@ export const FormBuilderForm = () => {
     []
   );
 
+  const bannerRequired = getValues()?.bannerUrl == null;
+
   return (
     <>
       <SelectInput
@@ -112,8 +114,8 @@ export const FormBuilderForm = () => {
                 <FileUploadInput
                   source="banner"
                   label="Upload Banner Images"
-                  validate={[required(), maxFileSize(1)]}
-                  isRequired
+                  validate={[...(bannerRequired ? [required()] : []), maxFileSize(1)]}
+                  isRequired={bannerRequired}
                   accept={["image/png", "image/svg+xml", "image/jpeg"]}
                   placeholder={
                     <Box paddingY={2}>

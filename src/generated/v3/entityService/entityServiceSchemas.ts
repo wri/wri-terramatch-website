@@ -122,6 +122,7 @@ export type MediaDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -562,6 +563,7 @@ export type DemographicDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -602,6 +604,7 @@ export type DisturbanceDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -859,6 +862,7 @@ export type DisturbanceReportEntryDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1505,6 +1509,7 @@ export type FinancialIndicatorDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1538,6 +1543,7 @@ export type FundingTypeDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1938,6 +1944,7 @@ export type SeedingDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1971,6 +1978,7 @@ export type TreeSpeciesDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2003,6 +2011,7 @@ export type InvasiveDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2032,6 +2041,7 @@ export type StrataDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2394,6 +2404,7 @@ export type StoreFormSectionAttributes = {
    * Translated section description
    */
   description?: string | null;
+  id?: string;
   questions?: StoreFormQuestionAttributes[];
 };
 
@@ -2435,11 +2446,24 @@ export type StoreFormAttributes = {
   sections?: StoreFormSectionAttributes[];
 };
 
-export type StormFormData = {
+export type CreateFormData = {
   type: "forms";
   attributes: StoreFormAttributes;
 };
 
-export type StoreFormBody = {
-  data: StormFormData;
+export type CreateFormBody = {
+  data: CreateFormData;
+};
+
+export type UpdateFormData = {
+  type: "forms";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreFormAttributes;
+};
+
+export type UpdateFormBody = {
+  data: UpdateFormData;
 };
