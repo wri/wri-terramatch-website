@@ -6,18 +6,19 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
-  fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid
+  fetchPostV2TerrafundPolygon, // @deprecated - use createSitePolygonsResource instead
+  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -1068,32 +1069,51 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
   URL.revokeObjectURL(url);
 }
 
-export async function storePolygon(
-  geojson: any,
-  record: any,
-  refetch: any,
-  setPolygonFromMap?: any,
-  refreshEntity?: any
-) {
+export async function storePolygon(geojson: any, record: any, setPolygonFromMap?: any, refreshEntity?: any) {
   if (geojson?.length) {
-    const response = await fetchPostV2TerrafundPolygon({
-      body: { geometry: JSON.stringify(geojson[0].geometry) }
-    });
-    const polygonUUID = response.uuid;
-    if (polygonUUID) {
-      const site_id = record.uuid;
-      fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-        body: {},
-        pathParams: { uuid: polygonUUID, siteUuid: site_id }
-      }).then(() => {
-        refreshEntity?.();
-        refetch();
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
+    const payload = {
+      geometries: [
+        {
+          type: "FeatureCollection" as const,
+          features: [
+            {
+              type: "Feature" as const,
+              geometry: geojson[0].geometry as any,
+              properties: {
+                site_id: record.uuid
+              }
+            }
+          ]
+        }
+      ]
+    };
+
+    try {
+      const result = await (createSitePolygonsResource as any)(payload);
+
+      ApiSlice.pruneCache("sitePolygons");
+      const currentState = ApiSlice.currentState;
+      const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};
+      Object.keys(sitePolygonsIndices).forEach(indexKey => {
+        ApiSlice.pruneIndex("sitePolygons", indexKey);
       });
+
+      console.log("result", result);
+      setPolygonFromMap?.({ uuid: result.polygonUuid, isOpen: true });
+
+      refreshEntity?.();
+    } catch (error) {
+      console.error("Failed to create site polygon:", error);
+      throw error;
     }
   }
 }
 
+/**
+ * @deprecated This function uses the old v2 API endpoints.
+ * Use the new connection-based approach with createSitePolygonsResource instead.
+ * The old /api/v2/terrafund/polygon endpoint is deprecated.
+ */
 export async function storePolygonProject(
   geojson: any,
   entity_uuid: string,
@@ -1101,6 +1121,11 @@ export async function storePolygonProject(
   refetch: any,
   setPolygonFromMap: any
 ) {
+  console.warn(
+    "DEPRECATED: storePolygonProject uses deprecated v2 API endpoints. " +
+      "Please migrate to the new connection-based approach with createSitePolygonsResource."
+  );
+
   if (geojson?.length) {
     const response = await fetchPostV2TerrafundPolygon({
       body: { geometry: JSON.stringify(geojson[0].geometry) }
