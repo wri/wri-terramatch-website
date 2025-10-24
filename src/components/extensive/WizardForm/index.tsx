@@ -120,7 +120,9 @@ function WizardForm(props: WizardFormProps) {
   Log.debug("Form Values", formHook.watch());
   Log.debug("Form Errors", formHook.formState.errors);
 
-  const onChange = useDebounce(() => !formHasError && props.onChange?.(formHook.getValues()));
+  const onChange = useDebounce(
+    useCallback(() => !formHasError && props.onChange?.(formHook.getValues()), [formHasError, formHook, props])
+  );
 
   const onSubmitStep = useCallback(
     (data: any) => {
