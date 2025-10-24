@@ -1,17 +1,21 @@
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import React from "react";
 import { twMerge } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { useGadmChoices } from "@/connections/Gadm";
 import { LAYERS_NAMES } from "@/constants/layers";
 import { CountriesProps } from "@/context/dashboard.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { usePopupData } from "@/pages/dashboard/hooks/usePopupsData";
 
 interface MobilePopupProps {
   event: {
     setFilters: (fn: (prev: any) => any) => void;
     dashboardCountries?: CountriesProps[];
+    isDashboard?: string;
     [key: string]: any;
   };
   onClose: () => void;
@@ -20,8 +24,11 @@ interface MobilePopupProps {
 
 export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
-  const { items, label, isoCountry, itemUuid, layerName } = usePopupData(event);
-  const { setFilters, dashboardCountries } = event;
+  const { items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
+  const { setFilters, dashboardCountries, isDashboard } = event;
+  const countryChoices = useGadmChoices({ level: 0 });
+  const router = useRouter();
+  const { closeModal } = useModalContext();
   if (!items?.length) return null;
 
   const handleLearnMore = () => {
@@ -35,10 +42,33 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
         }));
       }
     } else if (layerName === LAYERS_NAMES.CENTROIDS && itemUuid) {
-      setFilters(prev => ({ ...prev, uuid: itemUuid }));
+      const projectCountry = projectFullDto?.country;
+      if (projectCountry) {
+        setFilters(prev => ({
+          ...prev,
+          uuid: itemUuid,
+          country: {
+            country_slug: projectCountry,
+            id: 0,
+            data: {
+              label: countryChoices?.find(choice => choice.id === projectCountry)?.name ?? projectCountry,
+              icon: `/flags/${projectCountry}.svg`
+            }
+          }
+        }));
+
+        router.push({
+          pathname: "/dashboard",
+          query: { country: projectCountry, uuid: itemUuid }
+        });
+      }
     }
 
     onClose();
+
+    if (isDashboard === "modal") {
+      closeModal("modalExpand");
+    }
   };
 
   const classNamesVariants = {
