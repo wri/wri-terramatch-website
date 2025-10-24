@@ -1,4 +1,5 @@
 import { cloneDeep } from "lodash";
+import isArray from "lodash/isArray";
 
 import { isDtoOption } from "@/components/extensive/WizardForm/utils";
 import { LocalFieldWithChildren, LocalStep } from "@/context/wizardForm.provider";
@@ -7,7 +8,8 @@ import {
   FormQuestionOptionDto,
   StoreFormAttributes,
   StoreFormQuestionAttributes,
-  StoreFormQuestionOptionAttributes
+  StoreFormQuestionOptionAttributes,
+  StoreFormSectionAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Option } from "@/types/common";
 import Log from "@/utils/log";
@@ -31,19 +33,21 @@ export const formDtoToBuilder = ({ sections, ...form }: FormFullDto): FormBuilde
 
 export const formBuilderToAttributes = ({ id, steps, ...form }: FormBuilderData): StoreFormAttributes => ({
   ...form,
-  sections: steps.map(({ id, fields, ...section }) => ({
-    id: id?.startsWith("new-step-") ? undefined : id,
-    ...section,
-    questions: fields
-      .filter(({ inputType }) => {
-        if (["tel", "empty"].includes(inputType)) {
-          Log.error("Invalid input type for server-driven forms", inputType);
-          return false;
-        }
-        return true;
-      })
-      .map(fieldToAttributes)
-  }))
+  sections: steps.map(
+    ({ id, fields, ...section }): StoreFormSectionAttributes => ({
+      id: id?.startsWith("new-step-") ? undefined : id,
+      ...section,
+      questions: fields
+        .filter(({ inputType }) => {
+          if (["tel", "empty"].includes(inputType)) {
+            Log.error("Invalid input type for server-driven forms", inputType);
+            return false;
+          }
+          return true;
+        })
+        .map(fieldToAttributes)
+    })
+  )
 });
 
 const fieldToAttributes = ({
@@ -56,6 +60,11 @@ const fieldToAttributes = ({
   name: name?.startsWith("new-field-") ? undefined : name,
   ...question,
   inputType: inputType as StoreFormQuestionAttributes["inputType"],
+  // Due to how PHP serializes an empty "object", we have > 2k rows in the DB that have an empty
+  // JSON array instead of an empty JSON object for additional props. That causes a validation
+  // failure in v3, so move it to an object as we update the form.
+  additionalProps:
+    isArray(question.additionalProps) && question.additionalProps.length === 0 ? {} : question.additionalProps,
   options: options?.map(optionToAttributes),
   children: children?.map(fieldToAttributes)
 });

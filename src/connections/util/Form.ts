@@ -9,6 +9,7 @@ import {
   formGet,
   formIndex,
   FormIndexQueryParams,
+  formUpdate,
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
   optionLabelsGetList,
@@ -22,7 +23,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Filter } from "@/types/connection";
 
-import { resourceCreator } from "./resourceCreator";
+import { resourceCreator, resourceUpdater } from "./resourceMutator";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -77,9 +78,11 @@ const formConnection = v3Resource("forms", formGet)
     ({ translated }) => ({ queryParams: { translated } }),
     ({ data }, { translated }) => data?.translated === (translated ?? true)
   )
+  .update(formUpdate)
   .buildConnection();
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);
 export const deleteForm = deleterAsync("forms", formDelete, uuid => ({ pathParams: { uuid } }));
 
 export const createForm = resourceCreator(v3Resource("forms", formCreate).create<FormFullDto>().buildConnection());
+export const updateForm = resourceUpdater(formConnection);

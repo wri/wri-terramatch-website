@@ -1301,18 +1301,6 @@ export type FormQuestionCreate = {
   deleted_at?: string;
 };
 
-export type FormUpdate = {
-  type?: string;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  documentation?: string;
-  documentation_label?: string;
-  submission_message?: string;
-  duration?: string;
-  options_other?: boolean;
-};
-
 export type GeojsonRead = {
   uuid?: number;
   name?: Record<string, any>;
