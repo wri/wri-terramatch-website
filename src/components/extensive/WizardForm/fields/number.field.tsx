@@ -8,7 +8,6 @@ import { addValidationWith } from "@/utils/yup";
 export const NumberField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation, linkedFieldKey }) => {
     let validator = yup.number();
-    if (validation?.required === true) validator = validator.required();
     if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
     if (isNumber(validation?.max)) validator = validator.max(validation?.max!);
     if (linkedFieldKey?.includes("-lat-") || linkedFieldKey?.includes("-long-")) {

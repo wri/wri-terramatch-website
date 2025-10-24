@@ -12,9 +12,9 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 import { addValidationWith } from "@/utils/yup";
 
 export const DemographicField: FormFieldFactory = {
-  addValidation: addValidationWith(({ validation, inputType }, t, framework) => {
+  addValidation: addValidationWith(({ inputType }, t, framework) => {
     const type = inputType as DemographicType;
-    const validator = yup
+    return yup
       .array()
       .min(0)
       .max(1)
@@ -48,8 +48,6 @@ export const DemographicField: FormFieldFactory = {
           return calculateTotals(demographics as DemographicEntryDto[], framework, type).complete;
         }
       );
-
-    return validation?.required === true ? validator.required() : validator;
   }),
 
   renderInput: ({ inputType, collection }, sharedProps) => (

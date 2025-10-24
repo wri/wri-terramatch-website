@@ -9,7 +9,7 @@ import { addValidationWith, arrayValidator } from "@/utils/yup";
 export const OwnershipStakeField: FormFieldFactory = {
   addValidation: addValidationWith(arrayValidator),
 
-  renderInput: (field, sharedProps) => <RHFOwnershipStakeTable {...sharedProps} />,
+  renderInput: (_, sharedProps) => <RHFOwnershipStakeTable {...sharedProps} />,
 
   getAnswer: () => undefined,
 

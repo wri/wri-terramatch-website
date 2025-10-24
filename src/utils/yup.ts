@@ -17,41 +17,29 @@ export const addValidationWith =
     if (validator != null) validations[field.name] = validator;
   };
 
-export const urlValidator = ({ validation }: FieldDefinition, t: typeof useT) => {
-  const validator = yup.string().matches(UrlRegex, { message: t("URL is not valid."), excludeEmptyString: true });
-  return validation?.required === true ? validator.required() : validator;
-};
+export const urlValidator = (_: FieldDefinition, t: typeof useT) =>
+  yup.string().matches(UrlRegex, { message: t("URL is not valid."), excludeEmptyString: true });
 
 export const arrayValidator = ({ validation }: FieldDefinition) => {
   let validator = yup.array();
   if (validation?.required === true) {
     const min = validation?.min ?? 1;
-    validator = validator.min(min).required();
+    validator = validator.min(min);
   }
   return validator;
 };
 
-export const stringValidator = ({ validation }: FieldDefinition) => {
-  const validator = yup.string();
-  return validation?.required === true ? validator.required() : validator;
-};
+export const stringValidator = () => yup.string();
 
 export const selectValidator = ({ multiChoice, validation }: FieldDefinition) => {
   if (multiChoice) {
     const validator = yup.array(yup.string().required());
-    return validation?.required === true ? validator.min(1).required() : validator;
+    return validation?.required === true ? validator.min(1) : validator;
   } else {
-    const validator = yup.string();
-    return validation?.required === true ? validator.required() : validator;
+    return yup.string();
   }
 };
 
-export const objectValidator = ({ validation }: FieldDefinition) => {
-  const validator = yup.object();
-  return validation?.required === true ? validator.required() : validator;
-};
+export const objectValidator = () => yup.object();
 
-export const booleanValidator = ({ validation }: FieldDefinition) => {
-  const validator = yup.boolean();
-  return validation?.required === true ? validator.required() : validator;
-};
+export const booleanValidator = () => yup.boolean();

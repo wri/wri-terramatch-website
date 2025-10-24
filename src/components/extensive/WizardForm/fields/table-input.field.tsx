@@ -9,8 +9,8 @@ import { addFieldValidation } from "@/components/extensive/WizardForm/utils";
 import { isNotNull } from "@/utils/array";
 
 export const TableInputField: FormFieldFactory = {
-  addValidation: (validations, { name, validation }, t, framework, fieldsProvider) => {
-    const validator = yup.object(
+  addValidation: (validations, { name }, t, framework, fieldsProvider) => {
+    validations[name] = yup.object(
       fieldsProvider
         .childNames(name)
         .map(fieldsProvider.fieldByName)
@@ -20,7 +20,6 @@ export const TableInputField: FormFieldFactory = {
           return childSchema;
         }, {} as Dictionary<yup.AnySchema>)
     );
-    validations[name] = validation?.required === true ? validator.required() : validator;
   },
 
   renderInput: ({ name, tableHeaders, additionalProps }, sharedProps) => (

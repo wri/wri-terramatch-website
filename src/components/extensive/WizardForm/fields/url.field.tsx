@@ -4,5 +4,5 @@ import { addValidationWith, urlValidator } from "@/utils/yup";
 
 export const UrlField: FormFieldFactory = {
   addValidation: addValidationWith(urlValidator),
-  renderInput: (field, sharedProps) => <Input {...sharedProps} type="url" />
+  renderInput: (_, sharedProps) => <Input {...sharedProps} type="url" />
 };

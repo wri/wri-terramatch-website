@@ -10,8 +10,8 @@ import { isNotNull } from "@/utils/array";
 import { addValidationWith } from "@/utils/yup";
 
 export const TreeSpeciesField: FormFieldFactory = {
-  addValidation: addValidationWith(({ additionalProps, validation }) => {
-    const arrayItemShape =
+  addValidation: addValidationWith(({ additionalProps }) =>
+    yup.array(
       additionalProps?.with_numbers === true
         ? yup.object({
             name: yup.string().required(),
@@ -19,11 +19,9 @@ export const TreeSpeciesField: FormFieldFactory = {
           })
         : yup.object({
             name: yup.string().required()
-          });
-
-    const validator = yup.array(arrayItemShape);
-    return validation?.required === true ? validator.required() : validator;
-  }),
+          })
+    )
+  ),
 
   renderInput: ({ additionalProps, collection, model }, sharedProps) => (
     <RHFTreeSpeciesInput

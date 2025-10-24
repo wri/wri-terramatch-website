@@ -12,10 +12,9 @@ export const FileField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation, multiChoice }) => {
     if (multiChoice) {
       const validator = yup.array();
-      return validation?.required === true ? validator.min(1).required() : validator;
+      return validation?.required === true ? validator.min(1) : validator;
     } else {
-      const validator = yup.object();
-      return validation?.required === true ? validator.required() : validator;
+      return yup.object();
     }
   }),
 
