@@ -719,7 +719,7 @@ export type SiteLightDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -1018,7 +1018,7 @@ export type SiteFullDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -1680,7 +1680,7 @@ export type SiteUpdateAttributes = {
   /**
    * Request to change to the status of the given site
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress";
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
