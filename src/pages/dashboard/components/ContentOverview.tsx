@@ -287,6 +287,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               setLoader={setModalMapLoaded}
               projectUUID={projectUUID}
               hasAccess={hasAccess}
+              dashboardContext={{
+                setFilters,
+                dashboardCountries,
+                isDashboard: "modal"
+              }}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
