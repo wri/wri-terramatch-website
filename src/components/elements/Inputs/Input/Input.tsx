@@ -194,7 +194,7 @@ const Input = forwardRef(
 
     // Normalize incoming value/defaultValue for date-like inputs on initial render
     const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
-    const valueProps: Record<string, any> = { value: normalizedFormValue };
+    const valueProps: Record<string, any> = {};
     if ("value" in inputProps) {
       valueProps.value = normalize(inputProps.value);
     } else if ("defaultValue" in inputProps) {
@@ -233,7 +233,7 @@ const Input = forwardRef(
             {...registeredFormProps}
             onChange={handleChange}
             onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
-            ref={registeredFormProps?.ref || ref}
+            ref={registeredFormProps?.ref ?? ref}
             id={id}
             className={inputClasses}
             aria-invalid={!!error}
