@@ -16,6 +16,7 @@ import Log from "@/utils/log";
 
 export type FormBuilderData = Omit<FormFullDto, "sections"> & {
   id: string;
+  published: boolean;
   steps: LocalStep[];
 };
 

@@ -9,7 +9,7 @@ export const FormCreate = () => {
       <Typography variant="h5" marginX="1rem" marginTop="1.75rem">
         Create Form
       </Typography>
-      <SimpleForm defaultValues={{ steps: [{}] }} noValidate paddingY="1.5rem">
+      <SimpleForm defaultValues={{ published: false, steps: [{}] }} noValidate paddingY="1.5rem">
         <FormBuilderForm />
       </SimpleForm>
     </Create>
