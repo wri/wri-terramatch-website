@@ -139,9 +139,11 @@ export class V3ApiEndpoint<
       return;
     }
 
-    // The promise is ignored on purpose. Further progress of the request is tracked through
-    // redux.
-    this.executeRequest(variables, headers);
+    // The promise is ignored on purpose. Further progress of the request is tracked through redux.
+    this.executeRequest(variables, headers).then(
+      () => undefined,
+      () => undefined
+    );
   }
 
   /**
