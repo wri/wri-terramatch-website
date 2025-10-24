@@ -84,15 +84,15 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const steps = useMemo(() => {
-    return props.fieldsProvider.stepIds().map(stepId => {
-      return {
+  const steps = useMemo(
+    () =>
+      props.fieldsProvider.stepIds().map(stepId => ({
         id: stepId,
         title: props.fieldsProvider.step(stepId)?.title,
         validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
-      };
-    });
-  }, [props.framework, props.fieldsProvider, t]);
+      })),
+    [props.framework, props.fieldsProvider, t]
+  );
   const selectedSection = steps[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
@@ -139,9 +139,9 @@ function WizardForm(props: WizardFormProps) {
         formHook.reset(values);
         formHook.clearErrors();
       } else {
-        //Step changes on last step
-        if (!props.onSubmit) return props.onStepChange?.(data);
-        props.onSubmit?.(data);
+        // Step changes on last step
+        if (props.onSubmit == null) return props.onStepChange?.(data);
+        props.onSubmit(data);
       }
     },
     [formHook, lastIndex, props, selectedStepIndex]

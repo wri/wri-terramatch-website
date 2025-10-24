@@ -16,20 +16,33 @@ const FormField: FC<FormQuestionProps> = ({ fieldId, formHook, onChange }) => {
   const field = fieldByName(fieldId);
   if (field == null) return null;
 
+  const { control, formState } = formHook;
+  const error = formState.errors?.[field.name] as FieldError;
   const sharedProps = useMemo(
     (): SharedFieldProps => ({
-      error: formHook.formState.errors?.[field.name] as FieldError,
+      error,
       name: field.name,
       label: field.label,
       required: field.validation?.required === true,
       placeholder: field.placeholder ?? undefined,
       description: field.description ?? undefined,
       formHook,
-      control: formHook.control,
+      control,
       onChangeCapture: onChange,
       feedbackRequired: feedbackRequired(field.name)
     }),
-    [formHook, field, onChange, feedbackRequired]
+    [
+      error,
+      field.name,
+      field.label,
+      field.validation?.required,
+      field.placeholder,
+      field.description,
+      formHook,
+      control,
+      onChange,
+      feedbackRequired
+    ]
   );
 
   return FormFieldFactories[field.inputType].renderInput(field, sharedProps);
