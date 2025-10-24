@@ -7,6 +7,7 @@ import {
   KeyboardEvent,
   Ref,
   useCallback,
+  useEffect,
   useId,
   useMemo
 } from "react";
@@ -82,11 +83,6 @@ const Input = forwardRef(
       classNameContainerInput,
       classNameError,
       allowNegative,
-      ...inputWrapperProps
-    }: InputProps,
-    ref?: Ref<HTMLInputElement>
-  ) => {
-    const {
       label,
       description,
       descriptionFooter,
@@ -95,9 +91,12 @@ const Input = forwardRef(
       required,
       feedbackRequired,
       ...inputProps
-    } = inputWrapperProps;
+    }: InputProps,
+    ref?: Ref<HTMLInputElement>
+  ) => {
     const id = useId();
     const customVariantClasses = customVariant ?? {};
+    const { type, onChange, name } = inputProps;
     const variantClasses = {
       default: {
         "px-3 py-[9px] rounded-lg focus:border-primary-500": true,
@@ -106,13 +105,13 @@ const Input = forwardRef(
       },
       secondary: {
         "border-0 border-b py-[10px] px-0": true,
-        "pl-4": inputProps.type === "number",
+        "pl-4": type === "number",
         "border-b-neutral-400": !error
       },
       login: {
         "border-0 p-0 h-full relative z-[1] bg-transparent border-b-2 hover:border-primary border-darkCustom-100 hover:shadow-inset-blue w-full input-login pb-3.5 outline-none text-14-light !font-primary":
           true,
-        "pl-4": inputProps.type === "number",
+        "pl-4": type === "number",
         "border-b-neutral-300": !error,
         "hover:shadow-inset-red": error,
         "focus:shadow-inset-red": error,
@@ -122,19 +121,19 @@ const Input = forwardRef(
       signup: {
         "p-3 border border-darkCustom-100 rounded-xl w-full hover:border-primary hover:shadow-blue-border text-dark-700 opacity-60 outline-none text-14-light !font-primary":
           true,
-        "pl-4": inputProps.type === "number",
+        "pl-4": type === "number",
         "border-neutral-300": !error
       },
       monitored: {
         "px-3 py-1.5 border border-darkCustom-100 rounded-xl w-full hover:border-primary hover:shadow-blue-border text-dark-700 opacity-60 outline-none text-14-light !font-primary":
           true,
-        "pl-4": inputProps.type === "number",
+        "pl-4": type === "number",
         "border-neutral-300": !error
       },
       treePlanted: {
         "py-[7.5px] py-1.5 !w-[100px] text-center border border-blueCustom-700 rounded hover:border-primary hover:shadow-blue-border opacity-60 outline-none text-14-light !font-primary":
           true,
-        "text-center": inputProps.type === "number"
+        "text-center": type === "number"
       }
     };
 
@@ -147,12 +146,12 @@ const Input = forwardRef(
     );
 
     // Check if input is date-like
-    const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
+    const isDateLike = type === "date" || type === "datetime-local";
 
-    const registeredFormProps = formHook?.register(inputWrapperProps.name, {
+    const registeredFormProps = formHook?.register(name, {
       setValueAs: value => {
-        if ((inputProps.type === "number" && value === "") || typeof value === "undefined") return null;
-        if (isDateLike && typeof value === "string") return formatDateValue(inputProps.type, value);
+        if ((type === "number" && value === "") || typeof value === "undefined") return null;
+        if (isDateLike && typeof value === "string") return formatDateValue(type, value);
         return value;
       }
     });
@@ -169,11 +168,8 @@ const Input = forwardRef(
       }),
       []
     );
-    const clearInput = useCallback(
-      () => formHook?.setValue(inputWrapperProps.name, ""),
-      [formHook, inputWrapperProps.name]
-    );
-    if (clearable && formHook?.getValues(inputWrapperProps.name) != null) {
+    const clearInput = useCallback(() => formHook?.setValue(name, ""), [formHook, name]);
+    if (clearable && formHook?.getValues(name) != null) {
       iconButtonProps = {
         iconProps: clearableIconProps,
         onClick: clearInput
@@ -193,21 +189,22 @@ const Input = forwardRef(
       [allowNegative, inputProps.min]
     );
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const isNumber = inputProps.type === "number" && format === "number";
-      if (isNumber) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
-      if (isDateLike && e.target.value) e.target.value = formatDateValue(inputProps.type, e.target.value);
-      inputProps.onChange ? inputProps.onChange(e) : formHook?.setValue(inputWrapperProps.name, e.target.value);
-    };
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const isNumber = type === "number" && format === "number";
+        if (isNumber && e.target.value != null) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
+        if (isDateLike && e.target.value != null) e.target.value = formatDateValue(type, e.target.value);
+        onChange != null ? onChange(e) : formHook?.setValue(name, e.target.value);
+      },
+      [type, format, isDateLike, onChange, formHook, name]
+    );
 
     // Get the current form value and normalize it for date inputs
-    const formValue = formHook?.getValues(inputWrapperProps.name);
-    const normalizedFormValue =
-      isDateLike && typeof formValue === "string" ? formatDateValue(inputProps.type, formValue) : formValue;
+    const formValue = formHook?.getValues(name);
 
     // Normalize incoming value/defaultValue for date-like inputs on initial render
-    const normalize = (v: unknown) =>
-      (isDateLike && typeof v === "string" ? formatDateValue(inputProps.type, v) : v) as any;
+    const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(type, v) : v) as any;
+    // This can skip useMemo because the values set are simple and this object gets spread across the props of <input>
     const valueProps: Record<string, any> = {};
     if ("value" in inputProps) {
       valueProps.value = normalize(inputProps.value);
@@ -215,10 +212,14 @@ const Input = forwardRef(
       valueProps.defaultValue = normalize(inputProps.defaultValue);
     }
 
-    // Update form with normalized value if needed (without useEffect to avoid loops)
-    if (isDateLike && formValue && formValue !== normalizedFormValue) {
-      formHook?.setValue(inputWrapperProps.name, normalizedFormValue, { shouldValidate: false, shouldDirty: false });
-    }
+    // Update form with normalized value if needed
+    useEffect(() => {
+      const normalizedFormValue =
+        isDateLike && typeof formValue === "string" ? formatDateValue(type, formValue) : formValue;
+      if (isDateLike && formValue != null && formValue !== normalizedFormValue) {
+        formHook?.setValue(name, normalizedFormValue, { shouldValidate: false, shouldDirty: false });
+      }
+    }, [formHook, formValue, isDateLike, name, type]);
 
     return (
       <InputWrapper
@@ -247,7 +248,7 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onChange={handleChange}
-            onKeyDown={inputProps.type === "number" ? preventScientificNumbers : undefined}
+            onKeyDown={type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref ?? ref}
             id={id}
             className={inputClasses}
