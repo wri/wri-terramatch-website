@@ -22,7 +22,7 @@ export function useConnection<TSelected, TProps extends OptionalProps, State>(
         const state = (getState ?? ApiSlice.getState)(store) as State;
         const selected = selector(state, stableProps);
         const loadingDone = isLoaded == null || isLoaded(selected, stableProps);
-        if (load != null) load(selected, stableProps);
+        if (load != null) setTimeout(() => load(selected, stableProps));
         return loadingDone ? selected : undefined;
       },
       [connection, stableProps]
