@@ -57,7 +57,7 @@ export const useReportData = () => {
         const sitesPromise = dataProvider.getList<Site>("site", {
           filter: {
             projectUuid: record.id,
-            status: ["approved", "restoration-in-progress"]
+            status: ["approved"]
           },
           pagination: { page: 1, perPage: 100 },
           sort: { field: "createdAt", order: "DESC" }

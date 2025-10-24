@@ -167,7 +167,7 @@ const SitesTable = ({ project, hasAddButton = true, onFetch, alwaysShowPaginatio
             type: "dropDown",
             accessorKey: "update_request_status",
             label: t("Change Request"),
-            options: getChangeRequestStatusOptions(t).filter(option => option.value !== "restoration-in-progress")
+            options: getChangeRequestStatusOptions(t)
           },
           {
             type: "button",

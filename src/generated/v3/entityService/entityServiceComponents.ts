@@ -751,14 +751,6 @@ export type UploadFileError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
-        /**
-         * A code to lookup the error message translation string on the client.
-         */
-        code?: string;
-        /**
-         * A set of variables to pass to the translation service.
-         */
-        variables?: Record<string, any>;
       };
     }
   | {
@@ -810,7 +802,6 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
-  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 
@@ -1689,6 +1680,80 @@ export const entityIndex = new V3ApiEndpoint<
   EntityIndexVariables,
   {}
 >("/entities/v3/{entity}", "GET");
+
+export type EntityCreatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
+};
+
+export type EntityCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityCreateResponse = {
+  meta?: {
+    /**
+     * @example disturbanceReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example disturbanceReports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceReportFullDto;
+  };
+};
+
+export type EntityCreateVariables = {
+  body: Schemas.EntityCreateBody;
+  pathParams: EntityCreatePathParams;
+};
+
+export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreateError, EntityCreateVariables, {}>(
+  "/entities/v3/{entity}",
+  "POST"
+);
 
 export type EntityGetPathParams = {
   /**
@@ -3074,7 +3139,7 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
-  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },

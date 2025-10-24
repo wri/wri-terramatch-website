@@ -2,6 +2,7 @@ import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/co
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  entityCreate,
   entityDelete,
   entityGet,
   EntityGetPathParams,
@@ -13,6 +14,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
+  DisturbanceReportCreateData,
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
@@ -72,6 +74,8 @@ export type EntityUpdateData =
   | FinancialReportUpdateData
   | DisturbanceReportUpdateData;
 
+export type EntityCreateData = DisturbanceReportCreateData;
+
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<Filter<EntityIndexQueryParams>> &
   EnabledProp &
@@ -110,6 +114,13 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
 
 const createEntityDeleter = (entity: SupportedEntity) =>
   deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
+
+const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
+  return v3Resource(entity, entityCreate)
+    .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
+    .refetch(() => ApiSlice.pruneCache(entity))
+    .buildConnection();
+};
 
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
   SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
@@ -263,6 +274,12 @@ const disturbanceReportListConnection = v3Resource("disturbanceReports")
 export const useLightDisturbanceReportList = connectionHook(disturbanceReportListConnection);
 export const loadLightDisturbanceReportList = connectionLoader(disturbanceReportListConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
+
+const createDisturbanceReportConnection = createEntityCreateConnection<DisturbanceReportFullDto, EntityCreateData>(
+  "disturbanceReports"
+);
+export const loadCreateDisturbanceReport = connectionLoader(createDisturbanceReportConnection);
+export const useCreateDisturbanceReport = connectionHook(createDisturbanceReportConnection);
 
 /**
  * Get the full entity connection in a component that is shared amongst entity types. It's technically
