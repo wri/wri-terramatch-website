@@ -1,7 +1,7 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
-  SitePolygonFullDto,
   SitePolygonLightDto,
+  SitePolygonFullDto,
   BoundingBoxDto,
   ValidationDto,
   ValidationSummaryDto,
@@ -17,7 +17,7 @@ export const RESEARCH_SERVICE_RESOURCES = [
 ] as const;
 
 export type ResearchServiceApiResources = {
-  sitePolygons: StoreResourceMap<SitePolygonFullDto | SitePolygonLightDto>;
+  sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   validations: StoreResourceMap<ValidationDto>;
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
