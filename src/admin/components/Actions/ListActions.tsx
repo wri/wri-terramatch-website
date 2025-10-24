@@ -1,7 +1,6 @@
 import DownloadIcon from "@mui/icons-material/GetApp";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button, FilterButton, TopToolbar, useListContext } from "react-admin";
-import { When } from "react-if";
 
 interface ListActionsProps {
   onExport?: () => void;
@@ -29,12 +28,10 @@ const ResetSortButton = () => {
 const ListActions = (props: ListActionsProps) => (
   <TopToolbar>
     <FilterButton className="filter-button-page-admin" />
-    <When condition={props.showResetSort !== false}>
-      <ResetSortButton />
-    </When>
-    <When condition={!!props.onExport}>
+    {props.showResetSort !== false && <ResetSortButton />}
+    {!!props.onExport && (
       <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
-    </When>
+    )}
   </TopToolbar>
 );
 
