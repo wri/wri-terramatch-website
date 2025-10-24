@@ -250,6 +250,7 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
   const { resource, ids, searchQuery } = action.payload;
   if (ids == null && searchQuery == null) {
     state[resource] = {};
+    state.meta.indices[resource] = {};
     return;
   }
 

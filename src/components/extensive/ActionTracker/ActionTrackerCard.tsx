@@ -44,10 +44,6 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     statusText: t("Awaiting Approval"),
     status: "awaiting"
   },
-  "restoration-in-progress": {
-    statusText: t("Restoration in Progress"),
-    status: "restoration"
-  },
   ...SubmissionStatusMapping(t)
 });
 
