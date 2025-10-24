@@ -83,6 +83,8 @@ const formConnection = v3Resource("forms", formGet)
 export const useForm = connectionHook(formConnection);
 export const loadForm = connectionLoader(formConnection);
 export const deleteForm = deleterAsync("forms", formDelete, uuid => ({ pathParams: { uuid } }));
-
-export const createForm = resourceCreator(v3Resource("forms", formCreate).create<FormFullDto>().buildConnection());
 export const updateForm = resourceUpdater(formConnection);
+
+const createFormConnection = v3Resource("forms", formCreate).create<FormFullDto>().buildConnection();
+export const createForm = resourceCreator(createFormConnection);
+export const useFormCreate = connectionHook(createFormConnection);

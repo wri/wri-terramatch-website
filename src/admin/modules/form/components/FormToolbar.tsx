@@ -1,7 +1,6 @@
 import { useCallback, useState } from "react";
 import { Button, SaveButton, Toolbar, ToolbarClasses, useEditContext, useRefresh, useUpdate } from "react-admin";
 import { useFormContext } from "react-hook-form";
-import { When } from "react-if";
 
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
 import { CloneForm } from "@/admin/modules/form/components/CloneForm";
@@ -33,7 +32,7 @@ export const FormToolbar = (props: { isEdit?: boolean }) => {
         <div>
           <CloneForm />
           <CopyFormToOtherEnv />
-          <When condition={props.isEdit}>
+          {props.isEdit ? (
             <Button
               variant="contained"
               size="medium"
@@ -42,7 +41,7 @@ export const FormToolbar = (props: { isEdit?: boolean }) => {
               disabled={record?.published}
               onClick={() => setShowPublishDialog(true)}
             />
-          </When>
+          ) : null}
         </div>
       </div>
       <ConfirmationDialog
