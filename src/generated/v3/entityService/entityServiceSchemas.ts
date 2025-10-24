@@ -2424,6 +2424,7 @@ export type StoreFormAttributes = {
     | "nursery"
     | "nursery-report"
     | null;
+  published: boolean;
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:
