@@ -127,9 +127,9 @@ function WizardForm(props: WizardFormProps) {
   const onSubmitStep = useCallback(
     (data: any) => {
       if (selectedStepIndex < lastIndex) {
-        //Step changes through 0 - last step
+        // Step changes through 0 - last step
         if (!props.disableAutoProgress) {
-          //Disable auto step progress if disableAutoProgress was passed
+          // Disable auto step progress if disableAutoProgress was passed
           setSelectedStepIndex(n => n + 1);
         }
         let values = formHook.getValues();
@@ -215,7 +215,7 @@ function WizardForm(props: WizardFormProps) {
           backButtonProps={
             !props.hideBackButton
               ? {
-                  children: props.backButtonText || t("Back"),
+                  children: props.backButtonText ?? t("Back"),
                   onClick: () => {
                     if (selectedStepIndex > 0) {
                       setSelectedStepIndex(n => n - 1);

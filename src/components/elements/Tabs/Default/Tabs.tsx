@@ -1,10 +1,11 @@
 import { Tab as HTab } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, ReactElement, useEffect, useState } from "react";
+import { Fragment, ReactElement, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { CarouselBreakPoints } from "@/components/extensive/Carousel/Carousel";
 import List from "@/components/extensive/List/List";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { TextVariants } from "@/types/common";
 
 import { TabButton } from "./TabButton";
@@ -40,15 +41,15 @@ export interface TabItem {
 }
 
 const Tabs = (props: TabsProps) => {
-  const initialSelectedIndex = props.selectedTabKey
-    ? props.tabItems.findIndex(item => item.key === props.selectedTabKey)
-    : props.selectedIndex || 0;
+  const [selectedIndex, setSelectedIndex] = useState<number>(() =>
+    props.selectedTabKey != null
+      ? props.tabItems.findIndex(item => item.key === props.selectedTabKey)
+      : props.selectedIndex ?? 0
+  );
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(initialSelectedIndex);
-
-  useEffect(() => {
-    typeof props.selectedIndex === "number" && setSelectedIndex(props.selectedIndex);
-  }, [props.selectedIndex]);
+  useValueChanged(props.selectedIndex, () => {
+    if (typeof props.selectedIndex === "number") setSelectedIndex(props.selectedIndex);
+  });
 
   return (
     <HTab.Group

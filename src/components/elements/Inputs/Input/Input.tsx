@@ -1,6 +1,15 @@
 import cn from "classnames";
 import classNames from "classnames";
-import { DetailedHTMLProps, forwardRef, InputHTMLAttributes, KeyboardEvent, Ref, useId } from "react";
+import {
+  DetailedHTMLProps,
+  forwardRef,
+  InputHTMLAttributes,
+  KeyboardEvent,
+  Ref,
+  useCallback,
+  useId,
+  useMemo
+} from "react";
 import { UseFormReturn } from "react-hook-form";
 import { IconNames } from "src/components/extensive/Icon/Icon";
 
@@ -48,6 +57,10 @@ export type HtmlInputType =
   | "radio";
 
 const IS_ISO_MIDNIGHT = /^\d{4}-\d{2}-\d{2}T00:00:00\.000000Z$/;
+const formatDateValue = (type: HtmlInputType, value: string) => {
+  if (!IS_ISO_MIDNIGHT.test(value)) return value;
+  return (type === "date" ? value : new Date(value).toISOString()).split("T")[0];
+};
 
 const Input = forwardRef(
   (
@@ -133,16 +146,13 @@ const Input = forwardRef(
       customVariantClasses
     );
 
-    const clearInput = () => formHook?.setValue(inputWrapperProps.name, "");
+    // Check if input is date-like
+    const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
+
     const registeredFormProps = formHook?.register(inputWrapperProps.name, {
       setValueAs: value => {
-        if ((inputProps.type === "number" && typeof value === "string" && !value) || typeof value === "undefined") {
-          return null;
-        }
-        const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
-        if (isDateLike && typeof value === "string") {
-          return formatDateValue(value);
-        }
+        if ((inputProps.type === "number" && value === "") || typeof value === "undefined") return null;
+        if (isDateLike && typeof value === "string") return formatDateValue(inputProps.type, value);
         return value;
       }
     });
@@ -152,47 +162,52 @@ const Input = forwardRef(
       document.activeElement?.blur();
     });
 
-    if (!!clearable && !!formHook?.getValues(inputWrapperProps.name)) {
+    const clearableIconProps = useMemo(
+      () => ({
+        name: IconNames.X_CIRCLE,
+        className: "fill-primary-500"
+      }),
+      []
+    );
+    const clearInput = useCallback(
+      () => formHook?.setValue(inputWrapperProps.name, ""),
+      [formHook, inputWrapperProps.name]
+    );
+    if (clearable && formHook?.getValues(inputWrapperProps.name) != null) {
       iconButtonProps = {
-        iconProps: {
-          name: IconNames.X_CIRCLE,
-          className: "fill-primary-500"
-        },
-        onClick: () => clearInput()
+        iconProps: clearableIconProps,
+        onClick: clearInput
       };
     }
 
-    const preventScientificNumbers = (e: KeyboardEvent<HTMLInputElement>) => {
-      const disallowed = ["e", "E", "+"];
-      const min = inputProps.min;
-      const shouldBlockMinus = !allowNegative && (!min || Number(min) >= 0);
+    const preventScientificNumbers = useCallback(
+      (e: KeyboardEvent<HTMLInputElement>) => {
+        const disallowed = ["e", "E", "+"];
+        const min = inputProps.min;
+        const shouldBlockMinus = !allowNegative && (!min || Number(min) >= 0);
 
-      if (shouldBlockMinus) disallowed.push("-");
+        if (shouldBlockMinus) disallowed.push("-");
 
-      disallowed.includes(e.key) && e.preventDefault();
-    };
-
-    const formatDateValue = (value: string) => {
-      if (!IS_ISO_MIDNIGHT.test(value)) return value;
-      return (inputProps.type === "date" ? value : new Date(value).toISOString()).split("T")[0];
-    };
-
-    // Check if input is date-like
-    const isDateLike = inputProps.type === "date" || inputProps.type === "datetime-local";
+        disallowed.includes(e.key) && e.preventDefault();
+      },
+      [allowNegative, inputProps.min]
+    );
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const isNumber = inputProps.type === "number" && format === "number";
       if (isNumber) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
-      if (isDateLike && e.target.value) e.target.value = formatDateValue(e.target.value);
+      if (isDateLike && e.target.value) e.target.value = formatDateValue(inputProps.type, e.target.value);
       inputProps.onChange ? inputProps.onChange(e) : formHook?.setValue(inputWrapperProps.name, e.target.value);
     };
 
     // Get the current form value and normalize it for date inputs
     const formValue = formHook?.getValues(inputWrapperProps.name);
-    const normalizedFormValue = isDateLike && typeof formValue === "string" ? formatDateValue(formValue) : formValue;
+    const normalizedFormValue =
+      isDateLike && typeof formValue === "string" ? formatDateValue(inputProps.type, formValue) : formValue;
 
     // Normalize incoming value/defaultValue for date-like inputs on initial render
-    const normalize = (v: unknown) => (isDateLike && typeof v === "string" ? formatDateValue(v) : v) as any;
+    const normalize = (v: unknown) =>
+      (isDateLike && typeof v === "string" ? formatDateValue(inputProps.type, v) : v) as any;
     const valueProps: Record<string, any> = {};
     if ("value" in inputProps) {
       valueProps.value = normalize(inputProps.value);
