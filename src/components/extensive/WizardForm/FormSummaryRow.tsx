@@ -14,11 +14,11 @@ import { getOwnershipTableColumns } from "@/components/elements/Inputs/DataTable
 import { getSeedingTableColumns } from "@/components/elements/Inputs/DataTable/RHFSeedingTable";
 import { getStrataTableColumns } from "@/components/elements/Inputs/DataTable/RHFStrataTable";
 import {
-  currentRatioColumnsMap,
-  documentationColumnsMap,
+  CURRENT_RATIO_COLUMNS,
+  DOCUMENTATION_COLUMNS,
   formatFinancialData,
-  nonProfitAnalysisColumnsMap,
-  profitAnalysisColumnsMap
+  NON_PROFILE_ANALYSIS_COLUMNS,
+  PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/TreeSpeciesInput";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -60,11 +60,19 @@ export interface FormEntry {
 const getTableHtml = (body: string, t: typeof useT) => {
   return (
     `<table class="w-full"><thead><tr>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Year")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Revenue")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Expenses")}</th>` +
-    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600">${t("Profit")}</th>` +
-    `</tr></thead><tbody><tr>${body}</tr></tbody></table>`
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Year"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Revenue"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Expenses"
+    )}</th>` +
+    `<th class="py-2.5 text-sm font-medium uppercase border-b border-black text-neutral-600 text-center">${t(
+      "Profit"
+    )}</th>` +
+    `</tr></thead><tbody>${body}</tbody></table>`
   );
 };
 
@@ -219,10 +227,10 @@ export const getFormEntries = (
         const years = f.fieldProps.years;
         const collections = f.fieldProps.model;
         const columnMaps: Record<string, string[]> = {
-          profitAnalysisData: profitAnalysisColumnsMap,
-          nonProfitAnalysisData: nonProfitAnalysisColumnsMap,
-          currentRatioData: currentRatioColumnsMap,
-          documentationData: documentationColumnsMap
+          profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
+          nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
+          currentRatioData: CURRENT_RATIO_COLUMNS,
+          documentationData: DOCUMENTATION_COLUMNS
         };
 
         const profitCollections = ["revenue", "expenses", "profit"];
@@ -247,7 +255,7 @@ export const getFormEntries = (
           delete columnMaps.currentRatioData;
         }
 
-        const formatted = formatFinancialData(entries, years, "", "");
+        const formatted = formatFinancialData(entries, years, "");
         const sections = [
           { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
           { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
@@ -276,25 +284,29 @@ export const getFormEntries = (
 
             if (filteredRows.length === 0) return "";
 
-            const tableRows = filteredRows.filter((row: Record<string, any>) => {
-              return row["profit"];
-            });
-            const nonTableRows = filteredRows.filter((row: Record<string, any>) => {
-              return !row["profit"];
-            });
+            const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
 
-            const tableHtml = tableRows
-              .map((row: Record<string, any>) => {
-                const cellValues = columns.map(col => {
-                  return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium">${
-                    isEmptyValue(row[col]) ? "-" : row[col].toLocaleString()
-                  }</td>`;
-                });
-                return cellValues.join("");
-              })
-              .join("</tr><tr>");
+            if (shouldShowAsTable) {
+              const tableHtml = filteredRows
+                .map((row: Record<string, any>) => {
+                  const cellValues = columns.map(col => {
+                    let displayValue;
+                    if (col === "year") {
+                      displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
+                    } else {
+                      displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                    }
 
-            const rowsHtml = nonTableRows
+                    return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium text-center">${displayValue}</td>`;
+                  });
+                  return `<tr>${cellValues.join("")}</tr>`;
+                })
+                .join("");
+
+              return `<strong>${section.title}</strong><br/>${getTableHtml(tableHtml, t)}<br/><br/>`;
+            }
+
+            const rowsHtml = filteredRows
               .map((row: Record<string, any>) => {
                 const cellValues = columns.map(col => {
                   if (col === "documentation") {
@@ -325,8 +337,7 @@ export const getFormEntries = (
               })
               .join("<br/>");
 
-            const body = tableRows.length > 0 ? getTableHtml(tableHtml, t) : rowsHtml;
-            return `<strong>${section.title}</strong><br/>${body}<br/><br/>`;
+            return `<strong>${section.title}</strong><br/>${rowsHtml}<br/><br/>`;
           })
           .filter(Boolean)
           .join("");

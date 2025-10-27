@@ -146,6 +146,11 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
   hasAccess?: boolean;
+  dashboardContext?: {
+    setFilters: (fn: (prev: any) => any) => void;
+    dashboardCountries?: any[];
+    isDashboard?: string;
+  };
 }
 
 export const MapEditingContext = createContext({
@@ -192,6 +197,7 @@ export const MapContainer = ({
   showViewGallery = true,
   legendPosition,
   hasAccess,
+  dashboardContext,
   ...props
 }: MapProps) => {
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
@@ -219,8 +225,8 @@ export const MapContainer = ({
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
-  const dashboardContext = useDashboardContext();
-  const { setFilters, dashboardCountries } = dashboardContext ?? {};
+  const dashboardContextFromHook = useDashboardContext();
+  const { setFilters, dashboardCountries } = dashboardContextFromHook ?? {};
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
@@ -312,8 +318,8 @@ export const MapContainer = ({
             setEditPolygon,
             draw.current,
             isDashboard,
-            setFilters,
-            dashboardCountries,
+            dashboardContext?.setFilters ?? setFilters,
+            dashboardContext?.dashboardCountries ?? dashboardCountries,
             setLoader,
             selectedCountry,
             isMobile || isDashboard ? setMobilePopupData : undefined
@@ -352,7 +358,8 @@ export const MapContainer = ({
     setPolygonFromMap,
     tooltipType,
     projectUUID,
-    hasAccess
+    hasAccess,
+    dashboardContext
   ]);
 
   useValueChanged(currentStyle, () => {

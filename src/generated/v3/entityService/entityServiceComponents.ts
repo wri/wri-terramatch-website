@@ -74,6 +74,73 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
   "DELETE"
 );
 
+export type MediaBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export const mediaBulkDelete = new V3ApiEndpoint<MediaBulkDeleteResponse, MediaBulkDeleteError, {}, {}>(
+  "/entities/v3/medias",
+  "DELETE"
+);
+
 export type ProjectPitchIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -794,7 +861,8 @@ export type UploadFilePathParams = {
     | "formQuestionOptions"
     | "fundingProgrammes"
     | "impactStories"
-    | "financialIndicators";
+    | "financialIndicators"
+    | "projectPitches";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -817,6 +885,14 @@ export type UploadFileError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
+        /**
+         * A code to lookup the error message translation string on the client.
+         */
+        code?: string;
+        /**
+         * A set of variables to pass to the translation service.
+         */
+        variables?: Record<string, any>;
       };
     }
   | {
@@ -868,6 +944,7 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
+  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 
@@ -1746,6 +1823,80 @@ export const entityIndex = new V3ApiEndpoint<
   EntityIndexVariables,
   {}
 >("/entities/v3/{entity}", "GET");
+
+export type EntityCreatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports";
+};
+
+export type EntityCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityCreateResponse = {
+  meta?: {
+    /**
+     * @example disturbanceReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example disturbanceReports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceReportFullDto;
+  };
+};
+
+export type EntityCreateVariables = {
+  body: Schemas.EntityCreateBody;
+  pathParams: EntityCreatePathParams;
+};
+
+export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreateError, EntityCreateVariables, {}>(
+  "/entities/v3/{entity}",
+  "POST"
+);
 
 export type EntityGetPathParams = {
   /**
@@ -2714,7 +2865,7 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
 >("/forms/v3/linkedFields", "GET");
 
 export const operationsByTag = {
-  medias: { mediaDelete },
+  medias: { mediaDelete, mediaBulkDelete },
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
@@ -2722,7 +2873,7 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
-  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex }

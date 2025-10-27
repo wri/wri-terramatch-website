@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
-
 import { ReactNode } from "react";
+
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export type Colors =
   | "white"
@@ -13,16 +13,12 @@ export type Colors =
   | "error"
   | "success-600";
 export type ColorCodes = "none" | 50 | 100 | 150 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900;
-export type TextSizes = "xs" | "sm" | "base" | "md" | "m" | "lg";
-export type TextWeights = "regular" | "bold";
 export type TextVariants =
   | HeadingTextVariants
   | BodyTextVariants
   | ButtonTextVariants
   | CaptionTextVariants
   | TextVariantNew;
-
-export type Color = PrimaryColor | SecondaryColor | SuccessColor | NeutralColor | TertiaryColor | ErrorColor;
 
 export type TextVariantNew =
   | "text-8-light"
@@ -98,39 +94,6 @@ export type TextVariantNew =
   | "text-72-semibold"
   | "text-72-bold";
 
-export type PrimaryColor = "primary" | "primary-100" | "primary-200" | "primary-300" | "primary-400" | "primary-500";
-
-export type SecondaryColor =
-  | "secondary"
-  | "secondary-100"
-  | "secondary-200"
-  | "secondary-300"
-  | "secondary-400"
-  | "secondary-500";
-export type SuccessColor = "success" | "success-100" | "success-200" | "success-300" | "success-400" | "success-500";
-export type NeutralColor =
-  | "neutral"
-  | "neutral-50"
-  | "neutral-100"
-  | "neutral-150"
-  | "neutral-200"
-  | "neutral-300"
-  | "neutral-400"
-  | "neutral-500"
-  | "neutral-600"
-  | "neutral-700"
-  | "neutral-800"
-  | "neutral-900"
-  | "neutral-1000";
-export type TertiaryColor =
-  | "tertiary"
-  | "tertiary-100"
-  | "tertiary-200"
-  | "tertiary-300"
-  | "tertiary-400"
-  | "tertiary-500";
-export type ErrorColor = "error" | "error-100" | "error-200" | "error-300" | "error-400" | "error-500";
-
 export type HeadingTextVariants =
   | "text-heading-2000"
   | "text-heading-1000"
@@ -199,42 +162,57 @@ export enum FileType {
   ImagesAndDocs = "image/png, image/jpeg, application/pdf, application/msword",
   Image = "image/png, image/jpeg",
   Media = "image/png, image/jpeg, image/gif, video/mp4, video/quicktime",
-  ImageTiff = "image/tiff",
   ImagePdf = "application/pdf, image/png, image/jpeg",
   Pdf = "application/pdf",
   Video = "video/mp4, video/quicktime",
   Csv = "text/csv",
-  ShapeFiles = "application/zip, application/x-zip-compressed, .kml, .json, .geojson, .shp, .dbf, .shx, .prj",
   AcceptedShapefiles = ".zip, .kml, .geojson",
   Document = "application/pdf, application/msword",
-  Xlsx = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
   CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
 }
 
+export const mediaToUploadedFile = (media: MediaDto, rawFile?: File, uploadState?: UploadState): UploadedFile => ({
+  uuid: media.uuid,
+  url: media.url ?? "",
+  thumbUrl: media.thumbUrl ?? undefined,
+  size: media.size,
+  fileName: media.fileName,
+  mimeType: media.mimeType ?? "",
+  createdAt: media.createdAt,
+  collectionName: media.collectionName,
+  isPublic: media.isPublic,
+  isCover: media.isCover,
+  lat: media.lat ?? undefined,
+  lng: media.lng ?? undefined,
+  rawFile,
+  uploadState
+});
+
+export type UploadState = {
+  isLoading?: boolean;
+  isSuccess?: boolean;
+  isDeleting?: boolean;
+  error?: string;
+};
+
 export type UploadedFile = {
-  //Server side data
+  // Server side data
   uuid: string;
   url: string;
+  thumbUrl?: string;
   size: number;
-  file_name: string;
-  mime_type: string;
-  title: string;
-  created_at: string;
-  collection_name: string;
-  is_public?: boolean;
-  is_cover?: boolean;
-  status?: boolean;
+  fileName: string;
+  mimeType: string;
+  createdAt: string;
+  collectionName: string;
+  isPublic?: boolean;
+  isCover?: boolean;
   lat?: number;
   lng?: number;
 
   //Client side data
   rawFile?: File;
-  uploadState?: {
-    isLoading?: boolean;
-    isSuccess?: boolean;
-    isDeleting?: boolean;
-    error?: string;
-  };
+  uploadState?: UploadState;
 };
 
 export type Status = "edit" | "error" | "success" | "awaiting" | "warning" | "restoration";
@@ -251,9 +229,9 @@ export type ReportsModelNames =
   | "siteReports"
   | "financialReports"
   | "disturbanceReports"
-  | "disturbance-reports";
+  | "disturbance-reports"
+  | "srp-reports";
 
-export const isBaseModelName = (name: EntityName): name is BaseModelNames => !name.endsWith("-reports");
 export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
@@ -269,11 +247,6 @@ export type SingularReportsModelNames =
   | "siteReport"
   | "disturbanceReport"
   | "disturbance-report";
-
-export const isSingularBaseModelName = (name: SingularEntityName): name is SingularBaseModelNames =>
-  !name.endsWith("-report");
-export const isSingularReportModelName = (name: SingularEntityName): name is SingularReportsModelNames =>
-  name.endsWith("-report");
 
 export const isSingularEntityName = (name: EntityName | SingularEntityName): name is SingularEntityName =>
   !name.endsWith("s");

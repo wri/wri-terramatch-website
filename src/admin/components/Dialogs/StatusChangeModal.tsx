@@ -31,7 +31,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status?: "approved" | "needs-more-information" | "restoration-in-progress" | "reminder";
+  status?: "approved" | "needs-more-information" | "reminder";
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -94,9 +94,6 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
       case "needs-more-information":
         return `Request more information for ${name}`;
-
-      case "restoration-in-progress":
-        return `Are you sure you want to mark ${name} as Restoration In Progress?`;
 
       case "reminder":
         return `Send a reminder for ${name}`;
@@ -168,17 +165,15 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent>
-          <When condition={status !== "restoration-in-progress"}>
-            <TextField
-              value={feedbackValue}
-              onChange={e => setFeedbackValue(e.target.value)}
-              label="Feedback"
-              fullWidth
-              multiline
-              margin="dense"
-              helperText={false}
-            />
-          </When>
+          <TextField
+            value={feedbackValue}
+            onChange={e => setFeedbackValue(e.target.value)}
+            label="Feedback"
+            fullWidth
+            multiline
+            margin="dense"
+            helperText={false}
+          />
           <When condition={status === "needs-more-information" && feedbackChoices.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"

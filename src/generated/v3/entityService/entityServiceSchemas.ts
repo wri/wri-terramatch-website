@@ -23,6 +23,7 @@ export type MediaDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -415,6 +416,30 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaRequestAttributes = {
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestData = {
+  type: "media";
+  attributes: MediaRequestAttributes;
+};
+
+export type MediaRequestBody = {
+  data: MediaRequestData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -538,6 +563,7 @@ export type DemographicDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -578,6 +604,7 @@ export type DisturbanceDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -719,7 +746,7 @@ export type SiteLightDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -835,6 +862,7 @@ export type DisturbanceReportEntryDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1018,7 +1046,7 @@ export type SiteFullDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -1481,6 +1509,7 @@ export type FinancialIndicatorDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1514,6 +1543,7 @@ export type FundingTypeDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1680,7 +1710,7 @@ export type SiteUpdateAttributes = {
   /**
    * Request to change to the status of the given site
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress";
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
@@ -1800,6 +1830,22 @@ export type EntityUpdateBody = {
     | DisturbanceReportUpdateData;
 };
 
+export type EntityCreateAttributes = {
+  /**
+   * UUID of the entity related to the report
+   */
+  parentUuid: string;
+};
+
+export type DisturbanceReportCreateData = {
+  type: "disturbanceReports";
+  attributes: EntityCreateAttributes;
+};
+
+export type EntityCreateBody = {
+  data: DisturbanceReportCreateData;
+};
+
 /**
  * CONSTANTS
  */
@@ -1914,6 +1960,7 @@ export type SeedingDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1947,6 +1994,7 @@ export type TreeSpeciesDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1979,6 +2027,7 @@ export type InvasiveDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2008,6 +2057,7 @@ export type StrataDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.

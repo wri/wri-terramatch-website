@@ -13,13 +13,12 @@ export const FileUploadInput = (props: ImageInputProps) => {
     <>
       <StyledFileUpload
         {...props}
-        //@ts-ignore
         validateFileRemoval={async (file: UploadedFile) => {
           if (file.uuid) {
             setShowModal(true);
             return new Promise((resolve, reject) => {
               setRemoveFile({
-                fileName: file.file_name,
+                fileName: file.fileName,
                 delete: () => {
                   deleteMedia(file.uuid);
                   return resolve(true);
