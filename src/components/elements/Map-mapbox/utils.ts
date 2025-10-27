@@ -1118,11 +1118,6 @@ export async function storePolygon(
   }
 }
 
-/**
- * @deprecated This function uses the old v2 API endpoints.
- * Use the new connection-based approach with createSitePolygonsResource instead.
- * The old /api/v2/terrafund/polygon endpoint is deprecated.
- */
 export async function storePolygonProject(
   geojson: any,
   entity_uuid: string,
@@ -1130,11 +1125,6 @@ export async function storePolygonProject(
   refetch: any,
   setPolygonFromMap: any
 ) {
-  console.warn(
-    "DEPRECATED: storePolygonProject uses deprecated v2 API endpoints. " +
-      "Please migrate to the new connection-based approach with createSitePolygonsResource."
-  );
-
   if (geojson?.length) {
     const response = await fetchPostV2TerrafundPolygon({
       body: { geometry: JSON.stringify(geojson[0].geometry) }
