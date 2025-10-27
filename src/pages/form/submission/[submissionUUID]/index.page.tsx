@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
@@ -94,6 +95,16 @@ const SubmissionPage = () => {
     );
   }, [closeModal, openModal, submissionUUID, submitFormSubmission, t]);
 
+  const onChange = useCallback(
+    (data: Dictionary<any>) => {
+      updateSubmission({
+        pathParams: { uuid: submissionUUID },
+        body: { answers: normalizedFormData(data, fieldsProvider) }
+      });
+    },
+    [fieldsProvider, submissionUUID, updateSubmission]
+  );
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading || !providerLoaded}>
@@ -104,12 +115,7 @@ const SubmissionPage = () => {
           errors={error}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push("/home")}
-          onChange={data =>
-            updateSubmission({
-              pathParams: { uuid: submissionUUID },
-              body: { answers: normalizedFormData(data, fieldsProvider) }
-            })
-          }
+          onChange={onChange}
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={handleSubmit}
           submitButtonDisable={isSubmitting}

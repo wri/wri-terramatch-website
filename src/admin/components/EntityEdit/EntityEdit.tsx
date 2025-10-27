@@ -1,6 +1,6 @@
-import { camelCase } from "lodash";
+import { camelCase, Dictionary } from "lodash";
 import { notFound } from "next/navigation";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -94,6 +94,11 @@ export const EntityEdit = () => {
     [entityValue?.data?.project?.uuid]
   );
 
+  const onChange = useCallback(
+    (data: Dictionary<any>) => updateEntity({ answers: normalizedFormData(data, fieldsProvider) }),
+    [fieldsProvider, updateEntity]
+  );
+
   if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -108,7 +113,7 @@ export const EntityEdit = () => {
           framework={framework}
           errors={error}
           onBackFirstStep={() => navigate("..")}
-          onChange={data => updateEntity({ answers: normalizedFormData(data, fieldsProvider) })}
+          onChange={onChange}
           formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}

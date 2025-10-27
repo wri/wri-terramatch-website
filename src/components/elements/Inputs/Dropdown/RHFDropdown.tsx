@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { difference } from "lodash";
-import { FC, PropsWithChildren, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { getHardcodedOptions, toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
@@ -8,6 +8,7 @@ import Loader from "@/components/generic/Loading/Loader";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useOptionLabels } from "@/connections/util/Form";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
 import { toArray } from "@/utils/array";
 
@@ -52,9 +53,9 @@ const WithGadmOptions: FC<WithOptionsList> = props => {
   const level = useMemo(() => Number(optionsList.slice(-1)) as 0 | 1 | 2, [optionsList]);
   const options = useGadmOptions({ level, parentCodes });
 
-  useEffect(() => {
+  useValueChanged(options, () => {
     if (options != null) setOptionsCache(options);
-  }, [options]);
+  });
 
   return optionsCache == null ? (
     <Loader />
@@ -132,14 +133,13 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
     (value: OptionValue[]) => {
       onChange(props.multiSelect && Array.isArray(value) ? value : value[0]);
       onChangeCapture?.();
-      props.formHook?.trigger();
+      formHook?.trigger();
     },
-    [onChange, onChangeCapture, props.formHook, props.multiSelect]
+    [onChange, onChangeCapture, formHook, props.multiSelect]
   );
 
   const valueArray = useMemo(() => toArray(value), [value]);
   const defaultValueArray = useMemo(() => toArray(defaultValue), [defaultValue]);
-
   return (
     <Dropdown
       {...dropdownProps}

@@ -1,7 +1,8 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -85,6 +86,13 @@ const CreateOrganisationForm = () => {
 
   const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
 
+  const onChange = useCallback(
+    (data: Dictionary<any>) => {
+      updateOrganisation({ body: data, pathParams: { uuid } });
+    },
+    [updateOrganisation, uuid]
+  );
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isFetchingOrgData}>
@@ -95,7 +103,7 @@ const CreateOrganisationForm = () => {
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
           errors={error}
           defaultValues={defaultValues}
-          onChange={data => updateOrganisation({ body: data, pathParams: { uuid } })}
+          onChange={onChange}
           onSubmit={() => submitOrganisation({ pathParams: { uuid } })}
           submitButtonDisable={isSubmitting}
           onBackFirstStep={onBackFirstStep}
