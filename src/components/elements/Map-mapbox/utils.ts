@@ -1069,7 +1069,13 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
   URL.revokeObjectURL(url);
 }
 
-export async function storePolygon(geojson: any, record: any, setPolygonFromMap?: any, refreshEntity?: any) {
+export async function storePolygon(
+  geojson: any,
+  record: any,
+  setPolygonFromMap?: any,
+  refreshEntity?: any,
+  refetchSitePolygons?: () => any
+) {
   if (geojson?.length) {
     const payload = {
       geometries: [
@@ -1098,7 +1104,10 @@ export async function storePolygon(geojson: any, record: any, setPolygonFromMap?
         ApiSlice.pruneIndex("sitePolygons", indexKey);
       });
 
-      console.log("result", result);
+      if (refetchSitePolygons) {
+        await refetchSitePolygons();
+      }
+
       setPolygonFromMap?.({ uuid: result.polygonUuid, isOpen: true });
 
       refreshEntity?.();
