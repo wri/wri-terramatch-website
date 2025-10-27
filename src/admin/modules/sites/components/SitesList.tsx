@@ -203,7 +203,7 @@ export const SitesList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+      <List actions={<ListActions onExport={onClickExportButton} showResetSort={true} />} filters={filters}>
         <SiteDataGrid />
       </List>
 
