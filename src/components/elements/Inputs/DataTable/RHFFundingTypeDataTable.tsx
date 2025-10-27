@@ -125,15 +125,16 @@ const RHFFundingTypeDataTable = ({ ...props }: PropsWithChildren<RHFFundingTypeT
 
   const updateItem = useCallback(
     (data: any) => {
-      if (!data?.uuid) return;
+      const index = data?.index !== undefined ? data.index : -1;
+      if (index === -1) return;
+      
       const next = [...value];
-      const index = next.findIndex((item: any) => item?.uuid === data.uuid);
-      if (index !== -1) {
-        next[index] = { ...next[index], ...data };
-        field.onChange(next);
-        clearErrors();
-        refreshTable();
-      }
+      // Remove the index field from the data object before updating the item
+      const { index: _, ...dataWithoutIndex } = data;
+      next[index] = { ...next[index], ...dataWithoutIndex };
+      field.onChange(next);
+      clearErrors();
+      refreshTable();
     },
     [value, field, clearErrors]
   );
