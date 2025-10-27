@@ -29,7 +29,7 @@ const ListActions = (props: ListActionsProps) => (
   <TopToolbar>
     <FilterButton className="filter-button-page-admin" />
     {props.showResetSort !== false && <ResetSortButton />}
-    {!!props.onExport && (
+    {props.onExport != null && (
       <Button className="button-page-admin" label="Export" startIcon={<DownloadIcon />} onClick={props.onExport} />
     )}
   </TopToolbar>
