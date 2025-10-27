@@ -156,10 +156,10 @@ const DropdownDisplay: FC<DropdownDisplayProps> = props => {
 };
 
 const RHFDropdown = ({ optionsList, options, ...props }: PropsWithChildren<RHFDropdownProps>) =>
-  options != null ? (
-    <WithBuiltinOptions {...props} options={options} />
-  ) : optionsList?.startsWith("gadm-level-") ? (
+  optionsList?.startsWith("gadm-level-") ? (
     <WithGadmOptions {...props} optionsList={optionsList} />
+  ) : options != null ? (
+    <WithBuiltinOptions {...props} options={options} />
   ) : (
     <WithHardcodedOptions {...props} optionsList={optionsList ?? ""} />
   );
