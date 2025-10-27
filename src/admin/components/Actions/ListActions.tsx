@@ -13,7 +13,7 @@ export const AutoResetSort = () => {
   const prevPathname = useRef<string>("");
 
   useEffect(() => {
-    if (prevPathname.current !== location.pathname || !prevPathname.current) {
+    if (prevPathname.current !== location.pathname || prevPathname.current == null) {
       setSort({ field: "", order: "ASC" });
       prevPathname.current = location.pathname;
     }
