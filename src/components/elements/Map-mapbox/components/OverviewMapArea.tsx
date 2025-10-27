@@ -56,7 +56,7 @@ const OverviewMapArea = ({
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refreshEntity);
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refreshEntity, refetch);
 
   const mapFunctions = useMap(onSave);
 
