@@ -12,7 +12,7 @@ import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
-  fetchPostV2TerrafundPolygon, // @deprecated - use createSitePolygonsResource instead
+  fetchPostV2TerrafundPolygon, // will be deprecated in the future, currently used for project creation
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
