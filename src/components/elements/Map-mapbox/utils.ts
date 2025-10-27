@@ -1098,11 +1098,6 @@ export async function storePolygon(
       const result = await (createSitePolygonsResource as any)(payload);
 
       ApiSlice.pruneCache("sitePolygons");
-      const currentState = ApiSlice.currentState;
-      const sitePolygonsIndices = currentState.meta.indices.sitePolygons ?? {};
-      Object.keys(sitePolygonsIndices).forEach(indexKey => {
-        ApiSlice.pruneIndex("sitePolygons", indexKey);
-      });
 
       if (refetchSitePolygons) {
         await refetchSitePolygons();
