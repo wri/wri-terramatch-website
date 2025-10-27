@@ -9,7 +9,7 @@ import {
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
-  CreateSitePolygonBatchRequestDto,
+  CreateSitePolygonJsonApiRequestDto,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -157,7 +157,7 @@ export const useAllSitePolygons = (
 };
 
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
-  .create<SitePolygonLightDto, CreateSitePolygonBatchRequestDto>()
+  .create<SitePolygonLightDto, CreateSitePolygonJsonApiRequestDto>()
   .buildConnection();
 
 export const createSitePolygonsResource = resourceCreator(createSitePolygonsConnection);

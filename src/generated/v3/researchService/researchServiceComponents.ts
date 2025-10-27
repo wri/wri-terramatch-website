@@ -57,13 +57,11 @@ export type CreateSitePolygonsResponse = {
 };
 
 export type CreateSitePolygonsVariables = {
-  body: Schemas.CreateSitePolygonBatchRequestDto;
+  body: Schemas.CreateSitePolygonJsonApiRequestDto;
 };
 
 /**
- * Create site polygons in bulk from GeoJSON FeatureCollections. Supports multi-site batch creation.
- *       Each feature must have site_id in properties. Handles Polygon and MultiPolygon geometries.
- *       Automatically groups by site and geometry type, checks for duplicates, and processes large batches in chunks.
+ * Create site polygons. Supports multi-site batch creation.
  *       Duplicate validation results are always included in the response when duplicates are found.
  */
 export const createSitePolygons = new V3ApiEndpoint<

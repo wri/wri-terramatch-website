@@ -207,11 +207,31 @@ export type CreateSitePolygonRequestDto = {
   features: any[][];
 };
 
-export type CreateSitePolygonBatchRequestDto = {
+export type CreateSitePolygonAttributesDto = {
   /**
    * Array of feature collections (supports multi-site batch creation)
    */
   geometries: CreateSitePolygonRequestDto[];
+};
+
+export type CreateSitePolygonDataDto = {
+  /**
+   * Resource type
+   *
+   * @example sitePolygons
+   */
+  type: string;
+  /**
+   * Attributes containing the geometries to create
+   */
+  attributes: CreateSitePolygonAttributesDto;
+};
+
+export type CreateSitePolygonJsonApiRequestDto = {
+  /**
+   * JSON:API data object
+   */
+  data: CreateSitePolygonDataDto;
 };
 
 export type TreeSpeciesDto = {
