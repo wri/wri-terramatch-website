@@ -1,4 +1,4 @@
-import { camelCase, Dictionary } from "lodash";
+import { Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { useCreatePath, useResourceContext } from "react-admin";
@@ -12,10 +12,10 @@ import { toFramework } from "@/context/framework.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { singularEntityNameToPlural } from "@/helpers/entity";
+import { v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import { EntityName, isSingularEntityName } from "@/types/common";
+import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 export const EntityEdit = () => {
@@ -51,12 +51,10 @@ export const EntityEdit = () => {
 
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
-  const model = useMemo(() => {
-    const model = camelCase(
-      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
-    ) as FormModelType;
-    return { model, uuid: entityUUID };
-  }, [entityName, entityUUID]);
+  const model = useMemo(
+    () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
+    [entityName, entityUUID]
+  );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
   const defaultValues = useDefaultValues(entityResponse?.data, fieldsProvider);

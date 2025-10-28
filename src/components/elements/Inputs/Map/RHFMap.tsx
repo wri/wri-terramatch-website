@@ -13,7 +13,7 @@ import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import ApiSlice from "@/store/apiSlice";
 import { Entity, EntityName } from "@/types/common";
 
@@ -35,7 +35,7 @@ const RHFMap = ({
   ...inputWrapperProps
 }: PropsWithChildren<RHFMapProps>) => {
   const entityUUID = useFormModelUuid(model);
-  const entityName = useMemo(() => pluralEntityNameToSingular(kebabCase(model) as EntityName), [model]);
+  const entityName = useMemo(() => singularEntityName(kebabCase(model) as EntityName), [model]);
   const onSave = (geojson: any) => {
     if (entityName != null && entityUUID != null) {
       storePolygonProject(geojson, entityUUID, entityName, refetchData, setPolygonFromMap);

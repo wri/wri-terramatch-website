@@ -1,7 +1,6 @@
 import { Grid, Stack } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext } from "react-admin";
-import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
@@ -112,34 +111,34 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         return entityType;
     }
   };
-  return (
-    <When condition={!isLoading}>
-      <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
-        <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
-          <Grid xs={8}>
-            <Stack gap={4} className="pl-8 pt-9">
-              {!verifyEntity &&
-                entity != AuditLogButtonStates.SITE_REPORT &&
-                entity != AuditLogButtonStates.DISTURBANCE_REPORT - 1 && (
-                  <AuditLogSiteTabSelection
-                    buttonToggle={buttonToggle!}
-                    setButtonToggle={setButtonToggle}
-                    framework={record?.framework_key ?? record?.frameworkKey}
-                    isReport={isProjectReport}
-                    entityLevel={entity}
-                    existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
-                  />
-                )}
-              {showOpenEntity && (
+  return isLoading ? null : (
+    <TabbedShowLayout.Tab label={label ?? "Audit log"} {...rest}>
+      <Grid spacing={2} container className="max-h-[200vh] overflow-auto">
+        <Grid xs={8}>
+          <Stack gap={4} className="pl-8 pt-9">
+            {!verifyEntity &&
+              entity != AuditLogButtonStates.SITE_REPORT &&
+              entity != AuditLogButtonStates.DISTURBANCE_REPORT - 1 && (
                 <AuditLogSiteTabSelection
                   buttonToggle={buttonToggle!}
                   setButtonToggle={setButtonToggle}
                   framework={record?.framework_key ?? record?.frameworkKey}
+                  isReport={isProjectReport}
                   entityLevel={entity}
-                  isAdmin={true}
+                  existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
                 />
               )}
-              <When condition={buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity}>
+            {showOpenEntity && (
+              <AuditLogSiteTabSelection
+                buttonToggle={buttonToggle!}
+                setButtonToggle={setButtonToggle}
+                framework={record?.framework_key ?? record?.frameworkKey}
+                entityLevel={entity}
+                isAdmin={true}
+              />
+            )}
+            {buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity ? (
+              <>
                 <Text variant="text-24-bold">Project Report Status</Text>
                 <Text variant="text-14-light" className="mb-4">
                   Update all report statuses, view updates, and add comments.
@@ -151,14 +150,12 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   fullWidth
                   label="OPEN PROJECT REPORT AUDIT LOG"
                 />
-              </When>
-              <When
-                condition={
-                  ((buttonToggle === AuditLogButtonStates.PROJECT && record?.project) ||
-                    (buttonToggle === AuditLogButtonStates.PROJECT && record?.projectName)) &&
-                  !verifyEntity
-                }
-              >
+              </>
+            ) : null}
+            {((buttonToggle === AuditLogButtonStates.PROJECT && record?.project != null) ||
+              (buttonToggle === AuditLogButtonStates.PROJECT && record?.projectName != null)) &&
+            !verifyEntity ? (
+              <>
                 <Text variant="text-24-bold">Project Status</Text>
                 <Text variant="text-14-light" className="mb-4">
                   Update the site status, view updates, or add comments
@@ -172,91 +169,85 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   fullWidth
                   label="OPEN PROJECT AUDIT LOG"
                 />
-              </When>
-              <When
-                condition={
-                  buttonToggle === AuditLogButtonStates.PROJECT &&
-                  !record?.project &&
-                  buttonToggle === AuditLogButtonStates.PROJECT &&
-                  !record?.projectName
-                }
-              >
-                <SiteAuditLogProjectStatus
-                  record={record}
-                  auditLogData={auditLogData}
-                  auditData={auditData}
-                  refresh={refetch}
-                />
-              </When>
-              <When condition={(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel}>
-                <SiteAuditLogEntityStatus
-                  entityType={verifyEntityReport()}
-                  record={selected}
-                  auditLogData={auditLogData}
-                  refresh={refetch}
-                  buttonToggle={buttonToggle!}
-                  verifyEntity={verifyEntity}
-                  auditData={auditData}
-                  isProjectReport={isProjectReport}
-                />
-              </When>
-            </Stack>
-          </Grid>
-          <Grid xs={4} className="pl-8 pr-4 pt-9">
-            <SiteAuditLogEntityStatusSide
-              getValueForStatus={valuesForStatus}
-              progressBarLabels={statusLabels}
-              mutate={mutateEntity}
-              entityType={verifyEntityReport()}
-              refresh={() => {
-                refetch();
-                loadEntityList();
-              }}
-              record={selected}
-              polygonList={entityListItem}
-              selectedPolygon={selected}
-              setSelectedPolygon={setSelected}
-              checkPolygonsSite={checkPolygonsSite}
-            />
-          </Grid>
+              </>
+            ) : null}
+            {buttonToggle === AuditLogButtonStates.PROJECT &&
+            record?.project == null &&
+            buttonToggle === AuditLogButtonStates.PROJECT &&
+            record?.projectName == null ? (
+              <SiteAuditLogProjectStatus
+                record={record}
+                auditLogData={auditLogData}
+                auditData={auditData}
+                refresh={refetch}
+              />
+            ) : null}
+            {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
+              <SiteAuditLogEntityStatus
+                entityType={verifyEntityReport()}
+                record={selected}
+                auditLogData={auditLogData}
+                refresh={refetch}
+                buttonToggle={buttonToggle!}
+                verifyEntity={verifyEntity}
+                auditData={auditData}
+                isProjectReport={isProjectReport}
+              />
+            ) : null}
+          </Stack>
         </Grid>
-        <div className="px-2 py-2">
-          <When
-            condition={
-              buttonToggle === AuditLogButtonStates.PROJECT &&
-              !record?.project &&
-              buttonToggle === AuditLogButtonStates.PROJECT &&
-              !record?.projectName
-            }
-          >
+        <Grid xs={4} className="pl-8 pr-4 pt-9">
+          <SiteAuditLogEntityStatusSide
+            getValueForStatus={valuesForStatus}
+            progressBarLabels={statusLabels}
+            mutate={mutateEntity}
+            entityType={verifyEntityReport()}
+            refresh={() => {
+              refetch();
+              loadEntityList();
+            }}
+            record={selected}
+            polygonList={entityListItem}
+            selectedPolygon={selected}
+            setSelectedPolygon={setSelected}
+            checkPolygonsSite={checkPolygonsSite}
+          />
+        </Grid>
+      </Grid>
+      <div className="px-2 py-2">
+        {buttonToggle === AuditLogButtonStates.PROJECT &&
+        record?.project == null &&
+        buttonToggle === AuditLogButtonStates.PROJECT &&
+        record?.projectName == null ? (
+          <>
             <Text variant="text-16-bold" className="mb-6">
               History and Discussion for {record && record?.name}
             </Text>
             {auditLogData && <AuditLogTable auditLogData={auditLogData} auditData={auditData} refresh={refetch} />}
-          </When>
-          <When condition={(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel}>
-            <>
-              <div className="mb-6">
-                {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle && (
-                  <Text variant="text-16-bold">History and Discussion for {title()}</Text>
-                )}
-                {(isSite || verifyEntity || isProjectReport || isNurseryToggle) && (
-                  <Text variant="text-16-bold">
-                    History and Discussion for{" "}
-                    <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
-                      {title()}
-                    </Link>
-                  </Text>
-                )}
-              </div>
-              <When condition={!!auditLogData}>
-                <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
-              </When>
-            </>
-          </When>
-        </div>
-      </TabbedShowLayout.Tab>
-    </When>
+          </>
+        ) : null}
+        {(buttonToggle !== AuditLogButtonStates.PROJECT || verifyEntity) && !reportsLevel ? (
+          <>
+            <div className="mb-6">
+              {!isSite && !verifyEntity && !isProjectReport && !isNurseryToggle && (
+                <Text variant="text-16-bold">History and Discussion for {title()}</Text>
+              )}
+              {(isSite || verifyEntity || isProjectReport || isNurseryToggle) && (
+                <Text variant="text-16-bold">
+                  History and Discussion for{" "}
+                  <Link className="text-16-bold !text-[#000000DD]" to={redirectTo}>
+                    {title()}
+                  </Link>
+                </Text>
+              )}
+            </div>
+            {auditLogData == null ? null : (
+              <AuditLogTable auditLogData={auditLogData!} auditData={auditData} refresh={refetch} />
+            )}
+          </>
+        ) : null}
+      </div>
+    </TabbedShowLayout.Tab>
   );
 };
 

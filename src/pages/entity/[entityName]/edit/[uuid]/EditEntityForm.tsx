@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { camelCase, Dictionary } from "lodash";
+import { Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
@@ -14,11 +14,11 @@ import { toFramework } from "@/context/framework.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport, singularEntityNameToPlural } from "@/helpers/entity";
+import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
-import { EntityName, isSingularEntityName } from "@/types/common";
+import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 interface EditEntityFormProps {
@@ -35,12 +35,10 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const entityData = formData?.data;
   const framework = toFramework(entityData?.framework_key);
 
-  const model = useMemo(() => {
-    const model = camelCase(
-      isSingularEntityName(entityName) ? singularEntityNameToPlural(entityName) : entityName
-    ) as FormModelType;
-    return { model, uuid: entityUUID };
-  }, [entityName, entityUUID]);
+  const model = useMemo(
+    () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
+    [entityName, entityUUID]
+  );
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);

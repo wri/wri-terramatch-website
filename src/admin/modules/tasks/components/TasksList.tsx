@@ -11,6 +11,7 @@ import {
   TextField
 } from "react-admin";
 
+import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import { useFrameworkChoices } from "@/constants/options/frameworks";
 import { getTaskStatusOptions } from "@/constants/options/status";
@@ -79,6 +80,7 @@ export const TasksList: FC = () => {
       </Stack>
 
       <List filters={filters}>
+        <AutoResetSort />
         <TaskDataGrid />
       </List>
     </>

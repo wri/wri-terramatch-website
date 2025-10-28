@@ -17,7 +17,7 @@ import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
@@ -126,7 +126,7 @@ const InformationTab: FC<IProps> = props => {
                 </Typography>
                 <Typography>
                   The project has indicated that there is no activity to report on for this{" "}
-                  {pluralEntityNameToSingular(props.type).split("-")[0]} during this reporting period.
+                  {singularEntityName(props.type).split("-")[0]} during this reporting period.
                 </Typography>
               </Card>
             </Then>

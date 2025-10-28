@@ -30,7 +30,7 @@ export interface RHFFileInputProps
 }
 
 // TODO (NJC): TM-2581 will get these values from v3 and this will no longer be needed
-const normalizeV2UploadedFiles = (value: any): UploadedFile[] =>
+export const normalizeV2UploadedFiles = (value: any): UploadedFile[] =>
   toArray(value).map(
     value =>
       ({

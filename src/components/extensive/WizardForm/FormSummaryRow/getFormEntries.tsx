@@ -12,7 +12,7 @@ import { useBoundingBox } from "@/connections/BoundingBox";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -40,7 +40,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
-        entityType: pluralEntityNameToSingular((entityType ?? "") as EntityName),
+        entityType: singularEntityName((entityType ?? "") as EntityName),
         uuid: uuid ?? ""
       }
     },

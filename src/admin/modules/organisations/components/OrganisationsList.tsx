@@ -14,6 +14,7 @@ import {
   useListContext
 } from "react-admin";
 
+import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
@@ -152,6 +153,7 @@ export const OrganisationsList = () => {
         filters={filters}
         filterDefaultValues={{ status: tabs[0].id }}
       >
+        <AutoResetSort />
         <ApplicationDataGrid />
       </List>
 
