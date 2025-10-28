@@ -123,7 +123,7 @@ const ApplicationRequestMoreInfoModal = ({
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           {status === "requires-more-information" && !isAllSelected && (
-            <Button onClick={() => setIsAllSelected(true)}>Select All</Button>
+            <Button onClick={() => setIsAllSelected(true)}>Select All Fields</Button>
           )}
           <Button variant="contained" type="submit" disabled={isLoading}>
             <If condition={isLoading}>

@@ -31,7 +31,6 @@ const Status = (props: StatusProps) => {
       started: t("Started"),
       "under-review": t("Under Review"),
       "needs-more-information": t("Needs More Information"),
-      "restoration-in-progress": t("Restoration in Progress"),
       "awaiting-approval": t("Awaiting Approval")
     };
 
@@ -42,7 +41,6 @@ const Status = (props: StatusProps) => {
       started: t("Started"),
       "under-review": t("Under Review"),
       "needs-more-information": t("Needs Info"),
-      "restoration-in-progress": t("Restoration in Progress"),
       "awaiting-approval": t("Awaiting Approval")
     };
 

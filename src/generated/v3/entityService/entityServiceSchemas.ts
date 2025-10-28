@@ -415,30 +415,6 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
-export type MediaRequestAttributes = {
-  /**
-   * Whether the media is public
-   */
-  isPublic: boolean;
-  /**
-   * The latitude of the media
-   */
-  lat: number | null;
-  /**
-   * The longitude of the media
-   */
-  lng: number | null;
-};
-
-export type MediaRequestData = {
-  type: "media";
-  attributes: MediaRequestAttributes;
-};
-
-export type MediaRequestBody = {
-  data: MediaRequestData;
-};
-
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -743,7 +719,7 @@ export type SiteLightDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -1042,7 +1018,7 @@ export type SiteFullDto = {
   /**
    * Entity status for this site
    */
-  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress" | null;
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * Update request status for this site
    */
@@ -1704,7 +1680,7 @@ export type SiteUpdateAttributes = {
   /**
    * Request to change to the status of the given site
    */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information" | "restoration-in-progress";
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Specific feedback for the PD
    */
@@ -1822,6 +1798,22 @@ export type EntityUpdateBody = {
     | NurseryReportUpdateData
     | FinancialReportUpdateData
     | DisturbanceReportUpdateData;
+};
+
+export type EntityCreateAttributes = {
+  /**
+   * UUID of the entity related to the report
+   */
+  parentUuid: string;
+};
+
+export type DisturbanceReportCreateData = {
+  type: "disturbanceReports";
+  attributes: EntityCreateAttributes;
+};
+
+export type EntityCreateBody = {
+  data: DisturbanceReportCreateData;
 };
 
 /**

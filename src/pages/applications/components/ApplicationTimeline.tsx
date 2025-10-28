@@ -26,7 +26,7 @@ const getApplicationUpdateText = (t: typeof useT, row?: CellContext<AuditWithSta
     "stage-change": t("Approved to moved to stage {newStage}", { newStage: row?.original.stageName }),
     "awaiting-approval": t("Submitted"),
     approved: t("Approved"),
-    rejected: t("Rejected")
+    rejected: t("Not Selected")
   };
 
   const value = values[row?.original?.new_values?.status as keyof typeof values];
