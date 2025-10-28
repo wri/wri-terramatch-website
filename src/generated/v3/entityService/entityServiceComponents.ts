@@ -751,6 +751,14 @@ export type UploadFileError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
+        /**
+         * A code to lookup the error message translation string on the client.
+         */
+        code?: string;
+        /**
+         * A set of variables to pass to the translation service.
+         */
+        variables?: Record<string, any>;
       };
     }
   | {
@@ -802,6 +810,7 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
+  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 
