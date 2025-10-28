@@ -65,6 +65,7 @@
     "mapbox-gl-draw-circle": "^1.1.2",
     "next": "13.1.5",
     "nookies": "^2.5.2",
+    "pluralize": "^8.0.0",
     "prettier-plugin-tailwindcss": "^0.2.2",
     "qs": "^6.14.0",
     "query-string": "^7.1.1",
