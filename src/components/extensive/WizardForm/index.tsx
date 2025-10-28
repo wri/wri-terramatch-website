@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
@@ -84,15 +84,15 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
   const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
-  const steps = useMemo(() => {
-    return props.fieldsProvider.stepIds().map(stepId => {
-      return {
+  const steps = useMemo(
+    () =>
+      props.fieldsProvider.stepIds().map(stepId => ({
         id: stepId,
         title: props.fieldsProvider.step(stepId)?.title,
         validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
-      };
-    });
-  }, [props.framework, props.fieldsProvider, t]);
+      })),
+    [props.framework, props.fieldsProvider, t]
+  );
   const selectedSection = steps[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
@@ -115,19 +115,23 @@ function WizardForm(props: WizardFormProps) {
     formHook.trigger();
   });
 
-  const formHasError = Object.values(formHook.formState.errors ?? {}).length > 0;
+  const formHasError = useRef(false);
+  formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
 
   Log.debug("Form Values", formHook.watch());
   Log.debug("Form Errors", formHook.formState.errors);
 
-  const onChange = useDebounce(() => !formHasError && props.onChange?.(formHook.getValues()));
+  const { onChange } = props;
+  const _onChange = useDebounce(
+    useCallback(() => !formHasError.current && onChange?.(formHook.getValues()), [formHook, onChange])
+  );
 
   const onSubmitStep = useCallback(
     (data: any) => {
       if (selectedStepIndex < lastIndex) {
-        //Step changes through 0 - last step
+        // Step changes through 0 - last step
         if (!props.disableAutoProgress) {
-          //Disable auto step progress if disableAutoProgress was passed
+          // Disable auto step progress if disableAutoProgress was passed
           setSelectedStepIndex(n => n + 1);
         }
         let values = formHook.getValues();
@@ -137,9 +141,9 @@ function WizardForm(props: WizardFormProps) {
         formHook.reset(values);
         formHook.clearErrors();
       } else {
-        //Step changes on last step
-        if (!props.onSubmit) return props.onStepChange?.(data);
-        props.onSubmit?.(data);
+        // Step changes on last step
+        if (props.onSubmit == null) return props.onStepChange?.(data);
+        props.onSubmit(data);
       }
     },
     [formHook, lastIndex, props, selectedStepIndex]
@@ -207,13 +211,13 @@ function WizardForm(props: WizardFormProps) {
             </div>
           </div>
         )}
-        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={onChange} />
+        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
         <FormFooter
           variant="sticky"
           backButtonProps={
             !props.hideBackButton
               ? {
-                  children: props.backButtonText || t("Back"),
+                  children: props.backButtonText ?? t("Back"),
                   onClick: () => {
                     if (selectedStepIndex > 0) {
                       setSelectedStepIndex(n => n - 1);
@@ -231,12 +235,12 @@ function WizardForm(props: WizardFormProps) {
                 : props.submitButtonText ?? t("Submit"),
             onClick: formHook.handleSubmit(onSubmitStep),
             className: "py-3",
-            disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError
+            disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError.current
           }}
         />
       </div>
     ),
-    [formHasError, formHook, lastIndex, onChange, onSubmitStep, props, selectedStepIndex, t]
+    [formHasError, formHook, lastIndex, _onChange, onSubmitStep, props, selectedStepIndex, t]
   );
 
   const stepTabItems = useMemo(

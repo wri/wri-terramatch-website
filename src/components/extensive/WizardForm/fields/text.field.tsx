@@ -4,5 +4,5 @@ import { addValidationWith, stringValidator } from "@/utils/yup";
 
 export const TextField: FormFieldFactory = {
   addValidation: addValidationWith(stringValidator),
-  renderInput: (field, sharedProps) => <Input {...sharedProps} type="text" />
+  renderInput: (_, sharedProps) => <Input {...sharedProps} type="text" />
 };

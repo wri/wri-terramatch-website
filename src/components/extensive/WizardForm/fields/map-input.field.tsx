@@ -10,7 +10,7 @@ import { addValidationWith, objectValidator } from "@/utils/yup";
 
 export const MapInputField: FormFieldFactory = {
   addValidation: addValidationWith(field =>
-    field.linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidator(field)
+    field.linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidator()
   ),
 
   renderInput: ({ name, model }, sharedProps) => (

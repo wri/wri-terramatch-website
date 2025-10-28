@@ -1,5 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
@@ -92,6 +93,16 @@ const RequestMoreInformationPage = () => {
     [submission?.organisation_attributes]
   );
 
+  const onChange = useCallback(
+    (data: Dictionary<any>) => {
+      updateSubmission({
+        pathParams: { uuid: submission?.uuid ?? "" },
+        body: { answers: normalizedFormData(data, fieldsProvider) }
+      });
+    },
+    [fieldsProvider, submission?.uuid, updateSubmission]
+  );
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={applicationLoading || !providerLoaded}>
@@ -105,12 +116,7 @@ const RequestMoreInformationPage = () => {
           hideBackButton={false}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push(`/applications/${uuid}`)}
-          onChange={data =>
-            updateSubmission({
-              pathParams: { uuid: submission?.uuid ?? "" },
-              body: { answers: normalizedFormData(data, fieldsProvider) }
-            })
-          }
+          onChange={onChange}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
           onSubmit={() =>
             submitFormSubmission({

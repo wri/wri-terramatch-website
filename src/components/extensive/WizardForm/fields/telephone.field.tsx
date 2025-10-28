@@ -4,5 +4,5 @@ import { addValidationWith, stringValidator } from "@/utils/yup";
 
 export const TelephoneField: FormFieldFactory = {
   addValidation: addValidationWith(stringValidator),
-  renderInput: (field, sharedProps) => <Input {...sharedProps} type="tel" />
+  renderInput: (_, sharedProps) => <Input {...sharedProps} type="tel" />
 };

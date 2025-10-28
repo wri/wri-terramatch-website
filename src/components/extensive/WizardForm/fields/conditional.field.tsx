@@ -17,7 +17,7 @@ import { booleanValidator } from "@/utils/yup";
 
 export const ConditionalField: FormFieldFactory = {
   addValidation: (validations, field, t, framework, fieldsProvider) => {
-    validations[field.name] = booleanValidator(field);
+    validations[field.name] = booleanValidator();
     for (const childId of fieldsProvider.childNames(field.name)) {
       const child = fieldsProvider.fieldByName(childId);
       if (child == null) continue;

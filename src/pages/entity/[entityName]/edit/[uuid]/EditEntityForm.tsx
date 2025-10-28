@@ -1,8 +1,8 @@
 import { useT } from "@transifex/react";
-import { camelCase } from "lodash";
+import { camelCase, Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
@@ -129,6 +129,16 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
 
   const projectDetails = useMemo((): ProjectFormDetails => ({ uuid: entity?.project?.uuid }), [entity?.project?.uuid]);
 
+  const onChange = useCallback(
+    (data: Dictionary<any>, closeAndSave?: boolean) => {
+      updateEntity({
+        answers: normalizedFormData(data, fieldsProvider),
+        ...(closeAndSave ? { continue_later_action: true } : {})
+      });
+    },
+    [fieldsProvider, updateEntity]
+  );
+
   if (loadError || formLoadFailure != null) {
     Log.error("Form data load failed", { loadError, formLoadFailure });
     return notFound();
@@ -147,12 +157,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             errors={error}
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}
-            onChange={(data, closeAndSave?: boolean) =>
-              updateEntity({
-                answers: normalizedFormData(data, fieldsProvider),
-                ...(closeAndSave ? { continue_later_action: true } : {})
-              })
-            }
+            onChange={onChange}
             formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
             onSubmit={() =>
               submitEntity({

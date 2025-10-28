@@ -7,7 +7,7 @@ import { addValidationWith, arrayValidator } from "@/utils/yup";
 export const StratasField: FormFieldFactory = {
   addValidation: addValidationWith(arrayValidator),
 
-  renderInput: (field, sharedProps) => <RHFStrataTable {...sharedProps} />,
+  renderInput: (_, sharedProps) => <RHFStrataTable {...sharedProps} />,
 
   getAnswer: () => undefined,
 

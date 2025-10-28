@@ -45,6 +45,9 @@ export const addFieldValidation = (
 
   FormFieldFactories[field.inputType].addValidation(validations, field, t, framework, fieldsProvider);
   validations[field.name] = (validations[field.name] ?? yup.mixed()).nullable().label(field.label ?? "");
+
+  // .required() has to be added after the .nullable() call above to be functional.
+  if (field.validation?.required) validations[field.name] = validations[field.name].required();
 };
 
 export const isDtoOption = (option: FormQuestionOptionDto | Option): option is FormQuestionOptionDto =>

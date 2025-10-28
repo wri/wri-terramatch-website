@@ -7,8 +7,8 @@ import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { addValidationWith } from "@/utils/yup";
 
 export const StrategyAreaField: FormFieldFactory = {
-  addValidation: addValidationWith(({ validation }) => {
-    const validator = yup.string().test("total-percentage", function (value) {
+  addValidation: addValidationWith(() =>
+    yup.string().test("total-percentage", function (value) {
       try {
         const parsed = JSON.parse(value ?? "[]");
         if (!Array.isArray(parsed)) return true;
@@ -34,10 +34,8 @@ export const StrategyAreaField: FormFieldFactory = {
       } catch {
         return this.createError({ message: "There was a problem validating this field." });
       }
-    });
-
-    return validation?.required === true ? validator.required("This fields is required") : validator;
-  }),
+    })
+  ),
 
   renderInput: ({ collection, options, linkedFieldKey }, sharedProps) => (
     <RHFStrategyAreaDataTable

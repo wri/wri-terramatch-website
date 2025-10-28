@@ -5,11 +5,7 @@ import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addValidationWith } from "@/utils/yup";
 
 export const NumberPercentageField: FormFieldFactory = {
-  addValidation: addValidationWith(({ validation }) => {
-    let validator = yup.number().min(0).max(100);
-    if (validation?.required === true) validator = validator.required();
-    return validator;
-  }),
+  addValidation: addValidationWith(() => yup.number().min(0).max(100)),
 
   renderInput: (field, sharedProps) => {
     return <Input {...sharedProps} type="number" min={0} max={100} />;

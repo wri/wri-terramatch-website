@@ -34,8 +34,8 @@ const getTableHtml = (body: string, t: typeof useT) => {
 };
 
 export const FinancialIndicatorsField: FormFieldFactory = {
-  addValidation: addValidationWith(({ validation }) => {
-    const validator = yup.array().test("required-documentation", function (value) {
+  addValidation: addValidationWith(({ validation }) =>
+    yup.array().test("required-documentation", function (value) {
       if (!Array.isArray(value)) return true;
 
       const documentationEntries = value.filter(
@@ -66,10 +66,8 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       }
 
       return true;
-    });
-
-    return validation?.required === true ? validator.required() : validator;
-  }),
+    })
+  ),
 
   renderInput: ({ years, collection }, sharedProps) => (
     <RHFFinancialIndicatorsDataTable {...sharedProps} years={years ?? undefined} collection={collection ?? undefined} />

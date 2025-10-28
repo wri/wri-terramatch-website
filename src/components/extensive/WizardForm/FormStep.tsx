@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect, useMemo } from "react";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useCallback, useEffect, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 import { IButtonProps } from "@/components/elements/Button/Button";
@@ -25,6 +25,10 @@ export const FormStep = ({
   const { step, fieldNames } = useFieldsProvider();
   const stepDefinition = step(stepId);
   const stepFieldIds = useMemo(() => fieldNames(stepId), [fieldNames, stepId]);
+  const renderField = useCallback(
+    (fieldId: string) => <FormField key={fieldId} fieldId={fieldId} formHook={formHook} onChange={onChange} />,
+    [formHook, onChange]
+  );
 
   useEffect(() => {
     formHook.clearErrors();
@@ -39,12 +43,7 @@ export const FormStep = ({
       subtitle={stepDefinition.description ?? undefined}
     >
       {stepFieldIds.length === 0 ? null : (
-        <List
-          items={stepFieldIds}
-          uniqueId="name"
-          itemClassName="mt-8"
-          render={fieldId => <FormField key={fieldId} fieldId={fieldId} formHook={formHook} onChange={onChange} />}
-        />
+        <List items={stepFieldIds} uniqueId="name" itemClassName="mt-8" render={renderField} />
       )}
       {children}
     </FormStepHeader>

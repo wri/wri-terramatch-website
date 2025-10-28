@@ -1,6 +1,5 @@
 import { Dictionary, isObject, isString } from "lodash";
 import { Fragment } from "react";
-import { When } from "react-if";
 
 export type ListProps<T, U> = U & {
   uniqueId?: string;
@@ -37,7 +36,7 @@ const List = <T, U>({
 
   return (
     <ListComponent {...listComponentClassnames}>
-      {startListElement ? <ItemComponent>{startListElement}</ItemComponent> : <></>}
+      {startListElement ? <ItemComponent>{startListElement}</ItemComponent> : null}
       {items.map((item, i, array) => {
         const key = isString(item)
           ? `${item}-${i}`
@@ -47,11 +46,11 @@ const List = <T, U>({
         return (
           <Fragment key={key}>
             <ItemComponent {...listItemComponentClassnames}>{render(item, i, array)}</ItemComponent>
-            <When condition={i < items.length - 1}>{dividerComponent}</When>
+            {i === items.length - 1 ? null : dividerComponent}
           </Fragment>
         );
       })}
-      {endListElement ? <ItemComponent>{endListElement}</ItemComponent> : <></>}
+      {endListElement != null ? <ItemComponent>{endListElement}</ItemComponent> : null}
     </ListComponent>
   );
 };

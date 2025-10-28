@@ -6,9 +6,8 @@ import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { addValidationWith } from "@/utils/yup";
 
 export const LongTextField: FormFieldFactory = {
-  addValidation: addValidationWith(({ validation, minCharacterLimit, maxCharacterLimit }, t) => {
+  addValidation: addValidationWith(({ minCharacterLimit, maxCharacterLimit }, t) => {
     let validator = yup.string();
-    if (validation?.required === true) validator = validator.required();
     if (minCharacterLimit != null) {
       validator = validator.min(
         minCharacterLimit,
