@@ -1,5 +1,3 @@
-import { isEmpty } from "lodash";
-
 /**
  * to clone an array and update an element in it, use-case to update an state array
  * @param array original array
@@ -30,7 +28,7 @@ export function notEmpty(array?: any[] | null) {
  * Note: This does not replace _.toArray()
  */
 export const toArray = <T>(element: T | T[]): NonNullable<T>[] =>
-  (Array.isArray(element) ? element : !isEmpty(element) ? [element] : []) as NonNullable<T>[];
+  (Array.isArray(element) ? element : element != null && element !== "" ? [element] : []) as NonNullable<T>[];
 
 export function objectArrayHasDuplication(arr: any[], keys: string[]) {
   return (
