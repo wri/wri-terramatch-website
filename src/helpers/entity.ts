@@ -1,28 +1,15 @@
 import { camelCase } from "lodash";
+import pluralize from "pluralize";
 
-import {
-  BaseModelNames,
-  Entity,
-  EntityName,
-  isSingularEntityName,
-  ReportsModelNames,
-  SingularEntityName
-} from "@/types/common";
+import { BaseModelNames, Entity, EntityName, ReportsModelNames, SingularEntityName } from "@/types/common";
 
-export const singularEntityNameToPlural = (singular: SingularEntityName): EntityName => {
-  if (singular === "nursery") return "nurseries";
-  else return `${singular}s` as EntityName;
-};
-
-export const pluralEntityNameToSingular = (plural: EntityName): SingularEntityName => {
-  if (plural === "nurseries") return "nursery";
-  if (plural === "project-pitches") return "project-pitch";
-  else return plural.substring(0, plural.length - 1) as SingularEntityName;
-};
+export const pluralEntityName = (name: EntityName | SingularEntityName): EntityName =>
+  pluralize.plural(name) as EntityName;
+export const singularEntityName = (name: EntityName | SingularEntityName): SingularEntityName =>
+  pluralize.singular(name) as SingularEntityName;
 
 export const v3Entity = (entity?: Entity) => (entity == null ? undefined : v3EntityName(entity.entityName));
-export const v3EntityName = (name: EntityName | SingularEntityName) =>
-  camelCase(isSingularEntityName(name) ? singularEntityNameToPlural(name) : name);
+export const v3EntityName = (name: EntityName | SingularEntityName) => camelCase(pluralEntityName(name));
 
 export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, singular?: boolean) => {
   const mapping: any = {
@@ -40,7 +27,7 @@ export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, s
 };
 
 export const getEntityDetailPageLink = (entityName: EntityName, uuid: string, tab?: string) =>
-  `${entityName.includes("report") ? "/reports" : ""}/${pluralEntityNameToSingular(entityName)}/${uuid}${
+  `${entityName.includes("report") ? "/reports" : ""}/${singularEntityName(entityName)}/${uuid}${
     tab ? `?tab=${tab}` : ""
   }`;
 

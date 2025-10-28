@@ -11,7 +11,7 @@ import EntityProvider from "@/context/entity.provider";
 import { useFrameworkContext } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport, pluralEntityNameToSingular } from "@/helpers/entity";
+import { getEntityDetailPageLink, isEntityReport, singularEntityName } from "@/helpers/entity";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
   useGetCustomFormSteps,
@@ -56,7 +56,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   const formSteps = useGetCustomFormSteps(
     formData.form,
     {
-      entityName: pluralEntityNameToSingular(entityName),
+      entityName: singularEntityName(entityName),
       entityUUID
     },
     framework,
