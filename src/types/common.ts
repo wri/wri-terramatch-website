@@ -210,7 +210,7 @@ export type UploadedFile = {
   lat?: number;
   lng?: number;
 
-  //Client side data
+  // Client side data
   rawFile?: File;
   uploadState?: UploadState;
 };
