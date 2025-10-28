@@ -116,7 +116,7 @@ const PageCard = ({
           </div>
         </When>
         <div
-          className={classNames("delay-400 duration-0 h-auto transition-all ease-in-out", {
+          className={classNames("delay-400 duration-0 relative h-auto transition-all ease-in-out", {
             "bg-red-500 !h-0 opacity-0": collapseChildren && !openCollapseChildren
           })}
         >
