@@ -28,7 +28,7 @@ export function notEmpty(array?: any[] | null) {
  * Note: This does not replace _.toArray()
  */
 export function toArray<T>(element: T | T[]): NonNullable<T>[] {
-  return (Array.isArray(element) ? element : element ? [element] : []) as NonNullable<T>[];
+  return (Array.isArray(element) ? element : element != null ? [element] : []) as NonNullable<T>[];
 }
 
 export function objectArrayHasDuplication(arr: any[], keys: string[]) {
