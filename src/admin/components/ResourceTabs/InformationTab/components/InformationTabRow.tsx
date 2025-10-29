@@ -8,8 +8,8 @@ import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
 
-const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
-  const entries = useGetFormEntries({ ...props, type });
+const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProps) => {
+  const entries = useGetFormEntries({ ...props, type, entity });
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">

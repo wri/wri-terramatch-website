@@ -181,6 +181,7 @@ const InformationTab: FC<IProps> = props => {
                               values={values}
                               steps={formSteps}
                               type={props.type}
+                              entity={{ entityName: props.type, entityUUID: record?.uuid }}
                             />
                           )}
                         />

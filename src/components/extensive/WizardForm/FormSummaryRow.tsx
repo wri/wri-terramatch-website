@@ -162,7 +162,7 @@ export const getFormEntries = (
             } as PlantData)
         );
         const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
-        const tableType = !f.fieldProps.withNumbers ? "noCount" : undefined;
+        const tableType = !f.fieldProps.withNumbers ? "noCount" : "noGoal";
         outputArr.push({
           title: f.label,
           type: f.type,
