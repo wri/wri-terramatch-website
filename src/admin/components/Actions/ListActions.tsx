@@ -1,7 +1,7 @@
 import DownloadIcon from "@mui/icons-material/GetApp";
-import { useEffect, useRef } from "react";
 import { Button, FilterButton, TopToolbar, useListContext } from "react-admin";
-import { useLocation } from "react-router-dom";
+
+import { useOnMount } from "@/hooks/useOnMount";
 
 interface ListActionsProps {
   onExport?: () => void;
@@ -9,16 +9,10 @@ interface ListActionsProps {
 
 export const AutoResetSort = () => {
   const { setSort } = useListContext();
-  const location = useLocation();
-  const prevPathname = useRef<string>("");
 
-  useEffect(() => {
-    if (prevPathname.current !== location.pathname || prevPathname.current == null) {
-      setSort({ field: "", order: "ASC" });
-      prevPathname.current = location.pathname;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  useOnMount(() => {
+    setSort({ field: "", order: "ASC" });
+  });
 
   return null;
 };

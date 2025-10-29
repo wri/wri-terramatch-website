@@ -1,11 +1,11 @@
 import { BooleanInput } from "react-admin";
 import * as yup from "yup";
 
-import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import RHFFileInput, { normalizeV2UploadedFiles } from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer } from "@/components/extensive/WizardForm/utils";
 import { UploadedFile } from "@/types/common";
-import { isNotNull, toArray } from "@/utils/array";
+import { isNotNull } from "@/utils/array";
 import { addValidationWith } from "@/utils/yup";
 
 export const FileField: FormFieldFactory = {
@@ -31,7 +31,7 @@ export const FileField: FormFieldFactory = {
     />
   ),
 
-  getAnswer: ({ name }, formValues) => toArray(formValues[name]),
+  getAnswer: ({ name }, formValues) => normalizeV2UploadedFiles(formValues[name]),
 
   appendAnswers: (field, csv, values, fieldsProvider) => {
     const value = (getAnswer(field, values, fieldsProvider) as UploadedFile[]).filter(isNotNull);

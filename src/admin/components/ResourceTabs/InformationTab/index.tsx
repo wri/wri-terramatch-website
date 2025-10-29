@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { camelCase } from "lodash";
 import { FC, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
-import { Else, If, Then, When } from "react-if";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
@@ -112,213 +111,163 @@ const InformationTab: FC<IProps> = props => {
   }, [props.type]);
 
   const isLoading = ctxLoading || queryLoading || !providerLoaded || record == null;
-  if (isLoading) return null;
-
-  return (
+  return isLoading ? null : (
     <TabbedShowLayout.Tab label={tabTitle} {...props}>
       <Grid spacing={2} container>
         <Grid xs={8} item>
-          <If condition={record.nothingToReport}>
-            <Then>
-              <Card sx={{ padding: 4 }}>
-                <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
-                  Nothing to Report
-                </Typography>
-                <Typography>
-                  The project has indicated that there is no activity to report on for this{" "}
-                  {singularEntityName(props.type).split("-")[0]} during this reporting period.
-                </Typography>
+          {record.nothingToReport ? (
+            <Card sx={{ padding: 4 }}>
+              <Typography variant="h5" component="h3" sx={{ marginBottom: 2 }}>
+                Nothing to Report
+              </Typography>
+              <Typography>
+                The project has indicated that there is no activity to report on for this{" "}
+                {singularEntityName(props.type).split("-")[0]} during this reporting period.
+              </Typography>
+            </Card>
+          ) : props.type === "financial-reports" ? (
+            <div className="flex flex-col gap-8 p-2">
+              {fields.map(field =>
+                field.inputType === "financialIndicators" ? (
+                  <>
+                    <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
+                    <Accordion
+                      title="Financial Documents per Year"
+                      variant="drawer"
+                      className="rounded-lg bg-white px-6 py-4 shadow-all"
+                    >
+                      <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
+                    </Accordion>
+                    <Accordion
+                      title="Descriptions of Financials per Year"
+                      variant="drawer"
+                      className="rounded-lg bg-white px-6 py-4 shadow-all"
+                    >
+                      <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
+                    </Accordion>
+                  </>
+                ) : field.inputType === "fundingType" ? (
+                  <Accordion
+                    title="Major Funding Sources by Year"
+                    variant="drawer"
+                    className="rounded-lg bg-white px-6 py-4 shadow-all"
+                  >
+                    <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                  </Accordion>
+                ) : null
+              )}
+            </div>
+          ) : (
+            <Stack gap={4}>
+              <Card sx={{ padding: 4 }} className="!shadow-none">
+                <WizardFormProvider fieldsProvider={fieldsProvider}>
+                  <List
+                    className={classNames("space-y-12", {
+                      "map-span-3": props.type === "sites"
+                    })}
+                    items={fieldsProvider.stepIds()}
+                    render={stepId => <InformationTabRow stepId={stepId} values={values} type={props.type} />}
+                  />
+                </WizardFormProvider>
               </Card>
-            </Then>
-            <Else>
-              <If condition={props.type === "financial-reports"}>
-                <Then>
-                  <div className="flex flex-col gap-8 p-2">
-                    {fields.map(field =>
-                      field.inputType === "financialIndicators" ? (
-                        <>
-                          <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
-                          <Accordion
-                            title="Financial Documents per Year"
-                            variant="drawer"
-                            className="rounded-lg bg-white px-6 py-4 shadow-all"
-                          >
-                            <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
-                          </Accordion>
-                          <Accordion
-                            title="Descriptions of Financials per Year"
-                            variant="drawer"
-                            className="rounded-lg bg-white px-6 py-4 shadow-all"
-                          >
-                            <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
-                          </Accordion>
-                        </>
-                      ) : field.inputType === "fundingType" ? (
-                        <Accordion
-                          title="Major Funding Sources by Year"
-                          variant="drawer"
-                          className="rounded-lg bg-white px-6 py-4 shadow-all"
-                        >
-                          <FundingSourcesSection data={values[field.name]} currency={record.currency} />
-                        </Accordion>
-                      ) : null
-                    )}
-                  </div>
-                </Then>
-                <Else>
-                  <Stack gap={4}>
-                    <Card sx={{ padding: 4 }} className="!shadow-none">
-                      <WizardFormProvider fieldsProvider={fieldsProvider}>
-                        <List
-                          className={classNames("space-y-12", {
-                            "map-span-3": props.type === "sites"
-                          })}
-                          items={fieldsProvider.stepIds()}
-                          render={stepId => <InformationTabRow stepId={stepId} values={values} type={props.type} />}
-                        />
-                      </WizardFormProvider>
-                    </Card>
-                    <When condition={record}>
-                      <div className="pl-8">
-                        <When
-                          condition={
-                            props.type === "projects" ||
-                            props.type === "sites" ||
-                            props.type === "site-reports" ||
-                            props.type === "project-reports" ||
-                            props.type === "nursery-reports"
-                          }
-                        >
-                          <div className="flex flex-col gap-10">
-                            <ContextCondition frameworksHide={[Framework.PPC]}>
-                              <When condition={props.type !== "nursery-reports"}>
-                                <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-1 py-1">
-                                    <Text variant="text-16-bold" className="capitalize">
-                                      Non-Trees Planted:
-                                    </Text>
-                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                      {totalCountNonTree.toLocaleString() ?? 0}
-                                    </Text>
-                                  </div>
-                                  <TreeSpeciesTable
-                                    {...{ entity, entityUuid }}
-                                    collection="non-tree"
-                                    secondColumnWidth="45%"
-                                  />
-                                </div>
-                              </When>
-                            </ContextCondition>
-                            <When
-                              condition={
-                                props.type === "projects" ||
-                                props.type === "project-reports" ||
-                                props.type === "nursery-reports"
-                              }
-                            >
-                              <ContextCondition
-                                frameworksShow={[
-                                  Framework.PPC,
-                                  Framework.TF,
-                                  Framework.TF_LANDSCAPES,
-                                  Framework.ENTERPRISES
-                                ]}
-                              >
-                                <When
-                                  condition={
-                                    (props.type != "nursery-reports" && framework == Framework.PPC) ||
-                                    (props.type == "nursery-reports" &&
-                                      [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES].includes(
-                                        framework
-                                      ))
-                                  }
-                                >
-                                  <div className="flex flex-col gap-1">
-                                    <div className="flex items-center gap-1 py-1">
-                                      <Text variant="text-16-bold" className="capitalize">
-                                        Saplings Grown in Nurseries:
-                                      </Text>
-                                      <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                        {totalCountNurserySeedling.toLocaleString() ?? 0}
-                                      </Text>
-                                    </div>
-                                    <TreeSpeciesTable
-                                      {...{ entity, entityUuid }}
-                                      collection="nursery-seedling"
-                                      secondColumnWidth="45%"
-                                    />
-                                  </div>
-                                </When>
-                              </ContextCondition>
-                            </When>
-                            <ContextCondition frameworksShow={[Framework.PPC]}>
-                              <When condition={props.type !== "nursery-reports"}>
-                                <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-1 py-1">
-                                    <Text variant="text-16-bold" className="capitalize">
-                                      Seeds Planted:
-                                    </Text>
-                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                      {totalCountSeeds.toLocaleString()}
-                                    </Text>
-                                  </div>
-                                  <TreeSpeciesTable
-                                    {...{ entity, entityUuid }}
-                                    collection="seeds"
-                                    secondColumnWidth="45%"
-                                  />
-                                </div>
-                              </When>
-                            </ContextCondition>
-                            <When condition={props.type !== "nursery-reports"}>
-                              <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-1 py-1">
-                                  <Text variant="text-16-bold" className="capitalize">
-                                    Trees Planted:
-                                  </Text>
-                                  <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                    {totalCountTreePlanted.toLocaleString() ?? 0}
-                                  </Text>
-                                </div>
-                                <TreeSpeciesTable
-                                  {...{ entity, entityUuid }}
-                                  collection="tree-planted"
-                                  secondColumnWidth="45%"
-                                />
-                              </div>
-                            </When>
-                            <When condition={props.type === "site-reports" || props.type === "project-reports"}>
-                              <ContextCondition frameworksShow={ALL_TF}>
-                                <div className="flex flex-col gap-1">
-                                  <div className="flex items-center gap-1 py-1">
-                                    <Text variant="text-16-bold" className="capitalize">
-                                      Replanting:
-                                    </Text>
-                                    <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                                      {totalCountReplanting?.toLocaleString() ?? 0}
-                                    </Text>
-                                  </div>
-                                  <TreeSpeciesTable
-                                    {...{ entity, entityUuid }}
-                                    collection="replanting"
-                                    secondColumnWidth="45%"
-                                  />
-                                </div>
-                              </ContextCondition>
-                            </When>
+              <div className="pl-8">
+                {["projects", "sites", "site-reports", "project-reports", "nursery-reports"].includes(props.type) ? (
+                  <div className="flex flex-col gap-10">
+                    {props.type !== "nursery-reports" ? (
+                      <ContextCondition frameworksHide={[Framework.PPC]}>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Non-Trees Planted:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountNonTree.toLocaleString() ?? 0}
+                            </Text>
                           </div>
-                        </When>
+                          <TreeSpeciesTable {...{ entity, entityUuid }} collection="non-tree" secondColumnWidth="45%" />
+                        </div>
+                      </ContextCondition>
+                    ) : null}
+                    {(["projects", "project-reports"].includes(props.type) && framework === Framework.PPC) ||
+                    (props.type === "nursery-reports" && ALL_TF.includes(framework)) ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Saplings Grown in Nurseries:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountNurserySeedling.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable
+                          {...{ entity, entityUuid }}
+                          collection="nursery-seedling"
+                          secondColumnWidth="45%"
+                        />
                       </div>
-                    </When>
-                    <When condition={props.type === "projects"}>
-                      <MonitoringPartnersTable project={record} />
-                      <ProjectManagersTable project={record} />
-                    </When>
-                  </Stack>
-                </Else>
-              </If>
-            </Else>
-          </If>
+                    ) : null}
+                    {props.type !== "nursery-reports" ? (
+                      <>
+                        <ContextCondition frameworksShow={[Framework.PPC]}>
+                          <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1 py-1">
+                              <Text variant="text-16-bold" className="capitalize">
+                                Seeds Planted:
+                              </Text>
+                              <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                                {totalCountSeeds.toLocaleString()}
+                              </Text>
+                            </div>
+                            <TreeSpeciesTable {...{ entity, entityUuid }} collection="seeds" secondColumnWidth="45%" />
+                          </div>
+                        </ContextCondition>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Trees Planted:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountTreePlanted.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable
+                            {...{ entity, entityUuid }}
+                            collection="tree-planted"
+                            secondColumnWidth="45%"
+                          />
+                        </div>
+                      </>
+                    ) : null}
+                    {props.type === "site-reports" || props.type === "project-reports" ? (
+                      <ContextCondition frameworksShow={ALL_TF}>
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1 py-1">
+                            <Text variant="text-16-bold" className="capitalize">
+                              Replanting:
+                            </Text>
+                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                              {totalCountReplanting?.toLocaleString() ?? 0}
+                            </Text>
+                          </div>
+                          <TreeSpeciesTable
+                            {...{ entity, entityUuid }}
+                            collection="replanting"
+                            secondColumnWidth="45%"
+                          />
+                        </div>
+                      </ContextCondition>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+              {props.type === "projects" ? (
+                <>
+                  <MonitoringPartnersTable project={record} />
+                  <ProjectManagersTable project={record} />
+                </>
+              ) : null}
+            </Stack>
+          )}
         </Grid>
         <Grid xs={4} item>
           <InformationAside type={props.type} />
