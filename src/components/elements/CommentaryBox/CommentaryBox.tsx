@@ -8,13 +8,11 @@ import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { prepareFileForUpload } from "@/connections/Media";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  fetchPostV2FileUploadMODELCOLLECTIONUUID,
-  PostV2AuditStatusENTITYUUIDRequestBody,
-  usePostV2AuditStatusENTITYUUID
-} from "@/generated/apiComponents";
+import { PostV2AuditStatusENTITYUUIDRequestBody, usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
 import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
 
 export interface CommentaryBoxProps {
   name: string;
@@ -26,23 +24,22 @@ export interface CommentaryBoxProps {
   entity?: AuditLogEntity;
 }
 
-const processUploadFile = (file: File, auditStatusUUID: string) => {
-  const bodyFiles = new FormData();
-  bodyFiles.append("upload_file", file);
-  return fetchPostV2FileUploadMODELCOLLECTIONUUID({
-    //@ts-ignore swagger issue
-    body: bodyFiles,
-    pathParams: { model: "audit-status", collection: "attachments", uuid: auditStatusUUID }
-  });
-};
-
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
 
   const onSuccess = async (res: AuditStatusResponse) => {
-    const resAuditlog = res as { data: { uuid: string } };
-    await Promise.all(files.map(f => processUploadFile(f, resAuditlog.data.uuid)));
+    const {
+      data: { uuid }
+    } = res as { data: { uuid: string } };
+    await Promise.all(
+      files.map(async file =>
+        uploadFile.fetchParallel({
+          pathParams: { entity: "auditStatuses", collection: "attachments", uuid },
+          body: { data: { type: "media", attributes: await prepareFileForUpload(file) } }
+        })
+      )
+    );
     openNotification("success", "Success!", "Your comment was just added!");
     setComment("");
     setError("");

@@ -48,10 +48,7 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
       });
       // @ts-expect-error
       const uuid = response.data.uuid as string;
-      await handleUploads(params, uploadKeys, {
-        uuid,
-        model: "impact-story"
-      });
+      await handleUploads(params, uploadKeys, { uuid, entity: "impactStories" });
       // @ts-expect-error
       return { data: { ...response.data, id: response.id } };
     } catch (err) {
@@ -65,10 +62,7 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
     const body = omit(params.data, uploadKeys);
 
     try {
-      await handleUploads(params, uploadKeys, {
-        uuid,
-        model: "impact-story"
-      });
+      await handleUploads(params, uploadKeys, { uuid, entity: "impactStories" });
 
       const response = await fetchPutV2AdminImpactStoriesId({
         body,

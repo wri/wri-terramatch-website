@@ -11,7 +11,7 @@ import EntityProvider from "@/context/entity.provider";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import {
@@ -52,7 +52,7 @@ export const EntityEdit = () => {
   const formData = (formResponse?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
 
   const entity = {
-    entityName: pluralEntityNameToSingular(entityName),
+    entityName: singularEntityName(entityName),
     entityUUID
   };
   const framework = formData?.form?.framework_key as Framework;

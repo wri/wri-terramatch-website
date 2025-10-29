@@ -2,7 +2,7 @@ import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/t
 import { QueryClient } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
-import { isNumber, isString, uniq } from "lodash";
+import { Dictionary, isNumber, isString, uniq } from "lodash";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
 
@@ -51,7 +51,7 @@ const METHODS = ["GET", "DELETE", "POST", "PUT", "PATCH"] as const;
 export type Method = (typeof METHODS)[number];
 
 export type ApiPendingStore = {
-  [key in Method]: Record<string, Pending>;
+  [key in Method]: Dictionary<Pending>;
 };
 
 export type ApiFilteredIndexCache = {
@@ -250,6 +250,7 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
   const { resource, ids, searchQuery } = action.payload;
   if (ids == null && searchQuery == null) {
     state[resource] = {};
+    state.meta.indices[resource] = {};
     return;
   }
 

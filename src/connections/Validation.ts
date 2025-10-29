@@ -2,7 +2,10 @@ import { isEmpty } from "lodash";
 import { useCallback, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { resourceCreator } from "@/connections/util/resourceCreator";
 import {
+  createPolygonValidations,
+  createSiteValidation,
   getPolygonValidation,
   GetPolygonValidationPathParams,
   getSiteValidation
@@ -124,4 +127,32 @@ export const useAllSiteValidations = (siteUuid: string, criteriaId?: number) => 
     fetchAllValidationPages,
     total
   };
+};
+
+const createPolygonValidationConnection = v3Resource("validations", createPolygonValidations)
+  .create<ValidationDto>()
+  .buildConnection();
+
+export const createPolygonValidation = resourceCreator(createPolygonValidationConnection);
+
+const createSiteValidationConnection = v3Resource("validations", createSiteValidation)
+  .create<ValidationDto, { siteUuid: string }>(({ siteUuid }) => ({ pathParams: { siteUuid } }))
+  .buildConnection();
+
+export const triggerSiteValidation = async (
+  siteUuid: string,
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "WITHIN_COUNTRY"
+  )[]
+) => {
+  const { create } = await loadConnection(createSiteValidationConnection, { siteUuid });
+  const attributes = validationTypes != null ? { validationTypes } : {};
+  create(attributes);
 };

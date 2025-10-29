@@ -71,7 +71,11 @@ const FinancialMetrics = ({ data, years }: { data: V2FinancialIndicatorsRead; ye
       ? years.map(year => ({
           id: String(year),
           header: String(year),
-          accessorKey: String(year)
+          accessorKey: String(year),
+          cell: ({ getValue }: any) => getValue() || "",
+          meta: {
+            align: "center" as const
+          }
         }))
       : [])
   ];

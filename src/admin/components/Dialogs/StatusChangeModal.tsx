@@ -21,7 +21,7 @@ import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { useNotificationContext } from "@/context/notification.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
-import { singularEntityNameToPlural } from "@/helpers/entity";
+import { pluralEntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
@@ -31,7 +31,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status?: "approved" | "needs-more-information" | "restoration-in-progress" | "reminder";
+  status?: "approved" | "needs-more-information" | "reminder";
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -48,11 +48,8 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   const { openNotification } = useNotificationContext();
   const t = useT();
 
-  const resourceName = useMemo(() => kebabCase(singularEntityNameToPlural(resource as SingularEntityName)), [resource]);
-  const v3Resource = useMemo(
-    () => singularEntityNameToPlural(resource as SingularEntityName) as SupportedEntity,
-    [resource]
-  );
+  const resourceName = useMemo(() => kebabCase(pluralEntityName(resource as SingularEntityName)), [resource]);
+  const v3Resource = useMemo(() => pluralEntityName(resource as SingularEntityName) as SupportedEntity, [resource]);
   const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
@@ -94,9 +91,6 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
 
       case "needs-more-information":
         return `Request more information for ${name}`;
-
-      case "restoration-in-progress":
-        return `Are you sure you want to mark ${name} as Restoration In Progress?`;
 
       case "reminder":
         return `Send a reminder for ${name}`;
@@ -168,17 +162,15 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
         <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent>
-          <When condition={status !== "restoration-in-progress"}>
-            <TextField
-              value={feedbackValue}
-              onChange={e => setFeedbackValue(e.target.value)}
-              label="Feedback"
-              fullWidth
-              multiline
-              margin="dense"
-              helperText={false}
-            />
-          </When>
+          <TextField
+            value={feedbackValue}
+            onChange={e => setFeedbackValue(e.target.value)}
+            label="Feedback"
+            fullWidth
+            multiline
+            margin="dense"
+            helperText={false}
+          />
           <When condition={status === "needs-more-information" && feedbackChoices.length > 0}>
             <AutocompleteArrayInput
               source="feedback_fields"
