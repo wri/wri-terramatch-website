@@ -7,6 +7,70 @@ import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./researchServiceFetcher";
 import type * as Schemas from "./researchServiceSchemas";
 
+export type CreateSitePolygonsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonsResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  };
+};
+
+export type CreateSitePolygonsVariables = {
+  body: Schemas.CreateSitePolygonJsonApiRequestDto;
+};
+
+/**
+ * Create site polygons. Supports multi-site batch creation.
+ *       Duplicate validation results are always included in the response when duplicates are found.
+ */
+export const createSitePolygons = new V3ApiEndpoint<
+  CreateSitePolygonsResponse,
+  CreateSitePolygonsError,
+  CreateSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "POST");
+
 export type SitePolygonsIndexQueryParams = {
   /**
    * The size of page being requested
@@ -721,7 +785,7 @@ export const createSiteValidation = new V3ApiEndpoint<
 >("/validations/v3/sites/{siteUuid}/validation", "POST");
 
 export const operationsByTag = {
-  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
+  sitePolygons: { createSitePolygons, sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
   validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation }
 };

@@ -39,7 +39,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
-      const requestFilters: HookFilters<typeof useMedias> = {};
+      const requestFilters: HookFilters<typeof useMedias> = { fileType: "media" };
       if (filter !== "all") {
         requestFilters.isPublic = filter === "public";
       } else {

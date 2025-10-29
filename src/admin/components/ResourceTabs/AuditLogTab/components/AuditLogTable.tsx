@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC, Fragment, useRef } from "react";
-import { When } from "react-if";
 
 import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Menu from "@/components/elements/Menu/Menu";
@@ -96,8 +95,8 @@ const AuditLogTable: FC<{
       openNotification("error", "Error!", t("An error occurred while deleting the audit log."));
     }
   });
-  const deleteAuditStatus = async (id: string) => {
-    await mutate({
+  const deleteAuditStatus = (id: string) => {
+    mutate({
       pathParams: {
         entity: auditData?.entity as string,
         uuid: auditData?.entity_uuid as string,
@@ -129,23 +128,23 @@ const AuditLogTable: FC<{
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {generateUserName(item.first_name, item.last_name)}
             </Text>
-            <When condition={auditData?.entity !== "site-polygon" && !!fullColumns}>
+            {auditData?.entity !== "site-polygon" && fullColumns != null ? (
               <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
                 {formattedTextStatus(item.status as string) ?? "-"}
               </Text>
-            </When>
+            ) : null}
             <Text variant="text-12" className="border-b border-b-grey-750 py-2 pr-2">
               {getTextForActionTable(
                 item as { type: string; status: string; request_removed: boolean },
                 auditData?.entity
               )}
             </Text>
-            <When condition={!!fullColumns}>
+            {fullColumns != null ? (
               <Text variant="text-12" className="border-b border-b-grey-750 py-2">
                 {item.comment ?? "-"}
               </Text>
-            </When>
-            <When condition={!!fullColumns}>
+            ) : null}
+            {fullColumns != null ? (
               <div className="grid max-w-full gap-2 gap-y-1 border-b border-b-grey-750 py-2">
                 {item?.attachments?.map((attachmentItem: V2FileRead) => (
                   <Text
@@ -161,8 +160,8 @@ const AuditLogTable: FC<{
                   </Text>
                 ))}
               </div>
-            </When>
-            <When condition={isAdmin && fullColumns}>
+            ) : null}
+            {isAdmin && fullColumns ? (
               <div className="justify-cente flex items-center border-b border-b-grey-750 py-2">
                 <Menu
                   container={menuOverflowContainerRef.current}
@@ -186,7 +185,7 @@ const AuditLogTable: FC<{
                   <Icon name={IconNames.ELIPSES} className="h-5 w-5" />
                 </Menu>
               </div>
-            </When>
+            ) : null}
           </Fragment>
         ))}
       </div>

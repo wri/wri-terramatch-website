@@ -14,6 +14,7 @@ import {
   TextField
 } from "react-admin";
 
+import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreateFilter from "@/admin/components/Actions/ListActionsCreateFilter";
 import { userCanEdit } from "@/admin/hooks/useCanUserEdit";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
@@ -111,6 +112,7 @@ export const UserList = () => {
       </Stack>
 
       <List actions={<ListActionsCreateFilter canCreate={isFrameworkAdmin} />} filters={filters}>
+        <AutoResetSort />
         <UserDataGrid />
       </List>
     </>

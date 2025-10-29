@@ -16,14 +16,11 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
+import { normalizeV2UploadedFiles } from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { deleteMedia } from "@/connections/Media";
-import { getCurrencyOptions } from "@/constants/options/localCurrency";
-import { getMonthOptions } from "@/constants/options/months";
-import { useCurrencyContext } from "@/context/currency.provider";
-import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { currencySymbol } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -224,7 +221,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       pathParams: { entity: "financialIndicators", collection: "documentation", uuid: "" }
     });
 
-    const { mutate: createFinanciaData } = usePatchV2FinancialIndicators({
+    const { mutate: createFinancialData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
         if (data && Array.isArray(data)) {
           const currentData = value;
@@ -313,12 +310,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               isDeleting: true
             }
           });
-          deleteFile({ pathParams: { uuid: file.uuid } });
+          deleteMedia(file.uuid);
         } else if (file.fileName) {
           removeFile(file);
         }
       },
-      [addFile, deleteFile, removeFile]
+      [addFile, removeFile]
     );
 
     const handleDeleteFile = useCallback(
@@ -816,7 +813,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
             const rowIndex = row.index;
 
-            const files = (documentationData?.[rowIndex]?.[columnKey] as UploadedFile[]) ?? [];
+            const files = normalizeV2UploadedFiles(documentationData?.[rowIndex]?.[columnKey]);
 
             // Check if this year has documentation entries but no files uploaded
             const hasDocumentationEntry =
@@ -847,7 +844,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               >
                 <FileInput
                   key={rowIndex}
-                  files={files as Partial<UploadedFile>[]}
+                  files={files}
                   onDelete={file =>
                     handleDeleteFile(file, {
                       collection: "documentation",

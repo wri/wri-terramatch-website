@@ -37,7 +37,7 @@ import {
   ProjectReportLightDto,
   SiteReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { singularEntityNameToPlural } from "@/helpers/entity";
+import { pluralEntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
@@ -240,7 +240,7 @@ const ReportingTaskPage = () => {
           NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "project-report" || completion === 100);
 
         const handleClick = useCallback(() => {
-          nothingToReportHandler(singularEntityNameToPlural(type) as ReportsModelNames, uuid);
+          nothingToReportHandler(pluralEntityName(type) as ReportsModelNames, uuid);
         }, [type, uuid]);
 
         return (
