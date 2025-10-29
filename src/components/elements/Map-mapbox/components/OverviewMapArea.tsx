@@ -48,7 +48,6 @@ const OverviewMapArea = ({
     isMonitoring,
     editPolygon,
     shouldRefetchPolygonData,
-    setShouldRefetchPolygonData,
     setEditPolygon,
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
@@ -57,11 +56,7 @@ const OverviewMapArea = ({
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
-  const handleRefetchPolygon = () => {
-    setShouldRefetchPolygonData(true);
-  };
-  const onSave = (geojson: any) =>
-    storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon, refreshEntity);
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refreshEntity, refetch);
 
   const mapFunctions = useMap(onSave);
 
@@ -154,7 +149,7 @@ const OverviewMapArea = ({
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-20 flex h-[650px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
+          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -180,7 +175,7 @@ const OverviewMapArea = ({
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
-          className="absolute z-20 flex h-[650px] w-[23vw] flex-col bg-[#ffffff12] p-8 wide:h-[700px]"
+          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}

@@ -2,6 +2,7 @@ import { Stack } from "@mui/material";
 import { FC } from "react";
 import { Datagrid, EditButton, List, ShowButton, TextField, WrapperField } from "react-admin";
 
+import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsCreate from "@/admin/components/Actions/ListActionsCreate";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import { useGetUserRole } from "@/admin/hooks/useGetUserRole";
@@ -47,6 +48,7 @@ export const ReportingFrameworkList: FC = () => {
       </Stack>
 
       <List actions={<ListActionsCreate />}>
+        <AutoResetSort />
         <Datagrid bulkActionButtons={false} rowClick={"show"}>
           <TextField source="name" label="Framework" />
           <TextField source="access_code" label="Access Code" />

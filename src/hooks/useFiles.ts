@@ -35,7 +35,7 @@ export const useFiles = (allowMultiple: boolean, initialValue: UploadedFile[] = 
         if (file.uuid != null) {
           return value.filter(v => v.uuid !== file.uuid);
         } else {
-          return value.filter(v => v.fileName === file.fileName);
+          return value.filter(v => v.fileName !== file.fileName);
         }
       } else {
         return [];
