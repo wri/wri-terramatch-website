@@ -170,7 +170,6 @@ const FileInput: FC<FileInputProps> = props => {
         <FilePreviewTable
           items={props.files}
           onDelete={props.onDelete}
-          onPrivateChange={props.onPrivateChange}
           formHook={props.formHook}
           updateFile={props.updateFile}
           entityData={props.entityData}
