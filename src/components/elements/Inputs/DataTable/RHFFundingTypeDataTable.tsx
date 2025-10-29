@@ -127,9 +127,10 @@ const RHFFundingTypeDataTable = ({ ...props }: PropsWithChildren<RHFFundingTypeT
     (data: any) => {
       const index = data?.index !== undefined ? data.index : -1;
       if (index === -1) return;
-      
+
       const next = [...value];
       // Remove the index field from the data object before updating the item
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { index: _, ...dataWithoutIndex } = data;
       next[index] = { ...next[index], ...dataWithoutIndex };
       field.onChange(next);
