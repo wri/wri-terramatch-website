@@ -19,7 +19,6 @@ import { Dictionary, isObject } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { DelayedJobDto } from "./jobService/jobServiceSchemas";
-import JobsSlice from "@/store/jobsSlice";
 import { resolveUrl as resolveV3Url } from "./utils";
 
 export type ErrorPayload = { statusCode: number; message: string };
@@ -281,7 +280,7 @@ async function dispatchRequest<TData>(url: string, requestInit: RequestInit) {
     if (isPendingError(responsePayload)) throw responsePayload;
 
     if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
-      return await processDelayedJob<TData>(responsePayload?.data?.attributes?.uuid, actionPayload);
+      return await processDelayedJob<TData>(responsePayload?.data?.attributes?.uuid, undefined, actionPayload);
     }
 
     ApiSlice.fetchSucceeded({ ...actionPayload, response: responsePayload });
@@ -307,7 +306,8 @@ type JobResult = { data: { attributes: DelayedJobDto } };
 async function loadJob(
   delayedJobId: string,
   retries = 3,
-  actionPayload: { url: string; method: Method }
+  signal: AbortSignal | undefined,
+  actionPayload: { url: string; method: Method } | undefined
 ): Promise<JobResult> {
   let response, error;
   try {
@@ -324,7 +324,7 @@ async function loadJob(
     // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
     if (response.status === 502 && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
-      return loadJob(delayedJobId, retries - 1, actionPayload); // Retry
+      return loadJob(delayedJobId, retries - 1, signal, actionPayload); // Retry
     }
 
     if (!response.ok) {
@@ -341,7 +341,7 @@ async function loadJob(
     }
 
     const jsonResponse = await response.json();
-    ApiSlice.fetchSucceeded({ ...actionPayload, response: jsonResponse });
+    if (actionPayload != null) ApiSlice.fetchSucceeded({ ...actionPayload, response: jsonResponse });
     return jsonResponse;
   } catch (e: unknown) {
     Log.error("Delayed Job Fetch error", e);
@@ -354,7 +354,7 @@ async function loadJob(
 
       if ((isNetworkError || statusCode === -1 || statusCode === 401) && retries > 0) {
         await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
-        return loadJob(delayedJobId, retries - 1, actionPayload);
+        return loadJob(delayedJobId, retries - 1, signal, actionPayload);
       }
     }
 
@@ -362,29 +362,26 @@ async function loadJob(
   }
 }
 
-async function processDelayedJob<TData>(
+export async function processDelayedJob<TData>(
   delayedJobId: string,
-  actionPayload: { url: string; method: Method }
+  signal: AbortSignal | undefined,
+  actionPayload?: { url: string; method: Method }
 ): Promise<TData> {
   const headers: HeadersInit = { "Content-Type": "application/json" };
   const accessToken = typeof window !== "undefined" && getAccessToken();
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
-  let jobResult;
+  let jobResult: JobResult;
   for (
-    jobResult = await loadJob(delayedJobId, 3, actionPayload);
-    jobResult.data?.attributes?.status === "pending";
-    jobResult = await loadJob(delayedJobId, 3, actionPayload)
+    jobResult = await loadJob(delayedJobId, 3, signal, actionPayload);
+    jobResult.data.attributes.status === "pending";
+    jobResult = await loadJob(delayedJobId, 3, signal, actionPayload)
   ) {
-    const { totalContent, processedContent, progressMessage } = jobResult.data?.attributes;
-    const effectiveTotalContent =
-      jobResult.data?.attributes?.status === "pending" && totalContent === null ? 1 : totalContent ?? 0;
-    JobsSlice.setJobsProgress(effectiveTotalContent, processedContent ?? 0, progressMessage);
-
+    if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
   }
 
-  const { status, statusCode, payload } = jobResult.data!.attributes;
+  const { status, statusCode, payload } = jobResult.data.attributes;
   if (status === "failed") throw { statusCode, ...payload };
 
   return payload as TData;
