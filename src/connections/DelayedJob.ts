@@ -59,10 +59,10 @@ export const useDelayedJobs = () => {
   useEffect(() => stopPolling, [stopPolling]);
 
   const hasJobs = (connection[1].delayedJobs ?? []).length > 0;
-  useEffect(() => {
+  useValueChanged(hasJobs, () => {
     if (hasJobs) startPolling();
     else stopPolling();
-  }, [hasJobs, startPolling, stopPolling]);
+  });
 
   useValueChanged(login, () => {
     // make sure we call the listDelayedJobs request at least once when we first mount if we're

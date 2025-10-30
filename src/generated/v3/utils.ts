@@ -3,6 +3,7 @@ import ApiSlice, {
   isCompletedCreationState,
   isErrorState,
   isInProgress,
+  JsonApiResponse,
   Method,
   PendingError,
   ResourceType
@@ -20,6 +21,7 @@ import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
 import { DelayedJobDto } from "./jobService/jobServiceSchemas";
 import { resolveUrl as resolveV3Url } from "./utils";
+import { delayedJobsFind } from "@/generated/v3/jobService/jobServiceComponents";
 
 export type ErrorPayload = { statusCode: number; message: string };
 export type ErrorWrapper<TError extends undefined | { payload: ErrorPayload }> =
@@ -279,7 +281,7 @@ async function dispatchRequest<TData>(url: string, requestInit: RequestInit) {
     const responsePayload = await response.json();
     if (isPendingError(responsePayload)) throw responsePayload;
 
-    if (responsePayload?.data?.attributes?.uuid && responsePayload?.data?.type == "delayedJobs") {
+    if (responsePayload?.data?.attributes?.uuid != null && responsePayload?.data?.type == "delayedJobs") {
       return await processDelayedJob<TData>(responsePayload?.data?.attributes?.uuid, undefined, actionPayload);
     }
 
@@ -303,20 +305,10 @@ const JOB_POLL_TIMEOUT = 500; // in ms
 
 type JobResult = { data: { attributes: DelayedJobDto } };
 
-async function loadJob(
-  delayedJobId: string,
-  retries = 3,
-  signal: AbortSignal | undefined,
-  actionPayload: { url: string; method: Method } | undefined
-): Promise<JobResult> {
+async function loadJob(delayedJobId: string, retries = 3, signal: AbortSignal | undefined): Promise<JobResult> {
   let response, error;
   try {
-    const headers: HeadersInit = { "Content-Type": "application/json" };
-    const accessToken = typeof window !== "undefined" && getAccessToken();
-    if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
-
-    const url = resolveV3Url(`/jobs/v3/delayedJobs/${delayedJobId}`);
-    response = await fetch(url, { headers });
+    response = await delayedJobsFind.fetchParallel({ pathParams: { uuid: delayedJobId } });
 
     // Retry logic for handling 502 Bad Gateway errors
     // When requesting the job status from the server, a 502 Bad Gateway error may occur. This error should be temporary,
@@ -324,7 +316,7 @@ async function loadJob(
     // If the server responds with a 502 status and there are remaining retries, then try to reload the job status.
     if (response.status === 502 && retries > 0) {
       await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
-      return loadJob(delayedJobId, retries - 1, signal, actionPayload); // Retry
+      return loadJob(delayedJobId, retries - 1, signal); // Retry
     }
 
     if (!response.ok) {
@@ -341,7 +333,6 @@ async function loadJob(
     }
 
     const jsonResponse = await response.json();
-    if (actionPayload != null) ApiSlice.fetchSucceeded({ ...actionPayload, response: jsonResponse });
     return jsonResponse;
   } catch (e: unknown) {
     Log.error("Delayed Job Fetch error", e);
@@ -354,7 +345,7 @@ async function loadJob(
 
       if ((isNetworkError || statusCode === -1 || statusCode === 401) && retries > 0) {
         await new Promise(resolve => setTimeout(resolve, 4 * JOB_POLL_TIMEOUT));
-        return loadJob(delayedJobId, retries - 1, signal, actionPayload);
+        return loadJob(delayedJobId, retries - 1, signal);
       }
     }
 
@@ -373,9 +364,9 @@ export async function processDelayedJob<TData>(
 
   let jobResult: JobResult;
   for (
-    jobResult = await loadJob(delayedJobId, 3, signal, actionPayload);
+    jobResult = await loadJob(delayedJobId, 3, signal);
     jobResult.data.attributes.status === "pending";
-    jobResult = await loadJob(delayedJobId, 3, signal, actionPayload)
+    jobResult = await loadJob(delayedJobId, 3, signal)
   ) {
     if (signal?.aborted) throw new Error("Aborted");
     await new Promise(resolve => setTimeout(resolve, JOB_POLL_TIMEOUT));
