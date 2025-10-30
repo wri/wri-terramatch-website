@@ -9,7 +9,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/util/Form";
-import { usePostV2FormsENTITY } from "@/generated/apiComponents";
+import { PostV2FormsENTITYResponse, usePostV2FormsENTITY } from "@/generated/apiComponents";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
@@ -45,13 +45,14 @@ const EntityIntroPage = () => {
     isSuccess,
     isLoading
   } = usePostV2FormsENTITY({
-    onSuccess(data) {
-      router.replace(`/entity/${entityName}/edit/${data.uuid}`);
+    onSuccess(response) {
+      const { uuid } = (response as { data: PostV2FormsENTITYResponse }).data;
+      router.replace(`/entity/${entityName}/edit/${uuid}`);
     }
   });
 
   const handleContinue = useCallback(() => {
-    if (entityUUID) {
+    if (entityUUID != null) {
       router.push(`/entity/${entityName}/edit/${entityUUID}`);
     } else {
       createEntity({

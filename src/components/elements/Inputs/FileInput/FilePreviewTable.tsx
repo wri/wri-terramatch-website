@@ -24,7 +24,6 @@ export interface FilePreviewTableProps {
   items: Partial<UploadedFile>[];
   className?: string;
   onDelete?: (file: Partial<UploadedFile>) => void;
-  onPrivateChange?: (file: Partial<UploadedFile>, checked: boolean) => void;
   formHook?: UseFormReturn;
   updateFile?: (file: Partial<UploadedFile>) => void;
   entityData?: any;
@@ -60,7 +59,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
           reloadGalleryImages={() => {}}
           handleDelete={onDelete && (() => onDelete(item))}
           updateValuesInForm={updatedItem => {
-            if (updatedItem.is_cover) {
+            if (updatedItem.isCover) {
               items.forEach(item => {
                 if (item.uuid !== updatedItem.uuid && item.isCover) {
                   updateFile?.({ ...item, isCover: false });
@@ -83,7 +82,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
       try {
         const updatedItems = items.map(item => ({
           ...item,
-          is_cover: item.uuid === selectedItem.uuid ? checked : false
+          isCover: item.uuid === selectedItem.uuid ? checked : false
         }));
 
         updatedItems.forEach(item => updateFile?.(item));
@@ -162,7 +161,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
           accessorKey: "cover",
           cell: (props: any) => (
             <Checkbox
-              checked={props.getValue().is_cover}
+              checked={props.getValue().isCover}
               name={""}
               onChange={e => {
                 handleUpdateIsCover(props.getValue(), e.target.checked);
@@ -177,7 +176,7 @@ const FilePreviewTable = ({ items, onDelete, updateFile, entityData }: FilePrevi
           accessorKey: "public",
           cell: (props: any) => (
             <Checkbox
-              checked={props.getValue().is_public}
+              checked={props.getValue().isPublic}
               name={""}
               onChange={e => {
                 handleUpdateIsPublic(props.getValue(), e.target.checked);

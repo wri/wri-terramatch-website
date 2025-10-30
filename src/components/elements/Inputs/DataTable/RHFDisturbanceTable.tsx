@@ -1,6 +1,6 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { FC, PropsWithChildren, useMemo } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
@@ -117,12 +117,20 @@ const RHFDisturbanceTable: FC<PropsWithChildren<RHFDisturbanceTableProps>> = ({ 
   );
   const fieldsProvider = useLocalStepsProvider(steps);
 
+  const _onChange = useCallback(
+    (values: any) => {
+      onChange(values);
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook]
+  );
+
   return (
     <DataTable
       {...props}
       value={value ?? []}
       generateUuids={true}
-      onChange={onChange}
+      onChange={_onChange}
       addButtonCaption={t("Add Disturbance")}
       tableColumns={columns}
       fieldsProvider={fieldsProvider}
