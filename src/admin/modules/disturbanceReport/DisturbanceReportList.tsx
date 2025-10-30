@@ -15,7 +15,7 @@ import {
 } from "react-admin";
 
 import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
@@ -142,6 +142,7 @@ export const DisturbanceReportList: FC = () => {
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+        <AutoResetSort />
         <DisturbanceReportDataGrid />
       </List>
 
