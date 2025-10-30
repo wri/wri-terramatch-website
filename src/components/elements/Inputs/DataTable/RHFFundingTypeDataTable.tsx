@@ -86,7 +86,7 @@ export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => 
  * @param props PropsWithChildren<RHFSelectProps>
  * @returns React Hook Form Ready Select Component
  */
-const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
+const RHFFundingTypeDataTable = ({ ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
   const t = useT();
   const { field } = useController(props);
   const value = useMemo(() => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
@@ -106,11 +106,10 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     (data: any) => {
       const next = [...value, data];
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const removeItem = useCallback(
@@ -118,27 +117,27 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       if (!uuid) return;
       const next = (value as any[]).filter(item => item?.uuid !== uuid);
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const updateItem = useCallback(
     (data: any) => {
-      if (!data?.uuid) return;
+      const index = data?.index !== undefined ? data.index : -1;
+      if (index === -1) return;
+
       const next = [...value];
-      const index = next.findIndex((item: any) => item?.uuid === data.uuid);
-      if (index !== -1) {
-        next[index] = { ...next[index], ...data };
-        field.onChange(next);
-        onChangeCapture?.();
-        clearErrors();
-        refreshTable();
-      }
+      // Remove the index field from the data object before updating the item
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { index: _, ...dataWithoutIndex } = data;
+      next[index] = { ...next[index], ...dataWithoutIndex };
+      field.onChange(next);
+      clearErrors();
+      refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const tableColumnsWithCurrency: AccessorKeyColumnDef<any>[] = getFundingTypeTableColumns(t).map(col =>

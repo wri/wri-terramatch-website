@@ -1,3 +1,4 @@
+import pluralize from "pluralize";
 import { ReactNode } from "react";
 
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -210,7 +211,7 @@ export type UploadedFile = {
   lat?: number;
   lng?: number;
 
-  //Client side data
+  // Client side data
   rawFile?: File;
   uploadState?: UploadState;
 };
@@ -249,7 +250,7 @@ export type SingularReportsModelNames =
   | "disturbance-report";
 
 export const isSingularEntityName = (name: EntityName | SingularEntityName): name is SingularEntityName =>
-  !name.endsWith("s");
+  pluralize.isSingular(name);
 
 export type Entity = {
   entityName: EntityName | SingularEntityName;

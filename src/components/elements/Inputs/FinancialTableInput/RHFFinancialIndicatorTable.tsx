@@ -16,6 +16,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
+import { normalizeV2UploadedFiles } from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -822,7 +823,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
             const rowIndex = row.index;
 
-            const files = (documentationData?.[rowIndex]?.[columnKey] as UploadedFile[]) ?? [];
+            const files = normalizeV2UploadedFiles(documentationData?.[rowIndex]?.[columnKey]);
 
             // Check if this year has documentation entries but no files uploaded
             const hasDocumentationEntry =
@@ -853,7 +854,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               >
                 <FileInput
                   key={rowIndex}
-                  files={files as Partial<UploadedFile>[]}
+                  files={files}
                   onDelete={file =>
                     handleDeleteFile(file, {
                       collection: "documentation",

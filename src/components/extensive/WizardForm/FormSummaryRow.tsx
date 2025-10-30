@@ -34,7 +34,7 @@ import { SupportedEntity } from "@/connections/EntityAssociation";
 import { formatOptions } from "@/constants/options/disturbanceReports";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular, v3Entity } from "@/helpers/entity";
+import { singularEntityName, v3Entity } from "@/helpers/entity";
 import { Entity, EntityName } from "@/types/common";
 
 import List from "../List/List";
@@ -99,7 +99,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
-        entityType: pluralEntityNameToSingular((entityType ?? "") as EntityName),
+        entityType: singularEntityName((entityType ?? "") as EntityName),
         uuid: uuid ?? ""
       }
     },

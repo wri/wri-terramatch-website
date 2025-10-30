@@ -122,6 +122,7 @@ export type MediaDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -415,6 +416,30 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaRequestAttributes = {
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestData = {
+  type: "media";
+  attributes: MediaRequestAttributes;
+};
+
+export type MediaRequestBody = {
+  data: MediaRequestData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -538,6 +563,7 @@ export type DemographicDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -578,6 +604,7 @@ export type DisturbanceDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -835,6 +862,7 @@ export type DisturbanceReportEntryDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1481,6 +1509,7 @@ export type FinancialIndicatorDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1514,6 +1543,7 @@ export type FundingTypeDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1930,6 +1960,7 @@ export type SeedingDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1963,6 +1994,7 @@ export type TreeSpeciesDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1995,6 +2027,7 @@ export type InvasiveDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2024,6 +2057,7 @@ export type StrataDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
