@@ -17,15 +17,14 @@ type DelayedJobCombinedConnection = {
   bulkUpdateJobsHasFailed: boolean;
 };
 
-const delayedJobsSelector = (store: ApiDataStore) =>
-  Object.values(store.delayedJobs ?? {})
-    .map(resource => resource.attributes)
-    .filter(({ isAcknowledged }) => !isAcknowledged);
+const delayedJobsSelector = (store: ApiDataStore) => store.delayedJobs;
 
 const combinedSelector = createSelector(
   [delayedJobsSelector, bulkUpdateJobs.isFetchingSelector({}), bulkUpdateJobs.fetchFailedSelector({})],
   (delayedJobs, bulkUpdateJobsIsLoading, bulkUpdateJobsFailure) => ({
-    delayedJobs,
+    delayedJobs: Object.values(delayedJobs ?? {})
+      .map(({ attributes }) => attributes)
+      .filter(({ isAcknowledged }) => !isAcknowledged),
     delayedJobsIsLoading: delayedJobs == null && !bulkUpdateJobsFailure,
     delayedJobsHasFailed: Boolean(bulkUpdateJobsFailure),
     bulkUpdateJobsIsLoading,
