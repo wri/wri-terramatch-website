@@ -40,23 +40,23 @@ export const useOptionList = connectionHook(
     .buildConnection()
 );
 
-export type FormModelType = NonNullable<LinkedFieldsIndexQueryParams["formTypes"]>[number];
+export type FormModelType = NonNullable<LinkedFieldsIndexQueryParams["formModelTypes"]>[number];
 const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
-  .filterResources<LinkedFieldDto, { formTypes?: FormModelType[] }>(
-    ({ formTypes }) => ({ queryParams: { formTypes } }),
-    ({ formTypes }, indexMeta, linkedFields) => {
+  .filterResources<LinkedFieldDto, { formModelTypes?: FormModelType[] }>(
+    ({ formModelTypes }) => ({ queryParams: { formModelTypes } }),
+    ({ formModelTypes }, indexMeta, linkedFields) => {
       const linkedFieldAttributes = map(linkedFields, "attributes");
       const relevantValues =
-        formTypes == null
+        formModelTypes == null
           ? linkedFieldAttributes
-          : linkedFieldAttributes.filter(({ formModelType }) => formTypes.includes(formModelType));
+          : linkedFieldAttributes.filter(({ formModelType }) => formModelTypes.includes(formModelType));
       // If we've fetched the full index, just return everything. Otherwise, return nothing so that the
       // full index is fetched.
-      if (formTypes == null) return indexMeta == null ? undefined : relevantValues;
+      if (formModelTypes == null) return indexMeta == null ? undefined : relevantValues;
 
       // For this endpoint, we can assume that if we have at least one member of each of the requested form types, we have everything
       const formTypesInCache = uniq(map(relevantValues, "formModelType"));
-      return formTypesInCache.length === formTypes.length ? relevantValues : undefined;
+      return formTypesInCache.length === formModelTypes.length ? relevantValues : undefined;
     }
   )
   .enabledProp()

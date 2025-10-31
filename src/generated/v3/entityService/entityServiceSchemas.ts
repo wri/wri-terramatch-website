@@ -2097,7 +2097,7 @@ export type LinkedFieldDto = {
   formModelType:
     | "organisations"
     | "financialReports"
-    | "disturbanceReport"
+    | "disturbanceReports"
     | "nurseries"
     | "nurseryReports"
     | "projects"
@@ -2258,7 +2258,7 @@ export type FormQuestionDto = {
   model:
     | "organisations"
     | "financialReports"
-    | "disturbanceReport"
+    | "disturbanceReports"
     | "nurseries"
     | "nurseryReports"
     | "projects"

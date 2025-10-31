@@ -49,7 +49,7 @@ const toFormModelType = (formTypeChoice: string) => {
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormBuilderData>();
   const modelTypeValue = watch("type");
-  const formTypes = useMemo(
+  const formModelTypes = useMemo(
     () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
     [modelTypeValue]
   );
@@ -60,7 +60,7 @@ export const FormBuilderForm = () => {
     []
   );
 
-  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formTypes });
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
   const fullLinkedFields = useMemo(
     () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
     [linkedFieldsData]

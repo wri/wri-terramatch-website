@@ -2692,10 +2692,10 @@ export const optionLabelsGetList = new V3ApiEndpoint<
 >("/forms/v3/optionLabels/{listKey}", "GET");
 
 export type LinkedFieldsIndexQueryParams = {
-  formTypes?: (
+  formModelTypes?: (
     | "organisations"
     | "financialReports"
-    | "disturbanceReport"
+    | "disturbanceReports"
     | "nurseries"
     | "nurseryReports"
     | "projects"
