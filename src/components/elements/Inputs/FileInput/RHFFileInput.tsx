@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
@@ -119,7 +119,7 @@ const RHFFileInput = ({
         await prepareFileForUpload(file),
         fileUploadOptions(file, collection, {
           onSuccess: addFile,
-          onError: addFile,
+          onError: removeFile,
           getErrorMessage: error => {
             if (isTranslatableError(error)) {
               const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
@@ -145,6 +145,7 @@ const RHFFileInput = ({
       fileInputProps.maxFileSize,
       fileInputProps.name,
       formHook,
+      removeFile,
       t,
       uploadFile
     ]
@@ -194,6 +195,9 @@ const RHFFileInput = ({
     onChange(fileInputProps.allowMultiple ? tmp : tmp?.[0]);
   }, [onChange, files, fileInputProps.allowMultiple]);
 
+  const entityData = useMemo(() => ({ model, collection, uuid }), [collection, model, uuid]);
+  const _onChange = useCallback((files: File[]) => files.forEach(onSelectFile), [onSelectFile]);
+
   return (
     <FileInput
       {...fileInputProps}
@@ -204,12 +208,12 @@ const RHFFileInput = ({
         variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
       })}
       onDelete={onDeleteFile}
-      onChange={files => files.forEach(onSelectFile)}
+      onChange={_onChange}
       onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
       formHook={formHook}
       updateFile={updateFile}
-      entityData={{ model, collection, uuid }}
+      entityData={entityData}
     />
   );
 };

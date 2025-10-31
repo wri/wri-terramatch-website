@@ -4,7 +4,7 @@ import { ErrorOption } from "react-hook-form";
 export const getErrorMessages = (t: typeof useT, errorCode: string, variables: any) => {
   const errorMapping: { [index: string]: ErrorOption } = {
     MIMES: {
-      message: t("The {label} must be a file of type: {values}.", variables),
+      message: t('The "{label}" field must be a file of type: {values}.', variables),
       type: "validate"
     },
     FILE_SIZE: {
