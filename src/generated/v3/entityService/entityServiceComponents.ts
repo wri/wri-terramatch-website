@@ -728,7 +728,8 @@ export type UploadFilePathParams = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
-    | "projectPitches";
+    | "projectPitches"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */

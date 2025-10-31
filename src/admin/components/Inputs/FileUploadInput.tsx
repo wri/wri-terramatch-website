@@ -34,7 +34,7 @@ export const FileUploadInput = (props: ImageInputProps) => {
         }}
       >
         <>
-          <FileField source="url" title="file_name" target="_blank" />
+          <FileField source="url" title="fileName" target="_blank" />
           <FileField source="src" title="title" target="_blank" />
           <ImageField source="url" />
           <ImageField source="src" />

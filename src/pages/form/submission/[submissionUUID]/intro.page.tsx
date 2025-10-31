@@ -22,7 +22,7 @@ const FormIntroPage = () => {
           {form == null ? null : (
             <WizardFormIntro
               title={form.title}
-              imageSrc={form.bannerUrl ?? undefined}
+              imageSrc={form.banner?.url ?? undefined}
               description={form.description ?? undefined}
               deadline={form.deadlineAt ?? undefined}
               ctaProps={{

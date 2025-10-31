@@ -2187,7 +2187,7 @@ export type FormLightDto = {
     | "nursery-report"
     | null;
   published: boolean;
-  bannerUrl: string | null;
+  banner: MediaDto;
 };
 
 export type FormQuestionOptionDto = {
@@ -2312,7 +2312,7 @@ export type FormFullDto = {
     | "nursery-report"
     | null;
   published: boolean;
-  bannerUrl: string | null;
+  banner: MediaDto;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
    */

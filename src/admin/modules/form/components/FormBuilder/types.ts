@@ -11,18 +11,20 @@ import {
   StoreFormQuestionOptionAttributes,
   StoreFormSectionAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Option } from "@/types/common";
+import { mediaToUploadedFile, Option, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
-export type FormBuilderData = Omit<FormFullDto, "sections"> & {
+export type FormBuilderData = Omit<FormFullDto, "banner" | "sections"> & {
   id: string;
   published: boolean;
+  banner?: UploadedFile;
   steps: LocalStep[];
 };
 
 export const formDtoToBuilder = ({ sections, ...form }: FormFullDto): FormBuilderData => ({
   ...form,
   id: form.uuid,
+  banner: form.banner == null ? undefined : mediaToUploadedFile(form.banner),
   steps: sections.map(({ questions, ...step }) => ({
     ...step,
     fields: questions.map(({ children, ...field }) => ({
