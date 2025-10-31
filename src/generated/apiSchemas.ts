@@ -705,132 +705,14 @@ export type FundingProgramme = {
     name?: string;
     order?: number;
     form?: {
-      id?: number;
       uuid?: string;
-      type?: string;
-      version?: number;
       title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
+      type?: string;
       published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
     };
     deleted_at?: string;
     created_at?: string;
     updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type FundingProgrammeWithLiteStages = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    uuid?: string;
-    name?: string;
-    status?: string;
-    readable_status?: string;
   }[];
   organisations?: {
     uuid?: string;
@@ -895,410 +777,11 @@ export type FundingProgrammeCreate = {
   status?: string;
 };
 
-export type Form = {
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  documentation?: string;
-  documentation_label?: string;
-  submission_message?: string;
-  duration?: string;
-  deadline_at?: string;
-  stage_id?: number;
-  /**
-   * this is a list of key value pairs eg. slug: name
-   */
-  tags?: string[];
-};
-
-export type FormRead = {
-  id?: number;
+export type FormLiteRead = {
   uuid?: string;
+  title?: string;
   type?: string;
-  version?: number;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  framework_key?: string;
-  duration?: string;
-  deadline_at?: string;
-  documentation?: string;
-  documentation_label?: string;
-  submission_message?: string;
   published?: boolean;
-  stage_id?: string;
-  funding_programme_uuid?: string;
-  funding_programme_framework_key?: string;
-  options_other?: boolean;
-  form_sections?: {
-    order?: number;
-    form_id?: number;
-    form_questions?: {
-      id?: number;
-      uuid?: string;
-      form_section_id?: number;
-      label?: string;
-      validation?: string[];
-      parent_id?: string;
-      linked_field_key?: string;
-      children?: Record<string, any>[];
-      multichoice?: boolean;
-      order?: number;
-      options?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      table_headers?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      additional_text?: string;
-      additional_url?: string;
-      show_on_parent_condition?: boolean;
-      input_type?:
-        | "date"
-        | "text"
-        | "long-text"
-        | "select"
-        | "checkboxes"
-        | "radio"
-        | "number"
-        | "image"
-        | "file"
-        | "conditional";
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  /**
-   * this is a list of key value pairs eg. slug: name
-   */
-  tags?: string[];
-  updated_by?: number;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type FormSectionCreate = {
-  order?: number;
-  title?: string;
-  subtitle?: string;
-  description?: string;
-  form_questions?: {
-    additional_props?: Record<string, any>[];
-    child_form_questions?: {
-      id?: number;
-      uuid?: string;
-      form_section_id?: number;
-      label?: string;
-      validation?: string[];
-      parent_id?: string;
-      linked_field_key?: string;
-      children?: Record<string, any>[];
-      multichoice?: boolean;
-      order?: number;
-      options?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      table_headers?: {
-        id?: number;
-        uuid?: string;
-        form_question_id?: number;
-        label?: string;
-        order?: number;
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      additional_text?: string;
-      additional_url?: string;
-      show_on_parent_condition?: boolean;
-      input_type?:
-        | "date"
-        | "text"
-        | "long-text"
-        | "select"
-        | "checkboxes"
-        | "radio"
-        | "number"
-        | "image"
-        | "file"
-        | "conditional";
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    linked_field_key?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    label?: string;
-    placeholder?: string;
-    description?: string;
-    validation?: Record<string, any>;
-    multichoice?: boolean;
-    order?: number;
-    options_list?: string;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-};
-
-export type FormSectionRead = {
-  order?: number;
-  form_id?: number;
-  form_questions?: {
-    id?: number;
-    uuid?: string;
-    form_section_id?: number;
-    label?: string;
-    validation?: string[];
-    parent_id?: string;
-    linked_field_key?: string;
-    children?: Record<string, any>[];
-    multichoice?: boolean;
-    order?: number;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    additional_text?: string;
-    additional_url?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-};
-
-export type FormQuestionRead = {
-  id?: number;
-  uuid?: string;
-  form_section_id?: number;
-  label?: string;
-  validation?: string[];
-  parent_id?: string;
-  linked_field_key?: string;
-  children?: Record<string, any>[];
-  multichoice?: boolean;
-  order?: number;
-  options?: {
-    id?: number;
-    uuid?: string;
-    form_question_id?: number;
-    label?: string;
-    order?: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  table_headers?: {
-    id?: number;
-    uuid?: string;
-    form_question_id?: number;
-    label?: string;
-    order?: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  additional_text?: string;
-  additional_url?: string;
-  show_on_parent_condition?: boolean;
-  input_type?:
-    | "date"
-    | "text"
-    | "long-text"
-    | "select"
-    | "checkboxes"
-    | "radio"
-    | "number"
-    | "image"
-    | "file"
-    | "conditional";
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-};
-
-export type FormQuestionCreate = {
-  additional_props?: Record<string, any>[];
-  child_form_questions?: {
-    id?: number;
-    uuid?: string;
-    form_section_id?: number;
-    label?: string;
-    validation?: string[];
-    parent_id?: string;
-    linked_field_key?: string;
-    children?: Record<string, any>[];
-    multichoice?: boolean;
-    order?: number;
-    options?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    table_headers?: {
-      id?: number;
-      uuid?: string;
-      form_question_id?: number;
-      label?: string;
-      order?: number;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    additional_text?: string;
-    additional_url?: string;
-    show_on_parent_condition?: boolean;
-    input_type?:
-      | "date"
-      | "text"
-      | "long-text"
-      | "select"
-      | "checkboxes"
-      | "radio"
-      | "number"
-      | "image"
-      | "file"
-      | "conditional";
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  table_headers?: {
-    id?: number;
-    uuid?: string;
-    form_question_id?: number;
-    label?: string;
-    order?: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  linked_field_key?: string;
-  show_on_parent_condition?: boolean;
-  input_type?:
-    | "date"
-    | "text"
-    | "long-text"
-    | "select"
-    | "checkboxes"
-    | "radio"
-    | "number"
-    | "image"
-    | "file"
-    | "conditional";
-  label?: string;
-  placeholder?: string;
-  description?: string;
-  validation?: Record<string, any>;
-  multichoice?: boolean;
-  order?: number;
-  options_list?: string;
-  options?: {
-    id?: number;
-    uuid?: string;
-    form_question_id?: number;
-    label?: string;
-    order?: number;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
 };
 
 export type GeojsonRead = {
@@ -4117,10 +3600,23 @@ export type ProjectFullRead = {
       form_uuid?: string;
       framework_key?: string;
       stage?: {
+        id?: number;
         uuid?: string;
-        name?: string;
         status?: string;
+        deadline_at?: string;
         readable_status?: string;
+        funding_programme_id?: number;
+        name?: string;
+        order?: number;
+        form?: {
+          uuid?: string;
+          title?: string;
+          type?: string;
+          published?: boolean;
+        };
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
       };
       answers?: Record<string, any>;
       status?: string;
@@ -4171,10 +3667,23 @@ export type ProjectFullRead = {
       status?: string;
       organisation_types?: string[];
       stages?: {
+        id?: number;
         uuid?: string;
-        name?: string;
         status?: string;
+        deadline_at?: string;
         readable_status?: string;
+        funding_programme_id?: number;
+        name?: string;
+        order?: number;
+        form?: {
+          uuid?: string;
+          title?: string;
+          type?: string;
+          published?: boolean;
+        };
+        deleted_at?: string;
+        created_at?: string;
+        updated_at?: string;
       }[];
       organisations?: {
         uuid?: string;
@@ -5018,10 +4527,23 @@ export type FormSubmissionRead = {
   form_uuid?: string;
   framework_key?: string;
   stage?: {
+    id?: number;
     uuid?: string;
-    name?: string;
     status?: string;
+    deadline_at?: string;
     readable_status?: string;
+    funding_programme_id?: number;
+    name?: string;
+    order?: number;
+    form?: {
+      uuid?: string;
+      title?: string;
+      type?: string;
+      published?: boolean;
+    };
+    deleted_at?: string;
+    created_at?: string;
+    updated_at?: string;
   };
   answers?: Record<string, any>;
   status?: string;
@@ -5076,105 +4598,6 @@ export type FormSubmissionLiteRead = {
   };
 };
 
-export type FormPaginated = {
-  data?: {
-    id?: number;
-    uuid?: string;
-    type?: string;
-    version?: number;
-    title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
-    published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
 export type StagePaginated = {
   data?: {
     id?: number;
@@ -5186,88 +4609,10 @@ export type StagePaginated = {
     name?: string;
     order?: number;
     form?: {
-      id?: number;
       uuid?: string;
-      type?: string;
-      version?: number;
       title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
+      type?: string;
       published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
     };
     deleted_at?: string;
     created_at?: string;
@@ -5287,13 +4632,6 @@ export type StagePaginated = {
   };
 };
 
-export type StageLiteRead = {
-  uuid?: string;
-  name?: string;
-  status?: string;
-  readable_status?: string;
-};
-
 export type StageRead = {
   id?: number;
   uuid?: string;
@@ -5304,88 +4642,10 @@ export type StageRead = {
   name?: string;
   order?: number;
   form?: {
-    id?: number;
     uuid?: string;
-    type?: string;
-    version?: number;
     title?: string;
-    subtitle?: string;
-    description?: string;
-    framework_key?: string;
-    duration?: string;
-    deadline_at?: string;
-    documentation?: string;
-    documentation_label?: string;
-    submission_message?: string;
+    type?: string;
     published?: boolean;
-    stage_id?: string;
-    funding_programme_uuid?: string;
-    funding_programme_framework_key?: string;
-    options_other?: boolean;
-    form_sections?: {
-      order?: number;
-      form_id?: number;
-      form_questions?: {
-        id?: number;
-        uuid?: string;
-        form_section_id?: number;
-        label?: string;
-        validation?: string[];
-        parent_id?: string;
-        linked_field_key?: string;
-        children?: Record<string, any>[];
-        multichoice?: boolean;
-        order?: number;
-        options?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        table_headers?: {
-          id?: number;
-          uuid?: string;
-          form_question_id?: number;
-          label?: string;
-          order?: number;
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        additional_text?: string;
-        additional_url?: string;
-        show_on_parent_condition?: boolean;
-        input_type?:
-          | "date"
-          | "text"
-          | "long-text"
-          | "select"
-          | "checkboxes"
-          | "radio"
-          | "number"
-          | "image"
-          | "file"
-          | "conditional";
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    updated_by?: number;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
   };
   deleted_at?: string;
   created_at?: string;
@@ -5398,28 +4658,6 @@ export type StageCreate = {
   form_id?: string;
   deadline_at?: string;
   order?: number;
-};
-
-export type FormQuestionOptionRead = {
-  id?: number;
-  uuid?: string;
-  form_question_id?: number;
-  label?: string;
-  order?: number;
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
-};
-
-export type FormTableHeaderRead = {
-  id?: number;
-  uuid?: string;
-  form_question_id?: number;
-  label?: string;
-  order?: number;
-  created_at?: string;
-  updated_at?: string;
-  deleted_at?: string;
 };
 
 export type FormSubmissionCreate = {
@@ -5474,10 +4712,23 @@ export type ApplicationRead = {
     form_uuid?: string;
     framework_key?: string;
     stage?: {
+      id?: number;
       uuid?: string;
-      name?: string;
       status?: string;
+      deadline_at?: string;
       readable_status?: string;
+      funding_programme_id?: number;
+      name?: string;
+      order?: number;
+      form?: {
+        uuid?: string;
+        title?: string;
+        type?: string;
+        published?: boolean;
+      };
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
     };
     answers?: Record<string, any>;
     status?: string;
@@ -5528,10 +4779,23 @@ export type ApplicationRead = {
     status?: string;
     organisation_types?: string[];
     stages?: {
+      id?: number;
       uuid?: string;
-      name?: string;
       status?: string;
+      deadline_at?: string;
       readable_status?: string;
+      funding_programme_id?: number;
+      name?: string;
+      order?: number;
+      form?: {
+        uuid?: string;
+        title?: string;
+        type?: string;
+        published?: boolean;
+      };
+      deleted_at?: string;
+      created_at?: string;
+      updated_at?: string;
     }[];
     organisations?: {
       uuid?: string;

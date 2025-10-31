@@ -17,6 +17,11 @@ export type PatchV2AuthVerifyBody = {
   token?: string;
 };
 
+export type PostAuthResetBody = {
+  email_address?: string;
+  callback_url?: string;
+};
+
 export type GetV2FundingProgrammeIDBody = {
   id?: number;
   uuid?: string;
@@ -37,88 +42,10 @@ export type GetV2FundingProgrammeIDBody = {
     name?: string;
     order?: number;
     form?: {
-      id?: number;
       uuid?: string;
-      type?: string;
-      version?: number;
       title?: string;
-      subtitle?: string;
-      description?: string;
-      framework_key?: string;
-      duration?: string;
-      deadline_at?: string;
-      documentation?: string;
-      documentation_label?: string;
-      submission_message?: string;
+      type?: string;
       published?: boolean;
-      stage_id?: string;
-      funding_programme_uuid?: string;
-      funding_programme_framework_key?: string;
-      options_other?: boolean;
-      form_sections?: {
-        order?: number;
-        form_id?: number;
-        form_questions?: {
-          id?: number;
-          uuid?: string;
-          form_section_id?: number;
-          label?: string;
-          validation?: string[];
-          parent_id?: string;
-          linked_field_key?: string;
-          children?: Record<string, any>[];
-          multichoice?: boolean;
-          order?: number;
-          options?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          table_headers?: {
-            id?: number;
-            uuid?: string;
-            form_question_id?: number;
-            label?: string;
-            order?: number;
-            created_at?: string;
-            updated_at?: string;
-            deleted_at?: string;
-          }[];
-          additional_text?: string;
-          additional_url?: string;
-          show_on_parent_condition?: boolean;
-          input_type?:
-            | "date"
-            | "text"
-            | "long-text"
-            | "select"
-            | "checkboxes"
-            | "radio"
-            | "number"
-            | "image"
-            | "file"
-            | "conditional";
-          created_at?: string;
-          updated_at?: string;
-          deleted_at?: string;
-        }[];
-        created_at?: string;
-        updated_at?: string;
-        deleted_at?: string;
-      }[];
-      /**
-       * this is a list of key value pairs eg. slug: name
-       */
-      tags?: string[];
-      updated_by?: number;
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
     };
     deleted_at?: string;
     created_at?: string;
@@ -146,11 +73,6 @@ export type GetV2FundingProgrammeIDBody = {
   deleted_at?: string;
   created_at?: string;
   updated_at?: string;
-};
-
-export type PostAuthResetBody = {
-  email_address?: string;
-  callback_url?: string;
 };
 
 export type PostV2FormsEntityFormUuidBody = {
