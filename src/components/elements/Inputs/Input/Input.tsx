@@ -200,6 +200,7 @@ const Input = forwardRef(
         if (isNumber && e.target.value != null) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
         if (isDateLike && e.target.value != null) e.target.value = formatDateValue(type, e.target.value);
         onChange != null ? onChange(e) : formHook?.setValue(name, e.target.value);
+        formHook?.trigger();
       },
       [type, format, isDateLike, onChange, formHook, name]
     );

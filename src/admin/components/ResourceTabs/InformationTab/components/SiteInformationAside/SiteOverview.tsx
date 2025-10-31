@@ -8,13 +8,12 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const SiteOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
-
-  const { record } = useShowContext();
-
-  const isPPC = record.frameworkKey === "ppc";
+  const { record } = useShowContext<SiteFullDto & { id: string }>();
+  const isPPC = record?.frameworkKey === "ppc";
 
   return (
     <>
@@ -81,7 +80,7 @@ const SiteOverview: FC = () => {
             <Button
               className="button-aside-page-admin"
               startIcon={<Check />}
-              disabled={record?.status === "approved"}
+              disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
               onClick={() => setStatusModal("approved")}
             >
               Approve

@@ -728,7 +728,8 @@ export type UploadFilePathParams = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
-    | "projectPitches";
+    | "projectPitches"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2691,10 +2692,10 @@ export const optionLabelsGetList = new V3ApiEndpoint<
 >("/forms/v3/optionLabels/{listKey}", "GET");
 
 export type LinkedFieldsIndexQueryParams = {
-  formTypes?: (
+  formModelTypes?: (
     | "organisations"
     | "financialReports"
-    | "disturbanceReport"
+    | "disturbanceReports"
     | "nurseries"
     | "nurseryReports"
     | "projects"

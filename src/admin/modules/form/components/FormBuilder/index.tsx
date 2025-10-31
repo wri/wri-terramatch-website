@@ -49,7 +49,7 @@ const toFormModelType = (formTypeChoice: string) => {
 export const FormBuilderForm = () => {
   const { getValues, watch } = useFormContext<FormBuilderData>();
   const modelTypeValue = watch("type");
-  const formTypes = useMemo(
+  const formModelTypes = useMemo(
     () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
     [modelTypeValue]
   );
@@ -60,7 +60,7 @@ export const FormBuilderForm = () => {
     []
   );
 
-  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formTypes });
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
   const fullLinkedFields = useMemo(
     () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
     [linkedFieldsData]
@@ -75,8 +75,6 @@ export const FormBuilderForm = () => {
     }),
     []
   );
-
-  const bannerRequired = getValues()?.bannerUrl == null;
 
   return (
     <>
@@ -114,8 +112,8 @@ export const FormBuilderForm = () => {
                 <FileUploadInput
                   source="banner"
                   label="Upload Banner Images"
-                  validate={[...(bannerRequired ? [required()] : []), maxFileSize(1)]}
-                  isRequired={bannerRequired}
+                  validate={[required(), maxFileSize(1)]}
+                  isRequired={true}
                   accept={["image/png", "image/svg+xml", "image/jpeg"]}
                   placeholder={
                     <Box paddingY={2}>

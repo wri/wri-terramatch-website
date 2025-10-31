@@ -26,7 +26,7 @@ export const FormList = () => {
       >
         <AutoResetSort />
         <Datagrid rowClick="show" bulkActionButtons={false}>
-          <ImageField source="bannerUrl" label="Banner Image" />
+          <ImageField source="banner.url" label="Banner Image" />
           <TextField source="title" label="Title" />
           <TextField source="type" label="Form Type" />
           <BooleanField source="published" label="Published" />

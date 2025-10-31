@@ -161,6 +161,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           open
           status={statusToChangeTo}
           uuid={changeRequest?.uuid!}
+          entity={entity}
           handleClose={() => {
             setStatusToChangeTo(undefined);
             refetch?.();
