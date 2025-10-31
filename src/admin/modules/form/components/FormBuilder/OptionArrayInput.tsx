@@ -37,7 +37,7 @@ export const OptionArrayInput = ({
             if (!scopedFormData || !getSource) return null;
             const { field } = useInput({ source: getSource("") });
 
-            const imageSrc = scopedFormData.image?.src || scopedFormData.image?.url || scopedFormData.image_url;
+            const imageSrc = scopedFormData.image?.src || scopedFormData.image?.url || scopedFormData.imageUrl;
 
             return (
               <Box flexDirection="row" gap={2} display="flex" alignItems="center">
@@ -46,7 +46,7 @@ export const OptionArrayInput = ({
                     <img src={imageSrc} height={100} width={100} alt="" role="presentation" />
                     <IconButton
                       className="!absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] opacity-0"
-                      onClick={() => field.onChange({ ...field.value, image_url: null, image: null })}
+                      onClick={() => field.onChange({ ...field.value, imageUrl: null, image: null })}
                       color="error"
                       size="large"
                     >
@@ -84,7 +84,13 @@ export const OptionArrayInput = ({
         </FormDataConsumer>
         <FormDataConsumer>
           {({ scopedFormData, getSource }: FormDataConsumerRenderParams) => {
-            if (!allowImages || !scopedFormData || !getSource || !!scopedFormData?.image || scopedFormData.image_url)
+            if (
+              !allowImages ||
+              scopedFormData == null ||
+              getSource == null ||
+              scopedFormData?.image != null ||
+              scopedFormData.imageUrl != null
+            )
               return null;
 
             return (
