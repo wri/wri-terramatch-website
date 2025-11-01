@@ -64,7 +64,7 @@ const StubFormFieldsProvider: FormFieldsProvider = {
 };
 
 export type LocalStep = StepDefinition & { fields: LocalFieldWithChildren[] };
-export type LocalFieldWithChildren = FieldDefinition & { children?: FieldDefinition[] };
+export type LocalFieldWithChildren = FieldDefinition & { children?: FieldDefinition[] | null };
 
 export const createLocalStepsProvider = (
   localSteps: LocalStep[],
@@ -127,16 +127,17 @@ export const useApiFieldsProvider = (
       .map(({ id, title, description, questions }): LocalStep | undefined => {
         const fields = questions
           .map((question): LocalFieldWithChildren | undefined => {
+            // Only used for including parent questions whose children have been selected
             const children =
               (fieldFilter == null ? question.children : question.children?.filter(fieldFilter)) ?? undefined;
             if (fieldFilter != null && !fieldFilter(question)) {
               // If the field filter says no to this question, return null if it has no children,
               // or if all of its children have been filtered out as well.
-              if (question.children == null || question.children.length === 0) return undefined;
-              if (children?.length === 0) return undefined;
+              if (children == null || children.length === 0) return undefined;
             }
 
-            return { ...question, children };
+            // If a parent question has been included, we always include all of its children.
+            return question;
           })
           .filter(isNotNull);
 

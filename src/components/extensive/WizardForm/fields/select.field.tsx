@@ -25,7 +25,7 @@ export const SelectField: FormFieldFactory = {
   getAnswer: ({ name, options, optionsList, linkedFieldKey }, formValues, { fieldByKey }) => {
     const value = formValues[name];
 
-    if (options == null && optionsList?.startsWith("gadm-level-")) {
+    if (optionsList?.startsWith("gadm-level-")) {
       // Pull titles for our values from the data api cache. If the title isn't found, return
       // the base value.
       const dropdownValues = toArray(value) as string[];

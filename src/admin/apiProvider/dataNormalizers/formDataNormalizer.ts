@@ -1,10 +1,12 @@
 import { format } from "date-fns";
 import { isBoolean } from "lodash";
 
-import { setOrderFromIndex } from "@/admin/apiProvider/utils/normaliser";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { AdditionalInputTypes } from "@/admin/types/common";
-import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
+
+function setOrderFromIndex<T extends any>(array: T[]): (T & { order: number })[] {
+  return array.map((element: any, index) => ({ ...element, order: index }));
+}
 
 // Payload normalizer
 /**
@@ -12,7 +14,7 @@ import { FormQuestionRead, FormRead } from "@/generated/apiSchemas";
  * @param payload formCreateObject
  * @returns normalized version of formCreateObject
  */
-export const normalizeFormCreatePayload = (payload: FormRead, linkedFieldData: FormQuestionField[]) => ({
+export const normalizeFormCreatePayload = (payload: any, linkedFieldData: FormQuestionField[]) => ({
   ...payload,
   deadline_at: payload.deadline_at
     ? (() => {
@@ -23,7 +25,7 @@ export const normalizeFormCreatePayload = (payload: FormRead, linkedFieldData: F
         }
       })()
     : null,
-  form_sections: setOrderFromIndex(payload.form_sections ?? [])?.map(section => ({
+  form_sections: setOrderFromIndex(payload.form_sections ?? [])?.map((section: any) => ({
     ...section,
     form_questions: setOrderFromIndex(section.form_questions ?? [])?.map((question: any) =>
       normalizeQuestionCreatePayload(question, linkedFieldData)
@@ -31,10 +33,7 @@ export const normalizeFormCreatePayload = (payload: FormRead, linkedFieldData: F
   }))
 });
 
-export const normalizeQuestionCreatePayload = (
-  payload: FormQuestionRead & any,
-  linkedFieldData: FormQuestionField[]
-) => {
+export const normalizeQuestionCreatePayload = (payload: any, linkedFieldData: FormQuestionField[]) => {
   const { form_question_options, table_headers, child_form_questions, ...restOfPayload } = payload;
   const field = linkedFieldData.find(field => field.id === payload.linked_field_key);
   const input_type = field?.inputType;

@@ -69,10 +69,12 @@ export const formDataProvider: FormDataProvider = {
     try {
       const uploadKeys = ["banner"];
       const body = omitBy(omit(params.data, uploadKeys), isUndefined) as FormBuilderData;
+
+      // In update, do the banner upload first so that the update response shows the new banner media.
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: params.id as string });
       const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string, translated: false });
 
       await handleOptionFilesUpload(form, body);
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid: form.uuid });
 
       return { data: formDtoToBuilder(form) } as RecordType;
     } catch (updateFailure) {

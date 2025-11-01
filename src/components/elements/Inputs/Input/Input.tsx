@@ -204,6 +204,10 @@ const Input = forwardRef(
       [type, format, isDateLike, onChange, formHook, name]
     );
 
+    const handleBlur = useCallback(() => {
+      formHook?.trigger();
+    }, [formHook]);
+
     // Get the current form value and normalize it for date inputs
     const formValue = formHook?.getValues(name);
 
@@ -253,6 +257,7 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onChange={handleChange}
+            onBlur={handleBlur}
             onKeyDown={type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref ?? ref}
             id={id}

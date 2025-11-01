@@ -8,14 +8,16 @@ import {
   DialogTitle,
   TextField
 } from "@mui/material";
-import { useMemo, useState } from "react";
-import { AutocompleteArrayInput, Form, useNotify } from "react-admin";
+import { FC, useMemo, useState } from "react";
+import { AutocompleteArrayInput, Form, useNotify, useShowContext } from "react-admin";
 import * as yup from "yup";
 
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
+import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2AdminUpdateRequestsUUIDSTATUS } from "@/generated/apiComponents";
+import { EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
 export type IStatus = "approve" | "moreinfo";
@@ -25,6 +27,7 @@ interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
   status: IStatus;
   uuid: string;
   fieldsProvider: FormFieldsProvider;
+  entity: EntityName;
 }
 
 const statusTitles = {
@@ -40,15 +43,18 @@ const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
 });
 
-const ChangeRequestRequestMoreInfoModal = ({
+const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalProps> = ({
   handleClose,
   status,
   uuid,
   fieldsProvider,
+  entity,
   ...dialogProps
-}: ChangeRequestRequestMoreInfoModalProps) => {
+}) => {
   const notify = useNotify();
   const [feedbackValue, setFeedbackValue] = useState("");
+  const ctx = useShowContext();
+  const [, { refetch: refetchEntity }] = useFullEntity(entity as SupportedEntity, ctx?.record?.uuid);
 
   const feedbackChoices = useMemo<Choice[]>(
     () =>
@@ -84,6 +90,8 @@ const ChangeRequestRequestMoreInfoModal = ({
         },
         body
       });
+      refetchEntity?.();
+      ctx?.refetch?.();
     }
     setFeedbackValue("");
     return handleClose();
