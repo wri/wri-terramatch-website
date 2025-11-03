@@ -22598,6 +22598,36 @@ export const useGetV2DisturbanceReportsExport = <TData = Record<string, any>>(
   );
 };
 
+export type GetV2SrpReportsExportError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2SrpReportsExportVariables = ApiContext["fetcherOptions"];
+
+export const fetchGetV2SrpReportsExport = (variables: GetV2SrpReportsExportVariables, signal?: AbortSignal) =>
+  apiFetch<Record<string, any>, GetV2SrpReportsExportError, undefined, {}, {}, {}>({
+    url: "/v2/srp-reports/export",
+    method: "get",
+    ...variables,
+    signal
+  });
+
+export const useGetV2SrpReportsExport = <TData = Record<string, any>>(
+  variables: GetV2SrpReportsExportVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<Record<string, any>, GetV2SrpReportsExportError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<Record<string, any>, GetV2SrpReportsExportError, TData>(
+    queryKeyFn({ path: "/v2/srp-reports/export", operationId: "getV2SrpReportsExport", variables }),
+    ({ signal }) => fetchGetV2SrpReportsExport({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
 export type QueryOperation =
   | {
       path: "/v2/{entity}/{UUID}/aggregate-reports";
@@ -23113,4 +23143,9 @@ export type QueryOperation =
       path: "/v2/disturbance-reports/export";
       operationId: "getV2DisturbanceReportsExport";
       variables: GetV2DisturbanceReportsExportVariables;
+    }
+  | {
+      path: "/v2/srp-reports/export";
+      operationId: "getV2SrpReportsExport";
+      variables: GetV2SrpReportsExportVariables;
     };

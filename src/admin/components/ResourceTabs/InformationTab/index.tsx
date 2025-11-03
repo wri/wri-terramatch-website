@@ -168,7 +168,14 @@ const InformationTab: FC<IProps> = props => {
                   })}
                   items={formSteps}
                   render={(step, index) => (
-                    <InformationTabRow index={index} step={step} values={values} steps={formSteps} type={props.type} />
+                    <InformationTabRow
+                      index={index}
+                      step={step}
+                      values={values}
+                      steps={formSteps}
+                      type={props.type}
+                      entity={{ entityName: props.type, entityUUID: record?.uuid }}
+                    />
                   )}
                 />
               </Card>

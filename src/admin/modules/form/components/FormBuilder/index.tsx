@@ -33,7 +33,8 @@ export const formTypeChoices = [
   { id: "site-report", name: "Site Report" },
   { id: "nursery-report", name: "Nursery Report" },
   { id: "financial-report", name: "Financial Report" },
-  { id: "disturbance-report", name: "Disturbance Report" }
+  { id: "disturbance-report", name: "Disturbance Report" },
+  { id: "srp-report", name: "Annual Socio Economic Restoration Report" }
 ];
 
 export const FormBuilderForm = () => {

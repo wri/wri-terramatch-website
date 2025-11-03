@@ -1024,7 +1024,8 @@ export type EstablishmentTreesFindPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -1100,7 +1101,8 @@ export type TreeReportCountsFindPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for which to retrieve the associated report count data.
    */
@@ -1400,7 +1402,8 @@ export type EntityIndexPathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -1818,6 +1821,49 @@ export const entityIndex = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DisturbanceReportLightDto;
       }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example srpReports
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+      };
+      data?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
+      }[];
     },
   EntityIndexError,
   EntityIndexVariables,
@@ -1836,7 +1882,8 @@ export type EntityCreatePathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
 };
 
 export type EntityCreateError = Fetcher.ErrorWrapper<
@@ -1910,7 +1957,8 @@ export type EntityGetPathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2121,6 +2169,25 @@ export const entityGet = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DisturbanceReportFullDto;
       };
+    }
+  | {
+      meta?: {
+        /**
+         * @example srpReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportFullDto;
+      };
     },
   EntityGetError,
   EntityGetVariables,
@@ -2139,7 +2206,8 @@ export type EntityDeletePathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2206,7 +2274,8 @@ export type EntityUpdatePathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2277,7 +2346,8 @@ export type EntityAssociationIndexPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for association
    */
@@ -2797,6 +2867,7 @@ export type LinkedFieldsIndexQueryParams = {
     | "project"
     | "projectPitch"
     | "projectReport"
+    | "srpReport"
     | "site"
     | "siteReport"
   )[];
