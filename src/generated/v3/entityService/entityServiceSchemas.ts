@@ -2084,9 +2084,9 @@ export type OptionLabelDto = {
    */
   label: string;
   /**
-   * Option label text in English
+   * Option image
    */
-  imageUrl: string | null;
+  imageUrl?: string | null;
 };
 
 export type LinkedFieldDto = {
@@ -2094,22 +2094,23 @@ export type LinkedFieldDto = {
    * Linked field id
    */
   id: string;
-  formType:
-    | "organisation"
-    | "financialReport"
-    | "disturbanceReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport";
+  formModelType:
+    | "organisations"
+    | "financialReports"
+    | "disturbanceReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports";
   label: string;
   name: string;
   inputType:
     | "boolean"
     | "conditional"
+    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2142,6 +2143,344 @@ export type LinkedFieldDto = {
     | "volunteers"
     | "workdays";
   optionListKey: string | null;
-  multiChoice: string | null;
+  multiChoice: boolean | null;
   collection: string | null;
+};
+
+/**
+ * CONSTANTS
+ */
+export type Forms = {
+  /**
+   * @example application
+   * @example disturbance-report
+   * @example financial-report
+   * @example project
+   * @example project-report
+   * @example site
+   * @example site-report
+   * @example nursery
+   * @example nursery-report
+   */
+  FORM_TYPES: string[];
+};
+
+export type FormLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Translated form title
+   */
+  title: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
+  published: boolean;
+  banner: MediaDto;
+};
+
+export type FormQuestionOptionDto = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  altValue: string | null;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option image
+   */
+  imageUrl?: string | null;
+  id: string;
+  thumbUrl: string | null;
+};
+
+export type FormQuestionDto = {
+  name: string;
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "tableInput"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbanceReportEntries"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  label: string;
+  placeholder?: string | null;
+  description?: string | null;
+  validation?: Record<string, any> | null;
+  multiChoice: boolean;
+  collection?: string | null;
+  optionsList?: string | null;
+  optionsOther?: boolean | null;
+  options: FormQuestionOptionDto[] | null;
+  showOnParentCondition?: boolean | null;
+  model:
+    | "organisations"
+    | "financialReports"
+    | "disturbanceReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
+    | null;
+  linkedFieldKey?: string | null;
+  isParentConditionalDefault: boolean;
+  minCharacterLimit?: number | null;
+  maxCharacterLimit?: number | null;
+  years?: number[] | null;
+  tableHeaders?: string[] | null;
+  additionalProps?: Record<string, any> | null;
+  children: FormQuestionDto[] | null;
+};
+
+export type FormSectionDto = {
+  id: string;
+  /**
+   * Translated section title
+   */
+  title?: string | null;
+  /**
+   * Translated section description
+   */
+  description?: string | null;
+  questions: FormQuestionDto[];
+};
+
+export type FormFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Translated form title
+   */
+  title: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
+  published: boolean;
+  banner: MediaDto;
+  /**
+   * Indicates whether the text fields in this form response have been translated to the user's locale
+   */
+  translated: boolean;
+  subtitle?: string | null;
+  description?: string | null;
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  documentation?: string | null;
+  documentationLabel?: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt?: string | null;
+  submissionMessage: string;
+  stageId?: string | null;
+  fundingProgrammeId: string | null;
+  sections: FormSectionDto[];
+};
+
+export type StoreFormQuestionOptionAttributes = {
+  /**
+   * Option label slug
+   */
+  slug: string;
+  /**
+   * Option label text in requesting user's locale, if available
+   */
+  label: string;
+  /**
+   * Option image
+   */
+  imageUrl?: string | null;
+};
+
+export type StoreFormQuestionAttributes = {
+  inputType:
+    | "boolean"
+    | "conditional"
+    | "tableInput"
+    | "date"
+    | "long-text"
+    | "mapInput"
+    | "number"
+    | "number-percentage"
+    | "radio"
+    | "select"
+    | "select-image"
+    | "strategy-area"
+    | "text"
+    | "url"
+    | "file"
+    | "allBeneficiaries"
+    | "associates"
+    | "disturbanceReportEntries"
+    | "disturbances"
+    | "employees"
+    | "financialIndicators"
+    | "fundingType"
+    | "indirectBeneficiaries"
+    | "invasive"
+    | "jobs"
+    | "leaderships"
+    | "ownershipStake"
+    | "restorationPartners"
+    | "seedings"
+    | "stratas"
+    | "trainingBeneficiaries"
+    | "treeSpecies"
+    | "volunteers"
+    | "workdays";
+  label: string;
+  placeholder?: string | null;
+  description?: string | null;
+  validation?: Record<string, any> | null;
+  collection?: string | null;
+  optionsList?: string | null;
+  optionsOther?: boolean | null;
+  showOnParentCondition?: boolean | null;
+  linkedFieldKey?: string | null;
+  minCharacterLimit?: number | null;
+  maxCharacterLimit?: number | null;
+  years?: number[] | null;
+  tableHeaders?: string[] | null;
+  additionalProps?: Record<string, any> | null;
+  name?: string;
+  multiChoice?: boolean;
+  children?: StoreFormQuestionAttributes[];
+  options?: StoreFormQuestionOptionAttributes[];
+};
+
+export type StoreFormSectionAttributes = {
+  /**
+   * Translated section title
+   */
+  title?: string | null;
+  /**
+   * Translated section description
+   */
+  description?: string | null;
+  id?: string;
+  questions?: StoreFormQuestionAttributes[];
+};
+
+export type StoreFormAttributes = {
+  /**
+   * Translated form title
+   */
+  title: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | null;
+  published: boolean;
+  subtitle?: string | null;
+  description?: string | null;
+  frameworkKey?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  documentation?: string | null;
+  documentationLabel?: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt?: string | null;
+  submissionMessage: string;
+  stageId?: string | null;
+  sections?: StoreFormSectionAttributes[];
+};
+
+export type CreateFormData = {
+  type: "forms";
+  attributes: StoreFormAttributes;
+};
+
+export type CreateFormBody = {
+  data: CreateFormData;
+};
+
+export type UpdateFormData = {
+  type: "forms";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreFormAttributes;
+};
+
+export type UpdateFormBody = {
+  data: UpdateFormData;
 };

@@ -1,29 +1,35 @@
 import { Typography } from "@mui/material";
 import classNames from "classnames";
+import { FC } from "react";
 import { LabeledClasses } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import DisturbanceReport from "@/admin/modules/disturbanceReport/components/DisturbanceReport";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
-const InformationTabRow = ({ index, type, ...props }: FormSummaryRowProps) => {
-  const entries = useGetFormEntries({ ...props, type });
+type InformationTabRowProps = Omit<FormSummaryRowProps, "index">;
+
+const InformationTabRow: FC<InformationTabRowProps> = props => {
+  const entries = useGetFormEntries(props);
+  const title = useFieldsProvider().step(props.stepId)?.title;
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
-        {props.step.title}
+        {title}
       </Text>
       <List
         className={classNames("mt-4 gap-4", {
-          "grid grid-cols-3": type === "sites",
-          "flex flex-col": type !== "sites"
+          "grid grid-cols-3": props.type === "sites",
+          "flex flex-col": props.type !== "sites"
         })}
         items={entries}
         render={entry => {
-          return entry.type === "disturbanceReportEntries" ? (
-            <DisturbanceReport values={props?.values} formSteps={props.steps} />
+          return entry.inputType === "disturbanceReportEntries" ? (
+            <DisturbanceReport values={props?.values} />
           ) : (
             <div>
               <Typography className={LabeledClasses.label}>

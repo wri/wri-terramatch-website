@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { selectMe, useMyUser } from "@/connections/User";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceCreator";
+import { resourceCreator } from "@/connections/util/resourceMutator";
 import { organisationCreation } from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";

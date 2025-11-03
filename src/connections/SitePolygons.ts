@@ -2,7 +2,7 @@ import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceCreator";
+import { resourceCreator } from "@/connections/util/resourceMutator";
 import {
   createSitePolygons,
   sitePolygonsIndex,
@@ -13,8 +13,7 @@ import {
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
-import { PendingError } from "@/store/apiSlice";
-import ApiSlice from "@/store/apiSlice";
+import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 

@@ -1,62 +1,50 @@
 import { isUndefined, omit, omitBy } from "lodash";
-import { CreateResult, DataProvider, GetManyResult, GetOneResult, Identifier, UpdateResult } from "react-admin";
-
 import {
-  normalizeFormCreatePayload,
-  normalizeFormObject
-} from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
+  CreateResult,
+  DataProvider,
+  DeleteParams,
+  GetListParams,
+  GetManyResult,
+  GetOneParams,
+  UpdateParams
+} from "react-admin";
+
 import { handleUploads, upload } from "@/admin/apiProvider/utils/upload";
-import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { loadLinkedFields } from "@/connections/util/Form";
 import {
-  DeleteV2AdminFormsUUIDError,
-  fetchDeleteV2AdminFormsUUID,
-  fetchGetV2AdminForms,
-  fetchGetV2FormsUUID,
-  fetchPatchV2AdminFormsUUID,
-  fetchPostV2AdminForms,
-  GetV2AdminFormsError
-} from "@/generated/apiComponents";
-import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+  FormBuilderData,
+  formBuilderToAttributes,
+  formDtoToBuilder
+} from "@/admin/modules/form/components/FormBuilder/types";
+import { createForm, deleteForm, loadForm, loadFormIndex, updateForm } from "@/connections/util/Form";
+import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { Option } from "@/types/common";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
 export interface FormDataProvider extends Partial<DataProvider> {}
 
-export type NormalizedFormObject = Omit<FormRead, "id"> & { id: Identifier };
+const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderData) => {
+  const uploadPromises: Promise<unknown>[] = [];
 
-const handleOptionFilesUpload = async (response: NormalizedFormObject, payload: any) => {
-  const sections = response.form_sections || [];
-  const uploadPromises = [];
+  (form.sections ?? []).forEach((section, sectionIndex) => {
+    const payloadSection = payload.steps[sectionIndex] ?? {};
+    (section.questions ?? []).forEach((question, questionIndex) => {
+      const payloadQuestion = payloadSection.fields?.[questionIndex] ?? {};
+      (question.options ?? []).forEach((option, optionIndex) => {
+        const payloadOption = (payloadQuestion.options?.[optionIndex] ?? {}) as Option;
+        if (payloadOption.meta?.rawFile == null) return;
 
-  for (let sectionIndex = 0; sectionIndex < sections?.length; sectionIndex++) {
-    const section: FormSectionRead = response.form_sections?.[sectionIndex] || {};
-    const payloadSection = payload.form_sections?.[sectionIndex] || {};
-    const questions = section.form_questions || [];
-
-    for (let questionIndex = 0; questionIndex < questions?.length; questionIndex++) {
-      const question = questions[questionIndex] || {};
-      const payloadQuestion = payloadSection.form_questions?.[questionIndex] || {};
-      //@ts-ignore
-      const options = question.form_question_options || [];
-
-      for (let optionIndex = 0; optionIndex < options?.length; optionIndex++) {
-        const option = options[optionIndex] || {};
-        const payloadOption = payloadQuestion.form_question_options?.[optionIndex] || {};
-
-        if (payloadOption.image?.rawFile) {
-          uploadPromises.push(
-            upload(payloadOption.image.rawFile, {
-              collection: "image",
-              entity: "formQuestionOptions",
-              uuid: option.id
-            })
-          );
-        }
-      }
-    }
-  }
+        uploadPromises.push(
+          upload(payloadOption.meta.rawFile, {
+            collection: "image",
+            entity: "formQuestionOptions",
+            uuid: option.id
+          })
+        );
+      });
+    });
+  });
 
   return Promise.all(uploadPromises);
 };
@@ -65,110 +53,78 @@ export const formDataProvider: FormDataProvider = {
   async create(_, params) {
     try {
       const uploadKeys = ["banner"];
-      const body = omit(params.data, uploadKeys);
+      const body = omit(params.data, uploadKeys) as FormBuilderData;
+      const form = await createForm(formBuilderToAttributes(body));
 
-      const { data: linkedFieldsData } = await loadLinkedFields({});
+      await handleOptionFilesUpload(form, body);
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: form.uuid });
 
-      const response = await fetchPostV2AdminForms({
-        // @ts-expect-error the v2 post endpoint is not correctly defined.
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData))
-      });
-
-      // @ts-expect-error
-      await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
-      // @ts-expect-error
-      const uuid = response.data.uuid;
-
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid });
-
-      //@ts-expect-error
-      return { data: normalizeFormObject(response.data) } as CreateResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      return { data: { id: form.uuid } } as CreateResult;
+    } catch (createFailure) {
+      throw v3ErrorForRA("Form creation failed", createFailure);
     }
   },
 
-  async update(_, params) {
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     try {
       const uploadKeys = ["banner"];
-      const body = omitBy(omit(params.data, uploadKeys), isUndefined);
+      const body = omitBy(omit(params.data, uploadKeys), isUndefined) as FormBuilderData;
 
-      const { data: linkedFieldsData } = await loadLinkedFields({});
+      // In update, do the banner upload first so that the update response shows the new banner media.
+      await handleUploads(params, uploadKeys, { entity: "forms", uuid: params.id as string });
+      const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string, translated: false });
 
-      const response = await fetchPatchV2AdminFormsUUID({
-        // @ts-expect-error the v2 form update endpoint is not correctly defined.
-        pathParams: { uuid: params.id },
-        body: normalizeFormCreatePayload(body, appendAdditionalFormQuestionFields(linkedFieldsData ?? []))
-      });
+      await handleOptionFilesUpload(form, body);
 
-      //@ts-expect-error
-      await handleOptionFilesUpload(normalizeFormObject(response.data), params.data);
-
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid: String(params.id) });
-
-      //@ts-ignore
-      return { data: normalizeFormObject(response.data) } as UpdateResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+      return { data: formDtoToBuilder(form) } as RecordType;
+    } catch (updateFailure) {
+      throw v3ErrorForRA("Form get fetch failed", updateFailure);
     }
   },
 
-  async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminForms({
-        queryParams: raListParamsToQueryParams(params, [], [], [], { light: true })
-      });
-
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+  async getList<RecordType>(_: string, params: GetListParams) {
+    const connected = await loadFormIndex(raConnectionProps(params));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form index fetch failed", connected.loadFailure);
     }
+
+    return {
+      data: (connected.data?.map(form => ({ ...form, id: form.uuid })) ?? []) as RecordType[],
+      total: connected.indexTotal
+    };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2FormsUUID({
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: normalizeFormObject(response.data) } as GetOneResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    // Disable translation for admin data provider; forms must be edited in English so that the
+    // labels that will be translated from the DB are in English as the source language.
+    const connected = await loadForm({ id, translated: false });
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form get fetch failed", connected.loadFailure);
     }
+
+    return { data: formDtoToBuilder(connected.data!) } as RecordType;
   },
 
   async getMany(_, params) {
-    try {
-      //can be optimized by having a getMany endpoint from backend
-      const response = await Promise.all(
-        params.ids.map(id =>
-          fetchGetV2FormsUUID({
-            pathParams: { uuid: id as string }
-          })
-        )
-      );
-
-      return {
-        data: response?.map(item =>
-          //@ts-ignore
-          normalizeFormObject(item.data)
-        )
-      } as GetManyResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsError);
+    const response = await Promise.all(
+      params.ids.map(async id => await loadForm({ id: id as string, translated: false }))
+    );
+    const failed = response.find(({ loadFailure }) => loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Form get fetch failed", failed.loadFailure);
     }
+
+    return {
+      data: response.map(({ data }) => formDtoToBuilder(data!))
+    } as GetManyResult;
   },
 
-  // @ts-ignore
-  async delete(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
     try {
-      await fetchDeleteV2AdminFormsUUID({
-        // @ts-ignore issue with docs
-        pathParams: { uuid: params.id as string }
-      });
-      return { data: { id: params.id } };
+      await deleteForm(id as string);
+      return { data: { id } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsUUIDError);
+      throw v3ErrorForRA("Form delete fetch failed", err);
     }
   }
 };

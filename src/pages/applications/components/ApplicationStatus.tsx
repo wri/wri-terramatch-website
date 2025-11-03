@@ -38,7 +38,6 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   //@ts-ignore
   const stages = application?.funding_programme?.stages?.data as StageRead[];
   const fundingProgrammeStatus = application?.funding_programme?.status;
-  const currentForm: any = currentSubmission?.form;
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
@@ -46,7 +45,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
     // TODO: using the framework key as an access code here is really confusing and needs to be updated.
     // Will be related to some general application cleanup that Ben is getting set up in an epic.
-    pathParams: { accessCode: currentForm?.framework_key ? currentForm?.framework_key : "terrafund" }
+    pathParams: { accessCode: currentSubmission?.framework_key ? currentSubmission?.framework_key : "terrafund" }
   });
   //@ts-ignore
   const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;

@@ -1,32 +1,31 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import {
   getDisturbanceExtentOptions,
   getDisturbanceIntensityOptions,
   getDisturbanceTypeOptions
 } from "@/constants/options/disturbance";
-import { Entity } from "@/types/common";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFDisturbanceTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  entity: Entity;
   hasIntensity?: boolean;
   hasExtent?: boolean;
 }
 
 export const getDisturbanceTableColumns = (
-  props: { hasIntensity?: boolean; hasExtent?: boolean },
+  hasIntensity?: boolean,
+  hasExtent?: boolean,
   t: typeof useT | Function = (t: string) => t
 ) => {
   const columns: AccessorKeyColumnDef<any>[] = [
@@ -37,7 +36,7 @@ export const getDisturbanceTableColumns = (
     }
   ];
 
-  if (props.hasIntensity) {
+  if (hasIntensity) {
     columns.push({
       accessorKey: "intensity",
       header: t("Intensity"),
@@ -45,7 +44,7 @@ export const getDisturbanceTableColumns = (
     });
   }
 
-  if (props.hasExtent) {
+  if (hasExtent) {
     columns.push({
       accessorKey: "extent",
       header: t("Extent (% Of Site Affected)"),
@@ -58,77 +57,83 @@ export const getDisturbanceTableColumns = (
   return columns;
 };
 
-export const getDisturbanceTableFields = (
-  props: { hasIntensity?: boolean; hasExtent?: boolean },
+export const getDisturbanceTableQuestions = (
+  hasIntensity?: boolean,
+  hasExtent?: boolean,
   t: typeof useT | Function = (t: string) => t
 ) => {
-  const fields: FormField[] = [
+  const questions: FieldDefinition[] = [
     {
       label: t("Disturbance Type"),
       name: "type",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceTypeOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceTypeOptions(),
+      validation: { required: true }
     }
   ];
 
-  if (props.hasIntensity) {
-    fields.push({
+  if (hasIntensity) {
+    questions.push({
       label: t("Intensity"),
       name: "intensity",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceIntensityOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceIntensityOptions(),
+      validation: { required: true }
     });
   }
 
-  if (props.hasExtent) {
-    fields.push({
+  if (hasExtent) {
+    questions.push({
       label: t("Extent (% Of Site Affected)"),
       name: "extent",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getDisturbanceExtentOptions(),
-        required: true
-      }
+      inputType: "select",
+      options: getDisturbanceExtentOptions(),
+      validation: { required: true }
     });
   }
 
-  fields.push({
+  questions.push({
     label: t("Description"),
     name: "description",
-    type: FieldType.TextArea,
-    validation: yup.string(),
-    fieldProps: {
-      required: false
-    }
+    inputType: "long-text",
+    validation: { required: true }
   });
 
-  return fields;
+  return questions;
 };
 
-const RHFDisturbanceTable = ({ onChangeCapture, entity, ...props }: PropsWithChildren<RHFDisturbanceTableProps>) => {
+const RHFDisturbanceTable: FC<PropsWithChildren<RHFDisturbanceTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getDisturbanceTableColumns(props.hasIntensity, props.hasExtent, t),
+      steps: [{ id: "disturbanceTable", fields: getDisturbanceTableQuestions(props.hasIntensity, props.hasExtent, t) }]
+    }),
+    [props.hasExtent, props.hasIntensity, t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
+
+  const _onChange = useCallback(
+    (values: any) => {
+      onChange(values);
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook]
+  );
 
   return (
     <DataTable
       {...props}
       value={value ?? []}
       generateUuids={true}
-      onChange={onChange}
+      onChange={_onChange}
       addButtonCaption={t("Add Disturbance")}
-      tableColumns={getDisturbanceTableColumns(props, t)}
-      fields={getDisturbanceTableFields(props, t)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -8,29 +9,26 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import FrameworkProvider, { useFramework } from "@/context/framework.provider";
+import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
-import { normalizedFormData } from "@/helpers/customForms";
+import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 
 const SubmissionPage = () => {
   const t = useT();
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { isLoading, formData } = useFormSubmission(submissionUUID);
+  const { isLoading, formData, form } = useFormSubmission(submissionUUID);
   const application_uuid = formData?.data?.application_uuid as string;
 
   const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
 
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess() {
-      if (formData?.data?.form?.type === "application") {
+      if (form?.type === "application") {
         router.push(`/applications/request-more-information/success/${application_uuid}?isSendRequest=true`);
       } else {
         router.push(`/form/submission/${submissionUUID}/confirm`);
@@ -38,14 +36,35 @@ const SubmissionPage = () => {
     }
   });
 
-  const framework = useFramework(formData?.data?.form?.framework_key);
-  const formSteps = useGetCustomFormSteps(
-    formData?.data?.form,
-    { entityName: "project-pitch", entityUUID: formData?.data?.project_pitch_uuid ?? "" },
-    framework
+  const framework = useFramework(formData?.data?.framework_key);
+
+  const formModels = useMemo(() => {
+    const models: FormModel[] = [];
+    if (formData?.data?.organisation_uuid != null) {
+      models.push({ model: "organisations", uuid: formData.data.organisation_uuid });
+    }
+    if (formData?.data?.project_pitch_uuid != null) {
+      models.push({ model: "projectPitches", uuid: formData.data.project_pitch_uuid });
+    }
+    return models;
+  }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid);
+  const defaultValues = useMemo(
+    () => formDefaultValues(formData?.data?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, formData?.data?.answers]
   );
-  //@ts-ignore
-  const defaultValues = useNormalizedFormDefaultValue(formData?.data?.answers, formSteps);
+
+  const orgDetails = useMemo(
+    (): OrgFormDetails | undefined =>
+      formData?.data?.organisation_attributes == null
+        ? undefined
+        : {
+            uuid: formData?.data?.organisation_attributes.uuid,
+            currency: formData?.data?.organisation_attributes.currency,
+            startMonth: formData?.data?.organisation_attributes.start_month
+          },
+    [formData?.data?.organisation_attributes]
+  );
 
   const { openModal, closeModal } = useModalContext();
   const handleSubmit = useCallback(() => {
@@ -76,39 +95,43 @@ const SubmissionPage = () => {
     );
   }, [closeModal, openModal, submissionUUID, submitFormSubmission, t]);
 
+  const onChange = useCallback(
+    (data: Dictionary<any>) => {
+      updateSubmission({
+        pathParams: { uuid: submissionUUID },
+        body: { answers: normalizedFormData(data, fieldsProvider) }
+      });
+    },
+    [fieldsProvider, submissionUUID, updateSubmission]
+  );
+
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isLoading}>
-        <FrameworkProvider frameworkKey={framework}>
-          <WizardForm
-            steps={formSteps!}
-            errors={error}
-            onBackFirstStep={router.back}
-            onCloseForm={() => router.push("/home")}
-            onChange={data =>
-              updateSubmission({
-                pathParams: { uuid: submissionUUID },
-                body: { answers: normalizedFormData(data, formSteps!) }
-              })
-            }
-            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-            onSubmit={handleSubmit}
-            submitButtonDisable={isSubmitting}
-            defaultValues={defaultValues}
-            title={formData?.data.form?.title}
-            tabOptions={{
-              markDone: true,
-              disableFutureTabs: true
-            }}
-            summaryOptions={{
-              title: t("Review Application Details"),
-              downloadButtonText: t("Download Application")
-            }}
-            roundedCorners
-            //@ts-ignore
-            formSubmissionOrg={formData?.data?.organisation_attributes}
-          />
-        </FrameworkProvider>
+      <LoadingContainer loading={isLoading || !providerLoaded}>
+        <WizardForm
+          models={formModels}
+          framework={framework}
+          fieldsProvider={fieldsProvider}
+          errors={error}
+          onBackFirstStep={router.back}
+          onCloseForm={() => router.push("/home")}
+          onChange={onChange}
+          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          onSubmit={handleSubmit}
+          submitButtonDisable={isSubmitting}
+          defaultValues={defaultValues}
+          title={form?.title}
+          tabOptions={{
+            markDone: true,
+            disableFutureTabs: true
+          }}
+          summaryOptions={{
+            title: t("Review Application Details"),
+            downloadButtonText: t("Download Application")
+          }}
+          roundedCorners
+          orgDetails={orgDetails}
+        />
       </LoadingContainer>
     </BackgroundLayout>
   );

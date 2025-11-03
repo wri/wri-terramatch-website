@@ -10,22 +10,24 @@ import {
 } from "@mui/material";
 import { useT } from "@transifex/react";
 import { kebabCase } from "lodash";
-import { useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, useShowContext } from "react-admin";
-import { When } from "react-if";
 import * as yup from "yup";
 
 import modules from "@/admin/modules";
+import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { useNotificationContext } from "@/context/notification.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
-import { optionToChoices } from "@/utils/options";
+import { isNotNull } from "@/utils/array";
 
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
@@ -42,7 +44,7 @@ const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
 });
 
-const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChangeModalProps) => {
+const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ...dialogProps }) => {
   const { record, refetch, resource } = useShowContext();
   const [feedbackValue, setFeedbackValue] = useState("");
   const { openNotification } = useNotificationContext();
@@ -56,7 +58,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
   // This will be a quick cache get in that case, instead of another server round trip.
   useRequestComplete(isUpdating, refetch);
 
-  const dialogTitle = (() => {
+  const dialogTitle = useMemo(() => {
     let name;
     switch (resource as keyof typeof modules) {
       case "project":
@@ -95,32 +97,22 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
       case "reminder":
         return `Send a reminder for ${name}`;
     }
-  })();
+  }, [record, resource, status]);
 
   const { formData: formResponse } = useEntityForm(resourceName, record.id);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formResponse?.data.form_uuid);
+  const feedbackChoices = useMemo<Choice[]>(() => {
+    const { stepIds, fieldNames, fieldByName, childNames } = fieldsProvider;
+    const fieldToChoice = ({ label, name }: FieldDefinition): Choice => ({ id: name, name: label });
+    return stepIds()
+      .flatMap(fieldNames)
+      .flatMap(fieldId => {
+        const field = fieldByName(fieldId);
+        if (field == null) return [];
 
-  // Helper function to recursively extract all questions including follow-up questions
-  const extractAllQuestions = (questions: any[]): any[] => {
-    return questions.flatMap((question: any) => {
-      const currentQuestion = {
-        title: question.label ?? "",
-        value: question.uuid ?? ""
-      };
-
-      // If the question has children (follow-up questions), include them too
-      if (question.children && Array.isArray(question.children)) {
-        return [currentQuestion, ...extractAllQuestions(question.children)];
-      }
-
-      return [currentQuestion];
-    });
-  };
-
-  const questions = formResponse?.data.form?.form_sections.flatMap((section: { form_questions: any[] }) =>
-    extractAllQuestions(section.form_questions)
-  );
-
-  const feedbackChoices = useMemo(() => optionToChoices(questions ?? []), [questions]);
+        return [fieldToChoice(field), ...childNames(fieldId).map(fieldByName).filter(isNotNull).map(fieldToChoice)];
+      });
+  }, [fieldsProvider]);
 
   const { mutateAsync: mutateAsyncReminder, isLoading: isLoadingReminder } = usePostV2AdminENTITYUUIDReminder({
     onSuccess: () => {
@@ -128,30 +120,33 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
     }
   });
 
-  const handleSave = async (data: any) => {
-    if (!record || !status) return;
+  const handleSave = useCallback(
+    async (data: any) => {
+      if (!record || !status) return;
 
-    if (status === "reminder") {
-      await mutateAsyncReminder({
-        pathParams: {
-          uuid: record.id,
-          entity: resourceName
-        },
-        body: { feedback: feedbackValue }
-      });
-    } else {
-      // A little type munging to get this happy with the site-specific status update.
-      (update as (attributes: Partial<SiteUpdateAttributes>) => undefined)({
-        status,
-        feedback: feedbackValue,
-        feedbackFields: data.feedback_fields
-      });
-    }
-    setFeedbackValue("");
-    handleClose();
-  };
+      if (status === "reminder") {
+        await mutateAsyncReminder({
+          pathParams: {
+            uuid: record.id,
+            entity: resourceName
+          },
+          body: { feedback: feedbackValue }
+        });
+      } else {
+        // A little type munging to get this happy with the site-specific status update.
+        (update as (attributes: Partial<SiteUpdateAttributes>) => undefined)({
+          status,
+          feedback: feedbackValue,
+          feedbackFields: data.feedback_fields
+        });
+      }
+      setFeedbackValue("");
+      handleClose();
+    },
+    [feedbackValue, handleClose, mutateAsyncReminder, record, resourceName, status, update]
+  );
 
-  return (
+  return !providerLoaded ? null : (
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
@@ -171,7 +166,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
             margin="dense"
             helperText={false}
           />
-          <When condition={status === "needs-more-information" && feedbackChoices.length > 0}>
+          {status === "needs-more-information" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
@@ -179,7 +174,7 @@ const StatusChangeModal = ({ handleClose, status, ...dialogProps }: StatusChange
               fullWidth
               margin="dense"
             />
-          </When>
+          ) : null}
         </DialogContent>
 
         <DialogActions>

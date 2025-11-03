@@ -1,5 +1,5 @@
 import { RowData, SortingState } from "@tanstack/react-table";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Table, { TableProps } from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
@@ -54,7 +54,10 @@ export function ServerSideTable<TData extends RowData>({
   const [filters, setFilter] = useState<FilterValue[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
-  const onQueryParamChangeDebounced = useDebounce(args => onQueryParamChange?.(args), 500);
+  const onQueryParamChangeDebounced = useDebounce(
+    useCallback(args => onQueryParamChange?.(args), [onQueryParamChange]),
+    500
+  );
 
   useEffect(() => {
     onQueryParamChangeDebounced?.(getQueryParams({ page, pageSize, filters, sorting }));

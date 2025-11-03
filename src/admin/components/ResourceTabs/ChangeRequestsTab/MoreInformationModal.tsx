@@ -8,15 +8,17 @@ import {
   DialogTitle,
   TextField
 } from "@mui/material";
-import { useMemo, useState } from "react";
-import { AutocompleteArrayInput, Form, useNotify } from "react-admin";
-import { If } from "react-if";
+import { FC, useMemo, useState } from "react";
+import { AutocompleteArrayInput, Form, useNotify, useShowContext } from "react-admin";
 import * as yup from "yup";
 
+import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
+import { SupportedEntity, useFullEntity } from "@/connections/Entity";
+import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2AdminUpdateRequestsUUIDSTATUS } from "@/generated/apiComponents";
-import { Option } from "@/types/common";
-import { optionToChoices } from "@/utils/options";
+import { EntityName } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 export type IStatus = "approve" | "moreinfo";
 
@@ -24,7 +26,8 @@ interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
   handleClose: () => void;
   status: IStatus;
   uuid: string;
-  form: Record<string, any>;
+  fieldsProvider: FormFieldsProvider;
+  entity: EntityName;
 }
 
 const statusTitles = {
@@ -40,32 +43,31 @@ const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
 });
 
-const ChangeRequestRequestMoreInfoModal = ({
+const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalProps> = ({
   handleClose,
   status,
   uuid,
-  form,
+  fieldsProvider,
+  entity,
   ...dialogProps
-}: ChangeRequestRequestMoreInfoModalProps) => {
+}) => {
   const notify = useNotify();
   const [feedbackValue, setFeedbackValue] = useState("");
+  const ctx = useShowContext();
+  const [, { refetch: refetchEntity }] = useFullEntity(entity as SupportedEntity, ctx?.record?.uuid);
 
-  const questions: Option[] | undefined = useMemo(() => {
-    const flat = form?.form_sections
-      // @ts-ignore client error
-      ?.map(s => s.form_questions)
-      .flat(1);
+  const feedbackChoices = useMemo<Choice[]>(
+    () =>
+      fieldsProvider
+        .stepIds()
+        .flatMap(fieldsProvider.fieldNames)
+        .map(fieldsProvider.fieldByName)
+        .filter(isNotNull)
+        .map(({ label, name }) => ({ name: label ?? "", id: name ?? "" })),
+    [fieldsProvider]
+  );
 
-    // @ts-ignore client error
-    return flat.map(q => ({
-      title: q?.label ?? "",
-      value: q?.uuid ?? ""
-    }));
-  }, [form?.form_sections]);
-
-  const feebdackFields = useMemo(() => optionToChoices(questions ?? []), [questions]);
-
-  const { mutateAsync: upateStatus, isLoading } = usePutV2AdminUpdateRequestsUUIDSTATUS({
+  const { mutateAsync: updateStatus, isLoading } = usePutV2AdminUpdateRequestsUUIDSTATUS({
     onSuccess() {
       notify("Change Request status updated", { type: "success" });
     }
@@ -81,13 +83,15 @@ const ChangeRequestRequestMoreInfoModal = ({
         body.feedback_fields = data.feedback_fields;
       }
 
-      await upateStatus({
+      await updateStatus({
         pathParams: {
           uuid,
           status
         },
         body
       });
+      refetchEntity?.();
+      ctx?.refetch?.();
     }
     setFeedbackValue("");
     return handleClose();
@@ -99,9 +103,7 @@ const ChangeRequestRequestMoreInfoModal = ({
         onSubmit={handleSave}
         validate={validateForm(status === "moreinfo" ? moreInfoValidationSchema : genericValidationSchema)}
       >
-        <If condition={status}>
-          <DialogTitle>{statusTitles[status as IStatus]}</DialogTitle>
-        </If>
+        {status == null ? null : <DialogTitle>{statusTitles[status as IStatus]}</DialogTitle>}
         <DialogContent>
           <TextField
             value={feedbackValue}
@@ -112,22 +114,20 @@ const ChangeRequestRequestMoreInfoModal = ({
             margin="dense"
             helperText={false}
           />
-          <If condition={status === "moreinfo" && feebdackFields.length > 0}>
+          {status === "moreinfo" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
-              choices={feebdackFields}
+              choices={feedbackChoices}
               fullWidth
               margin="dense"
             />
-          </If>
+          ) : null}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button variant="contained" type="submit" disabled={isLoading}>
-            <If condition={isLoading}>
-              <CircularProgress size={18} sx={{ marginRight: 1 }} />
-            </If>
+            {isLoading ? <CircularProgress size={18} sx={{ marginRight: 1 }} /> : null}
             Update Status
           </Button>
         </DialogActions>

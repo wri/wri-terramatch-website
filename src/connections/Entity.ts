@@ -140,6 +140,8 @@ const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectU
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
+const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
+export const useLightProject = connectionHook(lightProjectConnection);
 
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);

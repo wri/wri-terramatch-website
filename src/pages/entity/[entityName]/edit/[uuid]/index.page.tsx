@@ -1,12 +1,9 @@
-import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import FrameworkProvider from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { useEntityForm } from "@/hooks/useFormGet";
+import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
 import { EntityName } from "@/types/common";
 
@@ -19,27 +16,19 @@ const EditEntityPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
+  // TODO: Once form submission to entities goes through v3, this can use the v3 entity and
+  //  will not be required to be fetched separately.
   const { data: entityData, isLoading: getEntityLoading } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
   const entity = entityData?.data ?? {}; //Do not abuse this since forms should stay entity agnostic!
 
-  const { formData: data, isLoading, loadError } = useEntityForm(entityName, entityUUID);
-  //@ts-ignore
-  const formData = (data?.data ?? {}) as GetV2FormsENTITYUUIDResponse;
-
-  if (loadError) {
-    return notFound();
-  }
-
   return (
     <BackgroundLayout>
-      <FrameworkProvider frameworkKey={entity.framework_key}>
-        <LoadingContainer loading={isLoading || getEntityLoading}>
-          <EditEntityForm {...{ entityName, entityUUID, entity, formData }} />
-        </LoadingContainer>
-        <PageFooter />
-      </FrameworkProvider>
+      <LoadingContainer loading={getEntityLoading}>
+        <EditEntityForm {...{ entityName, entityUUID, entity }} />
+      </LoadingContainer>
+      <PageFooter />
     </BackgroundLayout>
   );
 };
