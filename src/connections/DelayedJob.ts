@@ -68,20 +68,17 @@ export const useDelayedJobs = () => {
   const [, { data: login }] = useLogin({});
   const id = useId();
 
-  // Make sure to stop polling when we unmount.
-  useEffect(() => stopPolling(id), [id]);
-
-  const hasJobs = (connection[1].delayedJobs ?? []).length > 0;
-  useValueChanged(hasJobs, () => {
-    if (hasJobs) startPolling(id);
-    else stopPolling(id);
-  });
+  if ((connection[1].delayedJobs ?? []).length > 0) startPolling(id);
+  else stopPolling(id);
 
   useValueChanged(login, () => {
     // make sure we call the listDelayedJobs request at least once when we first mount if we're
     // logged in, or when we log in with a fresh user.
-    if (login != null) startPolling(id);
+    if (login != null) listDelayedJobs.fetch({});
   });
+
+  // Make sure to stop polling when we unmount.
+  useEffect(() => stopPolling(id), [id]);
 
   return connection;
 };
