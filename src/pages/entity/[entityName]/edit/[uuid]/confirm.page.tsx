@@ -36,7 +36,7 @@ const ConfirmPage = () => {
       {
         variant: "secondary",
         children: t("Add Another Site"),
-        href: `/entity/sites/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
+        href: `/entity/sites/create/${entity.framework_key}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
       { children: t("View Site"), href: getEntityDetailPageLink("sites", entityUUID) }
     ],
@@ -44,7 +44,7 @@ const ConfirmPage = () => {
       {
         variant: "secondary",
         children: t("Add Another Nursery"),
-        href: `/entity/nurseries/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
+        href: `/entity/nurseries/create/${entity.framework_key}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
       { children: t("View Nursery"), href: getEntityDetailPageLink("nurseries", entityUUID) }
     ],
