@@ -19,7 +19,7 @@ import {
 import { Dictionary, isObject } from "lodash";
 import qs, { ParsedQs } from "qs";
 import { getAccessToken, removeAccessToken } from "@/admin/apiProvider/utils/token";
-import { delayedJobsFind, DelayedJobsFindResponse } from "@/generated/v3/jobService/jobServiceComponents";
+import { delayedJobsFind } from "@/generated/v3/jobService/jobServiceComponents";
 
 export type ErrorPayload = { statusCode: number; message: string };
 export type ErrorWrapper<TError extends undefined | { payload: ErrorPayload }> =
@@ -305,13 +305,27 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
 
 const JOB_POLL_TIMEOUT = 500; // in ms
 
-async function loadJob(
-  delayedJobId: string,
-  retries = 3,
-  signal: AbortSignal | undefined
-): Promise<DelayedJobsFindResponse> {
+// JobResponse and fetchDelayedJob are here to avoid a circular import dependency
+type JobResponse = {
+  data: {
+    id: string;
+    attributes: {
+      status: "pending" | "failed" | "succeeded";
+      statusCode: number | null;
+      payload: Record<string, any> | null;
+      isAcknowledged: boolean | null;
+    };
+  };
+};
+
+const fetchDelayedJob = async (uuid: string) => {
+  const { delayedJobsFind } = await import("@/generated/v3/jobService/jobServiceComponents");
+  return (await delayedJobsFind.fetchParallel({ pathParams: { uuid } })) as JobResponse;
+};
+
+async function loadJob(delayedJobId: string, retries = 3, signal: AbortSignal | undefined): Promise<JobResponse> {
   try {
-    const response = await delayedJobsFind.fetchParallel({ pathParams: { uuid: delayedJobId } });
+    const response = await fetchDelayedJob(delayedJobId);
     const { status, payload } = response.data?.attributes ?? {};
     if (status === "failed") throw payload;
 
@@ -343,7 +357,7 @@ export async function processDelayedJob<TData>(delayedJobId: string, signal?: Ab
   const accessToken = typeof window !== "undefined" && getAccessToken();
   if (accessToken != null) headers.Authorization = `Bearer ${accessToken}`;
 
-  let jobResult: DelayedJobsFindResponse;
+  let jobResult: JobResponse;
   for (
     jobResult = await loadJob(delayedJobId, 3, signal);
     jobResult.data?.attributes?.status === "pending";
