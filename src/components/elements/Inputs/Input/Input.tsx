@@ -200,13 +200,11 @@ const Input = forwardRef(
         if (isNumber && e.target.value != null) e.target.value = e.target.value.replace(/^0+(?=\d)/, "");
         if (isDateLike && e.target.value != null) e.target.value = formatDateValue(type, e.target.value);
         onChange != null ? onChange(e) : formHook?.setValue(name, e.target.value);
-      },
-      [type, format, isDateLike, onChange, formHook, name]
-    );
 
-    const handleBlur = useCallback(() => {
-      formHook?.trigger();
-    }, [formHook]);
+        if (!hideErrorMessage && error != null) formHook?.trigger();
+      },
+      [type, format, isDateLike, onChange, formHook, name, hideErrorMessage, error]
+    );
 
     // Get the current form value and normalize it for date inputs
     const formValue = formHook?.getValues(name);
@@ -257,7 +255,6 @@ const Input = forwardRef(
             {...inputProps}
             {...registeredFormProps}
             onChange={handleChange}
-            onBlur={handleBlur}
             onKeyDown={type === "number" ? preventScientificNumbers : undefined}
             ref={registeredFormProps?.ref ?? ref}
             id={id}
