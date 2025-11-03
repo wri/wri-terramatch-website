@@ -305,7 +305,7 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
 
 const JOB_POLL_TIMEOUT = 500; // in ms
 
-// JobResponse and fetchDelayedJob are here to avoid a circular import dependency
+// JobResponse and the async import below are here to avoid a circular import dependency
 type JobResponse = {
   data: {
     id: string;
@@ -318,18 +318,10 @@ type JobResponse = {
   };
 };
 
-const fetchDelayedJob = async (uuid: string) => {
-  const { delayedJobsFind } = await import("@/generated/v3/jobService/jobServiceComponents");
-  return (await delayedJobsFind.fetchParallel({ pathParams: { uuid } })) as JobResponse;
-};
-
 async function loadJob(delayedJobId: string, retries = 3, signal: AbortSignal | undefined): Promise<JobResponse> {
   try {
-    const response = await fetchDelayedJob(delayedJobId);
-    const { status, payload } = response.data?.attributes ?? {};
-    if (status === "failed") throw payload;
-
-    return response;
+    const { delayedJobsFind } = await import("@/generated/v3/jobService/jobServiceComponents");
+    return (await delayedJobsFind.fetchParallel({ pathParams: { uuid: delayedJobId } })) as JobResponse;
   } catch (error: unknown) {
     Log.error("Delayed Job Fetch error", error);
 
@@ -368,8 +360,8 @@ export async function processDelayedJob<TData>(delayedJobId: string, signal?: Ab
   }
 
   const { status, statusCode, payload, isAcknowledged } = jobResult.data!.attributes!;
+  if (isAcknowledged) ApiSlice.pruneCache("delayedJobs", [jobResult.data!.id!]);
   if (status === "failed") throw { statusCode, ...payload };
-  else if (status === "succeeded" && isAcknowledged) ApiSlice.pruneCache("delayedJobs", [jobResult.data!.id!]);
 
   return payload as TData;
 }
