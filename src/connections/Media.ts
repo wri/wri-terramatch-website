@@ -1,5 +1,8 @@
+import exifr from "exifr";
+
 import {
-  mediaDelete, uploadFile,
+  mediaDelete,
+  uploadFile,
   UploadFileError,
   UploadFileResponse,
   UploadFileVariables
@@ -9,7 +12,7 @@ import { WithFormData } from "@/generated/v3/utils";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
-import exifr from "exifr";
+
 import { deleterAsync } from "./util/resourceDeleter";
 
 const createEntityDeleter = () => deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
