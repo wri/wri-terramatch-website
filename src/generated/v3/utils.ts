@@ -281,7 +281,11 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
     const responsePayload = await response.json();
     if (isPendingError(responsePayload)) throw responsePayload;
 
-    if (responsePayload?.data?.attributes?.uuid != null && responsePayload?.data?.type == "delayedJobs") {
+    if (
+      !url.includes("jobs/v3/delayedJobs") &&
+      responsePayload?.data?.attributes?.uuid != null &&
+      responsePayload?.data?.type == "delayedJobs"
+    ) {
       const delayedPayload = await processDelayedJob<JsonApiResponse>(responsePayload.data.attributes.uuid);
       ApiSlice.fetchSucceeded({ ...actionPayload, response: delayedPayload });
       return delayedPayload as TResponse;
