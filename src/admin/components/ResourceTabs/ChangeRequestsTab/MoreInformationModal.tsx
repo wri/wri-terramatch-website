@@ -17,6 +17,7 @@ import { validateForm } from "@/admin/utils/forms";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2AdminUpdateRequestsUUIDSTATUS } from "@/generated/apiComponents";
+import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -54,7 +55,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
   const notify = useNotify();
   const [feedbackValue, setFeedbackValue] = useState("");
   const ctx = useShowContext();
-  const [, { refetch: refetchEntity }] = useFullEntity(entity as SupportedEntity, ctx?.record?.uuid);
+  const [, { refetch: refetchEntity }] = useFullEntity(v3EntityName(entity) as SupportedEntity, ctx?.record?.uuid);
 
   const feedbackChoices = useMemo<Choice[]>(
     () =>
