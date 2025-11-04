@@ -17,6 +17,7 @@ import {
 } from "@/admin/modules/form/components/FormBuilder/types";
 import { createForm, deleteForm, loadForm, loadFormIndex, updateForm } from "@/connections/util/Form";
 import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import { Option } from "@/types/common";
 
 import { v3ErrorForRA } from "../utils/error";
@@ -27,16 +28,18 @@ export interface FormDataProvider extends Partial<DataProvider> {}
 const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderData) => {
   const uploadPromises: Promise<unknown>[] = [];
 
+  let invalidateCache = false;
   (form.sections ?? []).forEach((section, sectionIndex) => {
     const payloadSection = payload.steps[sectionIndex] ?? {};
     (section.questions ?? []).forEach((question, questionIndex) => {
       const payloadQuestion = payloadSection.fields?.[questionIndex] ?? {};
       (question.options ?? []).forEach((option, optionIndex) => {
         const payloadOption = (payloadQuestion.options?.[optionIndex] ?? {}) as Option;
-        if (payloadOption.meta?.rawFile == null) return;
+        if (payloadOption.image?.rawFile == null) return;
 
+        invalidateCache = true;
         uploadPromises.push(
-          upload(payloadOption.meta.rawFile, {
+          upload(payloadOption.image.rawFile, {
             collection: "image",
             entity: "formQuestionOptions",
             uuid: option.id
@@ -46,7 +49,13 @@ const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderDa
     });
   });
 
-  return Promise.all(uploadPromises);
+  await Promise.all(uploadPromises);
+
+  if (invalidateCache) {
+    // If we uploaded any option images, the local version of this form should be refetched from the
+    // server if it gets requested again
+    ApiSlice.pruneCache("forms", [form.uuid]);
+  }
 };
 
 export const formDataProvider: FormDataProvider = {

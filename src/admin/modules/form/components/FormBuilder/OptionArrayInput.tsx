@@ -1,5 +1,6 @@
 import { DeleteForever, UploadFile } from "@mui/icons-material";
 import { Box, IconButton, SxProps, Typography } from "@mui/material";
+import { isEmpty } from "lodash";
 import {
   ArrayInput,
   ArrayInputProps,
@@ -88,10 +89,11 @@ export const OptionArrayInput = ({
               !allowImages ||
               scopedFormData == null ||
               getSource == null ||
-              scopedFormData?.image != null ||
-              scopedFormData.imageUrl != null
-            )
+              !isEmpty(scopedFormData.image) ||
+              !isEmpty(scopedFormData.imageUrl)
+            ) {
               return null;
+            }
 
             return (
               <FileUploadInput
