@@ -43,8 +43,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const uuid = router.query.id as string;
   const { openModal, closeModal } = useModalContext();
   const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
-    // TODO: using the framework key as an access code here is really confusing and needs to be updated.
-    // Will be related to some general application cleanup that Ben is getting set up in an epic.
+    // Note: it's odd that we're using the framework key as access code. They have been made consistent
+    // in the database, and when implementing this pattern in v3, the framework should be fetched
+    // by framework key instead.
     pathParams: { accessCode: currentSubmission?.framework_key ? currentSubmission?.framework_key : "terrafund" }
   });
   //@ts-ignore
