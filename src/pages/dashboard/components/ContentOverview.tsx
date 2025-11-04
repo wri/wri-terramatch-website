@@ -118,6 +118,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setProjectUUID(filters.uuid);
   });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  const [currentCenter, setCurrentCenter] = useState<[number, number] | undefined>(undefined);
+  const [currentZoom, setCurrentZoom] = useState<number | undefined>(undefined);
   const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
   const [pendingStoryData, setPendingStoryData] = useState<any>(null);
   const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
@@ -179,19 +181,72 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   });
 
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
+
+  useEffect(() => {
+    const { map } = dashboardMapFunctions;
+    const currentMap = map.current as mapboxgl.Map;
+
+    if (!currentMap || !dashboardMapLoaded) return;
+
+    const handleMoveEnd = () => {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+    };
+
+    currentMap.on("moveend", handleMoveEnd);
+    currentMap.on("zoomend", handleMoveEnd);
+
+    return () => {
+      currentMap.off("moveend", handleMoveEnd);
+      currentMap.off("zoomend", handleMoveEnd);
+    };
+  }, [dashboardMapFunctions, dashboardMapLoaded]);
+
+  useEffect(() => {
+    const { map } = modalMapFunctions;
+    const currentMap = map.current as mapboxgl.Map;
+
+    if (!currentMap || !modalMapLoaded) return;
+
+    const handleMoveEnd = () => {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+    };
+
+    currentMap.on("moveend", handleMoveEnd);
+    currentMap.on("zoomend", handleMoveEnd);
+
+    return () => {
+      currentMap.off("moveend", handleMoveEnd);
+      currentMap.off("zoomend", handleMoveEnd);
+    };
+  }, [modalMapFunctions, modalMapLoaded]);
+
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
-    const bounds = (map.current as mapboxgl.Map).getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
+    const currentMap = map.current as mapboxgl.Map;
+    if (currentMap) {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
 
-    const clampedSwLng = clamp(sw.lng, -180, 180);
-    const clampedSwLat = clamp(sw.lat, -90, 90);
-    const clampedNeLng = clamp(ne.lng, -180, 180);
-    const clampedNeLat = clamp(ne.lat, -90, 90);
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
 
-    const modalBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
-    setCurrentBbox(modalBbox);
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+    }
   };
 
   const columnsModalImpactStories = [
@@ -251,16 +306,22 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   ];
   const ModalMap = () => {
     const { map } = dashboardMapFunctions;
-    const bounds = (map.current as mapboxgl.Map).getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
+    const currentMap = map.current as mapboxgl.Map;
 
-    const clampedSwLng = clamp(sw.lng, -180, 180);
-    const clampedSwLat = clamp(sw.lat, -90, 90);
-    const clampedNeLng = clamp(ne.lng, -180, 180);
-    const clampedNeLat = clamp(ne.lat, -90, 90);
+    let dashboardCenter: [number, number] | undefined = undefined;
+    let dashboardZoom: number | undefined = undefined;
 
-    const dashboardBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
+    if (currentMap) {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      dashboardCenter = [clampedLng, clampedLat];
+      dashboardZoom = zoom;
+    }
+
     const handleModalClose = (modalId: any) => {
       handleCloseModal();
       closeModal(modalId);
@@ -281,7 +342,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               polygonsData={polygonsData?.data as Record<string, string[]>}
               polygonsCentroids={polygonsData?.centroids}
               showImagesButton={showImagesButton}
-              bbox={dashboardBbox}
+              center={dashboardCenter || currentCenter}
+              zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
@@ -423,6 +485,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             polygonsCentroids={polygonsData?.centroids}
             showImagesButton={showImagesButton}
             bbox={currentBbox}
+            center={currentCenter}
+            zoom={currentZoom}
             selectedCountry={selectedCountry}
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}
