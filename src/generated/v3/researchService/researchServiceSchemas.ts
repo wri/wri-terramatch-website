@@ -430,15 +430,6 @@ export type ValidationSummaryDto = {
    */
   validatedPolygons: number;
   /**
-   * Summary of validation results by validation type
-   */
-  validationSummary: {
-    [key: string]: {
-      valid?: number;
-      invalid?: number;
-    };
-  };
-  /**
    * When the validation was completed
    *
    * @format date-time
