@@ -10,14 +10,11 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/util/Form";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import {
-  useGetV2ApplicationsUUID,
-  usePatchV2FormsSubmissionsUUID,
-  usePutV2FormsSubmissionsSubmitUUID
-} from "@/generated/apiComponents";
+import { useGetV2ApplicationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { ApplicationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
+import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
 
 //Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
@@ -35,8 +32,6 @@ const RequestMoreInformationPage = () => {
     queryParams: { lang: router.locale }
   });
 
-  const { mutate: updateSubmission, isSuccess, isLoading } = usePatchV2FormsSubmissionsUUID({});
-
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["v2", "applications", uuid] });
@@ -47,6 +42,8 @@ const RequestMoreInformationPage = () => {
   const submission = (applicationData?.data?.form_submissions ?? []).find(
     ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
   );
+
+  const { updateSubmission, isSuccess, isUpdating } = useSubmissionUpdate(submission?.uuid ?? "");
 
   const framework = useFramework(submission?.framework_key);
 
@@ -95,12 +92,9 @@ const RequestMoreInformationPage = () => {
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
-      updateSubmission({
-        pathParams: { uuid: submission?.uuid ?? "" },
-        body: { answers: normalizedFormData(data, fieldsProvider) }
-      });
+      updateSubmission({ answers: normalizedFormData(data, fieldsProvider) });
     },
-    [fieldsProvider, submission?.uuid, updateSubmission]
+    [fieldsProvider, updateSubmission]
   );
 
   return (
@@ -117,7 +111,7 @@ const RequestMoreInformationPage = () => {
           onBackFirstStep={router.back}
           onCloseForm={() => router.push(`/applications/${uuid}`)}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
+          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
           onSubmit={() =>
             submitFormSubmission({
               pathParams: {

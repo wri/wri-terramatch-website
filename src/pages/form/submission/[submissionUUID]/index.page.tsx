@@ -12,9 +12,10 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { usePatchV2FormsSubmissionsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
+import { usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
+import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -24,7 +25,7 @@ const SubmissionPage = () => {
   const { isLoading, formData, form } = useFormSubmission(submissionUUID);
   const application_uuid = formData?.data?.application_uuid as string;
 
-  const { mutate: updateSubmission, isSuccess, isLoading: isUpdating, error } = usePatchV2FormsSubmissionsUUID({});
+  const { updateSubmission, isSuccess, isUpdating, error } = useSubmissionUpdate(submissionUUID);
 
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess() {
@@ -97,12 +98,9 @@ const SubmissionPage = () => {
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
-      updateSubmission({
-        pathParams: { uuid: submissionUUID },
-        body: { answers: normalizedFormData(data, fieldsProvider) }
-      });
+      updateSubmission({ answers: normalizedFormData(data, fieldsProvider) });
     },
-    [fieldsProvider, submissionUUID, updateSubmission]
+    [fieldsProvider, updateSubmission]
   );
 
   return (

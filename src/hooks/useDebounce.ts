@@ -1,26 +1,23 @@
 import { useCallback, useEffect, useRef } from "react";
 
 type Timer = ReturnType<typeof setTimeout>;
-type SomeFunction = (...args: any[]) => void;
 
 // Note: func is a hook dependency and should be made stable (use useCallback)
-export function useDebounce<Func extends SomeFunction>(func: Func, delay = 500) {
+export function useDebounce<Func extends (...args: any[]) => void>(func: Func, delay = 500) {
   const timer = useRef<Timer>();
 
   useEffect(() => {
     return () => {
-      if (!timer.current) return;
-      clearTimeout(timer.current);
+      if (timer.current != null) clearTimeout(timer.current);
     };
   }, []);
 
   return useCallback(
     (...args: any[]) => {
-      const newTimer = setTimeout(() => {
+      if (timer.current != null) clearTimeout(timer.current);
+      timer.current = setTimeout(() => {
         func(...args);
       }, delay);
-      clearTimeout(timer.current);
-      timer.current = newTimer;
     },
     [delay, func]
   ) as Func;
