@@ -23,7 +23,7 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
-import { pluralEntityName } from "@/helpers/entity";
+import { pluralEntityName, v3EntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
@@ -51,7 +51,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const t = useT();
 
   const resourceName = useMemo(() => kebabCase(pluralEntityName(resource as SingularEntityName)), [resource]);
-  const v3Resource = useMemo(() => pluralEntityName(resource as SingularEntityName) as SupportedEntity, [resource]);
+  const v3Resource = useMemo(() => v3EntityName(resource as SingularEntityName) as SupportedEntity, [resource]);
   const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
