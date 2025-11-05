@@ -7,140 +7,6 @@ import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./entityServiceFetcher";
 import type * as Schemas from "./entityServiceSchemas";
 
-export type MediaBulkDeleteError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type MediaBulkDeleteResponse = {
-  meta?: {
-    /**
-     * @example media
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example media
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.MediaDto;
-  };
-};
-
-export const mediaBulkDelete = new V3ApiEndpoint<MediaBulkDeleteResponse, MediaBulkDeleteError, {}, {}>(
-  "/entities/v3/medias/bulkDelete",
-  "DELETE"
-);
-
-export type MediaDeleteError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type MediaDeleteResponse = {
-  meta?: {
-    /**
-     * @example media
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example media
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.MediaDto;
-  };
-};
-
-export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteError, {}, {}>(
-  "/entities/v3/medias/{uuid}",
-  "DELETE"
-);
-
 export type ProjectPitchIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -954,6 +820,127 @@ export type UploadFileVariables = {
 export const uploadFile = new V3ApiEndpoint<UploadFileResponse, UploadFileError, UploadFileVariables, {}>(
   "/entities/v3/files/{entity}/{uuid}/{collection}",
   "POST"
+);
+
+export type MediaBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export const mediaBulkDelete = new V3ApiEndpoint<MediaBulkDeleteResponse, MediaBulkDeleteError, {}, {}>(
+  "/entities/v3/files/bulkDelete",
+  "DELETE"
+);
+
+export type MediaDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaDeleteResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteError, {}, {}>(
+  "/entities/v3/files/{uuid}",
+  "DELETE"
 );
 
 export type TreeScientificNamesSearchQueryParams = {
@@ -2936,11 +2923,10 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
 >("/forms/v3/linkedFields", "GET");
 
 export const operationsByTag = {
-  medias: { mediaBulkDelete, mediaDelete },
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
-  fileUpload: { uploadFile },
+  files: { uploadFile, mediaBulkDelete, mediaDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },

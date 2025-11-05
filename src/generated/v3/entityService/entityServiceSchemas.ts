@@ -3,54 +3,6 @@
  *
  * @version 1.0
  */
-export type MediaDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | "organisations"
-    | "auditStatuses"
-    | "forms"
-    | "formQuestionOptions"
-    | "fundingProgrammes"
-    | "impactStories"
-    | "financialIndicators"
-    | "projectPitches"
-    | any;
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  collectionName: string;
-  url: string | null;
-  thumbUrl: string | null;
-  name: string;
-  fileName: string;
-  mimeType: string | null;
-  size: number;
-  lat: number | null;
-  lng: number | null;
-  isPublic: boolean;
-  isCover: boolean;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  description: string | null;
-  photographer: string | null;
-  createdByUserName: string | null;
-};
-
 export type ProjectPitchDto = {
   uuid: string;
   capacityBuildingNeeds: string[] | null;
@@ -149,6 +101,54 @@ export type ProjectPitchDto = {
 };
 
 export type FilterItem = {};
+
+export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+  createdByUserName: string | null;
+};
 
 export type ImpactStoryLightDto = {
   /**
