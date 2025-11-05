@@ -40,7 +40,7 @@ export const FilterControl = () => {
       </When>
       <Button
         variant="text"
-        className="text-12-bold h-fit rounded-lg bg-white px-5 py-2 shadow"
+        className="text-12-bold h-fit rounded border border-neutral-175 bg-white p-2 shadow"
         onClick={() => setShowFilters(!showFilters)}
       >
         <div className="text-12-bold flex items-center gap-2">
