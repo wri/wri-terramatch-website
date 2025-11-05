@@ -21,6 +21,7 @@ import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
 import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
+import { srpReportDataProvider } from "./SRPReportDataProvider";
 
 //@ts-ignore
 export const dataProvider = combineDataProviders(resource => {
@@ -83,7 +84,7 @@ export const dataProvider = combineDataProviders(resource => {
       return disturbanceReportDataProvider;
 
     case modules.srpReport.ResourceName:
-      return projectReportDataProvider;
+      return srpReportDataProvider;
 
     default:
       throw new Error(`Unknown resource: ${resource}`);

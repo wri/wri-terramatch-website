@@ -15,7 +15,7 @@ import {
 } from "react-admin";
 
 import { PitchDataProvider } from "@/admin/apiProvider/dataProviders/pitchDataProviders";
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
 import { Choice } from "@/admin/types/common";
@@ -106,6 +106,7 @@ export const PitchesList = () => {
       </Stack>
 
       <List actions={<ListActions onExport={handleExport} />} filters={filters(countryChoices)}>
+        <AutoResetSort />
         <ApplicationDataGrid />
       </List>
 

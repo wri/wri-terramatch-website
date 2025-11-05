@@ -48,12 +48,14 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
-  const initMap = (isDashboard?: boolean) => {
+  const initMap = (isDashboard?: boolean, initialStyle?: MapStyle) => {
     if (map.current) return;
+
+    const styleToUse = initialStyle !== undefined ? initialStyle : isDashboard ? MapStyle.Street : MapStyle.Satellite;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
-      style: isDashboard ? MapStyle.Street : MapStyle.Satellite,
+      style: styleToUse,
       zoom: zoom,
       minZoom: 2.0,
       accessToken: mapboxToken,

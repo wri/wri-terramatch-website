@@ -71,6 +71,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -78,7 +79,8 @@ import {
   setMapStyle,
   startDrawing,
   stopDrawing,
-  zoomToBbox
+  zoomToBbox,
+  zoomToCenter
 } from "./utils";
 
 interface LegendItem {
@@ -115,6 +117,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonsData?: Record<string, string[]>;
   polygonsCentroids?: any[];
   bbox?: BBox;
+  center?: [number, number];
+  zoom?: number;
+  mapStyle?: MapStyle;
+  onStyleChange?: (style: MapStyle) => void;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -203,15 +209,14 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
-  const [userChangedStyle, setUserChangedStyle] = useState(false);
-
   const {
     polygonsData,
     polygonsCentroids,
     bbox,
+    center,
+    zoom,
+    mapStyle: mapStyleProp,
+    onStyleChange,
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
@@ -220,6 +225,12 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
+    return mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
+  const [userChangedStyle, setUserChangedStyle] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -253,6 +264,7 @@ export const MapContainer = ({
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
     setUserChangedStyle(true);
+    onStyleChange?.(newStyle);
   };
   if (!mapFunctions) {
     return null;
@@ -267,7 +279,8 @@ export const MapContainer = ({
   );
 
   useOnMount(() => {
-    initMap(!!isDashboard);
+    const initialStyle = mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    initMap(!!isDashboard, initialStyle);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -379,10 +392,38 @@ export const MapContainer = ({
   });
 
   useEffect(() => {
-    if (bbox && map.current && shouldBboxZoom) {
+    if (!map.current || !styleLoaded) return;
+
+    if (mapStyleProp !== undefined) {
+      if (mapStyleProp !== currentStyle) {
+        const actualStyle = getCurrentMapStyle(map.current);
+        if (actualStyle !== mapStyleProp) {
+          setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
+        } else {
+          setCurrentStyle(mapStyleProp);
+        }
+      }
+    }
+  }, [mapStyleProp, map, currentStyle, styleLoaded]);
+
+  useEffect(() => {
+    if (!map.current || !shouldBboxZoom) return;
+
+    if (center && zoom !== undefined) {
+      const currentCenter = map.current.getCenter();
+      const currentZoom = map.current.getZoom();
+      const [lng, lat] = center;
+
+      const centerChanged = Math.abs(currentCenter.lng - lng) > 0.0001 || Math.abs(currentCenter.lat - lat) > 0.0001;
+      const zoomChanged = Math.abs(currentZoom - zoom) > 0.01;
+
+      if (centerChanged || zoomChanged) {
+        zoomToCenter(center, zoom, map.current);
+      }
+    } else if (bbox) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  }, [bbox, map, hasControls, shouldBboxZoom]);
+  }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
 
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
@@ -817,7 +858,11 @@ export const MapContainer = ({
               type="button"
               className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
               onClick={() => {
-                bbox && map.current && zoomToBbox(bbox, map.current, hasControls);
+                if (center && zoom !== undefined && map.current) {
+                  zoomToCenter(center, zoom, map.current);
+                } else if (bbox && map.current) {
+                  zoomToBbox(bbox, map.current, hasControls);
+                }
               }}
             >
               <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />

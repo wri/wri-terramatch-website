@@ -48,7 +48,6 @@ const OverviewMapArea = ({
     isMonitoring,
     editPolygon,
     shouldRefetchPolygonData,
-    setShouldRefetchPolygonData,
     setEditPolygon,
     setSelectedPolygonsInCheckbox,
     setPolygonCriteriaMap,
@@ -57,11 +56,7 @@ const OverviewMapArea = ({
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
-  const handleRefetchPolygon = () => {
-    setShouldRefetchPolygonData(true);
-  };
-  const onSave = (geojson: any) =>
-    storePolygon(geojson, entityModel, handleRefetchPolygon, setEditPolygon, refreshEntity);
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refreshEntity, refetch);
 
   const mapFunctions = useMap(onSave);
 

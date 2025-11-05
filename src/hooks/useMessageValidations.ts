@@ -99,10 +99,12 @@ export const useMessageValidators = () => {
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
           if (infoObject && typeof infoObject === "object" && "countryName" in infoObject) {
             const countryName = infoObject.countryName || "Unknown Country";
-            const country = countryChoices.find(choice => choice.id === countryName);
+            const country =
+              countryChoices.find(choice => choice.id === countryName) ??
+              countryChoices.find(choice => choice.name.toLowerCase() === countryName.toLowerCase());
             return [
               t("Target Country: The polygon should be located inside {country}", {
-                country: country?.name
+                country: country?.name ?? countryName
               })
             ];
           } else {
@@ -122,6 +124,10 @@ export const useMessageValidators = () => {
         const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
+            // Filter out deleted plantend field
+            if (info.field === "plantend") {
+              return false;
+            }
             if (!isAdmin && info.field === "planting_status") {
               return false;
             }

@@ -115,6 +115,7 @@ export type MediaDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -122,6 +123,7 @@ export type MediaDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -415,6 +417,30 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaRequestAttributes = {
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestData = {
+  type: "media";
+  attributes: MediaRequestAttributes;
+};
+
+export type MediaRequestBody = {
+  data: MediaRequestData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -449,6 +475,7 @@ export type TreeEntityTypes = {
    * @example nurseryReports
    * @example financialReports
    * @example disturbanceReports
+   * @example srpReports
    */
   ESTABLISHMENT_ENTITIES: string[];
   /**
@@ -531,6 +558,7 @@ export type DemographicDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -538,6 +566,7 @@ export type DemographicDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -571,6 +600,7 @@ export type DisturbanceDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -578,6 +608,7 @@ export type DisturbanceDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -623,6 +654,7 @@ export type EntitySideload = {
     | "siteReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "demographics"
     | "seedings"
     | "treeSpecies"
@@ -649,6 +681,7 @@ export type SupportedEntities = {
    * @example nurseryReports
    * @example financialReports
    * @example disturbanceReports
+   * @example srpReports
    */
   ENTITY_TYPES: string[];
 };
@@ -828,6 +861,7 @@ export type DisturbanceReportEntryDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -835,6 +869,7 @@ export type DisturbanceReportEntryDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -885,6 +920,41 @@ export type DisturbanceReportLightDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
+};
+
+export type SrpReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  year: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
 };
 
 export type ProjectFullDto = {
@@ -1474,6 +1544,7 @@ export type FinancialIndicatorDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1481,6 +1552,7 @@ export type FinancialIndicatorDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1507,6 +1579,7 @@ export type FundingTypeDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1514,6 +1587,7 @@ export type FundingTypeDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1645,6 +1719,59 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  media: MediaDto[];
+};
+
+export type SrpReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  year: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  title: string | null;
+  /**
+   * @format date-time
+   */
+  approvedAt: string | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  completion: number | null;
+  nothingToReport: boolean | null;
+  frameworkKey: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: string | null;
+  otherRestorationPartnersDescription: string | null;
+  totalUniqueRestorationPartners: number;
   media: MediaDto[];
 };
 
@@ -1788,6 +1915,15 @@ export type DisturbanceReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type SrpReportUpdateData = {
+  type: "srpReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1797,7 +1933,8 @@ export type EntityUpdateBody = {
     | SiteReportUpdateData
     | NurseryReportUpdateData
     | FinancialReportUpdateData
-    | DisturbanceReportUpdateData;
+    | DisturbanceReportUpdateData
+    | SrpReportUpdateData;
 };
 
 export type EntityCreateAttributes = {
@@ -1923,6 +2060,7 @@ export type SeedingDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1930,6 +2068,7 @@ export type SeedingDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1956,6 +2095,7 @@ export type TreeSpeciesDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1963,6 +2103,7 @@ export type TreeSpeciesDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -1988,6 +2129,7 @@ export type InvasiveDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1995,6 +2137,7 @@ export type InvasiveDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2017,6 +2160,7 @@ export type StrataDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -2024,6 +2168,7 @@ export type StrataDto = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
+    | "projectPitches"
     | any;
   /**
    * The entity UUID this resource is associated with.
@@ -2069,6 +2214,7 @@ export type LinkedFieldDto = {
     | "project"
     | "projectPitch"
     | "projectReport"
+    | "srpReport"
     | "site"
     | "siteReport";
   label: string;

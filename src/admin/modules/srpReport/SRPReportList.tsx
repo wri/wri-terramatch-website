@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -12,16 +12,17 @@ import {
   TextField
 } from "react-admin";
 
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
-import FrameworkSelectionDialog, { useFrameworkExport } from "@/admin/components/Dialogs/FrameworkSelectionDialog";
 import modules from "@/admin/modules";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
+import { fetchGetV2SrpReportsExport, GetV2SrpReportsExportError } from "@/generated/apiComponents";
+import { downloadFileBlob } from "@/utils/network";
+import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 
 const SRPReportDataGrid: FC = () => {
   const tableMenu = [
@@ -38,7 +39,7 @@ const SRPReportDataGrid: FC = () => {
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="projectName" label="Project" />
-      <TextField source="yearOfReport" label="Year" />
+      <TextField source="year" label="Year" />
       <DateField source="dueAt" label="Due Date" locales="en-GB" />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
       <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
@@ -51,7 +52,7 @@ const SRPReportDataGrid: FC = () => {
 };
 
 export const SRPReportList: FC = () => {
-  const frameworkInputChoices = useUserFrameworkChoices();
+  const [exporting, setExporting] = useState<boolean>(false);
   const filters = [
     <SearchInput key="search" source="search" alwaysOn className="search-page-admin" />,
 
@@ -75,10 +76,17 @@ export const SRPReportList: FC = () => {
     </ReferenceInput>
   ];
 
-  const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
-    "project-reports",
-    frameworkInputChoices
-  );
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const response = (await fetchGetV2SrpReportsExport({})) as Blob;
+      await downloadFileBlob(response, "SRPReports.csv");
+    } catch (e) {
+      throw getFormattedErrorForRA(e as GetV2SrpReportsExportError);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <>
@@ -88,11 +96,10 @@ export const SRPReportList: FC = () => {
         </Text>
       </Stack>
 
-      <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+      <List actions={<ListActions onExport={handleExport} />} filters={filters}>
+        <AutoResetSort />
         <SRPReportDataGrid />
       </List>
-
-      <FrameworkSelectionDialog {...frameworkDialogProps} />
 
       <ExportProcessingAlert show={exporting} />
     </>
