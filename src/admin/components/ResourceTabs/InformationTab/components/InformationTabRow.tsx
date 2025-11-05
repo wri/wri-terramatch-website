@@ -18,8 +18,7 @@ const asString = (v: unknown): string | undefined => (typeof v === "string" ? v 
 
 const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries({ ...props, type, entity });
-  // Default to safe empty strings when undefined to satisfy types; early return covers rendering
-  const entityName = (asSupportedEntity(entity?.entityName) ?? "projects") as SupportedEntity;
+  const entityName = asSupportedEntity(entity?.entityName) ?? "projects";
   const entityUuid = asString(entity?.entityUUID) ?? "";
   const [, { data: nurseryPlants }] = usePlants({
     entity: entityName,
