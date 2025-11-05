@@ -150,7 +150,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
           size: formatFileSize(item.size ?? 0),
           cover: item,
           public: item,
-          geoCoded: item?.lat !== 0 && item?.lng !== 0,
+          geoCoded: item?.lat != null && item?.lat !== 0 && item?.lng != null && item?.lng !== 0,
           ellipsis: item
         })
       ),
@@ -200,7 +200,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
         accessorKey: "geoCoded",
         header: `${t("GeoCoded")}`,
         cell: (props: any) =>
-          props.getValue != null ? (
+          props.getValue() ? (
             <div className="w-fit rounded bg-secondary-200 px-2 py-1">
               <Text variant="text-12-bold" className="text-green">
                 {t("Yes")}
