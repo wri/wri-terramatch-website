@@ -9,9 +9,9 @@ export const singularEntityName = (name: EntityName | SingularEntityName): Singu
   pluralize.singular(name) as SingularEntityName;
 
 export const v3Entity = (entity?: Entity) => (entity == null ? undefined : v3EntityName(entity.entityName));
-export const v3EntityName = (name: EntityName | SingularEntityName) => camelCase(pluralEntityName(name));
+export const v3EntityName = (name: EntityName | SingularEntityName) => camelCase(pluralEntityName(name)) as EntityName;
 
-export const v2EntityName = (name: EntityName | SingularEntityName) => kebabCase(pluralEntityName(name));
+export const v2EntityName = (name: EntityName | SingularEntityName) => kebabCase(pluralEntityName(name)) as EntityName;
 
 export const ReportModelNameToBaseModel = (reportModelName: ReportsModelNames, singular?: boolean) => {
   const mapping: any = {
