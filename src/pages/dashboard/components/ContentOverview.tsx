@@ -9,6 +9,8 @@ import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
+import { getCurrentMapStyle } from "@/components/elements/Map-mapbox/utils";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -120,6 +122,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
   const [currentCenter, setCurrentCenter] = useState<[number, number] | undefined>(undefined);
   const [currentZoom, setCurrentZoom] = useState<number | undefined>(undefined);
+  const [currentMapStyle, setCurrentMapStyle] = useState<MapStyle | undefined>(MapStyle.Street);
   const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
   const [pendingStoryData, setPendingStoryData] = useState<any>(null);
   const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
@@ -188,25 +191,37 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
     if (!currentMap || !dashboardMapLoaded) return;
 
-    const handleMoveEnd = () => {
+    const syncMapState = () => {
       const center = currentMap.getCenter();
       const zoom = currentMap.getZoom();
+      const style = getCurrentMapStyle(currentMap);
 
       const clampedLng = clamp(center.lng, -180, 180);
       const clampedLat = clamp(center.lat, -90, 90);
 
       setCurrentCenter([clampedLng, clampedLat]);
       setCurrentZoom(zoom);
+      if (style) {
+        setCurrentMapStyle(style);
+      }
     };
 
-    currentMap.on("moveend", handleMoveEnd);
-    currentMap.on("zoomend", handleMoveEnd);
+    syncMapState();
+
+    currentMap.on("moveend", syncMapState);
+    currentMap.on("zoomend", syncMapState);
+    currentMap.on("style.load", syncMapState);
 
     return () => {
-      currentMap.off("moveend", handleMoveEnd);
-      currentMap.off("zoomend", handleMoveEnd);
+      currentMap.off("moveend", syncMapState);
+      currentMap.off("zoomend", syncMapState);
+      currentMap.off("style.load", syncMapState);
     };
   }, [dashboardMapFunctions, dashboardMapLoaded]);
+
+  const handleDashboardStyleChange = (style: MapStyle) => {
+    setCurrentMapStyle(style);
+  };
 
   useEffect(() => {
     const { map } = modalMapFunctions;
@@ -233,6 +248,10 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       currentMap.off("zoomend", handleMoveEnd);
     };
   }, [modalMapFunctions, modalMapLoaded]);
+
+  const handleModalStyleChange = (style: MapStyle) => {
+    setCurrentMapStyle(style);
+  };
 
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
@@ -310,16 +329,23 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
     let dashboardCenter: [number, number] | undefined = undefined;
     let dashboardZoom: number | undefined = undefined;
+    let dashboardStyle: MapStyle | undefined = undefined;
 
     if (currentMap) {
       const center = currentMap.getCenter();
       const zoom = currentMap.getZoom();
+      const style = getCurrentMapStyle(currentMap);
 
       const clampedLng = clamp(center.lng, -180, 180);
       const clampedLat = clamp(center.lat, -90, 90);
 
       dashboardCenter = [clampedLng, clampedLat];
       dashboardZoom = zoom;
+      dashboardStyle = style || currentMapStyle;
+
+      if (style && style !== currentMapStyle) {
+        setCurrentMapStyle(style);
+      }
     }
 
     const handleModalClose = (modalId: any) => {
@@ -344,6 +370,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               showImagesButton={showImagesButton}
               center={dashboardCenter || currentCenter}
               zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
+              mapStyle={dashboardStyle !== undefined ? dashboardStyle : currentMapStyle}
+              onStyleChange={handleModalStyleChange}
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
@@ -487,6 +515,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             bbox={currentBbox}
             center={currentCenter}
             zoom={currentZoom}
+            mapStyle={currentMapStyle}
+            onStyleChange={handleDashboardStyleChange}
             selectedCountry={selectedCountry}
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}

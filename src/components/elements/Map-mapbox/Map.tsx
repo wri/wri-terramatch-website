@@ -71,6 +71,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -118,6 +119,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   bbox?: BBox;
   center?: [number, number];
   zoom?: number;
+  mapStyle?: MapStyle;
+  onStyleChange?: (style: MapStyle) => void;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -206,17 +209,14 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
-  const [userChangedStyle, setUserChangedStyle] = useState(false);
-
   const {
     polygonsData,
     polygonsCentroids,
     bbox,
     center,
     zoom,
+    mapStyle: mapStyleProp,
+    onStyleChange,
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
@@ -225,6 +225,12 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
+    return mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
+  const [userChangedStyle, setUserChangedStyle] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -258,6 +264,7 @@ export const MapContainer = ({
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
     setUserChangedStyle(true);
+    onStyleChange?.(newStyle);
   };
   if (!mapFunctions) {
     return null;
@@ -272,7 +279,8 @@ export const MapContainer = ({
   );
 
   useOnMount(() => {
-    initMap(!!isDashboard);
+    const initialStyle = mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    initMap(!!isDashboard, initialStyle);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -382,6 +390,21 @@ export const MapContainer = ({
       setStyleLoaded(false);
     }
   });
+
+  useEffect(() => {
+    if (!map.current || !styleLoaded) return;
+
+    if (mapStyleProp !== undefined) {
+      if (mapStyleProp !== currentStyle) {
+        const actualStyle = getCurrentMapStyle(map.current);
+        if (actualStyle !== mapStyleProp) {
+          setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
+        } else {
+          setCurrentStyle(mapStyleProp);
+        }
+      }
+    }
+  }, [mapStyleProp, map, currentStyle, styleLoaded]);
 
   useEffect(() => {
     if (!map.current || !shouldBboxZoom) return;
