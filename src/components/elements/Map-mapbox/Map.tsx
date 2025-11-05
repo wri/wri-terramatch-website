@@ -78,7 +78,8 @@ import {
   setMapStyle,
   startDrawing,
   stopDrawing,
-  zoomToBbox
+  zoomToBbox,
+  zoomToCenter
 } from "./utils";
 
 interface LegendItem {
@@ -115,6 +116,8 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonsData?: Record<string, string[]>;
   polygonsCentroids?: any[];
   bbox?: BBox;
+  center?: [number, number];
+  zoom?: number;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -212,6 +215,8 @@ export const MapContainer = ({
     polygonsData,
     polygonsCentroids,
     bbox,
+    center,
+    zoom,
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
@@ -375,10 +380,23 @@ export const MapContainer = ({
   });
 
   useEffect(() => {
-    if (bbox && map.current && shouldBboxZoom) {
+    if (!map.current || !shouldBboxZoom) return;
+
+    if (center && zoom !== undefined) {
+      const currentCenter = map.current.getCenter();
+      const currentZoom = map.current.getZoom();
+      const [lng, lat] = center;
+
+      const centerChanged = Math.abs(currentCenter.lng - lng) > 0.0001 || Math.abs(currentCenter.lat - lat) > 0.0001;
+      const zoomChanged = Math.abs(currentZoom - zoom) > 0.01;
+
+      if (centerChanged || zoomChanged) {
+        zoomToCenter(center, zoom, map.current);
+      }
+    } else if (bbox) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  }, [bbox, map, hasControls, shouldBboxZoom]);
+  }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
 
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
@@ -818,7 +836,11 @@ export const MapContainer = ({
               type="button"
               className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
               onClick={() => {
-                bbox && map.current && zoomToBbox(bbox, map.current, hasControls);
+                if (center && zoom !== undefined && map.current) {
+                  zoomToCenter(center, zoom, map.current);
+                } else if (bbox && map.current) {
+                  zoomToBbox(bbox, map.current, hasControls);
+                }
               }}
             >
               <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />

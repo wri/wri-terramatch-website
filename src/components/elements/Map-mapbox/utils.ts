@@ -899,6 +899,35 @@ export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, 
   }
 };
 
+export const zoomToCenter = (center: [number, number], zoom: number, map: mapboxgl.Map) => {
+  if (!map || !center || zoom === undefined) {
+    return;
+  }
+
+  const [lng, lat] = center;
+
+  if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+    Log.warn(
+      "zoomToCenter: Invalid geographic coordinates detected. Expected longitude between -180/180 and latitude between -90/90, but received:",
+      center
+    );
+    return;
+  }
+
+  if (zoom < 0 || zoom > 22) {
+    Log.warn("zoomToCenter: Invalid zoom level. Expected between 0 and 22, but received:", zoom);
+    return;
+  }
+
+  try {
+    map.setCenter([lng, lat]);
+    map.setZoom(zoom);
+  } catch (error) {
+    Log.warn("zoomToCenter: Error occurred while setting center and zoom:", error);
+    return;
+  }
+};
+
 export const formatPlannedStartDate = (plantStartDate: Date | null | undefined): string => {
   return plantStartDate != null
     ? plantStartDate.toLocaleDateString("en-US", {
