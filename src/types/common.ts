@@ -149,6 +149,7 @@ export type Option = {
   title: string;
   value: OptionValue;
   meta?: any;
+  image?: UploadedFile;
 };
 export type OptionValue = string | number;
 

@@ -164,7 +164,7 @@ export const FormBuilderForm = () => {
                   variant="text"
                   label="Delete Section"
                   modalTitle="Delete Section"
-                  modalContent="This is permanent, are you sure you want to delete this section?"
+                  modalContent="Are you sure you want to delete this section?"
                 >
                   <DeleteIcon />
                 </RemoveItemButton>

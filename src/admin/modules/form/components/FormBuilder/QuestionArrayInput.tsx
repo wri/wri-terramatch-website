@@ -143,7 +143,7 @@ export const QuestionArrayInput: FC<QuestionArrayInputProps> = ({
               label={`Delete ${title}`}
               onDelete={onDeleteQuestion}
               modalTitle="Delete Question"
-              modalContent="This is permanent, are you sure you want to delete this Question?"
+              modalContent="Are you sure you want to delete this Question?"
             >
               <DeleteIcon />
             </RemoveItemButton>

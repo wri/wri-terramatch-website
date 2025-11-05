@@ -1179,6 +1179,7 @@ export type NurseryFullDto = {
   nurseryReportsTotal: number | null;
   overdueNurseryReportsTotal: number | null;
   projectUuid: string | null;
+  media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   photos: MediaDto[];
@@ -1382,6 +1383,7 @@ export type NurseryReportFullDto = {
   createdByLastName: string | null;
   approvedByFirstName: string | null;
   approvedByLastName: string | null;
+  media: MediaDto[];
   file: MediaDto[];
   otherAdditionalDocuments: MediaDto[];
   treeSeedlingContributions: MediaDto[];

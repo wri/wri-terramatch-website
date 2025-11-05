@@ -123,7 +123,9 @@ function WizardForm(props: WizardFormProps) {
 
   const { onChange } = props;
   const _onChange = useDebounce(
-    useCallback(() => !formHasError.current && onChange?.(formHook.getValues()), [formHook, onChange])
+    useCallback(() => !formHasError.current && onChange?.(formHook.getValues()), [formHook, onChange]),
+    // Send an update to the server at most once per second
+    1000
   );
 
   const onSubmitStep = useCallback(

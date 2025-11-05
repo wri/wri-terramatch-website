@@ -78,5 +78,5 @@ const optionToAttributes = (option: FormQuestionOptionDto | Option): StoreFormQu
     : {
         label: option.title,
         slug: String(option.value),
-        imageUrl: option.meta.image_url
+        imageUrl: option.image?.url
       };
