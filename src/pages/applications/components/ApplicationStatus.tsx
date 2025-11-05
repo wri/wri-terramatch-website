@@ -42,14 +42,22 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const router = useRouter();
   const uuid = router.query.id as string;
   const { openModal, closeModal } = useModalContext();
-  const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE({
-    // Note: it's odd that we're using the framework key as access code. They have been made consistent
-    // in the database, and when implementing this pattern in v3, the framework should be fetched
-    // by framework key instead.
-    pathParams: { accessCode: currentSubmission?.framework_key ? currentSubmission?.framework_key : "terrafund" }
-  });
+  const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE(
+    {
+      // Note: it's odd that we're using the framework key as access code. They have been made consistent
+      // in the database, and when implementing this pattern in v3, the framework should be fetched
+      // by framework key instead.
+      pathParams: { accessCode: currentSubmission?.framework_key ?? "" }
+    },
+    {
+      enabled: currentSubmission?.framework_key != null,
+      onError() {
+        // override error toast
+      }
+    }
+  );
   //@ts-ignore
-  const terrafundReportingFramework = (data?.data || {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
+  const reportingFramework = (data?.data ?? {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
   //@ts-ignore
   const nextStage = stages?.find(s => s.uuid === currentSubmission?.next_stage_uuid);
 
@@ -151,15 +159,20 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           return {
             title: t("Status: Approved"),
             subtitle: t(
-              "Congratulations! Your application has been reviewed and approved by WRI. To start your monitoring activities, simply set up your monitoring project by clicking the button below. For additional guidance, feel free to contact WRI for further instructions or explore more information in the options provided below."
+              reportingFramework.slug == null
+                ? "Congratulations! Your application has been reviewed and approved. Please check back soon to set up your project. For additional guidance, feel free to contact your project manager for further instructions or email info@terramatch.org"
+                : "Congratulations! Your application has been reviewed and approved by WRI. To start your monitoring activities, simply set up your monitoring project by clicking the button below. For additional guidance, feel free to contact WRI for further instructions or explore more information in the options provided below."
             ),
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
-            primaryAction: {
-              children: t("Set up monitoring project"),
-              as: Link,
-              href: `/entity/projects/create/${terrafundReportingFramework.slug}?parent_name=application&parent_uuid=${application.uuid}`
-            },
+            primaryAction:
+              reportingFramework.slug == null
+                ? undefined
+                : {
+                    children: t("Set up monitoring project"),
+                    as: Link,
+                    href: `/entity/projects/create/${reportingFramework.slug}?parent_name=application&parent_uuid=${application.uuid}`
+                  },
             secondaryAction: {
               children: t("Learn More"),
               iconProps: { name: IconNames.LINK, width: 14 },
@@ -171,7 +184,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
     }
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSubmission, terrafundReportingFramework, t]);
+  }, [currentSubmission, reportingFramework, t]);
 
   if (!statusProps) return null;
 
