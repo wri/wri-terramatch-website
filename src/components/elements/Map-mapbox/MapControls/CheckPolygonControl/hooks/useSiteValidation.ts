@@ -8,7 +8,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
-import JobsSlice from "@/store/jobsSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 
 interface UseSiteValidationProps {
@@ -80,7 +79,6 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
 
     setIsLoadingDelayedJob?.(false);
     setPendingSiteValidation(false);
-    JobsSlice.reset();
   }, [
     siteUuid,
     fetchOverlapValidations,
