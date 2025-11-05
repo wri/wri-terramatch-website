@@ -12,10 +12,55 @@ import { FieldType } from "@/components/extensive/WizardForm/types";
 import { usePlants } from "@/connections/EntityAssociation";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 
+// Typed helpers para evitar any-casts y centralizar la lógica
+type SupportedCollection = "nursery-seedling" | "tree-planted" | "non-tree" | "seeds" | "replanting";
+
+interface FieldBase {
+  name: string;
+  label: string;
+  type: FieldType;
+  fieldProps?: {
+    description?: string;
+    subtitle?: string;
+    helperText?: string;
+  };
+}
+
+type FormStep = { fields: FieldBase[] };
+type FormValues = Record<string, unknown>;
+
+type TreeSpeciesValue = {
+  name?: string | null;
+  amount?: number | null;
+  taxon_id?: string | null;
+  collection?: SupportedCollection;
+};
+
+const getTreeSpeciesValues = (values: FormValues, field: FieldBase): TreeSpeciesValue[] => {
+  const raw = values?.[field?.name];
+  return Array.isArray(raw) ? (raw as TreeSpeciesValue[]) : [];
+};
+
+const findNurserySpeciesField = (steps: FormStep[], values: FormValues): FieldBase | undefined => {
+  for (const step of steps) {
+    for (const field of step?.fields ?? []) {
+      if (field?.type !== FieldType.TreeSpecies) continue;
+      const vals = getTreeSpeciesValues(values, field);
+      if (vals[0]?.collection === "nursery-seedling") return field;
+    }
+  }
+  return undefined;
+};
+
+const asSupportedEntity = (v: unknown): SupportedEntity | undefined =>
+  typeof v === "string" ? (v as SupportedEntity) : undefined;
+const asString = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+
 const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries({ ...props, type, entity });
-  const entityName = entity?.entityName as unknown as SupportedEntity;
-  const entityUuid = entity?.entityUUID as string;
+  // Default to safe empty strings when undefined to satisfy types; early return covers rendering
+  const entityName = (asSupportedEntity(entity?.entityName) ?? "projects") as SupportedEntity;
+  const entityUuid = asString(entity?.entityUUID) ?? "";
   const [, { data: nurseryPlants }] = usePlants({
     entity: entityName,
     uuid: entityUuid,
@@ -42,19 +87,11 @@ const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProp
               {(type === "nurseries" || type === "nursery-reports") && entry.type === FieldType.TreeSpecies ? (
                 <>
                   {(() => {
-                    const allFields = (props.steps ?? []).flatMap(step => step?.fields ?? []);
-                    // Prefer the TreeSpecies field whose answer collection is "nursery-seedling"
-                    const nurserySpeciesField = allFields.find((f: any) => {
-                      if (f?.type !== FieldType.TreeSpecies) return false;
-                      const fieldValues = (props.values as any)?.[f?.name];
-                      const first = Array.isArray(fieldValues) ? fieldValues[0] : undefined;
-                      return first?.collection === "nursery-seedling";
-                    }) as any;
+                    const steps = (props.steps as unknown as FormStep[]) ?? [];
+                    const values = (props.values as unknown as FormValues) ?? {};
+                    const nurseryField = findNurserySpeciesField(steps, values);
                     const currentField =
-                      nurserySpeciesField ||
-                      (allFields.find(
-                        (f: any) => f?.label === entry.title && f?.type === FieldType.TreeSpecies
-                      ) as any);
+                      nurseryField ?? steps.flatMap(s => s.fields).find(f => f.label === entry.title);
                     const question = currentField?.label;
                     return (
                       <>
