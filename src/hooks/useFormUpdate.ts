@@ -9,6 +9,7 @@ import {
   usePatchV2FormsSubmissionsUUID,
   usePutV2FormsENTITYUUID
 } from "@/generated/apiComponents";
+import { v3EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -88,7 +89,7 @@ export const useFormUpdate = (entityName: EntityName, entityUUID: string) => {
         // When an entity is updated via form, we want to forget the cached copy we might have from v3
         // so it gets re-fetched when a component needs it.
         // TODO TM-2581 Remove once we get the real update from v3.
-        pruneEntityCache(entityName, entityUUID);
+        pruneEntityCache(v3EntityName(entityName), entityUUID);
       },
       [entityName, entityUUID, mutate]
     ),

@@ -60,7 +60,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     onSuccess() {
       // When an entity is submitted via form, we want to forget the cached copy we might have from
       // v3 so it gets re-fetched when a component needs it.
-      pruneEntityCache(entityName, entityUUID);
+      // TODO TM-2581 This will hopefully no longer be true when form submission goes through v3.
+      pruneEntityCache(v3EntityName(entityName), entityUUID);
 
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));

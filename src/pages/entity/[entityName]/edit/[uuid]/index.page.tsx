@@ -16,7 +16,7 @@ const EditEntityPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  // TODO: Once form submission to entities goes through v3, this can use the v3 entity and
+  // TODO TM-2581: Once form submission to entities goes through v3, this can use the v3 entity and
   //  will not be required to be fetched separately.
   const { data: entityData, isLoading: getEntityLoading } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
