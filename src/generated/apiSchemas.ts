@@ -3625,7 +3625,6 @@ export type ProjectFullRead = {
         id?: number;
         event?: string;
         user_id?: number;
-        user_uuid?: string;
         old_values?: Record<string, any>;
         new_values?: Record<string, any>;
         created_at?: string;
@@ -4474,7 +4473,6 @@ export type AuditRead = {
   id?: number;
   event?: string;
   user_id?: number;
-  user_uuid?: string;
   old_values?: Record<string, any>;
   new_values?: Record<string, any>;
   created_at?: string;
@@ -4486,7 +4484,6 @@ export type AuditReadAll = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -4499,7 +4496,6 @@ export type AuditsPaginated = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -4552,7 +4548,6 @@ export type FormSubmissionRead = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -4737,7 +4732,6 @@ export type ApplicationRead = {
       id?: number;
       event?: string;
       user_id?: number;
-      user_uuid?: string;
       old_values?: Record<string, any>;
       new_values?: Record<string, any>;
       created_at?: string;

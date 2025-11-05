@@ -10517,7 +10517,6 @@ export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -10623,7 +10622,6 @@ export type PostV2FormsSubmissionsResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -10727,7 +10725,6 @@ export type GetV2FormsSubmissionsUUIDResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -10825,7 +10822,6 @@ export type PatchV2FormsSubmissionsUUIDResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -10971,7 +10967,6 @@ export type PostV2FormsSubmissionsUUIDNextStageResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -11076,7 +11071,6 @@ export type PutV2FormsSubmissionsSubmitUUIDResponse = {
     id?: number;
     event?: string;
     user_id?: number;
-    user_uuid?: string;
     old_values?: Record<string, any>;
     new_values?: Record<string, any>;
     created_at?: string;
@@ -11630,7 +11624,6 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
       id?: number;
       event?: string;
       user_id?: number;
-      user_uuid?: string;
       old_values?: Record<string, any>;
       new_values?: Record<string, any>;
       created_at?: string;
@@ -12244,7 +12237,6 @@ export type GetV2ApplicationsUUIDResponse = {
       id?: number;
       event?: string;
       user_id?: number;
-      user_uuid?: string;
       old_values?: Record<string, any>;
       new_values?: Record<string, any>;
       created_at?: string;
