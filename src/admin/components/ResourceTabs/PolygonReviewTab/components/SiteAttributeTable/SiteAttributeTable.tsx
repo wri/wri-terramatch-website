@@ -130,6 +130,7 @@ export default function SiteAttributeTable({
         visibleRows={10000000}
         classNameTableWrapper="!overflow-x-auto"
         serverSideData
+        classNameWrapper="!px-0"
         contentClassName={"w-[inherit] !px-0"}
         onTableStateChange={state =>
           setSorting(typeof state.sorting === "function" ? state.sorting(sorting) : state.sorting)
