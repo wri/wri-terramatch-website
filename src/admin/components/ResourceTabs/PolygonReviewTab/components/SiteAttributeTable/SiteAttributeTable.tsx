@@ -128,7 +128,7 @@ export default function SiteAttributeTable({
         variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
         hasPagination={false}
         visibleRows={10000000}
-        classNameTableWrapper="!overflow-x-auto w-[]"
+        classNameTableWrapper="!overflow-x-auto"
         serverSideData
         contentClassName={"w-[inherit]"}
         onTableStateChange={state =>

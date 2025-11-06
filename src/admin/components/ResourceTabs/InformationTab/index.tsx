@@ -202,7 +202,7 @@ const InformationTab: FC<IProps> = props => {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
-                            Saplings Grown in Nurseries:
+                            Saplings to be Grown:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                             {totalCountNurserySeedling.toLocaleString() ?? 0}
