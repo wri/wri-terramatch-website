@@ -2,7 +2,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
@@ -874,7 +873,7 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
           </When>
-          <ControlGroup position="top-right" className={classNames(isDashboard ? "top-5" : "top-[4.5rem]")}>
+          <ControlGroup position="top-right" className="top-[4.5rem]">
             <ZoomControl map={map.current} />
           </ControlGroup>
 
@@ -922,7 +921,7 @@ export const MapContainer = ({
           <When condition={!editable && !viewImages}>
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
           </When>
-          <ControlGroup position="top-right" className={classNames(isDashboard ? "top-[7.25rem]" : "top-[10.5rem]")}>
+          <ControlGroup position="top-right" className="top-[10.5rem]">
             <button
               type="button"
               className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
@@ -935,16 +934,6 @@ export const MapContainer = ({
               }}
             >
               <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
-            </button>
-          </ControlGroup>
-          <ControlGroup position="top-right" className={classNames(isDashboard ? "top-[10.5rem]" : "top-[13.75rem]")}>
-            <button
-              type="button"
-              className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
-              onClick={toggleFullscreen}
-              aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-            >
-              <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
             </button>
           </ControlGroup>
           <When condition={!isDashboard}>
