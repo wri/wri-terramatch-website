@@ -947,6 +947,18 @@ export const MapContainer = ({
               <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
             </button>
           </ControlGroup>
+          <When condition={!isDashboard}>
+            <ControlGroup position="top-right" className="top-[13.75rem]">
+              <button
+                type="button"
+                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
+                onClick={toggleFullscreen}
+                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              >
+                <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
+              </button>
+            </ControlGroup>
+          </When>
           <When condition={isEditing}>
             <ControlGroup position="top-right" className="top-[249px]">
               <TrashButton onClick={mapFunctions?.handleTrashDelete} />
