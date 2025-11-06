@@ -180,11 +180,12 @@ const WizardFormProvider: FC<PropsWithChildren<WizardFormProviderProps>> = ({
   models,
   fieldsProvider,
   orgDetails,
+  projectDetails,
   children
 }) => {
   const contextModels = useMemo(() => toArray(models), [models]);
   return (
-    <WizardFormContext.Provider value={{ models: contextModels, fieldsProvider, orgDetails }}>
+    <WizardFormContext.Provider value={{ models: contextModels, fieldsProvider, orgDetails, projectDetails }}>
       {children}
     </WizardFormContext.Provider>
   );
