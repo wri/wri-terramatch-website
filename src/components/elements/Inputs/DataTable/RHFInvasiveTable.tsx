@@ -1,17 +1,17 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getInvasiveTypeOptions } from "@/constants/options/invasives";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFInvasiveTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {}
 
 export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
@@ -26,11 +26,37 @@ export const getInvasiveTableColumns = (t: typeof useT | Function = (t: string) 
   }
 ];
 
-const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
+const getInvasiveTableQuestions = (t: typeof useT): FieldDefinition[] => [
+  {
+    label: t("Plant Species"),
+    placeholder: t("Add Species (scientific name)"),
+    name: "name",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Type"),
+    name: "type",
+    inputType: "select",
+    options: getInvasiveTypeOptions(),
+    validation: { required: true }
+  }
+];
+
+const RHFInvasiveTable: FC<PropsWithChildren<RHFInvasiveTableProps>> = props => {
   const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getInvasiveTableColumns(t),
+      steps: [{ id: "invasiveTable", fields: getInvasiveTableQuestions(t) }]
+    }),
+    [t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
     <DataTable
@@ -39,30 +65,8 @@ const RHFInvasiveTable = (props: PropsWithChildren<RHFInvasiveTableProps>) => {
       onChange={onChange}
       generateUuids={true}
       addButtonCaption={t("Add invasive")}
-      tableColumns={getInvasiveTableColumns(t)}
-      fields={[
-        {
-          label: t("Plant Species"),
-          placeholder: t("Add Species (scientific name)"),
-          name: "name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
-        },
-        {
-          label: t("Type"),
-          name: "type",
-          type: FieldType.Dropdown,
-          validation: yup.string().required(),
-          fieldProps: {
-            options: getInvasiveTypeOptions(),
-            required: true
-          }
-        }
-      ]}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

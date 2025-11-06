@@ -5,19 +5,15 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
 import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
 import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import { DemographicsCollapseGridProps, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { Entity } from "@/types/common";
-
-import { DataTableProps } from "../DataTable/DataTable";
 
 export interface RHFDemographicsTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DemographicsCollapseGridProps, "onChange" | "variant" | "type" | "entries">,
     UseControllerProps {
   demographicType: DemographicType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
-  entity: Entity;
   collection: string;
 }
 
@@ -41,7 +37,6 @@ const ensureCorrectSubtypes = (demographics: DemographicEntryDto[]) => {
 const RHFDemographicsTable = ({
   demographicType,
   onChangeCapture,
-  entity,
   collection,
   ...props
 }: PropsWithChildren<RHFDemographicsTableProps>) => {

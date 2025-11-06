@@ -146,6 +146,8 @@ const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectU
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
+const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
+export const useLightProject = connectionHook(lightProjectConnection);
 
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
@@ -286,24 +288,15 @@ export const loadCreateDisturbanceReport = connectionLoader(createDisturbanceRep
 export const useCreateDisturbanceReport = connectionHook(createDisturbanceReportConnection);
 
 // SRP Reports
-export const indexSRPReportConnection =
-  createEntityIndexConnection<SrpReportLightDto>("srpReports");
+export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
 export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
 export const useSRPReportIndex = connectionHook(indexSRPReportConnection);
-const fullSRPReportConnection = createEntityGetConnection<
-  SrpReportFullDto,
-  EntityUpdateData
->("srpReports");
-const lightSRPReportConnection = createEntityGetConnection<
-  SrpReportLightDto,
-  EntityUpdateData
->("srpReports", false);
+const fullSRPReportConnection = createEntityGetConnection<SrpReportFullDto, EntityUpdateData>("srpReports");
+const lightSRPReportConnection = createEntityGetConnection<SrpReportLightDto, EntityUpdateData>("srpReports", false);
 export const loadFullSRPReport = connectionLoader(fullSRPReportConnection);
 export const useFullSRPReport = connectionHook(fullSRPReportConnection);
 export const useLightSRPReport = connectionHook(lightSRPReportConnection);
-const srpReportListConnection = v3Resource("srpReports")
-  .list<SrpReportLightDto>()
-  .buildConnection();
+const srpReportListConnection = v3Resource("srpReports").list<SrpReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for disturbance reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.

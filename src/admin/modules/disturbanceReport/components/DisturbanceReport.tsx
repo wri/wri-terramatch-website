@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { flatMap } from "lodash";
 import { useMemo } from "react";
 import { Link, useBasename } from "react-admin";
 
@@ -8,8 +7,8 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_AIRTABLE_DASHBOARD } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 import { DISTURBANCE_PROPERTY_AFFECTED_OPTIONS, formatOptions } from "@/constants/options/disturbanceReports";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { TextVariants } from "@/types/common";
 
 import Intensity from "./Intensity";
@@ -29,7 +28,6 @@ interface DisturbanceReportProps {
   id?: string;
   index?: number;
   values?: Record<string, any>;
-  formSteps?: FormStepSchema[];
 }
 
 interface SiteAffected {
@@ -80,14 +78,14 @@ const TextEntry = ({
   );
 
 const DisturbanceReport = (props: DisturbanceReportProps) => {
-  const { values = {}, formSteps = [] } = props;
+  const { values = {} } = props;
   const basename = useBasename();
   const t = useT();
 
-  const disturbanceReportEntries = useMemo(() => {
-    const field = flatMap(formSteps, "fields").find(({ type }) => type === "disturbanceReportEntries");
-    return values[field?.name ?? ""] ?? [];
-  }, [values, formSteps]);
+  // For now, we can assume that only this linked field key is being used for this input type because it's specific to
+  // disturbance reports.
+  const entriesField = useFieldsProvider().fieldByKey("dis-rep-entries");
+  const disturbanceReportEntries = useMemo(() => values[entriesField?.name ?? ""] ?? [], [entriesField?.name, values]);
 
   const getFieldValue = (fieldName: string) => {
     const field = disturbanceReportEntries.find((f: any) => f.name === fieldName);

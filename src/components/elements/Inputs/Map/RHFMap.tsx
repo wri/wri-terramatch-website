@@ -1,17 +1,21 @@
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useEffect, useState } from "react";
+import { kebabCase } from "lodash";
+import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { FormModelType } from "@/connections/util/Form";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
+import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
+import { singularEntityName } from "@/helpers/entity";
 import ApiSlice from "@/store/apiSlice";
-import { Entity } from "@/types/common";
+import { Entity, EntityName } from "@/types/common";
 
 import { useMap } from "../../Map-mapbox/hooks/useMap";
 import { storePolygonProject } from "../../Map-mapbox/utils";
@@ -20,23 +24,21 @@ export interface RHFMapProps extends UseControllerProps, InputWrapperProps {
   onChangeCapture?: () => void;
   formHook: UseFormReturn;
   captureInterventionTypes?: boolean;
-  entity?: Entity;
-  model?: string;
-  uuid?: string;
+  model: FormModelType;
 }
 
 const RHFMap = ({
   captureInterventionTypes,
   onChangeCapture,
   formHook,
-  entity,
   model,
-  uuid,
   ...inputWrapperProps
 }: PropsWithChildren<RHFMapProps>) => {
+  const entityUUID = useFormModelUuid(model);
+  const entityName = useMemo(() => singularEntityName(kebabCase(model) as EntityName), [model]);
   const onSave = (geojson: any) => {
-    if (entity?.entityUUID && entity?.entityName) {
-      storePolygonProject(geojson, entity.entityUUID, entity.entityName, refetchData, setPolygonFromMap);
+    if (entityName != null && entityUUID != null) {
+      storePolygonProject(geojson, entityUUID, entityName, refetchData, setPolygonFromMap);
     }
   };
   const mapFunctions = useMap(onSave);
@@ -52,15 +54,15 @@ const RHFMap = ({
   const refetchData = () => {
     reloadProjectPolygonData();
     mapFunctions?.onCancel(polygonDataMap);
-    if (entity?.entityName === "project-pitch" && entity?.entityUUID) {
-      ApiSlice.pruneCache("boundingBoxes", [entity.entityUUID]);
+    if (entityName === "project-pitch" && entityUUID != null) {
+      ApiSlice.pruneCache("boundingBoxes", [entityUUID]);
     }
   };
 
   const reloadSiteDataWithBoundingBox = () => {
     reloadProjectPolygonData();
-    if (entity?.entityName === "project-pitch" && entity?.entityUUID) {
-      ApiSlice.pruneCache("boundingBoxes", [entity.entityUUID]);
+    if (entityName === "project-pitch" && entityUUID != null) {
+      ApiSlice.pruneCache("boundingBoxes", [entityUUID]);
     }
   };
 
@@ -71,21 +73,19 @@ const RHFMap = ({
   } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
-        entityType: entity?.entityName ?? "",
-        uuid: entity?.entityUUID ?? ""
+        entityType: entityName ?? "",
+        uuid: entityUUID ?? ""
       }
     },
     {
-      enabled: entity?.entityName != null && entity?.entityUUID != null,
+      enabled: entityName != null && entityUUID != null,
       staleTime: 0,
       cacheTime: 0
     }
   );
 
   const bbox = useBoundingBox(
-    entity?.entityName == "project-pitch"
-      ? { projectPitchUuid: entity?.entityUUID }
-      : { polygonUuid: polygonFromMap?.uuid }
+    entityName == "project-pitch" ? { projectPitchUuid: entityUUID } : { polygonUuid: polygonFromMap?.uuid }
   );
 
   // Ensure bbox has exactly 4 elements for BBox type
@@ -131,10 +131,11 @@ const RHFMap = ({
   }, [projectPolygon?.project_polygon?.poly_uuid]);
 
   useEffect(() => {
-    if (entity) {
+    if (entityName != null && entityUUID != null) {
+      const entity: Entity = { entityName, entityUUID };
       setSiteData(entity);
     }
-  }, [entity, setSiteData]);
+  }, [entityName, entityUUID, setSiteData]);
 
   const _onChange = (value: any) => {
     onChange(value);
@@ -162,7 +163,7 @@ const RHFMap = ({
           onGeojsonChange={_onChange}
           editable
           onError={onError}
-          captureAdditionalPolygonProperties={!!entity && entity.entityName !== "project"}
+          captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}
           mapFunctions={mapFunctions}
           showLegend={false}
           formMap={true}

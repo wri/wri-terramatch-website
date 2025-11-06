@@ -1,70 +1,49 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNotify, useRecordContext } from "react-admin";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
-import { getAccessToken } from "@/admin/apiProvider/utils/token";
-import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData, formBuilderToAttributes } from "@/admin/modules/form/components/FormBuilder/types";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { loadLinkedFields } from "@/connections/util/Form";
-import { apiBaseUrl } from "@/constants/environment";
+import { useFormCreate } from "@/connections/util/Form";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import Log from "@/utils/log";
+
+type TitleForm = {
+  title: string;
+};
 
 export const CloneForm = () => {
-  const record: any = useRecordContext();
-  const token = getAccessToken();
+  const record = useRecordContext<FormBuilderData>();
   const [open, setOpen] = useState(false);
   const notify = useNotify();
-  const formHook = useForm<any>({
+  const formHook = useForm<TitleForm>({
     defaultValues: {
       title: record.title
     }
   });
+  const [, { create, isCreating, createFailure }] = useFormCreate({});
 
   const { register, handleSubmit, formState } = formHook;
 
-  const cloneForm = async ({ title: formTitle }: any) => {
-    const { data: linkedFieldsData } = await loadLinkedFields({});
-    const formData = { ...record, title: formTitle };
-    const formBody = JSON.parse(
-      JSON.stringify(
-        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData ?? [])),
-        null,
-        2
-      )
-        .replace(/"(uuid|stage_id|id|form_id)":\s?("\w.+"|null|undefined),?/gim, "")
-        .replace(/,\n\s*(])/gim, "]")
-        .replace(/,\n\s*(})/gim, "}")
-    );
-    if (!formBody.document) {
-      delete formBody.document;
-    }
-    if (!formBody.documentation) {
-      delete formBody.documentation;
-    }
-    if (!formBody.documentation_label) {
-      delete formBody.documentation_label;
-    }
-    if (!formBody.subtitle) {
-      delete formBody.subtitle;
-    }
-    delete formBody.framework_key;
+  useRequestComplete(
+    isCreating,
+    useCallback(() => {
+      if (createFailure != null) {
+        Log.error("Form clone failed", createFailure);
+        notify("Form clone failed", { type: "error" });
+      } else {
+        notify("Form clone succeeded");
+      }
 
-    const response = await fetch(`${apiBaseUrl}/api/v2/admin/forms`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        //@ts-ignore
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify(formBody)
-    });
+      setOpen(false);
+    }, [createFailure, notify])
+  );
 
-    if (response.status === 201) {
-      notify("Successful");
-    }
-    setOpen(false);
-  };
+  const cloneForm = useCallback<SubmitHandler<TitleForm>>(
+    ({ title }) => create(formBuilderToAttributes({ ...record, title, published: false, frameworkKey: undefined })),
+    [create, record]
+  );
 
   return (
     <>

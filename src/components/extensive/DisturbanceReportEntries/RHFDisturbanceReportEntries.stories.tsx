@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm, UseFormReturn } from "react-hook-form";
 
 import { RHFDisturbanceReportEntries } from "@/components/elements/Inputs/DataTable/RHFDisturbanceReportEntries";
-import EntityProvider from "@/context/entity.provider";
+import FormField from "@/components/extensive/WizardForm/FormField";
+import WizardFormProvider, { useLocalStepsProvider } from "@/context/wizardForm.provider";
 
 const meta: Meta<typeof RHFDisturbanceReportEntries> = {
   title: "Components/Extensive/RHFDisturbanceReportEntries",
@@ -16,7 +17,7 @@ type Story = StoryObj<typeof RHFDisturbanceReportEntries>;
 
 export const Default: Story = {
   render: () => {
-    const form = useForm({
+    const formHook: UseFormReturn = useForm({
       defaultValues: {
         disturbanceReportEntries: [
           { name: "disturbance-type", value: "climatic" },
@@ -37,9 +38,22 @@ export const Default: Story = {
           },
           { name: "property-affected", value: ["seedlings", "trees"] }
         ]
-      },
+      } as any,
       mode: "onTouched"
     });
+    const onChangeCapture = () => {};
+    const provider = useLocalStepsProvider([
+      {
+        id: "step",
+        fields: [
+          {
+            inputType: "disturbanceReportEntries",
+            name: "disturbanceReportEntries",
+            label: "Disturbance Report"
+          }
+        ]
+      }
+    ]);
 
     // Lightweight fetch mock to avoid hitting real endpoints in Storybook/Storyshots
     if (typeof (globalThis as any).fetch !== "function" || !(globalThis as any).__rhf_dist_mock_fetch__) {
@@ -71,19 +85,13 @@ export const Default: Story = {
     }
 
     return (
-      <EntityProvider entityUuid="story-entity" entityName="projects" projectUuid="story-project">
-        <FormProvider {...form}>
-          <div style={{ padding: 24, background: "#fff" }}>
-            <RHFDisturbanceReportEntries
-              name="disturbanceReportEntries"
-              label="Disturbance Report"
-              control={form.control as any}
-              formHook={form as any}
-              onChangeCapture={() => {}}
-            />
-          </div>
-        </FormProvider>
-      </EntityProvider>
+      <WizardFormProvider
+        fieldsProvider={provider}
+        models={{ model: "projects", uuid: "story-entity" }}
+        projectDetails={{ uuid: "story-project" }}
+      >
+        <FormField fieldId="disturbanceReportEntries" formHook={formHook} onChange={onChangeCapture} />
+      </WizardFormProvider>
     );
   }
 };

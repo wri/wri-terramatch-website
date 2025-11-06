@@ -44,6 +44,7 @@ import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import { ReportsModelNames, Status } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 const StatusMapping: { [index: string]: Status } = {
   due: "edit",
@@ -148,15 +149,20 @@ const ReportingTaskPage = () => {
   });
 
   const reports = useMemo(() => {
-    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])].map(mapTaskReport(format)).filter(report => {
-      for (const filter of filters) {
-        const value = report[filter.filter.accessorKey as keyof TaskReport];
-        if (value !== filter.value) {
-          return false;
+    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])]
+      // TODO TM-2581 See comment in EditEntityForm's onSuccess for submit. This will not be needed
+      // once we've switched over to v3 for submission.
+      .filter(isNotNull)
+      .map(mapTaskReport(format))
+      .filter(report => {
+        for (const filter of filters) {
+          const value = report[filter.filter.accessorKey as keyof TaskReport];
+          if (value !== filter.value) {
+            return false;
+          }
         }
-      }
-      return true;
-    });
+        return true;
+      });
 
     const srpReportsMapped = srpReports?.map(mapTaskReport(format));
     setSrpReportsTableData(srpReportsMapped ?? []);
@@ -170,7 +176,7 @@ const ReportingTaskPage = () => {
       outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
       outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
     } as TaskReports;
-  }, [filters, format, nurseryReports, projectReport, siteReports]);
+  }, [filters, format, nurseryReports, projectReport, siteReports, srpReports]);
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
@@ -329,15 +335,14 @@ const ReportingTaskPage = () => {
         const { status, completion, uuid, completionStatus } = record;
         const type = "srp-report";
         const shouldShowButton =
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
-          !(type === "srp-report" || completion === 100);
+          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "srp-report" || completion === 100);
 
         const handleClick = useCallback(() => {
           nothingToReportHandler("srp-reports" as ReportsModelNames, uuid);
         }, [uuid]);
 
         return (
-          <div className="flex gap-4 justify-end">
+          <div className="flex justify-end gap-4">
             {shouldShowButton ? (
               <Button id={`nothing-to-report-button-${index}`} variant="secondary" onClick={handleClick}>
                 {t("Nothing to report")}

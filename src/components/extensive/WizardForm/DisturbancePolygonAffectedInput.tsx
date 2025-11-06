@@ -4,7 +4,7 @@ import { ControllerRenderProps } from "react-hook-form";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import { useLightDisturbanceReport } from "@/connections/Entity";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import { useEntityContext } from "@/context/entity.provider";
+import { useFormEntities } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { OptionValue } from "@/types/common";
 
@@ -25,7 +25,7 @@ export const DisturbancePolygonAffectedInput = ({
   value: polygonAffectedValue,
   field
 }: DisturbancePolygonAffectedInputProps) => {
-  const { entityUuid } = useEntityContext();
+  const entityUuid = useFormEntities()[0]?.entityUUID;
   const [, { data: disturbanceReport }] = useLightDisturbanceReport({ id: entityUuid! });
 
   const { data: polygonsData } = useAllSitePolygons({

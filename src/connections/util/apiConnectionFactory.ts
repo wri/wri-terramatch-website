@@ -1,4 +1,4 @@
-import { assign, Dictionary, isEmpty, merge } from "lodash";
+import { assign, Dictionary, isEmpty, merge, sortBy } from "lodash";
 import { createSelector } from "reselect";
 
 import { resourcesDeletedSelector } from "@/connections/util/resourceDeleter";
@@ -52,6 +52,7 @@ type Sideloads<Variables extends QueryVariables> = Required<Variables>["queryPar
 
 export type IdProp = { id?: string };
 export type IdsProp = { ids?: string[] };
+export type ParentIdProp = { parentId?: string };
 export type FilterProp<Filters> = { filter?: Filters };
 export type SideloadsProp<SideloadsType> = { sideloads?: SideloadsType };
 export type EnabledProp = {
@@ -102,6 +103,10 @@ type ResourceSelector<Props, Variables extends QueryVariables> = (
   variablesFactory: VariablesFactory<Variables, Props>,
   resource: ResourceType
 ) => (store: ApiDataStore) => StoreResource<unknown> | undefined;
+
+type ListConnectionFactoryOptions<DTO> = {
+  sortProp?: keyof DTO;
+};
 
 const resourceSelectorById =
   ({ id }: IdProp, _: unknown, resource: ResourceType) =>
@@ -314,6 +319,19 @@ export const v3Resource = <
     }).loadFailure(),
 
   /**
+   * Creates a connection that does not fetch; it pulls a single resource from the cache by ID.
+   */
+  cachedSingleResource: <DTO>() =>
+    new ApiConnectionFactory<never, DataConnection<DTO>, IdProp, never>(undefined, {
+      resource,
+      selectors: [resourceAttributesSelector<DTO, IdProp, never>(resourceSelectorById)],
+      selectorCacheKeyFactory:
+        () =>
+        ({ id }) =>
+          id ?? ""
+    }),
+
+  /**
    * Creates a connection that fetches a "full" resource from the backend (one that has
    * lightResource: false in its DTO). If the current cached copy of this resource is a light resource,
    * the connection is not complete, and the fetch will occur.
@@ -507,6 +525,29 @@ export const v3Resource = <
         () =>
         ({ ids }) =>
           ids?.join() ?? ""
+    }),
+
+  /**
+   * Creates a connection that does no fetching; it pulls a list of resources by parent ID / property from the cache.
+   */
+  listByParentId: <DTO>(parentProp: keyof DTO, { sortProp }: ListConnectionFactoryOptions<DTO> = {}) =>
+    new ApiConnectionFactory<never, ListConnection<DTO>, ParentIdProp, never>(undefined, {
+      resource,
+      selectors: [
+        ({ parentId }, _, resource) => {
+          if (parentId == null) return () => ({ data: undefined });
+          return createSelector([resourceMapSelector<DTO>(resource)], resources => {
+            const data = Object.values(resources)
+              .filter(resource => resource.attributes[parentProp] === parentId)
+              .map(({ attributes }) => attributes);
+            return sortProp == null ? { data } : { data: sortBy(data, sortProp) };
+          });
+        }
+      ],
+      selectorCacheKeyFactory:
+        () =>
+        ({ parentId }) =>
+          parentId ?? ""
     })
 });
 
@@ -636,7 +677,7 @@ class ApiConnectionFactory<
    * of body data. In that case, both must be provided. See Entity.ts for an example.
    */
   public update<Attributes extends UpdateAttributes<UpdateVariables>, UpdateVariables extends Variables>(
-    endpoint: V3ApiEndpoint<unknown, ErrorPayload, UpdateVariables>
+    updateEndpoint: V3ApiEndpoint<unknown, ErrorPayload, UpdateVariables>
   ) {
     return this.chain<UpdateConnection<Attributes>, IdProp & Props>({
       selectors: [
@@ -651,13 +692,13 @@ class ApiConnectionFactory<
           // state update, preventing some possible re-renders when the function is a dependency in useEffect.
           const update = (attributes: Attributes) => {
             if (props.id == null) return;
-            endpoint.fetch({
+            updateEndpoint.fetch({
               ...variables,
               body: { data: { type: resource, id: props.id, attributes } }
             } as unknown as UpdateVariables);
           };
           return createSelector(
-            [endpoint.isFetchingSelector(variables), endpoint.fetchFailedSelector(variables)],
+            [updateEndpoint.isFetchingSelector(variables), updateEndpoint.fetchFailedSelector(variables)],
             (isUpdating, updateFailure) => ({ isUpdating, updateFailure, update })
           );
         }

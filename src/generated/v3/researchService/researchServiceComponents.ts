@@ -784,8 +784,189 @@ export const createSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}/validation", "POST");
 
+export type CreateSitePolygonClippingPathParams = {
+  siteUuid: string;
+};
+
+export type CreateSitePolygonClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonClippingVariables = {
+  pathParams: CreateSitePolygonClippingPathParams;
+};
+
+/**
+ * Finds and clips all fixable overlapping polygons in a site (overlap ≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ */
+export const createSitePolygonClipping = new V3ApiEndpoint<
+  undefined,
+  CreateSitePolygonClippingError,
+  CreateSitePolygonClippingVariables,
+  {}
+>("/polygonClipping/v3/sites/{siteUuid}/clippedPolygons", "POST");
+
+export type CreateProjectPolygonClippingPathParams = {
+  siteUuid: string;
+};
+
+export type CreateProjectPolygonClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateProjectPolygonClippingVariables = {
+  pathParams: CreateProjectPolygonClippingPathParams;
+};
+
+/**
+ * Finds all polygons in a project (via site UUID) and clips fixable overlaps (≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ */
+export const createProjectPolygonClipping = new V3ApiEndpoint<
+  undefined,
+  CreateProjectPolygonClippingError,
+  CreateProjectPolygonClippingVariables,
+  {}
+>("/polygonClipping/v3/projects/{siteUuid}/clippedPolygons", "POST");
+
+export type CreatePolygonListClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreatePolygonListClippingVariables = {
+  body: Schemas.PolygonListClippingRequestBody;
+};
+
+/**
+ * Clips a specific list of polygons for fixable overlaps (≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ *       Does NOT modify the database or create new versions yet.
+ */
+export const createPolygonListClipping = new V3ApiEndpoint<
+  undefined,
+  CreatePolygonListClippingError,
+  CreatePolygonListClippingVariables,
+  {}
+>("/polygonClipping/v3/polygons", "POST");
+
 export const operationsByTag = {
   sitePolygons: { createSitePolygons, sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation }
+  validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation },
+  polygonClipping: { createSitePolygonClipping, createProjectPolygonClipping, createPolygonListClipping }
 };

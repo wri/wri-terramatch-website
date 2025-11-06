@@ -3,7 +3,7 @@ import { format, isValid, parse, parseISO } from "date-fns";
 export const parseDateValues = (value: any) => {
   try {
     const formattedValue = formatEntryValue(value);
-    const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
+    const parsedDate = parse(formattedValue, "dd/MM/yyyy HH:mm", new Date());
     try {
       return format(new Date(parsedDate), "yyyy-MM-dd");
     } catch (e) {

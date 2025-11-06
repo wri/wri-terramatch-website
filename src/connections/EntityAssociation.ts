@@ -69,7 +69,6 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(as
       }
 
       const { stableUrl } = getStableIndexPath(entityAssociationIndex.url, variables);
-      console.log("refetch", { props, variables, stableUrl });
       ApiSlice.pruneIndex(association, stableUrl);
     })
     .enabledProp()

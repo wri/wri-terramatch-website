@@ -12,7 +12,7 @@ import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import { fetchGetV2ReportingFrameworksAccessCodeACCESSCODE } from "@/generated/apiComponents";
 
 const schema = yup.object({
-  access_code: yup.string().label("Access Code").required()
+  accessCode: yup.string().label("Access Code").required()
 });
 
 export type FormData = yup.InferType<typeof schema>;
@@ -25,18 +25,16 @@ const ReportingFrameworkSelect = () => {
     resolver: yupResolver(schema)
   });
 
-  const onSubmitForm = (data: FormData) => {
+  const onSubmitForm = ({ accessCode }: FormData) => {
     fetchGetV2ReportingFrameworksAccessCodeACCESSCODE({
-      pathParams: {
-        accessCode: data.access_code
-      }
+      pathParams: { accessCode }
     })
       .then(data =>
         //@ts-ignore
         router.push(`/project/create/${data.data.project_form_uuid}`)
       )
       .catch(() => {
-        setError("access_code", { message: t("Invalid access code, please try again"), type: "validate" });
+        setError("accessCode", { message: t("Invalid access code, please try again"), type: "validate" });
       });
   };
 
@@ -50,11 +48,11 @@ const ReportingFrameworkSelect = () => {
           />
 
           <Input
-            {...register("access_code")}
+            {...register("accessCode")}
             type="text"
-            name="access_code"
+            name="accessCode"
             label={t("Access Code")}
-            error={formState.errors.access_code}
+            error={formState.errors.accessCode}
           />
 
           <Text variant="text-light-body-300" containHtml className="mt-7 text-center">
