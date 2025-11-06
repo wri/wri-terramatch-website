@@ -8,12 +8,12 @@ import InformationTab from "@/admin/components/ResourceTabs/InformationTab";
 import { RecordFrameworkProvider } from "@/context/framework.provider";
 
 const SRPReportShow = () => (
-  <Show actions={<ShowActions resourceName="project report" />} className="-mt-[50px] bg-neutral-100">
+  <Show actions={<ShowActions resourceName="srp report" />} className="-mt-[50px] bg-neutral-100">
     <RecordFrameworkProvider>
       <TabbedShowLayout>
-        <InformationTab type="project-reports" />
-        <ChangeRequestsTab entity="project-reports" singularEntity="project-report" />
-        <AuditLogTab entity={AuditLogButtonStates.PROJECT_REPORT} />
+        <InformationTab type="srp-reports" />
+        <ChangeRequestsTab entity="srp-reports" singularEntity="srp-report" />
+        <AuditLogTab entity={AuditLogButtonStates.SRP_REPORT} />
       </TabbedShowLayout>
     </RecordFrameworkProvider>
   </Show>

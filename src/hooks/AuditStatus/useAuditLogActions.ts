@@ -27,7 +27,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   4: "project-reports",
   5: "site-reports",
   6: "nursery-reports",
-  7: "disturbance-reports"
+  7: "disturbance-reports",
+  8: "srp-reports"
 };
 
 interface AuditLogActionsResponse {
@@ -59,13 +60,8 @@ const useAuditLogActions = ({
 }): AuditLogActionsResponse => {
   const t = useT();
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
-  const isToggleDisturbanceReport = buttonToggle === AuditLogButtonStates.DISTURBANCE_REPORT;
-  const reportEntityTypes = ReverseButtonStates2[isToggleDisturbanceReport ? buttonToggle - 1 : buttonToggle!].includes(
-    "reports"
-  )
-    ? AuditLogButtonStates.REPORT
-    : buttonToggle;
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(reportEntityTypes!);
+  const isLevelSrpReport = entityLevel === AuditLogButtonStates.SRP_REPORT;
+  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
@@ -80,9 +76,13 @@ const useAuditLogActions = ({
     isProjectReport
   });
 
-  const verifyEntity = ["reports", "nursery"].some(word =>
-    ReverseButtonStates2[isLevelDisturbanceReport ? entityLevel - 1 : entityLevel!].includes(word)
-  );
+  const verifyEntity = [
+    "project-reports",
+    "site-reports",
+    "nursery-reports",
+    "disturbance-reports",
+    "srp-reports"
+  ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   useEffect(() => {
     const fetchCheckPolygons = async () => {
@@ -120,6 +120,15 @@ const useAuditLogActions = ({
   };
 
   const entityHandlers = (() => {
+    if (isLevelSrpReport || isLevelDisturbanceReport) {
+      return {
+        selectedEntityItem: isProject ? { uuid: record.projectUuid, status: record.projectStatus } : record,
+        loadToEntity: () => {},
+        ListItemToEntity: [],
+        setSelectedToEntity: null,
+        checkPolygons: false
+      };
+    }
     if (buttonToggle == AuditLogButtonStates.PROJECT_REPORT) {
       return {
         selectedEntityItem: record,
@@ -162,7 +171,7 @@ const useAuditLogActions = ({
     isLoading
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
-      entity: ReverseButtonStates2[isToggleDisturbanceReport ? buttonToggle - 1 : buttonToggle!],
+      entity: ReverseButtonStates2[buttonToggle!],
       uuid: entityHandlers.selectedEntityItem?.uuid
     }
   });
@@ -172,9 +181,9 @@ const useAuditLogActions = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle, record, entityListItem, selected]);
 
-  const buttonStates = ReverseButtonStates2[isLevelDisturbanceReport ? entityLevel - 1 : entityLevel!];
+  const buttonStates = ReverseButtonStates2[entityLevel!];
   const getValuesStatusEntity = (() => {
-    if (buttonStates == "disturbance-reports") {
+    if (buttonStates == "disturbance-reports" || buttonStates == "srp-reports") {
       return {
         getValueForStatus: getValueForStatusDisturbanceReport,
         statusLabels: [
@@ -184,7 +193,11 @@ const useAuditLogActions = ({
           { id: "4", label: t("Approved") }
         ]
       };
-    } else if (buttonStates?.includes("Report")) {
+    } else if (
+      buttonStates?.includes("project-reports") ||
+      buttonStates?.includes("site-reports") ||
+      buttonStates?.includes("nursery-reports")
+    ) {
       return {
         getValueForStatus: getValueForStatusEntityReport,
         statusLabels: [

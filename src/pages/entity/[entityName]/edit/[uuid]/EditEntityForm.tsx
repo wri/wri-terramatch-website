@@ -78,6 +78,8 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       ? t("{orgName} Financial Report", { orgName: organisation?.name })
       : entityName === "disturbance-reports"
       ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
+      : entityName === "srp-reports"
+      ? t("{projectName} Socio-Economic Report", { projectName: entity.project.name })
       : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
