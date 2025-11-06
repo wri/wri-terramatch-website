@@ -34,7 +34,8 @@ export default function SiteAttributeTable({
   totalPages,
   pageSize,
   setCurrentPage,
-  setPageSize
+  setPageSize,
+  containerRef
 }: {
   setPolygonFromMap: (polygon: { isOpen: boolean; uuid: string }) => void;
   flyToPolygonBounds: (uuid: string) => void;
@@ -47,6 +48,7 @@ export default function SiteAttributeTable({
   pageSize: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
+  containerRef: React.RefObject<HTMLDivElement>;
 }) {
   const tableItemMenu = (props: TableItemMenuProps) => [
     {
@@ -94,7 +96,7 @@ export default function SiteAttributeTable({
   ];
 
   return (
-    <div className="mb-6 w-[inherit]">
+    <div className="mb-6 w-[inherit]" style={{ width: containerRef.current?.clientWidth }}>
       <div className="mb-4">
         <Text variant="text-16-bold" className="mb-2 text-darkCustom">
           Site Attribute Table
@@ -126,7 +128,7 @@ export default function SiteAttributeTable({
         variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
         hasPagination={false}
         visibleRows={10000000}
-        classNameTableWrapper="!overflow-x-auto lg:w-full sm:w-[50.265625rem]"
+        classNameTableWrapper="!overflow-x-auto"
         serverSideData
         contentClassName={"w-[inherit]"}
         onTableStateChange={state =>
