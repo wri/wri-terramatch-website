@@ -8,9 +8,10 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface SocioEconomicReportDataTabProps {
-  report: any;
+  report: SrpReportFullDto;
 }
 
 const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
@@ -20,14 +21,14 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
     <PageBody>
       <PageRow>
         <PageColumn>
-          <PageCard title={t("Project Report Partners - 174")} gap={8}>
+          <PageCard title={t("Socio-Economic Report Partners - 174")} gap={8}>
             {DemographicCollections.WORKDAYS_SITE.map(collection => (
               <Fragment key={collection}>
                 {collection === DemographicCollections.WORKDAYS_SITE_OTHER && (
-                  <TextField label={t("Other Activities Description")} value={report?.paidOtherActivityDescription!} />
+                  <TextField label={t("Other Activities Description")} value={report?.otherRestorationPartnersDescription!} />
                 )}
                 <DemographicsDisplay
-                  entity="projectReports"
+                  entity="srpReports"
                   uuid={report.uuid}
                   type="workdays"
                   collection={collection}

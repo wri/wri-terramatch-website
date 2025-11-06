@@ -13,6 +13,7 @@ interface AuditLogSiteTabSelectionProps {
   entityLevel?: number;
   existNurseries?: boolean;
   isAdmin?: boolean;
+  singularEntity?: string;
 }
 
 const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
@@ -22,7 +23,8 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   isReport = false,
   entityLevel,
   existNurseries = false,
-  isAdmin = false
+  isAdmin = false,
+  singularEntity
 }) => {
   const t = useT();
   const tabNames = useMemo(() => {
@@ -39,16 +41,28 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
         { index: 6, name: t("Nursery Report") }
       ];
     }
-    if (isAdmin && entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT - 1) {
+    if (isAdmin && entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT - 1 && singularEntity == "disturbance-report") {
       return [
         { index: 0, name: t("Project Status") },
         { index: 7, name: t("Disturbance Report") }
       ];
     }
-    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT) {
+    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT && singularEntity == "disturbance-report") {
       return [
         { index: 0, name: t("Project Status") },
         { index: 8, name: t("Disturbance Report") }
+      ];
+    }
+    if (isAdmin && entityLevel == AuditLogButtonStates.SRP_REPORT - 1 && singularEntity == "srp-report") {
+      return [
+        { index: 0, name: t("Project Status") },
+        { index: 8, name: t("Socio-Economic Report") }
+      ];
+    }
+    if (entityLevel == AuditLogButtonStates.SRP_REPORT && singularEntity == "srp-report") {
+      return [
+        { index: 0, name: t("Project Status") },
+        { index: 9, name: t("Srp Report") }
       ];
     }
     if (isReport) {

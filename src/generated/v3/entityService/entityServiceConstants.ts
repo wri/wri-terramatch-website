@@ -11,6 +11,8 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  SrpReportLightDto,
+  SrpReportFullDto,
   MediaDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
@@ -27,8 +29,6 @@ import {
   FinancialReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
-  SrpReportLightDto,
-  SrpReportFullDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
@@ -44,6 +44,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "srpReports",
   "media",
   "treeSpeciesScientificNames",
   "establishmentTrees",
@@ -55,7 +56,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseries",
   "financialReports",
   "disturbanceReports",
-  "srpReports",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -71,6 +71,7 @@ export type EntityServiceApiResources = {
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
   media: StoreResourceMap<MediaDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
@@ -82,7 +83,6 @@ export type EntityServiceApiResources = {
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
-  srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;

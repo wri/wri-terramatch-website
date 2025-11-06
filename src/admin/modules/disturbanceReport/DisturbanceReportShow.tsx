@@ -13,7 +13,7 @@ const DisturbanceReportShow = () => (
       <TabbedShowLayout>
         <InformationTab type="disturbance-reports" title="Disturbance Report" />
         <ChangeRequestsTab entity="disturbance-reports" singularEntity="disturbance-report" />
-        <AuditLogTab entity={AuditLogButtonStates.DISTURBANCE_REPORT - 1} />
+        <AuditLogTab entity={AuditLogButtonStates.DISTURBANCE_REPORT - 1} singularEntity="disturbance-report" />
       </TabbedShowLayout>
     </RecordFrameworkProvider>
   </Show>
