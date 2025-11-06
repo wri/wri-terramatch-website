@@ -7,7 +7,7 @@ import { useCallback, useMemo } from "react";
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { pruneEntityCache } from "@/connections/Entity";
+import { loadFullNurseryReport, loadFullSiteReport, pruneEntityCache } from "@/connections/Entity";
 import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
@@ -61,7 +61,17 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
       // When an entity is submitted via form, we want to forget the cached copy we might have from
       // v3 so it gets re-fetched when a component needs it.
       // TODO TM-2581 This will hopefully no longer be true when form submission goes through v3.
-      pruneEntityCache(v3EntityName(entityName), entityUUID);
+      const v3Entity = v3EntityName(entityName);
+      pruneEntityCache(v3Entity, entityUUID);
+      // A bit of a hacky temporary workaround for reports: if the user navigates back to the
+      // task page after submitting a site or nursery report, the report is pruned but the connection
+      // expects to find it. Therefore, let's kick off a re-fetch here right away. This should also
+      // be able to go away in TM-2581, or a subsequent ticket related to form data answers.
+      if (v3Entity === "siteReports") {
+        loadFullSiteReport({ id: entityUUID });
+      } else if (v3Entity === "nurseryReports") {
+        loadFullNurseryReport({ id: entityUUID });
+      }
 
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
