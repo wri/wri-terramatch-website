@@ -16,6 +16,7 @@ export interface VariantPagination {
   containerClassName?: string;
   textNumberNoSelected?: string;
   textNumberSelected?: string;
+  contentPerPageSelector?: string;
 }
 
 export const VARIANT_PAGINATION_DEFAULT: VariantPagination = {
@@ -62,4 +63,15 @@ export const VARIANT_PAGINATION_MONITORED: VariantPagination = {
     "bg-white !w-8 !h-8 lg:!h-9 lg:!w-9 rounded-lg border border-grey-350 flex items-center justify-center",
   contentPageSelector: "!gap-2 items-center",
   containerClassName: "!mt-3"
+};
+
+export const VARIANT_PAGINATION_POLYGON_REVIEW: VariantPagination = {
+  VariantPageText: "text-16",
+  VariantPrePageText: "text-16-bold",
+  contentPerPageSelector: "!pl-3",
+  label: "order-2",
+  value: "!w-auto h-[2.5rem] order-2 pr-3 flex gap-0 border border-grey-350 bg-white rounded-lg shadow-none",
+  labelText: "Per page",
+  iconContent: "bg-white max-w-[20px] ml-4",
+  icon: "h-3 w-3 mb-0"
 };

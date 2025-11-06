@@ -35,14 +35,11 @@ import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
-import TooltipGridMap from "./TooltipGridMap";
 
 const TOTAL_NUMBER_OF_SITES_TOOLTIP =
   "Sites are the fundamental unit for reporting data on TerraMatch. They consist of either a single restoration area or a grouping of restoration areas, represented by one or several geospatial polygons.";
 const TOTAL_HECTARES_UNDER_RESTORATION_TOOLTIP =
   "Total land area measured in hectares with active restoration interventions, tallied by the total area of polygons submitted by projects.";
-const MAP_TOOLTIP =
-  "Click on a country or project to view additional information. Zooming in on the map will display satellite imagery. Those with access to individual project pages can see approved polygons and photos.";
 const TARGET_LAND_USE_TYPES_REPRESENTED_TOOLTIP =
   "Total hectares under restoration broken down by target land use types.";
 const RESTORATION_STRATEGIES_REPRESENTED_TOOLTIP =
@@ -99,12 +96,11 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   const t = useT();
   const modalMapFunctions = useMap();
   const dashboardMapFunctions = useMap();
-  const { openModal, closeModal, setModalLoading } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
   const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(undefined);
   const [selectedLandscapes, setSelectedLandscapes] = useState<string[] | undefined>(undefined);
   const [dashboardMapLoaded, setDashboardMapLoaded] = useState(false);
-  const [modalMapLoaded, setModalMapLoaded] = useState(false);
   const [projectUUID, setProjectUUID] = useState<string | undefined>(undefined);
   const countryChoices = useGadmChoices({ level: 0 });
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -179,10 +175,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     }
   });
 
-  useValueChanged(modalMapLoaded, () => {
-    setModalLoading("modalExpand", modalMapLoaded);
-  });
-
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
 
   useEffect(() => {
@@ -227,7 +219,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     const { map } = modalMapFunctions;
     const currentMap = map.current as mapboxgl.Map;
 
-    if (!currentMap || !modalMapLoaded) return;
+    if (!currentMap) return;
 
     const handleMoveEnd = () => {
       const center = currentMap.getCenter();
@@ -247,26 +239,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       currentMap.off("moveend", handleMoveEnd);
       currentMap.off("zoomend", handleMoveEnd);
     };
-  }, [modalMapFunctions, modalMapLoaded]);
-
-  const handleModalStyleChange = (style: MapStyle) => {
-    setCurrentMapStyle(style);
-  };
-
-  const handleCloseModal = () => {
-    const { map } = modalMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
-    if (currentMap) {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
-
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      setCurrentCenter([clampedLng, clampedLat]);
-      setCurrentZoom(zoom);
-    }
-  };
+  }, [modalMapFunctions]);
 
   const columnsModalImpactStories = [
     {
@@ -323,88 +296,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
       }
     }
   ];
-  const ModalMap = () => {
-    const { map } = dashboardMapFunctions;
-    const currentMap = map.current as mapboxgl.Map;
-
-    let dashboardCenter: [number, number] | undefined = undefined;
-    let dashboardZoom: number | undefined = undefined;
-    let dashboardStyle: MapStyle | undefined = undefined;
-
-    if (currentMap) {
-      const center = currentMap.getCenter();
-      const zoom = currentMap.getZoom();
-      const style = getCurrentMapStyle(currentMap);
-
-      const clampedLng = clamp(center.lng, -180, 180);
-      const clampedLat = clamp(center.lat, -90, 90);
-
-      dashboardCenter = [clampedLng, clampedLat];
-      dashboardZoom = zoom;
-      dashboardStyle = style || currentMapStyle;
-
-      if (style && style !== currentMapStyle) {
-        setCurrentMapStyle(style);
-      }
-    }
-
-    const handleModalClose = (modalId: any) => {
-      handleCloseModal();
-      closeModal(modalId);
-    };
-    openModal(
-      "modalExpand",
-      <ModalExpand id="modalExpand" title={t("MAP")} closeModal={handleModalClose} popUpContent={MAP_TOOLTIP}>
-        <div className="shadow-lg relative w-full flex-1 overflow-hidden rounded-lg border-4 border-white">
-          <LoadingContainerOpacity loading={modalMapLoaded}>
-            <MapContainer
-              id="modal"
-              showLegend={false}
-              mapFunctions={modalMapFunctions}
-              isDashboard={"modal"}
-              className="custom-popup-close-button !h-full"
-              centroids={centroids}
-              showPopups={true}
-              polygonsData={polygonsData?.data as Record<string, string[]>}
-              polygonsCentroids={polygonsData?.centroids}
-              showImagesButton={showImagesButton}
-              center={dashboardCenter || currentCenter}
-              zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
-              mapStyle={dashboardStyle !== undefined ? dashboardStyle : currentMapStyle}
-              onStyleChange={handleModalStyleChange}
-              selectedCountry={selectedCountry}
-              selectedLandscapes={selectedLandscapes}
-              setLoader={setModalMapLoaded}
-              projectUUID={projectUUID}
-              hasAccess={hasAccess}
-              dashboardContext={{
-                setFilters,
-                dashboardCountries,
-                isDashboard: "modal"
-              }}
-            />
-          </LoadingContainerOpacity>
-          <TooltipGridMap label="Angola" learnMore={true} />
-          <When condition={!projectUUID}>
-            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
-              <div className="flex gap-2">
-                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
-                <Text variant="text-12" className="text-darkCustom">
-                  {t("Non-Profit Projects ({count})", { count: projectCounts?.totalNonProfitCount ?? 0 })}
-                </Text>
-              </div>
-              <div className="flex items-center gap-2">
-                <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-blue-50" />
-                <Text variant="text-12" className="text-darkCustom">
-                  {t("Enterprise Projects ({count})", { count: projectCounts?.totalEnterpriseCount ?? 0 })}
-                </Text>
-              </div>
-            </div>
-          </When>
-        </div>
-      </ModalExpand>
-    );
-  };
 
   const ModalTable = () => {
     openModal(
@@ -486,20 +377,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   return (
     <ContentDashboardtWrapper isLeftWrapper={false}>
       <div className="shadow-lg relative w-full rounded-lg border-4 border-white mobile:order-2">
-        <Button
-          className="absolute right-5 top-6 z-10 mobile:hidden"
-          variant="white-button-map"
-          onClick={() => {
-            ModalMap();
-          }}
-        >
-          <div className="flex items-center gap-1">
-            <Icon name={IconNames.EXPAND} className="h-[14px] w-[14px]" />
-            <Text variant="text-16-bold" className="capitalize text-blueCustom-900">
-              {t("Expand")}
-            </Text>
-          </div>
-        </Button>
         <LoadingContainerOpacity loading={dashboardMapLoaded}>
           <MapContainer
             id="dashboard"
@@ -525,7 +402,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
         </LoadingContainerOpacity>
         <When condition={!projectUUID}>
-          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded border border-neutral-175 bg-white px-4 py-2 mobile:hidden">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">

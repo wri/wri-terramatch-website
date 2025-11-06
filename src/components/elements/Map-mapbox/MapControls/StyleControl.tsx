@@ -23,7 +23,7 @@ export const StyleControl = ({
       <button
         onClick={() => setMapStyle(MapStyle.Street, map, setCurrentStyle, currentStyle)}
         className={classNames(
-          "h-fit w-21 rounded-l-lg py-2",
+          "h-fit w-21 rounded-l border border-neutral-175 bg-white py-2",
           currentStyle === MapStyle.Street ? "text-body-500" : "text-body-400"
         )}
         aria-label="Map street style"
@@ -34,7 +34,7 @@ export const StyleControl = ({
       <button
         onClick={() => setMapStyle(MapStyle.Satellite, map, setCurrentStyle, currentStyle)}
         className={classNames(
-          "h-fit w-21 rounded-r-lg py-2",
+          "h-fit w-21 rounded-r border border-neutral-175 bg-white py-2",
           currentStyle === MapStyle.Satellite ? "text-body-500" : "text-body-400"
         )}
         aria-label="Map satellite style"
