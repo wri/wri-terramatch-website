@@ -13,7 +13,7 @@ const SRPReportShow = () => (
       <TabbedShowLayout>
         <InformationTab type="srp-reports" />
         <ChangeRequestsTab entity="srp-reports" singularEntity="srp-report" />
-        <AuditLogTab entity={AuditLogButtonStates.SRP_REPORT - 1} singularEntity="srp-report" />
+        <AuditLogTab entity={AuditLogButtonStates.SRP_REPORT} />
       </TabbedShowLayout>
     </RecordFrameworkProvider>
   </Show>

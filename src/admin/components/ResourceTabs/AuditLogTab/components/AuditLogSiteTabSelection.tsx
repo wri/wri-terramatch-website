@@ -13,7 +13,6 @@ interface AuditLogSiteTabSelectionProps {
   entityLevel?: number;
   existNurseries?: boolean;
   isAdmin?: boolean;
-  singularEntity?: string;
 }
 
 const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
@@ -23,8 +22,7 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   isReport = false,
   entityLevel,
   existNurseries = false,
-  isAdmin = false,
-  singularEntity
+  isAdmin = false
 }) => {
   const t = useT();
   const tabNames = useMemo(() => {
@@ -41,28 +39,16 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
         { index: 6, name: t("Nursery Report") }
       ];
     }
-    if (isAdmin && entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT - 1 && singularEntity == "disturbance-report") {
+    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT) {
       return [
         { index: 0, name: t("Project Status") },
         { index: 7, name: t("Disturbance Report") }
       ];
     }
-    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT && singularEntity == "disturbance-report") {
-      return [
-        { index: 0, name: t("Project Status") },
-        { index: 8, name: t("Disturbance Report") }
-      ];
-    }
-    if (isAdmin && entityLevel == AuditLogButtonStates.SRP_REPORT - 1 && singularEntity == "srp-report") {
+    if (entityLevel == AuditLogButtonStates.SRP_REPORT) {
       return [
         { index: 0, name: t("Project Status") },
         { index: 8, name: t("Socio-Economic Report") }
-      ];
-    }
-    if (entityLevel == AuditLogButtonStates.SRP_REPORT && singularEntity == "srp-report") {
-      return [
-        { index: 0, name: t("Project Status") },
-        { index: 9, name: t("Srp Report") }
       ];
     }
     if (isReport) {
@@ -77,7 +63,7 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       tabs.push(t("Nursery Status"));
     }
     return tabs;
-  }, [framework, isReport, entityLevel, existNurseries, t, isAdmin]);
+  }, [framework, isReport, entityLevel, existNurseries, t]);
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       {tabNames.map((tab: any, index) => {

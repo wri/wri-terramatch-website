@@ -7,6 +7,7 @@ import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTa
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
+import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -15,7 +16,6 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
-import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 
 interface ReportingTasksProps {
   srpReport: any;
@@ -71,7 +71,6 @@ const AuditLog = ({ label, srpReport, refresh: refreshSite, enableChangeStatus, 
                     setButtonToggle={setButtonToggle}
                     framework={srpReport?.frameworkKey as string}
                     entityLevel={AuditLogButtonStates.SRP_REPORT}
-                    singularEntity="srp-report"
                   />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
