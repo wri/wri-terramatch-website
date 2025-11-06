@@ -6,7 +6,17 @@ import clsx from "clsx";
 import get from "lodash/get";
 import { useRecordContext } from "ra-core";
 import * as React from "react";
-import { Children, cloneElement, MouseEvent, MouseEventHandler, useCallback, useMemo, useRef } from "react";
+import {
+  Children,
+  cloneElement,
+  FC,
+  MouseEvent,
+  MouseEventHandler,
+  ReactElement,
+  useCallback,
+  useMemo,
+  useRef
+} from "react";
 import {
   AddItemButton as DefaultAddItemButton,
   FormDataConsumer,
@@ -21,7 +31,13 @@ import { UseFieldArrayReturn } from "react-hook-form";
 
 import { AccordionFormIteratorItem } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorItem";
 
-export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
+export interface AccordionFormIteratorProps extends SimpleFormIteratorProps, Partial<UseFieldArrayReturn> {
+  accordionSummaryTitle: (index: number, fields: any[]) => string;
+  summaryChildren?: React.ReactNode;
+  addItemFactory?: () => any;
+}
+
+export const AccordionFormIterator: FC<AccordionFormIteratorProps> = props => {
   const {
     addButton = <DefaultAddItemButton />,
     removeButton,
@@ -38,7 +54,8 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
     getItemLabel = false,
     fullWidth,
     sx,
-    summaryChildren
+    summaryChildren,
+    addItemFactory
   } = props;
 
   const { append, fields, move, remove } = useArrayInput(props);
@@ -61,35 +78,29 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
     for (const k in initialDefaultValue.current) initialDefaultValue.current[k] = "";
   }
 
-  const addField = useCallback(
-    (item: any = undefined) => {
-      let defaultValue = item;
-      if (item == null) {
-        defaultValue = initialDefaultValue.current;
-        if (
-          Children.count(children) === 1 &&
-          React.isValidElement(Children.only(children)) &&
-          // @ts-ignore
-          !Children.only(children).props.source
-        ) {
-          // ArrayInput used for an array of scalar values
-          // (e.g. tags: ['foo', 'bar'])
-          defaultValue = "";
-        } else {
-          // ArrayInput used for an array of objects
-          // (e.g. authors: [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Doe' }])
-          defaultValue = defaultValue || ({} as Record<string, unknown>);
-          Children.forEach(children, input => {
-            if (React.isValidElement(input) && input.type !== FormDataConsumer && input.props.source) {
-              defaultValue[input.props.source] = input.props.defaultValue ?? "";
-            }
-          });
+  const addField = useCallback(() => {
+    if (addItemFactory != null) {
+      append(addItemFactory());
+    } else if (
+      Children.count(children) === 1 &&
+      React.isValidElement(Children.only(children)) &&
+      (Children.only(children)! as ReactElement).props.source == null
+    ) {
+      // ArrayInput used for an array of scalar values
+      // (e.g. tags: ['foo', 'bar'])
+      append("");
+    } else {
+      // ArrayInput used for an array of objects
+      // (e.g. authors: [{ firstName: 'John', lastName: 'Doe' }, { firstName: 'Jane', lastName: 'Doe' }])
+      const defaultValue = initialDefaultValue.current ?? ({} as Record<string, unknown>);
+      Children.forEach(children, input => {
+        if (React.isValidElement(input) && input.type !== FormDataConsumer && input.props.source) {
+          defaultValue[input.props.source] = input.props.defaultValue ?? "";
         }
-      }
+      });
       append(defaultValue);
-    },
-    [append, children]
-  );
+    }
+  }, [addItemFactory, append, children]);
 
   // add field and call the onClick event of the button passed as addButton prop
   const handleAddButtonClick = (originalOnClickHandler: MouseEventHandler) => (event: MouseEvent) => {
@@ -162,11 +173,6 @@ export const AccordionFormIterator = (props: AccordionFormIteratorProps) => {
     </SimpleFormIteratorContext.Provider>
   ) : null;
 };
-
-export interface AccordionFormIteratorProps extends SimpleFormIteratorProps, Partial<UseFieldArrayReturn> {
-  accordionSummaryTitle: (index: number, fields: any[]) => string;
-  summaryChildren?: React.ReactNode;
-}
 
 const Root = styled("div", {
   name: SimpleFormIteratorPrefix,

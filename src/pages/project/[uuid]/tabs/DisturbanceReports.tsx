@@ -1,8 +1,6 @@
 import { useT } from "@transifex/react";
 import { useEffect, useRef } from "react";
 
-import Button from "@/components/elements/Button/Button";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -16,7 +14,7 @@ interface DisturbanceReportsProps {
 
 const DisturbanceReportsTab = ({ projectUUID }: DisturbanceReportsProps) => {
   const t = useT();
-  const [, { isCreating, createFailure, refetch, create }] = useCreateDisturbanceReport({
+  const [, { isCreating, createFailure, refetch }] = useCreateDisturbanceReport({
     parentUuid: projectUUID
   });
 

@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { FC } from "react";
 
 import PageSelector, { PageSelectorProps } from "./PageSelector";
 import { VariantPagination } from "./PaginationVariant";
@@ -28,9 +29,16 @@ function getPageSizeOptions(galleryType?: string) {
   return [5, 10, 15, 20, 50];
 }
 
-function Pagination(props: PaginationProps) {
+const Pagination: FC<PaginationProps> = ({
+  hasPageSizeSelector,
+  galleryType,
+  defaultPageSize,
+  invertSelect,
+  setPageSize,
+  ...props
+}) => {
   const t = useT();
-  const pageSizeOptions = getPageSizeOptions(props.galleryType);
+  const pageSizeOptions = getPageSizeOptions(galleryType);
   return (
     <div
       className={classNames(
@@ -39,26 +47,26 @@ function Pagination(props: PaginationProps) {
         props.variant?.containerClassName
       )}
     >
-      {props.hasPageSizeSelector ? (
+      {hasPageSizeSelector ? (
         <PerPageSelector
           label={t(props.variant?.labelText) || t("Per page")}
           options={pageSizeOptions}
           variantText={props.variant?.VariantPrePageText}
-          defaultValue={props.defaultPageSize}
-          onChange={props.setPageSize!}
-          invertSelect={props.invertSelect}
+          defaultValue={defaultPageSize}
+          onChange={setPageSize!}
+          invertSelect={invertSelect}
           variant={props.variant}
         />
       ) : (
         <div />
       )}
-      {props.hasPageSizeSelector ? (
+      {hasPageSizeSelector ? (
         <PageSelector variantText={props.variant?.VariantPageText} {...props} variant={props.variant} />
       ) : (
         <div />
       )}
     </div>
   );
-}
+};
 
 export default Pagination;

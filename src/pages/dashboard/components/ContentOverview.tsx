@@ -656,14 +656,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         ) : transformedStories.length > 0 ? (
           <div className="-mr-2 max-h-[513px] overflow-scroll pr-2 lg:max-h-[520px] wide:max-h-[560px]">
             <List
-              items={transformedStories}
+              items={
+                transformedStories as {
+                  thumbnail?: string;
+                  title: string;
+                  organization: { name: string; country: string };
+                }[]
+              }
               render={item => (
                 <button
                   onClick={() => ModalStoryOpen(item)}
                   className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
                 >
                   <img
-                    src={item.thumbnail || "/images/no-image-available.png"}
+                    src={item.thumbnail ?? "/images/no-image-available.png"}
                     alt={item.title}
                     className="h-20 w-20 rounded-md object-cover"
                   />

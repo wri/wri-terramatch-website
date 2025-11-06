@@ -1,8 +1,45 @@
 import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import * as yup from "yup";
+
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { Framework } from "@/context/framework.provider";
 
 export const UrlRegex =
   /^(https?:\/\/)?((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-z\d%_.~+]*)*(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?(\/.+)?$/gi;
 
-export const urlValidation = (t: typeof useT) =>
+type ValidatorFactory = (field: FieldDefinition, t: typeof useT, framework: Framework) => yup.AnySchema | undefined;
+
+export const addValidationWith =
+  (factory: ValidatorFactory) =>
+  (validations: Dictionary<yup.AnySchema>, field: FieldDefinition, t: typeof useT, framework: Framework) => {
+    const validator = factory(field, t, framework);
+    if (validator != null) validations[field.name] = validator;
+  };
+
+export const urlValidator = (_: FieldDefinition, t: typeof useT) =>
   yup.string().matches(UrlRegex, { message: t("URL is not valid."), excludeEmptyString: true });
+
+export const arrayValidator = ({ validation }: FieldDefinition) => {
+  let validator = yup.array();
+  if (validation?.required === true) {
+    const min = validation?.min ?? 1;
+    validator = validator.min(min);
+  }
+  return validator;
+};
+
+export const stringValidator = () => yup.string();
+
+export const selectValidator = ({ multiChoice, validation }: FieldDefinition) => {
+  if (multiChoice) {
+    const validator = yup.array(yup.string().required());
+    return validation?.required === true ? validator.min(1) : validator;
+  } else {
+    return yup.string();
+  }
+};
+
+export const objectValidator = () => yup.object();
+
+export const booleanValidator = () => yup.boolean();

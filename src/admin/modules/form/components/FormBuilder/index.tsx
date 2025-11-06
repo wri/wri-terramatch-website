@@ -1,10 +1,10 @@
 import { Delete as DeleteIcon, ExpandMore, UploadFile } from "@mui/icons-material";
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from "@mui/material";
-import { camelCase, get } from "lodash";
-import { useMemo, useState } from "react";
+import { camelCase } from "lodash";
+import { useCallback, useMemo, useState } from "react";
 import { ArrayInput, DateTimeInput, maxLength, minLength, required, SelectInput, TextInput } from "react-admin";
 import { useFormContext } from "react-hook-form";
-import { When } from "react-if";
+import { v4 as uuidv4 } from "uuid";
 
 import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/AccordionFormIterator";
 import {
@@ -19,12 +19,15 @@ import {
   appendAdditionalFormQuestionFields,
   QuestionArrayInput
 } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { maxFileSize } from "@/admin/utils/forms";
-import { FormType, useLinkedFields } from "@/connections/util/Form";
-import { useDeleteV2AdminFormsQuestionUUID, useDeleteV2AdminFormsSectionUUID } from "@/generated/apiComponents";
-import { FormRead, FormSectionRead } from "@/generated/apiSchemas";
+import { StepDefinition } from "@/components/extensive/WizardForm/types";
+import { FormModelType, useLinkedFields } from "@/connections/util/Form";
+import { LocalStep } from "@/context/wizardForm.provider";
+import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 
-export const formTypeChoices = [
+type FormType = (typeof Forms.FORM_TYPES)[number];
+export const formTypeChoices: { id: FormType; name: string }[] = [
   { id: "application", name: "Application" },
   { id: "project", name: "Project" },
   { id: "site", name: "Site" },
@@ -36,49 +39,42 @@ export const formTypeChoices = [
   { id: "disturbance-report", name: "Disturbance Report" }
 ];
 
+const toFormModelType = (formTypeChoice: string) => {
+  const singular = camelCase(formTypeChoice);
+  if (singular === "projectPitch") return "projectPitches";
+  if (singular === "nursery") return "nurseries";
+  return `${singular}s` as FormModelType;
+};
+
 export const FormBuilderForm = () => {
-  const { getValues, watch } = useFormContext<FormRead>();
-  const formTypeValue = watch("type");
-  const formTypes = useMemo(
-    () =>
-      formTypeValue
-        ?.replace("application", "organisation,project-pitch")
-        ?.split(",")
-        .map(formType => camelCase(formType)) as FormType[],
-    [formTypeValue]
+  const { getValues, watch } = useFormContext<FormBuilderData>();
+  const modelTypeValue = watch("type");
+  const formModelTypes = useMemo(
+    () => modelTypeValue?.replace("application", "organisation,project-pitch")?.split(",").map(toFormModelType),
+    [modelTypeValue]
   );
 
-  const { mutateAsync: deleteSection } = useDeleteV2AdminFormsSectionUUID();
-  const { mutateAsync: deleteQuestion } = useDeleteV2AdminFormsQuestionUUID();
-  const [previewSection, setPreviewSection] = useState<FormSectionRead>();
+  const [previewSectionId, setPreviewSectionId] = useState<string>();
+  const onSelectPreview = useCallback(
+    (field: Record<any, any>) => setPreviewSectionId((field as StepDefinition).id),
+    []
+  );
 
-  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: formTypeValue != null, formTypes: formTypes });
+  const [, { data: linkedFieldsData }] = useLinkedFields({ enabled: modelTypeValue != null, formModelTypes });
   const fullLinkedFields = useMemo(
     () => appendAdditionalFormQuestionFields(linkedFieldsData ?? []),
     [linkedFieldsData]
   );
 
-  const DeleteSection = async (index: number, source: string) => {
-    const values = getValues();
-    //@ts-ignore
-    const uuid = get(values, source)[index]?.uuid;
-
-    if (uuid) {
-      //@ts-ignore
-      await deleteSection({ pathParams: { uuid } });
-    }
-  };
-
-  const DeleteQuestion = async (index: number, source: string) => {
-    const values = getValues();
-    //@ts-ignore
-    const uuid = get(values, source)[index]?.uuid;
-
-    if (uuid) {
-      //@ts-ignore
-      await deleteQuestion({ pathParams: { uuid } });
-    }
-  };
+  const createStep = useCallback(
+    (): LocalStep => ({
+      id: `new-step-${uuidv4()}`,
+      title: "",
+      description: "",
+      fields: []
+    }),
+    []
+  );
 
   return (
     <>
@@ -87,11 +83,11 @@ export const FormBuilderForm = () => {
         source="type"
         choices={formTypeChoices}
         fullWidth
-        disabled={!!formTypeValue}
+        disabled={modelTypeValue != null}
         helperText="If you choose the incorrect form type and need to switch, please return to the previous page and start a new form. This ensures you won't lose any data by altering the form type midway through the creation process."
         sx={{ marginBottom: 6 }}
       />
-      <When condition={!!formTypeValue}>
+      {modelTypeValue == null ? null : (
         <>
           <div>
             <Accordion className="w-full">
@@ -117,7 +113,7 @@ export const FormBuilderForm = () => {
                   source="banner"
                   label="Upload Banner Images"
                   validate={[required(), maxFileSize(1)]}
-                  isRequired
+                  isRequired={true}
                   accept={["image/png", "image/svg+xml", "image/jpeg"]}
                   placeholder={
                     <Box paddingY={2}>
@@ -134,7 +130,7 @@ export const FormBuilderForm = () => {
                   }
                 />
                 <TextInput
-                  source="documentation_label"
+                  source="documentationLabel"
                   label="Download Button Title"
                   helperText="Please use the download button title to label the button on the first page of the form. This is typically used to enable project developers to download a PDF containing the form questions."
                   validate={[maxLength(25)]}
@@ -148,7 +144,7 @@ export const FormBuilderForm = () => {
                   fullWidth
                 />
                 <DateTimeInput
-                  source="deadline_at"
+                  source="deadlineAt"
                   label="Deadline(Date)"
                   helperText="Please set a deadline (date and time in Eastern Standard Time) for project developers to complete this form. The deadline will be displayed on the first page of the form and will be automatically adjusted based on the project developers' respective time zones. This field is optional; however, if you are creating a form for an application, it is strongly advised to include a deadline."
                   fullWidth
@@ -156,50 +152,45 @@ export const FormBuilderForm = () => {
               </AccordionDetails>
             </Accordion>
           </div>
-          <ArrayInput
-            source="form_sections"
-            label="Form Sections"
-            validate={minLength(1, "At least one section is required")}
-          >
+          <ArrayInput source="steps" label="Form Sections" validate={minLength(1, "At least one section is required")}>
             <AccordionFormIterator
               accordionSummaryTitle={(index, fields) =>
                 `Section ${index + 1} of ${fields.length} ${fields[index].title && `(${fields[index].title})`}`
               }
               addButton={<AddItemButton variant="contained" label="Add Section" />}
+              addItemFactory={createStep}
               removeButton={
                 <RemoveItemButton
                   variant="text"
                   label="Delete Section"
-                  onDelete={DeleteSection}
                   modalTitle="Delete Section"
-                  modalContent="This is permanent, are you sure you want to delete this section?"
+                  modalContent="Are you sure you want to delete this section?"
                 >
                   <DeleteIcon />
                 </RemoveItemButton>
               }
-              summaryChildren={<PreviewButton onClick={setPreviewSection} />}
+              summaryChildren={<PreviewButton onClick={onSelectPreview} />}
             >
               <TextInput
                 source="title"
-                label="Form Title"
+                label="Section Title"
                 helperText="The section will be displayed on the form and is used to group questions that belong to the same category together. For example: 'Organizational Details.' This helps in organizing and presenting related questions for better clarity and efficiency."
                 fullWidth
                 validate={required()}
               />
               <RichTextInput
                 source="description"
-                label="Form Description"
+                label="Section Description"
                 helperText="Please add a description to the category. This will assist project developers in understanding the type of questions that fall under that category, providing them with context and guidance."
                 disableLevelSelect
                 disableHorizontalLine
               />
 
               <QuestionArrayInput
-                source="form_questions"
+                source="fields"
                 label="Form Questions"
                 title="Question"
                 linkedFieldsData={fullLinkedFields}
-                onDeleteQuestion={DeleteQuestion}
                 validate={minLength(1, "At least one question is required")}
                 formTitle={getValues()?.title}
               />
@@ -213,7 +204,7 @@ export const FormBuilderForm = () => {
               </AccordionSummary>
               <AccordionDetails>
                 <RichTextInput
-                  source="submission_message"
+                  source="submissionMessage"
                   label="Submission Message"
                   helperText="Use this box to compose a message that will confirm to project developers that their submission has been sent successfully. Please ensure you include a title, a description, and guidance on the next steps after submission. You can use HTML formatting to customize the message appearance. This message will be used for both the email notification that the project developer will receive and the submission screen displayed after pressing 'Submit' on the form. Make sure the message is clear, informative, and provides any necessary instructions or follow-up actions."
                   validate={required()}
@@ -223,13 +214,12 @@ export const FormBuilderForm = () => {
           </div>
 
           <FormSectionPreviewDialog
-            open={!!previewSection}
-            linkedFieldData={appendAdditionalFormQuestionFields(linkedFieldsData ?? [])}
-            section={previewSection}
-            onClose={() => setPreviewSection(undefined)}
+            open={previewSectionId != null}
+            stepId={previewSectionId}
+            onClose={() => setPreviewSectionId(undefined)}
           />
         </>
-      </When>
+      )}
     </>
   );
 };
