@@ -5,6 +5,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { deleteMedia } from "@/connections/Media";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
+import { usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
 import { useFiles } from "@/hooks/useFiles";
@@ -67,6 +68,8 @@ const RHFFileInput = ({
   );
   const entity = v3EntityName(model as EntityName) as FileUploadEntity;
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid } });
+
+  const { mutate: update } = usePutV2FilesUUID();
 
   const onSelectFile = useCallback(
     async (file: File) => {
@@ -141,12 +144,17 @@ const RHFFileInput = ({
     (file: Partial<UploadedFile>, isPrivate: boolean) => {
       if (file.uuid == null) return;
 
-      updateFile({
-        ...file,
-        isPublic: !isPrivate
+      update({
+        pathParams: {
+          uuid: file.uuid
+        },
+        body: {
+          title: file.fileName ?? "",
+          is_public: !isPrivate
+        }
       });
     },
-    [updateFile]
+    [update]
   );
 
   const onDeleteFile = useCallback(
