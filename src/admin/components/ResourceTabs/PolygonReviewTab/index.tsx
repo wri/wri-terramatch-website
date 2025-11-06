@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { SortingState } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -159,6 +159,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonData,
@@ -644,7 +645,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         <Grid spacing={2} container>
           <Grid xs={9}>
             <Stack gap={4} className="pt-9 pl-8">
-              <div className="flex flex-col items-start gap-3">
+              <div className="flex flex-col items-start gap-3" ref={containerRef}>
                 <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
@@ -769,6 +770,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 pageSize={pageSize}
                 setCurrentPage={setCurrentPage}
                 setPageSize={setPageSize}
+                containerRef={containerRef}
               />
             </Stack>
           </Grid>
