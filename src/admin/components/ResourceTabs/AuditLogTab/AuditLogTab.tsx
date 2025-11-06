@@ -4,7 +4,7 @@ import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext }
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { DISTURBANCE_REPORT, NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
+import { DISTURBANCE_REPORT, NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT, SRP_REPORT } from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
@@ -27,7 +27,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   4: "project-reports",
   5: "site-reports",
   6: "nursery-reports",
-  7: "disturbance-reports"
+  7: "disturbance-reports",
+  8: "srp-reports"
 };
 
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
@@ -36,7 +37,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const basename = useBasename();
   const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
   const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
-  const showOpenEntity = ["nursery-reports", "site-reports", "disturbance-reports"].includes(
+  const showOpenEntity = ["nursery-reports", "site-reports", "disturbance-reports", "srp-reports"].includes(
     ReverseButtonStates2[entity!]
   );
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
@@ -60,11 +61,13 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
     entityLevel: entity,
     isProjectReport
   });
+
   useEffect(() => {
     refetch();
     loadEntityList();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [buttonToggle]);
+
   const formatUrl = () => {
     switch (ReverseButtonStates2[buttonToggle!]) {
       case "project-reports":
@@ -90,15 +93,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
   const verifyEntityReport = () => {
-    switch (
-      ReverseButtonStates2[
-        isProjectReport || showOpenEntity
-          ? buttonToggle == AuditLogButtonStates.DISTURBANCE_REPORT
-            ? buttonToggle! - 1
-            : buttonToggle!
-          : entity!
-      ]
-    ) {
+    switch (ReverseButtonStates2[isProjectReport || showOpenEntity ? buttonToggle! : entity!]) {
       case "project-reports":
         return PROJECT_REPORT;
       case "site-reports":
@@ -107,6 +102,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         return NURSERY_REPORT;
       case "disturbance-reports":
         return DISTURBANCE_REPORT;
+      case "srp-reports":
+        return SRP_REPORT;
       default:
         return entityType;
     }
@@ -118,7 +115,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           <Stack gap={4} className="pl-8 pt-9">
             {!verifyEntity &&
               entity != AuditLogButtonStates.SITE_REPORT &&
-              entity != AuditLogButtonStates.DISTURBANCE_REPORT - 1 && (
+              entity != AuditLogButtonStates.DISTURBANCE_REPORT &&
+              entity != AuditLogButtonStates.SRP_REPORT && (
                 <AuditLogSiteTabSelection
                   buttonToggle={buttonToggle!}
                   setButtonToggle={setButtonToggle}

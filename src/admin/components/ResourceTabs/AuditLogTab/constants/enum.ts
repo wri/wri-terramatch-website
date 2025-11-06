@@ -7,6 +7,6 @@ export enum AuditLogButtonStates {
   PROJECT_REPORT = 4,
   SITE_REPORT = 5,
   NURSERY_REPORT = 6,
-  REPORT = 7,
-  DISTURBANCE_REPORT = 8
+  DISTURBANCE_REPORT = 7,
+  SRP_REPORT = 8
 }

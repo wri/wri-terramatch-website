@@ -385,6 +385,48 @@ export type NurseryReportLightDto = {
   nothingToReport: boolean | null;
 };
 
+export type SrpReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  completion: number | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  taskUuid: string | null;
+  projectStatus: string;
+  year: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
@@ -920,41 +962,6 @@ export type DisturbanceReportLightDto = {
   updatedAt: string;
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
-};
-
-export type SrpReportLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  uuid: string;
-  status: string;
-  updateRequestStatus: string;
-  /**
-   * The associated project name
-   */
-  projectName: string | null;
-  /**
-   * The associated project uuid
-   */
-  projectUuid: string | null;
-  /**
-   * The associated organisation name
-   */
-  organisationName: string | null;
-  year: number | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  /**
-   * @format date-time
-   */
-  updatedAt: string;
 };
 
 export type ProjectFullDto = {
@@ -1730,6 +1737,7 @@ export type SrpReportFullDto = {
   uuid: string;
   status: string;
   updateRequestStatus: string;
+  completion: number | null;
   /**
    * The associated project name
    */
@@ -1742,6 +1750,15 @@ export type SrpReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  projectStatus: string;
   year: number | null;
   /**
    * @format date-time
@@ -1764,7 +1781,6 @@ export type SrpReportFullDto = {
    * @format date-time
    */
   submittedAt: string | null;
-  completion: number | null;
   nothingToReport: boolean | null;
   frameworkKey: string | null;
   feedback: string | null;

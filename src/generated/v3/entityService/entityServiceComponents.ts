@@ -529,6 +529,16 @@ export type TaskGetResponse = {
          */
         id?: string;
       }[];
+      srpReports?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
     };
   };
   included?: (
@@ -564,6 +574,17 @@ export type TaskGetResponse = {
          */
         id?: string;
         attributes?: Schemas.NurseryReportLightDto;
+      }
+    | {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
       }
   )[];
 };

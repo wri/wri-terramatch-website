@@ -20,7 +20,7 @@ const ReportInformationAside: FC<ReportInformationAsideProps> = ({ type, parent 
       {type !== "financial-reports" && (
         <>
           <ReportQuickActions type={type} />
-          {type !== "disturbance-reports" && <HighLevelMetrics />}
+          {type !== "disturbance-reports" && type !== "srp-reports" && <HighLevelMetrics />}
         </>
       )}
     </Stack>

@@ -86,6 +86,13 @@ const ConfirmPage = () => {
         children: t("Back to organization"),
         href: `/organization/${entity?.organisation?.uuid}?tab=disturbance_information`
       }
+    ],
+    "srp-reports": [
+      { children: t("View Report"), href: getEntityDetailPageLink("srp-reports", entityUUID) },
+      {
+        children: t("Back to reporting tasks"),
+        href: `/project/${entity.project?.uuid}/reporting-task/${entity.task_uuid}`
+      }
     ]
   };
 

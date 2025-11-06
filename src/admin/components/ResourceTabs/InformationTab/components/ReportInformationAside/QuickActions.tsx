@@ -37,7 +37,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          {type === "disturbance-reports" ? null : (
+          {type === "disturbance-reports" || type === "srp-reports" ? null : (
             <Button
               variant="outlined"
               component={Link}

@@ -7,7 +7,8 @@ export enum AuditLogEntityEnum {
   Nursery_Report = "Nursery_Report",
   Site_Report = "Site_Report",
   Project_Report = "Project_Report",
-  Disturbance_Report = "Disturbance_Report"
+  Disturbance_Report = "Disturbance_Report",
+  Srp_Report = "Srp_Report"
 }
 
 export type AuditLogEntity = keyof typeof AuditLogEntityEnum;

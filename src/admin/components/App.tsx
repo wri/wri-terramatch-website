@@ -196,8 +196,8 @@ const App = () => {
         <Resource
           name={modules.srpReport.ResourceName}
           list={modules.srpReport.List}
-          // show={modules.srpReport.Show}
-          // edit={modules.srpReport.Edit}
+          show={modules.srpReport.Show}
+          edit={modules.srpReport.Edit}
           icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
           options={{ label: "SRP Reports" }}
         />

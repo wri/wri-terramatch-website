@@ -32,7 +32,6 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
-import SRPReportAside from "./components/SRPReportAside";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: Exclude<EntityName, "project-pitches">;
@@ -58,7 +57,9 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
         <ReportInformationAside type={type} parent={{ label: "Disturbance Report", source: "organisationName" }} />
       );
     case "srp-reports":
-      return <SRPReportAside />;
+      return (
+        <ReportInformationAside type={type} parent={{ label: "Socio-Economic Report", source: "organisationName" }} />
+      );
     default:
       return null;
   }
@@ -202,7 +203,7 @@ const InformationTab: FC<IProps> = props => {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
-                            Saplings to be Grown:
+                            Saplings Grown in Nurseries:
                           </Text>
                           <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
                             {totalCountNurserySeedling.toLocaleString() ?? 0}

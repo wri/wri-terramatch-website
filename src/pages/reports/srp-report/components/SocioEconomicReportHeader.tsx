@@ -4,12 +4,13 @@ import Link from "next/link";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
 
 interface SocioEconomicReportHeaderProps {
-  socioEconomicReport: any;
+  socioEconomicReport: SrpReportFullDto;
 }
 
 const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportHeaderProps) => {
@@ -18,13 +19,13 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
   if (!socioEconomicReport) return null;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    "project-reports",
+    "srp-reports",
     socioEconomicReport.uuid,
     `Annual Socio-Economic Report - ${socioEconomicReport.organisationName}`
   );
 
   const { handleEdit } = useGetEditEntityHandler({
-    entityName: "project-reports",
+    entityName: "srp-reports",
     entityUUID: socioEconomicReport?.uuid,
     entityStatus: socioEconomicReport?.status,
     updateRequestStatus: socioEconomicReport?.updateRequestStatus
@@ -43,7 +44,7 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
   return (
     <PageHeader className="h-[203px]" title={title} subtitles={subtitles} hasBackButton={false}>
       {socioEconomicReport?.status === "started" && (
-        <Button as={Link} href={`/entity/project-reports/edit/${socioEconomicReport?.uuid}`}>
+        <Button as={Link} href={`/entity/srp-reports/edit/${socioEconomicReport?.uuid}`}>
           {t("Continue Report")}
         </Button>
       )}
