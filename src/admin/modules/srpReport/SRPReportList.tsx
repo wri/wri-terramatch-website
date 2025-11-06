@@ -5,6 +5,7 @@ import {
   Datagrid,
   DateField,
   EditButton,
+  FunctionField,
   List,
   ReferenceInput,
   SearchInput,
@@ -16,12 +17,15 @@ import { getFormattedErrorForRA } from "@/admin/apiProvider/utils/error";
 import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
+import CustomChipField from "@/admin/components/Fields/CustomChipField";
 import modules from "@/admin/modules";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { getChangeRequestStatusOptions, getReportStatusOptions } from "@/constants/options/status";
 import { fetchGetV2SrpReportsExport, GetV2SrpReportsExportError } from "@/generated/apiComponents";
+import { SrpReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 const SRPReportDataGrid: FC = () => {
@@ -40,6 +44,26 @@ const SRPReportDataGrid: FC = () => {
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="title" />} rowClick={"show"}>
       <TextField source="projectName" label="Project" />
       <TextField source="year" label="Year" />
+      <FunctionField
+        source="status"
+        label="Status"
+        sortable={false}
+        render={({ status }: SrpReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
+      <FunctionField
+        source="updateRequestStatus"
+        label="Change Request Status"
+        sortable={false}
+        render={(record: SrpReportLightDto) => {
+          const readableChangeRequestStatus = getChangeRequestStatusOptions().find(
+            (option: any) => option.value === record.updateRequestStatus
+          );
+          return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        }}
+      />
       <DateField source="dueAt" label="Due Date" locales="en-GB" />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
       <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />

@@ -1233,16 +1233,34 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
     .addTo(map);
 };
 
+export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
+  if (!map) return undefined;
+  try {
+    const styleUrl = (map as any).style?.url || (map as any).style?.name;
+    if (styleUrl) {
+      if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) {
+        return MapStyle.Street;
+      }
+      if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) {
+        return MapStyle.Satellite;
+      }
+    }
+  } catch (e) {
+    Log.warn("Error getting current map style:", e);
+  }
+  return undefined;
+};
+
 export const setMapStyle = (
   style: MapStyle,
   map: mapboxgl.Map,
   setCurrentStyle: (style: MapStyle) => void,
-  currentStyle: string
+  currentStyle: string | MapStyle
 ) => {
   if (map && currentStyle !== style) {
+    setCurrentStyle(style);
     map.setStyle(style);
     updateMapProjection(map, style);
-    setCurrentStyle(style);
   }
 };
 
