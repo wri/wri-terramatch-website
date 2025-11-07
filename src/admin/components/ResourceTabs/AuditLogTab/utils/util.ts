@@ -13,6 +13,8 @@ export const getRequestPathParam = (entityType: AuditLogEntity) => {
     return "disturbance-reports";
   } else if (entityType === "Srp_Report") {
     return "srp-reports";
+  } else if (entityType === "Financial_Report") {
+    return "financial-reports";
   }
   return entityType.toLocaleLowerCase();
 };
