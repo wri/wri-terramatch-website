@@ -211,7 +211,6 @@ const StatusDisplay = ({
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const { openNotification } = useNotificationContext();
-  console.log(titleStatus);
   const { openModal, closeModal } = useModalContext();
   const removeUnderscore = (title: string) => title.replace("_", " ");
   const contentStatus = (
