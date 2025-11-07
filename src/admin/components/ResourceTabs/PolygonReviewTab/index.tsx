@@ -68,9 +68,16 @@ export type SitePolygonRow = {
   "target-land-use-system": string;
   "tree-distribution": string;
   "planting-start-date": string;
+  "num-trees": number;
+  "calc-area": number;
   source: string;
   uuid?: string;
   ellipse: boolean;
+};
+
+export type PolygonTotals = {
+  totalTreesPlanted: number;
+  totalCalculatedArea: number;
 };
 export interface IPolygonItem {
   id: string;
@@ -180,7 +187,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
-  const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
+  const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
     Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
   const activeBbox = isValidBbox(bbox) ? bbox : undefined;
   const {
@@ -258,6 +265,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           "target-land-use-system": data?.targetSys ?? "",
           "tree-distribution": data?.distr ?? "",
           "planting-start-date": data?.plantStart ?? "",
+          "num-trees": data?.numTrees ?? 0,
+          "calc-area": data?.calcArea ?? 0,
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
           ellipse: index === (sitePolygonData ?? []).length - 1
@@ -765,6 +774,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 setSorting={setSorting}
                 sorting={sorting}
                 paginatedData={paginatedData}
+                allData={sortedData}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageSize={pageSize}
