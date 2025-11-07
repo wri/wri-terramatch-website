@@ -111,7 +111,7 @@ export default function SiteAttributeTable({
   ];
 
   return (
-    <div className="mb-6 w-[inherit]">
+    <div className="mb-6 w-[inherit]" style={{ width: containerRef.current?.clientWidth }}>
       <div className="mb-4">
         <Text variant="text-16-bold" className="mb-2 text-darkCustom">
           Site Attribute Table
