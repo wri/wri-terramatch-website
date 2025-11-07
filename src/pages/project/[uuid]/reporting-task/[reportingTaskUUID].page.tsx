@@ -389,7 +389,7 @@ const ReportingTaskPage = () => {
               </PageCard>
             </PageSection>
             <PageSection>
-              <PageCard title={t("SRP Reports")}>
+              <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
                 <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
               </PageCard>
             </PageSection>
