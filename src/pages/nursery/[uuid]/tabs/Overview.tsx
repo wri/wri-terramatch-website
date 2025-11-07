@@ -7,6 +7,7 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { useDate } from "@/hooks/useDate";
 
 interface NurseryOverviewTabProps {
@@ -16,6 +17,11 @@ interface NurseryOverviewTabProps {
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
+  const totalNurserySeedlings = usePlantTotalCount({
+    entity: "nurseries",
+    entityUuid: nursery?.uuid,
+    collection: "nursery-seedling"
+  });
 
   return (
     <PageBody>
@@ -35,7 +41,16 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             <TextField label={t("Last updated")} value={format(nursery?.updatedAt)} />
             <TextField label={t("Seedlings or Young Trees to be Grown")} value={nursery?.seedlingGrown} />
           </PageCard>
-          <PageCard title={"Tree Species"}>
+          <PageCard
+            title={"Saplings to be Grown"}
+            headerChildren={
+              <div className="flex items-center gap-2">
+                <span className="text-18 font-semibold text-primary">
+                  {totalNurserySeedlings.toLocaleString?.() ?? 0}
+                </span>
+              </div>
+            }
+          >
             <TreeSpeciesTable entityUuid={nursery?.uuid} entity="nurseries" collection="nursery-seedling" />
           </PageCard>
         </PageColumn>

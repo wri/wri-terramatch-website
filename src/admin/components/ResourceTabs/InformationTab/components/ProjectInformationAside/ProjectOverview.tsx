@@ -9,7 +9,6 @@ import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
-
   const { record } = useShowContext();
 
   return (
@@ -59,7 +58,7 @@ const ProjectOverview: FC = () => {
             <Button
               variant="contained"
               startIcon={<Check />}
-              disabled={record?.status === "approved"}
+              disabled={record?.status === "approved" || record?.updateRequestStatus === "awaiting-approval"}
               onClick={() => setStatusModal("approved")}
             >
               Approve

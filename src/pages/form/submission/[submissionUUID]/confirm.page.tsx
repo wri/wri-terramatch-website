@@ -10,13 +10,12 @@ import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFormSubmission } from "@/hooks/useFormGet";
 
-/* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
 const ConfirmPage = () => {
   const t = useT();
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { formData, isLoading } = useFormSubmission(submissionUUID);
+  const { formData, form, isLoading } = useFormSubmission(submissionUUID);
 
   return (
     <BackgroundLayout>
@@ -27,13 +26,12 @@ const ConfirmPage = () => {
             <div
               className="with-inner-html"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(formData?.data.form?.submission_message || "")
+                __html: DOMPurify.sanitize(form?.submissionMessage ?? "")
               }}
             />
             <div className="mt-15 flex w-full justify-between">
               <div />
 
-              {/* @ts-ignore */}
               <Button as={Link} href={`/applications/${formData?.data.application_uuid}`}>
                 {t("View My Application")}
               </Button>

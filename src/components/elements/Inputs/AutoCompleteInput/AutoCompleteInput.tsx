@@ -1,7 +1,7 @@
 import { Popover, Transition } from "@headlessui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { ChangeEvent, forwardRef, Fragment, Ref, useState } from "react";
+import { ChangeEvent, forwardRef, Fragment, Ref, useCallback, useState } from "react";
 import { Else, If, Then } from "react-if";
 
 import { useDebounce } from "@/hooks/useDebounce";
@@ -39,19 +39,24 @@ const AutoCompleteInput = forwardRef(
       setSearchResult({ list: [], query: item });
     };
 
-    const search = useDebounce(async (query: string) => {
-      if (query === searchResult.query) return;
+    const search = useDebounce(
+      useCallback(
+        async (query: string) => {
+          if (query === searchResult.query) return;
 
-      setLoading(true);
+          setLoading(true);
 
-      try {
-        setSearchResult({ list: await onSearch(query), query });
-        setLoading(false);
-      } catch {
-        setSearchResult(SEARCH_RESET);
-        setLoading(false);
-      }
-    });
+          try {
+            setSearchResult({ list: await onSearch(query), query });
+            setLoading(false);
+          } catch {
+            setSearchResult(SEARCH_RESET);
+            setLoading(false);
+          }
+        },
+        [onSearch, searchResult.query]
+      )
+    );
 
     useValueChanged(inputProps.value, () => search(String(inputProps.value ?? "")));
 

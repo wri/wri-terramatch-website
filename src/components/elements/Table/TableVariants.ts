@@ -89,7 +89,7 @@ export const VARIANT_TABLE_AIRTABLE = {
   table: "border-collapse",
   name: "border-airtable",
   trHeader: "bg-neutral-150",
-  thHeader: "first:rounded-tl-lg last:rounded-tr-lg border-y border-neutral-200 text-14-semibold first:w-full",
+  thHeader: "first:rounded-tl-lg last:rounded-tr-lg border-y border-neutral-200 text-16-bold first:w-full",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 lastRow",
   tdBody: "text-16-light px-6 py-3",
@@ -103,10 +103,10 @@ export const VARIANT_TABLE_SITE_POLYGON_REVIEW = {
   tableWrapper: "border border-neutral-200 rounded-lg overflow-hidden",
   trHeader: "bg-neutral-150 sticky top-0 z-auto",
   thHeader:
-    "first:pl-4 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto",
+    "first:pl-4 bg-neutral-150 first:pr-2 last:pl-2 last:pr-4 border-y border-neutral-200 text-14-semibold whitespace-normal px-2 border-t-0 sticky top-0 z-auto",
   tBody: "",
   trBody: "bg-white border-y border-neutral-200 last:border-b-0",
-  tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 ",
+  tdBody: "text-14-light px-2 py-3 first:pl-4 first:pr-2 last:pl-2 last:pr-4 bg-white ",
   thead: "bg-blueCustom-100",
   paginationVariant: VARIANT_PAGINATION_DASHBOARD
 };

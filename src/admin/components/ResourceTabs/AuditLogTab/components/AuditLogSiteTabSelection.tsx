@@ -12,6 +12,7 @@ interface AuditLogSiteTabSelectionProps {
   isReport?: boolean;
   entityLevel?: number;
   existNurseries?: boolean;
+  isAdmin?: boolean;
 }
 
 const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
@@ -20,7 +21,8 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   framework = null,
   isReport = false,
   entityLevel,
-  existNurseries = false
+  existNurseries = false,
+  isAdmin = false
 }) => {
   const t = useT();
   const tabNames = useMemo(() => {
@@ -35,6 +37,18 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       return [
         { index: 4, name: t("Project Report") },
         { index: 6, name: t("Nursery Report") }
+      ];
+    }
+    if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT) {
+      return [
+        { index: 0, name: t("Project Status") },
+        { index: 7, name: t("Disturbance Report") }
+      ];
+    }
+    if (entityLevel == AuditLogButtonStates.SRP_REPORT) {
+      return [
+        { index: 0, name: t("Project Status") },
+        { index: 8, name: t("Socio-Economic Report") }
       ];
     }
     if (isReport) {

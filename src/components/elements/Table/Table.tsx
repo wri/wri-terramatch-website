@@ -222,7 +222,7 @@ function Table<TData extends RowData>({
                               }}
                             >
                               <span
-                                className="font-inherit "
+                                className="font-inherit"
                                 ref={el => {
                                   if (
                                     el &&
@@ -252,7 +252,7 @@ function Table<TData extends RowData>({
                                       ] ?? IconNames.SORT
                                     }
                                     className={classNames(
-                                      "ml-2 inline h-4 w-3.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
+                                      "ml-2 inline h-6 w-2.5 min-w-[14px] fill-neutral-900 lg:min-w-[16px]",
                                       variant.iconSort
                                     )}
                                     width={11}

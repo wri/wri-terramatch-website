@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { ElementType, FC, HTMLProps, useMemo } from "react";
-import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
@@ -158,7 +157,7 @@ const Button: FC<IButtonProps> = props => {
         };
       case "white-button-map":
         return {
-          container: "h-fit rounded-lg bg-white px-4 py-2 shadow hover:bg-neutral-200",
+          container: "h-fit rounded bg-white px-4 py-2 shadow hover:bg-neutral-200 border border-neutral-175",
           span: "flex items-center gap-2 !leading-[normal]"
         };
       case "purple":
@@ -199,9 +198,7 @@ const Button: FC<IButtonProps> = props => {
         )
       )}
     >
-      <When condition={!!iconProps}>
-        <Icon width={14} {...iconProps!} />
-      </When>
+      {iconProps == null ? null : <Icon width={14} {...iconProps!} />}
       <span className={variantClasses.span}>{children}</span>
     </Component>
   );

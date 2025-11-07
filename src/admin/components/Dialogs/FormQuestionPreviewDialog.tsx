@@ -8,90 +8,65 @@ import {
   DialogTitle,
   Divider
 } from "@mui/material";
-import { useT } from "@transifex/react";
-import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { FC } from "react";
+import { useForm, useFormContext } from "react-hook-form";
 
-import { normalizeQuestionCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
-import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import ModalRoot from "@/components/extensive/Modal/ModalRoot";
-import { FieldMapper } from "@/components/extensive/WizardForm/FieldMapper";
+import FormField from "@/components/extensive/WizardForm/FormField";
 import ModalProvider from "@/context/modal.provider";
-import { FormQuestionRead } from "@/generated/apiSchemas";
-import { apiFormQuestionToFormField } from "@/helpers/customForms";
+import WizardFormProvider, { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import Log from "@/utils/log";
 
-interface ConfirmationDialogProps extends DialogProps {
-  question?: FormQuestionRead;
-  linkedFieldData: FormQuestionField[];
+interface FormQuestionPreviewDialogProps extends DialogProps {
+  questionId?: string;
   formTitle?: string;
 }
 
-export const FormQuestionPreviewDialog = ({
-  linkedFieldData,
-  question: _question,
-  formTitle,
-  ...props
-}: ConfirmationDialogProps) => {
+type QuestionPreviewContentProps = {
+  questionId: string;
+};
+
+const QuestionPreviewContent: FC<QuestionPreviewContentProps> = ({ questionId }) => {
+  const steps = useFormContext<FormBuilderData>().getValues().steps;
+  const fieldsProvider = useLocalStepsProvider(steps ?? []);
+  // Create a form hook for the preview so it doesn't try to interact with the form builder data.
   const formHook = useForm();
 
-  const field = useMemo(() => {
-    if (!_question) return null;
-
-    const question = preparePreviewField(_question, linkedFieldData);
-
-    return apiFormQuestionToFormField(question, (t: typeof useT) => t, 1, [question]);
-  }, [_question, linkedFieldData]);
-
-  if (!field) return null;
-
   return (
+    <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <FormField fieldId={questionId} formHook={formHook} onChange={() => Log.debug("FormField onChange")} />
+    </WizardFormProvider>
+  );
+};
+
+export const FormQuestionPreviewDialog: FC<FormQuestionPreviewDialogProps> = ({ questionId, formTitle, ...props }) =>
+  questionId == null ? null : (
     <ModalProvider>
       <Dialog {...props} fullWidth sx={{ zIndex: 40 }}>
-        <DialogTitle>
-          Field Preview
-          <DialogContentText>
-            This preview serves for illustrative purposes only, and certain fields may not have full functionality.
-          </DialogContentText>
-        </DialogTitle>
+        {props.open ? (
+          <>
+            <DialogTitle>
+              Field Preview
+              <DialogContentText>
+                This preview serves for illustrative purposes only, and certain fields may not have full functionality.
+              </DialogContentText>
+            </DialogTitle>
 
-        <Divider />
+            <Divider />
 
-        <DialogContent>
-          <FieldMapper
-            field={field}
-            formHook={formHook}
-            onChange={() => Log.debug("Field Mapper onChange")}
-            formSubmissionOrg={{ title: formTitle }}
-          />
-        </DialogContent>
+            <DialogContent>
+              <QuestionPreviewContent questionId={questionId} />
+            </DialogContent>
 
-        <DialogActions sx={{ padding: 3 }}>
-          <Button variant="outlined" onClick={e => props.onClose?.(e, "escapeKeyDown")}>
-            Close
-          </Button>
-        </DialogActions>
+            <DialogActions sx={{ padding: 3 }}>
+              <Button variant="outlined" onClick={e => props.onClose?.(e, "escapeKeyDown")}>
+                Close
+              </Button>
+            </DialogActions>
+          </>
+        ) : null}
       </Dialog>
       <ModalRoot />
     </ModalProvider>
   );
-};
-
-export const preparePreviewField = (_question: FormQuestionRead, linkedFieldData: FormQuestionField[]) => {
-  const question = questionPayloadToFormQuestionRead(
-    normalizeQuestionCreatePayload(_question, linkedFieldData),
-    linkedFieldData
-  );
-
-  question.uuid = question.uuid || "preview-" + Math.floor(Math.random() * 100000);
-  return { ...question, ...question.additional_props };
-};
-
-const questionPayloadToFormQuestionRead = (question: any, linkedFieldData: any) => {
-  question.options = question.form_question_options;
-  question.children =
-    question.child_form_questions?.map?.((child: FormQuestionRead) => preparePreviewField(child, linkedFieldData)) ||
-    [];
-
-  return question;
-};

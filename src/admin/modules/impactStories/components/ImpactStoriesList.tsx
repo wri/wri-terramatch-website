@@ -14,6 +14,7 @@ import {
   WrapperField
 } from "react-admin";
 
+import { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ListActionsImpactStories from "@/admin/components/Actions/ListActionsImpactStories";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
 import CustomChipField from "@/admin/components/Fields/CustomChipField";
@@ -141,6 +142,7 @@ export const ImpactStoriesList: FC = () => {
       </Stack>
 
       <List actions={<ListActionsImpactStories />} filters={filters}>
+        <AutoResetSort />
         <ImpactStoriesDataGrid />
       </List>
     </>

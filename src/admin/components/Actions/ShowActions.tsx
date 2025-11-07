@@ -55,7 +55,7 @@ const ShowActions = ({
       </When>
       <When condition={title != null}>
         <Typography variant="h4" component="h2" sx={{ flexGrow: 1 }}>
-          <ShowTitle moduleName={moduleName} />
+          {resource !== "srpReport" && <ShowTitle moduleName={moduleName} />}
         </Typography>
       </When>
       <TopToolbar sx={{ marginBottom: 2, marginLeft: "auto" }}>

@@ -61,7 +61,7 @@ const ImageGalleryPreviewer: FC<ImageGalleryPreviewerProps> = ({
       </div>
 
       {/* Preview */}
-      <ImageWithPlaceholder imageUrl={data.fullImageUrl} alt={data.label || ""} />
+      <ImageWithPlaceholder imageUrl={data.fullImageUrl} alt={data.label ?? ""} />
     </div>
   );
 };

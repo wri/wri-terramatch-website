@@ -1,6 +1,7 @@
-import { Datagrid, ReferenceManyField, SimpleShowLayout, TextField } from "react-admin";
+import { Datagrid, FunctionField, ReferenceField, ReferenceManyField, SimpleShowLayout, TextField } from "react-admin";
 
 import modules from "@/admin/modules";
+import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const FundingProgrammeStages = () => {
   return (
@@ -9,7 +10,9 @@ const FundingProgrammeStages = () => {
         <Datagrid>
           <TextField source="name" label="Stage Name" />
           <TextField source="order" label="Order" />
-          <TextField source="form.title" label="Form" />
+          <ReferenceField source="form.uuid" label="Form" reference={modules.form.ResourceName}>
+            <FunctionField render={(record: FormLightDto) => `${record?.title ?? ""}`} />
+          </ReferenceField>
         </Datagrid>
       </ReferenceManyField>
     </SimpleShowLayout>

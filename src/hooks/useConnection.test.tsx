@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 
 import { AuthLoginResponse } from "@/generated/v3/userService/userServiceComponents";
 import { useConnection } from "@/hooks/useConnection";
-import ApiSlice, { ApiDataStore, JsonApiResource } from "@/store/apiSlice";
+import ApiSlice, { ApiDataStore, JsonApiResponse } from "@/store/apiSlice";
 import { makeStore } from "@/store/store";
 import { Connection } from "@/types/connection";
 
@@ -16,23 +16,27 @@ const StoreWrapper = ({ children }: { children: ReactNode }) => {
 };
 
 describe("Test useConnection hook", () => {
-  test("isLoaded", () => {
+  test("isLoaded", async () => {
     const load = jest.fn();
-    let connectionLoaded = false;
+    let selected = { connectionLoaded: false };
     const connection = {
-      selector: () => ({ connectionLoaded }),
+      selector: () => selected,
       load,
       isLoaded: ({ connectionLoaded }) => connectionLoaded
     } as Connection<{ connectionLoaded: boolean }>;
     let rendered = renderHook(() => useConnection(connection), { wrapper: StoreWrapper });
 
     expect(rendered.result.current[0]).toBe(false);
+    // Load is now called after a delay.
+    await new Promise(resolve => setTimeout(resolve));
     expect(load).toHaveBeenCalled();
 
     load.mockReset();
-    connectionLoaded = true;
+    selected = { connectionLoaded: true };
     rendered = renderHook(() => useConnection(connection), { wrapper: StoreWrapper });
     expect(rendered.result.current[0]).toBe(true);
+    // Load is now called after a delay.
+    await new Promise(resolve => setTimeout(resolve));
     expect(load).toHaveBeenCalled();
   });
 
@@ -56,9 +60,12 @@ describe("Test useConnection hook", () => {
     expect(payloadCreator).toHaveBeenCalledTimes(1);
 
     const token = "asdfasdfasdf";
-    const data = { type: "logins", id: "1", attributes: { token } } as JsonApiResource;
+    const response = {
+      data: { type: "logins", id: "1", attributes: { token } },
+      meta: { resourceType: "logins" }
+    } as JsonApiResponse;
     act(() => {
-      ApiSlice.fetchSucceeded({ url: "/foo", method: "POST", response: { data } });
+      ApiSlice.fetchSucceeded({ url: "/foo", method: "POST", response });
     });
 
     // The store has changed so the selector gets called again, and the selector's result has

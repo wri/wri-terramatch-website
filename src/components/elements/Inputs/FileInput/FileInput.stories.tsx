@@ -23,7 +23,7 @@ const SingleUploadChildren: FC<{ args: Props }> = ({ args }) => {
   const [files, setFiles] = useState<UploadedFile[]>([]);
 
   const handlePrivateChange = (file: Partial<UploadedFile>, isPrivate: boolean) => {
-    openToast(`${file.title} has been updated to be ${isPrivate ? "Private" : "Public"}`);
+    openToast(`${file.fileName} has been updated to be ${isPrivate ? "Private" : "Public"}`);
   };
 
   return (
@@ -40,15 +40,14 @@ const SingleUploadChildren: FC<{ args: Props }> = ({ args }) => {
         setFiles(f => [
           ...f,
           ...files.map(file => ({
-            title: file.name,
-            file_name: file.name,
-            mime_type: file.type,
-            collection_name: "storybook",
+            fileName: file.name,
+            mimeType: file.type,
+            collectionName: "storybook",
             size: file.size,
             url: "https://google.com",
-            created_at: "now",
+            createdAt: "now",
             uuid: file.name,
-            is_public: true
+            isPublic: true
           }))
         ])
       }

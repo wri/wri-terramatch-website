@@ -8,14 +8,12 @@ import { createLogger } from "redux-logger";
 import DataApiSlice, { dataApiSlice, DataApiStore } from "@/store/dataApiSlice";
 
 import ApiSlice, { ApiDataStore, apiSlice, authListenerMiddleware } from "./apiSlice";
-import JobsSlice, { JobsDataStore, jobsSlice } from "./jobsSlice";
 
 // Action used only in test suites to dump some specific state into the store.
 export const __TEST_HYDRATE__ = "__TEST_HYDRATE__";
 
 export type AppStore = {
   api: ApiDataStore;
-  jobs: JobsDataStore;
   dataApi: DataApiStore;
 };
 
@@ -23,7 +21,6 @@ export const makeStore = (queryClient?: QueryClient) => {
   const store = configureStore({
     reducer: {
       api: apiSlice.reducer,
-      jobs: jobsSlice.reducer,
       dataApi: dataApiSlice.reducer
     },
     middleware: getDefaultMiddleware => {
@@ -49,7 +46,6 @@ export const makeStore = (queryClient?: QueryClient) => {
 
   ApiSlice.redux = store;
   ApiSlice.queryClient = queryClient;
-  JobsSlice.redux = store;
   DataApiSlice.redux = store;
 
   if (typeof window !== "undefined" && (window as any).terramatch != null) {

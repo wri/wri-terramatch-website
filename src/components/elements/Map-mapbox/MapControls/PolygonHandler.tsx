@@ -73,8 +73,7 @@ export const PolygonHandler = () => {
         const response = await uploadPromise;
         if (response instanceof Blob) {
           openNotification("success", t("Success!"), t("File uploaded successfully"));
-          const blob = response;
-          const url = window.URL.createObjectURL(blob);
+          const url = window.URL.createObjectURL(response);
           const a = document.createElement("a");
           const getFormattedDate = () => {
             const date = new Date();
@@ -110,7 +109,7 @@ export const PolygonHandler = () => {
   };
 
   const getFileType = (file: UploadedFile) => {
-    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
     if (fileType === "geojson") return "geojson";
     if (fileType === "zip") return "shapefile";
     if (fileType === "kml") return "kml";
@@ -165,13 +164,21 @@ export const PolygonHandler = () => {
         className="group  bg-[#E5F9FD] "
         onClick={() => openFormModalHandlerConfirmUpload("Creation")}
       >
-        <Text className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black" variant="text-14">
+        <Text
+          as="div"
+          className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black"
+          variant="text-14"
+        >
           <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
           &nbsp;{t("Create Polygon")}
         </Text>
       </Button>
       <Button variant="white-button-map" className="group " onClick={() => openFormModalHandlerConfirmUpload("Upload")}>
-        <Text className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black" variant="text-14">
+        <Text
+          as="div"
+          className="flex items-center font-bold uppercase text-[#637579] group-hover:text-black"
+          variant="text-14"
+        >
           <Icon name={IconNames.UPLOAD_PA} className="h-4 w-4" />
           &nbsp; {t("Upload Polygon")}
         </Text>

@@ -1,15 +1,15 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren } from "react";
+import { FC, PropsWithChildren, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFSeedingProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   formHook?: UseFormReturn;
   collection: string;
@@ -61,70 +61,62 @@ export const getSeedingTableColumns = (
         }
       ];
 
-export const getSeedingFields = (t: typeof useT | Function = (t: string) => t, captureCount: boolean): FormField[] =>
+export const getSeedingsQuestions = (
+  t: typeof useT | Function = (t: string) => t,
+  captureCount: boolean
+): FieldDefinition[] =>
   captureCount
     ? [
         {
           label: t("Seed species or Mix"),
           name: "name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Number of Seeds"),
           name: "amount",
-          type: FieldType.Input,
-          validation: yup.number().required(),
-          fieldProps: {
-            type: "number",
-            required: true
-          }
+          inputType: "number",
+          validation: { required: true }
         }
       ]
     : [
         {
           label: t("Seed species or Mix"),
           name: "name",
-          type: FieldType.Input,
-          validation: yup.string().required(),
-          fieldProps: {
-            type: "text",
-            required: true
-          }
+          inputType: "text",
+          validation: { required: true }
         },
         {
           label: t("Number of seeds in sample"),
           name: "seeds_in_sample",
-          type: FieldType.Input,
-          validation: yup.number().required(),
-          fieldProps: {
-            type: "number",
-            required: true,
-            step: 0.01
-          }
+          inputType: "number",
+          validation: { required: true },
+          additionalProps: { step: 0.01 }
         },
         {
           label: t("Weight of sample in KG"),
           name: "weight_of_sample",
-          type: FieldType.Input,
-          validation: yup.number().required(),
-          fieldProps: {
-            type: "number",
-            required: true,
-            step: 0.01
-          }
+          inputType: "number",
+          validation: { required: true },
+          additionalProps: { step: 0.01 }
         }
       ];
 
-const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildren<RHFSeedingProps>) => {
+const RHFSeedingTable: FC<PropsWithChildren<RHFSeedingProps>> = ({ collection, captureCount, ...props }) => {
   const t = useT();
   const {
     field: { value, onChange }
   } = useController(props);
+
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getSeedingTableColumns(t, captureCount),
+      steps: [{ id: "seedingTable", fields: getSeedingsQuestions(t, captureCount) }]
+    }),
+    [captureCount, t]
+  );
+  const fieldsProvider = useLocalStepsProvider(steps);
 
   return (
     <DataTable
@@ -134,8 +126,8 @@ const RHFSeedingTable = ({ collection, captureCount, ...props }: PropsWithChildr
       generateUuids={true}
       additionalValues={{ collection }}
       addButtonCaption={t("Add Species or mix")}
-      tableColumns={getSeedingTableColumns(t, captureCount)}
-      fields={getSeedingFields(t, captureCount)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
     />
   );
 };

@@ -70,7 +70,9 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   useEffect(() => {
     if (!polygonList || overlapValidations.length === 0) return;
 
-    const overlappingPolygonUuids = overlapValidations.map(validation => validation.polygonId).filter(id => id != null);
+    const overlappingPolygonUuids = overlapValidations
+      .map(validation => validation.polygonUuid)
+      .filter(id => id != null);
 
     let overlappingPolygons = polygonList.filter(
       polygon => polygon.poly_id && overlappingPolygonUuids.includes(polygon.poly_id)
@@ -83,7 +85,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
     }
 
     const polygons = overlappingPolygons.map(polygon => {
-      const validation = overlapValidations.find(v => v.polygonId === polygon.poly_id);
+      const validation = overlapValidations.find(v => v.polygonUuid === polygon.poly_id);
       const overlapCriteria = validation?.criteriaList.find(
         criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
       );

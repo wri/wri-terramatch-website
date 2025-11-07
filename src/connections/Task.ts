@@ -24,7 +24,8 @@ const taskConnection = v3Resource("tasks", taskGet)
     return {
       projectReportUuid: relationships["projectReport"]?.[0]?.id,
       siteReportUuids: (relationships["siteReports"] ?? []).map(({ id }) => id!),
-      nurseryReportUuids: (relationships["nurseryReports"] ?? []).map(({ id }) => id!)
+      nurseryReportUuids: (relationships["nurseryReports"] ?? []).map(({ id }) => id!),
+      srpReportUuids: (relationships["srpReports"] ?? []).map(({ id }) => id!)
     };
   })
   .buildConnection();

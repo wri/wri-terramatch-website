@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { FC, useMemo } from "react";
 import { useForm } from "react-hook-form";
 
 import Button from "@/components/elements/Button/Button";
@@ -7,29 +8,27 @@ import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import SimpleForm from "@/components/extensive/SimpleForm/SimpleForm";
-import { FormField } from "@/components/extensive/WizardForm/types";
 import { getSchema } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 import { ModalId } from "./ModalConst";
 import { ModalBase } from "./ModalsBases";
 
 export interface FormModalProps {
   title?: string;
-  fields: FormField[];
   onSubmit: (data: any) => void;
   defaultValues?: Record<string, any>;
 }
 
-const FormModal = ({ title, fields, onSubmit, defaultValues }: FormModalProps) => {
+const FormModal: FC<FormModalProps> = ({ title, onSubmit, defaultValues }) => {
   const t = useT();
   const { closeModal } = useModalContext();
 
-  const formHook = useForm({
-    resolver: yupResolver(getSchema(fields)),
-    mode: "onSubmit",
-    defaultValues
-  });
+  const fieldsProvider = useFieldsProvider();
+  const resolver = useMemo(() => yupResolver(getSchema(fieldsProvider, t)), [fieldsProvider, t]);
+  const formHook = useForm({ resolver, mode: "onTouched", defaultValues });
+  const fieldIds = useMemo(() => fieldsProvider.fieldNames(fieldsProvider.stepIds()[0]), [fieldsProvider]);
 
   return (
     <ModalBase className="w-[800px] p-0">
@@ -49,7 +48,7 @@ const FormModal = ({ title, fields, onSubmit, defaultValues }: FormModalProps) =
           formHook.reset();
         })}
       >
-        <SimpleForm fields={fields} formHook={formHook} onChange={() => {}} />
+        <SimpleForm fieldIds={fieldIds} formHook={formHook} />
         <Button type="submit" className="m-auto mt-15">
           {t("Save")}
         </Button>

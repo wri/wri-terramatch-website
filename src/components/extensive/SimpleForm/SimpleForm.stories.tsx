@@ -1,9 +1,11 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "../WizardForm/types";
+import FormField from "@/components/extensive/WizardForm/FormField";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import WizardFormProvider, { LocalStep, useLocalStepsProvider } from "@/context/wizardForm.provider";
+
 import Component, { SimpleFormProps as Props } from "./SimpleForm";
 
 const meta: Meta<typeof Component> = {
@@ -11,122 +13,98 @@ const meta: Meta<typeof Component> = {
   component: Component
 };
 
+// Make sure this gets imported early to avoid circular dependency
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const FORM_FIELD = FormField;
+
 export default meta;
 type Story = StoryObj<typeof Component>;
 
 const client = new QueryClient();
-const fields: FormField[] = [
+const FIELDS: FieldDefinition[] = [
   {
     name: "text_field",
     label: "Simple text field",
     placeholder: "Please enter ...",
-    type: FieldType.Input,
-    validation: yup.string().required(),
-    fieldProps: { type: "text", required: true }
+    inputType: "text",
+    validation: { required: true }
   },
   {
     name: "number_field",
     label: "Simple number field",
     placeholder: "Please enter ...",
-    type: FieldType.Input,
-    validation: yup.number().required(),
-    fieldProps: { type: "number", required: true }
+    inputType: "number",
+    validation: { required: true }
   },
   {
     name: "dropdown_input",
     label: "Dropdown component",
     placeholder: "Select ...",
-    type: FieldType.Dropdown,
-    validation: yup.string().required(),
-    fieldProps: {
-      required: true,
-      options: [
-        { title: "Option 1", value: "1" },
-        { title: "Option 2", value: "2" },
-        { title: "Option 3", value: "3" }
-      ]
-    }
+    inputType: "select",
+    validation: { required: true },
+    options: [
+      { title: "Option 1", value: "1" },
+      { title: "Option 2", value: "2" },
+      { title: "Option 3", value: "3" }
+    ]
   },
   {
     name: "multi_dropdown_input",
     label: "Multi-Select Dropdown component",
     placeholder: "Select ...",
-    type: FieldType.Dropdown,
-    validation: yup.array().min(1).required(),
-    fieldProps: {
-      multiSelect: true,
-      required: true,
-      options: [
-        { title: "Option 1", value: "1" },
-        { title: "Option 2", value: "2" },
-        { title: "Option 3", value: "3" },
-        { title: "Option 4", value: "4" }
-      ]
-    }
+    inputType: "select",
+    validation: { required: true },
+    multiChoice: true,
+    options: [
+      { title: "Option 1", value: "1" },
+      { title: "Option 2", value: "2" },
+      { title: "Option 3", value: "3" },
+      { title: "Option 4", value: "4" }
+    ]
   },
   {
     name: "field_country",
     label: "Country selector",
     placeholder: "Select country ...",
-    type: FieldType.Dropdown,
-    validation: yup.string().required(),
-    fieldProps: {
-      options: [
-        { title: "United States", value: "USA" },
-        { title: "México", value: "MEX" },
-        { title: "Colombia", value: "COL" }
-      ],
-      required: true
-    }
+    inputType: "select",
+    validation: { required: true },
+    options: [
+      { title: "United States", value: "USA" },
+      { title: "México", value: "MEX" },
+      { title: "Colombia", value: "COL" }
+    ]
   },
   {
     name: "select_input",
     label: "Select component",
     placeholder: "Select ...",
-    type: FieldType.Select,
-    validation: yup.string().required(),
-    fieldProps: {
-      required: true,
-      options: [
-        { title: "Option 1", value: "1" },
-        { title: "Option 2", value: "2" },
-        { title: "Option 3", value: "3" }
-      ]
-    }
-  },
-  {
-    name: "multi_select_input",
-    label: "Multi-Select component",
-    placeholder: "Select ...",
-    type: FieldType.Select,
-    validation: yup.array().min(1).required(),
-    fieldProps: {
-      multiSelect: true,
-      required: true,
-      options: [
-        { title: "Option 1", value: "1" },
-        { title: "Option 2", value: "2" },
-        { title: "Option 3", value: "3" },
-        { title: "Option 4", value: "4" }
-      ]
-    }
+    inputType: "radio",
+    validation: { required: true },
+    options: [
+      { title: "Option 1", value: "1" },
+      { title: "Option 2", value: "2" },
+      { title: "Option 3", value: "3" }
+    ]
   }
 ];
+const STEPS: LocalStep[] = [{ id: "simpleForm", fields: FIELDS }];
 
 export const Default: Story = {
   render: (args: Props) => {
     const formHook = useForm();
-
+    const fieldsProvider = useLocalStepsProvider(STEPS);
     return (
       <QueryClientProvider client={client}>
         <div className="flex w-full justify-center bg-background px-3">
-          <Component {...args} formHook={formHook} />
+          <WizardFormProvider fieldsProvider={fieldsProvider}>
+            <Component {...args} formHook={formHook} />
+          </WizardFormProvider>
         </div>
       </QueryClientProvider>
     );
   },
   args: {
-    fields: fields,
-    onChange() {}
+    onChange() {},
+    fieldIds: FIELDS.map(({ name }) => name)
   }
 };

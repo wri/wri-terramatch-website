@@ -37,12 +37,11 @@ export const Default: Story = {
         <SectionEntryRow title="Detailed Project Budget">
           <FilePreviewCard
             file={{
-              title: "Project Budget",
               url: "",
-              collection_name: "",
-              created_at: "",
-              file_name: "",
-              mime_type: "",
+              collectionName: "",
+              createdAt: "",
+              fileName: "Project Budget",
+              mimeType: "",
               size: 0,
               uuid: ""
             }}

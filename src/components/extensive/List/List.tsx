@@ -1,5 +1,5 @@
+import { Dictionary, isObject, isString } from "lodash";
 import { Fragment } from "react";
-import { When } from "react-if";
 
 export type ListProps<T, U> = U & {
   uniqueId?: string;
@@ -15,7 +15,7 @@ export type ListProps<T, U> = U & {
   itemAs?: React.ElementType;
 };
 
-const List = <T extends Record<any, any>, U>({
+const List = <T, U>({
   uniqueId,
   items,
   render,
@@ -36,14 +36,21 @@ const List = <T extends Record<any, any>, U>({
 
   return (
     <ListComponent {...listComponentClassnames}>
-      {startListElement ? <ItemComponent>{startListElement}</ItemComponent> : <></>}
-      {items.map((item, i, array) => (
-        <Fragment key={uniqueId ? `${item[uniqueId]}-${i}` : i}>
-          <ItemComponent {...listItemComponentClassnames}>{render(item, i, array)}</ItemComponent>
-          <When condition={i < items.length - 1}>{dividerComponent}</When>
-        </Fragment>
-      ))}
-      {endListElement ? <ItemComponent>{endListElement}</ItemComponent> : <></>}
+      {startListElement ? <ItemComponent>{startListElement}</ItemComponent> : null}
+      {items.map((item, i, array) => {
+        const key = isString(item)
+          ? `${item}-${i}`
+          : isObject(item) && uniqueId != null
+          ? `${(item as Dictionary<any>)[uniqueId]}-${i}`
+          : i;
+        return (
+          <Fragment key={key}>
+            <ItemComponent {...listItemComponentClassnames}>{render(item, i, array)}</ItemComponent>
+            {i === items.length - 1 ? null : dividerComponent}
+          </Fragment>
+        );
+      })}
+      {endListElement != null ? <ItemComponent>{endListElement}</ItemComponent> : null}
     </ListComponent>
   );
 };

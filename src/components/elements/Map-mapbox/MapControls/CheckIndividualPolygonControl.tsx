@@ -3,14 +3,13 @@ import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
-import { usePolygonValidation } from "@/connections/Validation";
+import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid,
-  usePostV2TerrafundValidationPolygon
+  usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
@@ -45,8 +44,15 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
     openNotification(type, title, message);
   };
-  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: () => {
+
+  const runPolygonValidation = async () => {
+    try {
+      showLoader();
+      const polygonUuid = editPolygon?.uuid ?? "";
+      await createPolygonValidation({
+        polygonUuids: [polygonUuid]
+      });
+
       setShouldRefetchValidation(true);
       setClickedValidation(false);
       if (editPolygon?.uuid != null) {
@@ -58,13 +64,12 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
         "success",
         t("Success! TerraMatch reviewed the polygon")
       );
-    },
-    onError: () => {
+    } catch (error) {
       hideLoader();
       setClickedValidation(false);
       displayNotification(t("Please try again later."), "error", t("Error! TerraMatch could not review polygons"));
     }
-  });
+  };
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
     onSuccess: async (data: ClippedPolygonResponse) => {
@@ -104,8 +109,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
 
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
-      showLoader();
-      getValidations({ queryParams: { uuid: editPolygon.uuid } });
+      runPolygonValidation();
     }
   });
 

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import FloatNotification from "@/components/elements/Notification/FloatNotification";
 
@@ -38,7 +38,5 @@ const FloatNotificationProvider = ({ children }: FloatNotificationProviderProps)
     </FloatNotificationContext.Provider>
   );
 };
-
-export const useFloatNotificationContex = () => useContext(FloatNotificationContext);
 
 export default FloatNotificationProvider;

@@ -1,11 +1,22 @@
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback } from "react";
+import { FC, PropsWithChildren, useCallback } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import TreeSpeciesInput, { TreeSpeciesInputProps } from "./TreeSpeciesInput";
 
 export interface RHFSeedingTableInputProps
-  extends Omit<TreeSpeciesInputProps, "value" | "onChanges" | "collection">,
+  extends Omit<
+      TreeSpeciesInputProps,
+      | "value"
+      | "onChanges"
+      | "collection"
+      | "buttonCaptionSuffix"
+      | "withPreviousCounts"
+      | "useTaxonomicBackbone"
+      | "clearErrors"
+      | "title"
+      | "onChange"
+    >,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook: UseFormReturn;
@@ -15,7 +26,7 @@ export interface RHFSeedingTableInputProps
  * @param props PropsWithChildren<RHFSeedingTableInputProps>
  * @returns React Hook Form Ready RHFSeedingTableInput Component
  */
-const RHFSeedingTableInput = (props: PropsWithChildren<RHFSeedingTableInputProps>) => {
+const RHFSeedingTableInput: FC<PropsWithChildren<RHFSeedingTableInputProps>> = props => {
   const t = useT();
   const {
     field: { onChange }

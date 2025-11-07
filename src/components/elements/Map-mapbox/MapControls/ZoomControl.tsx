@@ -11,22 +11,20 @@ export const ZoomControl = ({ map }: { map: mapboxgl.Map | null }) => {
       <IconButton
         iconProps={{
           name: IconNames.ZoomIn,
-          width: 24,
-          height: 24
+          className: "h-6 w-6"
         }}
         onClick={() => map?.zoomIn()}
-        className="rounded-b-none rounded-t-lg p-[10px]"
+        className="h-10 w-10 rounded-b-none rounded-t-sm border border-neutral-175 bg-white p-2"
         aria-label="Zoom in"
       />
       <ControlDivider direction="horizontal" className="m-0 w-auto bg-neutral-200" />
       <IconButton
         iconProps={{
           name: IconNames.ZoomOut,
-          width: 24,
-          height: 24
+          className: "h-6 w-6"
         }}
         onClick={() => map?.zoomOut()}
-        className="rounded-t-none rounded-b-lg p-[10px]"
+        className="h-10 w-10 rounded-t-none rounded-b-sm border border-neutral-175 bg-white p-2"
         aria-label="Zoom out"
       />
     </ControlButtonsGroup>

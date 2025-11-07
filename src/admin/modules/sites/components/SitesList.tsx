@@ -14,7 +14,7 @@ import {
   WrapperField
 } from "react-admin";
 
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
 import CustomBulkDeleteWithConfirmButton from "@/admin/components/Buttons/CustomBulkDeleteWithConfirmButton";
 import CustomDeleteWithConfirmButton from "@/admin/components/Buttons/CustomDeleteWithConfirmButton";
@@ -204,6 +204,7 @@ export const SitesList: FC = () => {
       </Stack>
 
       <List actions={<ListActions onExport={onClickExportButton} />} filters={filters}>
+        <AutoResetSort />
         <SiteDataGrid />
       </List>
 

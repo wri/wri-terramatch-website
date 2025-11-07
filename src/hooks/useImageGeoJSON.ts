@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { useGetV2MODELUUIDImageLocations } from "@/generated/apiComponents";
+import { v2EntityName } from "@/helpers/entity";
 import { EntityName } from "@/types/common";
 
 /**
@@ -11,7 +12,7 @@ import { EntityName } from "@/types/common";
  */
 export const useGetImagesGeoJSON = (modelName: EntityName, uuid: string) => {
   const { data } = useGetV2MODELUUIDImageLocations({
-    pathParams: { model: modelName, uuid }
+    pathParams: { model: v2EntityName(modelName), uuid }
   });
 
   return useMemo(() => {

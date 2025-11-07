@@ -2,22 +2,33 @@ import { useT } from "@transifex/react";
 
 import IconButton from "@/components/elements/IconButton/IconButton";
 import Text from "@/components/elements/Text/Text";
+import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
+import { FormFieldsProvider, FormModelsDefinition } from "@/context/wizardForm.provider";
 
 import { IconNames } from "../../Icon/Icon";
 import { ModalId } from "../../Modal/ModalConst";
 import WizardForm from "..";
-import { FormStepSchema } from "../types";
 
 export type WizardEditFormProps = {
   title: string;
-  steps: FormStepSchema[];
-  onSave: (data: any, step: FormStepSchema) => void;
+  fieldsProvider: FormFieldsProvider;
+  models: FormModelsDefinition;
+  framework: Framework;
+  onSave: (data: any) => void;
   defaultValues?: any;
   errors?: any;
 };
 
-const WizardEditForm = ({ title, steps, onSave, defaultValues, errors }: WizardEditFormProps) => {
+const WizardEditForm = ({
+  title,
+  fieldsProvider,
+  models,
+  framework,
+  onSave,
+  defaultValues,
+  errors
+}: WizardEditFormProps) => {
   const { closeModal } = useModalContext();
   const t = useT();
   return (
@@ -33,6 +44,9 @@ const WizardEditForm = ({ title, steps, onSave, defaultValues, errors }: WizardE
         />
       </div>
       <WizardForm
+        framework={framework}
+        models={models}
+        fieldsProvider={fieldsProvider}
         hideBackButton
         disableAutoProgress
         errors={errors}
@@ -41,7 +55,6 @@ const WizardEditForm = ({ title, steps, onSave, defaultValues, errors }: WizardE
         header={{
           hide: true
         }}
-        steps={steps}
         defaultValues={defaultValues || {}}
         onStepChange={onSave}
         onBackFirstStep={() => null}

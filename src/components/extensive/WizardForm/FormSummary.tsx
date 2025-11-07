@@ -1,14 +1,11 @@
 import FormSummaryRow from "@/components/extensive/WizardForm/FormSummaryRow";
-import { Entity } from "@/types/common";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 import List from "../List/List";
-import { FormStepSchema } from "./types";
 
 export interface FormSummaryProps {
   values: any;
-  steps: FormStepSchema[];
   onEdit?: (stepIndex: number) => void;
-  entity?: Entity;
   organisation?: any;
 }
 
@@ -18,11 +15,12 @@ export type FormSummaryOptions = {
 };
 
 const FormSummary = (props: FormSummaryProps) => {
+  const stepIds = useFieldsProvider().stepIds();
   return (
     <List
       className="space-y-8"
-      items={props.steps}
-      render={(step, index) => <FormSummaryRow index={index} step={step} {...props} />}
+      items={stepIds}
+      render={(stepId, index) => <FormSummaryRow index={index} stepId={stepId} {...props} />}
     />
   );
 };

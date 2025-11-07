@@ -8,27 +8,23 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { GetV2FormsENTITYUUIDResponse, useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
-/* Todo: To select actions and their copies based on form's parent(application, project, site, etc) in 2.4 */
 const ConfirmPage = () => {
   const t = useT();
   const router = useRouter();
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  const { formData: data, isLoading } = useEntityForm(entityName, entityUUID);
+  const { form, isLoading } = useEntityForm(entityName, entityUUID);
 
   const { data: entityData } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }
   });
-  //@ts-ignore
-  const entity = (entityData?.data || {}) as any;
-  //@ts-ignore
-  const formData = (data?.data || {}) as GetV2FormsENTITYUUIDResponse;
+  const entity = entityData?.data ?? {};
 
   const callToActionMapping: { [index: string]: IButtonProps[] } = {
     projects: [{ children: t("View Project"), href: `/project/${entityUUID}` }],
@@ -36,7 +32,7 @@ const ConfirmPage = () => {
       {
         variant: "secondary",
         children: t("Add Another Site"),
-        href: `/entity/sites/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
+        href: `/entity/sites/create/${entity.framework_key}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
       { children: t("View Site"), href: getEntityDetailPageLink("sites", entityUUID) }
     ],
@@ -44,7 +40,7 @@ const ConfirmPage = () => {
       {
         variant: "secondary",
         children: t("Add Another Nursery"),
-        href: `/entity/nurseries/create/${entity.framework_uuid}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
+        href: `/entity/nurseries/create/${entity.framework_key}?parent_name=projects&parent_uuid=${entity.project?.uuid}`
       },
       { children: t("View Nursery"), href: getEntityDetailPageLink("nurseries", entityUUID) }
     ],
@@ -86,6 +82,13 @@ const ConfirmPage = () => {
         children: t("Back to organization"),
         href: `/organization/${entity?.organisation?.uuid}?tab=disturbance_information`
       }
+    ],
+    "srp-reports": [
+      { children: t("View Report"), href: getEntityDetailPageLink("srp-reports", entityUUID) },
+      {
+        children: t("Back to reporting tasks"),
+        href: `/project/${entity.project?.uuid}/reporting-task/${entity.task_uuid}`
+      }
     ]
   };
 
@@ -100,7 +103,7 @@ const ConfirmPage = () => {
             <div
               className="with-inner-html"
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(formData.form?.submission_message || "")
+                __html: DOMPurify.sanitize(form?.submissionMessage ?? "")
               }}
             />
             <div className="mt-15 flex w-full justify-between">

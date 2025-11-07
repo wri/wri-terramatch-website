@@ -2,14 +2,18 @@ import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import { resourceCreator } from "@/connections/util/resourceMutator";
 import {
+  createSitePolygons,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import {
+  CreateSitePolygonJsonApiRequestDto,
+  SitePolygonLightDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
-import { PendingError } from "@/store/apiSlice";
-import ApiSlice from "@/store/apiSlice";
+import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
 
@@ -150,3 +154,9 @@ export const useAllSitePolygons = (
     refetch
   };
 };
+
+const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
+  .create<SitePolygonLightDto, CreateSitePolygonJsonApiRequestDto>()
+  .buildConnection();
+
+export const createSitePolygonsResource = resourceCreator(createSitePolygonsConnection);

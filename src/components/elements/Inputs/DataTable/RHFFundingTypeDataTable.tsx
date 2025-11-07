@@ -1,27 +1,35 @@
 import { AccessorKeyColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { PropsWithChildren, useCallback, useMemo, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
-import * as yup from "yup";
 
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { useCurrencyContext } from "@/context/currency.provider";
+import { useLocalStepsProvider } from "@/context/wizardForm.provider";
 import { currencyInput } from "@/utils/financialReport";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
 
 export interface RHFFundingTypeTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
 }
 
+type FundingTypeData = {
+  uuid: string;
+  year: number;
+  type: string;
+  source: string;
+  amount: number;
+};
+
 export const getFundingTypeTableColumns = (
   t: typeof useT | Function = (t: string) => t
-): AccessorKeyColumnDef<any>[] => [
+): AccessorKeyColumnDef<FundingTypeData>[] => [
   { accessorKey: "year", header: t("Funding year") },
   {
     accessorKey: "type",
@@ -32,64 +40,44 @@ export const getFundingTypeTableColumns = (
   { accessorKey: "amount", header: t("Funding amount") }
 ];
 
-export const getFundingTypeFields = (t: typeof useT | Function = (t: string) => t): FormField[] => {
-  return [
-    {
-      label: t("Select Funding year"),
-      name: "year",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: Array(6)
-          .fill(0)
-          .map((_, index) => {
-            const year = new Date().getFullYear() - 5 + index;
-            return { title: `${year}`, value: year };
-          }),
-        required: true
-      }
-    },
-    {
-      label: t("Select Funding type"),
-      name: "type",
-      type: FieldType.Dropdown,
-      validation: yup.string().required(),
-      fieldProps: {
-        options: getFundingTypesOptions(t),
-        required: true
-      }
-    },
-    {
-      label: t("Funding source"),
-      name: "source",
-      type: FieldType.Input,
-      validation: yup.string().required(),
-      fieldProps: {
-        type: "text",
-        required: true
-      }
-    },
-    {
-      label: t("Funding amount"),
-      name: "amount",
-      type: FieldType.Input,
-      validation: yup.string().min(0).max(9999999999999).required(),
-      fieldProps: {
-        type: "number",
-        required: true
-      }
-    }
-  ];
-};
+export const getFundingTypeQuestions = (t: typeof useT | Function = (t: string) => t): FieldDefinition[] => [
+  {
+    label: t("Select Funding year"),
+    name: "year",
+    inputType: "select",
+    validation: { required: true },
+    options: Array(6)
+      .fill(0)
+      .map((_, index) => {
+        const year = new Date().getFullYear() - 5 + index;
+        return { title: `${year}`, value: year };
+      })
+  },
+  {
+    label: t("Select Funding type"),
+    name: "type",
+    inputType: "select",
+    options: getFundingTypesOptions(t),
+    validation: { required: true }
+  },
+  {
+    label: t("Funding source"),
+    name: "source",
+    inputType: "text",
+    validation: { required: true }
+  },
+  {
+    label: t("Funding amount"),
+    name: "amount",
+    inputType: "number",
+    validation: { required: true }
+  }
+];
 
-/**
- * @param props PropsWithChildren<RHFSelectProps>
- * @returns React Hook Form Ready Select Component
- */
-const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildren<RHFFundingTypeTableProps>) => {
+const RHFFundingTypeDataTable: FC<PropsWithChildren<RHFFundingTypeTableProps>> = ({ ...props }) => {
   const t = useT();
   const { field } = useController(props);
-  const value = useMemo(() => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
+  const value = useMemo((): FundingTypeData[] => (Array.isArray(field?.value) ? field.value : []), [field?.value]);
   const [tableKey, setTableKey] = useState(0);
 
   const { currency } = useCurrencyContext();
@@ -106,11 +94,10 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
     (data: any) => {
       const next = [...value, data];
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const removeItem = useCallback(
@@ -118,56 +105,58 @@ const RHFFundingTypeDataTable = ({ onChangeCapture, ...props }: PropsWithChildre
       if (!uuid) return;
       const next = (value as any[]).filter(item => item?.uuid !== uuid);
       field.onChange(next);
-      onChangeCapture?.();
       clearErrors();
       refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
   const updateItem = useCallback(
     (data: any) => {
-      if (!data?.uuid) return;
+      const index = data?.index !== undefined ? data.index : -1;
+      if (index === -1) return;
+
       const next = [...value];
-      const index = next.findIndex((item: any) => item?.uuid === data.uuid);
-      if (index !== -1) {
-        next[index] = { ...next[index], ...data };
-        field.onChange(next);
-        onChangeCapture?.();
-        clearErrors();
-        refreshTable();
-      }
+      // Remove the index field from the data object before updating the item
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { index: _, ...dataWithoutIndex } = data;
+      next[index] = { ...next[index], ...dataWithoutIndex };
+      field.onChange(next);
+      clearErrors();
+      refreshTable();
     },
-    [value, field, onChangeCapture, clearErrors]
+    [value, field, clearErrors]
   );
 
-  const tableColumnsWithCurrency: AccessorKeyColumnDef<any>[] = getFundingTypeTableColumns(t).map(col =>
-    col.accessorKey === "amount"
-      ? {
-          ...col,
-          cell: (props: any) =>
-            (currencyInput[currency] ? currencyInput[currency] + " " : "") + (props.getValue() ?? "")
-        }
-      : col
+  const { columns, steps } = useMemo(
+    () => ({
+      columns: getFundingTypeTableColumns(t).map(col =>
+        col.accessorKey === "amount"
+          ? {
+              ...col,
+              cell: (props: any) =>
+                (currencyInput[currency] ? currencyInput[currency] + " " : "") + (props.getValue() ?? "")
+            }
+          : col
+      ),
+      steps: [{ id: "fundingTypeTable", fields: getFundingTypeQuestions(t) }]
+    }),
+    [currency, t]
   );
+  const fieldsProvider = useLocalStepsProvider(steps);
+
   return (
-    <DataTable
+    <DataTable<FundingTypeData>
       key={tableKey}
       {...props}
-      value={value ?? []}
-      handleCreate={data => {
-        createItem(data);
-      }}
-      handleDelete={uuid => {
-        removeItem(uuid);
-      }}
-      handleUpdate={data => {
-        updateItem(data);
-      }}
+      value={value}
+      handleCreate={createItem}
+      handleDelete={removeItem}
+      handleUpdate={updateItem}
       addButtonCaption={t("Add funding source")}
       modalEditTitle={t("Update funding source")}
-      tableColumns={tableColumnsWithCurrency}
-      fields={getFundingTypeFields(t)}
+      tableColumns={columns}
+      fieldsProvider={fieldsProvider}
       hasPagination={true}
       invertSelectPagination={true}
     />

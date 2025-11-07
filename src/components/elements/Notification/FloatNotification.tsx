@@ -1,7 +1,7 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -14,15 +14,43 @@ import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBa
 import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
+const listOfPolygonsFixed = (data: Record<string, any> | null) => {
+  if (data?.updated_polygons) {
+    const updatedPolygonNames = data.updated_polygons
+      ?.map((p: any) => p.poly_name)
+      .filter(Boolean)
+      .join(", ");
+    if (updatedPolygonNames) {
+      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
+    } else {
+      return "No polygons were fixed";
+    }
+  }
+  return null;
+};
+
+const clearJob = (item: DelayedJobDto) => {
+  const newJobsData: DelayedJobData[] = [
+    {
+      uuid: item.uuid,
+      type: "delayedJobs",
+      attributes: {
+        isAcknowledged: true
+      }
+    }
+  ];
+  triggerBulkUpdate(newJobsData);
+};
 const FloatNotification = () => {
   const firstRender = useRef(true);
   const t = useT();
   const [openModalNotification, setOpenModalNotification] = useState(false);
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
+  const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
 
-  const clearJobs = () => {
-    if (delayedJobs === undefined) return;
+  const clearJobs = useCallback(() => {
+    if (delayedJobs == null) return;
     const newJobsData: DelayedJobData[] = delayedJobs
       .filter((job: DelayedJobDto) => job.status !== "pending")
       .map((job: DelayedJobDto) => {
@@ -35,10 +63,18 @@ const FloatNotification = () => {
         };
       });
     triggerBulkUpdate(newJobsData);
-  };
+  }, [delayedJobs]);
 
   useValueChanged(delayedJobs, () => {
     if (!delayedJobs) return;
+
+    const newCachedNames = { ...cachedSiteNames };
+    delayedJobs.forEach(job => {
+      if (job.entityName && job.uuid) {
+        newCachedNames[job.uuid] = job.entityName;
+      }
+    });
+    setCachedSiteNames(newCachedNames);
 
     setNotAcknowledgedJobs(delayedJobs);
     if (delayedJobs.length > notAcknowledgedJobs.length && !firstRender.current) {
@@ -52,34 +88,6 @@ const FloatNotification = () => {
       setOpenModalNotification(false);
     }
   });
-
-  const listOfPolygonsFixed = (data: Record<string, any> | null) => {
-    if (data?.updated_polygons) {
-      const updatedPolygonNames = data.updated_polygons
-        ?.map((p: any) => p.poly_name)
-        .filter(Boolean)
-        .join(", ");
-      if (updatedPolygonNames) {
-        return "Success! The following polygons have been fixed: " + updatedPolygonNames;
-      } else {
-        return "No polygons were fixed";
-      }
-    }
-    return null;
-  };
-
-  function clearJob(item: DelayedJobDto) {
-    const newJobsData: DelayedJobData[] = [
-      {
-        uuid: item.uuid,
-        type: "delayedJobs",
-        attributes: {
-          isAcknowledged: true
-        }
-      }
-    ];
-    triggerBulkUpdate(newJobsData);
-  }
 
   return (
     <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">
@@ -129,7 +137,7 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{item.entityName}</b>
+                      Site: <b>{item.entityName ?? cachedSiteNames[item.uuid]}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (

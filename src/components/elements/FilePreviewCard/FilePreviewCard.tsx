@@ -26,13 +26,13 @@ const FilePreviewCard = ({ accessLevel, file, onDelete, onDownload, className }:
           className="flex items-center justify-center rounded-lg bg-cover bg-no-repeat"
           style={{ backgroundImage: `url(${file.url})` }}
         >
-          <When condition={!file.mime_type?.includes("image")}>
+          <When condition={!file.mimeType?.includes("image")}>
             <Icon name={IconNames.DOCUMENT} />
           </When>
         </div>
         <div className="flex flex-1 flex-col items-start gap-1">
           <Text variant="text-body-900" className=" capitalize line-clamp-1">
-            {file.title || file.file_name}
+            {file.fileName}
           </Text>
           <When condition={accessLevel}>
             <Text variant="text-body-600">{accessLevel === "public" ? t("Public") : t("Private")}</Text>

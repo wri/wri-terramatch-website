@@ -1,23 +1,24 @@
 import { useT } from "@transifex/react";
 import { useMemo } from "react";
 
+import { useGadmChoices } from "@/connections/Gadm";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import Log from "@/utils/log";
 
 interface IntersectionInfo {
   intersectSmaller: boolean;
   percentage: number;
-  poly_name: string | null;
-  site_name: string | null;
+  polyName: string | null;
+  siteName: string | null;
 }
 
 interface ProjectGoalInfo {
-  sum_area_project: number;
-  percentage_project: number;
-  total_area_project: number;
-  sum_area_site: number;
-  percentage_site: number;
-  total_area_site: number;
+  sumAreaProject: number;
+  percentageProject: number;
+  totalAreaProject: number;
+  sumAreaSite: number;
+  percentageSite: number;
+  totalAreaSite: number;
 }
 
 interface ExtraInfoItem {
@@ -27,23 +28,23 @@ interface ExtraInfoItem {
 }
 
 interface PlantStartDateInfo {
-  error_type: string;
-  polygon_uuid: string;
-  polygon_name: string;
-  site_name: string;
-  provided_value?: string;
-  min_date?: string;
-  current_date?: string;
-  site_start_date?: string;
-  allowed_range?: {
+  errorType: string;
+  polygonUuid: string;
+  polygonName: string;
+  siteName: string;
+  providedValue?: string;
+  minDate?: string;
+  currentDate?: string;
+  siteStartDate?: string;
+  allowedRange?: {
     min: string;
     max: string;
   };
-  error_details?: string;
+  errorDetails?: string;
 }
 
 const FIELDS_TO_VALIDATE: Record<string, string> = {
-  poly_name: "Polygon Name",
+  polyName: "Polygon Name",
   plantstart: "Plant Start Date",
   practice: "Restoration Practice",
   target_sys: "Target Land Use System",
@@ -55,28 +56,29 @@ const FIELDS_TO_VALIDATE: Record<string, string> = {
 export const useMessageValidators = () => {
   const t = useT();
   const isAdmin = useIsAdmin();
+  const countryChoices = useGadmChoices({ level: 0 });
 
   const getIntersectionMessages = useMemo(
     () =>
       (extraInfo: any): string[] => {
         if (extraInfo == null) return [];
         try {
-          return extraInfo.map(({ intersectSmaller, percentage, poly_name, site_name }: IntersectionInfo) => {
+          return extraInfo.map(({ intersectSmaller, percentage, polyName, siteName }: IntersectionInfo) => {
             return intersectSmaller
               ? t(
-                  "Geometries intersect: approx. {percentage}% of another, smaller polygon ({poly_name}) [in site: {site_name}]",
+                  "Geometries intersect: approx. {percentage}% of another, smaller polygon ({polyName}) [in site: {siteName}]",
                   {
                     percentage,
-                    poly_name: poly_name || "Unnamed Polygon",
-                    site_name: site_name || "Unnamed Site"
+                    polyName: polyName || "Unnamed Polygon",
+                    siteName: siteName || "Unnamed Site"
                   }
                 )
               : t(
-                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by polygon: {poly_name} [in site: {site_name}]",
+                  "Geometries intersect: approx. {percentage}% of this polygon is intersected by polygon: {polyName} [in site: {siteName}]",
                   {
                     percentage,
-                    poly_name: poly_name || "Unnamed Polygon",
-                    site_name: site_name || "Unnamed Site"
+                    polyName: polyName || "Unnamed Polygon",
+                    siteName: siteName || "Unnamed Site"
                   }
                 );
           });
@@ -95,11 +97,14 @@ export const useMessageValidators = () => {
         try {
           // Handle both V2 (string) and V3 (object) data formats
           const infoObject = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
-          if (infoObject && typeof infoObject === "object" && "country_name" in infoObject) {
-            const countryName = infoObject.country_name || "Unknown Country";
+          if (infoObject && typeof infoObject === "object" && "countryName" in infoObject) {
+            const countryName = infoObject.countryName || "Unknown Country";
+            const country =
+              countryChoices.find(choice => choice.id === countryName) ??
+              countryChoices.find(choice => choice.name.toLowerCase() === countryName.toLowerCase());
             return [
               t("Target Country: The polygon should be located inside {country}", {
-                country: countryName
+                country: country?.name ?? countryName
               })
             ];
           } else {
@@ -110,7 +115,7 @@ export const useMessageValidators = () => {
           return [t("Error parsing extra info.")];
         }
       },
-    [t]
+    [t, countryChoices]
   );
   const getDataMessage = useMemo(
     () => (extraInfo: any) => {
@@ -119,6 +124,10 @@ export const useMessageValidators = () => {
         const infoArray: ExtraInfoItem[] = extraInfo;
         return infoArray
           .filter(info => {
+            // Filter out deleted plantend field
+            if (info.field === "plantend") {
+              return false;
+            }
             if (!isAdmin && info.field === "planting_status") {
               return false;
             }
@@ -166,60 +175,49 @@ export const useMessageValidators = () => {
       if (extraInfo == null) return [];
       try {
         const infoArray: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
-        const {
-          sum_area_project,
-          percentage_project,
-          total_area_project,
-          sum_area_site,
-          percentage_site,
-          total_area_site
-        } = infoArray;
+        const { sumAreaProject, percentageProject, totalAreaProject, sumAreaSite, percentageSite, totalAreaSite } =
+          infoArray;
         const messages: string[] = [];
 
-        if (total_area_site === null) {
+        if (totalAreaSite === null) {
           messages.push(t("Site Goal: A goal has not been specified."));
-        } else if (sum_area_site !== undefined && percentage_site !== undefined && total_area_site !== undefined) {
+        } else if (sumAreaSite !== undefined && percentageSite !== undefined && totalAreaSite !== undefined) {
           // Ensure numeric values are properly formatted
-          const formattedSumAreaSite = typeof sum_area_site === "number" ? sum_area_site.toFixed(2) : sum_area_site;
+          const formattedSumAreaSite = typeof sumAreaSite === "number" ? sumAreaSite.toFixed(2) : sumAreaSite;
           const formattedPercentageSite =
-            typeof percentage_site === "number" ? percentage_site.toFixed(2) : percentage_site;
-          const formattedTotalAreaSite =
-            typeof total_area_site === "number" ? total_area_site.toFixed(2) : total_area_site;
+            typeof percentageSite === "number" ? percentageSite.toFixed(2) : percentageSite;
+          const formattedTotalAreaSite = typeof totalAreaSite === "number" ? totalAreaSite.toFixed(2) : totalAreaSite;
 
           messages.push(
             t(
-              "Site Goal: The sum of all site polygons {sum_area_site} ha is {percentage_site}% of total hectares to be restored for this site ({total_area_site} ha)",
+              "Site Goal: The sum of all site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
               {
-                sum_area_site: formattedSumAreaSite,
-                percentage_site: formattedPercentageSite,
-                total_area_site: formattedTotalAreaSite
+                sumAreaSite: formattedSumAreaSite,
+                percentageSite: formattedPercentageSite,
+                totalAreaSite: formattedTotalAreaSite
               }
             )
           );
         }
 
-        if (total_area_project === null) {
+        if (totalAreaProject === null) {
           messages.push(t("Project Goal: A goal has not been specified."));
-        } else if (
-          sum_area_project !== undefined &&
-          percentage_project !== undefined &&
-          total_area_project !== undefined
-        ) {
+        } else if (sumAreaProject !== undefined && percentageProject !== undefined && totalAreaProject !== undefined) {
           // Ensure numeric values are properly formatted
           const formattedSumAreaProject =
-            typeof sum_area_project === "number" ? sum_area_project.toFixed(2) : sum_area_project;
+            typeof sumAreaProject === "number" ? sumAreaProject.toFixed(2) : sumAreaProject;
           const formattedPercentageProject =
-            typeof percentage_project === "number" ? percentage_project.toFixed(2) : percentage_project;
+            typeof percentageProject === "number" ? percentageProject.toFixed(2) : percentageProject;
           const formattedTotalAreaProject =
-            typeof total_area_project === "number" ? total_area_project.toFixed(2) : total_area_project;
+            typeof totalAreaProject === "number" ? totalAreaProject.toFixed(2) : totalAreaProject;
 
           messages.push(
             t(
-              "Project Goal: The sum of all project polygons {sum_area_project} ha is {percentage_project}% of total hectares to be restored ({total_area_project} ha)",
+              "Project Goal: The sum of all project polygons {sumAreaProject} ha is {percentageProject}% of total hectares to be restored ({totalAreaProject} ha)",
               {
-                sum_area_project: formattedSumAreaProject,
-                percentage_project: formattedPercentageProject,
-                total_area_project: formattedTotalAreaProject
+                sumAreaProject: formattedSumAreaProject,
+                percentageProject: formattedPercentageProject,
+                totalAreaProject: formattedTotalAreaProject
               }
             )
           );
@@ -240,76 +238,73 @@ export const useMessageValidators = () => {
         // Handle both V2 (string) and V3 (object) data formats
         const info: PlantStartDateInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
 
-        switch (info.error_type) {
+        switch (info.errorType) {
           case "MISSING_VALUE":
             return [
-              t("Plant Start Date is missing for polygon {polygon_name} in site {site_name}", {
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+              t("Plant Start Date is missing for polygon {polygonName} in site {siteName}", {
+                polygonName: info.polygonName || "Unnamed Polygon",
+                siteName: info.siteName || "Unnamed Site"
               })
             ];
           case "INVALID_FORMAT":
             return [
-              t(
-                "Invalid format for Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}",
-                {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site"
-                }
-              )
+              t("Invalid format for Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName}", {
+                providedValue: info.providedValue,
+                polygonName: info.polygonName || "Unnamed Polygon",
+                siteName: info.siteName || "Unnamed Site"
+              })
             ];
           case "DATE_TOO_EARLY":
             return [
               t(
-                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is before the minimum allowed date ({min_date})",
+                "Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName} is before the minimum allowed date ({minDate})",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  min_date: info.min_date
+                  providedValue: info.providedValue,
+                  polygonName: info.polygonName || "Unnamed Polygon",
+                  siteName: info.siteName || "Unnamed Site",
+                  minDate: info.minDate
                 }
               )
             ];
           case "DATE_IN_FUTURE":
             return [
               t(
-                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} is in the future (current date: {current_date})",
+                "Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName} is in the future (current date: {currentDate})",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  current_date: info.current_date
+                  providedValue: info.providedValue,
+                  polygonName: info.polygonName || "Unnamed Polygon",
+                  siteName: info.siteName || "Unnamed Site",
+                  currentDate: info.currentDate
                 }
               )
             ];
           case "DATE_OUTSIDE_SITE_RANGE":
             return [
               t(
-                "Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name} should be within two years of the site's establishment date ({site_start_date}). Allowed range: {min_date} to {max_date}",
+                "Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName} should be within two years of the site's establishment date ({siteStartDate}). Allowed range: {minDate} to {maxDate}",
                 {
-                  provided_value: info.provided_value,
-                  polygon_name: info.polygon_name || "Unnamed Polygon",
-                  site_name: info.site_name || "Unnamed Site",
-                  site_start_date: info.site_start_date,
-                  min_date: info.allowed_range?.min,
-                  max_date: info.allowed_range?.max
+                  providedValue: info.providedValue,
+                  polygonName: info.polygonName || "Unnamed Polygon",
+                  siteName: info.siteName || "Unnamed Site",
+                  siteStartDate: info.siteStartDate,
+                  minDate: info.allowedRange?.min,
+                  maxDate: info.allowedRange?.max
                 }
               )
             ];
           case "PARSE_ERROR":
             return [
-              t("Error parsing Plant Start Date ({provided_value}) for polygon {polygon_name} in site {site_name}", {
-                provided_value: info.provided_value,
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+              t("Error parsing Plant Start Date ({providedValue}) for polygon {polygonName} in site {siteName}", {
+                providedValue: info.providedValue,
+                polygonName: info.polygonName || "Unnamed Polygon",
+                siteName: info.siteName || "Unnamed Site"
               })
             ];
           default:
             return [
-              t("Invalid Plant Start Date for polygon {polygon_name} in site {site_name}", {
-                polygon_name: info.polygon_name || "Unnamed Polygon",
-                site_name: info.site_name || "Unnamed Site"
+              t("Invalid Plant Start Date for polygon {polygonName} in site {siteName}", {
+                polygonName: info.polygonName || "Unnamed Polygon",
+                siteName: info.siteName || "Unnamed Site"
               })
             ];
         }

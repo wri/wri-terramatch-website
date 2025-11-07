@@ -33,18 +33,13 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
     const onClickListener = async (e: MapMouseEvent) => {
       const map = e.target;
       const features = map?.queryRenderedFeatures(e.point);
-      const properties = features?.[0]?.properties;
+      const properties: { image_url?: string; uuid?: string } = features?.[0]?.properties ?? {};
+      const { image_url: fullImageUrl, uuid } = properties;
 
-      if (properties?.image_url) {
+      if (fullImageUrl != null && uuid != null) {
         openModal(
           ModalId.IMAGE_GALLERY_PREVIEWER,
-          <ImageGalleryPreviewer
-            data={{
-              uuid: properties.uuid,
-              fullImageUrl: properties?.image_url
-            }}
-            onDelete={onDeleteImage}
-          />
+          <ImageGalleryPreviewer data={{ uuid, fullImageUrl }} onDelete={onDeleteImage} />
         );
       }
     };

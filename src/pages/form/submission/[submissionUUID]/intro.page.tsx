@@ -13,37 +13,36 @@ const FormIntroPage = () => {
   const router = useRouter();
   const submissionUUID = router.query.submissionUUID as string;
 
-  const { formData: submissionData } = useFormSubmission(submissionUUID);
-
-  const formData = submissionData?.data.form;
+  const { form } = useFormSubmission(submissionUUID);
 
   return (
     <BackgroundLayout>
       <ContentLayout>
-        <LoadingContainer loading={!formData}>
-          <WizardFormIntro
-            title={formData?.title!}
-            //@ts-ignore
-            imageSrc={formData?.banner?.url}
-            description={formData?.description}
-            deadline={formData?.deadline_at}
-            ctaProps={{
-              children: formData?.documentation_label || t("View list of questions"),
-              as: Link,
-              href: formData?.documentation,
-              target: "_blank"
-            }}
-            submitButtonProps={{
-              children: t("Continue"),
-              as: Link,
-              href: `/form/submission/${submissionUUID}`
-            }}
-            backButtonProps={{
-              children: t("Cancel"),
-              as: Link,
-              href: "/home"
-            }}
-          />
+        <LoadingContainer loading={form == null}>
+          {form == null ? null : (
+            <WizardFormIntro
+              title={form.title}
+              imageSrc={form.banner?.url ?? undefined}
+              description={form.description ?? undefined}
+              deadline={form.deadlineAt ?? undefined}
+              ctaProps={{
+                children: form.documentationLabel ?? t("View list of questions"),
+                as: Link,
+                href: form.documentation ?? undefined,
+                target: "_blank"
+              }}
+              submitButtonProps={{
+                children: t("Continue"),
+                as: Link,
+                href: `/form/submission/${submissionUUID}`
+              }}
+              backButtonProps={{
+                children: t("Cancel"),
+                as: Link,
+                href: "/home"
+              }}
+            />
+          )}
         </LoadingContainer>
       </ContentLayout>
     </BackgroundLayout>

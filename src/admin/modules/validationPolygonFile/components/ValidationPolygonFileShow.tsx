@@ -27,14 +27,14 @@ const ValidatePolygonFileShow: FC = () => {
 
   const t = useT();
   useValueChanged(saveFlags, () => {
-    if (file && saveFlags) {
+    if (file != null && saveFlags) {
       uploadFile();
       setSaveFlags(false);
     }
   });
 
   const getFileType = (file: UploadedFile) => {
-    const fileType = file?.file_name.split(".").pop()?.toLowerCase();
+    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
     if (fileType === "geojson") return "geojson";
     if (fileType === "zip") return "shapefile";
     if (fileType === "kml") return "kml";

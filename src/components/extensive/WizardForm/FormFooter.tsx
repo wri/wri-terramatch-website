@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { When } from "react-if";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 
@@ -20,12 +19,8 @@ export const FormFooter = (props: FormFooterProps) => {
   return (
     <div className={classNames(footerVariants[props.variant ?? "default"], className)}>
       <div {...rest} className={classNames("flex w-full items-center justify-between", className)}>
-        <When condition={!!backButtonProps}>
-          <Button {...backButtonProps!} variant="secondary" />
-        </When>
-        <When condition={!!submitButtonProps}>
-          <Button {...submitButtonProps!} />
-        </When>
+        {backButtonProps != null ? <Button {...backButtonProps!} variant="secondary" /> : null}
+        {submitButtonProps != null ? <Button {...submitButtonProps!} /> : null}
       </div>
     </div>
   );

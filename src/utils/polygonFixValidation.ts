@@ -32,7 +32,7 @@ export const checkPolygonFixability = (
 
   for (const overlap of overlapDetails) {
     const percentageValid = overlap.percentage <= 3.5;
-    const areaValid = overlap.intersectionArea <= 0.1;
+    const areaValid = overlap.intersectionArea ? overlap.intersectionArea <= 0.1 : true;
 
     if (!percentageValid) {
       canBeFixed = false;
@@ -41,7 +41,7 @@ export const checkPolygonFixability = (
       );
     }
 
-    if (!areaValid) {
+    if (overlap.intersectionArea && !areaValid) {
       canBeFixed = false;
       reasons.push(
         `Overlap area (${overlap.intersectionArea.toFixed(4)} ha) exceeds 0.1 ha limit for polygon "${

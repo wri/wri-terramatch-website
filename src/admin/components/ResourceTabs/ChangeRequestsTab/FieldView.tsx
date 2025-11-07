@@ -1,15 +1,15 @@
 import { Typography } from "@mui/material";
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
+import { FieldInputType } from "@/components/extensive/WizardForm/types";
 
 interface IFieldViewProps {
-  type: FieldType;
+  inputType: FieldInputType;
   value: ReactNode;
 }
 
-const FieldView = ({ type, value }: IFieldViewProps) => {
-  if (type === FieldType.TextArea || typeof value === "number") {
+const FieldView: FC<IFieldViewProps> = ({ inputType, value }) => {
+  if (inputType === "long-text" || typeof value === "number") {
     return <Typography variant="body2">{value}</Typography>;
   } else if (typeof value === "string") {
     // covers the case where getFormEntry() returns values joined with '<br/>'

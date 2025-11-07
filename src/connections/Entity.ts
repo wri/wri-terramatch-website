@@ -2,6 +2,7 @@ import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/co
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  entityCreate,
   entityDelete,
   entityGet,
   EntityGetPathParams,
@@ -13,6 +14,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
+  DisturbanceReportCreateData,
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
@@ -36,7 +38,10 @@ import {
   SiteReportFullDto,
   SiteReportLightDto,
   SiteReportUpdateData,
-  SiteUpdateData
+  SiteUpdateData,
+  SrpReportFullDto,
+  SrpReportLightDto,
+  SrpReportUpdateData
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
@@ -50,7 +55,8 @@ export type EntityFullDto =
   | NurseryReportFullDto
   | SiteReportFullDto
   | FinancialReportFullDto
-  | DisturbanceReportFullDto;
+  | DisturbanceReportFullDto
+  | SrpReportFullDto;
 export type EntityLightDto =
   | ProjectLightDto
   | SiteLightDto
@@ -59,7 +65,8 @@ export type EntityLightDto =
   | NurseryReportLightDto
   | SiteReportLightDto
   | FinancialReportLightDto
-  | DisturbanceReportLightDto;
+  | DisturbanceReportLightDto
+  | SrpReportLightDto;
 export type EntityDtoType = EntityFullDto | EntityLightDto;
 
 export type EntityUpdateData =
@@ -70,7 +77,10 @@ export type EntityUpdateData =
   | SiteReportUpdateData
   | NurseryReportUpdateData
   | FinancialReportUpdateData
-  | DisturbanceReportUpdateData;
+  | DisturbanceReportUpdateData
+  | SrpReportUpdateData;
+
+export type EntityCreateData = DisturbanceReportCreateData;
 
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<Filter<EntityIndexQueryParams>> &
@@ -111,6 +121,13 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
 const createEntityDeleter = (entity: SupportedEntity) =>
   deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
 
+const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
+  return v3Resource(entity, entityCreate)
+    .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
+    .refetch(() => ApiSlice.pruneCache(entity))
+    .buildConnection();
+};
+
 export const entityIsSupported = (entity: EntityName): entity is SupportedEntity =>
   SupportedEntities.ENTITY_TYPES.includes(entity as SupportedEntity);
 
@@ -129,6 +146,8 @@ const fullProjectConnection = createEntityGetConnection<ProjectFullDto, ProjectU
 export const loadFullProject = connectionLoader(fullProjectConnection);
 export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
+const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
+export const useLightProject = connectionHook(lightProjectConnection);
 
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
@@ -262,6 +281,30 @@ export const useLightDisturbanceReportList = connectionHook(disturbanceReportLis
 export const loadLightDisturbanceReportList = connectionLoader(disturbanceReportListConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
 
+const createDisturbanceReportConnection = createEntityCreateConnection<DisturbanceReportFullDto, EntityCreateData>(
+  "disturbanceReports"
+);
+export const loadCreateDisturbanceReport = connectionLoader(createDisturbanceReportConnection);
+export const useCreateDisturbanceReport = connectionHook(createDisturbanceReportConnection);
+
+// SRP Reports
+export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
+export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
+export const useSRPReportIndex = connectionHook(indexSRPReportConnection);
+const fullSRPReportConnection = createEntityGetConnection<SrpReportFullDto, EntityUpdateData>("srpReports");
+const lightSRPReportConnection = createEntityGetConnection<SrpReportLightDto, EntityUpdateData>("srpReports", false);
+export const loadFullSRPReport = connectionLoader(fullSRPReportConnection);
+export const useFullSRPReport = connectionHook(fullSRPReportConnection);
+export const useLightSRPReport = connectionHook(lightSRPReportConnection);
+const srpReportListConnection = v3Resource("srpReports").list<SrpReportLightDto>().buildConnection();
+/**
+ * Delivers the cached light DTOs for disturbance reports corresponding to the UUIDs in the props. Does
+ * not attempt to load them from the server.
+ */
+export const useLightSRPReportList = connectionHook(srpReportListConnection);
+export const loadLightSRPReportList = connectionLoader(srpReportListConnection);
+export const deleteSRPReport = createEntityDeleter("srpReports");
+
 /**
  * Get the full entity connection in a component that is shared amongst entity types. It's technically
  * against the rules of hooks to use control logic to select hooks, but each of these hooks has the
@@ -287,6 +330,8 @@ export const useFullEntity = (entity: SupportedEntity, id: string) => {
       return useFullFinancialReport({ id });
     case "disturbanceReports":
       return useFullDisturbanceReport({ id });
+    case "srpReports":
+      return useFullSRPReport({ id });
     default:
       throw new Error(`Unsupported entity type [${entity}]`);
   }

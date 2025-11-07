@@ -1,9 +1,18 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, Dispatch, FC, HTMLAttributes, SetStateAction, useEffect, useState } from "react";
+import {
+  DetailedHTMLProps,
+  Dispatch,
+  FC,
+  HTMLAttributes,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
-import MenuColapse from "@/components/elements/Menu/MenuCollapse";
+import MenuCollapse from "@/components/elements/Menu/MenuCollapse";
 import { MENU_PLACEMENT_BOTTOM_BOTTOM, MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -19,8 +28,7 @@ import { Option } from "@/types/common";
 
 import FilterSearchBox from "../TableFilters/Inputs/FilterSearchBox";
 import Toggle from "../Toggle/Toggle";
-import ImageGalleryItem, { ImageGalleryItemData, ImageGalleryItemProps } from "./ImageGalleryItem";
-import ImageGalleryPreviewer from "./ImageGalleryPreviewer";
+import ImageGalleryItem, { ImageGalleryItemProps } from "./ImageGalleryItem";
 
 export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   data: MediaDto[];
@@ -245,75 +253,53 @@ const ImageGallery = ({
     }
   ];
 
-  const getCanNextPage = () => {
-    return pageIndex + 1 < pageCount;
-  };
-
-  const getCanPreviousPage = () => {
-    return pageIndex > 0;
-  };
-
-  const getPageCount = () => {
-    return pageCount;
-  };
-
-  const nextPage = () => {
-    setPageIndex(state => state + 1);
-  };
-
-  const previousPage = () => {
-    setPageIndex(state => state - 1);
-  };
-
-  const handlePageSizeChange = (count: number) => {
+  const getCanNextPage = useCallback(() => pageIndex + 1 < pageCount, [pageCount, pageIndex]);
+  const getCanPreviousPage = useCallback(() => pageIndex > 0, [pageIndex]);
+  const getPageCount = useCallback(() => pageCount, [pageCount]);
+  const nextPage = useCallback(() => setPageIndex(state => state + 1), []);
+  const previousPage = useCallback(() => setPageIndex(state => state - 1), []);
+  const handlePageSizeChange = useCallback((count: number) => {
     setPageSize(count);
     setPageIndex(0);
-  };
-
-  const onClickGalleryItem = (previewData: ImageGalleryItemData) => {
-    openModal(
-      ModalId.IMAGE_GALLERY_PREVIEWER,
-      <ImageGalleryPreviewer data={previewData} onDelete={handleDelete} />,
-      true
-    );
-  };
-
-  const handleClearFilters = () => {
+  }, []);
+  const handleDelete = useCallback(
+    (id: string) => {
+      openModal(
+        ModalId.DELETE_IMAGE,
+        <Modal
+          title={t("Delete Image")}
+          content={t(
+            "Are you sure you want to delete this image? This action cannot be undone, and the image will be permanently removed."
+          )}
+          iconProps={{
+            height: 60,
+            width: 60,
+            className: "fill-error",
+            name: IconNames.TRASH_CIRCLE
+          }}
+          primaryButtonProps={{
+            children: t("Confirm Delete"),
+            onClick: () => {
+              closeModal(ModalId.DELETE_IMAGE);
+              onDeleteConfirm(id);
+            }
+          }}
+          secondaryButtonProps={{
+            children: t("Cancel"),
+            onClick: () => closeModal(ModalId.DELETE_IMAGE)
+          }}
+        />
+      );
+    },
+    [closeModal, onDeleteConfirm, openModal, t]
+  );
+  const handleClearFilters = useCallback(() => {
     setPrivacy(undefined);
     setSource("");
     setActiveIndex(0);
     setSearchText("");
     onChangeSearch("");
-  };
-
-  const handleDelete = (id: string) => {
-    openModal(
-      ModalId.DELETE_IMAGE,
-      <Modal
-        title={t("Delete Image")}
-        content={t(
-          "Are you sure you want to delete this image? This action cannot be undone, and the image will be permanently removed."
-        )}
-        iconProps={{
-          height: 60,
-          width: 60,
-          className: "fill-error",
-          name: IconNames.TRASH_CIRCLE
-        }}
-        primaryButtonProps={{
-          children: t("Confirm Delete"),
-          onClick: () => {
-            closeModal(ModalId.DELETE_IMAGE);
-            onDeleteConfirm(id);
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("Cancel"),
-          onClick: () => closeModal(ModalId.DELETE_IMAGE)
-        }}
-      />
-    );
-  };
+  }, [onChangeSearch]);
 
   useEffect(() => {
     onGalleryStateChange({ page: pageIndex + 1, pageSize });
@@ -345,7 +331,7 @@ const ImageGallery = ({
             <button className="text-primary hover:text-red" onClick={handleClearFilters}>
               <Text variant="text-14-bold">{t("Clear Filters")}</Text>
             </button>
-            <MenuColapse
+            <MenuCollapse
               menu={menuFilter as MenuItemProps[]}
               placement={MENU_PLACEMENT_BOTTOM_BOTTOM}
               classNameContentMenu="!sticky"
@@ -363,7 +349,7 @@ const ImageGallery = ({
                   width={20}
                 />
               </button>
-            </MenuColapse>
+            </MenuCollapse>
             <Menu
               menu={menuSort}
               placement={isAdmin ? MENU_PLACEMENT_BOTTOM_LEFT : MENU_PLACEMENT_BOTTOM_BOTTOM}
@@ -398,7 +384,6 @@ const ImageGallery = ({
                     key={item.uuid}
                     data={item}
                     entityData={entityData}
-                    onClickGalleryItem={onClickGalleryItem as unknown as (data: MediaDto) => void}
                     onDelete={handleDelete}
                     reloadGalleryImages={reloadGalleryImages}
                   />

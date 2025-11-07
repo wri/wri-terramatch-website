@@ -2,6 +2,7 @@ import { Button } from "@mui/material";
 import { FC, Fragment, useMemo, useState } from "react";
 import { BooleanInput, FormDataConsumerRenderParams, minLength } from "react-admin";
 
+import { DefaultOptionsSetter } from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/DefaultOptionsSetter";
 import { OptionArrayInput } from "@/admin/modules/form/components/FormBuilder/OptionArrayInput";
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { Choice } from "@/admin/types/common";
@@ -25,13 +26,14 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
     return true;
   }, [field]);
   const [editOptions, setEditOptions] = useState(false);
-  const [, { data: defaultOptions }] = useOptionList({
+  const [optionsLoaded, { data: defaultOptions }] = useOptionList({
     listKey: field.optionListKey,
     enabled: field.optionListKey != null && !field.optionListKey.startsWith("gadm-level-")
   });
 
-  return (
+  return optionsLoaded ? (
     <>
+      <DefaultOptionsSetter field={field} getSource={getSource} />
       {!editOptions ? (
         allowEditOptions && (
           <Button onClick={() => setEditOptions(true)} variant="contained" sx={{ marginX: "auto", marginY: 2 }}>
@@ -41,8 +43,7 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       ) : (
         <OptionArrayInput
           label="Options"
-          source={getSource("form_question_options")}
-          //@ts-ignore
+          source={getSource("options")}
           defaultValue={defaultOptions}
           dropDownOptions={
             defaultOptions?.map(option => ({
@@ -58,14 +59,14 @@ const SelectAdditionalOptions: FC<SelectAdditionalOptionsProps> = ({ field, getS
       )}
       {allowCreate && field.inputType === "select" && (
         <BooleanInput
-          source={getSource("options_other")}
+          source={getSource("optionsOther")}
           label="Has Other"
           helperText="Enable this option to let users provide a response when they choose 'Other' as an option."
           defaultValue={false}
         />
       )}
     </>
-  );
+  ) : null;
 };
 
 export default SelectAdditionalOptions;

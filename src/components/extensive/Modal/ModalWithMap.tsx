@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { remove } from "lodash";
-import { FC, useEffect, useState } from "react";
-import { When } from "react-if";
+import { FC, useCallback, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import FileInput from "@/components/elements/Inputs/FileInput/FileInput";
@@ -13,6 +12,7 @@ import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/S
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { formatFile } from "@/components/extensive/Modal/ModalAdd";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
@@ -69,27 +69,25 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
     }
   }, [initialPolygonData]);
 
+  const onChange = useCallback((files: File[]) => setFiles(f => [...f, ...files.map(formatFile)]), []);
+
   return (
     <ModalBaseWithMap {...rest}>
       <div className="flex h-full w-full">
         <div className="flex w-[40%] flex-col">
           <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
             <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
-            <div className="flex items-center">
-              <When condition={status}>
-                <Status status={status ?? StatusEnum.DRAFT} />
-              </When>
-            </div>
+            <div className="flex items-center">{status == null ? null : <Status status={status} />}</div>
           </header>
           <div className="max-h-[100%] w-full flex-[1_1_0] overflow-auto px-8 py-8">
             <div className="flex items-center justify-between">
               <Text variant="text-24-bold">{t(title)}</Text>
             </div>
-            <When condition={!!content}>
+            {content == null ? null : (
               <Text as="div" variant="text-12-bold" className="mt-1 mb-8" containHtml>
                 {t(content)}
               </Text>
-            </When>
+            )}
             <div className="mb-[72px]">
               <StepProgressbar value={80} labels={polygonStatusLabels} classNameLabels="min-w-[111px]" />
             </div>
@@ -115,23 +113,7 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
                   return tmp;
                 })
               }
-              onChange={files =>
-                setFiles(f => [
-                  ...f,
-                  ...files.map(file => ({
-                    title: file.name,
-                    file_name: file.name,
-                    mime_type: file.type,
-                    collection_name: "storybook",
-                    size: file.size,
-                    url: "https://google.com",
-                    created_at: "now",
-                    uuid: file.name,
-                    is_public: true,
-                    original_file: file
-                  }))
-                ])
-              }
+              onChange={onChange}
               files={files}
             />
           </div>

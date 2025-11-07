@@ -73,7 +73,7 @@ const SelectImage = (props: PropsWithChildren<SelectImageProps>) => {
           } else {
             isSelected = selected === option.value;
           }
-          const imageUrl = option.meta?.image?.thumb_url || option.meta?.url || option.meta?.image_url;
+          const imageUrl = option.meta?.image?.thumb_url ?? option.meta?.url ?? option.meta?.image_url;
 
           return (
             <If condition={props.multiSelect}>

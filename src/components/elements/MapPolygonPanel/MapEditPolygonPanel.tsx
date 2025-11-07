@@ -6,7 +6,6 @@ import { When } from "react-if";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchPostV2TerrafundValidationPolygon } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -65,24 +64,8 @@ const MapEditPolygonPanel = ({
   const [criteriaData, setCriteriaData] = useState<V2TerrafundCriteriaData | null>(null);
 
   useEffect(() => {
-    const fetchValidationData = async () => {
-      if (editPolygon?.uuid) {
-        try {
-          const response = await fetchPostV2TerrafundValidationPolygon({
-            queryParams: { uuid: editPolygon.uuid }
-          });
-
-          if (response) {
-            ApiSlice.pruneCache("validations", [editPolygon.uuid]);
-          }
-        } catch (error) {
-          console.error("Error fetching validation data:", error);
-        }
-      }
-    };
-
-    if (shouldRefetchValidation) {
-      fetchValidationData();
+    if (shouldRefetchValidation && editPolygon?.uuid) {
+      ApiSlice.pruneCache("validations", [editPolygon.uuid]);
     }
   }, [shouldRefetchValidation, editPolygon?.uuid]);
 
@@ -95,7 +78,7 @@ const MapEditPolygonPanel = ({
       );
       setHasOverlaps(hasOverlapsV3);
       const transformedData: V2TerrafundCriteriaData = {
-        polygon_id: polygonValidationData.polygonId,
+        polygon_id: polygonValidationData.polygonUuid,
         criteria_list: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
           criteria_id: criteria.criteriaId,
           valid: criteria.valid ? 1 : 0,

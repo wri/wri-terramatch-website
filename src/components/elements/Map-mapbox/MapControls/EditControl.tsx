@@ -37,7 +37,12 @@ const EditControl = ({ onClick, onSave, onCancel }: { onClick?: any; onSave?: an
   return (
     <When condition={!selectedPolyVersion?.uuid}>
       <div className="flex w-[160px] flex-col items-center gap-1">
-        <Button id="buttonEditPolygon" variant="white" className="w-full py-2" onClick={handleEditClick}>
+        <Button
+          id="buttonEditPolygon"
+          variant="white"
+          className="w-full rounded border border-neutral-175 py-2"
+          onClick={handleEditClick}
+        >
           <Text variant="text-12-bold" className="leading-[normal] text-black">
             {t("Edit Polygon")}
           </Text>

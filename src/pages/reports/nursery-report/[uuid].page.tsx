@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Else, If, Then, When } from "react-if";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import ButtonField from "@/components/elements/Field/ButtonField";
@@ -19,7 +18,7 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullNursery, useFullNurseryReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
-import FrameworkProvider from "@/context/framework.provider";
+import FrameworkProvider, { toFramework } from "@/context/framework.provider";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
@@ -31,19 +30,20 @@ const NurseryReportDetailPage = () => {
   const { format } = useDate();
   const nurseryReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { data: nurseryReport }] = useFullNurseryReport({ id: nurseryReportUUID });
+  const [reportLoaded, { data: nurseryReport }] = useFullNurseryReport({ id: nurseryReportUUID });
 
-  const [, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
-  const [, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
+  const [nurseryLoaded, { data: nursery }] = useFullNursery({ id: nurseryReport?.nurseryUuid! });
+  const [taskLoaded, { data: task }] = useTask({ id: nurseryReport?.taskUuid ?? undefined });
 
   const reportTitle = nurseryReport?.reportTitle ?? nurseryReport?.title ?? t("Nursery Report");
   const headerReportTitle = nursery?.name ? `${nursery?.name} ${reportTitle}` : "";
 
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(nurseryReport?.frameworkKey), task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
+  const isLoaded = reportLoaded && nurseryLoaded && taskLoaded;
   return (
-    <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey!}>
+    <FrameworkProvider frameworkKey={nurseryReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>
@@ -62,21 +62,20 @@ const NurseryReportDetailPage = () => {
         <NurseryReportHeader report={nurseryReport!} title={headerReportTitle} />
         <StatusBar entityName="nursery-reports" entity={nurseryReport} />
         <PageBody>
-          <If condition={nurseryReport?.nothingToReport}>
-            <Then>
-              <PageRow>
-                <PageColumn>
-                  <EmptyState
-                    iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                    title={t("Nothing to report")}
-                    subtitle={t(
-                      "You've marked this report as 'Nothing to Report,' indicating there are no updates for this nursery report. If you wish to add information to this report, please use the edit button."
-                    )}
-                  />
-                </PageColumn>
-              </PageRow>
-            </Then>
-            <Else>
+          {nurseryReport?.nothingToReport ? (
+            <PageRow>
+              <PageColumn>
+                <EmptyState
+                  iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+                  title={t("Nothing to report")}
+                  subtitle={t(
+                    "You've marked this report as 'Nothing to Report,' indicating there are no updates for this nursery report. If you wish to add information to this report, please use the edit button."
+                  )}
+                />
+              </PageColumn>
+            </PageRow>
+          ) : (
+            <>
               <PageRow>
                 <PageColumn>
                   <EntityMapAndGalleryCard
@@ -88,7 +87,7 @@ const NurseryReportDetailPage = () => {
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this nursery report."
                     )}
                   />
-                  <When condition={!!nurseryReport?.sharedDriveLink}>
+                  {nurseryReport?.sharedDriveLink != null ? (
                     <Paper>
                       <ButtonField
                         label={t("Shared Drive link")}
@@ -100,7 +99,7 @@ const NurseryReportDetailPage = () => {
                         }}
                       />
                     </Paper>
-                  </When>
+                  ) : null}
                 </PageColumn>
               </PageRow>
               <PageRow>
@@ -129,30 +128,25 @@ const NurseryReportDetailPage = () => {
                     />
                   </PageCard>
                   <Paper>
-                    <If condition={!!nurseryReport?.treeSeedlingContributions?.[0]?.url}>
-                      <Then>
-                        <ButtonField
-                          label={t("Tree Seedling Contributions")}
-                          subtitle={t(nurseryReport?.treeSeedlingContributions?.[0]?.fileName ?? "")}
-                          buttonProps={{
-                            as: Link,
-                            children: t("Download"),
-                            href: nurseryReport?.treeSeedlingContributions?.[0]?.url ?? "",
-                            download: true
-                          }}
-                        />
-                      </Then>
-                      <Else>
-                        <Then>
-                          <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
-                        </Then>
-                      </Else>
-                    </If>
+                    {nurseryReport?.treeSeedlingContributions?.[0]?.url != null ? (
+                      <ButtonField
+                        label={t("Tree Seedling Contributions")}
+                        subtitle={t(nurseryReport?.treeSeedlingContributions?.[0]?.fileName ?? "")}
+                        buttonProps={{
+                          as: Link,
+                          children: t("Download"),
+                          href: nurseryReport?.treeSeedlingContributions?.[0]?.url ?? "",
+                          download: true
+                        }}
+                      />
+                    ) : (
+                      <TextField label={t("Tree Seedling Contributions")} value={t("No file uploaded")} />
+                    )}
                   </Paper>
                 </PageColumn>
               </PageRow>
-            </Else>
-          </If>
+            </>
+          )}
         </PageBody>
       </LoadingContainer>
     </FrameworkProvider>

@@ -36,7 +36,8 @@ interface SelectedItem {
 const reportTypesMappging: { [key: number]: string } = {
   4: "project-reports",
   5: "site-reports",
-  6: "nursery-reports"
+  6: "nursery-reports",
+  7: "disturbance-reports"
 };
 
 const SiteAuditLogEntityStatus: FC<SiteAuditLogEntityStatusProps> = ({

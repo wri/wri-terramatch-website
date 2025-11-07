@@ -13,7 +13,7 @@ export enum Framework {
   UNDEFINED = "undefined"
 }
 
-export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES] as const;
+export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES];
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
 
 export const toFramework = (frameworkKey?: string | null) =>

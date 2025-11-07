@@ -243,7 +243,11 @@ export enum IconNames {
   FILE = "file",
   DISTURBANCE_REPORT = "disturbance-report",
   IMAGE_FILL = "image-fill",
-  DOLLAR_SIGN = "dollar"
+  DOLLAR_SIGN = "dollar",
+  SRP_REPORT = "srp-report",
+  AREA = "Area",
+  SEARCH_WRI = "search-wri",
+  TRASH_WRI = "trash-wri"
 }
 
 export interface IconProps {

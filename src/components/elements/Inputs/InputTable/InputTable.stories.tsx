@@ -1,9 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
-import * as yup from "yup";
-
-import { FieldType } from "@/components/extensive/WizardForm/types";
 
 import Component, { InputTableProps as Props } from "./InputTable";
 
@@ -33,25 +30,19 @@ export const Default: Story = {
         label: "% New paid full-time hobs",
         name: "full-time-jobs",
         placeholder: "Enter a value",
-        validation: yup.number().required(),
-        type: FieldType.Input,
-        fieldProps: { type: "number" }
+        type: "number"
       },
       {
         label: "% New paid part-time jobs",
         name: "part-time-jobs",
         placeholder: "Enter a value",
-        validation: yup.number().required(),
-        type: FieldType.Input,
-        fieldProps: { type: "number" }
+        type: "number"
       },
       {
         label: "% of women employees",
         name: "women-employees",
         placeholder: "Enter a value",
-        validation: yup.number().required(),
-        type: FieldType.Input,
-        fieldProps: { type: "number" }
+        type: "number"
       }
     ]
   }

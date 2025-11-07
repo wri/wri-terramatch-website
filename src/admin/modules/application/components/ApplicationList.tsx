@@ -15,7 +15,7 @@ import {
   TextField
 } from "react-admin";
 
-import ListActions from "@/admin/components/Actions/ListActions";
+import ListActions, { AutoResetSort } from "@/admin/components/Actions/ListActions";
 import ApplicationsExportModal from "@/admin/modules/application/components/ApplicationsExportModal";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
@@ -117,6 +117,7 @@ export const ApplicationList = () => {
       </Stack>
 
       <List actions={<ListActions onExport={() => setExportModalOpen(true)} />} filters={filters}>
+        <AutoResetSort />
         <ApplicationDataGrid />
       </List>
 

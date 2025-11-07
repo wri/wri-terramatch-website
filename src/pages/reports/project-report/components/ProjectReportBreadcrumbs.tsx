@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
+import { toFramework } from "@/context/framework.provider";
 import { ProjectReportFullDto, TaskFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 
@@ -12,7 +13,7 @@ interface ProjectReportBreadcrumbsProps {
 
 const ProjectReportBreadcrumbs = ({ title, report, task }: ProjectReportBreadcrumbsProps) => {
   const t = useT();
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(report?.frameworkKey), task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   return (

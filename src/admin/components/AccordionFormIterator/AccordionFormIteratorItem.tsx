@@ -82,42 +82,48 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
             })}
         </AccordionSummary>
         <AccordionDetails>
-          <li className={SimpleFormIteratorClasses.line} ref={ref}>
-            {label && (
-              <Typography variant="body2" className={SimpleFormIteratorClasses.index}>
-                {label}
-              </Typography>
-            )}
-            <section
-              className={clsx(SimpleFormIteratorClasses.form, inline && SimpleFormIteratorClasses.inline, "space-y-6")}
-            >
-              {
-                //@ts-ignore
-                Children.map(children, (input: ReactElement, index2) => {
-                  if (!isValidElement<any>(input)) {
-                    return null;
-                  }
-                  const { source, ...inputProps } = input.props;
-                  return cloneElement(input, {
-                    source: source ? `${member}.${source}` : member,
-                    index: source ? undefined : index2,
-                    resource,
-                    disabled,
-                    ...inputProps
-                  });
-                })
-              }
-            </section>
-            {!disabled && (
-              <span className={SimpleFormIteratorClasses.action}>
-                {removeButton &&
-                  !disableRemoveField(record) &&
-                  cloneElement(removeButton, {
-                    className: clsx("button-remove", `button-remove-${source}-${index}`)
-                  })}
-              </span>
-            )}
-          </li>
+          {expandAccordion ? (
+            <li className={SimpleFormIteratorClasses.line} ref={ref}>
+              {label && (
+                <Typography variant="body2" className={SimpleFormIteratorClasses.index}>
+                  {label}
+                </Typography>
+              )}
+              <section
+                className={clsx(
+                  SimpleFormIteratorClasses.form,
+                  inline && SimpleFormIteratorClasses.inline,
+                  "space-y-6"
+                )}
+              >
+                {
+                  //@ts-ignore
+                  Children.map(children, (input: ReactElement, index2) => {
+                    if (!isValidElement<any>(input)) {
+                      return null;
+                    }
+                    const { source, ...inputProps } = input.props;
+                    return cloneElement(input, {
+                      source: source ? `${member}.${source}` : member,
+                      index: source ? undefined : index2,
+                      resource,
+                      disabled,
+                      ...inputProps
+                    });
+                  })
+                }
+              </section>
+              {!disabled && (
+                <span className={SimpleFormIteratorClasses.action}>
+                  {removeButton &&
+                    !disableRemoveField(record) &&
+                    cloneElement(removeButton, {
+                      className: clsx("button-remove", `button-remove-${source}-${index}`)
+                    })}
+                </span>
+              )}
+            </li>
+          ) : null}
         </AccordionDetails>
       </Accordion>
     </SimpleFormIteratorItemContext.Provider>

@@ -44,6 +44,8 @@ import SiteReportShow from "./siteReports/components/SiteReportShow";
 import { SiteReportsList } from "./siteReports/components/SiteReportsList";
 import SiteShow from "./sites/components/SiteShow";
 import { SitesList } from "./sites/components/SitesList";
+import { SRPReportList } from "./srpReport/SRPReportList";
+import SRPReportShow from "./srpReport/SRPReportShow";
 import UserCreate from "./user/components/UserCreate";
 import UserEdit from "./user/components/UserEdit";
 import { UserList } from "./user/components/UserList";
@@ -186,6 +188,13 @@ const disturbanceReport = {
   Edit: EntityEdit
 };
 
+const srpReport = {
+  ResourceName: "srpReport",
+  List: SRPReportList,
+  Show: SRPReportShow,
+  Edit: EntityEdit
+};
+
 const modules = {
   user,
   organisation,
@@ -206,7 +215,8 @@ const modules = {
   audit,
   validatePolygonFile,
   impactStories,
-  disturbanceReport
+  disturbanceReport,
+  srpReport
 };
 
 export default modules;

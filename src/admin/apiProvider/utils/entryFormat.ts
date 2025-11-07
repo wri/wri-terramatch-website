@@ -3,7 +3,7 @@ import { format, isValid, parse, parseISO } from "date-fns";
 export const parseDateValues = (value: any) => {
   try {
     const formattedValue = formatEntryValue(value);
-    const parsedDate = parse(formattedValue, "dd/MM/yyyy", new Date());
+    const parsedDate = parse(formattedValue, "dd/MM/yyyy HH:mm", new Date());
     try {
       return format(new Date(parsedDate), "yyyy-MM-dd");
     } catch (e) {
@@ -46,4 +46,15 @@ export const convertDateFormat = (value: any) => {
   } catch (e) {
     return value;
   }
+};
+
+export const formatDateForEnGb = (value: string | null) => {
+  if (value == null || value == "") return "";
+  const date = new Date(value);
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    timeZone: "UTC"
+  }).format(date);
 };

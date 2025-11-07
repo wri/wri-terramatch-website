@@ -11,7 +11,7 @@ import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
 import { indexNurseryReportConnection, indexSiteReportConnection } from "@/connections/Entity";
 import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface CompletedReportsTableProps {
@@ -86,7 +86,7 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
           cell: props => (
             <Button
               as={Link}
-              href={`/reports/${pluralEntityNameToSingular(modelName)}-report/${props.getValue()}`}
+              href={`/reports/${singularEntityName(modelName)}-report/${props.getValue()}`}
               className="float-right"
             >
               {t("View Report")}

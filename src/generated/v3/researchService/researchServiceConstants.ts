@@ -1,10 +1,25 @@
 import { StoreResourceMap } from "@/store/apiSlice";
-import { SitePolygonFullDto, SitePolygonLightDto, BoundingBoxDto, ValidationDto } from "./researchServiceSchemas";
+import {
+  SitePolygonLightDto,
+  SitePolygonFullDto,
+  BoundingBoxDto,
+  ValidationDto,
+  ValidationSummaryDto,
+  DelayedJobDto
+} from "./researchServiceSchemas";
 
-export const RESEARCH_SERVICE_RESOURCES = ["sitePolygons", "boundingBoxes", "validations"] as const;
+export const RESEARCH_SERVICE_RESOURCES = [
+  "sitePolygons",
+  "boundingBoxes",
+  "validations",
+  "validationSummaries",
+  "delayedJobs"
+] as const;
 
 export type ResearchServiceApiResources = {
-  sitePolygons: StoreResourceMap<SitePolygonFullDto | SitePolygonLightDto>;
+  sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   validations: StoreResourceMap<ValidationDto>;
+  validationSummaries: StoreResourceMap<ValidationSummaryDto>;
+  delayedJobs: StoreResourceMap<DelayedJobDto>;
 };

@@ -1,14 +1,15 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2FormsUUID, usePostV2FormsENTITY } from "@/generated/apiComponents";
-import { FormRead } from "@/generated/apiSchemas";
+import { useForm } from "@/connections/util/Form";
+import { PostV2FormsENTITYResponse, usePostV2FormsENTITY } from "@/generated/apiComponents";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
@@ -34,40 +35,27 @@ const EntityIntroPage = () => {
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
 
-  const formUUID = !entityUUID ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
-
-  const { data: formData } = useGetV2FormsUUID<{ data: FormRead }>(
-    {
-      pathParams: { uuid: formUUID! },
-      queryParams: { lang: router.locale }
-    },
-    {
-      enabled: !!formUUID
-    }
-  );
-
-  const { formData: entityData } = useEntityForm(entityName, entityUUID);
-
-  //@ts-ignore
-  const form = entityData?.data?.form || formData?.data;
+  const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
+  const [, { data: frameworkForm }] = useForm({ id: formUUID, enabled: formUUID != null });
+  const { form: entityForm } = useEntityForm(entityName, entityUUID);
+  const form = frameworkForm ?? entityForm;
 
   const {
     mutate: createEntity,
     isSuccess,
     isLoading
   } = usePostV2FormsENTITY({
-    onSuccess(data) {
-      //@ts-ignore
-      router.replace(`/entity/${entityName}/edit/${data.data.uuid}`);
+    onSuccess(response) {
+      const { uuid } = (response as { data: PostV2FormsENTITYResponse }).data;
+      router.replace(`/entity/${entityName}/edit/${uuid}`);
     }
   });
 
-  const handleContinue = () => {
-    if (entityUUID) {
+  const handleContinue = useCallback(() => {
+    if (entityUUID != null) {
       router.push(`/entity/${entityName}/edit/${entityUUID}`);
     } else {
       createEntity({
-        //@ts-ignore
         pathParams: {
           entity: entityName
         },
@@ -78,34 +66,35 @@ const EntityIntroPage = () => {
         }
       });
     }
-  };
+  }, [createEntity, entityName, entityUUID, formUUID, parentName, parentUUID, router]);
 
   return (
     <BackgroundLayout>
       <ContentLayout>
         <LoadingContainer loading={!form}>
-          <WizardFormIntro
-            title={form?.title!}
-            //@ts-ignore
-            imageSrc={form?.banner?.url}
-            description={form?.description}
-            deadline={form?.deadline_at}
-            ctaProps={{
-              children: form?.documentation_label || t("View list of questions"),
-              as: Link,
-              href: form?.documentation,
-              target: "_blank"
-            }}
-            submitButtonProps={{
-              children: t("Continue"),
-              disabled: isLoading || isSuccess,
-              onClick: handleContinue
-            }}
-            backButtonProps={{
-              children: t("Cancel"),
-              onClick: () => router.back()
-            }}
-          />
+          {form == null ? null : (
+            <WizardFormIntro
+              title={form.title}
+              imageSrc={form.banner?.url ?? undefined}
+              description={form.description ?? undefined}
+              deadline={form.deadlineAt ?? undefined}
+              ctaProps={{
+                children: form.documentationLabel ?? t("View list of questions"),
+                as: Link,
+                href: form.documentation ?? undefined,
+                target: "_blank"
+              }}
+              submitButtonProps={{
+                children: t("Continue"),
+                disabled: isLoading || isSuccess,
+                onClick: handleContinue
+              }}
+              backButtonProps={{
+                children: t("Cancel"),
+                onClick: () => router.back()
+              }}
+            />
+          )}
         </LoadingContainer>
       </ContentLayout>
       <PageFooter />

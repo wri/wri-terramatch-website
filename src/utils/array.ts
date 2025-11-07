@@ -27,9 +27,8 @@ export function notEmpty(array?: any[] | null) {
  * return an empty array if input is undefined or null empty string
  * Note: This does not replace _.toArray()
  */
-export function toArray<T>(element: T | T[]): NonNullable<T>[] {
-  return (Array.isArray(element) ? element : element ? [element] : []) as NonNullable<T>[];
-}
+export const toArray = <T>(element: T | T[]): NonNullable<T>[] =>
+  (Array.isArray(element) ? element : element != null && element !== "" ? [element] : []) as NonNullable<T>[];
 
 export function objectArrayHasDuplication(arr: any[], keys: string[]) {
   return (
@@ -40,3 +39,12 @@ export function objectArrayHasDuplication(arr: any[], keys: string[]) {
     ).size !== arr.length
   );
 }
+
+/**
+ * A quick method to pass into an array to filter out null / undefined, and correctly type the result.
+ *
+ * ex:
+ * const foo: (string | null)[] = ["one", null, "two", "three"];
+ * foo.filter(isNotNull); // results in ["one", "two", "three"], and the type is `string[]` without any 'as' statement.
+ */
+export const isNotNull = <T>(value: T | null | undefined): value is T => value != null;

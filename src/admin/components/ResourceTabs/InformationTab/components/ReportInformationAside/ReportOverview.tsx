@@ -32,9 +32,11 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             </Labeled>
           )}
 
-          <Labeled label="Organisation">
-            <TextField source="organisationName" />
-          </Labeled>
+          {parent?.label !== "Socio-Economic Report" && (
+            <Labeled label="Organisation">
+              <TextField source="organisationName" />
+            </Labeled>
+          )}
 
           <Grid spacing={2} marginBottom={2} container>
             {record?.frameworkKey && (
@@ -82,7 +84,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
-            {(!parent || parent.label !== "Financial Report") && (
+            {parent?.label !== "Disturbance Report" && (
               <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
                 Reminder
               </Button>
