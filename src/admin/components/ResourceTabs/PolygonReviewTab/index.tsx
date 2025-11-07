@@ -68,6 +68,8 @@ export type SitePolygonRow = {
   "target-land-use-system": string;
   "tree-distribution": string;
   "planting-start-date": string;
+  "trees-planted": number | null;
+  "calculated-area": number | null;
   source: string;
   uuid?: string;
   ellipse: boolean;
@@ -258,6 +260,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           "target-land-use-system": data?.targetSys ?? "",
           "tree-distribution": data?.distr ?? "",
           "planting-start-date": data?.plantStart ?? "",
+          "trees-planted": data?.numTrees ?? null,
+          "calculated-area": data?.calcArea ?? null,
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
           ellipse: index === (sitePolygonData ?? []).length - 1
@@ -297,6 +301,18 @@ const PolygonReviewTab: FC<IProps> = props => {
   const startIndex = (currentPage - 1) * pageSize;
   const endIndex = startIndex + pageSize;
   const paginatedData = sortedData.slice(startIndex, endIndex);
+
+  // Calculate totals for summary cards (memoized for performance)
+  const totals = useMemo(() => {
+    return sitePolygonDataTable.reduce(
+      (acc, row) => {
+        acc.totalTreesPlanted += row["trees-planted"] ?? 0;
+        acc.totalCalculatedArea += row["calculated-area"] ?? 0;
+        return acc;
+      },
+      { totalTreesPlanted: 0, totalCalculatedArea: 0 }
+    );
+  }, [sitePolygonDataTable]);
 
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
@@ -771,6 +787,8 @@ const PolygonReviewTab: FC<IProps> = props => {
                 setCurrentPage={setCurrentPage}
                 setPageSize={setPageSize}
                 containerRef={containerRef}
+                totals={totals}
+                isLoading={loading && sitePolygonData.length === 0}
               />
             </Stack>
           </Grid>

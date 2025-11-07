@@ -385,6 +385,29 @@ export const formatNumberLocaleString = (value: number): string => {
   return value.toLocaleString();
 };
 
+/**
+ * Formats a number with locale-aware thousand separators and decimal places
+ * Handles null/undefined values by returning a default string
+ * @param value - The number to format (can be null or undefined)
+ * @param options - Intl.NumberFormatOptions for customization
+ * @param showEmptyAs - What to show when value is null/undefined (default: "-")
+ * @returns Formatted string or showEmptyAs if value is null/undefined
+ */
+export const formatNumber = (
+  value: number | null | undefined,
+  options?: Intl.NumberFormatOptions,
+  showEmptyAs: string = "-"
+): string => {
+  if (value == null || isNaN(value)) {
+    return showEmptyAs;
+  }
+  return value.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+    ...options
+  });
+};
+
 export const getPercentage = (value: number, total: number): string => {
   return ((value / total) * 100).toFixed(1);
 };
