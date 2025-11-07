@@ -95,6 +95,9 @@ export default function SiteAttributeTable({
     }
   ];
 
+  const totalTreesPlanted = paginatedData.reduce((acc, curr) => acc + curr["num-trees"], 0);
+  const totalCalculatedArea = paginatedData.reduce((acc, curr) => acc + curr["calc-area"], 0);
+
   return (
     <div className="mb-6 w-[inherit]" style={{ width: containerRef.current?.clientWidth }}>
       <div className="mb-4">
@@ -111,7 +114,7 @@ export default function SiteAttributeTable({
               <Icon name={IconNames.TREE_DASHABOARD} className="h-3.5 w-3.5 text-[#477010]" /> Trees Planted
             </Text>
             <Text variant="text-16-bold" className="text-[#1A1919]">
-              X,XXX
+              {totalTreesPlanted.toLocaleString()}
             </Text>
           </div>
           <div className="w-[12.5rem] rounded-lg border-2 border-neutral-300 p-3">
@@ -119,7 +122,7 @@ export default function SiteAttributeTable({
               <Icon name={IconNames.AREA} className="h-3.5 w-3.5 text-[#477010]" /> Calculated Area
             </Text>
             <Text variant="text-16-bold" className="text-[#1A1919]">
-              X,XXX
+              {totalCalculatedArea.toLocaleString()} ha
             </Text>
           </div>
         </div>
@@ -187,16 +190,20 @@ export default function SiteAttributeTable({
               style: { width: "7.1875rem" },
               cellStyles: { className: "w-[7.1875rem] wide:w-[12.1875rem] min-w-[7.1875rem]" }
             },
-            cell: (_: any) => <span>XXX,XXX.XX</span>
+            cell: (_: any) => <span>{_?.getValue()}</span>
           },
           {
             header: "Calculated Area",
-            accessorKey: "size",
+            accessorKey: "calc-area",
             meta: {
               style: { width: "7.1875rem" },
               cellStyles: { className: "w-[7.1875rem] wide:w-[12.1875rem] min-w-[7.1875rem]" }
             },
-            cell: (_: any) => <span>XXX,XXX.XX</span>
+            cell: (_: any) => {
+              const calculatedArea =
+                _?.getValue()?.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) ?? "";
+              return <span>{calculatedArea}</span>;
+            }
           },
           {
             header: "Source",

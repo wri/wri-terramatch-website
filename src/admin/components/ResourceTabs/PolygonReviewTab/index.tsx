@@ -71,6 +71,8 @@ export type SitePolygonRow = {
   source: string;
   uuid?: string;
   ellipse: boolean;
+  "num-trees": number;
+  "calc-area": number;
 };
 export interface IPolygonItem {
   id: string;
@@ -260,7 +262,9 @@ const PolygonReviewTab: FC<IProps> = props => {
           "planting-start-date": data?.plantStart ?? "",
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
-          ellipse: index === (sitePolygonData ?? []).length - 1
+          ellipse: index === (sitePolygonData ?? []).length - 1,
+          "num-trees": data?.numTrees ?? 0,
+          "calc-area": data?.calcArea ?? 0
         })
       ),
     [sitePolygonData]
