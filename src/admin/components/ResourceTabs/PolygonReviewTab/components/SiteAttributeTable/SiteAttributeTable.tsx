@@ -9,22 +9,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_POLYGON_REVIEW } from "@/components/extensive/Pagination/PaginationVariant";
-import { formatNumber } from "@/utils/dashboardUtils";
 
-import { SitePolygonRow } from "../..";
+import { PolygonTotals, SitePolygonRow } from "../..";
 
 // Type guard to safely extract menu props from SitePolygonRow
 function isValidMenuProps(row: SitePolygonRow): row is SitePolygonRow & { uuid: string } {
   return row.uuid !== undefined && row.uuid !== null;
-}
-
-// Helper function to format numeric values, showing "-" for null, undefined, or zero
-function formatNumericCell(value: number | null | undefined, unit?: string): string {
-  if (value == null || value === 0) {
-    return "-";
-  }
-  const formatted = formatNumber(value);
-  return unit ? `${formatted} ${unit}` : formatted;
 }
 
 interface SiteAttributeTableProps {
@@ -40,7 +30,7 @@ interface SiteAttributeTableProps {
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
   containerRef: React.RefObject<HTMLDivElement>;
-  totals: { totalTreesPlanted: number; totalCalculatedArea: number };
+  totals: PolygonTotals;
   isLoading: boolean;
 }
 
@@ -127,7 +117,7 @@ export default function SiteAttributeTable({
               </Text>
             </div>
             <Text variant="text-24-bold" className="text-center text-[#1A1919]">
-              {isLoading ? "..." : formatNumber(totals.totalTreesPlanted)}
+              {isLoading ? "..." : totals.totalTreesPlanted.toLocaleString()}
             </Text>
           </div>
           <div className="shadow-sm hover:shadow-md flex w-[14rem] flex-col items-center justify-center gap-1 rounded-lg border border-neutral-200 bg-white p-4 transition-shadow">
@@ -138,7 +128,7 @@ export default function SiteAttributeTable({
               </Text>
             </div>
             <Text variant="text-24-bold" className="text-center text-[#1A1919]">
-              {isLoading ? "..." : `${formatNumber(totals.totalCalculatedArea)} ha`}
+              {isLoading ? "..." : `${totals.totalCalculatedArea.toLocaleString()} ha`}
             </Text>
           </div>
         </div>
@@ -218,7 +208,7 @@ export default function SiteAttributeTable({
           },
           {
             header: "Trees Planted",
-            accessorKey: "trees-planted",
+            accessorKey: "num-trees",
             meta: {
               style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
               cellStyles: {
@@ -228,13 +218,13 @@ export default function SiteAttributeTable({
               className: "!px-4"
             },
             cell: info => {
-              const value = info.row.original["trees-planted"];
-              return <span className="whitespace-nowrap">{formatNumericCell(value)}</span>;
+              const value = info.row.original["num-trees"];
+              return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
             }
           },
           {
             header: "Calculated Area",
-            accessorKey: "calculated-area",
+            accessorKey: "calc-area",
             meta: {
               style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
               cellStyles: {
@@ -244,8 +234,11 @@ export default function SiteAttributeTable({
               className: "!px-4"
             },
             cell: info => {
-              const value = info.row.original["calculated-area"];
-              return <span className="whitespace-nowrap">{formatNumericCell(value, "ha")}</span>;
+              const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+              return <span className="whitespace-nowrap">{`${calculatedArea} ha`}</span>;
             }
           },
           {

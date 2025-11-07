@@ -68,11 +68,16 @@ export type SitePolygonRow = {
   "target-land-use-system": string;
   "tree-distribution": string;
   "planting-start-date": string;
-  "trees-planted": number | null;
-  "calculated-area": number | null;
+  "num-trees": number;
+  "calc-area": number;
   source: string;
   uuid?: string;
   ellipse: boolean;
+};
+
+export type PolygonTotals = {
+  totalTreesPlanted: number;
+  totalCalculatedArea: number;
 };
 export interface IPolygonItem {
   id: string;
@@ -182,7 +187,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
-  const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
+  const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
     Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
   const activeBbox = isValidBbox(bbox) ? bbox : undefined;
   const {
@@ -260,8 +265,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           "target-land-use-system": data?.targetSys ?? "",
           "tree-distribution": data?.distr ?? "",
           "planting-start-date": data?.plantStart ?? "",
-          "trees-planted": data?.numTrees ?? null,
-          "calculated-area": data?.calcArea ?? null,
+          "num-trees": data?.numTrees ?? 0,
+          "calc-area": data?.calcArea ?? 0,
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
           ellipse: index === (sitePolygonData ?? []).length - 1
@@ -302,17 +307,17 @@ const PolygonReviewTab: FC<IProps> = props => {
   const endIndex = startIndex + pageSize;
   const paginatedData = sortedData.slice(startIndex, endIndex);
 
-  // Calculate totals for summary cards (memoized for performance)
-  const totals = useMemo(() => {
-    return sitePolygonDataTable.reduce(
+  // Calculate totals from all data (not just current page)
+  const totals = useMemo<PolygonTotals>(() => {
+    return sortedData.reduce<PolygonTotals>(
       (acc, row) => {
-        acc.totalTreesPlanted += row["trees-planted"] ?? 0;
-        acc.totalCalculatedArea += row["calculated-area"] ?? 0;
+        acc.totalTreesPlanted += row["num-trees"];
+        acc.totalCalculatedArea += row["calc-area"];
         return acc;
       },
       { totalTreesPlanted: 0, totalCalculatedArea: 0 }
     );
-  }, [sitePolygonDataTable]);
+  }, [sortedData]);
 
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
