@@ -1,5 +1,5 @@
 import { SortingState } from "@tanstack/react-table";
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -10,11 +10,16 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 import { VARIANT_PAGINATION_POLYGON_REVIEW } from "@/components/extensive/Pagination/PaginationVariant";
 
-import { PolygonTotals, SitePolygonRow } from "../..";
+import { SitePolygonRow } from "../..";
 
-// Type guard to safely extract menu props from SitePolygonRow
-function isValidMenuProps(row: SitePolygonRow): row is SitePolygonRow & { uuid: string } {
-  return row.uuid !== undefined && row.uuid !== null;
+interface TableItemMenuProps {
+  ellipse: boolean;
+  "planting-start-date": string | null;
+  "polygon-name": string;
+  "restoration-practice": string;
+  "target-land-use-system": string | null;
+  "tree-distribution": string | null;
+  uuid: string;
 }
 
 interface SiteAttributeTableProps {
@@ -24,14 +29,13 @@ interface SiteAttributeTableProps {
   setSorting: (sorting: SortingState) => void;
   sorting: SortingState;
   paginatedData: SitePolygonRow[];
+  allData: SitePolygonRow[];
   currentPage: number;
   totalPages: number;
   pageSize: number;
   setCurrentPage: Dispatch<SetStateAction<number>>;
   setPageSize: Dispatch<SetStateAction<number>>;
   containerRef: React.RefObject<HTMLDivElement>;
-  totals: PolygonTotals;
-  isLoading: boolean;
 }
 
 export default function SiteAttributeTable({
@@ -41,62 +45,70 @@ export default function SiteAttributeTable({
   setSorting,
   sorting,
   paginatedData,
+  allData,
   currentPage,
   totalPages,
   pageSize,
   setCurrentPage,
   setPageSize,
-  containerRef,
-  totals,
-  isLoading
+  containerRef
 }: SiteAttributeTableProps) {
-  const tableItemMenu = useCallback(
-    (props: SitePolygonRow & { uuid: string }) => [
-      {
-        id: "1",
-        render: () => (
-          <div
-            className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
-            onClick={() => setPolygonFromMap({ isOpen: true, uuid: props.uuid })}
-          >
-            <Icon name={IconNames.AREA} className="h-4 w-4 flex-shrink-0" />
-            <Text variant="text-16-light" className="flex-1 text-left">
-              Open Polygon
-            </Text>
-          </div>
-        )
+  // Calculate totals from all data (not just current page)
+  const totals = useMemo(() => {
+    return allData.reduce(
+      (acc, row) => {
+        acc.totalTreesPlanted += row["num-trees"] ?? 0;
+        acc.totalCalculatedArea += row["calc-area"] ?? 0;
+        return acc;
       },
-      {
-        id: "2",
-        render: () => (
-          <div
-            className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
-            onClick={() => flyToPolygonBounds(props.uuid)}
-          >
-            <Icon name={IconNames.SEARCH_WRI} className="h-4 w-4 flex-shrink-0" />
-            <Text variant="text-16-light" className="flex-1 text-left">
-              Zoom to
-            </Text>
-          </div>
-        )
-      },
-      {
-        id: "3",
-        render: () => (
-          <div
-            className="flex w-full min-w-[12rem] items-center gap-2 pb-1.5"
-            onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}
-          >
-            <Icon name={IconNames.TRASH_WRI} className="h-4 w-4 flex-shrink-0" />
-            <Text variant="text-16-light" className="flex-1 text-left">
-              Delete Polygon
-            </Text>
-          </div>
-        )
-      }
-    ],
-    [setPolygonFromMap, flyToPolygonBounds, openFormModalHandlerConfirmDeletion]
-  );
+      { totalTreesPlanted: 0, totalCalculatedArea: 0 }
+    );
+  }, [allData]);
+
+  const tableItemMenu = (props: TableItemMenuProps) => [
+    {
+      id: "1",
+      render: () => (
+        <div
+          className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
+          onClick={() => setPolygonFromMap({ isOpen: true, uuid: props.uuid })}
+        >
+          <Icon name={IconNames.AREA} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
+            Open Polygon
+          </Text>
+        </div>
+      )
+    },
+    {
+      id: "2",
+      render: () => (
+        <div
+          className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
+          onClick={() => flyToPolygonBounds(props.uuid)}
+        >
+          <Icon name={IconNames.SEARCH_WRI} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
+            Zoom to
+          </Text>
+        </div>
+      )
+    },
+    {
+      id: "3",
+      render: () => (
+        <div
+          className="flex w-full min-w-[12rem] items-center gap-2 pb-1.5"
+          onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}
+        >
+          <Icon name={IconNames.TRASH_WRI} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
+            Delete Polygon
+          </Text>
+        </div>
+      )
+    }
+  ];
 
   return (
     <div className="mb-6 w-[inherit]">
@@ -117,7 +129,7 @@ export default function SiteAttributeTable({
               </Text>
             </div>
             <Text variant="text-24-bold" className="text-center text-[#1A1919]">
-              {isLoading ? "..." : totals.totalTreesPlanted.toLocaleString()}
+              {totals.totalTreesPlanted.toLocaleString()}
             </Text>
           </div>
           <div className="shadow-sm hover:shadow-md flex w-[14rem] flex-col items-center justify-center gap-1 rounded-lg border border-neutral-200 bg-white p-4 transition-shadow">
@@ -128,7 +140,7 @@ export default function SiteAttributeTable({
               </Text>
             </div>
             <Text variant="text-24-bold" className="text-center text-[#1A1919]">
-              {isLoading ? "..." : `${totals.totalCalculatedArea.toLocaleString()} ha`}
+              {totals.totalCalculatedArea.toLocaleString()} ha
             </Text>
           </div>
         </div>
@@ -142,8 +154,11 @@ export default function SiteAttributeTable({
         classNameWrapper="!px-0"
         contentClassName={"w-[inherit] !px-0"}
         onTableStateChange={state => {
-          const newSorting = typeof state.sorting === "function" ? state.sorting(sorting) : state.sorting;
-          setSorting(newSorting);
+          if (typeof state.sorting === "function") {
+            setSorting(state.sorting(sorting));
+          } else {
+            setSorting(state.sorting);
+          }
         }}
         columns={[
           {
@@ -217,7 +232,7 @@ export default function SiteAttributeTable({
               },
               className: "!px-4"
             },
-            cell: info => {
+            cell: (info: { row: { original: SitePolygonRow } }) => {
               const value = info.row.original["num-trees"];
               return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
             }
@@ -233,7 +248,7 @@ export default function SiteAttributeTable({
               },
               className: "!px-4"
             },
-            cell: info => {
+            cell: (info: { row: { original: SitePolygonRow } }) => {
               const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
@@ -265,16 +280,15 @@ export default function SiteAttributeTable({
               },
               className: "whitespace-nowrap pr-6 sticky right-0 z-20 relative"
             },
-            cell: info => {
-              const rowData = info.row.original;
-              if (!isValidMenuProps(rowData)) {
+            cell: (props: { row: { original: SitePolygonRow } }) => {
+              const rowData = props.row.original;
+              if (!rowData.uuid) {
                 return null;
               }
               return (
                 <Menu
-                  menu={tableItemMenu(rowData)}
+                  menu={tableItemMenu({ ...rowData, uuid: rowData.uuid } as TableItemMenuProps)}
                   placement={MENU_PLACEMENT_RIGHT_TOP}
-                  classNameContentMenu="min-w-[12rem] max-w-[16rem] w-auto"
                 >
                   <div className="rounded p-1 hover:bg-primary-200">
                     <Icon name={IconNames.ELIPSES} className="h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />

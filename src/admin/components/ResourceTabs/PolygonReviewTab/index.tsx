@@ -307,18 +307,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   const endIndex = startIndex + pageSize;
   const paginatedData = sortedData.slice(startIndex, endIndex);
 
-  // Calculate totals from all data (not just current page)
-  const totals = useMemo<PolygonTotals>(() => {
-    return sortedData.reduce<PolygonTotals>(
-      (acc, row) => {
-        acc.totalTreesPlanted += row["num-trees"];
-        acc.totalCalculatedArea += row["calc-area"];
-        return acc;
-      },
-      { totalTreesPlanted: 0, totalCalculatedArea: 0 }
-    );
-  }, [sortedData]);
-
   const transformedSiteDataForList = (sitePolygonData ?? []).map((data: SitePolygonLightDto, index: number) => ({
     id: (index + 1).toString(),
     status: data.status,
@@ -786,14 +774,13 @@ const PolygonReviewTab: FC<IProps> = props => {
                 setSorting={setSorting}
                 sorting={sorting}
                 paginatedData={paginatedData}
+                allData={sortedData}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageSize={pageSize}
                 setCurrentPage={setCurrentPage}
                 setPageSize={setPageSize}
                 containerRef={containerRef}
-                totals={totals}
-                isLoading={loading && sitePolygonData.length === 0}
               />
             </Stack>
           </Grid>
