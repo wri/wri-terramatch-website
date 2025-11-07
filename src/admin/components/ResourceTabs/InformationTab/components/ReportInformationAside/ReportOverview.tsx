@@ -32,11 +32,9 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             </Labeled>
           )}
 
-          {parent?.label !== "Socio-Economic Report" && (
-            <Labeled label="Organisation">
-              <TextField source="organisationName" />
-            </Labeled>
-          )}
+          <Labeled label="Organisation">
+            <TextField source="organisationName" />
+          </Labeled>
 
           <Grid spacing={2} marginBottom={2} container>
             {record?.frameworkKey && (
