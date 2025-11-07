@@ -2,7 +2,7 @@ import { isEmpty } from "lodash";
 import { useCallback, useState } from "react";
 
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceCreator";
+import { resourceCreator } from "@/connections/util/resourceMutator";
 import {
   createPolygonValidations,
   createSiteValidation,

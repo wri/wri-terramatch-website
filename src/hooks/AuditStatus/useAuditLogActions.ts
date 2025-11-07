@@ -28,7 +28,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   5: "site-reports",
   6: "nursery-reports",
   7: "disturbance-reports",
-  8: "srp-reports"
+  8: "srp-reports",
+  9: "financial-reports"
 };
 
 interface AuditLogActionsResponse {
@@ -61,6 +62,7 @@ const useAuditLogActions = ({
   const t = useT();
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
   const isLevelSrpReport = entityLevel === AuditLogButtonStates.SRP_REPORT;
+  const isLevelFinancialReport = entityLevel === AuditLogButtonStates.FINANCIAL_REPORT;
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
@@ -81,7 +83,8 @@ const useAuditLogActions = ({
     "site-reports",
     "nursery-reports",
     "disturbance-reports",
-    "srp-reports"
+    "srp-reports",
+    "financial-reports"
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   useEffect(() => {
@@ -123,6 +126,15 @@ const useAuditLogActions = ({
     if (isLevelSrpReport || isLevelDisturbanceReport) {
       return {
         selectedEntityItem: isProject ? { uuid: record.projectUuid, status: record.projectStatus } : record,
+        loadToEntity: () => {},
+        ListItemToEntity: [],
+        setSelectedToEntity: null,
+        checkPolygons: false
+      };
+    }
+    if (isLevelFinancialReport) {
+      return {
+        selectedEntityItem: record,
         loadToEntity: () => {},
         ListItemToEntity: [],
         setSelectedToEntity: null,

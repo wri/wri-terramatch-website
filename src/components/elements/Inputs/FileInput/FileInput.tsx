@@ -105,7 +105,7 @@ const FileInput: FC<FileInputProps> = props => {
         description={props.description}
         containerClassName={props.containerClassName}
         required={props.required}
-        error={!props.files || props.files.length === 0 ? props.error : undefined}
+        error={props.error}
         feedbackRequired={props.feedbackRequired}
         labelClassName={props.labelClassName}
         labelVariant={props.labelVariant}
@@ -170,7 +170,6 @@ const FileInput: FC<FileInputProps> = props => {
         <FilePreviewTable
           items={props.files}
           onDelete={props.onDelete}
-          onPrivateChange={props.onPrivateChange}
           formHook={props.formHook}
           updateFile={props.updateFile}
           entityData={props.entityData}

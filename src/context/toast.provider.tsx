@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 
 import { useDebounce } from "@/hooks/useDebounce";
 
@@ -32,23 +32,26 @@ const ToastProvider = ({ children }: ToastProviderProps) => {
     open: false
   });
 
-  const openToast = (text: string, type = ToastType.SUCCESS) => {
-    setToastDetails({
-      text,
-      type,
-      open: true
-    });
-    closeModalAfterTime();
-  };
-
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     setToastDetails(prev => ({
       ...prev,
       open: false
     }));
-  };
+  }, []);
 
   const closeModalAfterTime = useDebounce(closeToast, OPEN_TIME);
+
+  const openToast = useCallback(
+    (text: string, type = ToastType.SUCCESS) => {
+      setToastDetails({
+        text,
+        type,
+        open: true
+      });
+      closeModalAfterTime();
+    },
+    [closeModalAfterTime]
+  );
 
   return (
     <ToastContext.Provider

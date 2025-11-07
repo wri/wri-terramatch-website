@@ -19,7 +19,6 @@ import {
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import JobsSlice from "@/store/jobsSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
@@ -168,7 +167,6 @@ const ProcessBulkPolygonsControl = ({
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
 
                   setIsLoadingDelayedJob?.(false);
-                  JobsSlice.reset();
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -214,7 +212,6 @@ const ProcessBulkPolygonsControl = ({
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          JobsSlice.reset();
         },
         onError: () => {
           hideLoader();

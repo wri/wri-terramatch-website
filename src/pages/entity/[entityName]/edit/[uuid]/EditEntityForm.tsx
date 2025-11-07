@@ -1,47 +1,77 @@
 import { useT } from "@transifex/react";
-import { defaults } from "lodash";
+import { Dictionary } from "lodash";
+import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
-import { pruneEntityCache } from "@/connections/Entity";
+import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { loadFullNurseryReport, loadFullSiteReport, pruneEntityCache } from "@/connections/Entity";
+import { FormModelType } from "@/connections/util/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
-import EntityProvider from "@/context/entity.provider";
-import { useFrameworkContext } from "@/context/framework.provider";
-import { GetV2FormsENTITYUUIDResponse, usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
+import { toFramework } from "@/context/framework.provider";
+import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport, singularEntityName } from "@/helpers/entity";
+import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
-import {
-  useGetCustomFormSteps,
-  useNormalizedFormDefaultValue
-} from "@/hooks/useGetCustomFormSteps/useGetCustomFormSteps";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName } from "@/types/common";
+import Log from "@/utils/log";
 
 interface EditEntityFormProps {
   entityName: EntityName;
   entityUUID: string;
   entity: Record<string, any>;
-  formData: GetV2FormsENTITYUUIDResponse;
 }
 
-const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntityFormProps) => {
+const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
-  const { framework } = useFrameworkContext();
-  const organisation = entity?.organisation;
+
+  const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
+  const entityData = formData?.data;
+  const framework = toFramework(entityData?.framework_key);
+
+  const model = useMemo(
+    () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
+    [entityName, entityUUID]
+  );
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
+
+  const feedbackFields = useMemo(
+    () =>
+      mode?.includes("provide-feedback")
+        ? entityData?.update_request?.feedback_fields ?? entityData?.feedback_fields ?? []
+        : [],
+    [entityData?.feedback_fields, entityData?.update_request?.feedback_fields, mode]
+  );
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData?.data, fieldsProvider);
+
+  const organisation = entity?.organisation;
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
       // When an entity is submitted via form, we want to forget the cached copy we might have from
       // v3 so it gets re-fetched when a component needs it.
-      pruneEntityCache(entityName, entityUUID);
+      // TODO TM-2581 This will hopefully no longer be true when form submission goes through v3.
+      const v3Entity = v3EntityName(entityName);
+      pruneEntityCache(v3Entity, entityUUID);
+      // A bit of a hacky temporary workaround for reports: if the user navigates back to the
+      // task page after submitting a site or nursery report, the report is pruned but the connection
+      // expects to find it. Therefore, let's kick off a re-fetch here right away. This should also
+      // be able to go away in TM-2581, or a subsequent ticket related to form data answers.
+      if (v3Entity === "siteReports") {
+        loadFullSiteReport({ id: entityUUID });
+      } else if (v3Entity === "nurseryReports") {
+        loadFullNurseryReport({ id: entityUUID });
+      }
 
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
@@ -51,25 +81,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
     }
   });
 
-  const feedbackFields = formData?.update_request?.feedback_fields ?? formData?.feedback_fields ?? [];
-
-  const formSteps = useGetCustomFormSteps(
-    formData.form,
-    {
-      entityName: singularEntityName(entityName),
-      entityUUID
-    },
-    framework,
-    mode?.includes("provide-feedback") ? feedbackFields : undefined
-  );
-
-  const sourceData = useMemo(
-    () => defaults(formData?.update_request?.content ?? {}, formData?.answers),
-    [formData?.answers, formData?.update_request?.content]
-  );
-  const defaultValues = useNormalizedFormDefaultValue(sourceData, formSteps);
-
-  const reportingWindow = useReportingWindow(entity?.due_at);
+  const reportingWindow = useReportingWindow(framework, entity?.due_at);
   const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;
   const formTitle =
     entityName === "site-reports"
@@ -80,7 +92,7 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
       ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : entityName === "srp-reports"
       ? t("{projectName} Socio-Economic Report", { projectName: entity.project.name })
-      : `${formData.form?.title} ${isReport ? reportingWindow : ""}`;
+      : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -97,73 +109,103 @@ const EditEntityForm = ({ entityName, entityUUID, entity, formData }: EditEntity
   };
 
   const initialStepProps = useMemo(() => {
-    const stepIndex =
-      mode == null ? 0 : formSteps!.findIndex(step => step.fields.find(field => field.feedbackRequired) != null);
+    if (providerLoaded && feedbackFields != null) {
+      for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
+        for (const fieldId of fieldsProvider.fieldNames(stepId)) {
+          if (fieldsProvider.feedbackRequired(fieldId)) {
+            return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
+          }
+        }
+      }
+    }
 
-    return {
-      initialStepIndex: stepIndex < 0 ? undefined : stepIndex,
-      disableInitialAutoProgress: stepIndex >= 0
-    };
-  }, [formSteps, mode]);
+    return { initialStepIndex: 0, disableInitialAutoProgress: false };
+  }, [feedbackFields, fieldsProvider, providerLoaded]);
 
-  const formSubmissionOrg = {
-    uuid: organisation?.uuid,
-    type: organisation?.type,
-    currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
-    start_month: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
-  };
+  const orgDetails = useMemo(
+    (): OrgFormDetails => ({
+      uuid: organisation?.uuid,
+      currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
+      startMonth: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
+    }),
+    [
+      entity?.currency,
+      entity?.fin_start_month,
+      entityName,
+      organisation?.currency,
+      organisation?.fin_start_month,
+      organisation?.uuid
+    ]
+  );
+
+  const projectDetails = useMemo((): ProjectFormDetails => ({ uuid: entity?.project?.uuid }), [entity?.project?.uuid]);
+
+  const onChange = useCallback(
+    (data: Dictionary<any>, closeAndSave?: boolean) => {
+      updateEntity({
+        answers: normalizedFormData(data, fieldsProvider),
+        ...(closeAndSave ? { continue_later_action: true } : {})
+      });
+    },
+    [fieldsProvider, updateEntity]
+  );
+
+  if (loadError || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadError, formLoadFailure });
+    return notFound();
+  }
 
   return (
-    <EntityProvider entityUuid={entityUUID} entityName={entityName} projectUuid={entity?.project?.uuid}>
+    <LoadingContainer loading={isLoading || !providerLoaded}>
       <CurrencyProvider>
-        <WizardForm
-          formSubmissionOrg={formSubmissionOrg}
-          steps={formSteps!}
-          errors={error}
-          onBackFirstStep={router.back}
-          onCloseForm={() => router.push("/home")}
-          onChange={(data, closeAndSave?: boolean) =>
-            updateEntity({
-              answers: normalizedFormData(data, formSteps!),
-              ...(closeAndSave ? { continue_later_action: true } : {})
-            })
-          }
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitEntity({
-              pathParams: {
-                entity: entityName,
-                uuid: entityUUID
-              }
-            })
-          }
-          submitButtonDisable={isSubmitting}
-          defaultValues={defaultValues}
-          title={formTitle}
-          subtitle={formSubtitle}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          summaryOptions={{
-            title: t("Review Details"),
-            downloadButtonText: t("Download")
-          }}
-          roundedCorners
-          saveAndCloseModal={{
-            content:
-              saveAndCloseModalMapping[entityName] ??
-              t(
-                "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
-              ),
-            onConfirm() {
-              router.push(getEntityDetailPageLink(entityName, entityUUID));
+        {providerLoaded && (
+          <WizardForm
+            framework={framework}
+            models={model}
+            fieldsProvider={fieldsProvider}
+            orgDetails={orgDetails}
+            projectDetails={projectDetails}
+            errors={error}
+            onBackFirstStep={router.back}
+            onCloseForm={() => router.push("/home")}
+            onChange={onChange}
+            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+            onSubmit={() =>
+              submitEntity({
+                pathParams: {
+                  entity: entityName,
+                  uuid: entityUUID
+                }
+              })
             }
-          }}
-          {...initialStepProps}
-        />
+            submitButtonDisable={isSubmitting}
+            defaultValues={defaultValues}
+            title={formTitle}
+            subtitle={formSubtitle}
+            tabOptions={{
+              markDone: true,
+              disableFutureTabs: true
+            }}
+            summaryOptions={{
+              title: t("Review Details"),
+              downloadButtonText: t("Download")
+            }}
+            roundedCorners
+            saveAndCloseModal={{
+              content:
+                saveAndCloseModalMapping[entityName] ??
+                t(
+                  "You have made progress on this form. If you close the form now, your progress will be saved for when you come back. You can access this form again on the reporting tasks section under your project page. Would you like to close this form and continue later?"
+                ),
+              onConfirm() {
+                router.push(getEntityDetailPageLink(entityName, entityUUID));
+              }
+            }}
+            {...initialStepProps}
+          />
+        )}
       </CurrencyProvider>
-    </EntityProvider>
+    </LoadingContainer>
   );
 };
 

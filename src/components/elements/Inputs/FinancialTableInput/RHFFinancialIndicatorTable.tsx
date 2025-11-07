@@ -24,6 +24,7 @@ import { currencySymbol } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import { useOrgFormDetails } from "@/context/wizardForm.provider";
 import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
@@ -51,19 +52,17 @@ import {
   HandleChangePayload,
   NON_PROFILE_ANALYSIS_COLUMNS,
   NonProfitAnalysisData,
-  orgSubmission,
   PROFIT_ANALYSIS_COLUMNS,
   useDebouncedChange
 } from "./types";
 
 export interface RHFFinancialIndicatorsDataTableProps
-  extends Omit<DataTableProps<any>, "value" | "onChange" | "fields" | "addButtonCaption" | "tableColumns">,
+  extends Omit<DataTableProps<any>, "value" | "onChange" | "fieldsProvider" | "addButtonCaption" | "tableColumns">,
     UseControllerProps {
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   years?: Array<number>;
-  model?: string;
-  formSubmissionOrg?: orgSubmission;
+  collection?: string;
 }
 
 const handleChange = (
@@ -122,13 +121,14 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const { field } = useController(props);
     const value = field?.value ?? [];
     const { files, addFile, removeFile } = useFiles(true);
-    const { years, formSubmissionOrg, model } = props;
+    const { years, collection } = props;
+    const orgDetails = useOrgFormDetails();
 
     const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
-      getValueFromData(value, "currency", formSubmissionOrg?.currency ?? "")
+      getValueFromData(value, "currency", orgDetails?.currency ?? "")
     );
     const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(
-      getValueFromData(value, "start_month", formSubmissionOrg?.start_month ?? "")
+      getValueFromData(value, "start_month", orgDetails?.startMonth ?? "")
     );
     const [resetTable, setResetTable] = useState(0);
     const { openNotification } = useNotificationContext();
@@ -872,7 +872,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
     useOnMount(() => {
       const payload = {
-        organisation_id: formSubmissionOrg?.uuid,
+        organisation_id: orgDetails?.uuid,
         profit_analysis_data: forProfitAnalysisData,
         non_profit_analysis_data: nonProfitAnalysisData,
         current_radio_data: currentRadioData,
@@ -883,7 +883,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       };
 
       const isSame = JSON.stringify(payload) === JSON.stringify(lastSentData.current);
-      if (!formSubmissionOrg?.uuid || isSame || isRequestInProgress.current) return;
+      if (orgDetails?.uuid == null || isSame || isRequestInProgress.current) return;
 
       const sendRequest = async () => {
         isRequestInProgress.current = true;
@@ -897,20 +897,18 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         }
       };
 
-      if (formSubmissionOrg?.uuid) {
-        sendRequest();
-        if (selectCurrency === formSubmissionOrg?.currency) {
-          setSelectCurrency(formSubmissionOrg?.currency ?? "");
-        }
-        if (selectFinancialMonth === formSubmissionOrg?.start_month) {
-          setSelectFinancialMonth(formSubmissionOrg?.start_month as number);
-        }
+      sendRequest();
+      if (selectCurrency === orgDetails?.currency) {
+        setSelectCurrency(orgDetails?.currency ?? "");
+      }
+      if (selectFinancialMonth === orgDetails?.startMonth) {
+        setSelectFinancialMonth(orgDetails?.startMonth as number);
       }
     });
 
     const initialized = useRef(false);
     const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
-      formSubmissionOrg?.title ?? ""
+      orgDetails?.title ?? ""
     );
 
     useValueChanged(value, () => {
@@ -957,7 +955,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           exchange_rate: number | null;
         }> = [];
 
-        if (model?.includes("profit") && forProfitAnalysisData && forProfitAnalysisData.length > 0) {
+        if (collection?.includes("profit") && forProfitAnalysisData && forProfitAnalysisData.length > 0) {
           forProfitAnalysisData.forEach(item => {
             const year = Number(item.year);
 
@@ -968,7 +966,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.revenueUuid ?? null,
               description: null,
               documentation: [],
@@ -982,7 +980,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.expensesUuid ?? null,
               description: null,
               documentation: [],
@@ -996,7 +994,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.profitUuid ?? null,
               description: null,
               documentation: [],
@@ -1005,7 +1003,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
         }
 
-        if (model?.includes("budget") && nonProfitAnalysisData && nonProfitAnalysisData.length > 0) {
+        if (collection?.includes("budget") && nonProfitAnalysisData && nonProfitAnalysisData.length > 0) {
           nonProfitAnalysisData.forEach(item => {
             const year = Number(item.year);
 
@@ -1016,7 +1014,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.budgetUuid ?? null,
               description: null,
               documentation: [],
@@ -1025,7 +1023,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           });
         }
 
-        if (model?.includes("current-ratio") && currentRadioData && currentRadioData.length > 0) {
+        if (collection?.includes("current-ratio") && currentRadioData && currentRadioData.length > 0) {
           currentRadioData.forEach(item => {
             const year = Number(item.year);
             if (isNaN(year)) return;
@@ -1037,7 +1035,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.currentAssetsUuid ?? null,
               description: null,
               documentation: [],
@@ -1051,7 +1049,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.currentLiabilitiesUuid ?? null,
               description: null,
               documentation: [],
@@ -1065,7 +1063,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.currentRatioUuid ?? null,
               description: null,
               documentation: [],
@@ -1085,7 +1083,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               financial_report_id: id ?? router.query.uuid,
               start_month: selectFinancialMonth,
               currency: selectCurrency,
-              organisation_id: formSubmissionOrg?.uuid,
+              organisation_id: orgDetails?.uuid,
               uuid: item.uuid ?? null,
               description: item.description ?? null,
               documentation: item.documentation ?? [],
@@ -1111,8 +1109,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       initialized,
       id,
       router.query.uuid,
-      formSubmissionOrg?.uuid,
-      model
+      orgDetails?.uuid,
+      collection
     ]);
 
     const syncDocumentationTable = useCallback(() => {
@@ -1142,7 +1140,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             label={t("Local Currency")}
             placeholder={t("USD - US Dollar")}
             value={[selectCurrency]}
-            defaultValue={formSubmissionOrg?.currency ? [formSubmissionOrg?.currency] : [selectCurrency]}
+            defaultValue={orgDetails?.currency ? [orgDetails?.currency] : [selectCurrency]}
             onChange={e => setSelectCurrency(e?.[0])}
           />
           <Dropdown
@@ -1150,11 +1148,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             label={t("Financial Year Start Month")}
             placeholder={t("Select Month")}
             value={[selectFinancialMonth]}
-            defaultValue={formSubmissionOrg?.start_month ? [formSubmissionOrg?.start_month] : [selectFinancialMonth]}
+            defaultValue={orgDetails?.startMonth ? [orgDetails?.startMonth] : [selectFinancialMonth]}
             onChange={e => setSelectFinancialMonth(e?.[0])}
           />
         </div>
-        <When condition={model?.includes("profit")}>
+        <When condition={collection?.includes("profit")}>
           <div className="mb-10">
             <FinancialTableInput
               resetTable={resetTable}
@@ -1167,7 +1165,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             />
           </div>
         </When>
-        <When condition={model?.includes("budget")}>
+        <When condition={collection?.includes("budget")}>
           <div className="mb-10">
             <FinancialTableInput
               resetTable={resetTable}
@@ -1182,7 +1180,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             />
           </div>
         </When>
-        <When condition={model?.includes("current-ratio")}>
+        <When condition={collection?.includes("current-ratio")}>
           <div className="mb-10">
             <FinancialTableInput
               resetTable={resetTable}

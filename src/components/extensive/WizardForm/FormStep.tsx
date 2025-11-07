@@ -1,65 +1,51 @@
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useEffect } from "react";
-import { FieldValues, UseFormReturn } from "react-hook-form";
-import { When } from "react-if";
-import { twMerge } from "tailwind-merge";
+import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, useCallback, useEffect, useMemo } from "react";
+import { UseFormReturn } from "react-hook-form";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
-import Text from "@/components/elements/Text/Text";
+import { IButtonProps } from "@/components/elements/Button/Button";
 import List from "@/components/extensive/List/List";
-
-import { FieldMapper } from "./FieldMapper";
-import { FormField } from "./types";
+import FormField from "@/components/extensive/WizardForm/FormField";
+import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 
 interface FormTabProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  title: string;
-  subtitle?: string;
-  fields?: FormField[];
-  formHook: UseFormReturn<FieldValues, any>;
+  stepId: string;
+  formHook: UseFormReturn;
   onChange: () => void;
   actionButtonProps?: IButtonProps;
-  formSubmissionOrg?: any;
 }
 
 export const FormStep = ({
-  title,
-  subtitle,
-  fields,
+  stepId,
   formHook,
   onChange,
   actionButtonProps,
   children,
-  className,
-  formSubmissionOrg,
   ...divProps
 }: PropsWithChildren<FormTabProps>) => {
+  const { step, fieldNames } = useFieldsProvider();
+  const stepDefinition = step(stepId);
+  const stepFieldIds = useMemo(() => fieldNames(stepId), [fieldNames, stepId]);
+  const renderField = useCallback(
+    (fieldId: string) => <FormField key={fieldId} fieldId={fieldId} formHook={formHook} onChange={onChange} />,
+    [formHook, onChange]
+  );
+
   useEffect(() => {
     formHook.clearErrors();
-  }, [fields, formHook, title]);
+  }, [stepId, formHook]);
+
+  if (stepDefinition == null) return null;
 
   return (
-    <div {...divProps} className={twMerge("flex-1 bg-white px-16 pt-8 pb-11", className)}>
-      <div className="flex items-center justify-between">
-        <Text variant="text-heading-700">{title}</Text>
-        <When condition={!!actionButtonProps}>
-          <Button {...actionButtonProps!} />
-        </When>
-      </div>
-      <Text variant="text-body-600" className="mt-8" containHtml>
-        {subtitle}
-      </Text>
-      <div className="my-8 h-[2px] w-full bg-neutral-200" />
-
-      <When condition={!!fields}>
-        <List
-          items={fields!}
-          uniqueId="name"
-          itemClassName="mt-8"
-          render={field => (
-            <FieldMapper field={field} formHook={formHook} onChange={onChange} formSubmissionOrg={formSubmissionOrg} />
-          )}
-        />
-      </When>
+    <FormStepHeader
+      {...divProps}
+      title={stepDefinition.title ?? undefined}
+      subtitle={stepDefinition.description ?? undefined}
+    >
+      {stepFieldIds.length === 0 ? null : (
+        <List items={stepFieldIds} uniqueId="name" itemClassName="mt-8" render={renderField} />
+      )}
       {children}
-    </div>
+    </FormStepHeader>
   );
 };

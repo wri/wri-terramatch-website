@@ -4,14 +4,6 @@ import { useEffect, useMemo } from "react";
 import { currencySymbol } from "@/constants/options/localCurrency";
 import { UploadedFile } from "@/types/common";
 
-export type orgSubmission = {
-  uuid: string;
-  type: string;
-  currency: string;
-  start_month: string | number;
-  title?: string | null;
-};
-
 export type BaseYearlyData = {
   uuid: string | null;
   year: string | number;

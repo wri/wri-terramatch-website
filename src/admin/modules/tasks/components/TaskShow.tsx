@@ -1,7 +1,7 @@
 import { Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import React, { FC, useRef } from "react";
+import React, { FC, useCallback, useRef } from "react";
 import { Show, ShowButton, useShowContext } from "react-admin";
 
 import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
@@ -238,15 +238,18 @@ function ShowReports() {
     );
   };
 
-  useRequestComplete(taskIsUpdating, () => {
-    if (taskUpdateFailure == null) {
-      openNotification("success", "Reports approved successfully", "");
-      closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-      closeModal(ModalId.APPROVE_POLYGONS);
-    } else {
-      openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
-    }
-  });
+  useRequestComplete(
+    taskIsUpdating,
+    useCallback(() => {
+      if (taskUpdateFailure == null) {
+        openNotification("success", "Reports approved successfully", "");
+        closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+        closeModal(ModalId.APPROVE_POLYGONS);
+      } else {
+        openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
+      }
+    }, [closeModal, openNotification, taskUpdateFailure])
+  );
 
   return isLoading ? null : (
     <Card sx={{ padding: 4 }}>

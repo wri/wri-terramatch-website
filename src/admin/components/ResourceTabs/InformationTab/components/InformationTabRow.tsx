@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import classNames from "classnames";
+import { FC } from "react";
 import { LabeledClasses } from "react-admin";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -7,19 +8,18 @@ import DisturbanceReport from "@/admin/modules/disturbanceReport/components/Dist
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { FormSummaryRowProps, useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow";
-import { FieldType } from "@/components/extensive/WizardForm/types";
-import { usePlants } from "@/connections/EntityAssociation";
-import { SupportedEntity } from "@/connections/EntityAssociation";
+import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
+import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
+import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
-const asSupportedEntity = (v: unknown): SupportedEntity | undefined =>
-  typeof v === "string" ? (v as SupportedEntity) : undefined;
-const asString = (v: unknown): string | undefined => (typeof v === "string" ? v : undefined);
+type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
 
-const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProps) => {
-  const entries = useGetFormEntries({ ...props, type, entity });
-  const entityName = asSupportedEntity(entity?.entityName) ?? "projects";
-  const entityUuid = asString(entity?.entityUUID) ?? "";
+const InformationTabRow: FC<InformationTabRowProps> = props => {
+  const entity = useFormEntities()[0];
+  const entityName = (entity?.entityName as SupportedEntity) ?? "projects";
+  const entityUuid = entity?.entityUUID ?? "";
+  const entries = useGetFormEntries({ ...props, entity });
   const [, { data: nurseryPlants }] = usePlants({
     entity: entityName,
     uuid: entityUuid,
@@ -27,23 +27,25 @@ const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProp
   });
   const nurseryTotalFallback = (nurseryPlants ?? []).map(p => p?.amount ?? 0).reduce((sum, v) => sum + v, 0);
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
+  const title = useFieldsProvider().step(props.stepId)?.title;
+
   return (
     <>
       <Text variant="text-16-semibold" className="text-darkCustom">
-        {props.step.title}
+        {title}
       </Text>
       <List
         className={classNames("mt-4 gap-4", {
-          "grid grid-cols-3": type === "sites",
-          "flex flex-col": type !== "sites"
+          "grid grid-cols-3": entityName === "sites",
+          "flex flex-col": entityName !== "sites"
         })}
         items={entries}
         render={entry => {
-          return entry.type === "disturbanceReportEntries" ? (
-            <DisturbanceReport values={props?.values} formSteps={props.steps} />
+          return entry.inputType === "disturbanceReportEntries" ? (
+            <DisturbanceReport values={props?.values} />
           ) : (
             <div>
-              {(type === "nurseries" || type === "nursery-reports") && entry.type === FieldType.TreeSpecies ? (
+              {(entityName === "nurseries" || entityName === "nurseryReports") && entry.inputType === "treeSpecies" ? (
                 <>
                   {entry.title ? (
                     <Text variant="text-14-light" className="mb-2 text-grey-700" containHtml>
@@ -56,7 +58,8 @@ const InformationTabRow = ({ index, type, entity, ...props }: FormSummaryRowProp
                         {"Saplings to be Grown"}
                       </Text>
                       <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                        {(type === "nurseries" ? nurseryTotalFallback : totalTreePlanted)?.toLocaleString?.() ?? 0}
+                        {(entityName === "nurseries" ? nurseryTotalFallback : totalTreePlanted)?.toLocaleString?.() ??
+                          0}
                       </Text>
                     </div>
                   </Typography>

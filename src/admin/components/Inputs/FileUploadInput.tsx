@@ -1,18 +1,21 @@
 import { styled } from "@mui/material";
-import { useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { Confirm, FileField, FileInput, ImageField, ImageInputProps } from "react-admin";
 
 import { deleteMedia } from "@/connections/Media";
 import { UploadedFile } from "@/types/common";
 
-export const FileUploadInput = (props: ImageInputProps) => {
+export const FileUploadInput: FC<ImageInputProps> = ({ accept, ...props }) => {
   const [removeFile, setRemoveFile] = useState<any>(null);
   const [showModal, setShowModal] = useState<any>(false);
+
+  accept = useMemo(() => (Array.isArray(accept) ? accept.join(",") : accept), [accept]);
 
   return (
     <>
       <StyledFileUpload
         {...props}
+        accept={accept}
         validateFileRemoval={async (file: UploadedFile) => {
           if (file.uuid) {
             setShowModal(true);
@@ -32,7 +35,7 @@ export const FileUploadInput = (props: ImageInputProps) => {
         }}
       >
         <>
-          <FileField source="url" title="file_name" target="_blank" />
+          <FileField source="url" title="fileName" target="_blank" />
           <FileField source="src" title="title" target="_blank" />
           <ImageField source="url" />
           <ImageField source="src" />

@@ -44,6 +44,7 @@ import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import { ReportsModelNames, Status } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 const StatusMapping: { [index: string]: Status } = {
   due: "edit",
@@ -148,15 +149,20 @@ const ReportingTaskPage = () => {
   });
 
   const reports = useMemo(() => {
-    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])].map(mapTaskReport(format)).filter(report => {
-      for (const filter of filters) {
-        const value = report[filter.filter.accessorKey as keyof TaskReport];
-        if (value !== filter.value) {
-          return false;
+    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])]
+      // TODO TM-2581 See comment in EditEntityForm's onSuccess for submit. This will not be needed
+      // once we've switched over to v3 for submission.
+      .filter(isNotNull)
+      .map(mapTaskReport(format))
+      .filter(report => {
+        for (const filter of filters) {
+          const value = report[filter.filter.accessorKey as keyof TaskReport];
+          if (value !== filter.value) {
+            return false;
+          }
         }
-      }
-      return true;
-    });
+        return true;
+      });
 
     const srpReportsMapped = srpReports?.map(mapTaskReport(format));
     setSrpReportsTableData(srpReportsMapped ?? []);
@@ -383,7 +389,7 @@ const ReportingTaskPage = () => {
               </PageCard>
             </PageSection>
             <PageSection>
-              <PageCard title={t("SRP Reports")}>
+              <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
                 <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
               </PageCard>
             </PageSection>

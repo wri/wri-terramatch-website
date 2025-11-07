@@ -1,26 +1,26 @@
 import { Card, Grid, Stack, Typography } from "@mui/material";
-import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { camelCase } from "lodash";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import { MonitoringPartnersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/MonitoringPartners";
 import { ProjectManagersTable } from "@/admin/components/ResourceTabs/InformationTab/components/ProjectInformationAside/ProjectManagersTable";
-import { setDefaultConditionalFieldsAnswers } from "@/admin/utils/forms";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { FieldType } from "@/components/extensive/WizardForm/types";
 import { SupportedEntity } from "@/connections/EntityAssociation";
+import { FormModelType } from "@/connections/util/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
-import { getCustomFormSteps, normalizedFormDefaultValue } from "@/helpers/customForms";
-import { singularEntityName } from "@/helpers/entity";
+import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { formDefaultValues } from "@/helpers/customForms";
+import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 
 import FinancialDescriptionsSection from "../HistoryTab/components/FinancialDescriptionsSection";
@@ -66,7 +66,6 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
 };
 const InformationTab: FC<IProps> = props => {
   const { isLoading: ctxLoading, record } = useShowContext();
-  const t = useT();
   const { framework } = useFrameworkContext();
   const entity = camelCase(props.type) as SupportedEntity;
   const entityUuid = record?.uuid;
@@ -78,16 +77,24 @@ const InformationTab: FC<IProps> = props => {
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
   const { formData: response, isLoading: queryLoading } = useEntityForm(props.type, record?.uuid);
-  const isLoading = ctxLoading || queryLoading;
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(response?.data.form_uuid);
 
-  if (isLoading || record == null) return null;
+  const model = useMemo<FormModel>(
+    () => ({ model: v3EntityName(props.type) as FormModelType, uuid: record?.uuid ?? "" }),
+    [props.type, record?.uuid]
+  );
 
-  const formSteps = getCustomFormSteps(response?.data.form!, t, undefined, framework);
-  const values = record.migrated
-    ? setDefaultConditionalFieldsAnswers(normalizedFormDefaultValue(response?.data.answers!, formSteps), formSteps)
-    : normalizedFormDefaultValue(response?.data.answers!, formSteps);
+  const values = useMemo(
+    () => formDefaultValues(response?.data.answers!, fieldsProvider),
+    [fieldsProvider, response?.data.answers]
+  );
 
-  const tabTitle = (() => {
+  const fields = useMemo(
+    () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldNames).map(fieldsProvider.fieldByName).filter(isNotNull),
+    [fieldsProvider]
+  );
+
+  const tabTitle = useMemo(() => {
     switch (props.type) {
       case "projects":
         return "Project Information";
@@ -108,9 +115,10 @@ const InformationTab: FC<IProps> = props => {
       default:
         return "Information";
     }
-  })();
+  }, [props.type]);
 
-  return (
+  const isLoading = ctxLoading || queryLoading || !providerLoaded || record == null;
+  return isLoading ? null : (
     <TabbedShowLayout.Tab label={tabTitle} {...props}>
       <Grid spacing={2} container>
         <Grid xs={8} item>
@@ -126,59 +134,48 @@ const InformationTab: FC<IProps> = props => {
             </Card>
           ) : props.type === "financial-reports" ? (
             <div className="flex flex-col gap-8 p-2">
-              {formSteps.map(step =>
-                step?.fields?.map(field =>
-                  field.type === FieldType.FinancialTableInput ? (
-                    <>
-                      <FinancialMetrics data={values[field.name]} years={field?.fieldProps?.years} />
-                      <Accordion
-                        title="Financial Documents per Year"
-                        variant="drawer"
-                        className="rounded-lg bg-white px-6 py-4 shadow-all"
-                      >
-                        <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
-                      </Accordion>
-                      <Accordion
-                        title="Descriptions of Financials per Year"
-                        variant="drawer"
-                        className="rounded-lg bg-white px-6 py-4 shadow-all"
-                      >
-                        <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
-                      </Accordion>
-                    </>
-                  ) : field.type === FieldType.FundingTypeDataTable ? (
+              {fields.map(field =>
+                field.inputType === "financialIndicators" ? (
+                  <>
+                    <FinancialMetrics data={values[field.name]} years={field.years ?? undefined} />
                     <Accordion
-                      title="Major Funding Sources by Year"
+                      title="Financial Documents per Year"
                       variant="drawer"
                       className="rounded-lg bg-white px-6 py-4 shadow-all"
                     >
-                      <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                      <FinancialDocumentsSection files={formatDocumentData(values[field.name])} />
                     </Accordion>
-                  ) : (
-                    <></>
-                  )
-                )
+                    <Accordion
+                      title="Descriptions of Financials per Year"
+                      variant="drawer"
+                      className="rounded-lg bg-white px-6 py-4 shadow-all"
+                    >
+                      <FinancialDescriptionsSection items={formatDescriptionData(values[field.name])} />
+                    </Accordion>
+                  </>
+                ) : field.inputType === "fundingType" ? (
+                  <Accordion
+                    title="Major Funding Sources by Year"
+                    variant="drawer"
+                    className="rounded-lg bg-white px-6 py-4 shadow-all"
+                  >
+                    <FundingSourcesSection data={values[field.name]} currency={record.currency} />
+                  </Accordion>
+                ) : null
               )}
             </div>
           ) : (
             <Stack gap={4}>
               <Card sx={{ padding: 4 }} className="!shadow-none">
-                <List
-                  className={classNames("space-y-12", {
-                    "map-span-3": props.type === "sites"
-                  })}
-                  items={formSteps}
-                  render={(step, index) => (
-                    <InformationTabRow
-                      index={index}
-                      step={step}
-                      values={values}
-                      steps={formSteps}
-                      type={props.type}
-                      entity={{ entityName: props.type, entityUUID: record?.uuid }}
-                    />
-                  )}
-                />
+                <WizardFormProvider fieldsProvider={fieldsProvider} models={model}>
+                  <List
+                    className={classNames("space-y-12", {
+                      "map-span-3": props.type === "sites"
+                    })}
+                    items={fieldsProvider.stepIds()}
+                    render={stepId => <InformationTabRow stepId={stepId} values={values} />}
+                  />
+                </WizardFormProvider>
               </Card>
               <div className="pl-8">
                 {["projects", "sites", "site-reports", "project-reports", "nursery-reports"].includes(props.type) ? (
@@ -198,7 +195,7 @@ const InformationTab: FC<IProps> = props => {
                         </div>
                       </ContextCondition>
                     ) : null}
-                    {(["project-reports", "projects"].includes(props.type) && framework === Framework.PPC) ||
+                    {(["projects", "project-reports"].includes(props.type) && framework === Framework.PPC) ||
                     (props.type === "nursery-reports" && ALL_TF.includes(framework)) ? (
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">

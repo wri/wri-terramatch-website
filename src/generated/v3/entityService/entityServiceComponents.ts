@@ -749,7 +749,8 @@ export type UploadFilePathParams = {
     | "fundingProgrammes"
     | "impactStories"
     | "financialIndicators"
-    | "projectPitches";
+    | "projectPitches"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2851,6 +2852,43 @@ export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
   };
 }>;
 
+export type OptionLabelsGetListResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
 export type OptionLabelsGetListVariables = {
   pathParams: OptionLabelsGetListPathParams;
 };
@@ -2859,41 +2897,29 @@ export type OptionLabelsGetListVariables = {
  * Get a list of option labels by list key
  */
 export const optionLabelsGetList = new V3ApiEndpoint<
-  undefined,
+  OptionLabelsGetListResponse,
   OptionLabelsGetListError,
   OptionLabelsGetListVariables,
   {}
 >("/forms/v3/optionLabels/{listKey}", "GET");
 
 export type LinkedFieldsIndexQueryParams = {
-  formTypes?: (
-    | "organisation"
-    | "financialReport"
-    | "disturbanceReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "srpReport"
-    | "site"
-    | "siteReport"
+  formModelTypes?: (
+    | "organisations"
+    | "financialReports"
+    | "disturbanceReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
+    | "srpReports"
   )[];
 };
 
-export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<undefined>;
 
 export type LinkedFieldsIndexResponse = {
   meta?: {
@@ -2943,6 +2969,392 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
+export type FormIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | "srp-report";
+};
+
+export type FormIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type FormIndexResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormLightDto;
+  }[];
+};
+
+export type FormIndexVariables = {
+  queryParams?: FormIndexQueryParams;
+};
+
+/**
+ * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
+ */
+export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, FormIndexVariables, {}>(
+  "/forms/v3/forms",
+  "GET"
+);
+
+export type FormCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormCreateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormCreateVariables = {
+  body: Schemas.CreateFormBody;
+};
+
+/**
+ * Create a new form
+ */
+export const formCreate = new V3ApiEndpoint<FormCreateResponse, FormCreateError, FormCreateVariables, {}>(
+  "/forms/v3/forms",
+  "POST"
+);
+
+export type FormGetPathParams = {
+  /**
+   * Form uuid
+   */
+  uuid: string;
+};
+
+export type FormGetQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FormGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormGetResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormGetVariables = {
+  pathParams: FormGetPathParams;
+  queryParams?: FormGetQueryParams;
+};
+
+/**
+ * Get a form by uuid. Includes all sections and questions within the form.
+ */
+export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "GET"
+);
+
+export type FormDeletePathParams = {
+  uuid: string;
+};
+
+export type FormDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDeleteResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type FormDeleteVariables = {
+  pathParams: FormDeletePathParams;
+};
+
+export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError, FormDeleteVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "DELETE"
+);
+
+export type FormUpdatePathParams = {
+  uuid: string;
+};
+
+export type FormUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormUpdateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormUpdateVariables = {
+  body: Schemas.UpdateFormBody;
+  pathParams: FormUpdatePathParams;
+};
+
+/**
+ * Update a form
+ */
+export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError, FormUpdateVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "PUT"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -2954,5 +3366,6 @@ export const operationsByTag = {
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
-  linkedFields: { linkedFieldsIndex }
+  linkedFields: { linkedFieldsIndex },
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
 };

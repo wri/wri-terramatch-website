@@ -3,14 +3,14 @@ import { green, red } from "@mui/material/colors";
 import { Change, diffWords } from "diff";
 import { ReactNode } from "react";
 
-import { FieldType } from "@/components/extensive/WizardForm/types";
+import { FieldInputType } from "@/components/extensive/WizardForm/types";
 
 import FieldView from "./FieldView";
 
 interface IDisturbanceReportEntriesVisualDiffProps {
   currentValue: ReactNode;
   newValue: ReactNode;
-  type: FieldType;
+  inputType: FieldInputType;
 }
 
 const getStyle = (change: Change) => ({
@@ -21,7 +21,7 @@ const getStyle = (change: Change) => ({
 const DisturbanceReportEntriesVisualDiff = ({
   currentValue,
   newValue,
-  type
+  inputType
 }: IDisturbanceReportEntriesVisualDiffProps) => {
   if (typeof currentValue !== "string" || typeof newValue !== "string") {
     return (
@@ -29,11 +29,11 @@ const DisturbanceReportEntriesVisualDiff = ({
         <Grid container spacing={2}>
           <Grid item xs={6}>
             Old Value:
-            <FieldView type={type} value={currentValue} />
+            <FieldView inputType={inputType} value={currentValue} />
           </Grid>
           <Grid item xs={6}>
             New Value:
-            <FieldView type={type} value={newValue} />
+            <FieldView inputType={inputType} value={newValue} />
           </Grid>
         </Grid>
       </Box>
@@ -47,7 +47,7 @@ const DisturbanceReportEntriesVisualDiff = ({
 
   const oldView = diff
     .filter(change => !change.added)
-    .map((change, index) => {
+    .map(change => {
       const style = getStyle(change);
       return `<span style="color: ${style.color || "inherit"}; text-decoration: ${style.textDecoration || "none"};">${
         change.value
@@ -57,7 +57,7 @@ const DisturbanceReportEntriesVisualDiff = ({
 
   const newView = diff
     .filter(change => !change.removed)
-    .map((change, index) => {
+    .map(change => {
       const style = getStyle(change);
       return `<span style="color: ${style.color || "inherit"}; text-decoration: ${style.textDecoration || "none"};">${
         change.value
@@ -70,11 +70,11 @@ const DisturbanceReportEntriesVisualDiff = ({
       <Grid container spacing={2}>
         <Grid item xs={6}>
           Old Value:
-          <FieldView type={type} value={oldView} />
+          <FieldView inputType={inputType} value={oldView} />
         </Grid>
         <Grid item xs={6}>
           New Value:
-          <FieldView type={type} value={newView} />
+          <FieldView inputType={inputType} value={newView} />
         </Grid>
       </Grid>
     </Box>
