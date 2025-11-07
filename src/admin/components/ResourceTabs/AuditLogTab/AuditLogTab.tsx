@@ -4,7 +4,14 @@ import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext }
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { DISTURBANCE_REPORT, NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT, SRP_REPORT } from "@/constants/entities";
+import {
+  DISTURBANCE_REPORT,
+  FINANCIAL_REPORT,
+  NURSERY_REPORT,
+  PROJECT_REPORT,
+  SITE_REPORT,
+  SRP_REPORT
+} from "@/constants/entities";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
@@ -28,7 +35,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
   5: "site-reports",
   6: "nursery-reports",
   7: "disturbance-reports",
-  8: "srp-reports"
+  8: "srp-reports",
+  9: "financial-reports"
 };
 
 const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
@@ -37,9 +45,13 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const basename = useBasename();
   const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
   const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
-  const showOpenEntity = ["nursery-reports", "site-reports", "disturbance-reports", "srp-reports"].includes(
-    ReverseButtonStates2[entity!]
-  );
+  const showOpenEntity = [
+    "nursery-reports",
+    "site-reports",
+    "disturbance-reports",
+    "srp-reports",
+    "financial-reports"
+  ].includes(ReverseButtonStates2[entity!]);
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
 
   const {
@@ -104,6 +116,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
         return DISTURBANCE_REPORT;
       case "srp-reports":
         return SRP_REPORT;
+      case "financial-reports":
+        return FINANCIAL_REPORT;
       default:
         return entityType;
     }
@@ -116,7 +130,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             {!verifyEntity &&
               entity != AuditLogButtonStates.SITE_REPORT &&
               entity != AuditLogButtonStates.DISTURBANCE_REPORT &&
-              entity != AuditLogButtonStates.SRP_REPORT && (
+              entity != AuditLogButtonStates.SRP_REPORT &&
+              entity != AuditLogButtonStates.FINANCIAL_REPORT && (
                 <AuditLogSiteTabSelection
                   buttonToggle={buttonToggle!}
                   setButtonToggle={setButtonToggle}
@@ -126,7 +141,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
                   existNurseries={(record.totalNurseries ?? record.nursery_reports_count) > 0}
                 />
               )}
-            {showOpenEntity && (
+            {showOpenEntity && entity != AuditLogButtonStates.FINANCIAL_REPORT && (
               <AuditLogSiteTabSelection
                 buttonToggle={buttonToggle!}
                 setButtonToggle={setButtonToggle}
