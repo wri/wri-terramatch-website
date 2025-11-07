@@ -1,5 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useId } from "react";
 import { createSelector } from "reselect";
 
 import { useLogin } from "@/connections/Login";
@@ -8,8 +7,6 @@ import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServ
 import { useConnection } from "@/hooks/useConnection";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore } from "@/store/apiSlice";
-import { JobsDataStore } from "@/store/jobsSlice";
-import { AppStore } from "@/store/store";
 import { Connection } from "@/types/connection";
 
 type DelayedJobCombinedConnection = {
@@ -20,15 +17,14 @@ type DelayedJobCombinedConnection = {
   bulkUpdateJobsHasFailed: boolean;
 };
 
-const delayedJobsSelector = (store: ApiDataStore) =>
-  Object.values(store.delayedJobs ?? {})
-    .map(resource => resource.attributes)
-    .filter(({ isAcknowledged }) => !isAcknowledged);
+const delayedJobsSelector = (store: ApiDataStore) => store.delayedJobs;
 
 const combinedSelector = createSelector(
   [delayedJobsSelector, bulkUpdateJobs.isFetchingSelector({}), bulkUpdateJobs.fetchFailedSelector({})],
   (delayedJobs, bulkUpdateJobsIsLoading, bulkUpdateJobsFailure) => ({
-    delayedJobs,
+    delayedJobs: Object.values(delayedJobs ?? {})
+      .map(({ attributes }) => attributes)
+      .filter(({ isAcknowledged }) => !isAcknowledged),
     delayedJobsIsLoading: delayedJobs == null && !bulkUpdateJobsFailure,
     delayedJobsHasFailed: Boolean(bulkUpdateJobsFailure),
     bulkUpdateJobsIsLoading,
@@ -40,52 +36,49 @@ const delayedJobsCombinedConnection: Connection<DelayedJobCombinedConnection> = 
   selector: combinedSelector
 };
 
-export const useJobProgress = () => useSelector<AppStore, JobsDataStore>(({ jobs }) => jobs);
+// The polling interval needs to be truly global so that if more than one component is using
+// useDelayedJobs, we don't end up with multiple polling cycles.
+let delayedJobPollingInterval: NodeJS.Timer | undefined;
+// A set of the instances of useDelayedJobs that are currently requesting polling. The polling
+// interval is only cleared when this set is empty.
+const useDelayedJobInstances = new Set<string>();
+
+// Ensures that delayed jobs are being polled on a 1500ms cycle.
+const startPolling = (id: string) => {
+  useDelayedJobInstances.add(id);
+  if (delayedJobPollingInterval == null) {
+    delayedJobPollingInterval = setInterval(() => {
+      listDelayedJobs.fetch({});
+    }, 1500);
+  }
+};
+
+// If this id is the last in the set of registered instances and the polling interval is
+// currently running, this will stop it.
+const stopPolling = (id: string) => {
+  useDelayedJobInstances.delete(id);
+  if (delayedJobPollingInterval != null && useDelayedJobInstances.size === 0) {
+    clearInterval(delayedJobPollingInterval);
+    delayedJobPollingInterval = undefined;
+  }
+};
 
 export const useDelayedJobs = () => {
   const connection = useConnection(delayedJobsCombinedConnection);
-  const { totalContent } = useJobProgress();
-  const intervalRef = useRef<NodeJS.Timer | undefined>();
   const [, { data: login }] = useLogin({});
+  const id = useId();
 
-  const stopPolling = useCallback(() => {
-    if (intervalRef.current != null) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = undefined;
-    }
-  }, []);
-  const startPolling = useCallback(() => {
-    if (intervalRef.current == null) {
-      intervalRef.current = setInterval(() => {
-        listDelayedJobs.fetch({});
-      }, 1500);
-    }
-  }, []);
-
-  // Make sure to stop polling when we unmount.
-  useEffect(() => stopPolling, [stopPolling]);
-
-  const hasJobs = (connection[1].delayedJobs ?? []).length > 0;
-  useEffect(() => {
-    if (totalContent > 0) {
-      startPolling();
-      // Don't process the connection content because we need it to poll once before giving up; the
-      // currently cached poll result is going to claim there are no jobs.
-      // Note: this is a little fragile because it depends on some code somewhere to call
-      // JobsSlice.reset() when it's done watching the job, but that's better than accidentally not
-      // polling when we're supposed to.
-      return;
-    }
-
-    if (hasJobs) startPolling();
-    else stopPolling();
-  }, [hasJobs, startPolling, stopPolling, totalContent]);
+  if ((connection[1].delayedJobs ?? []).length > 0) startPolling(id);
+  else stopPolling(id);
 
   useValueChanged(login, () => {
     // make sure we call the listDelayedJobs request at least once when we first mount if we're
     // logged in, or when we log in with a fresh user.
     if (login != null) listDelayedJobs.fetch({});
   });
+
+  // Make sure to stop polling when we unmount.
+  useEffect(() => stopPolling(id), [id]);
 
   return connection;
 };

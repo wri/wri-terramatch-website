@@ -8,13 +8,14 @@ import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/Pag
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
+import { toFramework } from "@/context/framework.provider";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 
 import SocioEconomicReportHeader from "./components/SocioEconomicReportHeader";
-import ReportDataTab from "./tabs/ReportDataTab";
-import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useReportingWindow } from "@/hooks/useReportingWindow";
 import AuditLog from "./tabs/AuditLog";
+import ReportDataTab from "./tabs/ReportDataTab";
 
 const SocioEconomicReportDetailPage = () => {
   const t = useT();
@@ -23,7 +24,7 @@ const SocioEconomicReportDetailPage = () => {
 
   const [isLoaded, { data: srpReport }] = useFullSRPReport({ id: socioEconomicReportUUID });
 
-  const window = useReportingWindow(srpReport?.dueAt as string);
+  const window = useReportingWindow(toFramework(srpReport?.frameworkKey), srpReport?.dueAt as string);
   const taskTitle = t("Reporting Task {window}", { window });
 
   return (

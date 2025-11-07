@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { ElementType, FC, HTMLProps, useMemo } from "react";
-import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Icon, { IconProps } from "@/components/extensive/Icon/Icon";
@@ -199,9 +198,7 @@ const Button: FC<IButtonProps> = props => {
         )
       )}
     >
-      <When condition={!!iconProps}>
-        <Icon width={14} {...iconProps!} />
-      </When>
+      {iconProps == null ? null : <Icon width={14} {...iconProps!} />}
       <span className={variantClasses.span}>{children}</span>
     </Component>
   );

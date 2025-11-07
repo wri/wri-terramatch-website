@@ -149,6 +149,7 @@ export type Option = {
   title: string;
   value: OptionValue;
   meta?: any;
+  image?: UploadedFile;
 };
 export type OptionValue = string | number;
 
@@ -234,7 +235,8 @@ export type ReportsModelNames =
   | "srp-reports"
   | "srpReports";
 
-export const isReportModelName = (name: EntityName): name is ReportsModelNames => name.endsWith("-reports");
+export const isReportModelName = (name: EntityName): name is ReportsModelNames =>
+  name.endsWith("Reports") || name.endsWith("-reports");
 
 export type SingularEntityName = SingularBaseModelNames | SingularReportsModelNames;
 export type SingularBaseModelNames = "project" | "site" | "nursery" | "project-pitch";

@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { groupBy, startCase } from "lodash";
 import { FC, useCallback, useMemo, useState } from "react";
-import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -42,8 +41,9 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
         <Text variant="text-18-bold">{fullTitle}</Text>
 
         <div className="flex items-baseline gap-2">
-          <When condition={onChange != null}>
+          {onChange != null ? (
             <Text
+              as={"div"}
               variant="text-14-bold"
               className={classNames("flex items-start gap-2 leading-normal", {
                 "text-customGreen-200": status === "complete",
@@ -52,11 +52,11 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
               })}
             >
               {t(startCase(status))}
-              <When condition={status === "complete"}>
+              {status === "complete" ? (
                 <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className="text-customGreen-200" />
-              </When>
+              ) : null}
             </Text>
-          </When>
+          ) : null}
           <Icon
             name={IconNames.IC_ARROW_COLLAPSE}
             width={16}
@@ -65,7 +65,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
           />
         </div>
       </button>
-      <When condition={open}>
+      {open ? (
         <div className={classNames("", variant.bodyCollapse)}>
           <div
             className={classNames(
@@ -84,7 +84,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
             ))}
           </div>
         </div>
-      </When>
+      ) : null}
     </div>
   );
 };

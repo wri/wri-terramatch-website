@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -40,28 +41,31 @@ const SignUpPage = ({
   const t = useT();
   const router = useRouter();
 
-  const [, { isCreating, createFailure, data: newUser, create: signUp }] = useUserCreation({});
-  useRequestComplete(isCreating, () => {
-    if (createFailure == null) {
-      return router.push(`/auth/signup/confirm?email=${encodeURIComponent(newUser?.emailAddress ?? "")}`);
-    } else {
-      let message: string;
-      if (createFailure.statusCode == 422 && createFailure.message == "User already exists") {
-        message = t(
-          "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
-        );
-        form.setError("email_address", { message: message, type: "validate" });
-      } else {
-        message = t("An error occurred. Please try again later.");
-        form.setError("root", { message: message, type: "validate" });
-      }
-    }
-  });
-
   const form = useForm<SignUpFormData>({
     resolver: yupResolver(SignUpFormDataSchema(t)),
     mode: "onSubmit"
   });
+
+  const [, { isCreating, createFailure, data: newUser, create: signUp }] = useUserCreation({});
+  useRequestComplete(
+    isCreating,
+    useCallback(() => {
+      if (createFailure == null) {
+        return router.push(`/auth/signup/confirm?email=${encodeURIComponent(newUser?.emailAddress ?? "")}`);
+      } else {
+        let message: string;
+        if (createFailure.statusCode == 422 && createFailure.message == "User already exists") {
+          message = t(
+            "An account with this email address already exists. Please try signing in with your existing account, or reset your password if you have forgotten it."
+          );
+          form.setError("email_address", { message: message, type: "validate" });
+        } else {
+          message = t("An error occurred. Please try again later.");
+          form.setError("root", { message: message, type: "validate" });
+        }
+      }
+    }, [createFailure, form, newUser?.emailAddress, router, t])
+  );
 
   const { strength } = usePasswordStrength({ password: form.watch("password") });
 

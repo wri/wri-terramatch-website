@@ -7,7 +7,9 @@ import { ConnectionTable } from "@/components/elements/ServerSideTable/Connectio
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import { ActionTableCell } from "@/components/extensive/TableCells/ActionTableCell";
 import { StatusTableCell } from "@/components/extensive/TableCells/StatusTableCell";
+import { useLightProject } from "@/connections/Entity";
 import { taskIndexConnection } from "@/connections/Task";
+import FrameworkProvider, { useFrameworkContext } from "@/context/framework.provider";
 import { TaskLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -21,13 +23,15 @@ interface ReportingTasksTableProps {
 
 const ReportingWindow = ({ dueDate }: { dueDate: string }) => {
   const t = useT();
-  const window = useReportingWindow(dueDate);
+  const { framework } = useFrameworkContext();
+  const window = useReportingWindow(framework, dueDate);
   return <p className="text-14-light whitespace-nowrap">{t("Project Report {window}", { window })}</p>;
 };
 
 const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = false }: ReportingTasksTableProps) => {
   const t = useT();
   const { format } = useDate();
+  const [, { data: project }] = useLightProject({ id: projectUUID });
 
   const columns = useMemo(
     () =>
@@ -80,15 +84,17 @@ const ReportingTasksTable = ({ projectUUID, onFetch, alwaysShowPagination = fals
   );
 
   return (
-    <ConnectionTable
-      connection={taskIndexConnection}
-      connectionProps={{ filter: { projectUuid: projectUUID } }}
-      onFetch={onFetch}
-      variant={VARIANT_TABLE_BORDER_ALL}
-      initialTableState={{ sorting: [{ id: "dueAt", desc: true }] }}
-      columns={columns}
-      alwaysShowPagination={alwaysShowPagination}
-    />
+    <FrameworkProvider frameworkKey={project?.frameworkKey}>
+      <ConnectionTable
+        connection={taskIndexConnection}
+        connectionProps={{ filter: { projectUuid: projectUUID } }}
+        onFetch={onFetch}
+        variant={VARIANT_TABLE_BORDER_ALL}
+        initialTableState={{ sorting: [{ id: "dueAt", desc: true }] }}
+        columns={columns}
+        alwaysShowPagination={alwaysShowPagination}
+      />
+    </FrameworkProvider>
   );
 };
 

@@ -430,15 +430,6 @@ export type ValidationSummaryDto = {
    */
   validatedPolygons: number;
   /**
-   * Summary of validation results by validation type
-   */
-  validationSummary: {
-    [key: string]: {
-      valid?: number;
-      invalid?: number;
-    };
-  };
-  /**
    * When the validation was completed
    *
    * @format date-time
@@ -513,4 +504,23 @@ export type SiteValidationRequestData = {
 
 export type SiteValidationRequestBody = {
   data: SiteValidationRequestData;
+};
+
+export type PolygonListClippingAttributes = {
+  /**
+   * Array of polygon UUIDs to check and clip for fixable overlaps
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   * @example 660e8400-e29b-41d4-a716-446655440001
+   */
+  polygonUuids: string[];
+};
+
+export type PolygonListClippingData = {
+  type: "polygon-clipping";
+  attributes: PolygonListClippingAttributes;
+};
+
+export type PolygonListClippingRequestBody = {
+  data: PolygonListClippingData;
 };

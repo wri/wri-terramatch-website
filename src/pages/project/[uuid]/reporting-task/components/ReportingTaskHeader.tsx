@@ -10,6 +10,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import { useTask } from "@/connections/Task";
+import { toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
@@ -118,7 +119,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
     );
   };
 
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(project?.frameworkKey), task?.dueAt);
   const title = t("Reporting Task {window}", { window });
 
   return (

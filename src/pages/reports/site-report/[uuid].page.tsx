@@ -3,7 +3,6 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useMemo } from "react";
-import { Else, If, Then, When } from "react-if";
 
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
@@ -29,7 +28,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { ContextCondition } from "@/context/ContextCondition";
-import FrameworkProvider, { ALL_TF, Framework } from "@/context/framework.provider";
+import FrameworkProvider, { ALL_TF, Framework, toFramework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { useDate } from "@/hooks/useDate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -49,10 +48,10 @@ const SiteReportDetailPage = () => {
   const { format } = useDate();
   const siteReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { data: siteReport }] = useFullSiteReport({ id: siteReportUUID });
+  const [reportLoaded, { data: siteReport }] = useFullSiteReport({ id: siteReportUUID });
 
-  const [, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
-  const [, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
+  const [siteLoaded, { data: site }] = useFullSite({ id: siteReport?.siteUuid! });
+  const [taskLoaded, { data: task }] = useTask({ id: siteReport?.taskUuid ?? undefined });
 
   const reportTitle = siteReport?.reportTitle ?? siteReport?.title ?? t("Site Report");
   const headerReportTitle = site?.name ? `${site?.name} ${reportTitle}` : "";
@@ -72,7 +71,7 @@ const SiteReportDetailPage = () => {
     collections: DemographicCollections.WORKDAYS_SITE.filter(c => c.startsWith("volunteer-"))
   });
 
-  const window = useReportingWindow(task?.dueAt);
+  const window = useReportingWindow(toFramework(siteReport?.frameworkKey), task?.dueAt);
   const taskTitle = t("Reporting Task {window}", { window });
 
   const totalFiles = useMemo(
@@ -80,8 +79,9 @@ const SiteReportDetailPage = () => {
     [siteReport]
   );
 
+  const isLoaded = reportLoaded && siteLoaded && taskLoaded;
   return (
-    <FrameworkProvider frameworkKey={siteReport?.frameworkKey!}>
+    <FrameworkProvider frameworkKey={siteReport?.frameworkKey}>
       <LoadingContainer loading={!isLoaded}>
         <Head>
           <title>{reportTitle}</title>
@@ -97,21 +97,20 @@ const SiteReportDetailPage = () => {
         <SiteReportHeader report={siteReport!} reportTitle={headerReportTitle} />
         <StatusBar entityName="site-reports" entity={siteReport} />
         <PageBody>
-          <If condition={siteReport?.nothingToReport}>
-            <Then>
-              <PageRow>
-                <PageColumn>
-                  <EmptyState
-                    iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
-                    title={t("Nothing to report")}
-                    subtitle={t(
-                      "You've marked this report as 'Nothing to Report,' indicating there are no updates for this site report. If you wish to add information to this report, please use the edit button."
-                    )}
-                  />
-                </PageColumn>
-              </PageRow>
-            </Then>
-            <Else>
+          {siteReport?.nothingToReport ? (
+            <PageRow>
+              <PageColumn>
+                <EmptyState
+                  iconProps={{ name: IconNames.DOCUMENT_CIRCLE, className: "fill-success" }}
+                  title={t("Nothing to report")}
+                  subtitle={t(
+                    "You've marked this report as 'Nothing to Report,' indicating there are no updates for this site report. If you wish to add information to this report, please use the edit button."
+                  )}
+                />
+              </PageColumn>
+            </PageRow>
+          ) : (
+            <>
               <PageRow>
                 <PageColumn>
                   <EntityMapAndGalleryCard
@@ -123,7 +122,7 @@ const SiteReportDetailPage = () => {
                       "Your gallery is currently empty. Add images by using the 'Edit' button on this site report."
                     )}
                   />
-                  <When condition={!!siteReport?.sharedDriveLink}>
+                  {siteReport?.sharedDriveLink != null ? (
                     <Paper>
                       <ButtonField
                         label={t("Shared Drive link")}
@@ -135,38 +134,35 @@ const SiteReportDetailPage = () => {
                         }}
                       />
                     </Paper>
-                  </When>
+                  ) : null}
                 </PageColumn>
               </PageRow>
               <ContextCondition frameworksShow={[Framework.HBF]}>
                 <PageRow>
                   <PageCard title={t("Site Report Files")} gap={8}>
-                    <If condition={totalFiles === 0}>
-                      <Then>
-                        <h3>{t("Files not found")}</h3>
-                      </Then>
-                      <Else>
-                        {sections.map((section, index) => (
-                          <Then key={index}>
-                            {siteReport?.[section?.property].map((file: any) => (
-                              <Paper key={file.uuid}>
-                                <ButtonField
-                                  key={file.uuid}
-                                  label={t(section.name)}
-                                  subtitle={t(file.file_name)}
-                                  buttonProps={{
-                                    as: Link,
-                                    children: t("Download"),
-                                    href: file.url,
-                                    download: true
-                                  }}
-                                />
-                              </Paper>
-                            ))}
-                          </Then>
-                        ))}
-                      </Else>
-                    </If>
+                    {totalFiles === 0 ? (
+                      <h3>{t("Files not found")}</h3>
+                    ) : (
+                      sections.map((section, index) => (
+                        <Fragment key={index}>
+                          {siteReport?.[section?.property].map((file: any) => (
+                            <Paper key={file.uuid}>
+                              <ButtonField
+                                key={file.uuid}
+                                label={t(section.name)}
+                                subtitle={t(file.file_name)}
+                                buttonProps={{
+                                  as: Link,
+                                  children: t("Download"),
+                                  href: file.url,
+                                  download: true
+                                }}
+                              />
+                            </Paper>
+                          ))}
+                        </Fragment>
+                      ))
+                    )}
                   </PageCard>
                 </PageRow>
               </ContextCondition>
@@ -456,8 +452,8 @@ const SiteReportDetailPage = () => {
                   </PageCard>
                 </PageColumn>
               </PageRow>
-            </Else>
-          </If>
+            </>
+          )}
           <br />
           <br />
           <br />

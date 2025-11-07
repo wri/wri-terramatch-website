@@ -1,9 +1,11 @@
 import { useT } from "@transifex/react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
+import { FormModelType } from "@/connections/util/Form";
+import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
@@ -11,6 +13,7 @@ import { useFiles } from "@/hooks/useFiles";
 import { EntityName, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
+import Log from "@/utils/log";
 
 import FileInput, { FileInputProps } from "./FileInput";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariants";
@@ -18,13 +21,12 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "./FileInputVariant
 export interface RHFFileInputProps
   extends Omit<FileInputProps, "files" | "loading" | "onChange" | "onDelete">,
     UseControllerProps {
-  model: string;
   collection: string;
-  uuid: string;
   formHook?: UseFormReturn;
   showPrivateCheckbox?: boolean;
   onChangeCapture?: () => void;
   isPhotosAndVideo?: boolean;
+  model: FormModelType;
 }
 
 // TODO (NJC): TM-2581 will get these values from v3 and this will no longer be needed
@@ -51,14 +53,13 @@ const RHFFileInput = ({
   formHook,
   model,
   collection,
-  uuid,
   showPrivateCheckbox,
   onChangeCapture,
   isPhotosAndVideo = false,
   ...fileInputProps
 }: RHFFileInputProps) => {
   const t = useT();
-
+  const uuid = useFormModelUuid(model);
   const { field } = useController(fileInputProps);
   const onChange = field.onChange;
   const { files, addFile, removeFile, updateFile } = useFiles(
@@ -66,7 +67,10 @@ const RHFFileInput = ({
     normalizeV2UploadedFiles(field.value)
   );
   const entity = v3EntityName(model as EntityName) as FileUploadEntity;
-  const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid } });
+  if (uuid == null) {
+    Log.error("Missing a model UUID for this file input", { model, collection });
+  }
+  const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: uuid ?? "" } });
 
   const { mutate: update } = usePutV2FilesUUID();
 
@@ -115,7 +119,7 @@ const RHFFileInput = ({
         await prepareFileForUpload(file),
         fileUploadOptions(file, collection, {
           onSuccess: addFile,
-          onError: addFile,
+          onError: removeFile,
           getErrorMessage: error => {
             if (isTranslatableError(error)) {
               const formError = getErrorMessages(t, error.code, { ...error.variables, label: fileInputProps.label });
@@ -141,6 +145,7 @@ const RHFFileInput = ({
       fileInputProps.maxFileSize,
       fileInputProps.name,
       formHook,
+      removeFile,
       t,
       uploadFile
     ]
@@ -190,6 +195,9 @@ const RHFFileInput = ({
     onChange(fileInputProps.allowMultiple ? tmp : tmp?.[0]);
   }, [onChange, files, fileInputProps.allowMultiple]);
 
+  const entityData = useMemo(() => ({ model, collection, uuid }), [collection, model, uuid]);
+  const _onChange = useCallback((files: File[]) => files.forEach(onSelectFile), [onSelectFile]);
+
   return (
     <FileInput
       {...fileInputProps}
@@ -200,12 +208,12 @@ const RHFFileInput = ({
         variant: VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP
       })}
       onDelete={onDeleteFile}
-      onChange={files => files.forEach(onSelectFile)}
+      onChange={_onChange}
       onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
       formHook={formHook}
       updateFile={updateFile}
-      entityData={{ model, collection, uuid }}
+      entityData={entityData}
     />
   );
 };
