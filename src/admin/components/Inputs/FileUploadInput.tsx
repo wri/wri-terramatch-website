@@ -2,16 +2,15 @@ import { styled } from "@mui/material";
 import { FC, useMemo, useState } from "react";
 import { Confirm, FileField, FileInput, ImageField, ImageInputProps } from "react-admin";
 
-import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
+import { deleteMedia } from "@/connections/Media";
 import { UploadedFile } from "@/types/common";
 
 export const FileUploadInput: FC<ImageInputProps> = ({ accept, ...props }) => {
   const [removeFile, setRemoveFile] = useState<any>(null);
   const [showModal, setShowModal] = useState<any>(false);
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({});
-
   accept = useMemo(() => (Array.isArray(accept) ? accept.join(",") : accept), [accept]);
+
   return (
     <>
       <StyledFileUpload
@@ -24,7 +23,7 @@ export const FileUploadInput: FC<ImageInputProps> = ({ accept, ...props }) => {
               setRemoveFile({
                 fileName: file.fileName,
                 delete: () => {
-                  deleteFile({ pathParams: { uuid: file.uuid } });
+                  deleteMedia(file.uuid);
                   return resolve(true);
                 },
                 cancel: () => reject(false)

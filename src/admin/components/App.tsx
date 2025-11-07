@@ -198,7 +198,7 @@ const App = () => {
           list={modules.srpReport.List}
           show={modules.srpReport.Show}
           edit={modules.srpReport.Edit}
-          icon={() => <Icon className="w-7 h-7" name={IconNames.SRP_REPORT} />}
+          icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
           options={{ label: "SRP Reports" }}
         />
       </Admin>

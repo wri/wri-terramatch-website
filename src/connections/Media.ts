@@ -1,6 +1,8 @@
 import exifr from "exifr";
 
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  mediaDelete,
   uploadFile,
   UploadFileError,
   UploadFileResponse,
@@ -11,6 +13,8 @@ import { WithFormData } from "@/generated/v3/utils";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
+
+export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
 
 export const prepareFileForUpload = async (
   file: File,

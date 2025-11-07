@@ -14,10 +14,11 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { deleteMedia } from "@/connections/Media";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { GetV2TypeEntityResponse, useDeleteV2FilesUUID, useGetV2TypeEntity } from "@/generated/apiComponents";
+import { GetV2TypeEntityResponse, useGetV2TypeEntity } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -115,12 +116,6 @@ const EntityMapAndGalleryCard = ({
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      refetch?.();
-    }
-  });
-
   const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
 
   const filterOptions = useMemo(() => {
@@ -200,7 +195,14 @@ const EntityMapAndGalleryCard = ({
             bbox={mapBbox}
             className="rounded-lg"
             imageLayerGeojson={imagesGeoJson}
-            onDeleteImage={uuid => deleteFile({ pathParams: { uuid } })}
+            onDeleteImage={async uuid => {
+              try {
+                await deleteMedia(uuid);
+                refetch?.();
+              } catch (error) {
+                Log.error(error);
+              }
+            }}
             mapFunctions={mapFunctions}
             showLegend
             hasControls
@@ -230,7 +232,14 @@ const EntityMapAndGalleryCard = ({
                 entity={modelName}
                 entityData={entityData}
                 pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
-                onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+                onDeleteConfirm={async uuid => {
+                  try {
+                    await deleteMedia(uuid);
+                    refetch?.();
+                  } catch (error) {
+                    Log.error(error);
+                  }
+                }}
                 onGalleryStateChange={(pagination, filter) => {
                   setPagination(pagination);
                   setFilter(filter);

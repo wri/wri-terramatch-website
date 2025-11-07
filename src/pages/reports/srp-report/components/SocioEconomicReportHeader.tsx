@@ -4,10 +4,10 @@ import Link from "next/link";
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useFrameworkTitle } from "@/hooks/useFrameworkTitle";
-import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface SocioEconomicReportHeaderProps {
   socioEconomicReport: SrpReportFullDto;

@@ -19,9 +19,9 @@ import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
+import { srpReportDataProvider } from "./SRPReportDataProvider";
 import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
-import { srpReportDataProvider } from "./SRPReportDataProvider";
 
 //@ts-ignore
 export const dataProvider = combineDataProviders(resource => {

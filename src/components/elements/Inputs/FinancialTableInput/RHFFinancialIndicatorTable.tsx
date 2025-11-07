@@ -17,17 +17,15 @@ import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
 import { normalizeV2UploadedFiles } from "@/components/elements/Inputs/FileInput/RHFFileInput";
+import { deleteMedia } from "@/connections/Media";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { currencySymbol } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useOrgFormDetails } from "@/context/wizardForm.provider";
-import {
-  DeleteV2FilesUUIDResponse,
-  useDeleteV2FilesUUID,
-  usePatchV2FinancialIndicators
-} from "@/generated/apiComponents";
+import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -223,14 +221,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       pathParams: { entity: "financialIndicators", collection: "documentation", uuid: "" }
     });
 
-    const { mutate: deleteFile } = useDeleteV2FilesUUID({
-      onSuccess(data) {
-        setResetTable(prev => prev + 1);
-        removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
-        onChangeCapture?.();
-      }
-    });
-
     const { mutate: createFinancialData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
         if (data && Array.isArray(data)) {
@@ -320,12 +310,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               isDeleting: true
             }
           });
-          deleteFile({ pathParams: { uuid: file.uuid } });
+          deleteMedia(file.uuid);
         } else if (file.fileName) {
           removeFile(file);
         }
       },
-      [addFile, deleteFile, removeFile]
+      [addFile, removeFile]
     );
 
     const handleDeleteFile = useCallback(
