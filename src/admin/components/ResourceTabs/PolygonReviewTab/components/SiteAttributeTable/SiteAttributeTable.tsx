@@ -111,7 +111,7 @@ export default function SiteAttributeTable({
   ];
 
   return (
-    <div className="mb-6 w-[inherit]">
+    <div className="mb-6 w-[inherit]" style={{ width: containerRef.current?.clientWidth }}>
       <div className="mb-4">
         <Text variant="text-16-bold" className="mb-2 text-darkCustom">
           Site Attribute Table
@@ -149,10 +149,10 @@ export default function SiteAttributeTable({
         variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
         hasPagination={false}
         visibleRows={10000000}
-        classNameTableWrapper="!overflow-x-auto"
+        classNameTableWrapper="!overflow-x-auto w-full"
         serverSideData
-        classNameWrapper="!px-0"
-        contentClassName={"w-[inherit] !px-0"}
+        classNameWrapper="!px-0 w-full"
+        contentClassName={"w-full !px-0"}
         onTableStateChange={state => {
           if (typeof state.sorting === "function") {
             setSorting(state.sorting(sorting));
