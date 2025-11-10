@@ -58,7 +58,6 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
   const handleSiteValidationComplete = useCallback(() => {
     if (!siteUuid) return;
 
-    console.log("handleSiteValidationComplete", sitePolygonData);
     fetchOverlapValidations(true);
     setShouldRefetchValidation(true);
     ApiSlice.pruneCache("sitePolygons");
