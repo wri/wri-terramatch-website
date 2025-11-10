@@ -1,4 +1,3 @@
-import { defaults } from "lodash";
 import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 
@@ -46,9 +45,6 @@ export const useEntityForm = (entity?: FormEntity, uuid?: string) => {
 };
 
 export const useDefaultValues = (entityData: FormDataDto | undefined, fieldsProvider: FormFieldsProvider) => {
-  const sourceData = useMemo(
-    () => defaults(entityData?.update_request?.content ?? {}, entityData?.answers),
-    [entityData?.answers, entityData?.update_request?.content]
-  );
+  const sourceData = useMemo(() => entityData?.answers ?? {}, [entityData?.answers]);
   return useMemo(() => formDefaultValues(sourceData, fieldsProvider), [sourceData, fieldsProvider]);
 };

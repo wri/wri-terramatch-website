@@ -46,14 +46,11 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const isReport = isEntityReport(entityName);
 
   const feedbackFields = useMemo(
-    () =>
-      mode?.includes("provide-feedback")
-        ? formData?.update_request?.feedback_fields ?? formData?.feedbackFields ?? []
-        : [],
-    [formData?.feedbackFields, formData?.update_request?.feedback_fields, mode]
+    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
+    [formData?.feedbackFields, mode]
   );
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid, feedbackFields);
-  const defaultValues = useDefaultValues(formData?.data, fieldsProvider);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
 
   const organisation = entity?.organisation;
 
