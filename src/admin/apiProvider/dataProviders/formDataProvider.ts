@@ -15,7 +15,7 @@ import {
   formBuilderToAttributes,
   formDtoToBuilder
 } from "@/admin/modules/form/components/FormBuilder/types";
-import { createForm, deleteForm, loadForm, loadFormIndex, updateForm } from "@/connections/util/Form";
+import { createForm, deleteForm, loadForm, loadFormIndex, updateForm } from "@/connections/Form";
 import { FormFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { Option } from "@/types/common";

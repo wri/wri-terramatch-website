@@ -14,7 +14,7 @@ import * as yup from "yup";
 
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
-import { useForm } from "@/connections/util/Form";
+import { useForm } from "@/connections/Form";
 import { usePatchV2AdminFormsSubmissionsUUIDStatus } from "@/generated/apiComponents";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
 import { optionToChoices } from "@/utils/options";

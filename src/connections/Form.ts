@@ -5,6 +5,8 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   formCreate,
+  formDataGet,
+  FormDataGetPathParams,
   formDelete,
   formGet,
   formIndex,
@@ -16,6 +18,7 @@ import {
   optionLabelsIndex
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
+  FormDataDto,
   FormFullDto,
   FormLightDto,
   LinkedFieldDto,
@@ -23,7 +26,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Filter } from "@/types/connection";
 
-import { resourceCreator, resourceUpdater } from "./resourceMutator";
+import { resourceCreator, resourceUpdater } from "./util/resourceMutator";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -88,3 +91,13 @@ export const updateForm = resourceUpdater(formConnection);
 const createFormConnection = v3Resource("forms", formCreate).create<FormFullDto>().buildConnection();
 export const createForm = resourceCreator(createFormConnection);
 export const useFormCreate = connectionHook(createFormConnection);
+
+export type FormEntity = FormDataGetPathParams["entity"];
+const entityFormDataConnection = v3Resource("formData", formDataGet)
+  .singleByCustomId<FormDataDto, Partial<FormDataGetPathParams>>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    ({ entity, uuid }) => `${entity}|${uuid}`
+  )
+  .enabledProp()
+  .buildConnection();
+export const useEntityFormData = connectionHook(entityFormDataConnection);

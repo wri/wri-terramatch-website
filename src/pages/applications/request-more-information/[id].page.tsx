@@ -7,7 +7,7 @@ import { useCallback, useMemo } from "react";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
+import { useForm } from "@/connections/Form";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2ApplicationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";

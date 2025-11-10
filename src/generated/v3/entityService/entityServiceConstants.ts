@@ -29,6 +29,7 @@ import {
   FinancialReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
+  FormDataDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
@@ -58,6 +59,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseries",
   "financialReports",
   "disturbanceReports",
+  "formData",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -86,6 +88,7 @@ export type EntityServiceApiResources = {
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
+  formData: StoreResourceMap<FormDataDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;

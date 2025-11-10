@@ -1971,6 +1971,32 @@ export type EntityCreateBody = {
   data: DisturbanceReportCreateData;
 };
 
+export type FormDataDto = {
+  /**
+   * Entity type for this form data
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * Entity UUID for this form data
+   */
+  entityUuid: string;
+  formUuid: string;
+  formTitle: string;
+  frameworkKey: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: Record<string, any>;
+};
+
 /**
  * CONSTANTS
  */
@@ -2224,17 +2250,17 @@ export type LinkedFieldDto = {
    */
   id: string;
   formModelType:
-    | "organisations"
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
-    | "srpReports";
+    | "srpReports"
+    | "organisations"
+    | "projectPitches";
   label: string;
   name: string;
   inputType:
@@ -2388,17 +2414,17 @@ export type FormQuestionDto = {
   options: FormQuestionOptionDto[] | null;
   showOnParentCondition?: boolean | null;
   model:
-    | "organisations"
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
     | "srpReports"
+    | "organisations"
+    | "projectPitches"
     | null;
   linkedFieldKey?: string | null;
   isParentConditionalDefault: boolean;

@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { FormModelType } from "@/connections/util/Form";
+import { FormEntity, FormModelType } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
@@ -43,14 +43,12 @@ export const EntityEdit = () => {
 
   const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
 
-  const {
-    formData: entityResponse,
-    form,
-    isLoading,
-    loadError,
-    formLoadFailure
-  } = useEntityForm(entityName, entityUUID);
+  const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(
+    v3EntityName(entityName) as FormEntity,
+    entityUUID
+  );
 
+  // TODO TM-2581
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
 
   const model = useMemo(
@@ -59,16 +57,16 @@ export const EntityEdit = () => {
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
-  const defaultValues = useDefaultValues(entityResponse?.data, fieldsProvider);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${entityResponse?.data.form_title}`;
+      return `${entityValue?.data?.site?.name} ${formData?.formTitle}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${entityResponse?.data.form_title}`;
+      return `${entityValue?.data?.nursery?.name} ${formData?.formTitle}`;
     }
     return form?.title;
-  }, [entityName, entityResponse, entityValue, form?.title]);
+  }, [entityName, formData, entityValue, form?.title]);
 
   const organisation = entityValue?.data?.organisation;
 
@@ -99,8 +97,8 @@ export const EntityEdit = () => {
     [fieldsProvider, updateEntity]
   );
 
-  if (loadError || formLoadFailure != null) {
-    Log.error("Form data load failed", { loadError, formLoadFailure });
+  if (loadFailure != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadFailure, formLoadFailure });
     return notFound();
   }
 

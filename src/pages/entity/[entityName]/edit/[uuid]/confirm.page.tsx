@@ -8,8 +8,9 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { FormEntity } from "@/connections/Form";
 import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
-import { getEntityDetailPageLink } from "@/helpers/entity";
+import { getEntityDetailPageLink, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 
@@ -19,7 +20,7 @@ const ConfirmPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  const { form, isLoading } = useEntityForm(entityName, entityUUID);
+  const { form, isLoading } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUUID);
 
   const { data: entityData } = useGetV2ENTITYUUID({
     pathParams: { entity: entityName, uuid: entityUUID }

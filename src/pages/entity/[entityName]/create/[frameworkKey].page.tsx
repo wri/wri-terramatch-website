@@ -8,8 +8,9 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
+import { FormEntity, useForm } from "@/connections/Form";
 import { PostV2FormsENTITYResponse, usePostV2FormsENTITY } from "@/generated/apiComponents";
+import { v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
@@ -37,7 +38,7 @@ const EntityIntroPage = () => {
 
   const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
   const [, { data: frameworkForm }] = useForm({ id: formUUID, enabled: formUUID != null });
-  const { form: entityForm } = useEntityForm(entityName, entityUUID);
+  const { form: entityForm } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUUID);
   const form = frameworkForm ?? entityForm;
 
   const {

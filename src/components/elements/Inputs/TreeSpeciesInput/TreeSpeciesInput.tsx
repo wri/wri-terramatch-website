@@ -12,7 +12,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EstablishmentEntity, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
-import { FormModelType } from "@/connections/util/Form";
+import { FormModelType } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { useDebounce } from "@/hooks/useDebounce";

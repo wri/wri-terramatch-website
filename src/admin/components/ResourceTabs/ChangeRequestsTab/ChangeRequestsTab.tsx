@@ -15,7 +15,9 @@ import {
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
+import { FormEntity } from "@/connections/Form";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { Entity, EntityName, SingularEntityName } from "@/types/common";
 
@@ -31,14 +33,14 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const ctx = useShowContext();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
-  const { formData: currentValues, form, refetch } = useEntityForm(entity, ctx?.record?.uuid);
+  const { formData, form } = useEntityForm(v3EntityName(entity) as FormEntity, ctx?.record?.uuid);
 
-  const changeRequest = currentValues?.data?.update_request;
+  const changeRequest = formData?.update_request;
   const changes = changeRequest?.content;
-  const current = currentValues?.data?.answers;
+  const current = formData?.answers;
   const status = changeRequest?.status;
 
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(currentValues?.data?.form_uuid);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
 
   const entityDef = useMemo(
     () => ({ entityName: entity, entityUUID: ctx?.record?.uuid ?? "" } as Entity),
@@ -164,7 +166,6 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
           entity={entity}
           handleClose={() => {
             setStatusToChangeTo(undefined);
-            refetch?.();
           }}
           fieldsProvider={fieldsProvider}
         />

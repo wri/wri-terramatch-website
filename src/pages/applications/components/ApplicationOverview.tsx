@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import Tabs from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
-import { loadForm } from "@/connections/util/Form";
+import { loadForm } from "@/connections/Form";
 import FrameworkProvider from "@/context/framework.provider";
 import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { FormSubmissionRead } from "@/generated/apiSchemas";

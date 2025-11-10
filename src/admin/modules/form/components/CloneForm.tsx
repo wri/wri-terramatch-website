@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { FormBuilderData, formBuilderToAttributes } from "@/admin/modules/form/components/FormBuilder/types";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { useFormCreate } from "@/connections/util/Form";
+import { useFormCreate } from "@/connections/Form";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import Log from "@/utils/log";
 

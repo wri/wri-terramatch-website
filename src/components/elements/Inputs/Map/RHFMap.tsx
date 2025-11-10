@@ -6,7 +6,7 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { FormModelType } from "@/connections/util/Form";
+import { FormModelType } from "@/connections/Form";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";

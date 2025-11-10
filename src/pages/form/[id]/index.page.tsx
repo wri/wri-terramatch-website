@@ -6,7 +6,7 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
+import { useForm } from "@/connections/Form";
 import { usePostV2FormsSubmissions } from "@/generated/apiComponents";
 
 import ApplicationsTable from "../cards/ApplicationsTable";

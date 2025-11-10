@@ -8,7 +8,7 @@ import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { loadFullNurseryReport, loadFullSiteReport, pruneEntityCache } from "@/connections/Entity";
-import { FormModelType } from "@/connections/util/Form";
+import { FormEntity, FormModelType } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -31,9 +31,11 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const t = useT();
   const router = useRouter();
 
-  const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
-  const entityData = formData?.data;
-  const framework = toFramework(entityData?.framework_key);
+  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(
+    v3EntityName(entityName) as FormEntity,
+    entityUUID
+  );
+  const framework = toFramework(formData?.frameworkKey);
 
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
@@ -46,9 +48,9 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const feedbackFields = useMemo(
     () =>
       mode?.includes("provide-feedback")
-        ? entityData?.update_request?.feedback_fields ?? entityData?.feedback_fields ?? []
+        ? formData?.update_request?.feedback_fields ?? formData?.feedbackFields ?? []
         : [],
-    [entityData?.feedback_fields, entityData?.update_request?.feedback_fields, mode]
+    [formData?.feedbackFields, formData?.update_request?.feedback_fields, mode]
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid, feedbackFields);
   const defaultValues = useDefaultValues(formData?.data, fieldsProvider);
@@ -92,7 +94,7 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
       ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : entityName === "srp-reports"
       ? t("{projectName} Socio-Economic Report", { projectName: entity.project.name })
-      : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
+      : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -150,8 +152,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     [fieldsProvider, updateEntity]
   );
 
-  if (loadError || formLoadFailure != null) {
-    Log.error("Form data load failed", { loadError, formLoadFailure });
+  if (loadFailure != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadFailure, formLoadFailure });
     return notFound();
   }
 

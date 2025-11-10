@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
+import { FormModelType } from "@/connections/Form";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { FormModelType } from "@/connections/util/Form";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
