@@ -21,7 +21,7 @@ export const DemographicField: FormFieldFactory = {
       .of(
         yup.object({
           collection: yup.string().required(),
-          demographics: yup
+          entries: yup
             .array()
             .of(
               yup.object({
@@ -41,11 +41,10 @@ export const DemographicField: FormFieldFactory = {
             ? t("At least one entry in gender is required")
             : t("The totals for each demographic type do not match"),
         value => {
-          const { demographics } =
-            value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
-          if (demographics == null) return true;
+          const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
+          if (entries == null) return true;
 
-          return calculateTotals(demographics as DemographicEntryDto[], framework, type).complete;
+          return calculateTotals(entries as DemographicEntryDto[], framework, type).complete;
         }
       );
   }),

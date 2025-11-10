@@ -44,10 +44,7 @@ const RHFDemographicsTable = ({
     field: { value, onChange }
   } = useController(props);
 
-  const demographics = useMemo(
-    () => ensureCorrectSubtypes((value?.[0]?.demographics ?? []) as DemographicEntryDto[]),
-    [value]
-  );
+  const entries = useMemo(() => ensureCorrectSubtypes((value?.[0]?.entries ?? []) as DemographicEntryDto[]), [value]);
 
   const updateDemographics = useCallback(
     (updatedDemographics: DemographicEntryDto[]) => {
@@ -76,7 +73,7 @@ const RHFDemographicsTable = ({
     <InputWrapper {...props}>
       <DemographicsCollapseGrid
         type={demographicType}
-        entries={demographics}
+        entries={entries}
         variant={GRID_VARIANT_GREEN}
         onChange={updateDemographics}
       />

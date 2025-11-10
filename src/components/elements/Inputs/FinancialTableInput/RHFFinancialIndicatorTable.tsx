@@ -130,7 +130,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       getValueFromData(value, "currency", orgDetails?.currency ?? "")
     );
     const [selectFinancialMonth, setSelectFinancialMonth] = useState<OptionValue>(
-      getValueFromData(value, "start_month", orgDetails?.startMonth ?? "")
+      getValueFromData(value, "startMonth", orgDetails?.startMonth ?? "")
     );
     const [resetTable, setResetTable] = useState(0);
     const { openNotification } = useNotificationContext();
@@ -194,7 +194,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             year: item,
             documentation: [],
             description: "",
-            exchange_rate: null
+            exchangeRate: null
           })
         ),
       [years]
@@ -749,7 +749,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         },
         {
           header: t("USD Exchange Rate"),
-          accessorKey: "exchange_rate",
+          accessorKey: "exchangeRate",
           enableSorting: false,
           cell: ({ cell, row }: { cell: Cell<FinancialRow, unknown>; row: Row<FinancialRow> }) => {
             const visibleCells = row.getVisibleCells();
@@ -888,7 +888,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
         current_radio_data: currentRadioData,
         documentation_data: documentationData,
         currency: selectCurrency as string,
-        start_month: selectFinancialMonth as number,
+        startMonth: selectFinancialMonth as number,
         financial_report_id: id ?? router.query.uuid
       };
 
@@ -937,11 +937,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           }
 
           if (
-            firstItem.start_month !== null &&
-            firstItem.start_month !== undefined &&
-            firstItem.start_month !== selectFinancialMonth
+            firstItem.startMonth !== null &&
+            firstItem.startMonth !== undefined &&
+            firstItem.startMonth !== selectFinancialMonth
           ) {
-            setSelectFinancialMonth(firstItem.start_month);
+            setSelectFinancialMonth(firstItem.startMonth);
           }
         }
 
@@ -956,13 +956,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           amount: number | null;
           year: number;
           financial_report_id: string | string[] | undefined;
-          start_month: OptionValue;
+          startMonth: OptionValue;
           currency: OptionValue;
           organisation_id: string | undefined;
           uuid: string | null;
           description: string | null;
           documentation: Partial<UploadedFile>[];
-          exchange_rate: number | null;
+          exchangeRate: number | null;
         }> = [];
 
         if (collection?.includes("profit") && forProfitAnalysisData && forProfitAnalysisData.length > 0) {
@@ -974,13 +974,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.revenue,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.revenueUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
 
             payload.push({
@@ -988,13 +988,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.expenses,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.expensesUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
 
             payload.push({
@@ -1002,13 +1002,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.revenue - item.expenses,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.profitUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
           });
         }
@@ -1022,13 +1022,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.budget,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.budgetUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
           });
         }
@@ -1043,13 +1043,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.currentAssets,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.currentAssetsUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
 
             payload.push({
@@ -1057,13 +1057,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: item.currentLiabilities,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.currentLiabilitiesUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
 
             payload.push({
@@ -1071,13 +1071,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: Number((item.currentAssets / item.currentLiabilities).toFixed(2)),
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.currentRatioUuid ?? null,
               description: null,
               documentation: [],
-              exchange_rate: null
+              exchangeRate: null
             });
           });
         }
@@ -1091,13 +1091,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               amount: null,
               year: year,
               financial_report_id: id ?? router.query.uuid,
-              start_month: selectFinancialMonth,
+              startMonth: selectFinancialMonth,
               currency: selectCurrency,
               organisation_id: orgDetails?.uuid,
               uuid: item.uuid ?? null,
               description: item.description ?? null,
               documentation: item.documentation ?? [],
-              exchange_rate: item.exchange_rate
+              exchangeRate: item.exchangeRate
             });
           });
         }

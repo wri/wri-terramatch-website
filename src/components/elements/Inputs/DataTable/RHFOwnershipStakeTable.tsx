@@ -24,28 +24,28 @@ export interface RHFOwnershipStakeTableProps
 }
 
 export const getOwnershipTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
-  { accessorKey: "first_name", header: t("First name") },
-  { accessorKey: "last_name", header: t("Last name") },
+  { accessorKey: "firstName", header: t("First name") },
+  { accessorKey: "lastName", header: t("Last name") },
   {
     accessorKey: "gender",
     header: t("Gender"),
     cell: props => formatOptionsList(getGenderOptions(t), props.getValue() as string)
   },
   { accessorKey: "title", header: t("Title") },
-  { accessorKey: "percent_ownership", header: t("Percent Ownership") },
-  { accessorKey: "year_of_birth", header: t("Year of birth") }
+  { accessorKey: "percentOwnership", header: t("Percent Ownership") },
+  { accessorKey: "yearOfBirth", header: t("Year of birth") }
 ];
 
 const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
   {
     label: t("first name"),
-    name: "first_name",
+    name: "firstName",
     inputType: "text",
     validation: { required: true }
   },
   {
     label: t("last name"),
-    name: "last_name",
+    name: "lastName",
     inputType: "text",
     validation: { required: true }
   },
@@ -64,13 +64,13 @@ const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
   },
   {
     label: t("Year of birth"),
-    name: "year_of_birth",
+    name: "yearOfBirth",
     inputType: "number",
     validation: { required: true, min: 1900, max: 2050 }
   },
   {
     label: t("Percent Ownership"),
-    name: "percent_ownership",
+    name: "percentOwnership",
     inputType: "number",
     validation: { required: true, min: 1, max: 100 }
   }
