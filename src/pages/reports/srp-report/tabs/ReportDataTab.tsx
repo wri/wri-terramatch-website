@@ -32,7 +32,6 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
       </PageCard>
     );
   }
-  console.log("demographicsTotal", report);
   return (
     <PageBody>
       <PageRow>
