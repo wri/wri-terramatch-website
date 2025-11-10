@@ -1102,7 +1102,6 @@ export async function storePolygon(
   geojson: any,
   record: any,
   setPolygonFromMap?: any,
-  refreshEntity?: any,
   refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
@@ -1131,10 +1130,9 @@ export async function storePolygon(
       if (refetchSitePolygons) {
         await refetchSitePolygons();
       }
-
-      setPolygonFromMap?.({ uuid: result.polygonUuid, isOpen: true });
-
-      refreshEntity?.();
+      if (setPolygonFromMap) {
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true });
+      }
     } catch (error) {
       console.error("Failed to create site polygon:", error);
       throw error;
