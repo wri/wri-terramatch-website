@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { Fragment } from "react";
 
+import LongTextField from "@/components/elements/Field/LongTextField";
 import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
 import useCollectionsTotal from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -31,7 +32,7 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
       </PageCard>
     );
   }
-
+  console.log("demographicsTotal", report);
   return (
     <PageBody>
       <PageRow>
@@ -39,6 +40,20 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
           <PageCard title={t(`Restoration Partners by Impact Category - ${demographicsTotal}`)} gap={8}>
             {DemographicCollections.RESTORATION_PARTNERS_PROJECT.map(collection => (
               <Fragment key={collection}>
+                {collection == DemographicCollections.RESTORATION_PARTNERS_PROJECT[17] && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("EnvironmentalOther Impacts Description")}>
+                      {report.otherRestorationPartnersDescription}
+                    </LongTextField>
+                  </div>
+                )}
+                {collection == DemographicCollections.RESTORATION_PARTNERS_PROJECT[19] && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("Total Unique Restoration Partners")}>
+                      {report.totalUniqueRestorationPartners}
+                    </LongTextField>
+                  </div>
+                )}
                 <DemographicsDisplay
                   entity="srpReports"
                   uuid={report.uuid}
