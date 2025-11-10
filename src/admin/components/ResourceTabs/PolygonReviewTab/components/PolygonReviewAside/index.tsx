@@ -14,22 +14,19 @@ interface SitePolygonReviewAsideProps {
   isLoading?: boolean;
 }
 
-const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => {
-  return (
-    <Stack gap={8} className="h-full">
-      <Polygons
-        menu={props?.data}
-        polygonFromMap={props?.polygonFromMap}
-        setPolygonFromMap={props?.setPolygonFromMap}
-        refresh={props?.refresh}
-        mapFunctions={props?.mapFunctions}
-        totalPolygons={props?.totalPolygons}
-        progress={props?.progress}
-        siteUuid={props?.siteUuid}
-        isLoading={props?.isLoading}
-      />
-    </Stack>
-  );
-};
-
+const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
+  <Stack gap={8} className="h-full">
+    <Polygons
+      menu={props?.data}
+      polygonFromMap={props?.polygonFromMap}
+      setPolygonFromMap={props?.setPolygonFromMap}
+      refresh={props?.refresh}
+      mapFunctions={props?.mapFunctions}
+      totalPolygons={props?.totalPolygons}
+      progress={props?.progress}
+      siteUuid={props?.siteUuid}
+      isLoading={props?.isLoading}
+    />
+  </Stack>
+);
 export default SitePolygonReviewAside;

@@ -116,7 +116,6 @@ const Polygons = (props: IPolygonProps) => {
         setSelectedPolygon(newSelectedPolygon);
         setIsOpenPolygonDrawer(true);
       } else {
-        // Still open drawer even if not in menu - it will load when data arrives
         setSelectedPolygon(undefined);
         setIsOpenPolygonDrawer(true);
       }

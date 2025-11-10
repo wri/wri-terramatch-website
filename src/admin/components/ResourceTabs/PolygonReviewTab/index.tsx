@@ -210,7 +210,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
 
   const onSave = (geojson: any, record: any) => {
-    // Use context setter directly - no need for refreshEntity, refetchSitePolygons already updates the data
     storePolygon(geojson, record, setSelectPolygonFromMap, refetch);
   };
   const mapFunctions = useMap(onSave);
@@ -219,7 +218,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     setCurrentPolygonUuid(uuid);
   }, []);
 
-  // No need for this effect - we're using selectPolygonFromMap directly from context
   useEffect(() => {
     if (selectPolygonFromMap?.uuid) {
       flyToPolygonBounds(selectPolygonFromMap.uuid);
