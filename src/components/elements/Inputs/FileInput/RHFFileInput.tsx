@@ -163,7 +163,7 @@ const RHFFileInput = ({
   );
 
   const onDeleteFile = useCallback(
-    (file: Partial<UploadedFile>) => {
+    async (file: Partial<UploadedFile>) => {
       if (file.uuid) {
         addFile({
           ...file,
@@ -173,12 +173,14 @@ const RHFFileInput = ({
             isDeleting: true
           }
         });
-        deleteMedia(file.uuid);
+        await deleteMedia(file.uuid);
+        removeFile(file);
+        onChangeCapture?.();
       } else if (file.fileName != null) {
         removeFile(file);
       }
     },
-    [addFile, removeFile]
+    [addFile, removeFile, onChangeCapture]
   );
 
   useEffect(() => {
