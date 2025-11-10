@@ -58,6 +58,7 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
   const handleSiteValidationComplete = useCallback(() => {
     if (!siteUuid) return;
 
+    console.log("handleSiteValidationComplete", sitePolygonData);
     fetchOverlapValidations(true);
     setShouldRefetchValidation(true);
     ApiSlice.pruneCache("sitePolygons");
@@ -96,7 +97,7 @@ export const useSiteValidation = ({ siteUuid, setIsLoadingDelayedJob, setAlertTi
     const completedValidationJob = delayedJobs.find(job => {
       const isCompleted = job.status === "succeeded" || job.status === "failed";
       const isPolygonValidation = job.name === "Polygon Validation";
-      const matchesSite = job.payload?.siteUuid === siteUuid;
+      const matchesSite = job.payload?.data?.attributes?.siteUuid === siteUuid;
 
       return isCompleted && isPolygonValidation && matchesSite;
     });
