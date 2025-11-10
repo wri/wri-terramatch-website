@@ -160,11 +160,22 @@ const ContentForApproval = ({
 );
 
 const PolygonReviewTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
-  const { selectPolygonFromMap } = useMonitoredDataContext();
+  const { isLoading: ctxLoading, record } = useShowContext();
+  const { selectPolygonFromMap, setSelectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+
+  const polygonFromMap = selectPolygonFromMap ?? { isOpen: false, uuid: "" };
+  const setPolygonFromMap = useCallback(
+    (value: IpolygonFromMap | ((prev: IpolygonFromMap) => IpolygonFromMap)) => {
+      if (setSelectPolygonFromMap) {
+        const newValue =
+          typeof value === "function" ? value(selectPolygonFromMap ?? { isOpen: false, uuid: "" }) : value;
+        setSelectPolygonFromMap(newValue);
+      }
+    },
+    [setSelectPolygonFromMap, selectPolygonFromMap]
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const {
@@ -197,8 +208,9 @@ const PolygonReviewTab: FC<IProps> = props => {
     total,
     progress
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
+
   const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, refetch, setPolygonFromMap, refreshEntity);
+    storePolygon(geojson, record, setSelectPolygonFromMap, refetch);
   };
   const mapFunctions = useMap(onSave);
 
@@ -208,7 +220,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   useEffect(() => {
     if (selectPolygonFromMap?.uuid) {
-      setPolygonFromMap(selectPolygonFromMap);
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
