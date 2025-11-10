@@ -111,8 +111,15 @@ const Polygons = (props: IPolygonProps) => {
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
-      setSelectedPolygon(newSelectedPolygon);
-      setIsOpenPolygonDrawer(true);
+
+      if (newSelectedPolygon) {
+        setSelectedPolygon(newSelectedPolygon);
+        setIsOpenPolygonDrawer(true);
+      } else {
+        // Still open drawer even if not in menu - it will load when data arrives
+        setSelectedPolygon(undefined);
+        setIsOpenPolygonDrawer(true);
+      }
     } else {
       setIsOpenPolygonDrawer(false);
       setSelectedPolygon(undefined);
@@ -304,7 +311,7 @@ const Polygons = (props: IPolygonProps) => {
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         {isOpenPolygonDrawer && (
           <PolygonDrawer
-            polygonSelected={selectedPolygon?.uuid ?? ""}
+            polygonSelected={selectedPolygon?.uuid ?? polygonFromMap?.uuid ?? ""}
             isPolygonStatusOpen={isPolygonStatusOpen}
             refresh={props?.refresh}
             isOpenPolygonDrawer={isOpenPolygonDrawer}
