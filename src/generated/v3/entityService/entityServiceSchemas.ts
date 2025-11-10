@@ -425,6 +425,10 @@ export type SrpReportLightDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
 };
 
 export type TaskUpdateAttributes = {
@@ -1774,15 +1778,15 @@ export type SrpReportFullDto = {
    * @format date-time
    */
   updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
   title: string | null;
   /**
    * @format date-time
    */
   approvedAt: string | null;
-  /**
-   * @format date-time
-   */
-  submittedAt: string | null;
   nothingToReport: boolean | null;
   frameworkKey: string | null;
   feedback: string | null;
