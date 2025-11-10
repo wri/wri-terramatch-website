@@ -39,26 +39,26 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
           <PageCard title={t(`Restoration Partners by Impact Category - ${demographicsTotal}`)} gap={8}>
             {DemographicCollections.RESTORATION_PARTNERS_PROJECT.map(collection => (
               <Fragment key={collection}>
-                {collection == DemographicCollections.RESTORATION_PARTNERS_PROJECT[17] && (
-                  <div className="flex w-full items-center justify-between p-4">
-                    <LongTextField title={t("EnvironmentalOther Impacts Description")}>
-                      {report.otherRestorationPartnersDescription}
-                    </LongTextField>
-                  </div>
-                )}
-                {collection == DemographicCollections.RESTORATION_PARTNERS_PROJECT[19] && (
-                  <div className="flex w-full items-center justify-between p-4">
-                    <LongTextField title={t("Total Unique Restoration Partners")}>
-                      {report.totalUniqueRestorationPartners}
-                    </LongTextField>
-                  </div>
-                )}
                 <DemographicsDisplay
                   entity="srpReports"
                   uuid={report.uuid}
                   type="restorationPartners"
                   collection={collection}
                 />
+                {collection == "indirect-productivity" && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("EnvironmentalOther Impacts Description")}>
+                      {report.otherRestorationPartnersDescription}
+                    </LongTextField>
+                  </div>
+                )}
+                {collection == "indirect-other" && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("Total Unique Restoration Partners")}>
+                      {report.totalUniqueRestorationPartners}
+                    </LongTextField>
+                  </div>
+                )}
               </Fragment>
             ))}
           </PageCard>
