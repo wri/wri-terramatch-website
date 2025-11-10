@@ -234,7 +234,9 @@ export default function SiteAttributeTable({
             },
             cell: (info: { row: { original: SitePolygonRow } }) => {
               const value = info.row.original["num-trees"];
-              return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
+              return (
+                <span className="whitespace-nowrap">{value == null || value === 0 ? "-" : value.toLocaleString()}</span>
+              );
             }
           },
           {
@@ -249,7 +251,11 @@ export default function SiteAttributeTable({
               className: "!px-4"
             },
             cell: (info: { row: { original: SitePolygonRow } }) => {
-              const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
+              const value = info.row.original["calc-area"];
+              if (value == null || value === 0) {
+                return <span className="whitespace-nowrap">-</span>;
+              }
+              const calculatedArea = value.toLocaleString("en-US", {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
               });
