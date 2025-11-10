@@ -2069,6 +2069,13 @@ export type FormDataDto = {
   answers: Record<string, any>;
 };
 
+export type UpdateRequestDto = {
+  formUuid: string;
+  status: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+  entityAnswers: Record<string, any>;
+  updateRequestAnswers: Record<string, any>;
+};
+
 /**
  * CONSTANTS
  */

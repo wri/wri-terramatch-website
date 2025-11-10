@@ -2224,20 +2224,20 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
 
 export type FormDataGetPathParams = {
   /**
-   * Entity type for form data
+   * Entity type to retrieve
    */
   entity:
     | "projects"
     | "sites"
     | "nurseries"
     | "projectReports"
-    | "siteReports"
     | "nurseryReports"
+    | "siteReports"
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
   /**
-   * Entity UUID for form data
+   * Entity UUID for resource to retrieve
    */
   uuid: string;
 };
@@ -2312,6 +2312,86 @@ export const formDataGet = new V3ApiEndpoint<FormDataGetResponse, FormDataGetErr
   "/entities/v3/{entity}/{uuid}/formData",
   "GET"
 );
+
+export type UpdateRequestGetPathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type UpdateRequestGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateRequestGetResponse = {
+  meta?: {
+    /**
+     * @example updateRequests
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example updateRequests
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UpdateRequestDto;
+  };
+};
+
+export type UpdateRequestGetVariables = {
+  pathParams: UpdateRequestGetPathParams;
+};
+
+export const updateRequestGet = new V3ApiEndpoint<
+  UpdateRequestGetResponse,
+  UpdateRequestGetError,
+  UpdateRequestGetVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/updateRequests", "GET");
 
 export type EntityAssociationIndexPathParams = {
   /**
@@ -3335,6 +3415,7 @@ export const operationsByTag = {
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet },
+  updateRequests: { updateRequestGet },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },

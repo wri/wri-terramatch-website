@@ -8,10 +8,6 @@ import { FormSubmissionRead } from "@/generated/apiSchemas";
 import { FormDataDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 
-/**
- * Protects the FE from first rendering with an out of date cached copy of the form data by only
- * returning the form data once `onSettled` has been called on the request.
- */
 export const useFormSubmission = (uuid?: string) => {
   const [formDataValid, setFormDataValid] = useState(false);
   const router = useRouter();

@@ -15,14 +15,17 @@ import {
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
   optionLabelsGetList,
-  optionLabelsIndex
+  optionLabelsIndex,
+  updateRequestGet,
+  UpdateRequestGetPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
   FormDataDto,
   FormFullDto,
   FormLightDto,
   LinkedFieldDto,
-  OptionLabelDto
+  OptionLabelDto,
+  UpdateRequestDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Filter } from "@/types/connection";
 
@@ -101,3 +104,12 @@ const entityFormDataConnection = v3Resource("formData", formDataGet)
   .enabledProp()
   .buildConnection();
 export const useEntityFormData = connectionHook(entityFormDataConnection);
+
+const updateRequestConnection = v3Resource("updateRequests", updateRequestGet)
+  .singleByCustomId<UpdateRequestDto, Partial<UpdateRequestGetPathParams>>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    ({ entity, uuid }) => `${entity}|${uuid}`
+  )
+  .enabledProp()
+  .buildConnection();
+export const useUpdateRequest = connectionHook(updateRequestConnection);
