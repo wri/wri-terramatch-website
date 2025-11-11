@@ -47,7 +47,7 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
                 />
                 {collection == "indirect-productivity" && (
                   <div className="flex w-full items-center justify-between p-4">
-                    <LongTextField title={t("EnvironmentalOther Impacts Description")}>
+                    <LongTextField title={t("Other Impacts Description")}>
                       {report.otherRestorationPartnersDescription}
                     </LongTextField>
                   </div>
