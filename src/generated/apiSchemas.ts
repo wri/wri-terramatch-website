@@ -9418,27 +9418,6 @@ export type AdminUserCreate = {
   direct_frameworks?: boolean;
 };
 
-export type UpdateRequestsPaginated = {
-  data?: {
-    uuid?: string;
-    framework_key?: string;
-    status?: string;
-    readable_status?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-  };
-};
-
 export type UpdateRequestRead = {
   uuid?: string;
   framework_key?: string;
