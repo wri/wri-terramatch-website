@@ -140,6 +140,22 @@ export type GetV2AdminProjectsMultiResponse = {
     /**
      * @format float
      */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
+    /**
+     * @format float
+     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -176,6 +192,7 @@ export type GetV2AdminProjectsMultiResponse = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
+    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -454,6 +471,22 @@ export type GetV2AdminNurseriesMultiResponse = {
       /**
        * @format float
        */
+      fin_budget_3year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_2year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_1year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_current_year?: number;
+      /**
+       * @format float
+       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -490,6 +523,7 @@ export type GetV2AdminNurseriesMultiResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
+      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -773,6 +807,22 @@ export type GetV2AdminSitesMultiResponse = {
       /**
        * @format float
        */
+      fin_budget_3year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_2year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_1year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_current_year?: number;
+      /**
+       * @format float
+       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -809,6 +859,7 @@ export type GetV2AdminSitesMultiResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
+      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -1071,6 +1122,22 @@ export type PostUsersResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -2957,6 +3024,22 @@ export type GetV2AdminOrganisationsResponse = {
     /**
      * @format float
      */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
+    /**
+     * @format float
+     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -3194,7 +3277,7 @@ export type GetV2AdminOrganisationsVariables = {
 } & ApiContext["fetcherOptions"];
 
 /**
- * Currently available sort is status, type, trees_grown_total, name, created_at
+ * Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at
  */
 export const fetchGetV2AdminOrganisations = (variables: GetV2AdminOrganisationsVariables, signal?: AbortSignal) =>
   apiFetch<
@@ -3207,7 +3290,7 @@ export const fetchGetV2AdminOrganisations = (variables: GetV2AdminOrganisationsV
   >({ url: "/v2/admin/organisations", method: "get", ...variables, signal });
 
 /**
- * Currently available sort is status, type, trees_grown_total, name, created_at
+ * Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at
  */
 export const useGetV2AdminOrganisations = <TData = GetV2AdminOrganisationsResponse>(
   variables: GetV2AdminOrganisationsVariables,
@@ -3268,6 +3351,22 @@ export type GetV2AdminOrganisationsMultiResponse = {
   hq_zipcode?: string;
   hq_country?: string;
   fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
   /**
    * @format float
    */
@@ -3558,6 +3657,22 @@ export type GetV2AdminOrganisationsUUIDResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3845,6 +3960,22 @@ export type PutV2AdminOrganisationsUUIDResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4088,6 +4219,22 @@ export type PutV2AdminOrganisationsUUIDRequestBody = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4124,6 +4271,7 @@ export type PutV2AdminOrganisationsUUIDRequestBody = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4250,6 +4398,22 @@ export type PutV2AdminOrganisationsApproveResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4286,6 +4450,7 @@ export type PutV2AdminOrganisationsApproveResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4371,6 +4536,22 @@ export type PutV2AdminOrganisationsRejectResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4407,6 +4588,7 @@ export type PutV2AdminOrganisationsRejectResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4536,6 +4718,22 @@ export type PostV2OrganisationsResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4572,6 +4770,7 @@ export type PostV2OrganisationsResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4826,6 +5025,22 @@ export type GetV2OrganisationsUUIDResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4862,6 +5077,7 @@ export type GetV2OrganisationsUUIDResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -5123,6 +5339,22 @@ export type PutV2OrganisationsUUIDResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -5159,6 +5391,7 @@ export type PutV2OrganisationsUUIDResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -5472,6 +5705,22 @@ export type PostV2OrganisationsJoinExistingResponse = {
   /**
    * @format float
    */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
+  /**
+   * @format float
+   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -5508,6 +5757,7 @@ export type PostV2OrganisationsJoinExistingResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -5779,6 +6029,22 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -6111,6 +6377,22 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -6840,6 +7122,22 @@ export type PutV2AdminUsersUUIDRequestBody = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -8243,6 +8541,22 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
         /**
          * @format float
          */
+        fin_budget_3year?: number;
+        /**
+         * @format float
+         */
+        fin_budget_2year?: number;
+        /**
+         * @format float
+         */
+        fin_budget_1year?: number;
+        /**
+         * @format float
+         */
+        fin_budget_current_year?: number;
+        /**
+         * @format float
+         */
         ha_restored_total?: number;
         /**
          * @format float
@@ -8279,6 +8593,7 @@ export type GetV2ProjectsUUIDNurseriesResponse = {
         tree_restoration_practices?: string[];
         business_model?: string;
         subtype?: string;
+        organisation_revenue_this_year?: number;
         shapefiles?: {
           uuid?: string;
           shapefileable_type?: string;
@@ -10834,6 +11149,22 @@ export type PatchV2MyBannersResponse = {
     /**
      * @format float
      */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
+    /**
+     * @format float
+     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -11372,6 +11703,22 @@ export type GetV2AdminFormsApplicationsUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -11969,6 +12316,22 @@ export type GetV2ApplicationsUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
+    /**
+     * @format float
+     */
+    fin_budget_3year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_2year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_1year?: number;
+    /**
+     * @format float
+     */
+    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -13251,6 +13614,22 @@ export type GetV2SitesUUIDResponse = {
       /**
        * @format float
        */
+      fin_budget_3year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_2year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_1year?: number;
+      /**
+       * @format float
+       */
+      fin_budget_current_year?: number;
+      /**
+       * @format float
+       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -13287,6 +13666,7 @@ export type GetV2SitesUUIDResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
+      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;

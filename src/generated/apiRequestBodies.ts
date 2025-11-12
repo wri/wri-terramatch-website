@@ -84,34 +84,6 @@ export type PostV2FormsEntityFormUuidBody = {
   form_uuid?: string;
 };
 
-export type PostV2FundingProgrammeBody = {
-  name?: string;
-  description?: string;
-  read_more_url?: string;
-  location?: string;
-  organisation_types?: string[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  status?: string;
-};
-
-export type V2AdminOrganisationApproveBody = {
-  uuid: string;
-};
-
 export type V2PostOrganisationsBody = {
   /**
    * Available type are for-profit-organization, non-profit-organization, government-agency
@@ -153,6 +125,7 @@ export type V2PostOrganisationsBody = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
+  organisation_revenue_this_year?: number;
   languages?: string[];
   web_url?: string;
   facebook_url?: string;
@@ -166,6 +139,22 @@ export type V2PostOrganisationsBody = {
   hq_zipcode?: string;
   hq_country?: string;
   fin_start_month?: number;
+  /**
+   * @format float
+   */
+  fin_budget_3year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_2year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_1year?: number;
+  /**
+   * @format float
+   */
+  fin_budget_current_year?: number;
   /**
    * @format float
    */
@@ -208,6 +197,34 @@ export type V2PostOrganisationsBody = {
     deleted_at?: string;
   }[];
   tags?: string[];
+};
+
+export type PostV2FundingProgrammeBody = {
+  name?: string;
+  description?: string;
+  read_more_url?: string;
+  location?: string;
+  organisation_types?: string[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  status?: string;
+};
+
+export type V2AdminOrganisationApproveBody = {
+  uuid: string;
 };
 
 export type PostV2AdminFundingProgrammeStageBody = {
