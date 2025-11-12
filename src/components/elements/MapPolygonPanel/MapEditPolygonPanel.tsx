@@ -82,8 +82,8 @@ const MapEditPolygonPanel = ({
         criteria_list: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
           criteria_id: criteria.criteriaId,
           valid: criteria.valid ? 1 : 0,
-          latest_created_at: criteria.createdAt,
-          extra_info: criteria.extraInfo || undefined
+          latest_created_at: criteria.createdAt ?? undefined,
+          extra_info: criteria.extraInfo ?? undefined
         }))
       };
 

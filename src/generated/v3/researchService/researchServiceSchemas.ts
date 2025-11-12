@@ -91,17 +91,32 @@ export type ValidationCriteriaDto = {
   /**
    * The validation criteria ID
    */
-  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15 | 16;
+  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15 | 16 | 5 | 10;
+  /**
+   * The validation type name (e.g., 'SELF_INTERSECTION', 'POLYGON_SIZE')
+   */
+  validationType:
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE";
   /**
    * Whether the polygon passed this validation
    */
   valid: boolean;
   /**
-   * When this validation was last run
+   * When this validation was last run (null for non-persistent validations)
    *
    * @format date-time
    */
-  createdAt: string;
+  createdAt: string | null;
   /**
    * Additional information about the validation result
    */
@@ -402,6 +417,8 @@ export type ValidationRequestAttributes = {
     | "PLANT_START_DATE"
     | "DUPLICATE_GEOMETRY"
     | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
   )[];
 };
 
@@ -494,6 +511,8 @@ export type SiteValidationRequestAttributes = {
     | "PLANT_START_DATE"
     | "DUPLICATE_GEOMETRY"
     | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
   )[];
 };
 
@@ -504,6 +523,36 @@ export type SiteValidationRequestData = {
 
 export type SiteValidationRequestBody = {
   data: SiteValidationRequestData;
+};
+
+export type GeometryValidationRequestAttributes = {
+  /**
+   * Array of GeoJSON FeatureCollections containing geometries to validate
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000","poly_name":"Test Polygon"}}]}
+   */
+  geometries: any[];
+  /**
+   * Array of validation types to run. If not provided or empty, all non persistent validation types will be run.
+   */
+  validationTypes?: (
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "DUPLICATE_GEOMETRY"
+    | "DATA_COMPLETENESS"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type GeometryValidationRequestData = {
+  type: "geometryValidations";
+  attributes: GeometryValidationRequestAttributes;
+};
+
+export type GeometryValidationRequestBody = {
+  data: GeometryValidationRequestData;
 };
 
 export type PolygonListClippingAttributes = {
