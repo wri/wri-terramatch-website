@@ -301,6 +301,65 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         options: getMonthOptions(t)
       },
       {
+        name: "fin_budget_3year",
+        label: t("Organization Budget in USD for (-{count} years from today)", { count: 3 }),
+        placeholder: t("Organization Budget in USD"),
+        inputType: "number",
+        validation: { min: 0, max: 9999999999999 }
+      },
+      {
+        name: "op_budget_3year",
+        inputType: "file",
+        label: t("Upload your organization's operating budget from {count} years ago", { count: 3 }),
+        placeholder: t("Upload your organization's operating budget"),
+        collection: "op_budget_3year",
+        multiChoice: true,
+        model: "organisations",
+        additionalProps: { max: 5, accept: [FileType.CsvExcel, FileType.Pdf] }
+      },
+      {
+        name: "fin_budget_2year",
+        label: t("Organization Budget in USD for (-{count} years from today)", { count: 2 }),
+        placeholder: t("Organization Budget in USD"),
+        inputType: "number",
+        validation: { min: 0, max: 9999999999999 }
+      },
+      {
+        name: "op_budget_2year",
+        inputType: "file",
+        label: t("Upload your organization's operating budget from {count} years ago", { count: 2 }),
+        placeholder: t("Upload your organization's operating budget"),
+        validation: yup.array(),
+        collection: "op_budget_2year",
+        multiChoice: true,
+        model: "organisations",
+        additionalProps: { max: 5, accept: [FileType.CsvExcel, FileType.Pdf] }
+      },
+      {
+        name: "fin_budget_1year",
+        label: t("Organization Budget in USD for (-{count} years from today)", { count: 1 }),
+        placeholder: t("Organization Budget in USD"),
+        inputType: "number",
+        validation: { min: 0, max: 9999999999999 }
+      },
+      {
+        name: "op_budget_1year",
+        inputType: "file",
+        label: t("Upload your organization's operating budget from last year"),
+        placeholder: t("Upload your organization's operating budget"),
+        collection: "op_budget_1year",
+        multiChoice: true,
+        model: "organisations",
+        additionalProps: { max: 5, accept: [FileType.CsvExcel, FileType.Pdf] }
+      },
+      {
+        name: "fin_budget_current_year",
+        label: t("Organization Budget in USD for this year"),
+        placeholder: t("Organization Budget in USD"),
+        inputType: "number",
+        validation: { min: 0, max: 9999999999999 }
+      },
+      {
         name: "bank_statements",
         inputType: "file",
         label: t("Upload your organization's bank statements"),

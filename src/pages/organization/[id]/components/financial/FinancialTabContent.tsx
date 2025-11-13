@@ -31,6 +31,7 @@ import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
 import Files from "../Files";
 import CardFinancial from "./components/cardFinancial";
+import FinancialInformation from "./FinancialInformation";
 
 type FinancialTabContentProps = {
   organization?: V2OrganisationRead;
@@ -56,6 +57,13 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
+    const financial = _.pick<any, keyof V2OrganisationRead>(organization, [
+      "fin_budget_current_year",
+      "fin_budget_3year",
+      "fin_budget_2year",
+      "fin_budget_1year"
+    ]);
+
     const statementFiles = _.pick<any, keyof V2OrganisationRead>(
       organization,
       // @ts-ignore
@@ -63,11 +71,12 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     );
 
     return {
+      financial: _.some(financial, _.isNull || _.isNaN),
       statementFiles: _.some(statementFiles, _.isEmpty)
     };
   }, [organization]);
 
-  const showIncompleteStepsSection = incompleteSteps.statementFiles;
+  const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
 
   const files: V2FileRead[] = useMemo(() => {
     return [
@@ -231,6 +240,10 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
       <Container className="hidden py-15">
         <Text variant="text-heading-2000">{t("Financial Information")}</Text>
 
+        {/* Information */}
+        <When condition={!incompleteSteps.financial}>
+          <FinancialInformation organization={organization} />
+        </When>
         {/* Files */}
         <When condition={!incompleteSteps.statementFiles}>
           <Files files={files} />
@@ -239,6 +252,13 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         <When condition={showIncompleteStepsSection}>
           <BuildStrongerProfile
             steps={[
+              {
+                showWhen: incompleteSteps.financial,
+                title: t("Add Organizational Budget"),
+                subtitle: t(
+                  "Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD."
+                )
+              },
               {
                 showWhen: incompleteSteps.statementFiles,
                 title: t("Add Financial Documents"),
