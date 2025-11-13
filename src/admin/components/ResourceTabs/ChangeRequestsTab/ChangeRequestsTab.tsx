@@ -15,15 +15,15 @@ import {
 import ChangeRow from "@/admin/components/ResourceTabs/ChangeRequestsTab/ChangeRow";
 import useFormChanges from "@/admin/components/ResourceTabs/ChangeRequestsTab/useFormChanges";
 import List from "@/components/extensive/List/List";
+import { FormEntity, useUpdateRequest } from "@/connections/Form";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useEntityForm } from "@/hooks/useFormGet";
-import { Entity, EntityName, SingularEntityName } from "@/types/common";
+import { Entity, SingularEntityName } from "@/types/common";
 
 import ChangeRequestRequestMoreInfoModal, { IStatus } from "./MoreInformationModal";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
-  entity: EntityName;
+  entity: FormEntity;
   singularEntity: SingularEntityName;
 }
 
@@ -31,20 +31,24 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const ctx = useShowContext();
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
-  const { formData: currentValues, form, refetch } = useEntityForm(entity, ctx?.record?.uuid);
-
-  const changeRequest = currentValues?.data?.update_request;
-  const changes = changeRequest?.content;
-  const current = currentValues?.data?.answers;
-  const status = changeRequest?.status;
-
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(currentValues?.data?.form_uuid);
+  const enabled = entity != null && ctx?.record?.uuid != null;
+  const [, { data: updateRequest }] = useUpdateRequest({
+    entity,
+    uuid: ctx?.record?.uuid,
+    enabled
+  });
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(updateRequest?.formUuid);
 
   const entityDef = useMemo(
     () => ({ entityName: entity, entityUUID: ctx?.record?.uuid ?? "" } as Entity),
     [ctx?.record?.uuid, entity]
   );
-  const formChanges = useFormChanges(fieldsProvider, current, changes, entityDef);
+  const formChanges = useFormChanges(
+    fieldsProvider,
+    updateRequest?.entityAnswers,
+    updateRequest?.updateRequestAnswers,
+    entityDef
+  );
   const numFieldsAffected = useMemo(
     () =>
       formChanges.reduce((sum, stepChange) => {
@@ -69,7 +73,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         label={label ?? "Change Requests"}
         {...rest}
       >
-        {changeRequest != null ? (
+        {updateRequest != null ? (
           <Grid container spacing={2}>
             <Grid item xs={8}>
               <List
@@ -156,15 +160,14 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         )}
       </TabbedShowLayout.Tab>
 
-      {statusToChangeTo && changeRequest && form && (
+      {statusToChangeTo && updateRequest && (
         <ChangeRequestRequestMoreInfoModal
           open
           status={statusToChangeTo}
-          uuid={changeRequest?.uuid!}
+          uuid={/* TODO TM-2624 */ ""}
           entity={entity}
           handleClose={() => {
             setStatusToChangeTo(undefined);
-            refetch?.();
           }}
           fieldsProvider={fieldsProvider}
         />

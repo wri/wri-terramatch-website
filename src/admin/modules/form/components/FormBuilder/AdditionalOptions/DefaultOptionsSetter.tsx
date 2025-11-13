@@ -3,7 +3,7 @@ import { FC } from "react";
 import { FormDataConsumerRenderParams, useInput } from "react-admin";
 
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
-import { useOptionList } from "@/connections/util/Form";
+import { useOptionList } from "@/connections/Form";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 type DefaultOptionsSetterProps = {

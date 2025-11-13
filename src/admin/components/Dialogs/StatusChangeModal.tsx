@@ -18,7 +18,8 @@ import modules from "@/admin/modules";
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
-import { SupportedEntity, useFullEntity } from "@/connections/Entity";
+import { useFullEntity } from "@/connections/Entity";
+import { FormEntity } from "@/connections/Form";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
@@ -51,7 +52,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const t = useT();
 
   const resourceName = useMemo(() => kebabCase(pluralEntityName(resource as SingularEntityName)), [resource]);
-  const v3Resource = useMemo(() => v3EntityName(resource as SingularEntityName) as SupportedEntity, [resource]);
+  const v3Resource = useMemo(() => v3EntityName(resource as SingularEntityName) as FormEntity, [resource]);
   const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
   // For a v3 update, the store already has the updated resource, but react-admin doesn't know about it.
@@ -102,8 +103,8 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
     }
   }, [record, resource, status]);
 
-  const { formData: formResponse } = useEntityForm(resourceName, record.id);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formResponse?.data.form_uuid);
+  const { formData } = useEntityForm(v3Resource, record.id);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
   const feedbackChoices = useMemo<Choice[]>(() => {
     const { stepIds, fieldNames, fieldByName, childNames } = fieldsProvider;
     const fieldToChoice = ({ label, name }: FieldDefinition): Choice => ({ id: name, name: label });

@@ -247,7 +247,10 @@ export type ProjectReportLightDto = {
   organisationUuid: string | null;
   projectName: string | null;
   projectUuid: string | null;
-  status: string;
+  /**
+   * Report status for this project report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   completion: number | null;
   /**
    * @format date-time
@@ -258,7 +261,10 @@ export type ProjectReportLightDto = {
    */
   taskUuid: string | null;
   title: string | null;
-  updateRequestStatus: string;
+  /**
+   * Update request status for this project report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * @format date-time
    */
@@ -289,8 +295,14 @@ export type SiteReportLightDto = {
    */
   siteUuid: string | null;
   frameworkKey: string | null;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this site report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this site report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -344,9 +356,15 @@ export type NurseryReportLightDto = {
    */
   nurseryUuid: string | null;
   frameworkKey: string | null;
-  status: string;
+  /**
+   * Report status for this nursery report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this nursery report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
-  updateRequestStatus: string;
   /**
    * The associated project name
    */
@@ -391,8 +409,14 @@ export type SrpReportLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this srp report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this srp report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -869,8 +893,14 @@ export type FinancialReportLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this financial report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this financial report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated organisation name
    */
@@ -930,8 +960,14 @@ export type DisturbanceReportLightDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Entity status for this disturbance report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this disturbance report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated project name
    */
@@ -1251,7 +1287,10 @@ export type ProjectReportFullDto = {
   organisationUuid: string | null;
   projectName: string | null;
   projectUuid: string | null;
-  status: string;
+  /**
+   * Report status for this project report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   completion: number | null;
   /**
    * @format date-time
@@ -1262,7 +1301,10 @@ export type ProjectReportFullDto = {
    */
   taskUuid: string | null;
   title: string | null;
-  updateRequestStatus: string;
+  /**
+   * Update request status for this project report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * @format date-time
    */
@@ -1379,9 +1421,15 @@ export type NurseryReportFullDto = {
    */
   nurseryUuid: string | null;
   frameworkKey: string | null;
-  status: string;
+  /**
+   * Report status for this nursery report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this nursery report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
-  updateRequestStatus: string;
   /**
    * The associated project name
    */
@@ -1454,8 +1502,14 @@ export type SiteReportFullDto = {
    */
   siteUuid: string | null;
   frameworkKey: string | null;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this site report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this site report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -1617,8 +1671,14 @@ export type FinancialReportFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this financial report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this financial report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated organisation name
    */
@@ -1675,8 +1735,14 @@ export type DisturbanceReportFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Entity status for this disturbance report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this disturbance report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
    * The associated project name
    */
@@ -1737,8 +1803,14 @@ export type SrpReportFullDto = {
    */
   lightResource: boolean;
   uuid: string;
-  status: string;
-  updateRequestStatus: string;
+  /**
+   * Report status for this srp report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this srp report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   completion: number | null;
   /**
    * The associated project name
@@ -1969,6 +2041,39 @@ export type DisturbanceReportCreateData = {
 
 export type EntityCreateBody = {
   data: DisturbanceReportCreateData;
+};
+
+export type FormDataDto = {
+  /**
+   * Entity type for this form data
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * Entity UUID for this form data
+   */
+  entityUuid: string;
+  formUuid: string;
+  formTitle: string;
+  frameworkKey: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: Record<string, any>;
+};
+
+export type UpdateRequestDto = {
+  formUuid: string;
+  status: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+  entityAnswers: Record<string, any>;
+  updateRequestAnswers: Record<string, any>;
 };
 
 /**
@@ -2224,17 +2329,17 @@ export type LinkedFieldDto = {
    */
   id: string;
   formModelType:
-    | "organisations"
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
-    | "srpReports";
+    | "srpReports"
+    | "organisations"
+    | "projectPitches";
   label: string;
   name: string;
   inputType:
@@ -2388,17 +2493,17 @@ export type FormQuestionDto = {
   options: FormQuestionOptionDto[] | null;
   showOnParentCondition?: boolean | null;
   model:
-    | "organisations"
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
     | "srpReports"
+    | "organisations"
+    | "projectPitches"
     | null;
   linkedFieldKey?: string | null;
   isParentConditionalDefault: boolean;

@@ -7,7 +7,7 @@ import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/
 import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { loadLinkedFields } from "@/connections/util/Form";
+import { loadLinkedFields } from "@/connections/Form";
 import Log from "@/utils/log";
 
 const envOptions = [

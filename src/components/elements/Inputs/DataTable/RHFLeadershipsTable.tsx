@@ -26,8 +26,8 @@ export interface RHFLeadershipsTableProps
 export const getLeadershipsTableColumns = (
   t: typeof useT | Function = (t: string) => t
 ): AccessorKeyColumnDef<any>[] => [
-  { accessorKey: "first_name", header: t("First name") },
-  { accessorKey: "last_name", header: t("Last name") },
+  { accessorKey: "firstName", header: t("First name") },
+  { accessorKey: "lastName", header: t("Last name") },
   {
     accessorKey: "gender",
     header: t("Gender"),
@@ -47,13 +47,13 @@ export const getLeadershipsTableColumns = (
 const getLeadershipsTableQuestions = (countryOptions: Option[], t: typeof useT): FieldDefinition[] => [
   {
     label: t("Team Member first name"),
-    name: "first_name",
+    name: "firstName",
     inputType: "text",
     validation: { required: true }
   },
   {
     label: t("Team member last name"),
-    name: "last_name",
+    name: "lastName",
     inputType: "text",
     validation: { required: true }
   },

@@ -16,7 +16,7 @@ const NurseryReportShow = () => (
         <InformationTab type="nursery-reports" />
         <GalleryTab label="Nursery Report Gallery" entity="nurseryReports" />
         <DocumentTab label="Nursery Report Documents" entity="nurseryReports" />
-        <ChangeRequestsTab entity="nursery-reports" singularEntity="nursery-report" />
+        <ChangeRequestsTab entity="nurseryReports" singularEntity="nursery-report" />
         <AuditLogTab entity={AuditLogButtonStates.NURSERY_REPORT} />
       </TabbedShowLayout>
     </RecordFrameworkProvider>

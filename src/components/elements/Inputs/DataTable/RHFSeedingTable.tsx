@@ -37,26 +37,22 @@ export const getSeedingTableColumns = (
           header: t("Species")
         },
         {
-          accessorKey: "seeds_in_sample",
+          accessorKey: "seedsInSample",
           header: t("Seeds Per Sample")
         },
         {
-          accessorKey: "weight_of_sample",
+          accessorKey: "weightOfSample",
           header: t("Sample Weight(Kg)")
         },
         {
-          accessorKey: "seeds_per_kg",
+          accessorKey: "seedsPerKg",
           header: t("Seeds Per Kg"),
           cell: props => {
             const original = props.row?.original ?? {};
-            if (
-              original.seeds_in_sample == null ||
-              original.weight_of_sample === 0 ||
-              original.weight_of_sample == null
-            ) {
+            if (original.seedsInSample == null || original.weightOfSample === 0 || original.weightOfSample == null) {
               return null;
             }
-            return (original.seeds_in_sample / original.weight_of_sample).toFixed(2);
+            return (original.seedsInSample / original.weightOfSample).toFixed(2);
           }
         }
       ];
@@ -89,14 +85,14 @@ export const getSeedingsQuestions = (
         },
         {
           label: t("Number of seeds in sample"),
-          name: "seeds_in_sample",
+          name: "seedsInSample",
           inputType: "number",
           validation: { required: true },
           additionalProps: { step: 0.01 }
         },
         {
           label: t("Weight of sample in KG"),
-          name: "weight_of_sample",
+          name: "weightOfSample",
           inputType: "number",
           validation: { required: true },
           additionalProps: { step: 0.01 }

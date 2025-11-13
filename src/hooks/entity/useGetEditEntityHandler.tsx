@@ -12,13 +12,11 @@ interface GetEditEntityHandlerArgs {
   entityUUID: string;
   entityName: EntityName;
   entityStatus: string;
-  updateRequestStatus: string;
+  updateRequestStatus: string | null;
 }
 
 /**
  * To get edit entity handler, this will apply the shared logic to all entities.
- * @param args GetEditEntityHandlerArgs
- * @returns { handleEdit }
  */
 export const useGetEditEntityHandler = ({
   entityName,

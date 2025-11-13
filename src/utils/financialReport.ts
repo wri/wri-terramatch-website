@@ -17,7 +17,7 @@ export const formatDescriptionData = (documents: V2FinancialIndicatorsRead) => {
 export const formatExchangeData = (documents: V2FinancialIndicatorsRead) => {
   return documents
     ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ label: financial?.year, exchangeRate: financial?.exchange_rate }))
+    .map(financial => ({ label: financial?.year, exchangeRate: financial?.exchangeRate }))
     .sort((a, b) => b.label - a.label);
 };
 
