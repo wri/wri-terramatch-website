@@ -177,12 +177,6 @@ const App = () => {
         {isAdmin && (
           <>
             <Resource name={modules.audit.ResourceName} />
-            <Resource
-              name={modules.validatePolygonFile.ResourceName}
-              list={modules.validatePolygonFile.List}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
-              options={{ label: "Test Polygon" }}
-            />
           </>
         )}
         <Resource
