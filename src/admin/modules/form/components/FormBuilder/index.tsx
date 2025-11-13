@@ -36,7 +36,8 @@ export const formTypeChoices: { id: FormType; name: string }[] = [
   { id: "site-report", name: "Site Report" },
   { id: "nursery-report", name: "Nursery Report" },
   { id: "financial-report", name: "Financial Report" },
-  { id: "disturbance-report", name: "Disturbance Report" }
+  { id: "disturbance-report", name: "Disturbance Report" },
+  { id: "srp-report", name: "Annual Socio Economic Restoration Report" }
 ];
 
 const toFormModelType = (formTypeChoice: string) => {

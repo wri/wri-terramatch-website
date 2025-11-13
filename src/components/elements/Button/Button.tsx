@@ -157,7 +157,7 @@ const Button: FC<IButtonProps> = props => {
         };
       case "white-button-map":
         return {
-          container: "h-fit rounded-lg bg-white px-4 py-2 shadow hover:bg-neutral-200",
+          container: "h-fit rounded bg-white px-4 py-2 shadow hover:bg-neutral-200 border border-neutral-175",
           span: "flex items-center gap-2 !leading-[normal]"
         };
       case "purple":

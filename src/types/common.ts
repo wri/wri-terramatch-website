@@ -232,7 +232,8 @@ export type ReportsModelNames =
   | "financialReports"
   | "disturbanceReports"
   | "disturbance-reports"
-  | "srp-reports";
+  | "srp-reports"
+  | "srpReports";
 
 export const isReportModelName = (name: EntityName): name is ReportsModelNames =>
   name.endsWith("Reports") || name.endsWith("-reports");
@@ -249,7 +250,9 @@ export type SingularReportsModelNames =
   | "financial-report"
   | "siteReport"
   | "disturbanceReport"
-  | "disturbance-report";
+  | "disturbance-report"
+  | "srp-report"
+  | "srpReport";
 
 export const isSingularEntityName = (name: EntityName | SingularEntityName): name is SingularEntityName =>
   pluralize.isSingular(name);

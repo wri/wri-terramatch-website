@@ -12,11 +12,12 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SupportedEntity } from "@/connections/EntityAssociation";
+import { FormModelType } from "@/connections/util/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
-import WizardFormProvider, { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
-import { singularEntityName } from "@/helpers/entity";
+import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
@@ -31,7 +32,6 @@ import NurseryInformationAside from "./components/NurseryInformationAside";
 import ProjectInformationAside from "./components/ProjectInformationAside";
 import ReportInformationAside from "./components/ReportInformationAside";
 import SiteInformationAside from "./components/SiteInformationAside";
-import SRPReportAside from "./components/SRPReportAside";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: Exclude<EntityName, "project-pitches">;
@@ -57,7 +57,9 @@ const InformationAside: FC<{ type: EntityName }> = ({ type }) => {
         <ReportInformationAside type={type} parent={{ label: "Disturbance Report", source: "organisationName" }} />
       );
     case "srp-reports":
-      return <SRPReportAside />;
+      return (
+        <ReportInformationAside type={type} parent={{ label: "Socio-Economic Report", source: "organisationName" }} />
+      );
     default:
       return null;
   }
@@ -76,6 +78,11 @@ const InformationTab: FC<IProps> = props => {
 
   const { formData: response, isLoading: queryLoading } = useEntityForm(props.type, record?.uuid);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(response?.data.form_uuid);
+
+  const model = useMemo<FormModel>(
+    () => ({ model: v3EntityName(props.type) as FormModelType, uuid: record?.uuid ?? "" }),
+    [props.type, record?.uuid]
+  );
 
   const values = useMemo(
     () => formDefaultValues(response?.data.answers!, fieldsProvider),
@@ -160,13 +167,13 @@ const InformationTab: FC<IProps> = props => {
           ) : (
             <Stack gap={4}>
               <Card sx={{ padding: 4 }} className="!shadow-none">
-                <WizardFormProvider fieldsProvider={fieldsProvider}>
+                <WizardFormProvider fieldsProvider={fieldsProvider} models={model}>
                   <List
                     className={classNames("space-y-12", {
                       "map-span-3": props.type === "sites"
                     })}
                     items={fieldsProvider.stepIds()}
-                    render={stepId => <InformationTabRow stepId={stepId} values={values} type={props.type} />}
+                    render={stepId => <InformationTabRow stepId={stepId} values={values} />}
                   />
                 </WizardFormProvider>
               </Card>

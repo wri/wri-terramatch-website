@@ -168,7 +168,9 @@ const menuOptionsMap = {
   Nursery_Report: menuEntityReportOptions,
   Site_Report: menuEntityReportOptions,
   Project_Report: menuEntityReportOptions,
-  Disturbance_Report: menuEntityReportOptions
+  Disturbance_Report: menuEntityReportOptions,
+  Srp_Report: menuEntityReportOptions,
+  Financial_Report: menuEntityReportOptions
 };
 
 const DescriptionStatusMap = {
@@ -179,7 +181,9 @@ const DescriptionStatusMap = {
   Nursery_Report: "Are you sure you want to change the nursery report status to",
   Site_Report: "Are you sure you want to change the site report status to",
   Project_Report: "Are you sure you want to change the project report status to",
-  Disturbance_Report: "Are you sure you want to change the disturbance report status to"
+  Disturbance_Report: "Are you sure you want to change the disturbance report status to",
+  Srp_Report: "Are you sure you want to change the srp report status to",
+  Financial_Report: "Are you sure you want to change the financial report status to"
 };
 
 const DescriptionRequestMap = {
@@ -190,7 +194,9 @@ const DescriptionRequestMap = {
   Nursery_Report: "Provide an explanation for your change request for the nursery report",
   Site_Report: "Provide an explanation for your change request for the site report",
   Project_Report: "Provide an explanation for your change request for the project report",
-  Disturbance_Report: "Provide an explanation for your change request for the disturbance report"
+  Disturbance_Report: "Provide an explanation for your change request for the disturbance report",
+  Srp_Report: "Provide an explanation for your change request for the srp report",
+  Financial_Report: "Provide an explanation for your change request for the financial report"
 };
 
 const StatusDisplay = ({
@@ -205,7 +211,6 @@ const StatusDisplay = ({
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const { openNotification } = useNotificationContext();
-
   const { openModal, closeModal } = useModalContext();
   const removeUnderscore = (title: string) => title.replace("_", " ");
   const contentStatus = (

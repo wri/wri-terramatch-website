@@ -231,7 +231,7 @@ export const treeSpeciesEntryValue = (
       } as PlantData)
   );
   const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;
-  const tableType = field.additionalProps?.with_numbers !== true ? "noCount" : undefined;
+  const tableType = field.additionalProps?.with_numbers !== true ? "noCount" : "noGoal";
   return (
     <TreeSpeciesTable {...{ plants, collection, tableType }} entity={supportedEntity} entityUuid={entity?.entityUUID} />
   );

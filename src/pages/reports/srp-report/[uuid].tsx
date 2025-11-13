@@ -7,11 +7,14 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullProjectReport } from "@/connections/Entity";
+import { useFullSRPReport } from "@/connections/Entity";
+import { toFramework } from "@/context/framework.provider";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 
-import AuditLog from "../project-report/tabs/AuditLog";
 import SocioEconomicReportHeader from "./components/SocioEconomicReportHeader";
+import AuditLog from "./tabs/AuditLog";
 import ReportDataTab from "./tabs/ReportDataTab";
 
 const SocioEconomicReportDetailPage = () => {
@@ -19,7 +22,10 @@ const SocioEconomicReportDetailPage = () => {
   const router = useRouter();
   const socioEconomicReportUUID = router.query.uuid as string;
 
-  const [isLoaded, { data: socioEconomicReport }] = useFullProjectReport({ id: socioEconomicReportUUID });
+  const [isLoaded, { data: srpReport }] = useFullSRPReport({ id: socioEconomicReportUUID });
+
+  const window = useReportingWindow(toFramework(srpReport?.frameworkKey), srpReport?.dueAt as string);
+  const taskTitle = t("Reporting Task {window}", { window });
 
   return (
     <LoadingContainer loading={!isLoaded}>
@@ -28,31 +34,25 @@ const SocioEconomicReportDetailPage = () => {
       </Head>
       <PageBreadcrumbs
         links={[
-          {
-            title: socioEconomicReport?.organisationName ?? "",
-            path: `/organization/${socioEconomicReport?.organisationUuid}`
-          },
-          {
-            title: `Annual Socio-Economic Report ${
-              socioEconomicReport?.createdAt ? new Date(socioEconomicReport?.createdAt).toLocaleDateString() : ""
-            }`
-          }
+          { title: t("My Projects"), path: "/my-projects" },
+          { title: srpReport?.projectName ?? t("Project"), path: `/project/${srpReport?.projectUuid}` },
+          { title: taskTitle, path: `/project/${srpReport?.projectUuid}/reporting-task/${srpReport?.taskUuid}` }
         ]}
       />
-      <SocioEconomicReportHeader socioEconomicReport={socioEconomicReport} />
-      <StatusBar entityName="project-reports" entity={socioEconomicReport} />
+      <SocioEconomicReportHeader socioEconomicReport={srpReport as SrpReportFullDto} />
+      <StatusBar entityName="srp-reports" entity={srpReport} />
       <PageBody className="pt-0">
         <SecondaryTabs
           tabItems={[
             {
               key: "report-data",
               title: t("Report Data"),
-              body: <ReportDataTab report={socioEconomicReport} />
+              body: <ReportDataTab report={srpReport as SrpReportFullDto} />
             },
             {
               key: "audit-log",
               title: t("Audit Log"),
-              body: <AuditLog projectReport={socioEconomicReport} />
+              body: <AuditLog srpReport={srpReport as SrpReportFullDto} />
             }
           ]}
           containerClassName="max-w-[82vw] px-10 xl:px-0 w-full overflow-y-hidden"

@@ -11,6 +11,8 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  SrpReportLightDto,
+  SrpReportFullDto,
   MediaDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
@@ -44,6 +46,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "srpReports",
   "media",
   "treeSpeciesScientificNames",
   "establishmentTrees",
@@ -71,6 +74,7 @@ export type EntityServiceApiResources = {
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
   media: StoreResourceMap<MediaDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
@@ -99,7 +103,8 @@ export const TreeEntityTypes = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports"
+    "disturbanceReports",
+    "srpReports"
   ] as const,
   REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;
@@ -113,7 +118,8 @@ export const SupportedEntities = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports"
+    "disturbanceReports",
+    "srpReports"
   ] as const
 } as const;
 
@@ -189,6 +195,7 @@ export const Forms = {
     "site",
     "site-report",
     "nursery",
-    "nursery-report"
+    "nursery-report",
+    "srp-report"
   ] as const
 } as const;

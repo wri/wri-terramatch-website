@@ -12,7 +12,6 @@ enum Period {
  * to generate reporting window based on the due_date and period
  * ex: quarterly   => {3 month before due_date} - {1 month before due date} [yyyy]
  * ex: bi-annually => {6 month before due_date} - {1 month before due date} [yyyy]
- * Must be wrapped in a FrameworkContext in order to determine reporting period.
  * @returns string
  */
 export const useReportingWindow = (framework: Framework, dueDate?: string) => {

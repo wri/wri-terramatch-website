@@ -11,8 +11,8 @@ import {
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { deleteMedia } from "@/connections/Media";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { UploadFilePathParams } from "@/generated/v3/entityService/entityServiceComponents";
 import { useFiles } from "@/hooks/useFiles";
 import { FileType, UploadedFile } from "@/types/common";
@@ -81,15 +81,6 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: entityData.uuid } });
   const { files, addFile, removeFile, updateFile } = useFiles(allowMultiple ?? false);
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess(data) {
-      removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
-    },
-    onError(err) {
-      setErrorMessage?.(`Error deleting file: ${err}`);
-    }
-  });
-
   useEffect(() => {
     if (setFile) {
       setFile(files);
@@ -107,12 +98,12 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
             isDeleting: true
           }
         });
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        deleteMedia(file.uuid);
       } else {
         removeFile(file);
       }
     },
-    [addFile, deleteFile, removeFile]
+    [addFile, deleteMedia, removeFile]
   );
 
   const handleFileChange = useCallback(
@@ -155,10 +146,10 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
   const deleteAllFiles = useCallback(() => {
     files.forEach(file => {
       if (file.uuid) {
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        deleteMedia(file.uuid);
       }
     });
-  }, [files, deleteFile]);
+  }, [files]);
 
   const handleClose = useCallback(() => {
     deleteAllFiles();

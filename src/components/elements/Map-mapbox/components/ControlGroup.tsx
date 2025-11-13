@@ -17,9 +17,10 @@ export interface ControlGroupProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
     PropsWithChildren {
   position: ControlMapPosition;
+  isFullscreen?: boolean;
 }
 
-const ControlGroup = ({ children, position, className, ...props }: ControlGroupProps) => {
+const ControlGroup = ({ children, position, className, isFullscreen, ...props }: ControlGroupProps) => {
   return (
     <div
       {...props}
@@ -30,6 +31,7 @@ const ControlGroup = ({ children, position, className, ...props }: ControlGroupP
           "right-5 items-end": position.includes("right"),
           "bottom-8": position.includes("bottom"),
           "!left-[24vw] items-start": position.includes("site"),
+          "!left-5": isFullscreen,
           "left-[45%]": position.includes("center"),
           "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite"),
           "left-[34%] lg:left-[35.5%]": position.includes("centerPolygonsInCheckbox")

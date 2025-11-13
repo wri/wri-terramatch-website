@@ -2,12 +2,10 @@ import { kebabCase } from "lodash";
 import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react";
 
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
-import { useForm } from "@/connections/util/Form";
+import { FormModelType, useForm } from "@/connections/util/Form";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
-
-type FormModelType = NonNullable<FormQuestionDto["model"]>;
 
 export type FormModel = {
   model: FormModelType;

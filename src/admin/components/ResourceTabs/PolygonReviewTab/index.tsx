@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import LinearProgress from "@mui/material/LinearProgress";
 import { SortingState } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 import { Else, If, Then } from "react-if";
 
@@ -19,11 +19,7 @@ import {
   parsePolygonDataV3,
   storePolygon
 } from "@/components/elements/Map-mapbox/utils";
-import Menu from "@/components/elements/Menu/Menu";
-import { MENU_PLACEMENT_RIGHT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
-import Table from "@/components/elements/Table/Table";
-import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
 import Icon from "@/components/extensive/Icon/Icon";
@@ -31,8 +27,6 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import Pagination from "@/components/extensive/Pagination";
-import { VARIANT_PAGINATION_DASHBOARD } from "@/components/extensive/Pagination/PaginationVariant";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -58,6 +52,7 @@ import ModalIdentified from "../../extensive/Modal/ModalIdentified";
 import AddDataButton from "./components/AddDataButton";
 import SitePolygonReviewAside from "./components/PolygonReviewAside";
 import { IpolygonFromMap } from "./components/Polygons";
+import SiteAttributeTable from "./components/SiteAttributeTable/SiteAttributeTable";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   type: EntityName;
@@ -66,21 +61,28 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   isLoadingDelayedJob?: boolean;
   setAlertTitle?: (value: string) => void;
 }
+
+export type SitePolygonRow = {
+  "polygon-name": string;
+  "restoration-practice": string;
+  "target-land-use-system": string;
+  "tree-distribution": string;
+  "planting-start-date": string;
+  "num-trees": number;
+  "calc-area": number;
+  source: string;
+  uuid?: string;
+  ellipse: boolean;
+};
+
+export type PolygonTotals = {
+  totalTreesPlanted: number;
+  totalCalculatedArea: number;
+};
 export interface IPolygonItem {
   id: string;
   status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
-  uuid: string;
-}
-
-interface TableItemMenuProps {
-  ellipse: boolean;
-  "planting-start-date": string | null;
-  "polygon-name": string;
-  "restoration-practice": string;
-  source?: string;
-  "target-land-use-system": string | null;
-  "tree-distribution": string | null;
   uuid: string;
 }
 
@@ -158,12 +160,24 @@ const ContentForApproval = ({
 );
 
 const PolygonReviewTab: FC<IProps> = props => {
-  const { isLoading: ctxLoading, record, refetch: refreshEntity } = useShowContext();
-  const { selectPolygonFromMap } = useMonitoredDataContext();
+  const { isLoading: ctxLoading, record } = useShowContext();
+  const { selectPolygonFromMap, setSelectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const [polygonFromMap, setPolygonFromMap] = useState<IpolygonFromMap>({ isOpen: false, uuid: "" });
+
+  const polygonFromMap = selectPolygonFromMap ?? { isOpen: false, uuid: "" };
+  const setPolygonFromMap = useCallback(
+    (value: IpolygonFromMap | ((prev: IpolygonFromMap) => IpolygonFromMap)) => {
+      if (setSelectPolygonFromMap) {
+        const newValue =
+          typeof value === "function" ? value(selectPolygonFromMap ?? { isOpen: false, uuid: "" }) : value;
+        setSelectPolygonFromMap(newValue);
+      }
+    },
+    [setSelectPolygonFromMap, selectPolygonFromMap]
+  );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const {
     setSelectedPolygonsInCheckbox,
     setPolygonData,
@@ -184,7 +198,7 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
-  const isValidBbox = (bbox: any): bbox is [number, number, number, number] =>
+  const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
     Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
   const activeBbox = isValidBbox(bbox) ? bbox : undefined;
   const {
@@ -194,8 +208,9 @@ const PolygonReviewTab: FC<IProps> = props => {
     total,
     progress
   } = useLoadSitePolygonsData(record?.uuid ?? "", "sites", undefined, "createdAt", "ASC", validFilter);
+
   const onSave = (geojson: any, record: any) => {
-    storePolygon(geojson, record, setPolygonFromMap, refreshEntity, refetch);
+    storePolygon(geojson, record, setSelectPolygonFromMap, refetch);
   };
   const mapFunctions = useMap(onSave);
 
@@ -205,7 +220,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   useEffect(() => {
     if (selectPolygonFromMap?.uuid) {
-      setPolygonFromMap(selectPolygonFromMap);
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
@@ -253,17 +267,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     }));
   };
 
-  type SitePolygonRow = {
-    "polygon-name": string;
-    "restoration-practice": string;
-    "target-land-use-system": string;
-    "tree-distribution": string;
-    "planting-start-date": string;
-    source: string;
-    uuid?: string;
-    ellipse: boolean;
-  };
-
   const sitePolygonDataTable: SitePolygonRow[] = useMemo(
     () =>
       (sitePolygonData ?? []).map(
@@ -273,6 +276,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           "target-land-use-system": data?.targetSys ?? "",
           "tree-distribution": data?.distr ?? "",
           "planting-start-date": data?.plantStart ?? "",
+          "num-trees": data?.numTrees ?? 0,
+          "calc-area": data?.calcArea ?? 0,
           source: data?.source ?? "",
           uuid: data?.polygonUuid ?? undefined,
           ellipse: index === (sitePolygonData ?? []).length - 1
@@ -519,7 +524,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           record?.name ?? ""
         }.`}
         descriptionList={
-          <Text variant="text-12-bold" className="mt-9 ">
+          <Text variant="text-12-bold" className="mt-9">
             Uploaded Files
           </Text>
         }
@@ -654,43 +659,13 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   if (ctxLoading) return null;
 
-  const tableItemMenu = (props: TableItemMenuProps) => [
-    {
-      id: "1",
-      render: () => (
-        <div className="flex items-center gap-2" onClick={() => setPolygonFromMap({ isOpen: true, uuid: props.uuid })}>
-          <Icon name={IconNames.POLYGON} className="h-6 w-6" />
-          <Text variant="text-12-bold">Open Polygon</Text>
-        </div>
-      )
-    },
-    {
-      id: "2",
-      render: () => (
-        <div className="flex items-center gap-2" onClick={() => flyToPolygonBounds(props.uuid)}>
-          <Icon name={IconNames.SEARCH_PA} className="h-6 w-6" />
-          <Text variant="text-12-bold">Zoom to</Text>
-        </div>
-      )
-    },
-    {
-      id: "3",
-      render: () => (
-        <div className="flex items-center gap-2" onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}>
-          <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
-          <Text variant="text-12-bold">Delete Polygon</Text>
-        </div>
-      )
-    }
-  ];
-
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
       <TabbedShowLayout.Tab {...props}>
         <Grid spacing={2} container>
           <Grid xs={9}>
-            <Stack gap={4} className="pl-8 pt-9">
-              <div className="flex flex-col items-start gap-3">
+            <Stack gap={4} className="pt-9 pl-8">
+              <div className="flex flex-col items-start gap-3" ref={containerRef}>
                 <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
                   <div className="w-40 lg:w-48">
                     <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
@@ -803,99 +778,24 @@ const PolygonReviewTab: FC<IProps> = props => {
                 isLoadingDelayedJob={props.isLoadingDelayedJob}
                 setAlertTitle={props.setAlertTitle}
               />
-              <div className="mb-6">
-                <div className="mb-4">
-                  <Text variant="text-16-bold" className="mb-2 text-darkCustom">
-                    Site Attribute Table
-                  </Text>
-                  <Text variant="text-14-light" className="text-darkCustom">
-                    Edit attribute table for all polygons quickly through the table below. Alternatively, open a polygon
-                    and edit the attributes in the map above.
-                  </Text>
-                </div>
-                <Table
-                  variant={VARIANT_TABLE_SITE_POLYGON_REVIEW}
-                  hasPagination={false}
-                  visibleRows={10000000}
-                  classNameWrapper=""
-                  serverSideData
-                  onTableStateChange={state =>
-                    setSorting(typeof state.sorting === "function" ? state.sorting(sorting) : state.sorting)
-                  }
-                  columns={[
-                    {
-                      header: "Polygon Name",
-                      accessorKey: "polygon-name",
-                      meta: { style: { width: "14.63%" }, className: "whitespace-nowrap pr-6" }
-                    },
-                    {
-                      header: "Restoration Practice",
-                      accessorKey: "restoration-practice",
-                      meta: { style: { width: "17.63%" } }
-                    },
-                    {
-                      header: "Target Land Use System",
-                      accessorKey: "target-land-use-system",
-                      meta: { style: { width: "20.63%" } }
-                    },
-                    {
-                      header: "Tree Distribution",
-                      accessorKey: "tree-distribution",
-                      meta: { style: { width: "15.63%" } }
-                    },
-                    {
-                      header: "Planting Start Date",
-                      accessorKey: "planting-start-date",
-                      meta: { style: { width: "17.63%" } }
-                    },
-                    { header: "Source", accessorKey: "source", meta: { style: { width: "10.63%" } } },
-                    {
-                      header: "",
-                      accessorKey: "ellipse",
-                      enableSorting: false,
-                      cell: props => (
-                        <Menu
-                          menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
-                          placement={MENU_PLACEMENT_RIGHT_BOTTOM}
-                        >
-                          <div className="rounded p-1 hover:bg-primary-200">
-                            <Icon
-                              name={IconNames.ELIPSES}
-                              className="roudn h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200"
-                            />
-                          </div>
-                        </Menu>
-                      )
-                    }
-                  ]}
-                  data={paginatedData}
-                />
-                <div className="mt-4 mb-20">
-                  <div className="relative">
-                    <Pagination
-                      pageIndex={currentPage - 1}
-                      nextPage={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                      getCanNextPage={() => currentPage < totalPages}
-                      previousPage={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      getCanPreviousPage={() => currentPage > 1}
-                      getPageCount={() => totalPages}
-                      setPageIndex={(index: number) => setCurrentPage(index + 1)}
-                      hasPageSizeSelector
-                      defaultPageSize={pageSize}
-                      setPageSize={size => {
-                        setCurrentPage(1);
-                        setPageSize(size);
-                      }}
-                      variant={VARIANT_PAGINATION_DASHBOARD}
-                      containerClassName="justify-between"
-                      invertSelect
-                    />
-                  </div>
-                </div>
-              </div>
+              <SiteAttributeTable
+                setPolygonFromMap={setPolygonFromMap}
+                flyToPolygonBounds={flyToPolygonBounds}
+                openFormModalHandlerConfirmDeletion={openFormModalHandlerConfirmDeletion}
+                setSorting={setSorting}
+                sorting={sorting}
+                paginatedData={paginatedData}
+                allData={sortedData}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                setCurrentPage={setCurrentPage}
+                setPageSize={setPageSize}
+                containerRef={containerRef}
+              />
             </Stack>
           </Grid>
-          <Grid xs={3} className="pl-8 pr-4 pt-9">
+          <Grid xs={3} className="pt-9 pr-4 pl-8">
             <PolygonReviewAside
               type={props.type}
               data={transformedSiteDataForList as IPolygonItem[]}

@@ -899,6 +899,35 @@ export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, 
   }
 };
 
+export const zoomToCenter = (center: [number, number], zoom: number, map: mapboxgl.Map) => {
+  if (!map || !center || zoom === undefined) {
+    return;
+  }
+
+  const [lng, lat] = center;
+
+  if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+    Log.warn(
+      "zoomToCenter: Invalid geographic coordinates detected. Expected longitude between -180/180 and latitude between -90/90, but received:",
+      center
+    );
+    return;
+  }
+
+  if (zoom < 0 || zoom > 22) {
+    Log.warn("zoomToCenter: Invalid zoom level. Expected between 0 and 22, but received:", zoom);
+    return;
+  }
+
+  try {
+    map.setCenter([lng, lat]);
+    map.setZoom(zoom);
+  } catch (error) {
+    Log.warn("zoomToCenter: Error occurred while setting center and zoom:", error);
+    return;
+  }
+};
+
 export const formatPlannedStartDate = (plantStartDate: Date | null | undefined): string => {
   return plantStartDate != null
     ? plantStartDate.toLocaleDateString("en-US", {
@@ -1073,7 +1102,6 @@ export async function storePolygon(
   geojson: any,
   record: any,
   setPolygonFromMap?: any,
-  refreshEntity?: any,
   refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
@@ -1102,10 +1130,9 @@ export async function storePolygon(
       if (refetchSitePolygons) {
         await refetchSitePolygons();
       }
-
-      setPolygonFromMap?.({ uuid: result.polygonUuid, isOpen: true });
-
-      refreshEntity?.();
+      if (setPolygonFromMap) {
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true });
+      }
     } catch (error) {
       console.error("Failed to create site polygon:", error);
       throw error;
@@ -1204,16 +1231,34 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
     .addTo(map);
 };
 
+export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
+  if (!map) return undefined;
+  try {
+    const styleUrl = (map as any).style?.url || (map as any).style?.name;
+    if (styleUrl) {
+      if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) {
+        return MapStyle.Street;
+      }
+      if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) {
+        return MapStyle.Satellite;
+      }
+    }
+  } catch (e) {
+    Log.warn("Error getting current map style:", e);
+  }
+  return undefined;
+};
+
 export const setMapStyle = (
   style: MapStyle,
   map: mapboxgl.Map,
   setCurrentStyle: (style: MapStyle) => void,
-  currentStyle: string
+  currentStyle: string | MapStyle
 ) => {
   if (map && currentStyle !== style) {
+    setCurrentStyle(style);
     map.setStyle(style);
     updateMapProjection(map, style);
-    setCurrentStyle(style);
   }
 };
 

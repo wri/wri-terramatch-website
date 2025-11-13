@@ -85,6 +85,9 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
       case "disturbanceReport":
         name = "Disturbance Report";
         break;
+      case "srpReport":
+        name = "Socio-Economic Report";
+        break;
     }
 
     switch (status) {

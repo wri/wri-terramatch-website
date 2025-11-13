@@ -115,6 +115,7 @@ export type MediaDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -384,6 +385,52 @@ export type NurseryReportLightDto = {
   nothingToReport: boolean | null;
 };
 
+export type SrpReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  completion: number | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  taskUuid: string | null;
+  projectStatus: string;
+  year: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+};
+
 export type TaskUpdateAttributes = {
   /**
    * Request to change to the status of the given entity
@@ -474,6 +521,7 @@ export type TreeEntityTypes = {
    * @example nurseryReports
    * @example financialReports
    * @example disturbanceReports
+   * @example srpReports
    */
   ESTABLISHMENT_ENTITIES: string[];
   /**
@@ -556,6 +604,7 @@ export type DemographicDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -597,6 +646,7 @@ export type DisturbanceDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -650,6 +700,7 @@ export type EntitySideload = {
     | "siteReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "demographics"
     | "seedings"
     | "treeSpecies"
@@ -676,6 +727,7 @@ export type SupportedEntities = {
    * @example nurseryReports
    * @example financialReports
    * @example disturbanceReports
+   * @example srpReports
    */
   ENTITY_TYPES: string[];
 };
@@ -855,6 +907,7 @@ export type DisturbanceReportEntryDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1504,6 +1557,7 @@ export type FinancialIndicatorDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1538,6 +1592,7 @@ export type FundingTypeDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1677,6 +1732,68 @@ export type DisturbanceReportFullDto = {
   answers: string | null;
   description: string | null;
   actionDescription: string | null;
+  media: MediaDto[];
+};
+
+export type SrpReportFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  status: string;
+  updateRequestStatus: string;
+  completion: number | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  projectStatus: string;
+  year: number | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  title: string | null;
+  /**
+   * @format date-time
+   */
+  approvedAt: string | null;
+  nothingToReport: boolean | null;
+  frameworkKey: string | null;
+  feedback: string | null;
+  feedbackFields: string[] | null;
+  answers: string | null;
+  otherRestorationPartnersDescription: string | null;
+  totalUniqueRestorationPartners: number;
   media: MediaDto[];
 };
 
@@ -1820,6 +1937,15 @@ export type DisturbanceReportUpdateData = {
   attributes: ReportUpdateAttributes;
 };
 
+export type SrpReportUpdateData = {
+  type: "srpReports";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: ReportUpdateAttributes;
+};
+
 export type EntityUpdateBody = {
   data:
     | ProjectUpdateData
@@ -1829,7 +1955,8 @@ export type EntityUpdateBody = {
     | SiteReportUpdateData
     | NurseryReportUpdateData
     | FinancialReportUpdateData
-    | DisturbanceReportUpdateData;
+    | DisturbanceReportUpdateData
+    | SrpReportUpdateData;
 };
 
 export type EntityCreateAttributes = {
@@ -1955,6 +2082,7 @@ export type SeedingDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -1989,6 +2117,7 @@ export type TreeSpeciesDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -2022,6 +2151,7 @@ export type InvasiveDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -2052,6 +2182,7 @@ export type StrataDto = {
     | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
+    | "srpReports"
     | "organisations"
     | "auditStatuses"
     | "forms"
@@ -2106,7 +2237,8 @@ export type LinkedFieldDto = {
     | "projectPitches"
     | "projectReports"
     | "sites"
-    | "siteReports";
+    | "siteReports"
+    | "srpReports";
   label: string;
   name: string;
   inputType:
@@ -2163,6 +2295,7 @@ export type Forms = {
    * @example site-report
    * @example nursery
    * @example nursery-report
+   * @example srp-report
    */
   FORM_TYPES: string[];
 };
@@ -2187,6 +2320,7 @@ export type FormLightDto = {
     | "site-report"
     | "nursery"
     | "nursery-report"
+    | "srp-report"
     | null;
   published: boolean;
   banner: MediaDto;
@@ -2268,6 +2402,7 @@ export type FormQuestionDto = {
     | "projectReports"
     | "sites"
     | "siteReports"
+    | "srpReports"
     | null;
   linkedFieldKey?: string | null;
   isParentConditionalDefault: boolean;
@@ -2312,6 +2447,7 @@ export type FormFullDto = {
     | "site-report"
     | "nursery"
     | "nursery-report"
+    | "srp-report"
     | null;
   published: boolean;
   banner: MediaDto;
@@ -2441,6 +2577,7 @@ export type StoreFormAttributes = {
     | "site-report"
     | "nursery"
     | "nursery-report"
+    | "srp-report"
     | null;
   published: boolean;
   subtitle?: string | null;

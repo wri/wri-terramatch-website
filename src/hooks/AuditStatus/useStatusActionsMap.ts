@@ -61,7 +61,67 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         ],
         entityType: NURSERY
       },
-      [AuditLogButtonStates.REPORT as number]: {
+      [AuditLogButtonStates.SRP_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.SITE_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.NURSERY_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.PROJECT_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.DISTURBANCE_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.FINANCIAL_REPORT as number]: {
         mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [

@@ -193,14 +193,14 @@ const App = () => {
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "Impact Stories" }}
         />
-        {/* <Resource
+        <Resource
           name={modules.srpReport.ResourceName}
           list={modules.srpReport.List}
           show={modules.srpReport.Show}
           edit={modules.srpReport.Edit}
-          icon={() => <Icon className="w-7 h-7" name={IconNames.SRP_REPORT} />}
+          icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
           options={{ label: "SRP Reports" }}
-        /> */}
+        />
       </Admin>
     </LoadingProvider>
   );

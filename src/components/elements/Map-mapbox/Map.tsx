@@ -16,6 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { deleteMedia } from "@/connections/Media";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -27,7 +28,6 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  useDeleteV2FilesUUID,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage,
   usePostV2GeometryUUIDNewVersion,
@@ -71,6 +71,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   drawTemporaryPolygon,
+  getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
   removeMediaLayer,
@@ -78,13 +79,24 @@ import {
   setMapStyle,
   startDrawing,
   stopDrawing,
-  zoomToBbox
+  zoomToBbox,
+  zoomToCenter
 } from "./utils";
 
 interface LegendItem {
   color: string;
   text: string;
   uuid: string;
+}
+
+// Fullscreen API type definitions for Safari (webkit) and Chrome
+interface DocumentWithFullscreen extends Document {
+  webkitFullscreenElement?: Element | null;
+  webkitExitFullscreen?: () => Promise<void>;
+}
+
+interface HTMLElementWithFullscreen extends HTMLElement {
+  webkitRequestFullscreen?: () => Promise<void>;
 }
 
 export type DashboardGetProjectsData = {
@@ -115,6 +127,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   polygonsData?: Record<string, string[]>;
   polygonsCentroids?: any[];
   bbox?: BBox;
+  center?: [number, number];
+  zoom?: number;
+  mapStyle?: MapStyle;
+  onStyleChange?: (style: MapStyle) => void;
   setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
   polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
@@ -203,15 +219,14 @@ export const MapContainer = ({
   const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
-  const [currentStyle, setCurrentStyle] = useState(isDashboard ? MapStyle.Street : MapStyle.Satellite);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
-  const [userChangedStyle, setUserChangedStyle] = useState(false);
-
   const {
     polygonsData,
     polygonsCentroids,
     bbox,
+    center,
+    zoom,
+    mapStyle: mapStyleProp,
+    onStyleChange,
     setPolygonFromMap,
     polygonFromMap,
     sitePolygonData,
@@ -220,6 +235,17 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
+  const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
+    return mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
+  const [userChangedStyle, setUserChangedStyle] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(() => {
+    // Initialize fullscreen state based on current browser state
+    const doc = document as DocumentWithFullscreen;
+    return !!(doc.fullscreenElement || doc.webkitFullscreenElement);
+  });
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -245,14 +271,11 @@ export const MapContainer = ({
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
-  const { mutateAsync: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      setShouldRefetchMediaData(true);
-    }
-  });
+
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
     setUserChangedStyle(true);
+    onStyleChange?.(newStyle);
   };
   if (!mapFunctions) {
     return null;
@@ -267,7 +290,8 @@ export const MapContainer = ({
   );
 
   useOnMount(() => {
-    initMap(!!isDashboard);
+    const initialStyle = mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    initMap(!!isDashboard, initialStyle);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -379,10 +403,38 @@ export const MapContainer = ({
   });
 
   useEffect(() => {
-    if (bbox && map.current && shouldBboxZoom) {
+    if (!map.current || !styleLoaded) return;
+
+    if (mapStyleProp !== undefined) {
+      if (mapStyleProp !== currentStyle) {
+        const actualStyle = getCurrentMapStyle(map.current);
+        if (actualStyle !== mapStyleProp) {
+          setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
+        } else {
+          setCurrentStyle(mapStyleProp);
+        }
+      }
+    }
+  }, [mapStyleProp, map, currentStyle, styleLoaded]);
+
+  useEffect(() => {
+    if (!map.current || !shouldBboxZoom) return;
+
+    if (center && zoom !== undefined) {
+      const currentCenter = map.current.getCenter();
+      const currentZoom = map.current.getZoom();
+      const [lng, lat] = center;
+
+      const centerChanged = Math.abs(currentCenter.lng - lng) > 0.0001 || Math.abs(currentCenter.lat - lat) > 0.0001;
+      const zoomChanged = Math.abs(currentZoom - zoom) > 0.01;
+
+      if (centerChanged || zoomChanged) {
+        zoomToCenter(center, zoom, map.current);
+      }
+    } else if (bbox) {
       zoomToBbox(bbox, map.current, hasControls);
     }
-  }, [bbox, map, hasControls, shouldBboxZoom]);
+  }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
 
   useEffect(() => {
     if (!map.current || !sourcesAdded) return;
@@ -440,8 +492,13 @@ export const MapContainer = ({
   useEffect(() => {
     const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
-    const handleDelete = (id: string) => {
-      deleteFile({ pathParams: { uuid: id } });
+    const handleDelete = async (id: string) => {
+      try {
+        await deleteMedia(id);
+        setShouldRefetchMediaData(true);
+      } catch (error) {
+        Log.error(error);
+      }
       closeModal(ModalId.DELETE_IMAGE);
     };
 
@@ -723,14 +780,67 @@ export const MapContainer = ({
     }
   };
 
+  const getFullscreenStatus = (): boolean => {
+    const doc = document as DocumentWithFullscreen;
+    return !!(doc.fullscreenElement || doc.webkitFullscreenElement);
+  };
+
+  const toggleFullscreen = async () => {
+    if (!mapContainer.current) return;
+
+    const element = mapContainer.current as HTMLElementWithFullscreen;
+    const doc = document as DocumentWithFullscreen;
+
+    const isCurrentlyFullscreen = getFullscreenStatus();
+
+    try {
+      if (!isCurrentlyFullscreen) {
+        if (element.requestFullscreen) {
+          await element.requestFullscreen();
+        } else if (element.webkitRequestFullscreen) {
+          await element.webkitRequestFullscreen();
+        }
+      } else {
+        if (doc.exitFullscreen) {
+          await doc.exitFullscreen();
+        } else if (doc.webkitExitFullscreen) {
+          await doc.webkitExitFullscreen();
+        }
+      }
+    } catch (error) {
+      Log.error("Fullscreen error:", error);
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isCurrentlyFullscreen = getFullscreenStatus();
+      setIsFullscreen(isCurrentlyFullscreen);
+
+      if (map.current) {
+        requestAnimationFrame(() => {
+          map.current?.resize();
+        });
+      }
+    };
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+    };
+  }, [map]);
+
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
-      <div ref={mapContainer} className={twMerge("h-[500px] wide:h-[700px]", className)} id="map-container">
+      <div ref={mapContainer} className={twMerge("relative h-[500px] wide:h-[700px]", className)} id="map-container">
         <When condition={showDownloadPolygons}>
           <ControlGroup position="top-right">
             <button
               type="button"
-              className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="shadow-lg z-10 flex h-10 w-56 items-center justify-center gap-2 rounded border border-neutral-175 bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={downloadGeoJsonPolygon}
               disabled={isDownloadingPolygons}
             >
@@ -764,12 +874,12 @@ export const MapContainer = ({
               <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
             </ControlGroup>
           </When>
-          <ControlGroup position="top-right" className="top-21">
+          <ControlGroup position="top-right" className="top-[4.5rem]">
             <ZoomControl map={map.current} />
           </ControlGroup>
 
           <When condition={!!record?.uuid && validationType === "bulkValidation"}>
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+            <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
               <CheckPolygonControl
                 siteRecord={record}
                 polygonCheck={!siteData}
@@ -812,17 +922,33 @@ export const MapContainer = ({
           <When condition={!editable && !viewImages}>
             <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
           </When>
-          <ControlGroup position="top-right" className="top-48">
+          <ControlGroup position="top-right" className="top-[10.5rem]">
             <button
               type="button"
-              className="rounded-lg bg-white p-2.5 text-darkCustom-100 hover:bg-neutral-200 "
+              className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
               onClick={() => {
-                bbox && map.current && zoomToBbox(bbox, map.current, hasControls);
+                if (center && zoom !== undefined && map.current) {
+                  zoomToCenter(center, zoom, map.current);
+                } else if (bbox && map.current) {
+                  zoomToBbox(bbox, map.current, hasControls);
+                }
               }}
             >
-              <Icon name={IconNames.IC_EARTH_MAP} className="h-5 w-5 lg:h-6 lg:w-6" />
+              <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
             </button>
           </ControlGroup>
+          <When condition={!isDashboard}>
+            <ControlGroup position="top-right" className="top-[13.75rem]">
+              <button
+                type="button"
+                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
+                onClick={toggleFullscreen}
+                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+              >
+                <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
+              </button>
+            </ControlGroup>
+          </When>
           <When condition={isEditing}>
             <ControlGroup position="top-right" className="top-[249px]">
               <TrashButton onClick={mapFunctions?.handleTrashDelete} />
@@ -855,7 +981,10 @@ export const MapContainer = ({
           </ControlGroup>
         </When>
         <When condition={showLegend}>
-          <ControlGroup position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}>
+          <ControlGroup
+            position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
+            isFullscreen={isFullscreen}
+          >
             <FilterControl />
           </ControlGroup>
         </When>

@@ -3,10 +3,11 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
+import { deleteMedia } from "@/connections/Media";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { FormModelType } from "@/connections/util/Form";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
-import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
+import { usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
 import { useFiles } from "@/hooks/useFiles";
@@ -73,13 +74,6 @@ const RHFFileInput = ({
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: uuid ?? "" } });
 
   const { mutate: update } = usePutV2FilesUUID();
-
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess(data) {
-      removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
-      onChangeCapture?.();
-    }
-  });
 
   const onSelectFile = useCallback(
     async (file: File) => {
@@ -169,7 +163,7 @@ const RHFFileInput = ({
   );
 
   const onDeleteFile = useCallback(
-    (file: Partial<UploadedFile>) => {
+    async (file: Partial<UploadedFile>) => {
       if (file.uuid) {
         addFile({
           ...file,
@@ -179,12 +173,14 @@ const RHFFileInput = ({
             isDeleting: true
           }
         });
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        await deleteMedia(file.uuid);
+        removeFile(file);
+        onChangeCapture?.();
       } else if (file.fileName != null) {
         removeFile(file);
       }
     },
-    [addFile, deleteFile, removeFile]
+    [addFile, removeFile, onChangeCapture]
   );
 
   useEffect(() => {

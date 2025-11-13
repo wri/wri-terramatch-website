@@ -19,6 +19,7 @@ import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
+import { srpReportDataProvider } from "./SRPReportDataProvider";
 import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
 
@@ -83,7 +84,7 @@ export const dataProvider = combineDataProviders(resource => {
       return disturbanceReportDataProvider;
 
     case modules.srpReport.ResourceName:
-      return projectReportDataProvider;
+      return srpReportDataProvider;
 
     default:
       throw new Error(`Unknown resource: ${resource}`);
