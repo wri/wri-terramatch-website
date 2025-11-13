@@ -16,9 +16,9 @@ interface TableItemMenuProps {
   ellipse: boolean;
   "planting-start-date": string | null;
   "polygon-name": string;
-  "restoration-practice": string;
+  "restoration-practice": string[];
   "target-land-use-system": string | null;
-  "tree-distribution": string | null;
+  "tree-distribution": string[] | null;
   uuid: string;
 }
 

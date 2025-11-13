@@ -22,8 +22,7 @@ import {
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
@@ -64,9 +63,9 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 
 export type SitePolygonRow = {
   "polygon-name": string;
-  "restoration-practice": string;
+  "restoration-practice": string[];
   "target-land-use-system": string;
-  "tree-distribution": string;
+  "tree-distribution": string[];
   "planting-start-date": string;
   "num-trees": number;
   "calc-area": number;
@@ -248,9 +247,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       site_id: polygon.siteId ?? undefined,
       site_name: polygon.siteName ?? undefined,
       plantstart: polygon.plantStart ?? undefined,
-      practice: polygon.practice ?? undefined,
+      practice: polygon.practice?.join(",") ?? undefined,
       target_sys: polygon.targetSys ?? undefined,
-      distr: polygon.distr ?? undefined,
+      distr: polygon.distr?.join(",") ?? undefined,
       num_trees: polygon.numTrees ?? undefined,
       calc_area: polygon.calcArea ?? undefined,
       created_by: undefined,
@@ -272,9 +271,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       (sitePolygonData ?? []).map(
         (data: SitePolygonLightDto, index): SitePolygonRow => ({
           "polygon-name": data?.name ?? `Unnamed Polygon`,
-          "restoration-practice": data?.practice ?? "",
+          "restoration-practice": data?.practice ?? [],
           "target-land-use-system": data?.targetSys ?? "",
-          "tree-distribution": data?.distr ?? "",
+          "tree-distribution": data?.distr ?? [],
           "planting-start-date": data?.plantStart ?? "",
           "num-trees": data?.numTrees ?? 0,
           "calc-area": data?.calcArea ?? 0,
