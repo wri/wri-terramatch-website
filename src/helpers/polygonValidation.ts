@@ -14,7 +14,7 @@ export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaChe
       criteria.criteriaId,
       {
         id: criteria.criteriaId,
-        date: criteria.createdAt,
+        date: criteria.createdAt ?? undefined,
         status: criteria.valid,
         label: validationLabels[criteria.criteriaId],
         extra_info: criteria.extraInfo

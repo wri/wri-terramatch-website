@@ -10,7 +10,7 @@ import List from "@/components/extensive/List/List";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
+import { SupportedEntity } from "@/connections/EntityAssociation";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 
 type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
@@ -20,12 +20,8 @@ const InformationTabRow: FC<InformationTabRowProps> = props => {
   const entityName = (entity?.entityName as SupportedEntity) ?? "projects";
   const entityUuid = entity?.entityUUID ?? "";
   const entries = useGetFormEntries({ ...props, entity });
-  const [, { data: nurseryPlants }] = usePlants({
-    entity: entityName,
-    uuid: entityUuid,
-    collection: "nursery-seedling"
-  });
-  const nurseryTotalFallback = (nurseryPlants ?? []).map(p => p?.amount ?? 0).reduce((sum, v) => sum + v, 0);
+  // usePlantTotalCount already combines plants and reportCounts, filtering duplicates for nurseries
+  const nurseryTotalFallback = usePlantTotalCount({ entity: entityName, entityUuid, collection: "nursery-seedling" });
   const totalTreePlanted = usePlantTotalCount({ entity: entityName, entityUuid, collection: "tree-planted" });
   const title = useFieldsProvider().step(props.stepId)?.title;
 

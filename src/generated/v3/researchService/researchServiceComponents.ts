@@ -784,6 +784,54 @@ export const createSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}/validation", "POST");
 
+export type ValidateGeometriesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ValidateGeometriesResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type ValidateGeometriesVariables = {
+  body: Schemas.GeometryValidationRequestBody;
+};
+
+/**
+ * Validates geometries in-memory without persisting results to database. Returns validation results in included array.
+ */
+export const validateGeometries = new V3ApiEndpoint<
+  ValidateGeometriesResponse,
+  ValidateGeometriesError,
+  ValidateGeometriesVariables,
+  {}
+>("/validations/v3/geometries", "POST");
+
 export type CreateSitePolygonClippingPathParams = {
   siteUuid: string;
 };
@@ -967,6 +1015,12 @@ export const createPolygonListClipping = new V3ApiEndpoint<
 export const operationsByTag = {
   sitePolygons: { createSitePolygons, sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation },
+  validations: {
+    getPolygonValidation,
+    getSiteValidation,
+    createPolygonValidations,
+    createSiteValidation,
+    validateGeometries
+  },
   polygonClipping: { createSitePolygonClipping, createProjectPolygonClipping, createPolygonListClipping }
 };
