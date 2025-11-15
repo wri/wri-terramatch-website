@@ -2313,6 +2313,100 @@ export const formDataGet = new V3ApiEndpoint<FormDataGetResponse, FormDataGetErr
   "GET"
 );
 
+export type FormDataUpdatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type FormDataUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDataUpdateResponse = {
+  meta?: {
+    /**
+     * @example formData
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formData
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormDataDto;
+  };
+};
+
+export type FormDataUpdateVariables = {
+  body: Schemas.UpdateFormDataBody;
+  pathParams: FormDataUpdatePathParams;
+};
+
+export const formDataUpdate = new V3ApiEndpoint<
+  FormDataUpdateResponse,
+  FormDataUpdateError,
+  FormDataUpdateVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/formData", "PUT");
+
 export type UpdateRequestGetPathParams = {
   /**
    * Entity type to retrieve
@@ -2391,7 +2485,7 @@ export const updateRequestGet = new V3ApiEndpoint<
   UpdateRequestGetError,
   UpdateRequestGetVariables,
   {}
->("/entities/v3/{entity}/{uuid}/updateRequests", "GET");
+>("/entities/v3/{entity}/{uuid}/updateRequest", "GET");
 
 export type EntityAssociationIndexPathParams = {
   /**
@@ -3414,7 +3508,7 @@ export const operationsByTag = {
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
-  formData: { formDataGet },
+  formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },

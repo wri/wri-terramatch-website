@@ -31,10 +31,10 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const t = useT();
   const router = useRouter();
 
-  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(
-    v3EntityName(entityName) as FormEntity,
-    entityUUID
-  );
+  const formEntity = v3EntityName(entityName) as FormEntity;
+  const { updateEntity, isUpdating } = useFormUpdate(formEntity, entityUUID);
+  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
+
   const framework = toFramework(formData?.frameworkKey);
 
   const model = useMemo(
@@ -54,7 +54,6 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
 
   const organisation = entity?.organisation;
 
-  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
   const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
     onSuccess() {
       // When an entity is submitted via form, we want to forget the cached copy we might have from
@@ -164,11 +163,10 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             fieldsProvider={fieldsProvider}
             orgDetails={orgDetails}
             projectDetails={projectDetails}
-            errors={error}
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}
             onChange={onChange}
-            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+            formStatus={isUpdating ? "saving" : "saved"}
             onSubmit={() =>
               submitEntity({
                 pathParams: {

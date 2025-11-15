@@ -62,7 +62,7 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: Demogr
         demographicIndex: index,
         typeName: name ?? "unknown",
         label: typeMap[subtype!],
-        userLabel: name,
+        userLabel: name ?? undefined,
         amount
       })
     );

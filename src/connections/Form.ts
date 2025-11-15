@@ -7,6 +7,7 @@ import {
   formCreate,
   formDataGet,
   FormDataGetPathParams,
+  formDataUpdate,
   formDelete,
   formGet,
   formIndex,
@@ -101,6 +102,7 @@ const entityFormDataConnection = v3Resource("formData", formDataGet)
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
     ({ entity, uuid }) => `${entity}|${uuid}`
   )
+  .update(formDataUpdate)
   .enabledProp()
   .buildConnection();
 export const useEntityFormData = connectionHook(entityFormDataConnection);
