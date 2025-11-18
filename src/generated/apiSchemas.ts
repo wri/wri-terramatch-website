@@ -65,12 +65,6 @@ export type EntityFormCreate = {
   form_uuid?: string;
 };
 
-export type EntityFormUpdate = {
-  name?: string;
-  status?: string;
-  answers?: Record<string, any>;
-};
-
 export type EntityFormRead = {
   uuid?: string;
   name?: string;

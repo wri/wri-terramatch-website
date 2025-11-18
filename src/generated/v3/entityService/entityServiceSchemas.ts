@@ -606,8 +606,8 @@ export type TreeReportCountsDto = {
 
 export type DemographicEntryDto = {
   type: string;
-  subtype: string;
-  name?: string;
+  subtype?: string | null;
+  name?: string | null;
   amount: number;
 };
 
@@ -1621,11 +1621,11 @@ export type FinancialIndicatorDto = {
    * The entity UUID this resource is associated with.
    */
   entityUuid: string;
-  collection: string | null;
+  collection: string;
   description: string | null;
   amount: number | null;
   exchangeRate: number | null;
-  year: number | null;
+  year: number;
   documentation: MediaDto[] | null;
 };
 
@@ -2067,6 +2067,23 @@ export type FormDataDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: Record<string, any>;
+};
+
+export type StoreFormDataAttributes = {
+  answers: Record<string, any>;
+};
+
+export type UpdateFormDataDAta = {
+  type: "formData";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreFormDataAttributes;
+};
+
+export type UpdateFormDataBody = {
+  data: UpdateFormDataDAta;
 };
 
 export type UpdateRequestDto = {

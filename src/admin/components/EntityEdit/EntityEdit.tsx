@@ -41,12 +41,9 @@ export const EntityEdit = () => {
   const entityName = ResourceEntityMapping[resource] as EntityName;
   const entityUUID = id as string;
 
-  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
-
-  const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(
-    v3EntityName(entityName) as FormEntity,
-    entityUUID
-  );
+  const formEntity = v3EntityName(entityName) as FormEntity;
+  const { updateEntity, isUpdating } = useFormUpdate(formEntity, entityUUID);
+  const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
 
   // TODO TM-2581
   const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
@@ -109,10 +106,9 @@ export const EntityEdit = () => {
           models={model}
           fieldsProvider={fieldsProvider}
           framework={framework}
-          errors={error}
           onBackFirstStep={() => navigate("..")}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          formStatus={isUpdating ? "saving" : "saved"}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
           title={bannerTitle}

@@ -27,7 +27,7 @@ const ensureCorrectSubtypes = (demographics: DemographicEntryDto[]) => {
   for (let ii = 0; ii < demographics.length; ii++) {
     const { type, subtype, name } = demographics[ii];
     if (SUBTYPE_SWAP_TYPES.includes(type) && subtype == null && name != null) {
-      demographics[ii] = { ...demographics[ii], subtype: name, name: undefined };
+      demographics[ii] = { ...demographics[ii], subtype: name, name: null };
     }
   }
 
