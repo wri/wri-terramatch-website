@@ -7,14 +7,15 @@ import { useCallback, useMemo } from "react";
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { loadFullNurseryReport, loadFullSiteReport, pruneEntityCache } from "@/connections/Entity";
-import { FormEntity, FormModelType } from "@/connections/Form";
+import { useFullEntity } from "@/connections/Entity";
+import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
+import { useToastContext } from "@/context/toast.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -31,16 +32,19 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const t = useT();
   const router = useRouter();
 
-  const formEntity = v3EntityName(entityName) as FormEntity;
-  const { updateEntity, isUpdating } = useFormUpdate(formEntity, entityUUID);
-  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
-
-  const framework = toFramework(formData?.frameworkKey);
-
   const model = useMemo(
-    () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
+    () => ({ model: v3EntityName(entityName) as FormEntity, uuid: entityUUID }),
     [entityName, entityUUID]
   );
+
+  const [, { update: updateEntity, isUpdating: isSubmitting, updateFailure: submissionFailure }] = useFullEntity(
+    model.model,
+    model.uuid
+  );
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(model.model, entityUUID);
+  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(model.model, entityUUID);
+
+  const framework = toFramework(formData?.frameworkKey);
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
@@ -54,23 +58,15 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
 
   const organisation = entity?.organisation;
 
-  const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
-    onSuccess() {
-      // When an entity is submitted via form, we want to forget the cached copy we might have from
-      // v3 so it gets re-fetched when a component needs it.
-      // TODO TM-2581 This will hopefully no longer be true when form submission goes through v3.
-      const v3Entity = v3EntityName(entityName);
-      pruneEntityCache(v3Entity, entityUUID);
-      // A bit of a hacky temporary workaround for reports: if the user navigates back to the
-      // task page after submitting a site or nursery report, the report is pruned but the connection
-      // expects to find it. Therefore, let's kick off a re-fetch here right away. This should also
-      // be able to go away in TM-2581, or a subsequent ticket related to form data answers.
-      if (v3Entity === "siteReports") {
-        loadFullSiteReport({ id: entityUUID });
-      } else if (v3Entity === "nurseryReports") {
-        loadFullNurseryReport({ id: entityUUID });
-      }
-
+  const submitEntity = useCallback(() => {
+    updateEntity({ status: "awaiting-approval" });
+  }, [updateEntity]);
+  const { openToast } = useToastContext();
+  useRequestComplete(isSubmitting, () => {
+    if (submissionFailure != null) {
+      Log.error("Entity submission failed", submissionFailure);
+      openToast("Submission failed");
+    } else {
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
       } else {
@@ -140,12 +136,12 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
 
   const onChange = useCallback(
     (data: Dictionary<any>, closeAndSave?: boolean) => {
-      updateEntity({
+      updateEntityAnswers({
         answers: normalizedFormData(data, fieldsProvider),
         ...(closeAndSave ? { continue_later_action: true } : {})
       });
     },
-    [fieldsProvider, updateEntity]
+    [fieldsProvider, updateEntityAnswers]
   );
 
   if (loadFailure != null || formLoadFailure != null) {
@@ -166,15 +162,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}
             onChange={onChange}
-            formStatus={isUpdating ? "saving" : "saved"}
-            onSubmit={() =>
-              submitEntity({
-                pathParams: {
-                  entity: entityName,
-                  uuid: entityUUID
-                }
-              })
-            }
+            formStatus={entityAnswersUpdating ? "saving" : "saved"}
+            onSubmit={submitEntity}
             submitButtonDisable={isSubmitting}
             defaultValues={defaultValues}
             title={formTitle}
