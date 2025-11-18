@@ -82,7 +82,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const values = formValues[field.name];
 
     const currencyCode =
-      Array.isArray(values) && values.length > 0 ? values[0].currency || values[0].local_currency : undefined;
+      Array.isArray(values) && values.length > 0 ? values[0].currency ?? values[0].local_currency : undefined;
 
     const currencyDisplayName = currencyCode
       ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
@@ -166,8 +166,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                 if (col === "year") {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else if (col === "revenue" || col === "expenses") {
-                  // Format revenue and expenses with currency code
-                  const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) || 0;
+                  const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) ?? 0;
                   displayValue = isEmptyValue(row[col])
                     ? "-"
                     : `${numericValue.toLocaleString()} ${currencyCode ?? ""}`.trim();
