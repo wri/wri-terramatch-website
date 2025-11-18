@@ -12,6 +12,7 @@ import {
   PROFIT_ANALYSIS_COLUMNS
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { addValidationWith } from "@/utils/yup";
 
 const getTableHtml = (body: string, t: typeof useT) => {
@@ -79,10 +80,18 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   addFormEntries: (entries, field, formValues, { t }) => {
     const values = formValues[field.name];
+
+    const currencyCode =
+      Array.isArray(values) && values.length > 0 ? values[0].currency || values[0].local_currency : undefined;
+
+    const currencyDisplayName = currencyCode
+      ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
+      : undefined;
+
     entries.push({
       title: t("Local Currency"),
       inputType: "select",
-      value: values?.find((value: any) => value.current)?.currency ?? t("Answer Not Provided")
+      value: currencyDisplayName ?? t("Answer Not Provided")
     });
 
     if (!Array.isArray(values) || values?.length === 0) return;
@@ -117,7 +126,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       delete columnMaps.currentRatioData;
     }
 
-    const formatted = formatFinancialData(values, years ?? undefined, "");
+    const formatted = formatFinancialData(values, years ?? undefined, currencyCode ?? "");
     const sections = [
       { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
@@ -156,6 +165,12 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                 let displayValue;
                 if (col === "year") {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
+                } else if (col === "revenue" || col === "expenses") {
+                  // Format revenue and expenses with currency code
+                  const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) || 0;
+                  displayValue = isEmptyValue(row[col])
+                    ? "-"
+                    : `${numericValue.toLocaleString()} ${currencyCode ?? ""}`.trim();
                 } else {
                   displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                 }
