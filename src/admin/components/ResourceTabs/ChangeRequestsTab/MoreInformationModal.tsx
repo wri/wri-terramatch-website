@@ -8,32 +8,31 @@ import {
   DialogTitle,
   TextField
 } from "@mui/material";
-import { FC, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, useNotify, useShowContext } from "react-admin";
 import * as yup from "yup";
 
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
-import { SupportedEntity, useFullEntity } from "@/connections/Entity";
+import { useFullEntity } from "@/connections/Entity";
+import { FormEntity, useUpdateRequest } from "@/connections/Form";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
-import { usePutV2AdminUpdateRequestsUUIDSTATUS } from "@/generated/apiComponents";
-import { v3EntityName } from "@/helpers/entity";
-import { EntityName } from "@/types/common";
+import { UpdateRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { isNotNull } from "@/utils/array";
 
-export type IStatus = "approve" | "moreinfo";
+export type IStatus = "needs-more-information" | "approved";
 
 interface ChangeRequestRequestMoreInfoModalProps extends DialogProps {
   handleClose: () => void;
   status: IStatus;
-  uuid: string;
+  entity: FormEntity;
   fieldsProvider: FormFieldsProvider;
-  entity: EntityName;
 }
 
-const statusTitles = {
-  approve: "Approve Change Request",
-  moreinfo: "Request more information for this Change Request"
+const STATUS_TITLES = {
+  approved: "Approve Change Request",
+  "needs-more-information": "Request more information for this Change Request"
 };
 
 const moreInfoValidationSchema = yup.object({
@@ -47,7 +46,6 @@ const genericValidationSchema = yup.object({
 const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalProps> = ({
   handleClose,
   status,
-  uuid,
   fieldsProvider,
   entity,
   ...dialogProps
@@ -55,7 +53,22 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
   const notify = useNotify();
   const [feedbackValue, setFeedbackValue] = useState("");
   const ctx = useShowContext();
-  const [, { refetch: refetchEntity }] = useFullEntity(v3EntityName(entity) as SupportedEntity, ctx?.record?.uuid);
+  const [, { refetch: refetchEntity }] = useFullEntity(entity, ctx?.record?.uuid);
+  const [, { update, isUpdating, updateFailure }] = useUpdateRequest({
+    entity,
+    uuid: ctx?.record?.uuid,
+    enabled: ctx?.record?.uuid != null
+  });
+  useRequestSuccess(
+    isUpdating,
+    updateFailure,
+    useCallback(() => {
+      notify("Change Request status updated", { type: "success" });
+      refetchEntity?.();
+      ctx?.refetch?.();
+    }, [ctx, notify, refetchEntity]),
+    "Change request failed to update"
+  );
 
   const feedbackChoices = useMemo<Choice[]>(
     () =>
@@ -68,31 +81,18 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
     [fieldsProvider]
   );
 
-  const { mutateAsync: updateStatus, isLoading } = usePutV2AdminUpdateRequestsUUIDSTATUS({
-    onSuccess() {
-      notify("Change Request status updated", { type: "success" });
-    }
-  });
-
   const handleSave = async (data: any) => {
-    if (status) {
-      const body: any = {
+    if (status != null) {
+      const attributes: UpdateRequestAttributes = {
+        status,
         feedback: feedbackValue
       };
 
-      if (data.feedback_fields && status === "moreinfo") {
-        body.feedback_fields = data.feedback_fields;
+      if (data.feedback_fields && status === "needs-more-information") {
+        attributes.feedbackFields = data.feedback_fields;
       }
 
-      await updateStatus({
-        pathParams: {
-          uuid,
-          status
-        },
-        body
-      });
-      refetchEntity?.();
-      ctx?.refetch?.();
+      update(attributes);
     }
     setFeedbackValue("");
     return handleClose();
@@ -102,9 +102,11 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
-        validate={validateForm(status === "moreinfo" ? moreInfoValidationSchema : genericValidationSchema)}
+        validate={validateForm(
+          status === "needs-more-information" ? moreInfoValidationSchema : genericValidationSchema
+        )}
       >
-        {status == null ? null : <DialogTitle>{statusTitles[status as IStatus]}</DialogTitle>}
+        {status == null ? null : <DialogTitle>{STATUS_TITLES[status]}</DialogTitle>}
         <DialogContent>
           <TextField
             value={feedbackValue}
@@ -115,7 +117,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
             margin="dense"
             helperText={false}
           />
-          {status === "moreinfo" && feedbackChoices.length > 0 ? (
+          {status === "needs-more-information" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
@@ -127,8 +129,8 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" type="submit" disabled={isLoading}>
-            {isLoading ? <CircularProgress size={18} sx={{ marginRight: 1 }} /> : null}
+          <Button variant="contained" type="submit" disabled={isUpdating || updateFailure != null}>
+            {isUpdating ? <CircularProgress size={18} sx={{ marginRight: 1 }} /> : null}
             Update Status
           </Button>
         </DialogActions>

@@ -1899,10 +1899,6 @@ export type SrpReportFullDto = {
 
 export type ProjectUpdateAttributes = {
   /**
-   * Request to change to the status of the given entity
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
    * Specific feedback for the PD
    */
   feedback?: string;
@@ -1910,6 +1906,10 @@ export type ProjectUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update the isTest flag.
    */
@@ -1925,11 +1925,7 @@ export type ProjectUpdateData = {
   attributes: ProjectUpdateAttributes;
 };
 
-export type SiteUpdateAttributes = {
-  /**
-   * Request to change to the status of the given site
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+export type EntityUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
@@ -1938,6 +1934,10 @@ export type SiteUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
 };
 
 export type SiteUpdateData = {
@@ -1946,22 +1946,7 @@ export type SiteUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: SiteUpdateAttributes;
-};
-
-export type EntityUpdateAttributes = {
-  /**
-   * Request to change to the status of the given entity
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
-   * Specific feedback for the PD
-   */
-  feedback?: string;
-  /**
-   * The fields in the entity form that need attention from the PD
-   */
-  feedbackFields?: string[];
+  attributes: EntityUpdateAttributes;
 };
 
 export type NurseryUpdateData = {
@@ -1975,10 +1960,6 @@ export type NurseryUpdateData = {
 
 export type ReportUpdateAttributes = {
   /**
-   * Request to change to the status of the given report
-   */
-  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
    * Specific feedback for the PD
    */
   feedback?: string;
@@ -1986,6 +1967,10 @@ export type ReportUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given report
+   */
+  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update the nothingToReport flag.
    */
@@ -2149,6 +2134,34 @@ export type UpdateRequestDto = {
   status: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
   entityAnswers: Record<string, any>;
   updateRequestAnswers: Record<string, any>;
+};
+
+export type UpdateRequestAttributes = {
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+};
+
+export type UpdateRequestData = {
+  type: "updateRequests";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateRequestAttributes;
+};
+
+export type UpdateRequestUpdateBody = {
+  data: UpdateRequestData;
 };
 
 /**

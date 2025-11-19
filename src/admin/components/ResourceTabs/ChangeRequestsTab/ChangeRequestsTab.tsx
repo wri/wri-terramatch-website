@@ -61,7 +61,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
     setStatusToChangeTo(type);
   }, []);
 
-  const icon = status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
+  const icon = updateRequest?.status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
 
   if (ctx.isLoading || !providerLoaded) return null;
 
@@ -131,14 +131,14 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                       variant="contained"
                       startIcon={<Check />}
                       disabled={["approved", "draft"].includes(status ?? "")}
-                      onClick={() => handleStatusUpdate("approve")}
+                      onClick={() => handleStatusUpdate("approved")}
                     >
                       Approve
                     </Button>
                     <Button
                       variant="outlined"
                       disabled={["more-information", "draft"].includes(status ?? "")}
-                      onClick={() => handleStatusUpdate("moreinfo")}
+                      onClick={() => handleStatusUpdate("needs-more-information")}
                     >
                       Request More Information
                     </Button>
@@ -160,18 +160,17 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
         )}
       </TabbedShowLayout.Tab>
 
-      {statusToChangeTo && updateRequest && (
+      {statusToChangeTo != null && updateRequest != null ? (
         <ChangeRequestRequestMoreInfoModal
           open
           status={statusToChangeTo}
-          uuid={/* TODO TM-2624 */ ""}
           entity={entity}
           handleClose={() => {
             setStatusToChangeTo(undefined);
           }}
           fieldsProvider={fieldsProvider}
         />
-      )}
+      ) : null}
     </>
   );
 };

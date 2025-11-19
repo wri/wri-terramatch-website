@@ -9058,19 +9058,6 @@ export type AdminUserCreate = {
   direct_frameworks?: boolean;
 };
 
-export type UpdateRequestRead = {
-  uuid?: string;
-  framework_key?: string;
-  status?: string;
-  readable_status?: string;
-  content?: Record<string, any>;
-  feedback?: string;
-  feedback_fields?: string[];
-  project?: Record<string, any>;
-  organisation?: Record<string, any>;
-  created_by?: Record<string, any>;
-};
-
 export type UpdateRequestLiteRead = {
   uuid?: string;
   framework_key?: string;

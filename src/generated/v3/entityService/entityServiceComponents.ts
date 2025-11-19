@@ -2487,6 +2487,100 @@ export const updateRequestGet = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/updateRequest", "GET");
 
+export type UpdateRequestUpdatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+};
+
+export type UpdateRequestUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateRequestUpdateResponse = {
+  meta?: {
+    /**
+     * @example updateRequests
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example updateRequests
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UpdateRequestDto;
+  };
+};
+
+export type UpdateRequestUpdateVariables = {
+  body: Schemas.UpdateRequestUpdateBody;
+  pathParams: UpdateRequestUpdatePathParams;
+};
+
+export const updateRequestUpdate = new V3ApiEndpoint<
+  UpdateRequestUpdateResponse,
+  UpdateRequestUpdateError,
+  UpdateRequestUpdateVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/updateRequest", "PATCH");
+
 export type EntityAssociationIndexPathParams = {
   /**
    * Entity type for associations
@@ -3509,7 +3603,7 @@ export const operationsByTag = {
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
-  updateRequests: { updateRequestGet },
+  updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
