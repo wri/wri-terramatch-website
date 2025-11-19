@@ -75,15 +75,6 @@ export type GetV2FundingProgrammeIDBody = {
   updated_at?: string;
 };
 
-export type PostV2FormsEntityFormUuidBody = {
-  /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-   */
-  parent_entity?: string;
-  parent_uuid?: string;
-  form_uuid?: string;
-};
-
 export type V2PostOrganisationsBody = {
   /**
    * Available type are for-profit-organization, non-profit-organization, government-agency

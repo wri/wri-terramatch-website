@@ -2029,7 +2029,7 @@ export type EntityUpdateBody = {
 
 export type EntityCreateAttributes = {
   /**
-   * UUID of the entity related to the report
+   * UUID of the parent entity.
    */
   parentUuid: string;
 };
@@ -2039,8 +2039,34 @@ export type DisturbanceReportCreateData = {
   attributes: EntityCreateAttributes;
 };
 
+export type SiteCreateData = {
+  type: "sites";
+  attributes: EntityCreateAttributes;
+};
+
+export type NurseryCreateData = {
+  type: "nurseries";
+  attributes: EntityCreateAttributes;
+};
+
+export type ProjectCreateAttributes = {
+  /**
+   * UUID of the application.
+   */
+  applicationUuid?: string;
+  /**
+   * UUID of the form for project creation.
+   */
+  formUuid: string;
+};
+
+export type ProjectCreateData = {
+  type: "projects";
+  attributes: ProjectCreateAttributes;
+};
+
 export type EntityCreateBody = {
-  data: DisturbanceReportCreateData;
+  data: DisturbanceReportCreateData | SiteCreateData | NurseryCreateData | ProjectCreateData;
 };
 
 export type FormDataDto = {

@@ -11,11 +11,10 @@ import { useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
-import { useToastContext } from "@/context/toast.provider";
 import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
-import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
@@ -61,19 +60,18 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
   const submitEntity = useCallback(() => {
     updateEntity({ status: "awaiting-approval" });
   }, [updateEntity]);
-  const { openToast } = useToastContext();
-  useRequestComplete(isSubmitting, () => {
-    if (submissionFailure != null) {
-      Log.error("Entity submission failed", submissionFailure);
-      openToast("Submission failed");
-    } else {
+  useRequestSuccess(
+    isSubmitting,
+    submissionFailure,
+    useCallback(() => {
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
       } else {
         router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
       }
-    }
-  });
+    }, [entityName, entityUUID, mode, router]),
+    "Submission failed"
+  );
 
   const reportingWindow = useReportingWindow(framework, entity?.due_at);
   const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;

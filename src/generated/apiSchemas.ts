@@ -56,39 +56,6 @@ export type AssociatedUserRead = {
   status?: string;
 };
 
-export type EntityFormCreate = {
-  /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-   */
-  parent_entity?: string;
-  parent_uuid?: string;
-  form_uuid?: string;
-};
-
-export type EntityFormRead = {
-  uuid?: string;
-  name?: string;
-  status?: string;
-  form_uuid?: string;
-  answers?: Record<string, any>;
-  framework_key?: string;
-  form_title?: string;
-  feedback?: string;
-  feedback_fields?: string[];
-  update_request?: {
-    uuid?: string;
-    framework_key?: string;
-    status?: string;
-    readable_status?: string;
-    content?: Record<string, any>;
-    feedback?: string;
-    feedback_fields?: string[];
-    project?: Record<string, any>;
-    organisation?: Record<string, any>;
-    created_by?: Record<string, any>;
-  };
-};
-
 export type UserRead = {
   id?: number;
   uuid?: string;

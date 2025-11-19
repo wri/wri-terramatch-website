@@ -1,8 +1,11 @@
 import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
-import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   entityCreate,
+  EntityCreateError,
+  EntityCreateResponse,
+  EntityCreateVariables,
   entityDelete,
   entityGet,
   EntityGetPathParams,
@@ -21,18 +24,21 @@ import {
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
+  NurseryCreateData,
   NurseryFullDto,
   NurseryLightDto,
   NurseryReportFullDto,
   NurseryReportLightDto,
   NurseryReportUpdateData,
   NurseryUpdateData,
+  ProjectCreateData,
   ProjectFullDto,
   ProjectLightDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
   ProjectReportUpdateData,
   ProjectUpdateData,
+  SiteCreateData,
   SiteFullDto,
   SiteLightDto,
   SiteReportFullDto,
@@ -80,8 +86,6 @@ export type EntityUpdateData =
   | DisturbanceReportUpdateData
   | SrpReportUpdateData;
 
-export type EntityCreateData = DisturbanceReportCreateData;
-
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<Filter<EntityIndexQueryParams>> &
   EnabledProp &
@@ -121,10 +125,13 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
 const createEntityDeleter = (entity: SupportedEntity) =>
   deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
 
+export type EntityCreateData = EntityCreateVariables["body"]["data"];
+type SpecificEntityCreateVariables<C extends EntityCreateData> = Omit<EntityCreateVariables, "body"> & {
+  body: { data: C };
+};
 const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
-  return v3Resource(entity, entityCreate)
-    .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
-    .refetch(() => ApiSlice.pruneCache(entity))
+  return v3Resource<EntityCreateResponse, EntityCreateError, SpecificEntityCreateVariables<C>, {}>(entity, entityCreate)
+    .create<D>(() => ({ pathParams: { entity } }))
     .buildConnection();
 };
 
@@ -148,10 +155,12 @@ export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
 const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
 export const useLightProject = connectionHook(lightProjectConnection);
-
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+export const useCreateProject = creationHook(
+  createEntityCreateConnection<ProjectFullDto, ProjectCreateData>("projects")
+);
 
 // Sites
 const fullSiteConnection = createEntityGetConnection<SiteFullDto, EntityUpdateData>("sites");
@@ -161,6 +170,7 @@ export const deleteSite = createEntityDeleter("sites");
 export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
+export const useCreateSite = creationHook(createEntityCreateConnection<SiteFullDto, SiteCreateData>("sites"));
 
 // Nurseries
 const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
@@ -170,6 +180,9 @@ export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
+export const useCreateNursery = creationHook(
+  createEntityCreateConnection<NurseryFullDto, NurseryCreateData>("nurseries")
+);
 
 // Project Reports
 const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
@@ -255,11 +268,9 @@ export const loadFullDisturbanceReport = connectionLoader(fullDisturbanceReportC
 export const useFullDisturbanceReport = connectionHook(fullDisturbanceReportConnection);
 export const useLightDisturbanceReport = connectionHook(lightDisturbanceReportConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
-
-const createDisturbanceReportConnection = createEntityCreateConnection<DisturbanceReportFullDto, EntityCreateData>(
-  "disturbanceReports"
+export const useCreateDisturbanceReport = creationHook(
+  createEntityCreateConnection<DisturbanceReportFullDto, DisturbanceReportCreateData>("disturbanceReports")
 );
-export const useCreateDisturbanceReport = connectionHook(createDisturbanceReportConnection);
 
 // SRP Reports
 export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
