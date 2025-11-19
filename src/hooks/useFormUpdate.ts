@@ -77,12 +77,12 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
   const { openToast } = useToastContext();
   useValueChanged(updateFailure, () => {
     if (updateFailure != null) {
-      Log.error("Form data save failed", { updateFailure });
+      Log.error("Form data save failed", updateFailure);
       openToast("Form data save failed");
     }
   });
 
-  const updateEntity = useFormReducer(
+  const updateEntityAnswers = useFormReducer(
     useCallback(
       (body: StoreFormDataAttributes) => {
         if (enabled) {
@@ -98,7 +98,7 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
     isUpdating
   );
 
-  return { updateEntity, isUpdating };
+  return { updateEntityAnswers, entityAnswersUpdating: isUpdating };
 };
 
 export const useSubmissionUpdate = (submissionUUID: string) => {

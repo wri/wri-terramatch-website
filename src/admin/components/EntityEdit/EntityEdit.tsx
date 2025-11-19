@@ -42,7 +42,7 @@ export const EntityEdit = () => {
   const entityUUID = id as string;
 
   const formEntity = v3EntityName(entityName) as FormEntity;
-  const { updateEntity, isUpdating } = useFormUpdate(formEntity, entityUUID);
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(formEntity, entityUUID);
   const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
 
   // TODO TM-2581
@@ -90,8 +90,8 @@ export const EntityEdit = () => {
   );
 
   const onChange = useCallback(
-    (data: Dictionary<any>) => updateEntity({ answers: normalizedFormData(data, fieldsProvider) }),
-    [fieldsProvider, updateEntity]
+    (data: Dictionary<any>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
+    [fieldsProvider, updateEntityAnswers]
   );
 
   if (loadFailure != null || formLoadFailure != null) {
@@ -108,7 +108,7 @@ export const EntityEdit = () => {
           framework={framework}
           onBackFirstStep={() => navigate("..")}
           onChange={onChange}
-          formStatus={isUpdating ? "saving" : "saved"}
+          formStatus={entityAnswersUpdating ? "saving" : "saved"}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
           title={bannerTitle}
