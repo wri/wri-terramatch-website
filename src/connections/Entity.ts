@@ -53,16 +53,15 @@ import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Filter, PaginatedConnectionProps } from "@/types/connection";
 
-export type EntityFullDto =
-  | ProjectFullDto
-  | SiteFullDto
-  | NurseryFullDto
-  | ProjectReportFullDto
-  | NurseryReportFullDto
-  | SiteReportFullDto
-  | FinancialReportFullDto
+export type ReportFullDto =
   | DisturbanceReportFullDto
+  | FinancialReportFullDto
+  | NurseryReportFullDto
+  | ProjectReportFullDto
+  | SiteReportFullDto
   | SrpReportFullDto;
+
+export type EntityFullDto = ReportFullDto | ProjectFullDto | SiteFullDto | NurseryFullDto;
 export type EntityLightDto =
   | ProjectLightDto
   | SiteLightDto

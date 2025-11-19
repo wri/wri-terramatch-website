@@ -2,8 +2,6 @@ import { useRouter } from "next/router";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
-import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
 import { EntityName } from "@/types/common";
 
@@ -16,18 +14,9 @@ const EditEntityPage = () => {
   const entityName = router.query.entityName as EntityName;
   const entityUUID = router.query.uuid as string;
 
-  // TODO TM-2581: Once form submission to entities goes through v3, this can use the v3 entity and
-  //  will not be required to be fetched separately.
-  const { data: entityData, isLoading: getEntityLoading } = useGetV2ENTITYUUID({
-    pathParams: { entity: entityName, uuid: entityUUID }
-  });
-  const entity = entityData?.data ?? {}; //Do not abuse this since forms should stay entity agnostic!
-
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={getEntityLoading}>
-        <EditEntityForm {...{ entityName, entityUUID, entity }} />
-      </LoadingContainer>
+      <EditEntityForm {...{ entityName, entityUUID }} />
       <PageFooter />
     </BackgroundLayout>
   );

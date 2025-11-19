@@ -767,6 +767,10 @@ export type ProjectLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * The associated organisation type
    */
   organisationType: string | null;
@@ -869,6 +873,10 @@ export type NurseryLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * @format date-time
    */
   startDate: string | null;
@@ -905,6 +913,10 @@ export type FinancialReportLightDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   yearOfReport: number | null;
   /**
    * @format date-time
@@ -981,6 +993,10 @@ export type DisturbanceReportLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * @format date-time
    */
   intensity: string | null;
@@ -1014,6 +1030,10 @@ export type ProjectFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * The associated organisation type
    */
@@ -1209,6 +1229,10 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
 };
 
 export type NurseryFullDto = {
@@ -1238,6 +1262,10 @@ export type NurseryFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
@@ -1683,6 +1711,10 @@ export type FinancialReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   yearOfReport: number | null;
   /**
    * @format date-time
@@ -1714,10 +1746,6 @@ export type FinancialReportFullDto = {
   finStartMonth: number | null;
   financialCollection: FinancialIndicatorDto[] | null;
   currency: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
   /**
    * The associated organisation type
    */
@@ -1755,6 +1783,10 @@ export type DisturbanceReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * @format date-time
    */

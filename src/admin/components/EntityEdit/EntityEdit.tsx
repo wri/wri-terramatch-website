@@ -7,14 +7,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFullEntity } from "@/connections/Entity";
 import { FormEntity, FormModelType } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
-import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { NurseryReportFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -44,9 +46,8 @@ export const EntityEdit = () => {
   const formEntity = v3EntityName(entityName) as FormEntity;
   const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(formEntity, entityUUID);
   const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
-
-  // TODO TM-2581
-  const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+  const [, { data: entity }] = useFullEntity(formEntity, entityUUID);
+  const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
@@ -58,36 +59,12 @@ export const EntityEdit = () => {
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${formData?.formTitle}`;
+      return `${(entity as SiteReportFullDto).siteName} ${formData?.formTitle}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${formData?.formTitle}`;
+      return `${(entity as NurseryReportFullDto).nurseryName} ${formData?.formTitle}`;
     }
     return form?.title;
-  }, [entityName, formData, entityValue, form?.title]);
-
-  const organisation = entityValue?.data?.organisation;
-
-  const orgDetails = useMemo(
-    (): OrgFormDetails => ({
-      uuid: organisation?.uuid,
-      currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
-      startMonth:
-        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
-    }),
-    [
-      entityName,
-      entityValue?.data?.currency,
-      entityValue?.data?.fin_start_month,
-      organisation?.currency,
-      organisation?.fin_start_month,
-      organisation?.uuid
-    ]
-  );
-
-  const projectDetails = useMemo(
-    (): ProjectFormDetails => ({ uuid: entityValue?.data?.project?.uuid }),
-    [entityValue?.data?.project?.uuid]
-  );
+  }, [entityName, form?.title, entity, formData?.formTitle]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
@@ -101,7 +78,7 @@ export const EntityEdit = () => {
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <LoadingContainer loading={isLoading || !providerLoaded}>
+      <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
         <WizardForm
           models={model}
           fieldsProvider={fieldsProvider}
