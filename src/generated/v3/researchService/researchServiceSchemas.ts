@@ -182,9 +182,9 @@ export type SitePolygonLightDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -321,9 +321,9 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon

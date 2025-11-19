@@ -77,7 +77,7 @@ const AttributeInformation = ({
     setTreesPlanted(selectedPolygon?.numTrees ?? 0);
     setCalculatedArea(selectedPolygon?.calcArea ?? 0);
     const restorationPracticeArray = selectedPolygon?.practice
-      ? selectedPolygon?.practice.split(",").map(function (item) {
+      ? selectedPolygon?.practice.map(function (item) {
           return item.trim();
         })
       : [];
@@ -91,7 +91,7 @@ const AttributeInformation = ({
     setTargetLandUseSystem(targetLandUseSystemArray);
 
     const treeDistributionArray = selectedPolygon?.distr
-      ? selectedPolygon?.distr.split(",").map(function (item) {
+      ? selectedPolygon?.distr.map(function (item) {
           return item.trim();
         })
       : [];

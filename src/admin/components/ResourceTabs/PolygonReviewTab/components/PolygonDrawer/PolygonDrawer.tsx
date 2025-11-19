@@ -23,7 +23,7 @@ import {
   useGetV2SitePolygonUuidVersions,
   usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -216,7 +216,7 @@ const PolygonDrawer = ({
   }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
-    if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
+    if (selectedPolygonData && isEmpty(selectedPolygonData) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
   }, [polygonSelected, selectPolygonVersion, selectedPolygonData]);
