@@ -745,16 +745,6 @@ export type FormLiteRead = {
   published?: boolean;
 };
 
-export type GeojsonRead = {
-  uuid?: number;
-  name?: Record<string, any>;
-  geojson?: string;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-};
-
 export type ReportingFrameworkRead = {
   uuid?: string;
   name?: string;
@@ -2437,19 +2427,6 @@ export type V2SiteRead = {
    * @format date-time
    */
   updated_at?: string;
-};
-
-export type V2SiteLiteRead = {
-  uuid?: string;
-  name?: string;
-  framework_key?: string;
-  description?: string;
-  control_site?: number;
-  status?: string;
-  readable_status?: string;
-  number_of_trees_planted?: number;
-  start_date?: string;
-  created_at?: string;
 };
 
 export type V2SiteMonitoringCreate = {
