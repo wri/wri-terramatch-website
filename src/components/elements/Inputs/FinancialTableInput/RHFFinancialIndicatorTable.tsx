@@ -16,7 +16,6 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
-import { normalizeV2UploadedFiles } from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -33,6 +32,7 @@ import { useFiles } from "@/hooks/useFiles";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValue, UploadedFile } from "@/types/common";
+import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
 
 import Text from "../../Text/Text";
@@ -823,7 +823,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
             const rowIndex = row.index;
 
-            const files = normalizeV2UploadedFiles(documentationData?.[rowIndex]?.[columnKey]);
+            const files = toArray(documentationData?.[rowIndex]?.[columnKey] as UploadedFile | UploadedFile[]);
 
             // Check if this year has documentation entries but no files uploaded
             const hasDocumentationEntry =
