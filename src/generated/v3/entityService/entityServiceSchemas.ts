@@ -2623,3 +2623,8 @@ export type UpdateFormData = {
 export type UpdateFormBody = {
   data: UpdateFormData;
 };
+
+export type TreeSpeciesResearchDto = {
+  nativeDistribution: string[] | null;
+  suitability: string[] | null;
+};
