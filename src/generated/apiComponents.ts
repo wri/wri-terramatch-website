@@ -1631,50 +1631,6 @@ export const usePutV2MyActionsUUIDComplete = (
   );
 };
 
-export type PutV2ENTITYUUIDNothingToReportPathParams = {
-  /**
-   * allowed values are project-reports, site-reports, nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type PutV2ENTITYUUIDNothingToReportError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2ENTITYUUIDNothingToReportVariables = {
-  pathParams: PutV2ENTITYUUIDNothingToReportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2ENTITYUUIDNothingToReport = (
-  variables: PutV2ENTITYUUIDNothingToReportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, PutV2ENTITYUUIDNothingToReportError, undefined, {}, {}, PutV2ENTITYUUIDNothingToReportPathParams>(
-    { url: "/v2/{entity}/{uuid}/nothing-to-report", method: "put", ...variables, signal }
-  );
-
-export const usePutV2ENTITYUUIDNothingToReport = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      PutV2ENTITYUUIDNothingToReportError,
-      PutV2ENTITYUUIDNothingToReportVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    undefined,
-    PutV2ENTITYUUIDNothingToReportError,
-    PutV2ENTITYUUIDNothingToReportVariables
-  >(
-    (variables: PutV2ENTITYUUIDNothingToReportVariables) =>
-      fetchPutV2ENTITYUUIDNothingToReport({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2AdminReportingFrameworksError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2AdminReportingFrameworksResponse = {
