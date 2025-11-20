@@ -112,11 +112,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
     const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
 
-    const isNonProfit = isGroupPresent(nonProfitCollections) && isCollectionPresent(nonProfitCollections);
-
-    const hasProfitGroup = isGroupPresent(profitCollections) ? true : null;
-    const hasProfitCollection = isCollectionPresent(profitCollections) ? true : null;
-    if (hasProfitGroup === null || hasProfitCollection === null || isNonProfit) {
+    if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
       delete columnMaps.profitAnalysisData;
     }
 
