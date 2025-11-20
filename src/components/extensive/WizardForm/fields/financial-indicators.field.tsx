@@ -78,12 +78,12 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t, record }) => {
+  addFormEntries: (entries, field, formValues, { t, record, type }) => {
     const values = formValues[field.name];
 
-    const organisationCurrency = record?.organisation?.currency;
-    const currencyDisplayName = organisationCurrency
-      ? getCurrencyOptions(t).find(opt => opt.value === organisationCurrency)?.title
+    const currencyCode = type === "financial-reports" ? record?.currency : record?.organisation?.currency;
+    const currencyDisplayName = currencyCode
+      ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
       : undefined;
 
     entries.push({
@@ -126,7 +126,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       delete columnMaps.currentRatioData;
     }
 
-    const formatted = formatFinancialData(values, years ?? undefined, organisationCurrency ?? "");
+    const formatted = formatFinancialData(values, years ?? undefined, currencyCode ?? "");
     const sections = [
       { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
