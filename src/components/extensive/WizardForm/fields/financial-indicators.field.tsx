@@ -78,14 +78,12 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t }) => {
+  addFormEntries: (entries, field, formValues, { t, record }) => {
     const values = formValues[field.name];
 
-    const currencyCode =
-      Array.isArray(values) && values.length > 0 ? values[0].currency ?? values[0].local_currency : undefined;
-
-    const currencyDisplayName = currencyCode
-      ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
+    const organisationCurrency = record?.organisation?.currency;
+    const currencyDisplayName = organisationCurrency
+      ? getCurrencyOptions(t).find(opt => opt.value === organisationCurrency)?.title
       : undefined;
 
     entries.push({
@@ -114,7 +112,9 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const isGroupPresent = (collections: string[]) => collections.some(col => presentCollections.has(col));
     const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
 
-    if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
+    const isNonProfit = isGroupPresent(nonProfitCollections) && isCollectionPresent(nonProfitCollections);
+
+    if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections) || isNonProfit) {
       delete columnMaps.profitAnalysisData;
     }
 
@@ -126,7 +126,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       delete columnMaps.currentRatioData;
     }
 
-    const formatted = formatFinancialData(values, years ?? undefined, currencyCode ?? "");
+    const formatted = formatFinancialData(values, years ?? undefined, organisationCurrency ?? "");
     const sections = [
       { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
@@ -167,9 +167,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else if (col === "revenue" || col === "expenses") {
                   const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) ?? 0;
-                  displayValue = isEmptyValue(row[col])
-                    ? "-"
-                    : `${numericValue.toLocaleString()} ${currencyCode ?? ""}`.trim();
+                  displayValue = isEmptyValue(row[col]) ? "-" : numericValue.toLocaleString();
                 } else {
                   displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                 }
