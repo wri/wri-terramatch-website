@@ -20,7 +20,6 @@ import {
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
-  useGetV2SitePolygonUuidVersions,
   usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
 import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -122,7 +121,9 @@ const PolygonDrawer = ({
       openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
       setShouldRefetchValidation(true);
       ApiSlice.pruneCache("validations", [polygonSelected]);
-      await refetchPolygonVersions();
+      if (selectedPolygon?.primaryUuid) {
+        ApiSlice.pruneIndex("sitePolygons", "");
+      }
       await sitePolygonRefresh?.();
       await refresh?.();
       if (!selectedPolygon?.primaryUuid) {
@@ -192,28 +193,6 @@ const PolygonDrawer = ({
   useEffect(() => {
     setSelectPolygonVersion(selectedPolygonData);
   }, [selectedPolygonData]);
-
-  const {
-    data: polygonVersions,
-    refetch: refetchPolygonVersions,
-    isLoading: isLoadingVersions
-  } = useGetV2SitePolygonUuidVersions(
-    {
-      pathParams: { uuid: (selectPolygonVersion?.primaryUuid ?? selectedPolygonData?.primaryUuid) as string }
-    },
-    {
-      enabled: !!selectPolygonVersion?.primaryUuid || !!selectedPolygonData?.primaryUuid || !!polygonFromMap?.uuid
-    }
-  );
-
-  useEffect(() => {
-    setIsLoadingDropdown(true);
-    const onLoading = async () => {
-      await refetchPolygonVersions();
-      setIsLoadingDropdown(false);
-    };
-    onLoading();
-  }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
     if (selectedPolygonData && isEmpty(selectedPolygonData) && isEmpty(polygonSelected)) {
@@ -324,10 +303,8 @@ const PolygonDrawer = ({
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
                   sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
-                  isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
-                  refetchPolygonVersions={refetchPolygonVersions}
                   setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
                   selectedPolygonIndex={selectedPolygonIndex}
                   setPolygonFromMap={setPolygonFromMap}
@@ -337,32 +314,23 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-              {isLoadingVersions ? (
-                <div className="flex justify-center py-4">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
-                </div>
-              ) : (
-                selectedPolygonData && (
-                  <VersionHistory
-                    wrapperRef={wrapperRef}
-                    setPolygonFromMap={setPolygonFromMap}
-                    polygonFromMap={polygonFromMap}
-                    selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
-                    setSelectPolygonVersion={setSelectPolygonVersion}
-                    selectPolygonVersion={selectPolygonVersion}
-                    refreshPolygonList={refresh}
-                    refreshSiteData={sitePolygonRefresh}
-                    setSelectedPolygonData={setSelectedPolygonData}
-                    setStatusSelectedPolygon={setStatusSelectedPolygon}
-                    data={polygonVersions ?? []}
-                    isLoadingVersions={isLoadingVersions}
-                    refetch={refetchPolygonVersions}
-                    isLoadingDropdown={isLoadingDropdown}
-                    setIsLoadingDropdown={setIsLoadingDropdown}
-                    setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
-                    selectedPolygonIndex={selectedPolygonIndex}
-                  />
-                )
+              {selectedPolygonData && (
+                <VersionHistory
+                  wrapperRef={wrapperRef}
+                  setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
+                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                  setSelectPolygonVersion={setSelectPolygonVersion}
+                  selectPolygonVersion={selectPolygonVersion}
+                  refreshPolygonList={refresh}
+                  refreshSiteData={sitePolygonRefresh}
+                  setSelectedPolygonData={setSelectedPolygonData}
+                  setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  isLoadingDropdown={isLoadingDropdown}
+                  setIsLoadingDropdown={setIsLoadingDropdown}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
+                />
               )}
             </Accordion>
             <Divider />

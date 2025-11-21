@@ -27,8 +27,8 @@ interface AttributeInformationProps {
   sitePolygonRefresh: () => void;
   setSelectedPolygonData: any;
   setStatusSelectedPolygon: any;
-  refetchPolygonVersions: () => void;
-  isLoadingVersions: boolean;
+  refetchPolygonVersions?: () => void;
+  isLoadingVersions?: boolean;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
@@ -127,7 +127,9 @@ const AttributeInformation = ({
           },
           {
             onSuccess: async () => {
-              await refetchPolygonVersions();
+              if (refetchPolygonVersions) {
+                await refetchPolygonVersions();
+              }
               await refetch();
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primaryUuid as string }
