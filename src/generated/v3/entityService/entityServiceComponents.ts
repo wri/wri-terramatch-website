@@ -731,58 +731,14 @@ export const taskUpdate = new V3ApiEndpoint<TaskUpdateResponse, TaskUpdateError,
   "PATCH"
 );
 
-export type UploadFilePathParams = {
+export type GetMediaPathParams = {
   /**
-   * Entity type to retrieve
-   */
-  entity:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "organisations"
-    | "auditStatuses"
-    | "forms"
-    | "formQuestionOptions"
-    | "fundingProgrammes"
-    | "impactStories"
-    | "financialIndicators"
-    | "projectPitches"
-    | "disturbanceReports";
-  /**
-   * Entity UUID for resource to retrieve
+   * Media UUID for media to retrieve
    */
   uuid: string;
-  /**
-   * Media collection to retrieve
-   */
-  collection: string;
 };
 
-export type UploadFileError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-        /**
-         * A code to lookup the error message translation string on the client.
-         */
-        code?: string;
-        /**
-         * A set of variables to pass to the translation service.
-         */
-        variables?: Record<string, any>;
-      };
-    }
+export type GetMediaError = Fetcher.ErrorWrapper<
   | {
       status: 401;
       payload: {
@@ -811,7 +767,7 @@ export type UploadFileError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type UploadFileResponse = {
+export type GetMediaResponse = {
   meta?: {
     /**
      * @example media
@@ -831,17 +787,13 @@ export type UploadFileResponse = {
   };
 };
 
-export type UploadFileVariables = {
-  body: Schemas.MediaRequestBody;
-  pathParams: UploadFilePathParams;
+export type GetMediaVariables = {
+  pathParams: GetMediaPathParams;
 };
 
-/**
- * Upload a file to a media collection
- */
-export const uploadFile = new V3ApiEndpoint<UploadFileResponse, UploadFileError, UploadFileVariables, {}>(
-  "/entities/v3/files/{entity}/{uuid}/{collection}",
-  "POST"
+export const getMedia = new V3ApiEndpoint<GetMediaResponse, GetMediaError, GetMediaVariables, {}>(
+  "/entities/v3/files/{uuid}",
+  "GET"
 );
 
 export type MediaUpdatePathParams = {
@@ -988,6 +940,119 @@ export type MediaDeleteResponse = {
 export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteError, {}, {}>(
   "/entities/v3/files/{uuid}",
   "DELETE"
+);
+
+export type UploadFilePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | "disturbanceReports";
+  /**
+   * Entity UUID for resource to retrieve
+   */
+  uuid: string;
+  /**
+   * Media collection to retrieve
+   */
+  collection: string;
+};
+
+export type UploadFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+        /**
+         * A code to lookup the error message translation string on the client.
+         */
+        code?: string;
+        /**
+         * A set of variables to pass to the translation service.
+         */
+        variables?: Record<string, any>;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadFileResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export type UploadFileVariables = {
+  body: Schemas.MediaRequestBody;
+  pathParams: UploadFilePathParams;
+};
+
+/**
+ * Upload a file to a media collection
+ */
+export const uploadFile = new V3ApiEndpoint<UploadFileResponse, UploadFileError, UploadFileVariables, {}>(
+  "/entities/v3/files/{entity}/{uuid}/{collection}",
+  "POST"
 );
 
 export type MediaBulkDeleteError = Fetcher.ErrorWrapper<
@@ -3438,7 +3503,7 @@ export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { uploadFile, mediaUpdate, mediaDelete, mediaBulkDelete },
+  files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },

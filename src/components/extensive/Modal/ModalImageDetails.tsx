@@ -12,9 +12,10 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
+import { useMedia } from "@/connections/Media";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { usePatchV2MediaProjectProjectMediaUuid } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
@@ -64,7 +65,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const [descriptionCharCount, setDescriptionCharCount] = useState(data.description?.length ?? 0);
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
-  const { mutate: updateMedia, isLoading: isUpdating } = usePatchV2MediaUuid();
+  const [, { update: updateMedia, isUpdating }] = useMedia({ id: data.uuid });
   const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   useOnMount(() => {
@@ -99,14 +100,12 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       formData.is_public !== initialFormData.is_public
     ) {
       const mediaUpdate = updateMedia({
-        pathParams: { uuid: data.uuid },
-        body: {
-          name: formData.name,
-          // @ts-expect-error until we can have v3 media update endpoint
-          description: formData.description,
-          photographer: formData.photographer,
-          is_public: formData.is_public
-        }
+        name: formData.name,
+        title: formData.name,
+        photographer: formData.photographer,
+        description: formData.description ?? undefined,
+        isPublic: formData.is_public,
+        isCover: formData.is_cover
       });
 
       updatePromises.push(mediaUpdate);

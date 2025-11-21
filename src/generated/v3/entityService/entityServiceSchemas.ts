@@ -491,27 +491,35 @@ export type MediaUpdateAttributes = {
   /**
    * The name of the media
    */
-  name: string;
+  name?: string;
   /**
    * The title of the media
    */
-  title: string;
+  title?: string;
+  /**
+   * The description of the media
+   */
+  description?: string;
   /**
    * The photographer of the media
    */
-  photographer: string;
+  photographer?: string;
   /**
    * The public status of the media
    */
-  isPublic: boolean;
+  isPublic?: boolean;
   /**
    * The cover of the project
    */
-  isCover: boolean;
+  isCover?: boolean;
 };
 
 export type MediaData = {
-  type: "medias";
+  type: "media";
+  /**
+   * @format uuid
+   */
+  id: string;
   attributes: MediaUpdateAttributes;
 };
 

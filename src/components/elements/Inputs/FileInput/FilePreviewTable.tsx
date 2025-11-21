@@ -8,9 +8,10 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
+import { usePatchV2MediaProjectProjectMediaUuid } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
@@ -20,7 +21,6 @@ import Table from "../../Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "../../Table/TableVariants";
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
-import { useMedia } from "@/connections/Media";
 
 type FilePreviewTableProps = {
   items: Partial<UploadedFile>[];
@@ -60,8 +60,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
 
-  const { mutate: updateMedia } = usePatchV2MediaUuid();
-  const [,{ update: updateMediaProject }] = useMedia({ id: entityData.uuid });
+  const [, { update: updateMedia }] = useMedia({ id: entityData.uuid });
   const { mutateAsync: updateIsCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   const openModalImageDetail = useCallback(
@@ -132,7 +131,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
     (item: Partial<UploadedFile>, checked: boolean) => {
       showLoader();
       try {
-        updateMedia({ pathParams: { uuid: item.uuid! }, body: { is_public: checked } });
+        updateMedia({ isPublic: checked });
         updateFile?.({ ...item, isPublic: checked });
       } catch (error) {
         Log.error("Error updating public status:", error);

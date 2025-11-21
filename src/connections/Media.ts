@@ -2,6 +2,7 @@ import exifr from "exifr";
 
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  getMedia,
   mediaDelete,
   mediaUpdate,
   uploadFile,
@@ -14,11 +15,12 @@ import { WithFormData } from "@/generated/v3/utils";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
+
 import { v3Resource } from "./util/apiConnectionFactory";
 import { connectionHook } from "./util/connectionShortcuts";
 
-export const mediaConnection = v3Resource("media")
-  .singleResource<MediaDto>(({ id }) => ({ pathParams: { uuid: id! } }))
+export const mediaConnection = v3Resource("media", getMedia)
+  .singleResource<MediaDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .update(mediaUpdate)
   .buildConnection();
 
