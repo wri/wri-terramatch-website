@@ -17,6 +17,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import { CompletionStatusMapping } from "@/components/extensive/Tables/ReportingTasksTable";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
@@ -25,7 +26,8 @@ import {
   useFullProject,
   useLightNurseryReportList,
   useLightProjectReport,
-  useLightSiteReportList
+  useLightSiteReportList,
+  useLightSRPReportList
 } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import FrameworkProvider from "@/context/framework.provider";
@@ -34,13 +36,15 @@ import { usePutV2ENTITYUUIDNothingToReport } from "@/generated/apiComponents";
 import {
   NurseryReportLightDto,
   ProjectReportLightDto,
-  SiteReportLightDto
+  SiteReportLightDto,
+  SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { singularEntityNameToPlural } from "@/helpers/entity";
+import { pluralEntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
 import { ReportsModelNames, Status } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 const StatusMapping: { [index: string]: Status } = {
   due: "edit",
@@ -51,9 +55,9 @@ const StatusMapping: { [index: string]: Status } = {
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
 
-export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto) & {
+export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto) & {
   completionStatus: string;
-  type: "site-report" | "nursery-report" | "project-report";
+  type: "site-report" | "nursery-report" | "project-report" | "srp-report";
   parentName: string;
 };
 
@@ -66,7 +70,7 @@ export type TaskReports = {
 
 const mapTaskReport =
   (format: ReturnType<typeof useDate>["format"]) =>
-  (report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto): TaskReport => {
+  (report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto): TaskReport => {
     let completionStatus = "started";
     const { status: reportStatus, updateRequestStatus } = report;
     // If there is no submitted update request in play, then the report status is the source of
@@ -117,14 +121,16 @@ const ReportingTaskPage = () => {
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
   const [reportsTableData, setReportsTableData] = useState([] as TaskReport[]);
+  const [srpReportsTableData, setSrpReportsTableData] = useState([] as TaskReport[]);
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids }] = useTask({
+  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids }] = useTask({
     id: reportingTaskUUID
   });
   const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
   const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });
   const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids });
+  const [, { data: srpReports }] = useLightSRPReportList({ ids: srpReportUuids });
   const [projectLoaded, { data: project }] = useFullProject({ id: projectUUID });
 
   const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
@@ -142,15 +148,23 @@ const ReportingTaskPage = () => {
   });
 
   const reports = useMemo(() => {
-    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])].map(mapTaskReport(format)).filter(report => {
-      for (const filter of filters) {
-        const value = report[filter.filter.accessorKey as keyof TaskReport];
-        if (value !== filter.value) {
-          return false;
+    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])]
+      // TODO TM-2581 See comment in EditEntityForm's onSuccess for submit. This will not be needed
+      // once we've switched over to v3 for submission.
+      .filter(isNotNull)
+      .map(mapTaskReport(format))
+      .filter(report => {
+        for (const filter of filters) {
+          const value = report[filter.filter.accessorKey as keyof TaskReport];
+          if (value !== filter.value) {
+            return false;
+          }
         }
-      }
-      return true;
-    });
+        return true;
+      });
+
+    const srpReportsMapped = srpReports?.map(mapTaskReport(format));
+    setSrpReportsTableData(srpReportsMapped ?? []);
 
     setReportsTableData(additional);
 
@@ -161,7 +175,7 @@ const ReportingTaskPage = () => {
       outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
       outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
     } as TaskReports;
-  }, [filters, format, nurseryReports, projectReport, siteReports]);
+  }, [filters, format, nurseryReports, projectReport, siteReports, srpReports]);
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
@@ -239,7 +253,7 @@ const ReportingTaskPage = () => {
           NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "project-report" || completion === 100);
 
         const handleClick = useCallback(() => {
-          nothingToReportHandler(singularEntityNameToPlural(type) as ReportsModelNames, uuid);
+          nothingToReportHandler(pluralEntityName(type) as ReportsModelNames, uuid);
         }, [type, uuid]);
 
         return (
@@ -277,6 +291,89 @@ const ReportingTaskPage = () => {
     }
   ];
 
+  const tableColumnsSRP: ColumnDef<RowData>[] = [
+    {
+      accessorKey: "projectName",
+      header: t("Report")
+    },
+    {
+      accessorKey: "completionStatus",
+      header: t("Status"),
+      cell: props => {
+        const value = props.getValue() as string;
+        const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
+        if (!status) return null;
+
+        return (
+          <StatusPill status={status} className="w-fit">
+            <Text variant="text-bold-caption-100">{statusText}</Text>
+          </StatusPill>
+        );
+      }
+    },
+    {
+      accessorKey: "completion",
+      header: t("Completion"),
+      cell: props => {
+        return `${props.getValue()}%`;
+      }
+    },
+    {
+      accessorKey: "updatedAt",
+      header: t("Last Update")
+    },
+    {
+      accessorKey: "completionStatus",
+      id: "uuid",
+      header: "",
+      enableSorting: false,
+      cell: props => {
+        const record = props.row.original as TaskReport;
+        const { index } = props.row;
+        const { status, completion, uuid, completionStatus } = record;
+        const type = "srp-report";
+        const shouldShowButton =
+          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "srp-report" || completion === 100);
+
+        const handleClick = useCallback(() => {
+          nothingToReportHandler("srp-reports" as ReportsModelNames, uuid);
+        }, [uuid]);
+
+        return (
+          <div className="flex justify-end gap-4">
+            {shouldShowButton ? (
+              <Button id={`nothing-to-report-button-${index}`} variant="secondary" onClick={handleClick}>
+                {t("Nothing to report")}
+              </Button>
+            ) : null}
+            <Switch>
+              <Case condition={completionStatus === "not-started" || completionStatus === "nothing-to-report"}>
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+                  {t("Write report")}
+                </Button>
+              </Case>
+              <Case condition={["approved", "awaiting-approval"].includes(completionStatus)}>
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Completed Report")}
+                </Button>
+              </Case>
+              <Case condition={completionStatus === "needs-more-information"}>
+                <Button as={Link} href={`/reports/${type}/${uuid}`}>
+                  {t("View Feedback")}
+                </Button>
+              </Case>
+              <Default>
+                <Button as={Link} href={`/entity/${type}s/edit/${uuid}`}>
+                  {t("Continue report")}
+                </Button>
+              </Default>
+            </Switch>
+          </div>
+        );
+      }
+    }
+  ];
+
   return (
     projectLoaded && (
       <FrameworkProvider frameworkKey={project?.frameworkKey}>
@@ -289,6 +386,13 @@ const ReportingTaskPage = () => {
                 <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
               </PageCard>
             </PageSection>
+            {project?.frameworkKey === "ppc" && (
+              <PageSection>
+                <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
+                  <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
+                </PageCard>
+              </PageSection>
+            )}
             <PageSection>
               <PageCard title={t("Additional Reports")}>
                 <Table
@@ -336,6 +440,11 @@ const ReportingTaskPage = () => {
               onStart={() => setTourEnabled(true)}
               onFinish={() => setTourEnabled(false)}
             />
+            <br />
+            <br />
+            <br />
+
+            <PageFooter />
           </PageBody>
         </LoadingContainer>
       </FrameworkProvider>

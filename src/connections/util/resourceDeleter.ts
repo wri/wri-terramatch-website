@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import { ErrorPayload, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, ResourceType } from "@/store/apiSlice";
 
 export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiDataStore) =>
@@ -16,7 +16,7 @@ export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiD
  * condition and will often fail. Therefore, for deletions, we have this utility for handling
  * deletes more gracefully.
  */
-export const deleterAsync = <R, E, V extends RequestVariables, H extends {}>(
+export const deleterAsync = <R, E extends ErrorPayload | undefined, V extends RequestVariables, H extends {}>(
   type: ResourceType,
   endpoint: V3ApiEndpoint<R, E, V, H>,
   variablesFactory: (id: string) => V

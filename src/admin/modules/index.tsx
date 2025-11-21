@@ -12,7 +12,6 @@ import { StageEdit } from "@/admin/modules/stages/StageEdit";
 import { StageShow } from "@/admin/modules/stages/StageShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
-import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/ValidationPolygonFileShow";
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
@@ -44,6 +43,8 @@ import SiteReportShow from "./siteReports/components/SiteReportShow";
 import { SiteReportsList } from "./siteReports/components/SiteReportsList";
 import SiteShow from "./sites/components/SiteShow";
 import { SitesList } from "./sites/components/SitesList";
+import { SRPReportList } from "./srpReport/SRPReportList";
+import SRPReportShow from "./srpReport/SRPReportShow";
 import UserCreate from "./user/components/UserCreate";
 import UserEdit from "./user/components/UserEdit";
 import { UserList } from "./user/components/UserList";
@@ -167,11 +168,6 @@ const audit = {
   ResourceName: "audit"
 };
 
-const validatePolygonFile = {
-  ResourceName: "validatePolygonFile",
-  List: ValidatePolygonFileShow
-};
-
 const impactStories = {
   ResourceName: "impactStories",
   List: ImpactStoriesList,
@@ -183,6 +179,13 @@ const disturbanceReport = {
   ResourceName: "disturbanceReport",
   List: DisturbanceReportList,
   Show: DisturbanceReportShow,
+  Edit: EntityEdit
+};
+
+const srpReport = {
+  ResourceName: "srpReport",
+  List: SRPReportList,
+  Show: SRPReportShow,
   Edit: EntityEdit
 };
 
@@ -204,9 +207,9 @@ const modules = {
   nurseryReport,
   financialReport,
   audit,
-  validatePolygonFile,
   impactStories,
-  disturbanceReport
+  disturbanceReport,
+  srpReport
 };
 
 export default modules;

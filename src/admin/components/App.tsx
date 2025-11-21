@@ -177,12 +177,6 @@ const App = () => {
         {isAdmin && (
           <>
             <Resource name={modules.audit.ResourceName} />
-            <Resource
-              name={modules.validatePolygonFile.ResourceName}
-              list={modules.validatePolygonFile.List}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
-              options={{ label: "Test Polygon" }}
-            />
           </>
         )}
         <Resource
@@ -192,6 +186,14 @@ const App = () => {
           edit={modules.impactStories.Edit}
           icon={() => <Icon className="h-8 w-8" name={IconNames.PROJECTS} />}
           options={{ label: "Impact Stories" }}
+        />
+        <Resource
+          name={modules.srpReport.ResourceName}
+          list={modules.srpReport.List}
+          show={modules.srpReport.Show}
+          edit={modules.srpReport.Edit}
+          icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
+          options={{ label: "SRP Reports" }}
         />
       </Admin>
     </LoadingProvider>

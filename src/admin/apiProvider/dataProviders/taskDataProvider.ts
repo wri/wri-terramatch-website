@@ -22,6 +22,7 @@ export const taskDataProvider: DataProvider = {
       projectReportUuid,
       siteReportUuids,
       nurseryReportUuids,
+      srpReportUuids,
       loadFailure
     } = await loadTask({
       id: params.id
@@ -30,6 +31,8 @@ export const taskDataProvider: DataProvider = {
       throw v3ErrorForRA("Task get fetch failed", loadFailure);
     }
 
-    return { data: { ...task, projectReportUuid, siteReportUuids, nurseryReportUuids, id: task!.uuid } };
+    return {
+      data: { ...task, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids, id: task!.uuid }
+    };
   }
 };

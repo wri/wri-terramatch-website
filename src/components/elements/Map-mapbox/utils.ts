@@ -6,18 +6,19 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
   fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
-  fetchPostV2TerrafundPolygon,
-  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType,
-  fetchPostV2TerrafundSitePolygonUuidSiteUuid
+  fetchPostV2TerrafundPolygon, // will be deprecated in the future, currently used for project creation
+  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -898,6 +899,35 @@ export const zoomToBbox = (bbox: BBox, map: mapboxgl.Map, hasControls: boolean, 
   }
 };
 
+export const zoomToCenter = (center: [number, number], zoom: number, map: mapboxgl.Map) => {
+  if (!map || !center || zoom === undefined) {
+    return;
+  }
+
+  const [lng, lat] = center;
+
+  if (lng < -180 || lng > 180 || lat < -90 || lat > 90) {
+    Log.warn(
+      "zoomToCenter: Invalid geographic coordinates detected. Expected longitude between -180/180 and latitude between -90/90, but received:",
+      center
+    );
+    return;
+  }
+
+  if (zoom < 0 || zoom > 22) {
+    Log.warn("zoomToCenter: Invalid zoom level. Expected between 0 and 22, but received:", zoom);
+    return;
+  }
+
+  try {
+    map.setCenter([lng, lat]);
+    map.setZoom(zoom);
+  } catch (error) {
+    Log.warn("zoomToCenter: Error occurred while setting center and zoom:", error);
+    return;
+  }
+};
+
 export const formatPlannedStartDate = (plantStartDate: Date | null | undefined): string => {
   return plantStartDate != null
     ? plantStartDate.toLocaleDateString("en-US", {
@@ -950,14 +980,15 @@ export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePol
   indicators: [],
   siteName: sitePolygonData.site_name ?? null,
   versionName: sitePolygonData.version_name ?? null,
-  practice: sitePolygonData.practice ?? null,
+  practice: sitePolygonData.practice?.split(",") ?? null,
   targetSys: sitePolygonData.target_sys ?? null,
-  distr: sitePolygonData.distr ?? null,
+  distr: sitePolygonData.distr?.split(",") ?? null,
   numTrees: sitePolygonData.num_trees ?? null,
   source: sitePolygonData.source ?? null,
   validationStatus: sitePolygonData.validation_status?.toString() ?? null,
   primaryUuid: sitePolygonData.primary_uuid ?? null,
-  uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? ""
+  uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? "",
+  disturbanceableId: null
 });
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
@@ -1070,25 +1101,41 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
 export async function storePolygon(
   geojson: any,
   record: any,
-  refetch: any,
   setPolygonFromMap?: any,
-  refreshEntity?: any
+  refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
-    const response = await fetchPostV2TerrafundPolygon({
-      body: { geometry: JSON.stringify(geojson[0].geometry) }
-    });
-    const polygonUUID = response.uuid;
-    if (polygonUUID) {
-      const site_id = record.uuid;
-      fetchPostV2TerrafundSitePolygonUuidSiteUuid({
-        body: {},
-        pathParams: { uuid: polygonUUID, siteUuid: site_id }
-      }).then(() => {
-        refreshEntity?.();
-        refetch();
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
-      });
+    const payload = {
+      geometries: [
+        {
+          type: "FeatureCollection" as const,
+          features: [
+            {
+              type: "Feature" as const,
+              geometry: geojson[0].geometry as any,
+              properties: {
+                site_id: record.uuid
+              }
+            }
+          ]
+        }
+      ]
+    };
+
+    try {
+      const result = await (createSitePolygonsResource as any)(payload);
+
+      ApiSlice.pruneCache("sitePolygons");
+
+      if (refetchSitePolygons) {
+        await refetchSitePolygons();
+      }
+      if (setPolygonFromMap) {
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true });
+      }
+    } catch (error) {
+      console.error("Failed to create site polygon:", error);
+      throw error;
     }
   }
 }
@@ -1184,16 +1231,34 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
     .addTo(map);
 };
 
+export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
+  if (!map) return undefined;
+  try {
+    const styleUrl = (map as any).style?.url || (map as any).style?.name;
+    if (styleUrl) {
+      if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) {
+        return MapStyle.Street;
+      }
+      if (styleUrl === MapStyle.Satellite || styleUrl.includes("clv3bkxut01y301pk317z5afu")) {
+        return MapStyle.Satellite;
+      }
+    }
+  } catch (e) {
+    Log.warn("Error getting current map style:", e);
+  }
+  return undefined;
+};
+
 export const setMapStyle = (
   style: MapStyle,
   map: mapboxgl.Map,
   setCurrentStyle: (style: MapStyle) => void,
-  currentStyle: string
+  currentStyle: string | MapStyle
 ) => {
   if (map && currentStyle !== style) {
+    setCurrentStyle(style);
     map.setStyle(style);
     updateMapProjection(map, style);
-    setCurrentStyle(style);
   }
 };
 

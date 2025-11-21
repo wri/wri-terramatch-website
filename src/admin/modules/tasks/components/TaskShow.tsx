@@ -1,7 +1,7 @@
 import { Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { useT } from "@transifex/react";
-import React, { FC, useRef } from "react";
+import React, { FC, useCallback, useRef } from "react";
 import { Show, ShowButton, useShowContext } from "react-admin";
 
 import ModalBulkApprove from "@/admin/components/extensive/Modal/ModalBulkApprove";
@@ -16,7 +16,8 @@ import {
   useLightNurseryReportList,
   useLightProjectReport,
   useLightSiteReport,
-  useLightSiteReportList
+  useLightSiteReportList,
+  useLightSRPReport
 } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { APPROVED } from "@/constants/statuses";
@@ -25,7 +26,8 @@ import { useNotificationContext } from "@/context/notification.provider";
 import {
   NurseryReportLightDto,
   ProjectReportLightDto,
-  SiteReportLightDto
+  SiteReportLightDto,
+  SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
@@ -41,7 +43,7 @@ const ReadableStatus: { [index: string]: string } = {
 };
 
 type ReportRowProps = {
-  report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto;
+  report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto;
   typeLabel: string;
   parentName: string;
   resource: string;
@@ -105,6 +107,12 @@ const NurseryReportRow: FC<{ uuid: string }> = ({ uuid }) => {
   return (
     <ReportRow report={data} typeLabel="Nursery Report" parentName={data.nurseryName ?? ""} resource="nurseryReport" />
   );
+};
+
+const SrpReportRow: FC<{ uuid: string }> = ({ uuid }) => {
+  const [, { data }] = useLightSRPReport({ id: uuid });
+  if (data == null) return null;
+  return <ReportRow report={data} typeLabel="SRP Report" parentName={data.projectName ?? ""} resource="srpReport" />;
 };
 
 type SelectedItem = {
@@ -238,15 +246,18 @@ function ShowReports() {
     );
   };
 
-  useRequestComplete(taskIsUpdating, () => {
-    if (taskUpdateFailure == null) {
-      openNotification("success", "Reports approved successfully", "");
-      closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
-      closeModal(ModalId.APPROVE_POLYGONS);
-    } else {
-      openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
-    }
-  });
+  useRequestComplete(
+    taskIsUpdating,
+    useCallback(() => {
+      if (taskUpdateFailure == null) {
+        openNotification("success", "Reports approved successfully", "");
+        closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
+        closeModal(ModalId.APPROVE_POLYGONS);
+      } else {
+        openNotification("error", "Failed to approve reports", taskUpdateFailure.message ?? "An error occurred");
+      }
+    }, [closeModal, openNotification, taskUpdateFailure])
+  );
 
   return isLoading ? null : (
     <Card sx={{ padding: 4 }}>
@@ -296,6 +307,9 @@ function ShowReports() {
             ))}
             {task.nurseryReportUuids?.map((uuid: string) => (
               <NurseryReportRow key={uuid} uuid={uuid} />
+            ))}
+            {task.srpReportUuids?.map((uuid: string) => (
+              <SrpReportRow key={uuid} uuid={uuid} />
             ))}
           </TableBody>
         </Table>

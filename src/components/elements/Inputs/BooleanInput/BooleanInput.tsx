@@ -3,10 +3,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import { InputProps } from "@/components/elements/Inputs/Input/Input";
 import RadioGroup from "@/components/elements/Inputs/RadioGroup/RadioGroup";
-import { FormField } from "@/components/extensive/WizardForm/types";
 
-export interface BooleanInputProps extends Omit<InputProps, "defaultValue">, UseControllerProps {
-  fields: FormField[];
+export interface BooleanInputProps extends Omit<InputProps, "defaultValue" | "type">, UseControllerProps {
   formHook: UseFormReturn;
   onChangeCapture: () => void;
 }

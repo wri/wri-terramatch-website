@@ -7,11 +7,11 @@ import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import ImageGalleryItem from "@/components/elements/ImageGallery/ImageGalleryItem";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import Text from "@/components/elements/Text/Text";
-import ModalAddImages from "@/components/extensive/Modal/ModalAddImages";
+import ModalAddImages, { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { deleteMedia } from "@/connections/Media";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
@@ -21,16 +21,6 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
   entity?: EntityName;
 }
-
-const formatEntityForUpload = (entity: string) => {
-  if (entity === "projectReports") {
-    return "project-reports";
-  }
-  if (entity === "siteReports") {
-    return "site-reports";
-  }
-  return entity;
-};
 
 const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const t = useT();
@@ -49,7 +39,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
-      const requestFilters: HookFilters<typeof useMedias> = {};
+      const requestFilters: HookFilters<typeof useMedias> = { fileType: "media" };
       if (filter !== "all") {
         requestFilters.isPublic = filter === "public";
       } else {
@@ -86,12 +76,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ])
   );
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      refetch?.();
-    }
-  });
-
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -114,7 +98,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
             closeModal(ModalId.UPLOAD_IMAGES);
           }
         }}
-        model={formatEntityForUpload(resource)}
+        entity={resource as FileUploadEntity}
         collection="media"
         entityData={ctx?.record}
         setErrorMessage={message => {
@@ -141,7 +125,14 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           onGalleryStateChange={pagination => {
             setPagination(pagination);
           }}
-          onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+          onDeleteConfirm={async uuid => {
+            try {
+              await deleteMedia(uuid);
+              refetch?.();
+            } catch (error) {
+              Log.error(error);
+            }
+          }}
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}

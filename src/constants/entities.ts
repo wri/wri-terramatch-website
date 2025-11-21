@@ -7,3 +7,6 @@ export const NURSERY_REPORT = "Nursery_Report";
 export const SITE_REPORT = "Site_Report";
 export const PROJECT_REPORT = "Project_Report";
 export const ENTITY_REPORT = "Report";
+export const DISTURBANCE_REPORT = "Disturbance_Report";
+export const SRP_REPORT = "Srp_Report";
+export const FINANCIAL_REPORT = "Financial_Report";

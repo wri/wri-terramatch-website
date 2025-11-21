@@ -112,9 +112,10 @@ const Menu = (props: MenuProps) => {
     }
     const bottom = menuContainerRef.current.getBoundingClientRect().bottom;
     const heightMenu = menuRef.current.getBoundingClientRect().height;
-
+    const left = menuContainerRef.current.getBoundingClientRect().left;
     return {
-      top: bottom - heightMenu
+      top: bottom - heightMenu,
+      left: left + 35
     };
   };
 
@@ -212,7 +213,7 @@ const Menu = (props: MenuProps) => {
         <div
           ref={menuRef}
           className={tw(
-            "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
+            "fixed z-40 flex flex-col gap-1 overflow-auto rounded-lg border border-[#A1A1A1] bg-white p-2 shadow-[0_0_5px_0_rgba(0,0,0,0.2)]",
             variant,
             classNameContentMenu
           )}

@@ -1,9 +1,6 @@
-// eslint-disable-next-line no-unused-vars
 import c from "case";
 import { get, memoize, uniqBy } from "lodash";
 import { AnyObjectSchema } from "yup";
-
-import { FormStepSchema } from "@/components/extensive/WizardForm/types";
 
 export const validateForm = (schema: AnyObjectSchema) => (values: any) => {
   let errors: { [index: string]: string } = {};
@@ -58,54 +55,6 @@ export const noEmptyElement = memoize((key: string) =>
     return null;
   })
 );
-
-/**
- * set conditional fields answer to true if it's a migrated record
- * @param answers
- * @param steps
- * @param migrated
- * @returns
- */
-export const setDefaultConditionalFieldsAnswers = (answers: any, steps: FormStepSchema[]) => {
-  const output = { ...answers };
-
-  steps.forEach(step => {
-    step.fields.forEach(fieldStep => {
-      if (fieldStep?.fieldProps && "fields" in fieldStep.fieldProps) {
-        let fieldsCount = 0;
-        let valueAlreadyCalculated = false;
-        fieldStep.fieldProps?.fields.forEach((fieldChildren: any) => {
-          if (valueAlreadyCalculated) {
-            return;
-          }
-          if (
-            Array.isArray(output[fieldChildren.name]) &&
-            output[fieldChildren.name]?.length > 0 &&
-            output[fieldStep.name] == null
-          ) {
-            output[fieldStep.name] = true;
-            valueAlreadyCalculated = true;
-          }
-          if (output[fieldStep.name] == true) {
-            if (
-              (Array.isArray(output[fieldChildren.name]) && output[fieldChildren.name]?.length < 1) ||
-              output[fieldChildren.name] == null ||
-              output[fieldChildren.name] == "" ||
-              output[fieldChildren.name] == 0
-            ) {
-              fieldsCount++;
-            }
-          }
-          if ("fields" in fieldStep.fieldProps && fieldsCount == fieldStep.fieldProps?.fields?.length) {
-            output[fieldStep.name] = false;
-          }
-        });
-      }
-    });
-  });
-
-  return output;
-};
 
 /**
  * convert object keys to snake_case

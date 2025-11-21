@@ -10,6 +10,7 @@ import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/M
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -20,10 +21,9 @@ import {
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
   useGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid,
-  usePostV2TerrafundValidationPolygon
+  usePostV2TerrafundClipPolygonsPolygonUuid
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -77,37 +77,35 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
-  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation, setPolygonCriteriaMap } =
-    contextMapArea;
+  const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
 
-  const { mutate: getValidations } = usePostV2TerrafundValidationPolygon({
-    onSuccess: async (data: any) => {
-      setCheckPolygonValidation(false);
-      setPolygonCriteriaMap((oldPolygonMap: any) => ({
-        ...oldPolygonMap,
-        [data.polygon_id]: data
-      }));
+  const runPolygonValidation = async () => {
+    try {
+      showLoader();
+      await createPolygonValidation({
+        polygonUuids: [polygonSelected]
+      });
 
-      if (data.polygon_id) {
-        context?.reloadSiteData?.();
-        ApiSlice.pruneCache("validations", [polygonSelected]);
-      }
+      setCheckPolygonValidation(false);
+      setShouldRefetchValidation(true);
+      context?.reloadSiteData?.();
+      ApiSlice.pruneCache("validations", [polygonSelected]);
+
       openNotification(
         "success",
         t("Success! TerraMatch reviewed the polygon"),
         t("Please update and re-run if validations fail.")
       );
       hideLoader();
-    },
-    onError: () => {
+    } catch (error) {
       setCheckPolygonValidation(false);
       hideLoader();
       openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
     }
-  });
+  };
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
 
   const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
@@ -158,8 +156,7 @@ const PolygonDrawer = ({
 
   useEffect(() => {
     if (checkPolygonValidation) {
-      showLoader();
-      getValidations({ queryParams: { uuid: polygonSelected } });
+      runPolygonValidation();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkPolygonValidation]);
@@ -219,7 +216,7 @@ const PolygonDrawer = ({
   }, [isOpenPolygonDrawer, refetchPolygonVersions]);
 
   useEffect(() => {
-    if (selectedPolygonData && isEmpty(selectedPolygonData as SitePolygon) && isEmpty(polygonSelected)) {
+    if (selectedPolygonData && isEmpty(selectedPolygonData) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
     }
   }, [polygonSelected, selectPolygonVersion, selectedPolygonData]);

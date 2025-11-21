@@ -1,6 +1,7 @@
 import { useMediaQuery } from "@mui/material";
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
+import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { When } from "react-if";
@@ -9,6 +10,8 @@ import Button from "@/components/elements/Button/Button";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { DashboardGetProjectsData, MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { MapStyle } from "@/components/elements/Map-mapbox/MapControls/types";
+import { getCurrentMapStyle } from "@/components/elements/Map-mapbox/utils";
 import Table from "@/components/elements/Table/Table";
 import {
   VARIANT_TABLE_DASHBOARD_COUNTRIES,
@@ -118,6 +121,9 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     setProjectUUID(filters.uuid);
   });
   const [currentBbox, setCurrentBbox] = useState<BBox | undefined>(initialBbox);
+  const [currentCenter, setCurrentCenter] = useState<[number, number] | undefined>(undefined);
+  const [currentZoom, setCurrentZoom] = useState<number | undefined>(undefined);
+  const [currentMapStyle, setCurrentMapStyle] = useState<MapStyle | undefined>(MapStyle.Street);
   const [selectedStoryId, setSelectedStoryId] = useState<string | undefined>(undefined);
   const [pendingStoryData, setPendingStoryData] = useState<any>(null);
   const [, { data: impactStory, loadFailure }] = useDashboardImpactStory({ id: selectedStoryId });
@@ -179,19 +185,88 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   });
 
   const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(value, max));
+
+  useEffect(() => {
+    const { map } = dashboardMapFunctions;
+    const currentMap = map.current as mapboxgl.Map;
+
+    if (!currentMap || !dashboardMapLoaded) return;
+
+    const syncMapState = () => {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+      const style = getCurrentMapStyle(currentMap);
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+      if (style) {
+        setCurrentMapStyle(style);
+      }
+    };
+
+    syncMapState();
+
+    currentMap.on("moveend", syncMapState);
+    currentMap.on("zoomend", syncMapState);
+    currentMap.on("style.load", syncMapState);
+
+    return () => {
+      currentMap.off("moveend", syncMapState);
+      currentMap.off("zoomend", syncMapState);
+      currentMap.off("style.load", syncMapState);
+    };
+  }, [dashboardMapFunctions, dashboardMapLoaded]);
+
+  const handleDashboardStyleChange = (style: MapStyle) => {
+    setCurrentMapStyle(style);
+  };
+
+  useEffect(() => {
+    const { map } = modalMapFunctions;
+    const currentMap = map.current as mapboxgl.Map;
+
+    if (!currentMap || !modalMapLoaded) return;
+
+    const handleMoveEnd = () => {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+    };
+
+    currentMap.on("moveend", handleMoveEnd);
+    currentMap.on("zoomend", handleMoveEnd);
+
+    return () => {
+      currentMap.off("moveend", handleMoveEnd);
+      currentMap.off("zoomend", handleMoveEnd);
+    };
+  }, [modalMapFunctions, modalMapLoaded]);
+
+  const handleModalStyleChange = (style: MapStyle) => {
+    setCurrentMapStyle(style);
+  };
+
   const handleCloseModal = () => {
     const { map } = modalMapFunctions;
-    const bounds = (map.current as mapboxgl.Map).getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
+    const currentMap = map.current as mapboxgl.Map;
+    if (currentMap) {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
 
-    const clampedSwLng = clamp(sw.lng, -180, 180);
-    const clampedSwLat = clamp(sw.lat, -90, 90);
-    const clampedNeLng = clamp(ne.lng, -180, 180);
-    const clampedNeLat = clamp(ne.lat, -90, 90);
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
 
-    const modalBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
-    setCurrentBbox(modalBbox);
+      setCurrentCenter([clampedLng, clampedLat]);
+      setCurrentZoom(zoom);
+    }
   };
 
   const columnsModalImpactStories = [
@@ -251,16 +326,29 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   ];
   const ModalMap = () => {
     const { map } = dashboardMapFunctions;
-    const bounds = (map.current as mapboxgl.Map).getBounds();
-    const sw = bounds.getSouthWest();
-    const ne = bounds.getNorthEast();
+    const currentMap = map.current as mapboxgl.Map;
 
-    const clampedSwLng = clamp(sw.lng, -180, 180);
-    const clampedSwLat = clamp(sw.lat, -90, 90);
-    const clampedNeLng = clamp(ne.lng, -180, 180);
-    const clampedNeLat = clamp(ne.lat, -90, 90);
+    let dashboardCenter: [number, number] | undefined = undefined;
+    let dashboardZoom: number | undefined = undefined;
+    let dashboardStyle: MapStyle | undefined = undefined;
 
-    const dashboardBbox: BBox = [clampedSwLng, clampedSwLat, clampedNeLng, clampedNeLat];
+    if (currentMap) {
+      const center = currentMap.getCenter();
+      const zoom = currentMap.getZoom();
+      const style = getCurrentMapStyle(currentMap);
+
+      const clampedLng = clamp(center.lng, -180, 180);
+      const clampedLat = clamp(center.lat, -90, 90);
+
+      dashboardCenter = [clampedLng, clampedLat];
+      dashboardZoom = zoom;
+      dashboardStyle = style || currentMapStyle;
+
+      if (style && style !== currentMapStyle) {
+        setCurrentMapStyle(style);
+      }
+    }
+
     const handleModalClose = (modalId: any) => {
       handleCloseModal();
       closeModal(modalId);
@@ -281,17 +369,25 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               polygonsData={polygonsData?.data as Record<string, string[]>}
               polygonsCentroids={polygonsData?.centroids}
               showImagesButton={showImagesButton}
-              bbox={dashboardBbox}
+              center={dashboardCenter || currentCenter}
+              zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
+              mapStyle={dashboardStyle !== undefined ? dashboardStyle : currentMapStyle}
+              onStyleChange={handleModalStyleChange}
               selectedCountry={selectedCountry}
               selectedLandscapes={selectedLandscapes}
               setLoader={setModalMapLoaded}
               projectUUID={projectUUID}
               hasAccess={hasAccess}
+              dashboardContext={{
+                setFilters,
+                dashboardCountries,
+                isDashboard: "modal"
+              }}
             />
           </LoadingContainerOpacity>
           <TooltipGridMap label="Angola" learnMore={true} />
           <When condition={!projectUUID}>
-            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg bg-white px-4 py-2">
+            <div className="absolute bottom-6 left-6 grid gap-2 rounded-lg border border-neutral-175 bg-white px-4 py-2">
               <div className="flex gap-2">
                 <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
                 <Text variant="text-12" className="text-darkCustom">
@@ -418,6 +514,10 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             polygonsCentroids={polygonsData?.centroids}
             showImagesButton={showImagesButton}
             bbox={currentBbox}
+            center={currentCenter}
+            zoom={currentZoom}
+            mapStyle={currentMapStyle}
+            onStyleChange={handleDashboardStyleChange}
             selectedCountry={selectedCountry}
             setLoader={setDashboardMapLoaded}
             selectedLandscapes={selectedLandscapes}
@@ -426,7 +526,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           />
         </LoadingContainerOpacity>
         <When condition={!projectUUID}>
-          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded-lg bg-white px-4 py-2 mobile:hidden">
+          <div className="z[1] absolute bottom-8 left-6 grid gap-2 rounded border border-neutral-175 bg-white px-4 py-2 mobile:hidden">
             <div className="flex gap-2">
               <Icon name={IconNames.IC_LEGEND_MAP} className="h-4.5 w-4.5 text-tertiary-800" />
               <Text variant="text-12" className="text-darkCustom">
@@ -651,14 +751,20 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         ) : transformedStories.length > 0 ? (
           <div className="-mr-2 max-h-[513px] overflow-scroll pr-2 lg:max-h-[520px] wide:max-h-[560px]">
             <List
-              items={transformedStories}
+              items={
+                transformedStories as {
+                  thumbnail?: string;
+                  title: string;
+                  organization: { name: string; country: string };
+                }[]
+              }
               render={item => (
                 <button
                   onClick={() => ModalStoryOpen(item)}
                   className="group flex w-full items-center gap-4 rounded-lg border border-neutral-200 p-4 hover:shadow-monitored mobile:items-start mobile:border-transparent mobile:bg-grey-925 mobile:p-2"
                 >
                   <img
-                    src={item.thumbnail || "/images/no-image-available.png"}
+                    src={item.thumbnail ?? "/images/no-image-available.png"}
                     alt={item.title}
                     className="h-20 w-20 rounded-md object-cover"
                   />

@@ -2,7 +2,7 @@ import { createListenerMiddleware, createSlice, PayloadAction } from "@reduxjs/t
 import { QueryClient } from "@tanstack/react-query";
 import { compareDesc } from "date-fns";
 import { WritableDraft } from "immer";
-import { isNumber, isString, uniq } from "lodash";
+import { Dictionary, isNumber, isString, uniq } from "lodash";
 import isArray from "lodash/isArray";
 import { Store } from "redux";
 
@@ -51,7 +51,7 @@ const METHODS = ["GET", "DELETE", "POST", "PUT", "PATCH"] as const;
 export type Method = (typeof METHODS)[number];
 
 export type ApiPendingStore = {
-  [key in Method]: Record<string, Pending>;
+  [key in Method]: Dictionary<Pending>;
 };
 
 export type ApiFilteredIndexCache = {
@@ -122,7 +122,7 @@ export type IndexData = {
 
 export type ResponseMeta = {
   resourceType: ResourceType;
-  resourceId?: string;
+  resourceIds?: string[];
   indices?: IndexData[];
 };
 
@@ -137,7 +137,7 @@ export type IndexApiResponse = Omit<JsonApiResponse, "meta"> & {
 };
 
 export type DeleteApiResponse = Omit<JsonApiResponse, "meta" | "data"> & {
-  meta: Omit<ResponseMeta, "indices" | "resourceId"> & { resourceId: string };
+  meta: Omit<ResponseMeta, "indices" | "resourceIds"> & { resourceIds: string[] };
 };
 
 export type ApiDataStore = ApiResources & {
@@ -250,6 +250,7 @@ const pruneCache = (state: WritableDraft<ApiDataStore>, action: PayloadAction<Pr
   const { resource, ids, searchQuery } = action.payload;
   if (ids == null && searchQuery == null) {
     state[resource] = {};
+    state.meta.indices[resource] = {};
     return;
   }
 
@@ -271,7 +272,7 @@ const isIndexResponse = (method: string, response: JsonApiResponse): response is
   method === "GET" && isArray(response.data) && response.meta.indices != null && response.meta.indices.length > 0;
 
 const isDeleteResponse = (method: string, response: JsonApiResponse): response is DeleteApiResponse =>
-  method === "DELETE" && response.meta.resourceId != null;
+  method === "DELETE" && response.meta.resourceIds != null;
 
 export const apiSlice = createSlice({
   name: "api",
@@ -302,7 +303,7 @@ export const apiSlice = createSlice({
 
       if (isDeleteResponse(method, response)) {
         const resource = response.meta.resourceType;
-        const ids = [response.meta.resourceId];
+        const ids = response.meta.resourceIds;
         pruneCache(state, apiSlice.actions.pruneCache({ resource, ids }));
         state.meta.deleted[resource] = uniq([...state.meta.deleted[resource], ...ids]);
         return;

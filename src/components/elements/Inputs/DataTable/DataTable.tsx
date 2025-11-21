@@ -11,8 +11,10 @@ import Table from "@/components/elements/Table/Table";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { FieldType, FormField } from "@/components/extensive/WizardForm/types";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
+import WizardFormProvider, { FormFieldsProvider } from "@/context/wizardForm.provider";
+import { isNotNull } from "@/utils/array";
 
 declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,7 +27,7 @@ declare module "@tanstack/react-table" {
 export interface DataTableProps<TData extends RowData & { uuid: string }> extends Omit<InputWrapperProps, "errors"> {
   modalTitle?: string;
   modalEditTitle?: string;
-  fields: FormField[];
+  fieldsProvider: FormFieldsProvider;
   addButtonCaption: string;
   tableColumns: AccessorKeyColumnDef<TData>[];
   value: TData[];
@@ -43,7 +45,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
   const { openModal, closeModal } = useModalContext();
   const {
-    fields,
+    fieldsProvider,
     addButtonCaption,
     tableColumns,
     value,
@@ -62,7 +64,9 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   const openFormModalHandler = () => {
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal title={props.modalTitle || props.addButtonCaption} fields={fields} onSubmit={onAddNewEntry} />
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        <FormModal title={props.modalTitle || props.addButtonCaption} onSubmit={onAddNewEntry} />
+      </WizardFormProvider>
     );
   };
 
@@ -70,15 +74,16 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     const rowValues = props.row.original;
     openModal(
       ModalId.FORM_MODAL,
-      <FormModal
-        title={modalEditTitle}
-        fields={fields}
-        defaultValues={rowValues}
-        onSubmit={updatedValues => {
-          handleUpdate?.({ ...rowValues, ...updatedValues });
-          closeModal(ModalId.FORM_MODAL);
-        }}
-      />
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        <FormModal
+          title={modalEditTitle}
+          defaultValues={rowValues}
+          onSubmit={updatedValues => {
+            handleUpdate?.({ ...rowValues, ...updatedValues });
+            closeModal(ModalId.FORM_MODAL);
+          }}
+        />
+      </WizardFormProvider>
     );
   };
 
@@ -106,6 +111,10 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
   );
 
   const headers = useMemo<ColumnDef<TData>[]>(() => {
+    const fields = fieldsProvider
+      .fieldNames(fieldsProvider.stepIds()[0])
+      .map(fieldsProvider.fieldByName)
+      .filter(isNotNull);
     return [
       {
         accessorKey: "index",
@@ -113,11 +122,14 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
         cell: props => (props.getValue() as number) + 1
       },
       ...tableColumns.map(header => {
-        const field = fields.find(field => field.name === header.accessorKey);
-        if (field?.type === FieldType.Dropdown) {
-          if (!header.cell) {
-            header.cell = props =>
-              field.fieldProps.options.find(option => option.value === props.getValue())?.title || props.getValue();
+        const field = fields.find(({ name }) => name === header.accessorKey);
+        if (field?.inputType === "select") {
+          if (header.cell == null) {
+            header.cell = props => {
+              const value = props.getValue();
+              if (field.options == null) return value;
+              return toFormOptions(field.options).find(option => option.value === value)?.title ?? value;
+            };
           }
           header.id = field.name;
         }
@@ -144,7 +156,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
       }
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fields, tableColumns]);
+  }, [fieldsProvider, tableColumns]);
 
   return (
     <InputWrapper {...inputWrapperProps}>

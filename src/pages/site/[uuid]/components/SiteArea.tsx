@@ -86,7 +86,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
   };
 
   return (
-    <div className="flex h-[500px] rounded-lg text-darkCustom wide:h-[700px]">
+    <div className="relative flex h-[650px] rounded-lg text-darkCustom wide:h-[1225px]">
       <div className="relative h-auto w-auto">
         <When condition={!!selectedPolyVersion && openModalConfirmation}>
           <div className="absolute top-5 left-[43vw] z-20 text-center">

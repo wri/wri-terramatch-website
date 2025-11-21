@@ -61,21 +61,22 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
       setTreesPlanted(polygonData.num_trees ?? 0);
       setCalculatedArea(polygonData.calc_area ?? 0);
       const restorationPracticeArray = polygonData?.practice
-        ? polygonData?.practice.split(",").map(function (item) {
+        ? (polygonData.practice as unknown as string[]).map(function (item: string) {
             return item.trim();
           })
         : [];
       setRestorationPractice(restorationPracticeArray);
 
       const targetLandUseSystemArray = polygonData?.target_sys
-        ? polygonData?.target_sys.split(",").map(function (item) {
+        ? polygonData.target_sys.split(",").map(function (item: string) {
             return item.trim();
           })
         : [];
+
       setTargetLandUseSystem(targetLandUseSystemArray);
 
       const treeDistributionArray = polygonData?.distr
-        ? polygonData?.distr.split(",").map(function (item) {
+        ? (polygonData.distr as unknown as string[]).map(function (item: string) {
             return item.trim();
           })
         : [];

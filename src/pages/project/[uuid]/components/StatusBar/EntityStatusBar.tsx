@@ -23,8 +23,7 @@ const StatusMapping: { [index: string]: Status } = {
   awaiting: "awaiting",
   pending: "awaiting",
   "needs-more-information": "warning",
-  "nothing-to-report": "warning",
-  "restoration-in-progress": "restoration"
+  "nothing-to-report": "warning"
 };
 
 const EntityStatusBar = ({ entityName, entity }: EntityStatusBarProps) => {

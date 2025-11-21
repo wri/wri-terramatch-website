@@ -9,15 +9,35 @@ import {
 } from "@/types/validation";
 
 export const parseV3ValidationData = (criteriaData: ValidationDto): ICriteriaCheckItem[] => {
-  return criteriaData.criteriaList.map((criteria: ValidationCriteriaDto): ICriteriaCheckItem => {
-    return {
-      id: criteria.criteriaId,
-      date: criteria.createdAt,
-      status: criteria.valid,
-      label: validationLabels[criteria.criteriaId],
-      extra_info: criteria.extraInfo
-    };
+  const existingValidations = new Map<number, ICriteriaCheckItem>(
+    criteriaData.criteriaList.map((criteria: ValidationCriteriaDto) => [
+      criteria.criteriaId,
+      {
+        id: criteria.criteriaId,
+        date: criteria.createdAt ?? undefined,
+        status: criteria.valid,
+        label: validationLabels[criteria.criteriaId],
+        extra_info: criteria.extraInfo
+      }
+    ])
+  );
+
+  const transformedData: ICriteriaCheckItem[] = Object.entries(validationLabels).map(([id, label]) => {
+    const criteriaId = Number(id);
+    const existingValidation = existingValidations.get(criteriaId);
+
+    return (
+      existingValidation ?? {
+        id: criteriaId,
+        date: undefined,
+        status: true,
+        label: String(label),
+        extra_info: null
+      }
+    );
   });
+
+  return transformedData;
 };
 
 export const parseValidationDataFromContext = (polygonValidation: any) => {

@@ -1,15 +1,8 @@
 import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 
-import { OptionValue } from "@/types/common";
-
-export type orgSubmission = {
-  uuid: string;
-  type: string;
-  currency: string;
-  start_month: string | number;
-  title?: string | null;
-};
+import { currencySymbol } from "@/constants/options/localCurrency";
+import { UploadedFile } from "@/types/common";
 
 export type BaseYearlyData = {
   uuid: string | null;
@@ -52,7 +45,7 @@ export type UseDebouncedChangeProps<T> = {
 };
 
 export type HandleChangePayload = {
-  value: string | number | null | File[];
+  value: string | number | null | File[] | UploadedFile[];
   row: number;
   cell: number;
 };
@@ -61,10 +54,19 @@ export type FinancialRow = {
   [key: string]: string | number | any;
 };
 
-export const profitAnalysisColumnsMap = ["year", "revenue", "expenses", "profit"];
-export const nonProfitAnalysisColumnsMap = ["year", "budget"];
-export const currentRatioColumnsMap = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-export const documentationColumnsMap = ["year", "description", "exchange_rate", "documentation"];
+export type DocumentationData = {
+  uuid: string | null;
+  year: number;
+  documentation: UploadedFile[];
+  description: string;
+  exchange_rate: number | null;
+  [key: string]: string | number | null | UploadedFile[];
+};
+
+export const PROFIT_ANALYSIS_COLUMNS = ["year", "revenue", "expenses", "profit"];
+export const NON_PROFILE_ANALYSIS_COLUMNS = ["year", "budget"];
+export const CURRENT_RATIO_COLUMNS = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
+export const DOCUMENTATION_COLUMNS = ["year", "description", "exchange_rate", "documentation"];
 
 export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }: UseDebouncedChangeProps<T>) {
   const debouncedFn = useMemo(() => debounce(onDebouncedChange, delay), [onDebouncedChange, delay]);
@@ -79,12 +81,7 @@ export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }:
   }, [value, debouncedFn]);
 }
 
-export function formatFinancialData(
-  rawData: any,
-  years: number[] | undefined,
-  selectCurrency: OptionValue | any,
-  currencyInput: string
-) {
+export function formatFinancialData(rawData: any, years: number[] | undefined, currency: any) {
   const profitCollections = ["revenue", "expenses", "profit"];
   const nonProfitCollections = ["budget"];
   const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
@@ -122,9 +119,9 @@ export function formatFinancialData(
   }
 
   const formatCurrency = (value: number) =>
-    value ? `${currencyInput?.[selectCurrency] ?? ""} ${Number(value).toLocaleString()}` : undefined;
+    value ? `${currencySymbol(currency)}${Number(value).toLocaleString()}` : undefined;
 
-  const finalData = {
+  return {
     profitAnalysisData: years?.map((year, index) => {
       const row = groupedData.profitAnalysisData[year] ?? {};
       return {
@@ -160,7 +157,7 @@ export function formatFinancialData(
         currentRatioUuid: row["current-ratio"]?.uuid
       };
     }),
-    documentationData: years?.map((year, index) => {
+    documentationData: years?.map((year, index): DocumentationData => {
       const row = groupedData.documentationData[year] ?? {};
       return {
         uuid: row?.uuid ?? index,
@@ -171,6 +168,4 @@ export function formatFinancialData(
       };
     })
   };
-
-  return finalData;
 }

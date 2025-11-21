@@ -1,5 +1,4 @@
 import { FC, HTMLAttributes } from "react";
-import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 
@@ -8,14 +7,11 @@ export interface InputDescriptionProps extends HTMLAttributes<HTMLParagraphEleme
   className?: string;
 }
 
-const InputDescription: FC<InputDescriptionProps> = ({ children, className, ...rest }) => {
-  return (
-    <When condition={!!children}>
-      <Text as="p" variant="text-body-400" className={className} containHtml {...rest}>
-        {children}
-      </Text>
-    </When>
+const InputDescription: FC<InputDescriptionProps> = ({ children, className, ...rest }) =>
+  children == null ? null : (
+    <Text as="p" variant="text-body-400" className={className} containHtml {...rest}>
+      {children}
+    </Text>
   );
-};
 
 export default InputDescription;

@@ -355,85 +355,6 @@ export const impactStoryGet = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories/{uuid}", "GET");
 
-export type MediaUpdatePathParams = {
-  /**
-   * Media UUID for media to retrieve
-   */
-  uuid: string;
-};
-
-export type MediaUpdateError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type MediaUpdateResponse = {
-  meta?: {
-    /**
-     * @example media
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example media
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.MediaDto;
-  };
-};
-
-export type MediaUpdateVariables = {
-  body: Schemas.MediaUpdateBody;
-  pathParams: MediaUpdatePathParams;
-};
-
-export const mediaUpdate = new V3ApiEndpoint<MediaUpdateResponse, MediaUpdateError, MediaUpdateVariables, {}>(
-  "/entities/v3/medias/{uuid}",
-  "PATCH"
-);
-
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -608,6 +529,16 @@ export type TaskGetResponse = {
          */
         id?: string;
       }[];
+      srpReports?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+      }[];
     };
   };
   included?: (
@@ -643,6 +574,17 @@ export type TaskGetResponse = {
          */
         id?: string;
         attributes?: Schemas.NurseryReportLightDto;
+      }
+    | {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
       }
   )[];
 };
@@ -806,7 +748,9 @@ export type UploadFilePathParams = {
     | "formQuestionOptions"
     | "fundingProgrammes"
     | "impactStories"
-    | "financialIndicators";
+    | "financialIndicators"
+    | "projectPitches"
+    | "disturbanceReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -829,6 +773,14 @@ export type UploadFileError = Fetcher.ErrorWrapper<
          * @example Bad Request
          */
         message: string;
+        /**
+         * A code to lookup the error message translation string on the client.
+         */
+        code?: string;
+        /**
+         * A set of variables to pass to the translation service.
+         */
+        variables?: Record<string, any>;
       };
     }
   | {
@@ -880,6 +832,7 @@ export type UploadFileResponse = {
 };
 
 export type UploadFileVariables = {
+  body: Schemas.MediaRequestBody;
   pathParams: UploadFilePathParams;
 };
 
@@ -889,6 +842,206 @@ export type UploadFileVariables = {
 export const uploadFile = new V3ApiEndpoint<UploadFileResponse, UploadFileError, UploadFileVariables, {}>(
   "/entities/v3/files/{entity}/{uuid}/{collection}",
   "POST"
+);
+
+export type MediaUpdatePathParams = {
+  /**
+   * Media UUID for media to retrieve
+   */
+  uuid: string;
+};
+
+export type MediaUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaUpdateResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export type MediaUpdateVariables = {
+  body: Schemas.MediaUpdateBody;
+  pathParams: MediaUpdatePathParams;
+};
+
+export const mediaUpdate = new V3ApiEndpoint<MediaUpdateResponse, MediaUpdateError, MediaUpdateVariables, {}>(
+  "/entities/v3/files/{uuid}",
+  "PATCH"
+);
+
+export type MediaDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaDeleteResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteError, {}, {}>(
+  "/entities/v3/files/{uuid}",
+  "DELETE"
+);
+
+export type MediaBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type MediaBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example media
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  };
+};
+
+export const mediaBulkDelete = new V3ApiEndpoint<MediaBulkDeleteResponse, MediaBulkDeleteError, {}, {}>(
+  "/entities/v3/files/bulkDelete",
+  "DELETE"
 );
 
 export type TreeScientificNamesSearchQueryParams = {
@@ -959,7 +1112,8 @@ export type EstablishmentTreesFindPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for which to retrieve the establishment tree data.
    */
@@ -1035,7 +1189,8 @@ export type TreeReportCountsFindPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for which to retrieve the associated report count data.
    */
@@ -1335,7 +1490,8 @@ export type EntityIndexPathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
 };
 
 export type EntityIndexQueryParams = {
@@ -1753,11 +1909,129 @@ export const entityIndex = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DisturbanceReportLightDto;
       }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example srpReports
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+      };
+      data?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportLightDto;
+      }[];
     },
   EntityIndexError,
   EntityIndexVariables,
   {}
 >("/entities/v3/{entity}", "GET");
+
+export type EntityCreatePathParams = {
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type EntityCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type EntityCreateResponse = {
+  meta?: {
+    /**
+     * @example disturbanceReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example disturbanceReports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.DisturbanceReportFullDto;
+  };
+};
+
+export type EntityCreateVariables = {
+  body: Schemas.EntityCreateBody;
+  pathParams: EntityCreatePathParams;
+};
+
+export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreateError, EntityCreateVariables, {}>(
+  "/entities/v3/{entity}",
+  "POST"
+);
 
 export type EntityGetPathParams = {
   /**
@@ -1771,7 +2045,8 @@ export type EntityGetPathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -1982,6 +2257,25 @@ export const entityGet = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DisturbanceReportFullDto;
       };
+    }
+  | {
+      meta?: {
+        /**
+         * @example srpReports
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example srpReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SrpReportFullDto;
+      };
     },
   EntityGetError,
   EntityGetVariables,
@@ -2000,7 +2294,8 @@ export type EntityDeletePathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2067,7 +2362,8 @@ export type EntityUpdatePathParams = {
     | "nurseryReports"
     | "siteReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for resource to retrieve
    */
@@ -2138,7 +2434,8 @@ export type EntityAssociationIndexPathParams = {
     | "siteReports"
     | "nurseryReports"
     | "financialReports"
-    | "disturbanceReports";
+    | "disturbanceReports"
+    | "srpReports";
   /**
    * Entity UUID for association
    */
@@ -2634,6 +2931,43 @@ export type OptionLabelsGetListError = Fetcher.ErrorWrapper<{
   };
 }>;
 
+export type OptionLabelsGetListResponse = {
+  meta?: {
+    /**
+     * @example optionLabels
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example optionLabels
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.OptionLabelDto;
+  }[];
+};
+
 export type OptionLabelsGetListVariables = {
   pathParams: OptionLabelsGetListPathParams;
 };
@@ -2642,40 +2976,29 @@ export type OptionLabelsGetListVariables = {
  * Get a list of option labels by list key
  */
 export const optionLabelsGetList = new V3ApiEndpoint<
-  undefined,
+  OptionLabelsGetListResponse,
   OptionLabelsGetListError,
   OptionLabelsGetListVariables,
   {}
 >("/forms/v3/optionLabels/{listKey}", "GET");
 
 export type LinkedFieldsIndexQueryParams = {
-  formTypes?: (
-    | "organisation"
-    | "financialReport"
-    | "disturbanceReport"
-    | "nursery"
-    | "nurseryReport"
-    | "project"
-    | "projectPitch"
-    | "projectReport"
-    | "site"
-    | "siteReport"
+  formModelTypes?: (
+    | "organisations"
+    | "financialReports"
+    | "disturbanceReports"
+    | "nurseries"
+    | "nurseryReports"
+    | "projects"
+    | "projectPitches"
+    | "projectReports"
+    | "sites"
+    | "siteReports"
+    | "srpReports"
   )[];
 };
 
-export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
+export type LinkedFieldsIndexError = Fetcher.ErrorWrapper<undefined>;
 
 export type LinkedFieldsIndexResponse = {
   meta?: {
@@ -2725,17 +3048,403 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
+export type FormIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  type?:
+    | "application"
+    | "disturbance-report"
+    | "financial-report"
+    | "project"
+    | "project-report"
+    | "site"
+    | "site-report"
+    | "nursery"
+    | "nursery-report"
+    | "srp-report";
+};
+
+export type FormIndexError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type FormIndexResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The current page number.
+       */
+      pageNumber?: number;
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormLightDto;
+  }[];
+};
+
+export type FormIndexVariables = {
+  queryParams?: FormIndexQueryParams;
+};
+
+/**
+ * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
+ */
+export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, FormIndexVariables, {}>(
+  "/forms/v3/forms",
+  "GET"
+);
+
+export type FormCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormCreateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormCreateVariables = {
+  body: Schemas.CreateFormBody;
+};
+
+/**
+ * Create a new form
+ */
+export const formCreate = new V3ApiEndpoint<FormCreateResponse, FormCreateError, FormCreateVariables, {}>(
+  "/forms/v3/forms",
+  "POST"
+);
+
+export type FormGetPathParams = {
+  /**
+   * Form uuid
+   */
+  uuid: string;
+};
+
+export type FormGetQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FormGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormGetResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormGetVariables = {
+  pathParams: FormGetPathParams;
+  queryParams?: FormGetQueryParams;
+};
+
+/**
+ * Get a form by uuid. Includes all sections and questions within the form.
+ */
+export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "GET"
+);
+
+export type FormDeletePathParams = {
+  uuid: string;
+};
+
+export type FormDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDeleteResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type FormDeleteVariables = {
+  pathParams: FormDeletePathParams;
+};
+
+export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError, FormDeleteVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "DELETE"
+);
+
+export type FormUpdatePathParams = {
+  uuid: string;
+};
+
+export type FormUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormUpdateResponse = {
+  meta?: {
+    /**
+     * @example forms
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example forms
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormFullDto;
+  };
+};
+
+export type FormUpdateVariables = {
+  body: Schemas.UpdateFormBody;
+  pathParams: FormUpdatePathParams;
+};
+
+/**
+ * Update a form
+ */
+export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError, FormUpdateVariables, {}>(
+  "/forms/v3/forms/{uuid}",
+  "PUT"
+);
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
-  medias: { mediaUpdate },
   tasks: { taskIndex, taskGet, taskUpdate },
-  fileUpload: { uploadFile },
+  files: { uploadFile, mediaUpdate, mediaDelete, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
-  entities: { entityIndex, entityGet, entityDelete, entityUpdate },
+  entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
-  linkedFields: { linkedFieldsIndex }
+  linkedFields: { linkedFieldsIndex },
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
 };

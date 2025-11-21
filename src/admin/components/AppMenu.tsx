@@ -60,14 +60,14 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "audit" })}>
         <Menu.ResourceItem name={modules.audit.ResourceName} />
       </div>
-      <div className={classNames({ "Sidebar-active": hash === "validationPolygon" })}>
-        <Menu.ResourceItem name={modules.validatePolygonFile.ResourceName} />
-      </div>
       <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
         <Menu.ResourceItem name={modules.impactStories.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "disturbanceReport" })}>
         <Menu.ResourceItem name={modules.disturbanceReport.ResourceName} />
+      </div>
+      <div className={classNames({ "Sidebar-active": hash === "srpReport" })}>
+        <Menu.ResourceItem name={modules.srpReport.ResourceName} />
       </div>
     </Menu>
   );

@@ -1,5 +1,5 @@
 import { useGetV2UpdateRequestsENTITYUUID } from "@/generated/apiComponents";
-import { pluralEntityNameToSingular } from "@/helpers/entity";
+import { singularEntityName } from "@/helpers/entity";
 import EntityStatusBar from "@/pages/project/[uuid]/components/StatusBar/EntityStatusBar";
 import UpdateRequestStatusBar from "@/pages/project/[uuid]/components/StatusBar/UpdateRequestStatusBar";
 import { EntityName } from "@/types/common";
@@ -13,7 +13,7 @@ const StatusBar = ({ entity, entityName }: EntityStatusBarProps) => {
   const { data: updateRequestData } = useGetV2UpdateRequestsENTITYUUID(
     {
       pathParams: {
-        entity: pluralEntityNameToSingular(entityName),
+        entity: singularEntityName(entityName),
         uuid: entity?.uuid
       }
     },

@@ -3,7 +3,6 @@ import {
   ProjectPitchDto,
   ImpactStoryLightDto,
   ImpactStoryFullDto,
-  MediaDto,
   TaskLightDto,
   TaskFullDto,
   ProjectReportLightDto,
@@ -12,6 +11,9 @@ import {
   SiteReportFullDto,
   NurseryReportLightDto,
   NurseryReportFullDto,
+  SrpReportLightDto,
+  SrpReportFullDto,
+  MediaDto,
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
@@ -32,17 +34,20 @@ import {
   InvasiveDto,
   StrataDto,
   OptionLabelDto,
-  LinkedFieldDto
+  LinkedFieldDto,
+  FormLightDto,
+  FormFullDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
   "projectPitches",
   "impactStories",
-  "media",
   "tasks",
   "projectReports",
   "siteReports",
   "nurseryReports",
+  "srpReports",
+  "media",
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
@@ -58,17 +63,19 @@ export const ENTITY_SERVICE_RESOURCES = [
   "invasives",
   "stratas",
   "optionLabels",
-  "linkedFields"
+  "linkedFields",
+  "forms"
 ] as const;
 
 export type EntityServiceApiResources = {
   projectPitches: StoreResourceMap<ProjectPitchDto>;
   impactStories: StoreResourceMap<ImpactStoryLightDto | ImpactStoryFullDto>;
-  media: StoreResourceMap<MediaDto>;
   tasks: StoreResourceMap<TaskLightDto | TaskFullDto>;
   projectReports: StoreResourceMap<ProjectReportLightDto | ProjectReportFullDto>;
   siteReports: StoreResourceMap<SiteReportLightDto | SiteReportFullDto>;
   nurseryReports: StoreResourceMap<NurseryReportLightDto | NurseryReportFullDto>;
+  srpReports: StoreResourceMap<SrpReportLightDto | SrpReportFullDto>;
+  media: StoreResourceMap<MediaDto>;
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
@@ -85,6 +92,7 @@ export type EntityServiceApiResources = {
   stratas: StoreResourceMap<StrataDto>;
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
+  forms: StoreResourceMap<FormLightDto | FormFullDto>;
 };
 
 export const TreeEntityTypes = {
@@ -95,7 +103,8 @@ export const TreeEntityTypes = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports"
+    "disturbanceReports",
+    "srpReports"
   ] as const,
   REPORT_COUNT_ENTITIES: ["projects", "projectReports", "sites", "nurseries"] as const
 } as const;
@@ -109,7 +118,8 @@ export const SupportedEntities = {
     "siteReports",
     "nurseryReports",
     "financialReports",
-    "disturbanceReports"
+    "disturbanceReports",
+    "srpReports"
   ] as const
 } as const;
 
@@ -173,4 +183,19 @@ export const DemographicCollections = {
   VOLUNTEERS_PROJECT: ["volunteer"] as const,
   BENEFICIARIES_PROJECT_ALL: ["all"] as const,
   BENEFICIARIES_PROJECT_TRAINING: ["training"] as const
+} as const;
+
+export const Forms = {
+  FORM_TYPES: [
+    "application",
+    "disturbance-report",
+    "financial-report",
+    "project",
+    "project-report",
+    "site",
+    "site-report",
+    "nursery",
+    "nursery-report",
+    "srp-report"
+  ] as const
 } as const;

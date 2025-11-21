@@ -7,6 +7,70 @@ import { V3ApiEndpoint } from "../utils";
 import type * as Fetcher from "./researchServiceFetcher";
 import type * as Schemas from "./researchServiceSchemas";
 
+export type CreateSitePolygonsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonsResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  };
+};
+
+export type CreateSitePolygonsVariables = {
+  body: Schemas.CreateSitePolygonJsonApiRequestDto;
+};
+
+/**
+ * Create site polygons. Supports multi-site batch creation.
+ *       Duplicate validation results are always included in the response when duplicates are found.
+ */
+export const createSitePolygons = new V3ApiEndpoint<
+  CreateSitePolygonsResponse,
+  CreateSitePolygonsError,
+  CreateSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "POST");
+
 export type SitePolygonsIndexQueryParams = {
   /**
    * The size of page being requested
@@ -298,6 +362,66 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type DeleteSitePolygonPathParams = {
+  uuid: string;
+};
+
+export type DeleteSitePolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteSitePolygonResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteSitePolygonVariables = {
+  pathParams: DeleteSitePolygonPathParams;
+};
+
+/**
+ * Deletes a site polygon and all its associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons.
+ */
+export const deleteSitePolygon = new V3ApiEndpoint<
+  DeleteSitePolygonResponse,
+  DeleteSitePolygonError,
+  DeleteSitePolygonVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}", "DELETE");
+
 export type BoundingBoxGetQueryParams = {
   /**
    * UUID of a polygon to get its bounding box
@@ -453,10 +577,8 @@ export type GetSiteValidationQueryParams = {
   ["page[number]"]?: number;
   /**
    * Filter validations by criteria ID
-   *
-   * @example 3
    */
-  criteriaId?: number;
+  criteriaId?: Schemas.Object;
 };
 
 export type GetSiteValidationError = Fetcher.ErrorWrapper<
@@ -520,8 +642,385 @@ export const getSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}", "GET");
 
+export type CreatePolygonValidationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreatePolygonValidationsResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type CreatePolygonValidationsVariables = {
+  body: Schemas.ValidationRequestBody;
+};
+
+export const createPolygonValidations = new V3ApiEndpoint<
+  CreatePolygonValidationsResponse,
+  CreatePolygonValidationsError,
+  CreatePolygonValidationsVariables,
+  {}
+>("/validations/v3/polygonValidations", "POST");
+
+export type CreateSiteValidationPathParams = {
+  siteUuid: string;
+};
+
+export type CreateSiteValidationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSiteValidationVariables = {
+  body: Schemas.SiteValidationRequestBody;
+  pathParams: CreateSiteValidationPathParams;
+};
+
+export const createSiteValidation = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example validationSummaries
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example validationSummaries
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ValidationSummaryDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  CreateSiteValidationError,
+  CreateSiteValidationVariables,
+  {}
+>("/validations/v3/sites/{siteUuid}/validation", "POST");
+
+export type ValidateGeometriesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ValidateGeometriesResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
+};
+
+export type ValidateGeometriesVariables = {
+  body: Schemas.GeometryValidationRequestBody;
+};
+
+/**
+ * Validates geometries in-memory without persisting results to database. Returns validation results in included array.
+ */
+export const validateGeometries = new V3ApiEndpoint<
+  ValidateGeometriesResponse,
+  ValidateGeometriesError,
+  ValidateGeometriesVariables,
+  {}
+>("/validations/v3/geometries", "POST");
+
+export type CreateSitePolygonClippingPathParams = {
+  siteUuid: string;
+};
+
+export type CreateSitePolygonClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateSitePolygonClippingVariables = {
+  pathParams: CreateSitePolygonClippingPathParams;
+};
+
+/**
+ * Finds and clips all fixable overlapping polygons in a site (overlap ≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ */
+export const createSitePolygonClipping = new V3ApiEndpoint<
+  undefined,
+  CreateSitePolygonClippingError,
+  CreateSitePolygonClippingVariables,
+  {}
+>("/polygonClipping/v3/sites/{siteUuid}/clippedPolygons", "POST");
+
+export type CreateProjectPolygonClippingPathParams = {
+  siteUuid: string;
+};
+
+export type CreateProjectPolygonClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateProjectPolygonClippingVariables = {
+  pathParams: CreateProjectPolygonClippingPathParams;
+};
+
+/**
+ * Finds all polygons in a project (via site UUID) and clips fixable overlaps (≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ */
+export const createProjectPolygonClipping = new V3ApiEndpoint<
+  undefined,
+  CreateProjectPolygonClippingError,
+  CreateProjectPolygonClippingVariables,
+  {}
+>("/polygonClipping/v3/projects/{siteUuid}/clippedPolygons", "POST");
+
+export type CreatePolygonListClippingError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreatePolygonListClippingVariables = {
+  body: Schemas.PolygonListClippingRequestBody;
+};
+
+/**
+ * Clips a specific list of polygons for fixable overlaps (≤3.5% AND ≤0.118 hectares).
+ *       Returns GeoJSON of original and clipped polygons for verification.
+ *       Does NOT modify the database or create new versions yet.
+ */
+export const createPolygonListClipping = new V3ApiEndpoint<
+  undefined,
+  CreatePolygonListClippingError,
+  CreatePolygonListClippingVariables,
+  {}
+>("/polygonClipping/v3/polygons", "POST");
+
 export const operationsByTag = {
-  sitePolygons: { sitePolygonsIndex, bulkUpdateSitePolygons },
+  sitePolygons: { createSitePolygons, sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation, getSiteValidation }
+  validations: {
+    getPolygonValidation,
+    getSiteValidation,
+    createPolygonValidations,
+    createSiteValidation,
+    validateGeometries
+  },
+  polygonClipping: { createSitePolygonClipping, createProjectPolygonClipping, createPolygonListClipping }
 };

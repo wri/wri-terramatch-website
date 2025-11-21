@@ -7,15 +7,16 @@ import {
   DialogProps,
   DialogTitle
 } from "@mui/material";
-import { useMemo } from "react";
+import { flatten } from "lodash";
+import { useCallback, useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, RaRecord, TextInput, useNotify, useRefresh, useShowContext } from "react-admin";
-import { If } from "react-if";
 import * as yup from "yup";
 
+import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
+import { useForm } from "@/connections/util/Form";
 import { usePatchV2AdminFormsSubmissionsUUIDStatus } from "@/generated/apiComponents";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
-import { Option } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
 import { status } from "./ApplicationShowAside";
@@ -48,87 +49,83 @@ const ApplicationRequestMoreInfoModal = ({
   const notify = useNotify();
   const { record } = useShowContext<FormSubmissionRead & RaRecord>();
   const uuid = record?.current_submission?.uuid as string;
+  const formUuid = record?.current_submission?.form_uuid as string;
+  const [, { data: form }] = useForm({ id: formUuid, enabled: formUuid != null });
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
-  const questions: Option[] | undefined = useMemo(
-    () =>
-      record?.current_submission?.form?.form_sections
-        // @ts-ignore client error
-        ?.map(s => s.form_questions)
-        .flat(1)
-        // @ts-ignore client error
-        .map(q => ({
-          title: q?.label ?? "",
-          value: q?.label ?? ""
-        })),
-    [record?.current_submission?.form?.form_sections]
+  const feedbackFields = useMemo(
+    (): Choice[] =>
+      optionToChoices(
+        flatten(form?.sections.map(({ questions }) => questions)).map(({ label }) => ({
+          title: label,
+          value: label
+        })) ?? []
+      ),
+    [form?.sections]
   );
 
-  const feebdackFields = useMemo(() => optionToChoices(questions ?? []), [questions]);
-
-  const { mutateAsync: requestMoreInfo, isLoading } = usePatchV2AdminFormsSubmissionsUUIDStatus({
+  const { mutateAsync: requestMoreInfo, isLoading: isUpdating } = usePatchV2AdminFormsSubmissionsUUIDStatus({
     onSuccess() {
       refresh();
       notify("Application status updated", { type: "success" });
     }
   });
 
-  const handleSave = async (data: any) => {
-    if (status) {
-      const body: any = {
-        status,
-        feedback_fields: data.feedback_fields
-      };
-
-      if (data.feedback) {
-        body.feedback = data.feedback;
+  const handleSave = useCallback(
+    async (data: any) => {
+      if (status) {
+        await requestMoreInfo({
+          // @ts-ignore client error
+          pathParams: {
+            uuid
+          },
+          body: {
+            feedback: data.feedback,
+            status,
+            //@ts-ignore
+            feedback_fields: isAllSelected ? feedbackFields.map(f => f.id) : data.feedback_fields
+          }
+        });
       }
 
-      await requestMoreInfo({
-        // @ts-ignore client error
-        pathParams: {
-          uuid
-        },
-        body: {
-          feedback: data.feedback,
-          status,
-          //@ts-ignore
-          feedback_fields: data.feedback_fields
-        }
-      });
-    }
-
-    return handleClose();
-  };
+      return handleClose();
+    },
+    [feedbackFields, handleClose, isAllSelected, requestMoreInfo, status, uuid]
+  );
 
   return (
     <Dialog {...dialogProps} fullWidth>
       <Form
         onSubmit={handleSave}
         validate={validateForm(
-          status === "requires-more-information" ? moreInfoValidationSchema : genericValidationSchema
+          status === "requires-more-information" && !isAllSelected ? moreInfoValidationSchema : genericValidationSchema
         )}
       >
-        <If condition={status}>
-          <DialogTitle>{statusTitles[status as status]}</DialogTitle>
-        </If>
+        {status == null ? null : <DialogTitle>{statusTitles[status as status]}</DialogTitle>}
         <DialogContent>
           <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
-          <If condition={status === "requires-more-information" && feebdackFields.length > 0}>
+          {status === "requires-more-information" && feedbackFields.length > 0 && !isAllSelected ? (
             <AutocompleteArrayInput
               source="feedback_fields"
               label="Fields"
-              choices={feebdackFields}
+              choices={feedbackFields}
               fullWidth
               margin="dense"
             />
-          </If>
+          ) : null}
+          {isAllSelected && (
+            <div>
+              All Fields selected | <button onClick={() => setIsAllSelected(false)}>Clear</button>
+            </div>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" type="submit" disabled={isLoading}>
-            <If condition={isLoading}>
-              <CircularProgress size={18} sx={{ marginRight: 1 }} />
-            </If>
+          {status === "requires-more-information" && !isAllSelected && (
+            <Button onClick={() => setIsAllSelected(true)}>Select All Fields</Button>
+          )}
+          <Button variant="contained" type="submit" disabled={isUpdating}>
+            {isUpdating ? <CircularProgress size={18} sx={{ marginRight: 1 }} /> : null}
             Update Status
           </Button>
         </DialogActions>

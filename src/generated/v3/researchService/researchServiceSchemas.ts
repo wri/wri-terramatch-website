@@ -87,6 +87,168 @@ export type IndicatorMsuCarbonDto = {
   confidence: number | null;
 };
 
+export type ValidationCriteriaDto = {
+  /**
+   * The validation criteria ID
+   */
+  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15 | 16 | 5 | 10;
+  /**
+   * The validation type name (e.g., 'SELF_INTERSECTION', 'POLYGON_SIZE')
+   */
+  validationType:
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE";
+  /**
+   * Whether the polygon passed this validation
+   */
+  valid: boolean;
+  /**
+   * When this validation was last run (null for non-persistent validations)
+   *
+   * @format date-time
+   */
+  createdAt: string | null;
+  /**
+   * Additional information about the validation result
+   */
+  extraInfo?: Record<string, any>;
+};
+
+export type ValidationDto = {
+  /**
+   * The UUID of the polygon that was validated
+   *
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonUuid: string;
+  /**
+   * List of validation criteria results for this polygon
+   */
+  criteriaList: ValidationCriteriaDto[];
+};
+
+export type SitePolygonLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  name: string | null;
+  status: "draft" | "submitted" | "needs-more-information" | "approved";
+  /**
+   * If this ID points to a deleted site, the indicators will be empty.
+   */
+  siteId: string | null;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
+  projectId: string | null;
+  projectShortName: string | null;
+  /**
+   * @format date-time
+   */
+  plantStart: string | null;
+  calcArea: number | null;
+  /**
+   * Latitude of the site polygon
+   */
+  lat: number | null;
+  /**
+   * Longitude of the site polygon
+   */
+  long: number | null;
+  /**
+   * All indicators currently recorded for this site polygon
+   */
+  indicators: (
+    | IndicatorTreeCoverLossDto
+    | IndicatorHectaresDto
+    | IndicatorTreeCountDto
+    | IndicatorTreeCoverDto
+    | IndicatorFieldMonitoringDto
+    | IndicatorMsuCarbonDto
+  )[];
+  /**
+   * The name of the associated Site.
+   */
+  siteName: string | null;
+  versionName: string | null;
+  practice: string[] | null;
+  targetSys: string | null;
+  distr: string[] | null;
+  numTrees: number | null;
+  /**
+   * Source of the site polygon
+   */
+  source: string | null;
+  /**
+   * Validation status of the site polygon
+   *
+   * @maxLength 255
+   */
+  validationStatus: string | null;
+  /**
+   * Primary UUID of the site polygon
+   */
+  primaryUuid: string | null;
+  /**
+   * UUID of the site polygon
+   */
+  uuid: string;
+  disturbanceableId: number | null;
+};
+
+export type CreateSitePolygonRequestDto = {
+  /**
+   * Feature collection type (always 'FeatureCollection')
+   *
+   * @example FeatureCollection
+   */
+  type: string;
+  /**
+   * Array of features to create
+   *
+   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000","poly_name":"North Field","plantstart":"2023-01-15T00:00:00Z"}}
+   */
+  features: any[][];
+};
+
+export type CreateSitePolygonAttributesDto = {
+  /**
+   * Array of feature collections (supports multi-site batch creation)
+   */
+  geometries: CreateSitePolygonRequestDto[];
+};
+
+export type CreateSitePolygonDataDto = {
+  /**
+   * Resource type
+   *
+   * @example sitePolygons
+   */
+  type: string;
+  /**
+   * Attributes containing the geometries to create
+   */
+  attributes: CreateSitePolygonAttributesDto;
+};
+
+export type CreateSitePolygonJsonApiRequestDto = {
+  /**
+   * JSON:API data object
+   */
+  data: CreateSitePolygonDataDto;
+};
+
 export type TreeSpeciesDto = {
   /**
    * @example Acacia binervia
@@ -159,9 +321,9 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -181,6 +343,7 @@ export type SitePolygonFullDto = {
    * UUID of the site polygon
    */
   uuid: string;
+  disturbanceableId: number | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -190,76 +353,6 @@ export type SitePolygonFullDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
-};
-
-export type SitePolygonLightDto = {
-  /**
-   * Indicates if this resource has the full resource definition.
-   */
-  lightResource: boolean;
-  name: string | null;
-  status: "draft" | "submitted" | "needs-more-information" | "approved";
-  /**
-   * If this ID points to a deleted site, the indicators will be empty.
-   */
-  siteId: string | null;
-  /**
-   * UUID of the associated polygon geometry
-   */
-  polygonUuid: string | null;
-  projectId: string | null;
-  projectShortName: string | null;
-  /**
-   * @format date-time
-   */
-  plantStart: string | null;
-  calcArea: number | null;
-  /**
-   * Latitude of the site polygon
-   */
-  lat: number | null;
-  /**
-   * Longitude of the site polygon
-   */
-  long: number | null;
-  /**
-   * All indicators currently recorded for this site polygon
-   */
-  indicators: (
-    | IndicatorTreeCoverLossDto
-    | IndicatorHectaresDto
-    | IndicatorTreeCountDto
-    | IndicatorTreeCoverDto
-    | IndicatorFieldMonitoringDto
-    | IndicatorMsuCarbonDto
-  )[];
-  /**
-   * The name of the associated Site.
-   */
-  siteName: string | null;
-  versionName: string | null;
-  practice: string | null;
-  targetSys: string | null;
-  distr: string | null;
-  numTrees: number | null;
-  /**
-   * Source of the site polygon
-   */
-  source: string | null;
-  /**
-   * Validation status of the site polygon
-   *
-   * @maxLength 255
-   */
-  validationStatus: string | null;
-  /**
-   * Primary UUID of the site polygon
-   */
-  primaryUuid: string | null;
-  /**
-   * UUID of the site polygon
-   */
-  uuid: string;
 };
 
 export type SitePolygonUpdateAttributes = {
@@ -301,43 +394,182 @@ export type BoundingBoxDto = {
   bbox: number[];
 };
 
-export type ValidationCriteriaDto = {
-  /**
-   * The criteria ID that was validated
-   *
-   * @example 3
-   */
-  criteriaId: number;
-  /**
-   * Whether the polygon passed this validation criteria
-   *
-   * @example true
-   */
-  valid: boolean;
-  /**
-   * When this validation was last run
-   *
-   * @format date-time
-   * @example 2025-02-20T22:01:31Z
-   */
-  createdAt: string;
-  /**
-   * Additional information about the validation result
-   *
-   * @example null
-   */
-  extraInfo?: Record<string, any>;
-};
+export type Object = {};
 
-export type ValidationDto = {
+export type ValidationRequestAttributes = {
   /**
-   * The UUID of the polygon that was validated
+   * Array of polygon UUIDs to validate
    *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
    * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
    */
-  polygonId: string;
+  polygonUuids: string[];
   /**
-   * List of validation criteria results for this polygon
+   * Array of validation types to run. If not provided or empty, all validation types will be run.
    */
-  criteriaList: ValidationCriteriaDto[];
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type ValidationRequestData = {
+  type: "validations";
+  attributes: ValidationRequestAttributes;
+};
+
+export type ValidationRequestBody = {
+  data: ValidationRequestData;
+};
+
+export type ValidationSummaryDto = {
+  /**
+   * The UUID of the site that was validated
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  siteUuid: string;
+  /**
+   * Total number of polygons in the site
+   */
+  totalPolygons: number;
+  /**
+   * Number of polygons that were validated
+   */
+  validatedPolygons: number;
+  /**
+   * When the validation was completed
+   *
+   * @format date-time
+   */
+  completedAt: string;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+};
+
+export type SiteValidationRequestAttributes = {
+  /**
+   * Array of validation types to run on all polygons in the site. If not provided or empty, all validation types will be run.
+   */
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type SiteValidationRequestData = {
+  type: "validations";
+  attributes: SiteValidationRequestAttributes;
+};
+
+export type SiteValidationRequestBody = {
+  data: SiteValidationRequestData;
+};
+
+export type GeometryValidationRequestAttributes = {
+  /**
+   * Array of GeoJSON FeatureCollections containing geometries to validate
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000","poly_name":"Test Polygon"}}]}
+   */
+  geometries: any[];
+  /**
+   * Array of validation types to run. If not provided or empty, all non persistent validation types will be run.
+   */
+  validationTypes?: (
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "DUPLICATE_GEOMETRY"
+    | "DATA_COMPLETENESS"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type GeometryValidationRequestData = {
+  type: "geometryValidations";
+  attributes: GeometryValidationRequestAttributes;
+};
+
+export type GeometryValidationRequestBody = {
+  data: GeometryValidationRequestData;
+};
+
+export type PolygonListClippingAttributes = {
+  /**
+   * Array of polygon UUIDs to check and clip for fixable overlaps
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   * @example 660e8400-e29b-41d4-a716-446655440001
+   */
+  polygonUuids: string[];
+};
+
+export type PolygonListClippingData = {
+  type: "polygon-clipping";
+  attributes: PolygonListClippingAttributes;
+};
+
+export type PolygonListClippingRequestBody = {
+  data: PolygonListClippingData;
 };

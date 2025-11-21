@@ -5,7 +5,16 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import TreeSpeciesInput, { TreeSpeciesInputProps } from "./TreeSpeciesInput";
 
 export interface RHFTreeSpeciesInputProps
-  extends Omit<TreeSpeciesInputProps, "value" | "onChange" | "clearErrors">,
+  extends Omit<
+      TreeSpeciesInputProps,
+      | "value"
+      | "onChange"
+      | "clearErrors"
+      | "buttonCaptionSuffix"
+      | "title"
+      | "withPreviousCounts"
+      | "useTaxonomicBackbone"
+    >,
     UseControllerProps {
   formHook: UseFormReturn;
 }

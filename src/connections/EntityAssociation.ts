@@ -1,5 +1,4 @@
-import { Dictionary } from "lodash";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { connectionHook, connectionSelector } from "@/connections/util/connectionShortcuts";
 import {
@@ -16,10 +15,10 @@ import {
   SeedingDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getStableIndexPath } from "@/generated/v3/utils";
 import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { Connected, Connection, Filter, PaginatedConnectionProps } from "@/types/connection";
-import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 
 import {
@@ -62,8 +61,15 @@ const createAssociationIndexConnection = <T extends EntityAssociationDtoType>(as
     .pagination()
     .filter<Filter<EntityAssociationIndexQueryParams>>()
     .sideloads()
-    .refetch(({ uuid }) => {
-      if (uuid != null) ApiSlice.pruneIndex(association, uuid);
+    .refetch((props, variablesFactory) => {
+      const variables = variablesFactory(props);
+      if (variables == null) {
+        Log.warn("Cannot prune cache, no variables returned from variables factory", { props });
+        return;
+      }
+
+      const { stableUrl } = getStableIndexPath(entityAssociationIndex.url, variables);
+      ApiSlice.pruneIndex(association, stableUrl);
     })
     .enabledProp()
     .buildConnection();
@@ -132,7 +138,6 @@ const invasiveConnection = createAssociationIndexConnection<InvasiveDto>("invasi
 export const useInvasives = connectionHook(invasiveConnection);
 
 const treeSpeciesConnection = createAssociationIndexConnection<TreeSpeciesDto>("treeSpecies");
-export const selectTreeSpecies = connectionSelector(treeSpeciesConnection);
 const seedingsConnection = createAssociationIndexConnection<SeedingDto>("seedings");
 
 export type PlantDto = TreeSpeciesDto | SeedingDto;
@@ -163,44 +168,4 @@ export const usePlants = <T extends PlantDto = PlantDto>(
   }, [associations, loaded, props.collection]);
 
   return loaded ? [true, { data: filteredAssociations, loadFailure }] : [false, {}];
-};
-
-/**
- * TODO: Temporary! We'll add a method for associations for multiple entities in a future ticket.
- */
-export const useSiteReportDisturbances = (siteReportUuids: string[]) => {
-  const [disturbances, setDisturbances] = useState<Dictionary<DisturbanceDto[]> | undefined>();
-  useEffect(() => {
-    if (siteReportUuids.length === 0) {
-      setDisturbances({});
-      return;
-    }
-
-    const connectionPromises = siteReportUuids.map(uuid =>
-      loadConnection(disturbanceConnection, { entity: "siteReports", uuid })
-    );
-
-    Promise.all(connectionPromises).then(connectionResponses => {
-      if (connectionResponses.length !== siteReportUuids.length) {
-        Log.error("Incorrect number of responses", { connectionResponses, siteReportUuids });
-        return;
-      }
-
-      const result: Dictionary<DisturbanceDto[]> = {};
-      for (let i = 0; i < siteReportUuids.length; i++) {
-        const response = connectionResponses[i];
-        if (response.loadFailure != null) {
-          Log.error("Fetching site report association failed", response.loadFailure);
-          result[siteReportUuids[i]] = [];
-          continue;
-        }
-
-        result[siteReportUuids[i]] = response.data ?? [];
-      }
-
-      setDisturbances(result);
-    });
-  }, [siteReportUuids]);
-
-  return disturbances;
 };

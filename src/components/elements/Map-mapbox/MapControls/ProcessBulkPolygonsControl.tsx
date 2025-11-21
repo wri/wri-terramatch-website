@@ -19,7 +19,6 @@ import {
   usePostV2TerrafundValidationPolygons
 } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import JobsSlice from "@/store/jobsSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
@@ -67,7 +66,7 @@ const ProcessBulkPolygonsControl = ({
   useEffect(() => {
     if (selectedPolygonsInCheckbox.length > 0 && overlapValidations.length > 0) {
       const selectedPolygonsWithOverlaps = overlapValidations
-        .filter(validation => selectedPolygonsInCheckbox.includes(validation.polygonId ?? ""))
+        .filter(validation => selectedPolygonsInCheckbox.includes(validation.polygonUuid ?? ""))
         .map(validation => {
           const overlapCriteria = validation.criteriaList.find(
             criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
@@ -168,7 +167,6 @@ const ProcessBulkPolygonsControl = ({
                   const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
 
                   setIsLoadingDelayedJob?.(false);
-                  JobsSlice.reset();
                   if (processedNames) {
                     openNotification(
                       "success",
@@ -214,7 +212,6 @@ const ProcessBulkPolygonsControl = ({
           openNotification("success", t("Success!"), t("Polygons checked successfully"));
           hideLoader();
           setIsLoadingDelayedJob?.(false);
-          JobsSlice.reset();
         },
         onError: () => {
           hideLoader();

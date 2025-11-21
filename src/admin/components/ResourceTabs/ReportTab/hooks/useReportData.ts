@@ -4,7 +4,7 @@ import { GetListResult, useDataProvider, useShowContext } from "react-admin";
 
 import { useDisturbance } from "@/connections/Disturbance";
 import { selectDemographics, usePlants } from "@/connections/EntityAssociation";
-import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
 import { BeneficiaryData, EmploymentDemographicData, ProjectReport, ReportData, Site, SiteReport } from "../types";
 import { processBeneficiaryData, processDemographicData } from "../utils/demographicsProcessor";
@@ -57,7 +57,7 @@ export const useReportData = () => {
         const sitesPromise = dataProvider.getList<Site>("site", {
           filter: {
             projectUuid: record.id,
-            status: ["approved", "restoration-in-progress"]
+            status: ["approved"]
           },
           pagination: { page: 1, perPage: 100 },
           sort: { field: "createdAt", order: "DESC" }
@@ -75,8 +75,8 @@ export const useReportData = () => {
         const demographics = flatten(
           reportsResult.data
             .map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).data)
-            .filter(associations => associations != null)
-        ) as DemographicDto[];
+            .filter(isNotNull)
+        );
         if (demographics.length > 0) {
           setEmploymentData(processDemographicData(demographics));
           setBeneficiaryData(processBeneficiaryData(demographics));
