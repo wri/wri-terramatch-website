@@ -17,6 +17,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { deleteMedia } from "@/connections/Media";
+import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
@@ -29,14 +30,13 @@ import {
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   usePatchV2MediaProjectProjectMediaUuid,
-  usePostV2ExportImage,
-  usePostV2GeometryUUIDNewVersion,
-  usePutV2TerrafundPolygonUuid
+  usePostV2ExportImage
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import { AdminPopup } from "./components/AdminPopup";
@@ -635,9 +635,6 @@ export const MapContainer = ({
     }
   };
 
-  const { mutateAsync: updateGeometry } = usePutV2TerrafundPolygonUuid();
-  const { mutateAsync: createGeometry } = usePostV2GeometryUUIDNewVersion();
-
   const onSaveEdit = async () => {
     if (map.current && draw.current) {
       const geojson = draw.current.getAll();
@@ -645,16 +642,41 @@ export const MapContainer = ({
         if (polygonFromMap?.uuid) {
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
+          const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
+
+          if (!selectedPolygon?.primary_uuid) {
+            openNotification("error", t("Error"), t("Missing polygon information"));
+            return;
+          }
+
           try {
+            showLoader();
+
+            const siteId = selectedPolygon?.site_id;
+            if (!siteId) {
+              throw new Error("Missing site_id for polygon");
+            }
+
+            // Create version with geometry changes using v3 API (works for both Admin and PD)
+            await createVersionWithGeometry(
+              selectedPolygon.primary_uuid,
+              pdView ? "Updated geometry" : "Updated geometry from admin panel",
+              {
+                type: "Feature",
+                geometry: feature.geometry,
+                properties: {
+                  site_id: siteId
+                }
+              }
+            );
+
+            if (selectedPolygon.poly_id) {
+              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.poly_id]);
+            }
+            // For admin view, fetch the updated versions and update UI
             if (!pdView) {
-              showLoader();
-              await createGeometry({
-                body: { geometry: JSON.stringify(feature) as any },
-                pathParams: { uuid: polygonFromMap?.uuid }
-              });
-              const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: selectedPolygon?.primary_uuid as string }
+                pathParams: { uuid: selectedPolygon.primary_uuid }
               })) as SitePolygonsDataResponse;
 
               const polygonActive = polygonVersionData?.find(item => item.is_active);
@@ -663,20 +685,12 @@ export const MapContainer = ({
               }
               setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
               setStatusSelectedPolygon?.(polygonActive?.status as string);
-            } else {
-              await updateGeometry({
-                body: { geometry: JSON.stringify(feature) },
-                pathParams: { uuid: polygonFromMap?.uuid }
-              });
             }
+
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData, centroids);
             setShouldRefetchPolygonData(true);
-            openNotification(
-              "success",
-              t("Success"),
-              pdView ? t("Geometry updated successfully.") : t("Site polygon version created successfully.")
-            );
+            openNotification("success", t("Success"), t("Site polygon version created successfully."));
           } catch (e: any) {
             openNotification("error", t("Error"), e?.message || t("Please try again later."));
           } finally {
@@ -692,8 +706,10 @@ export const MapContainer = ({
   };
 
   const addGeometryVersion = async () => {
+    // Handle both v2 (poly_id) and v3 (polygonUuid) properties
+    const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
     const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-      pathParams: { uuid: selectedPolyVersion?.poly_id as string }
+      pathParams: { uuid: polygonUuid as string }
     });
     drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
   };

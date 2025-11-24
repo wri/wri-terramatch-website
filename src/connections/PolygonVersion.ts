@@ -10,9 +10,14 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import ApiSlice from "@/store/apiSlice";
 
 const listPolygonVersionsConnection = v3Resource("sitePolygons", listSitePolygonVersions)
-  .index<SitePolygonLightDto>(({ uuid }: { uuid?: string }) => (uuid ? { pathParams: { uuid } } : undefined))
+  .index<SitePolygonLightDto>(({ uuid }: { uuid?: string }) => ({ pathParams: { uuid: uuid || "" } }))
   .enabledProp()
   .addProps<{ uuid?: string }>(() => ({}))
+  .refetch((props, variablesFactory) => {
+    const variables = variablesFactory(props);
+    if (variables == null || !variables.pathParams?.uuid) return;
+    ApiSlice.pruneIndex("sitePolygons", "");
+  })
   .buildConnection();
 
 export const useListPolygonVersions = connectionHook(listPolygonVersionsConnection);

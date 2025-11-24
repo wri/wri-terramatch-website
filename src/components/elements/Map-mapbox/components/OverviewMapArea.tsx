@@ -44,6 +44,8 @@ const OverviewMapArea = ({
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
+  const sitePolygonDataV3 = context?.sitePolygonData;
+
   const {
     isMonitoring,
     editPolygon,
@@ -71,6 +73,24 @@ const OverviewMapArea = ({
     polygonCriteriaMap,
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
+
+  const sitePolygonDataV2 = sitePolygonDataV3?.map(v3Polygon => ({
+    id: v3Polygon.uuid,
+    uuid: v3Polygon.uuid,
+    poly_id: v3Polygon.polygonUuid,
+    poly_name: v3Polygon.name,
+    primary_uuid: v3Polygon.primaryUuid,
+    status: v3Polygon.status,
+    site_id: v3Polygon.siteId,
+    practice: Array.isArray(v3Polygon.practice) ? v3Polygon.practice.join(", ") : v3Polygon.practice,
+    target_sys: v3Polygon.targetSys,
+    distr: Array.isArray(v3Polygon.distr) ? v3Polygon.distr.join(", ") : v3Polygon.distr,
+    num_trees: v3Polygon.numTrees,
+    calc_area: v3Polygon.calcArea,
+    plantstart: v3Polygon.plantStart,
+    source: v3Polygon.source,
+    is_active: true // All polygons in the list should be active versions
+  }));
 
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -205,6 +225,7 @@ const OverviewMapArea = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData}
+        sitePolygonData={sitePolygonDataV2 as any}
         pdView={true}
       />
     </>
