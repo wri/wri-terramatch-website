@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -7,8 +7,9 @@ import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import { sitePolygonsConnection } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { useConnection } from "@/hooks/useConnection";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
@@ -51,9 +52,6 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   selectedUUIDs,
   ...rest
 }) => {
-  const { data: polygonList } = useGetV2SitesSitePolygon({
-    pathParams: { site: site.uuid }
-  });
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
     useAllSiteValidations(site.uuid, OVERLAPPING_CRITERIA_ID);
   const t = useT();
@@ -67,25 +65,36 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
     }
   }, [site?.uuid, fetchOverlapValidations]);
 
-  useEffect(() => {
-    if (!polygonList || overlapValidations.length === 0) return;
-
-    const overlappingPolygonUuids = overlapValidations
+  const failingPolygonUuids = useMemo(() => {
+    const overlappingUuids = overlapValidations
       .map(validation => validation.polygonUuid)
-      .filter(id => id != null);
-
-    let overlappingPolygons = polygonList.filter(
-      polygon => polygon.poly_id && overlappingPolygonUuids.includes(polygon.poly_id)
-    );
+      .filter((id): id is string => id != null);
 
     if (selectedUUIDs != null) {
-      overlappingPolygons = overlappingPolygons.filter(
-        polygon => polygon.poly_id != null && selectedUUIDs.includes(polygon.poly_id)
-      );
+      return overlappingUuids.filter(uuid => selectedUUIDs.includes(uuid));
     }
 
-    const polygons = overlappingPolygons.map(polygon => {
-      const validation = overlapValidations.find(v => v.polygonUuid === polygon.poly_id);
+    return overlappingUuids;
+  }, [overlapValidations, selectedUUIDs]);
+
+  const [, polygonData] = useConnection(sitePolygonsConnection, {
+    filter: {
+      "polygonUuid[]": failingPolygonUuids
+    },
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: failingPolygonUuids.length > 0,
+    pageSize: 100,
+    pageNumber: 1
+  });
+
+  const polygonList = useMemo(() => polygonData.data ?? [], [polygonData.data]);
+
+  useEffect(() => {
+    if (polygonList.length === 0 || overlapValidations.length === 0) return;
+
+    const polygons = polygonList.map(polygon => {
+      const validation = overlapValidations.find(v => v.polygonUuid === polygon.polygonUuid);
       const overlapCriteria = validation?.criteriaList.find(
         criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
       );
@@ -96,7 +105,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
       return {
         id: polygon.uuid,
         checked: true,
-        name: polygon.poly_name ?? t("Unnamed Polygon"),
+        name: polygon.name ?? t("Unnamed Polygon"),
         canBeApproved: false,
         failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
         fixabilityResult
@@ -107,7 +116,7 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
 
     const canFixAny = polygons.some(polygon => polygon.fixabilityResult?.canBeFixed === true);
     setCanFixAnyPolygon(canFixAny);
-  }, [polygonList, overlapValidations, t, selectedUUIDs]);
+  }, [polygonList, overlapValidations, t]);
 
   return (
     <ModalBaseSubmit {...rest}>

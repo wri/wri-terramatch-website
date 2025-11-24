@@ -222,11 +222,68 @@ export type CreateSitePolygonRequestDto = {
   features: any[][];
 };
 
+export type AttributeChangesDto = {
+  /**
+   * Updated polygon name
+   *
+   * @example North Field Updated
+   */
+  polyName?: string;
+  /**
+   * Updated planting start date (ISO 8601 format)
+   *
+   * @example 2023-01-15T00:00:00Z
+   */
+  plantStart?: string;
+  /**
+   * Updated practice type
+   *
+   * @example agroforestry
+   */
+  practice?: string;
+  /**
+   * Updated target system
+   *
+   * @example restoration
+   */
+  targetSys?: string;
+  /**
+   * Updated distribution method
+   *
+   * @example direct seeding
+   */
+  distr?: string;
+  /**
+   * Updated number of trees
+   *
+   * @example 150
+   */
+  numTrees?: number;
+};
+
 export type CreateSitePolygonAttributesDto = {
   /**
-   * Array of feature collections (supports multi-site batch creation)
+   * Array of feature collections (optional when creating version with attribute-only changes)
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000"}}]}
    */
-  geometries: CreateSitePolygonRequestDto[];
+  geometries?: CreateSitePolygonRequestDto[];
+  /**
+   * UUID of existing site polygon to create version from. When provided, creates a new version instead of a new polygon.
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  baseSitePolygonUuid?: string;
+  /**
+   * Reason for creating version (required when baseSitePolygonUuid is provided)
+   *
+   * @example Updated polygon boundary based on field survey data
+   */
+  changeReason?: string;
+  /**
+   * Attribute changes to apply when creating version (optional, for attribute-only or mixed updates)
+   */
+  attributeChanges?: AttributeChangesDto;
 };
 
 export type CreateSitePolygonDataDto = {
@@ -380,6 +437,34 @@ export type SitePolygonUpdate = {
 
 export type SitePolygonBulkUpdateBodyDto = {
   data: SitePolygonUpdate[];
+};
+
+export type VersionUpdateAttributes = {
+  /**
+   * Set to true to activate this version, false to deactivate
+   *
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Optional comment explaining the version change
+   *
+   * @example Activating this version to revert recent changes
+   */
+  comment?: string;
+};
+
+export type VersionUpdateData = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: VersionUpdateAttributes;
+};
+
+export type VersionUpdateBody = {
+  data: VersionUpdateData;
 };
 
 export type BoundingBoxDto = {
@@ -553,6 +638,39 @@ export type GeometryValidationRequestData = {
 
 export type GeometryValidationRequestBody = {
   data: GeometryValidationRequestData;
+};
+
+export type ClippedVersionDto = {
+  /**
+   * The UUID of the newly created polygon version
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  uuid: string;
+  /**
+   * The name of the polygon
+   *
+   * @example Plot_1_2024
+   */
+  polyName: Record<string, any>;
+  /**
+   * The original area in hectares before clipping
+   *
+   * @example 2.5
+   */
+  originalArea: number;
+  /**
+   * The new area in hectares after clipping
+   *
+   * @example 2.35
+   */
+  newArea: number;
+  /**
+   * The area removed in hectares
+   *
+   * @example 0.15
+   */
+  areaRemoved: number;
 };
 
 export type PolygonListClippingAttributes = {

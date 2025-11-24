@@ -15,17 +15,18 @@ import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
 const listOfPolygonsFixed = (data: Record<string, any> | null) => {
-  if (data?.updated_polygons) {
-    const updatedPolygonNames = data.updated_polygons
-      ?.map((p: any) => p.poly_name)
+  if (data?.data && Array.isArray(data.data)) {
+    const clippedPolygonNames = data.data
+      .map((item: any) => item.attributes?.polyName)
       .filter(Boolean)
       .join(", ");
-    if (updatedPolygonNames) {
-      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
+    if (clippedPolygonNames) {
+      return "Success! The following polygons have been fixed: " + clippedPolygonNames;
     } else {
       return "No polygons were fixed";
     }
   }
+
   return null;
 };
 

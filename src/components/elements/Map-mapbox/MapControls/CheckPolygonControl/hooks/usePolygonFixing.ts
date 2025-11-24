@@ -1,15 +1,13 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useLoading } from "@/context/loaderAdmin.provider";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { clipPolygonsForSite } from "@/connections/PolygonClipping";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { usePostV2TerrafundClipPolygonsSiteUuid } from "@/generated/apiComponents";
-import { ClippedPolygonResponse } from "@/generated/apiSchemas";
 import ApiSlice from "@/store/apiSlice";
-import Log from "@/utils/log";
 
 interface UsePolygonFixingProps {
   siteUuid?: string;
@@ -20,23 +18,54 @@ interface UsePolygonFixingProps {
 export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTitle }: UsePolygonFixingProps) => {
   const { closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
-  const { hideLoader } = useLoading();
   const { setShouldRefetchPolygonData, setShouldRefetchValidation } = useMapAreaContext();
   const context = useSitePolygonData();
   const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
+  const [, { delayedJobs }] = useDelayedJobs();
+  const [pendingClipping, setPendingClipping] = useState(false);
 
-  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsSiteUuid({
-    onSuccess: (data: ClippedPolygonResponse) => {
-      if (!data.updated_polygons?.length) {
-        openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
-        hideLoader();
-        setIsLoadingDelayedJob?.(false);
-        closeModal(ModalId.FIX_POLYGONS);
-        return;
-      }
+  const runFixPolygonOverlaps = useCallback(() => {
+    if (siteUuid) {
+      closeModal(ModalId.FIX_POLYGONS);
+      setIsLoadingDelayedJob?.(true);
+      setAlertTitle?.("Fix Polygons");
+      clipPolygonsForSite(siteUuid);
+      setPendingClipping(true);
+    } else {
+      openNotification("error", "Cannot fix polygons: Site UUID is missing.", "Error");
+    }
+  }, [siteUuid, closeModal, setIsLoadingDelayedJob, setAlertTitle, openNotification]);
 
-      if (data) {
+  useEffect(() => {
+    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
+      return;
+    }
+
+    const completedClippingJob = delayedJobs.find(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      const isPolygonClipping = job.name === "Polygon Clipping";
+      return isCompleted && isPolygonClipping;
+    });
+
+    if (completedClippingJob) {
+      if (completedClippingJob.status === "succeeded") {
+        const clippedData = completedClippingJob.payload?.data;
+        if (Array.isArray(clippedData) && clippedData.length > 0) {
+          const polygonNames = clippedData
+            .map((item: any) => item.attributes?.polyName)
+            .filter(Boolean)
+            .join(", ");
+
+          if (polygonNames) {
+            openNotification("success", "Success! The following polygons have been fixed:", polygonNames);
+          } else {
+            openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
+          }
+        } else {
+          openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
+        }
+
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
@@ -49,35 +78,23 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
             ApiSlice.pruneCache("validations", polygonUuids);
           }
         }
-
-        const updatedPolygonNames = data.updated_polygons
-          ?.map(p => p.poly_name)
-          .filter(Boolean)
-          .join(", ");
-        openNotification("success", "Success! The following polygons have been fixed:", updatedPolygonNames);
-        hideLoader();
-        setIsLoadingDelayedJob?.(false);
+      } else {
+        openNotification("error", "An error occurred while fixing polygons. Please try again.", "Error");
       }
-      closeModal(ModalId.FIX_POLYGONS);
-    },
-    onError: error => {
-      Log.error("Error clipping polygons:", error);
-      openNotification("error", "An error occurred while fixing polygons. Please try again.", "Error");
-      hideLoader();
-      setIsLoadingDelayedJob?.(false);
-    }
-  });
 
-  const runFixPolygonOverlaps = useCallback(() => {
-    if (siteUuid) {
-      closeModal(ModalId.FIX_POLYGONS);
-      setIsLoadingDelayedJob?.(true);
-      setAlertTitle?.("Fix Polygons");
-      clipPolygons({ pathParams: { uuid: siteUuid } });
-    } else {
-      openNotification("error", "Cannot fix polygons: Site UUID is missing.", "Error");
+      setIsLoadingDelayedJob?.(false);
+      setPendingClipping(false);
     }
-  }, [siteUuid, closeModal, setIsLoadingDelayedJob, setAlertTitle, clipPolygons, openNotification]);
+  }, [
+    delayedJobs,
+    pendingClipping,
+    openNotification,
+    sitePolygonRefresh,
+    setShouldRefetchPolygonData,
+    setShouldRefetchValidation,
+    sitePolygonData,
+    setIsLoadingDelayedJob
+  ]);
 
   return {
     runFixPolygonOverlaps
