@@ -19,7 +19,13 @@ import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygon
 
 import Button from "../../Button/Button";
 
-const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSuport: boolean }) => {
+const CheckIndividualPolygonControl = ({
+  viewRequestSuport,
+  entityData
+}: {
+  viewRequestSuport: boolean;
+  entityData?: any;
+}) => {
   const [clickedValidation, setClickedValidation] = useState(false);
   const [canBeFixed, setCanBeFixed] = useState(false);
   const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
@@ -85,17 +91,23 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     if (completedClippingJob) {
       const handleSuccess = async () => {
         const clippedData = completedClippingJob.payload?.data;
+
+        // Handle both array (bulk clipping) and object (single polygon clipping) formats
+        let polygonNames = "";
+
         if (Array.isArray(clippedData) && clippedData.length > 0) {
-          const polygonNames = clippedData
+          // Bulk clipping: data is an array
+          polygonNames = clippedData
             .map((item: any) => item.attributes?.polyName)
             .filter(Boolean)
             .join(", ");
+        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
+          // Single polygon clipping: data is an object
+          polygonNames = clippedData.attributes.polyName;
+        }
 
-          if (polygonNames) {
-            openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
-          } else {
-            openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
-          }
+        if (polygonNames) {
+          openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
         } else {
           openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
         }

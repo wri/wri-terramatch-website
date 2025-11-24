@@ -15,19 +15,24 @@ import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
 const listOfPolygonsFixed = (data: Record<string, any> | null) => {
-  if (data?.data && Array.isArray(data.data)) {
-    const clippedPolygonNames = data.data
+  if (!data?.data) return null;
+
+  let clippedPolygonNames = "";
+
+  if (Array.isArray(data.data)) {
+    clippedPolygonNames = data.data
       .map((item: any) => item.attributes?.polyName)
       .filter(Boolean)
       .join(", ");
-    if (clippedPolygonNames) {
-      return "Success! The following polygons have been fixed: " + clippedPolygonNames;
-    } else {
-      return "No polygons were fixed";
-    }
+  } else if (typeof data.data === "object" && data.data.attributes?.polyName) {
+    clippedPolygonNames = data.data.attributes.polyName;
   }
 
-  return null;
+  if (clippedPolygonNames) {
+    return "Success! The following polygons have been fixed: " + clippedPolygonNames;
+  } else {
+    return "No polygons were fixed";
+  }
 };
 
 const clearJob = (item: DelayedJobDto) => {
@@ -41,6 +46,21 @@ const clearJob = (item: DelayedJobDto) => {
     }
   ];
   triggerBulkUpdate(newJobsData);
+};
+
+const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
+  // Use entityName from the backend if available
+  if (job.entityName) {
+    return job.entityName;
+  }
+
+  // Fall back to the cached name by job UUID
+  if (cachedSiteNames[job.uuid]) {
+    return cachedSiteNames[job.uuid];
+  }
+
+  // Last resort
+  return "Unknown";
 };
 const FloatNotification = () => {
   const firstRender = useRef(true);
@@ -138,7 +158,7 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{item.entityName ?? cachedSiteNames[item.uuid]}</b>
+                      Site: <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (
