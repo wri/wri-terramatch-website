@@ -3,20 +3,18 @@ import { useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  fetchGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid
-} from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { fetchGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
-import Log from "@/utils/log";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
 import Button from "../../Button/Button";
@@ -25,6 +23,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const [clickedValidation, setClickedValidation] = useState(false);
   const [canBeFixed, setCanBeFixed] = useState(false);
   const [fixabilityResult, setFixabilityResult] = useState<PolygonFixabilityResult | null>(null);
+  const [pendingClipping, setPendingClipping] = useState(false);
   const {
     editPolygon,
     setEditPolygon,
@@ -36,6 +35,7 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
   const t = useT();
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
+  const [, { delayedJobs }] = useDelayedJobs();
 
   const v3ValidationData = usePolygonValidation({
     polygonUuid: editPolygon?.uuid || ""
@@ -71,41 +71,76 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
     }
   };
 
-  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
-    onSuccess: async (data: ClippedPolygonResponse) => {
-      if (!data.updated_polygons?.length) {
-        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+  useEffect(() => {
+    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
+      return;
+    }
+
+    const completedClippingJob = delayedJobs.find(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      const isPolygonClipping = job.name === "Polygon Clipping";
+      return isCompleted && isPolygonClipping;
+    });
+
+    if (completedClippingJob) {
+      const handleSuccess = async () => {
+        const clippedData = completedClippingJob.payload?.data;
+        if (Array.isArray(clippedData) && clippedData.length > 0) {
+          const polygonNames = clippedData
+            .map((item: any) => item.attributes?.polyName)
+            .filter(Boolean)
+            .join(", ");
+
+          if (polygonNames) {
+            openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
+          } else {
+            openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+          }
+        } else {
+          openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+        }
+
+        setShouldRefetchPolygonData(true);
+        setShouldRefetchValidation(true);
+        setShouldRefetchPolygonVersions(true);
+        if (editPolygon?.uuid != null) {
+          ApiSlice.pruneCache("validations", [editPolygon.uuid]);
+        }
+
+        const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
+          pathParams: { uuid: editPolygon?.primary_uuid as string }
+        })) as SitePolygonsDataResponse;
+        const polygonActive = polygonVersionData?.find(item => item.is_active);
+        setEditPolygon({
+          isOpen: true,
+          uuid: polygonActive?.poly_id as string,
+          primary_uuid: polygonActive?.primary_uuid
+        });
         hideLoader();
-        return;
-      }
-      const updatedPolygonNames = data.updated_polygons
-        ?.map(p => p.poly_name)
-        .filter(Boolean)
-        .join(", ");
-      openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
-      setShouldRefetchPolygonData(true);
-      setShouldRefetchValidation(true);
-      setShouldRefetchPolygonVersions(true);
-      if (editPolygon?.uuid != null) {
-        ApiSlice.pruneCache("validations", [editPolygon.uuid]);
+      };
+
+      if (completedClippingJob.status === "succeeded") {
+        handleSuccess();
+      } else {
+        openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+        hideLoader();
       }
 
-      const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: editPolygon?.primary_uuid as string }
-      })) as SitePolygonsDataResponse;
-      const polygonActive = polygonVersionData?.find(item => item.is_active);
-      setEditPolygon({
-        isOpen: true,
-        uuid: polygonActive?.poly_id as string,
-        primary_uuid: polygonActive?.primary_uuid
-      });
-      hideLoader();
-    },
-    onError: error => {
-      Log.error("Error clipping polygons:", error);
-      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+      setPendingClipping(false);
     }
-  });
+  }, [
+    delayedJobs,
+    pendingClipping,
+    openNotification,
+    t,
+    setShouldRefetchPolygonData,
+    setShouldRefetchValidation,
+    setShouldRefetchPolygonVersions,
+    editPolygon?.uuid,
+    editPolygon?.primary_uuid,
+    setEditPolygon,
+    hideLoader
+  ]);
 
   useValueChanged(clickedValidation, () => {
     if (clickedValidation) {
@@ -177,7 +212,8 @@ const CheckIndividualPolygonControl = ({ viewRequestSuport }: { viewRequestSupor
               className="text-10-bold flex w-full justify-center whitespace-nowrap rounded-lg border border-white bg-white p-2 text-darkCustom-100 hover:border-black disabled:cursor-not-allowed disabled:opacity-60"
               onClick={() => {
                 showLoader();
-                clipPolygons({ pathParams: { uuid: editPolygon.uuid } });
+                clipSinglePolygon(editPolygon.uuid);
+                setPendingClipping(true);
               }}
               disabled={!canBeFixed}
             >
