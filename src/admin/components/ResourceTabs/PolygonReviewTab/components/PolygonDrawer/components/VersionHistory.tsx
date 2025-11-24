@@ -222,7 +222,7 @@ const VersionHistory = ({
     try {
       setIsLoadingDropdown(true);
 
-      const newVersion = await createBlankVersion(polygonPrimaryUuid as string, "Created new version from admin panel");
+      const newVersion = await createBlankVersion(polygonPrimaryUuid as string, "Duplicate version");
 
       if (polygonUuid) {
         ApiSlice.pruneCache("sitePolygons", [polygonUuid]);

@@ -657,7 +657,6 @@ export const MapContainer = ({
               throw new Error("Missing site_id for polygon");
             }
 
-            // Create version with geometry changes using v3 API (works for both Admin and PD)
             await createVersionWithGeometry(
               selectedPolygon.primary_uuid,
               pdView ? "Updated geometry" : "Updated geometry from admin panel",
@@ -673,7 +672,6 @@ export const MapContainer = ({
             if (selectedPolygon.poly_id) {
               await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.poly_id]);
             }
-            // For admin view, fetch the updated versions and update UI
             if (!pdView) {
               const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
                 pathParams: { uuid: selectedPolygon.primary_uuid }
@@ -706,7 +704,6 @@ export const MapContainer = ({
   };
 
   const addGeometryVersion = async () => {
-    // Handle both v2 (poly_id) and v3 (polygonUuid) properties
     const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
     const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
       pathParams: { uuid: polygonUuid as string }

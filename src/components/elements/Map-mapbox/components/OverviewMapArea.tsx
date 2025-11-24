@@ -89,7 +89,7 @@ const OverviewMapArea = ({
     calc_area: v3Polygon.calcArea,
     plantstart: v3Polygon.plantStart,
     source: v3Polygon.source,
-    is_active: true // All polygons in the list should be active versions
+    is_active: true
   }));
 
   const modelBbox = useBoundingBox(
