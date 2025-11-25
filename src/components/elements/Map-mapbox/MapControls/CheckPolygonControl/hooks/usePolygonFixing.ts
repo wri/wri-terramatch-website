@@ -20,7 +20,6 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
   const { openNotification } = useNotificationContext();
   const { setShouldRefetchPolygonData, setShouldRefetchValidation } = useMapAreaContext();
   const context = useSitePolygonData();
-  const sitePolygonData = context?.sitePolygonData;
   const sitePolygonRefresh = context?.reloadSiteData;
   const [, { delayedJobs }] = useDelayedJobs();
   const [pendingClipping, setPendingClipping] = useState(false);
@@ -86,7 +85,6 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
     sitePolygonRefresh,
     setShouldRefetchPolygonData,
     setShouldRefetchValidation,
-    sitePolygonData,
     setIsLoadingDelayedJob
   ]);
 

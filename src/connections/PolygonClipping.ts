@@ -5,13 +5,13 @@ import {
 import { PolygonListClippingRequestBody } from "@/generated/v3/researchService/researchServiceSchemas";
 
 export const clipPolygonsForSite = (siteUuid: string): void => {
-  createClippedVersions.fetch({
+  createClippedVersions.fetchParallel({
     queryParams: { siteUuid }
   });
 };
 
 export const clipPolygonsForProject = (projectUuid: string): void => {
-  createClippedVersions.fetch({
+  createClippedVersions.fetchParallel({
     queryParams: { projectUuid }
   });
 };
@@ -26,7 +26,7 @@ export const clipPolygonList = (polygonUuids: string[]): void => {
     }
   };
 
-  createPolygonListClippedVersions.fetch({ body });
+  createPolygonListClippedVersions.fetchParallel({ body });
 };
 
 export const clipSinglePolygon = (polygonUuid: string): void => {
