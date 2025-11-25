@@ -10,6 +10,8 @@ import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/M
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -20,10 +22,9 @@ import {
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID,
-  useGetV2SitePolygonUuidVersions,
-  usePostV2TerrafundClipPolygonsPolygonUuid
+  useGetV2SitePolygonUuidVersions
 } from "@/generated/apiComponents";
-import { ClippedPolygonResponse, SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -70,6 +71,7 @@ const PolygonDrawer = ({
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
+  const [pendingClipping, setPendingClipping] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -80,6 +82,7 @@ const PolygonDrawer = ({
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
+  const [, { delayedJobs }] = useDelayedJobs();
   const wrapperRef = useRef(null);
 
   const runPolygonValidation = async () => {
@@ -107,52 +110,6 @@ const PolygonDrawer = ({
     }
   };
   const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
-
-  const { mutate: clipPolygons } = usePostV2TerrafundClipPolygonsPolygonUuid({
-    onSuccess: async (data: ClippedPolygonResponse) => {
-      if (!data.updated_polygons?.length) {
-        openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
-        hideLoader();
-        return;
-      }
-      const updatedPolygonNames = data.updated_polygons
-        ?.map(p => p.poly_name)
-        .filter(Boolean)
-        .join(", ");
-      openNotification("success", t("Success! The following polygons have been fixed:"), updatedPolygonNames);
-      setShouldRefetchValidation(true);
-      ApiSlice.pruneCache("validations", [polygonSelected]);
-      await refetchPolygonVersions();
-      await sitePolygonRefresh?.();
-      await refresh?.();
-      if (!selectedPolygon?.primaryUuid) {
-        return;
-      }
-      const response = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon?.primaryUuid as string }
-      })) as SitePolygonsDataResponse;
-      const polygonActive = response?.find(item => item.is_active);
-      sitePolygonRefresh?.();
-      if (polygonActive) {
-        const polygonActiveLightDto = parseSitePolygonsDataResponseToLightDto(polygonActive);
-        setSelectedPolygonData(polygonActiveLightDto);
-        setSelectedPolygonToDrawer?.({
-          id: selectedPolygonIndex as string,
-          status: polygonActiveLightDto.status as string,
-          label: polygonActiveLightDto.name as string,
-          uuid: polygonActiveLightDto.polygonUuid as string
-        });
-        setPolygonFromMap({ isOpen: true, uuid: polygonActiveLightDto.polygonUuid ?? "" });
-        setStatusSelectedPolygon(polygonActiveLightDto.status ?? "");
-      }
-      setIsLoadingDropdown(false);
-      hideLoader();
-    },
-    onError: error => {
-      Log.error("Error clipping polygons:", error);
-      openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
-    }
-  });
 
   useEffect(() => {
     if (checkPolygonValidation) {
@@ -207,6 +164,106 @@ const PolygonDrawer = ({
   );
 
   useEffect(() => {
+    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
+      return;
+    }
+
+    const completedClippingJob = delayedJobs.find(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      const isPolygonClipping = job.name === "Polygon Clipping";
+      return isCompleted && isPolygonClipping;
+    });
+
+    if (completedClippingJob) {
+      const handleSuccess = async () => {
+        const clippedData = completedClippingJob.payload?.data;
+        let polygonNames = "";
+
+        if (Array.isArray(clippedData) && clippedData.length > 0) {
+          polygonNames = clippedData
+            .map((item: any) => item.attributes?.polyName)
+            .filter(Boolean)
+            .join(", ");
+        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
+          polygonNames = clippedData.attributes.polyName;
+        }
+
+        if (polygonNames) {
+          openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
+        } else {
+          openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
+          hideLoader();
+          setPendingClipping(false);
+          return;
+        }
+
+        setShouldRefetchValidation(true);
+
+        ApiSlice.pruneCache("validations");
+
+        await refetchPolygonVersions();
+        await sitePolygonRefresh?.();
+        await refresh?.();
+
+        if (!selectedPolygon?.primaryUuid) {
+          hideLoader();
+          setPendingClipping(false);
+          return;
+        }
+
+        const response = (await fetchGetV2SitePolygonUuidVersions({
+          pathParams: { uuid: selectedPolygon?.primaryUuid as string }
+        })) as SitePolygonsDataResponse;
+        const polygonActive = response?.find(item => item.is_active);
+        sitePolygonRefresh?.();
+
+        if (polygonActive) {
+          const polygonActiveLightDto = parseSitePolygonsDataResponseToLightDto(polygonActive);
+          setSelectedPolygonData(polygonActiveLightDto);
+          setSelectedPolygonToDrawer?.({
+            id: selectedPolygonIndex as string,
+            status: polygonActiveLightDto.status as string,
+            label: polygonActiveLightDto.name as string,
+            uuid: polygonActiveLightDto.polygonUuid as string
+          });
+          setPolygonFromMap({ isOpen: true, uuid: polygonActiveLightDto.polygonUuid ?? "" });
+          setStatusSelectedPolygon(polygonActiveLightDto.status ?? "");
+        }
+
+        setIsLoadingDropdown(false);
+        hideLoader();
+      };
+
+      if (completedClippingJob.status === "succeeded") {
+        handleSuccess();
+      } else {
+        Log.error("Error clipping polygons:", completedClippingJob.payload);
+        openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
+        hideLoader();
+      }
+
+      setPendingClipping(false);
+    }
+  }, [
+    delayedJobs,
+    pendingClipping,
+    openNotification,
+    t,
+    setShouldRefetchValidation,
+    polygonSelected,
+    refetchPolygonVersions,
+    sitePolygonRefresh,
+    refresh,
+    selectedPolygon?.primaryUuid,
+    setSelectedPolygonToDrawer,
+    selectedPolygonIndex,
+    setPolygonFromMap,
+    setStatusSelectedPolygon,
+    hideLoader,
+    sitePolygonData
+  ]);
+
+  useEffect(() => {
     setIsLoadingDropdown(true);
     const onLoading = async () => {
       await refetchPolygonVersions();
@@ -224,7 +281,8 @@ const PolygonDrawer = ({
   const runFixPolygonOverlaps = () => {
     if (polygonSelected) {
       showLoader();
-      clipPolygons({ pathParams: { uuid: polygonSelected } });
+      clipSinglePolygon(polygonSelected);
+      setPendingClipping(true);
     } else {
       Log.error("Polygon UUID is missing");
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));

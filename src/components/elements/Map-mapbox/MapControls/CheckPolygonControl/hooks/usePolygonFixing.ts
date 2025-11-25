@@ -51,17 +51,19 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
     if (completedClippingJob) {
       if (completedClippingJob.status === "succeeded") {
         const clippedData = completedClippingJob.payload?.data;
+        let polygonNames = "";
+
         if (Array.isArray(clippedData) && clippedData.length > 0) {
-          const polygonNames = clippedData
+          polygonNames = clippedData
             .map((item: any) => item.attributes?.polyName)
             .filter(Boolean)
             .join(", ");
+        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
+          polygonNames = clippedData.attributes.polyName;
+        }
 
-          if (polygonNames) {
-            openNotification("success", "Success! The following polygons have been fixed:", polygonNames);
-          } else {
-            openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
-          }
+        if (polygonNames) {
+          openNotification("success", "Success! The following polygons have been fixed:", polygonNames);
         } else {
           openNotification("warning", "No polygon have been fixed", "Please run 'Check Polygons' again.");
         }
@@ -69,15 +71,7 @@ export const usePolygonFixing = ({ siteUuid, setIsLoadingDelayedJob, setAlertTit
         sitePolygonRefresh?.();
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
-
-        if (Array.isArray(sitePolygonData)) {
-          const polygonUuids = sitePolygonData
-            .map(polygon => polygon.polygonUuid)
-            .filter((uuid): uuid is string => Boolean(uuid));
-          if (polygonUuids.length > 0) {
-            ApiSlice.pruneCache("validations", polygonUuids);
-          }
-        }
+        ApiSlice.pruneCache("validations");
       } else {
         openNotification("error", "An error occurred while fixing polygons. Please try again.", "Error");
       }

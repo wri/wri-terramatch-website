@@ -35,6 +35,18 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
   }
 };
 
+const getValidationMessage = (data: Record<string, any> | null) => {
+  if (!data?.data?.attributes) return null;
+
+  const { validatedPolygons, totalPolygons } = data.data.attributes;
+
+  if (validatedPolygons != null && totalPolygons != null) {
+    return `Validated ${validatedPolygons} of ${totalPolygons} polygon${totalPolygons !== 1 ? "s" : ""}`;
+  }
+
+  return null;
+};
+
 const clearJob = (item: DelayedJobDto) => {
   const newJobsData: DelayedJobData[] = [
     {
@@ -203,11 +215,21 @@ const FloatNotification = () => {
                         </div>
                       )}
 
-                      {item.status === "succeeded" && listOfPolygonsFixed(item.payload) && (
-                        <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                          {listOfPolygonsFixed(item.payload)}
-                        </Text>
-                      )}
+                      {item.status === "succeeded" &&
+                        item.name === "Polygon Clipping" &&
+                        listOfPolygonsFixed(item.payload) && (
+                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                            {listOfPolygonsFixed(item.payload)}
+                          </Text>
+                        )}
+
+                      {item.status === "succeeded" &&
+                        item.name === "Polygon Validation" &&
+                        getValidationMessage(item.payload) && (
+                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                            {getValidationMessage(item.payload)}
+                          </Text>
+                        )}
                     </div>
                   </div>
                 ))}

@@ -61,9 +61,8 @@ const CheckIndividualPolygonControl = ({
 
       setShouldRefetchValidation(true);
       setClickedValidation(false);
-      if (editPolygon?.uuid != null) {
-        ApiSlice.pruneCache("validations", [editPolygon.uuid]);
-      }
+      ApiSlice.pruneCache("validations");
+
       hideLoader();
       displayNotification(
         t("Please update and re-run if validations fail."),
@@ -115,9 +114,8 @@ const CheckIndividualPolygonControl = ({
         setShouldRefetchPolygonData(true);
         setShouldRefetchValidation(true);
         setShouldRefetchPolygonVersions(true);
-        if (editPolygon?.uuid != null) {
-          ApiSlice.pruneCache("validations", [editPolygon.uuid]);
-        }
+
+        ApiSlice.pruneCache("validations");
 
         const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
           pathParams: { uuid: editPolygon?.primary_uuid as string }
