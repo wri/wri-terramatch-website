@@ -2114,9 +2114,10 @@ export type FormDataDto = {
 
 export type StoreFormDataAttributes = {
   answers: Record<string, any>;
+  isContinueLater?: boolean;
 };
 
-export type UpdateFormDataDAta = {
+export type UpdateFormDataData = {
   type: "formData";
   /**
    * @format uuid
@@ -2126,7 +2127,7 @@ export type UpdateFormDataDAta = {
 };
 
 export type UpdateFormDataBody = {
-  data: UpdateFormDataDAta;
+  data: UpdateFormDataData;
 };
 
 export type UpdateRequestDto = {

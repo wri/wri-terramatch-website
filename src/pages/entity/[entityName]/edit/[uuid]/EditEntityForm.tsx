@@ -123,7 +123,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     (data: Dictionary<any>, closeAndSave?: boolean) => {
       updateEntityAnswers({
         answers: normalizedFormData(data, fieldsProvider),
-        ...(closeAndSave ? { continue_later_action: true } : {})
+        isContinueLater: closeAndSave
       });
     },
     [fieldsProvider, updateEntityAnswers]
