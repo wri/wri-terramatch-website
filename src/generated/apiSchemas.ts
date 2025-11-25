@@ -140,22 +140,6 @@ export type UserRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -432,22 +416,6 @@ export type UserReadAll = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -915,22 +883,6 @@ export type V2AdminOrganisationRead = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -1177,22 +1129,6 @@ export type V2MonitoringOrganisationRead = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -1377,22 +1313,6 @@ export type V2AdminOrganisationUpdate = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -1429,7 +1349,6 @@ export type V2AdminOrganisationUpdate = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -1497,7 +1416,6 @@ export type V2OrganisationUpdate = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   languages?: string[];
   web_url?: string;
   facebook_url?: string;
@@ -1511,22 +1429,6 @@ export type V2OrganisationUpdate = {
   hq_zipcode?: string;
   hq_country?: string;
   fin_start_month?: number;
-  /**
-   * @format float
-   */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
   /**
    * @format float
    */
@@ -1614,22 +1516,6 @@ export type V2OrganisationRead = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -1666,7 +1552,6 @@ export type V2OrganisationRead = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -1920,22 +1805,6 @@ export type V2AdminUserUpdate = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -2695,22 +2564,6 @@ export type V2NurseryLiteRead = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -2747,7 +2600,6 @@ export type V2NurseryLiteRead = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -3073,22 +2925,6 @@ export type ProjectLiteRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -3125,7 +2961,6 @@ export type ProjectLiteRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -3359,22 +3194,6 @@ export type ProjectFullRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -3411,7 +3230,6 @@ export type ProjectFullRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -3742,22 +3560,6 @@ export type ProjectFullRead = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -4033,22 +3835,6 @@ export type SiteFullRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -4085,7 +3871,6 @@ export type SiteFullRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -4849,22 +4634,6 @@ export type ApplicationRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -5140,22 +4909,6 @@ export type NurseryPaginated = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -5192,7 +4945,6 @@ export type NurseryPaginated = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -5441,22 +5193,6 @@ export type NurseryRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -5493,7 +5229,6 @@ export type NurseryRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -5755,22 +5490,6 @@ export type NurseryLiteRead = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -5807,7 +5526,6 @@ export type NurseryLiteRead = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -6050,22 +5768,6 @@ export type SiteLiteRead = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -6102,7 +5804,6 @@ export type SiteLiteRead = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -6350,22 +6051,6 @@ export type NurseryReportRead = {
         /**
          * @format float
          */
-        fin_budget_3year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_2year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_1year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_current_year?: number;
-        /**
-         * @format float
-         */
         ha_restored_total?: number;
         /**
          * @format float
@@ -6402,7 +6087,6 @@ export type NurseryReportRead = {
         tree_restoration_practices?: string[];
         business_model?: string;
         subtype?: string;
-        organisation_revenue_this_year?: number;
         shapefiles?: {
           uuid?: string;
           shapefileable_type?: string;
@@ -6642,22 +6326,6 @@ export type NurseryReportRead = {
       hq_zipcode?: string;
       hq_country?: string;
       fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
       /**
        * @format float
        */
@@ -6936,22 +6604,6 @@ export type NurseryReportRead = {
       hq_zipcode?: string;
       hq_country?: string;
       fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
       /**
        * @format float
        */
@@ -7231,22 +6883,6 @@ export type NurseryReportRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -7283,7 +6919,6 @@ export type NurseryReportRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -7523,22 +7158,6 @@ export type SiteReportRead = {
         /**
          * @format float
          */
-        fin_budget_3year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_2year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_1year?: number;
-        /**
-         * @format float
-         */
-        fin_budget_current_year?: number;
-        /**
-         * @format float
-         */
         ha_restored_total?: number;
         /**
          * @format float
@@ -7575,7 +7194,6 @@ export type SiteReportRead = {
         tree_restoration_practices?: string[];
         business_model?: string;
         subtype?: string;
-        organisation_revenue_this_year?: number;
         shapefiles?: {
           uuid?: string;
           shapefileable_type?: string;
@@ -7812,22 +7430,6 @@ export type SiteReportRead = {
       hq_zipcode?: string;
       hq_country?: string;
       fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
       /**
        * @format float
        */
@@ -8106,22 +7708,6 @@ export type SiteReportRead = {
       hq_zipcode?: string;
       hq_country?: string;
       fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
       /**
        * @format float
        */
@@ -8470,22 +8056,6 @@ export type SiteReportRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -8522,7 +8092,6 @@ export type SiteReportRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -8856,22 +8425,6 @@ export type ProjectReportRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -8908,7 +8461,6 @@ export type ProjectReportRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -9132,22 +8684,6 @@ export type ProjectReportRead = {
       hq_zipcode?: string;
       hq_country?: string;
       fin_start_month?: number;
-      /**
-       * @format float
-       */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
       /**
        * @format float
        */
@@ -10986,22 +10522,6 @@ export type V2FinancialReportRead = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -11038,7 +10558,6 @@ export type V2FinancialReportRead = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
