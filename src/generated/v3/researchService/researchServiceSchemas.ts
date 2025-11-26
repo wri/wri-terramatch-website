@@ -205,6 +205,10 @@ export type SitePolygonLightDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -402,6 +406,10 @@ export type SitePolygonFullDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.

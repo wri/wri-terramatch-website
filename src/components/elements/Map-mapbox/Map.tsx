@@ -17,6 +17,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { deleteMedia } from "@/connections/Media";
+import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
@@ -27,13 +28,13 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundPolygonGeojsonUuid,
   usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -672,18 +673,17 @@ export const MapContainer = ({
             if (selectedPolygon.poly_id) {
               await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.poly_id]);
             }
-            if (!pdView) {
-              const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-                pathParams: { uuid: selectedPolygon.primary_uuid }
-              })) as SitePolygonsDataResponse;
 
-              const polygonActive = polygonVersionData?.find(item => item.is_active);
-              if (selectedPolygon?.uuid) {
-                reloadSiteData?.();
-              }
-              setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.poly_id as string });
-              setStatusSelectedPolygon?.(polygonActive?.status as string);
+            const polygonVersionResponse = await loadListPolygonVersions({
+              uuid: selectedPolygon.primary_uuid
+            });
+
+            const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);
+            if (selectedPolygon?.uuid) {
+              reloadSiteData?.();
             }
+            setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.polygonUuid as string });
+            setStatusSelectedPolygon?.(polygonActive?.status as string);
 
             onCancel(polygonsData);
             addSourcesToLayers(map.current, polygonsData, centroids);
