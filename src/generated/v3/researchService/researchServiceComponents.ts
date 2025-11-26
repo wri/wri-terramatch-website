@@ -667,6 +667,100 @@ export const deleteSitePolygon = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/{uuid}", "DELETE");
 
+export type UploadGeometryFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadGeometryFileVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file (KML, Shapefile, or GeoJSON) and creates site polygons asynchronously.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadGeometryFile = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  UploadGeometryFileError,
+  UploadGeometryFileVariables,
+  {}
+>("/research/v3/sitePolygons/upload", "POST");
+
 export type BoundingBoxGetQueryParams = {
   /**
    * UUID of a polygon to get its bounding box
@@ -1290,7 +1384,8 @@ export const operationsByTag = {
     listSitePolygonVersions,
     updateSitePolygonVersion,
     deleteSitePolygonVersion,
-    deleteSitePolygon
+    deleteSitePolygon,
+    uploadGeometryFile
   },
   boundingBoxes: { boundingBoxGet },
   validations: {
