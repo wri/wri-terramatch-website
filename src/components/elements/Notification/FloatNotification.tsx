@@ -34,17 +34,37 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
     return "No polygons were fixed";
   }
 };
+const getValidationMessages = (data: Record<string, any> | null): string[] => {
+  if (data?.included == null) return [];
+  const messageGroups: Record<string, string[]> = {};
 
-const getValidationMessage = (data: Record<string, any> | null) => {
-  if (!data?.data?.attributes) return null;
+  data.included.forEach((item: any) => {
+    if (item?.attributes?.criteriaList != null) {
+      item.attributes.criteriaList.forEach((criteria: any) => {
+        if (criteria?.extraInfo?.message != null && criteria?.extraInfo?.sitePolygonName != null) {
+          const message = criteria.extraInfo.message;
+          const polygonName = criteria.extraInfo.sitePolygonName;
 
-  const { validatedPolygons, totalPolygons } = data.data.attributes;
+          if (messageGroups[message] == null) {
+            messageGroups[message] = [];
+          }
+          messageGroups[message].push(polygonName);
+        }
+      });
+    }
+  });
 
-  if (validatedPolygons != null && totalPolygons != null) {
-    return `Validated ${validatedPolygons} of ${totalPolygons} polygon${totalPolygons !== 1 ? "s" : ""}`;
-  }
+  const formattedMessages: string[] = [];
+  Object.entries(messageGroups).forEach(([message, polygonNames]) => {
+    const uniqueNames = Array.from(new Set(polygonNames));
+    if (uniqueNames.length === 1) {
+      formattedMessages.push(`${message}: ${uniqueNames[0]}`);
+    } else {
+      formattedMessages.push(`${message} (${uniqueNames.length} polygons): ${uniqueNames.join(", ")}`);
+    }
+  });
 
-  return null;
+  return formattedMessages;
 };
 
 const clearJob = (item: DelayedJobDto) => {
@@ -175,7 +195,11 @@ const FloatNotification = () => {
                     <div className="mt-1">
                       {item.status === "failed" ? (
                         <Text variant="text-12-semibold" className="text-error-600">
-                          {item.payload ? t(getErrorMessageFromPayload(item.payload)) : t("Failed to complete")}
+                          {item.payload?.message != null
+                            ? t(item.payload.message)
+                            : item.payload != null
+                            ? t(getErrorMessageFromPayload(item.payload))
+                            : t("Failed to complete")}
                         </Text>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -215,21 +239,21 @@ const FloatNotification = () => {
                         </div>
                       )}
 
-                      {item.status === "succeeded" &&
-                        item.name === "Polygon Clipping" &&
-                        listOfPolygonsFixed(item.payload) && (
-                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                            {listOfPolygonsFixed(item.payload)}
-                          </Text>
-                        )}
+                      {item.status === "succeeded" && listOfPolygonsFixed(item.payload) && (
+                        <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                          {listOfPolygonsFixed(item.payload)}
+                        </Text>
+                      )}
 
-                      {item.status === "succeeded" &&
-                        item.name === "Polygon Validation" &&
-                        getValidationMessage(item.payload) && (
-                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                            {getValidationMessage(item.payload)}
-                          </Text>
-                        )}
+                      {item.status === "succeeded" && getValidationMessages(item.payload).length > 0 && (
+                        <div className="mt-2 flex flex-col gap-1">
+                          {getValidationMessages(item.payload).map((message, msgIndex) => (
+                            <Text key={msgIndex} variant="text-12-light" className="text-warning-600">
+                              {message}
+                            </Text>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

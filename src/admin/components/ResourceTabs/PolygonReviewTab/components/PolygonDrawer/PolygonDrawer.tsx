@@ -6,11 +6,9 @@ import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
-import { parseSitePolygonsDataResponseToLightDto } from "@/components/elements/Map-mapbox/utils";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { useDelayedJobs } from "@/connections/DelayedJob";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -18,13 +16,10 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
-  fetchGetV2SitePolygonUuidVersions,
   fetchPutV2ENTITYUUIDStatus,
   GetV2AuditStatusENTITYUUIDResponse,
-  useGetV2AuditStatusENTITYUUID,
-  useGetV2SitePolygonUuidVersions
+  useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -71,7 +66,6 @@ const PolygonDrawer = ({
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
   const [selectPolygonVersion, setSelectPolygonVersion] = useState<SitePolygonLightDto>();
   const [isLoadingDropdown, setIsLoadingDropdown] = useState(false);
-  const [pendingClipping, setPendingClipping] = useState(false);
   const t = useT();
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
@@ -82,7 +76,6 @@ const PolygonDrawer = ({
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
-  const [, { delayedJobs }] = useDelayedJobs();
   const wrapperRef = useRef(null);
 
   const runPolygonValidation = async () => {
@@ -150,128 +143,6 @@ const PolygonDrawer = ({
     setSelectPolygonVersion(selectedPolygonData);
   }, [selectedPolygonData]);
 
-  const {
-    data: polygonVersions,
-    refetch: refetchPolygonVersions,
-    isLoading: isLoadingVersions
-  } = useGetV2SitePolygonUuidVersions(
-    {
-      pathParams: { uuid: (selectPolygonVersion?.primaryUuid ?? selectedPolygonData?.primaryUuid) as string }
-    },
-    {
-      enabled: !!selectPolygonVersion?.primaryUuid || !!selectedPolygonData?.primaryUuid || !!polygonFromMap?.uuid
-    }
-  );
-
-  useEffect(() => {
-    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
-      return;
-    }
-
-    const completedClippingJob = delayedJobs.find(job => {
-      const isCompleted = job.status === "succeeded" || job.status === "failed";
-      const isPolygonClipping = job.name === "Polygon Clipping";
-      return isCompleted && isPolygonClipping;
-    });
-
-    if (completedClippingJob) {
-      const handleSuccess = async () => {
-        const clippedData = completedClippingJob.payload?.data;
-        let polygonNames = "";
-
-        if (Array.isArray(clippedData) && clippedData.length > 0) {
-          polygonNames = clippedData
-            .map((item: any) => item.attributes?.polyName)
-            .filter(Boolean)
-            .join(", ");
-        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
-          polygonNames = clippedData.attributes.polyName;
-        }
-
-        if (polygonNames) {
-          openNotification("success", t("Success! The following polygons have been fixed:"), polygonNames);
-        } else {
-          openNotification("warning", t("No polygon have been fixed"), t("Please run 'Check Polygons' again."));
-          hideLoader();
-          setPendingClipping(false);
-          return;
-        }
-
-        setShouldRefetchValidation(true);
-
-        ApiSlice.pruneCache("validations");
-
-        await refetchPolygonVersions();
-        await sitePolygonRefresh?.();
-        await refresh?.();
-
-        if (!selectedPolygon?.primaryUuid) {
-          hideLoader();
-          setPendingClipping(false);
-          return;
-        }
-
-        const response = (await fetchGetV2SitePolygonUuidVersions({
-          pathParams: { uuid: selectedPolygon?.primaryUuid as string }
-        })) as SitePolygonsDataResponse;
-        const polygonActive = response?.find(item => item.is_active);
-        sitePolygonRefresh?.();
-
-        if (polygonActive) {
-          const polygonActiveLightDto = parseSitePolygonsDataResponseToLightDto(polygonActive);
-          setSelectedPolygonData(polygonActiveLightDto);
-          setSelectedPolygonToDrawer?.({
-            id: selectedPolygonIndex as string,
-            status: polygonActiveLightDto.status as string,
-            label: polygonActiveLightDto.name as string,
-            uuid: polygonActiveLightDto.polygonUuid as string
-          });
-          setPolygonFromMap({ isOpen: true, uuid: polygonActiveLightDto.polygonUuid ?? "" });
-          setStatusSelectedPolygon(polygonActiveLightDto.status ?? "");
-        }
-
-        setIsLoadingDropdown(false);
-        hideLoader();
-      };
-
-      if (completedClippingJob.status === "succeeded") {
-        handleSuccess();
-      } else {
-        Log.error("Error clipping polygons:", completedClippingJob.payload);
-        openNotification("error", t("Error! Could not fix polygons"), t("Please try again later."));
-        hideLoader();
-      }
-
-      setPendingClipping(false);
-    }
-  }, [
-    delayedJobs,
-    pendingClipping,
-    openNotification,
-    t,
-    setShouldRefetchValidation,
-    polygonSelected,
-    refetchPolygonVersions,
-    sitePolygonRefresh,
-    refresh,
-    selectedPolygon?.primaryUuid,
-    setSelectedPolygonToDrawer,
-    selectedPolygonIndex,
-    setPolygonFromMap,
-    setStatusSelectedPolygon,
-    hideLoader,
-    sitePolygonData
-  ]);
-
-  useEffect(() => {
-    setIsLoadingDropdown(true);
-    const onLoading = async () => {
-      await refetchPolygonVersions();
-      setIsLoadingDropdown(false);
-    };
-    onLoading();
-  }, [isOpenPolygonDrawer, refetchPolygonVersions]);
-
   useEffect(() => {
     if (selectedPolygonData && isEmpty(selectedPolygonData) && isEmpty(polygonSelected)) {
       setSelectedPolygonData(selectPolygonVersion);
@@ -282,7 +153,6 @@ const PolygonDrawer = ({
     if (polygonSelected) {
       showLoader();
       clipSinglePolygon(polygonSelected);
-      setPendingClipping(true);
     } else {
       Log.error("Polygon UUID is missing");
       openNotification("error", t("Error"), t("Cannot fix polygons: Polygon UUID is missing."));
@@ -382,10 +252,8 @@ const PolygonDrawer = ({
                 <AttributeInformation
                   selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
                   sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
-                  isLoadingVersions={isLoadingVersions}
                   setSelectedPolygonData={setSelectPolygonVersion}
                   setStatusSelectedPolygon={setStatusSelectedPolygon}
-                  refetchPolygonVersions={refetchPolygonVersions}
                   setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
                   selectedPolygonIndex={selectedPolygonIndex}
                   setPolygonFromMap={setPolygonFromMap}
@@ -395,32 +263,23 @@ const PolygonDrawer = ({
               )}
             </Accordion>
             <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-              {isLoadingVersions ? (
-                <div className="flex justify-center py-4">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-blue"></div>
-                </div>
-              ) : (
-                selectedPolygonData && (
-                  <VersionHistory
-                    wrapperRef={wrapperRef}
-                    setPolygonFromMap={setPolygonFromMap}
-                    polygonFromMap={polygonFromMap}
-                    selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
-                    setSelectPolygonVersion={setSelectPolygonVersion}
-                    selectPolygonVersion={selectPolygonVersion}
-                    refreshPolygonList={refresh}
-                    refreshSiteData={sitePolygonRefresh}
-                    setSelectedPolygonData={setSelectedPolygonData}
-                    setStatusSelectedPolygon={setStatusSelectedPolygon}
-                    data={polygonVersions ?? []}
-                    isLoadingVersions={isLoadingVersions}
-                    refetch={refetchPolygonVersions}
-                    isLoadingDropdown={isLoadingDropdown}
-                    setIsLoadingDropdown={setIsLoadingDropdown}
-                    setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
-                    selectedPolygonIndex={selectedPolygonIndex}
-                  />
-                )
+              {selectedPolygonData && (
+                <VersionHistory
+                  wrapperRef={wrapperRef}
+                  setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
+                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                  setSelectPolygonVersion={setSelectPolygonVersion}
+                  selectPolygonVersion={selectPolygonVersion}
+                  refreshPolygonList={refresh}
+                  refreshSiteData={sitePolygonRefresh}
+                  setSelectedPolygonData={setSelectedPolygonData}
+                  setStatusSelectedPolygon={setStatusSelectedPolygon}
+                  isLoadingDropdown={isLoadingDropdown}
+                  setIsLoadingDropdown={setIsLoadingDropdown}
+                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                  selectedPolygonIndex={selectedPolygonIndex}
+                />
               )}
             </Accordion>
             <Divider />

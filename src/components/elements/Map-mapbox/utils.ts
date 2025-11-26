@@ -17,8 +17,10 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+import {
+  CreateSitePolygonAttributesDto,
+  SitePolygonLightDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -1108,27 +1110,25 @@ export async function storePolygon(
   refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
-    const payload = {
+    const attributes: CreateSitePolygonAttributesDto = {
       geometries: [
         {
-          type: "FeatureCollection" as const,
+          type: "FeatureCollection",
           features: [
             {
-              type: "Feature" as const,
-              geometry: geojson[0].geometry as any,
+              type: "Feature",
+              geometry: geojson[0].geometry,
               properties: {
                 site_id: record.uuid
               }
             }
-          ]
+          ] as any
         }
       ]
     };
 
     try {
-      const result = await (createSitePolygonsResource as any)(payload);
-
-      ApiSlice.pruneCache("sitePolygons");
+      const result = await createSitePolygonsResource(attributes);
 
       if (refetchSitePolygons) {
         await refetchSitePolygons();

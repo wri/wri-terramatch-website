@@ -28,6 +28,7 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
+import { prepareGeometryForUpload, useUploadGeometry } from "@/connections/GeometryUpload";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -41,6 +42,7 @@ import {
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { uploadGeometryFile, UploadGeometryFileError } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -194,6 +196,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const t = useT();
 
   const { openNotification } = useNotificationContext();
+  const uploadGeometry = useUploadGeometry({});
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
@@ -388,20 +391,52 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
-  // Table pagination handled by ConnectionTable; no local pagination state
   const uploadFiles = async () => {
-    const uploadPromises = [];
     closeModal(ModalId.ADD_POLYGON);
+    const siteUuid = record?.uuid;
+    if (!siteUuid) return;
+
+    if (!polygonLoaded) {
+      const uploadPromises = files.map(
+        file =>
+          new Promise((resolve, reject) => {
+            const fileToUpload = file.rawFile as File;
+            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+            uploadGeometry(attributes, {
+              onSuccess: (response: Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>) => resolve(response),
+              onError: (error: UploadGeometryFileError) => reject(error)
+            });
+          })
+      );
+
+      try {
+        await Promise.all(uploadPromises);
+        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
+        refetch();
+      } catch (error) {
+        const errorMessage =
+          error && typeof error === "object" && "message" in error
+            ? (error.message as string)
+            : t("An unknown error occurred");
+        openNotification("error", t("Error uploading file"), errorMessage);
+      } finally {
+        setPolygonLoaded(false);
+        setSubmitPolygonLoaded(false);
+      }
+      return;
+    }
+
+    const uploadPromises = [];
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
-      const site_uuid = record?.uuid;
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
-      formData.append("uuid", site_uuid);
+      formData.append("uuid", siteUuid);
       formData.append("polygon_loaded", polygonLoaded.toString());
       formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
-      let newRequest: any = formData;
+      const newRequest: any = formData;
 
       switch (fileType) {
         case "geojson":
@@ -417,19 +452,13 @@ const PolygonReviewTab: FC<IProps> = props => {
           break;
       }
     }
+
     try {
       const promise = await Promise.all(uploadPromises);
-      if (polygonLoaded) {
-        openFormModalHandlerIdentifiedPolygons(promise);
-      } else {
-        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
-      }
+      openFormModalHandlerIdentifiedPolygons(promise);
       refetch();
-      setPolygonLoaded(false);
-      setSubmitPolygonLoaded(false);
     } catch (error) {
       let errorMessage;
-
       if (error && typeof error === "object" && "error" in error) {
         const nestedError = error.error;
         if (typeof nestedError === "string") {
@@ -452,6 +481,9 @@ const PolygonReviewTab: FC<IProps> = props => {
         errorMessage = t("An unknown error occurred");
       }
       openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
+    } finally {
+      setPolygonLoaded(false);
+      setSubmitPolygonLoaded(false);
     }
   };
 
