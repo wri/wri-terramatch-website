@@ -42,6 +42,7 @@ import {
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { uploadGeometryFile, UploadGeometryFileError } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -402,9 +403,9 @@ const PolygonReviewTab: FC<IProps> = props => {
             const fileToUpload = file.rawFile as File;
             const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
 
-            (uploadGeometry as any)(attributes, {
-              onSuccess: (response: any) => resolve(response),
-              onError: (error: any) => reject(error)
+            uploadGeometry(attributes, {
+              onSuccess: (response: Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>) => resolve(response),
+              onError: (error: UploadGeometryFileError) => reject(error)
             });
           })
       );
