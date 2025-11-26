@@ -81,17 +81,12 @@ const clearJob = (item: DelayedJobDto) => {
 };
 
 const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
-  // Use entityName from the backend if available
   if (job.entityName) {
     return job.entityName;
   }
-
-  // Fall back to the cached name by job UUID
   if (cachedSiteNames[job.uuid]) {
     return cachedSiteNames[job.uuid];
   }
-
-  // Last resort
   return "Unknown";
 };
 const FloatNotification = () => {

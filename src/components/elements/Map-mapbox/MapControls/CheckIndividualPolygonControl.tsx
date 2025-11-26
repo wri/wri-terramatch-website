@@ -91,17 +91,14 @@ const CheckIndividualPolygonControl = ({
       const handleSuccess = async () => {
         const clippedData = completedClippingJob.payload?.data;
 
-        // Handle both array (bulk clipping) and object (single polygon clipping) formats
         let polygonNames = "";
 
         if (Array.isArray(clippedData) && clippedData.length > 0) {
-          // Bulk clipping: data is an array
           polygonNames = clippedData
             .map((item: any) => item.attributes?.polyName)
             .filter(Boolean)
             .join(", ");
         } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
-          // Single polygon clipping: data is an object
           polygonNames = clippedData.attributes.polyName;
         }
 
