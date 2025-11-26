@@ -12,7 +12,6 @@ import {
 } from "@/constants/polygonDropdownOptions";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygon } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
@@ -23,7 +22,7 @@ import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const t = useT();
-  const { editPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
+  const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygon | SitePolygonLightDto>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
@@ -34,16 +33,14 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const [calculatedArea, setCalculatedArea] = useState<number>(0);
   const [formattedArea, setFormattedArea] = useState<string>();
 
-  const context = useSitePolygonData();
-  const sitePolygonDataV3 = context?.sitePolygonData;
   const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
   const { openNotification } = useNotificationContext();
 
   useEffect(() => {
-    if (sitePolygonDataV3 && editPolygon.uuid) {
-      const activePolygon = sitePolygonDataV3.find(p => p.polygonUuid === editPolygon.uuid);
+    if (polygonDataContext && editPolygon.uuid) {
+      const activePolygon = polygonDataContext.find(p => p.polygonUuid === editPolygon.uuid);
 
       if (activePolygon) {
         setPolygonData(activePolygon);
@@ -51,11 +48,11 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
         Log.warn("Active polygon not found in context. Polygon UUID:", editPolygon.uuid);
         Log.warn(
           "Available polygons:",
-          sitePolygonDataV3.map(p => ({ uuid: p.uuid, polygonUuid: p.polygonUuid, name: p.name }))
+          polygonDataContext.map(p => ({ uuid: p.uuid, polygonUuid: p.polygonUuid, name: p.name }))
         );
       }
     }
-  }, [sitePolygonDataV3, editPolygon.uuid]);
+  }, [polygonDataContext, editPolygon.uuid]);
 
   useEffect(() => {
     if (polygonData) {

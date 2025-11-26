@@ -990,7 +990,8 @@ export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePol
   validationStatus: sitePolygonData.validation_status?.toString() ?? null,
   primaryUuid: sitePolygonData.primary_uuid ?? null,
   uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? "",
-  disturbanceableId: null
+  disturbanceableId: null,
+  isActive: sitePolygonData.is_active ?? false
 });
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {

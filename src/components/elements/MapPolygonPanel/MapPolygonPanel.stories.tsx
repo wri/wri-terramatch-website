@@ -38,7 +38,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   },
   {
     uuid: "2",
@@ -63,7 +64,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   },
   {
     uuid: "3",
@@ -88,7 +90,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   },
   {
     uuid: "4",
@@ -113,7 +116,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   },
   {
     uuid: "5",
@@ -138,7 +142,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   },
   {
     uuid: "6",
@@ -163,7 +168,8 @@ const items: SitePolygonLightDto[] = [
     source: null,
     validationStatus: "notChecked",
     primaryUuid: null,
-    disturbanceableId: null
+    disturbanceableId: null,
+    isActive: true
   }
 ];
 

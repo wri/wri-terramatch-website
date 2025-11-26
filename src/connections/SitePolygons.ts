@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
+import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
@@ -222,10 +223,16 @@ export const createPolygonVersion = async (options: CreateVersionOptions): Promi
 };
 
 export const createBlankVersion = async (primaryUuid: string, changeReason: string): Promise<SitePolygonLightDto> => {
+  const versionsResponse = await loadListPolygonVersions({ uuid: primaryUuid });
+  const latestVersion = versionsResponse?.data?.[0];
+  const latestVersionName = latestVersion?.name;
+
+  const attributeChanges: AttributeChangesDto = latestVersionName ? { polyName: latestVersionName } : { polyName: "" };
+
   return createPolygonVersion({
     primaryUuid,
     changeReason,
-    attributeChanges: {}
+    attributeChanges
   });
 };
 

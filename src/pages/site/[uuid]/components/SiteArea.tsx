@@ -31,7 +31,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     setPreviewVersion,
     setEditPolygon,
     setSelectedPolyVersion,
-    shouldRefetchPolygonVersions
+    shouldRefetchPolygonVersions,
+    setShouldRefetchPolygonData
   } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
 
@@ -50,14 +51,23 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     target_sys: v3Version.targetSys,
     distr: v3Version.distr?.join?.(", ") || (v3Version.distr as any),
     source: v3Version.source,
-    is_active: v3Version.polygonUuid === polygon?.uuid
+    is_active: v3Version.isActive
   }));
 
   const makeActivePolygon = async () => {
-    const versionActive = (polygonVersions as SitePolygonsDataResponse)?.find(
-      item => item?.uuid == selectedPolyVersion?.uuid
-    );
-    if (!versionActive?.is_active) {
+    if (!selectedPolyVersion?.uuid) {
+      openNotification("error", t("Error!"), t("No polygon version selected"));
+      return;
+    }
+
+    const versionActive = polygonVersions?.find(item => item?.uuid === selectedPolyVersion?.uuid);
+
+    if (!versionActive) {
+      openNotification("error", t("Error!"), t("Polygon version not found"));
+      return;
+    }
+
+    if (!versionActive.is_active) {
       try {
         await updatePolygonVersionAsync(selectedPolyVersion?.uuid as string, {
           isActive: true
@@ -72,6 +82,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
         setSelectedPolyVersion({} as any);
         setPreviewVersion(false);
         setOpenModalConfirmation(false);
+        setShouldRefetchPolygonData(true);
         const selectedVersion = selectedPolyVersion as any;
         setEditPolygon?.({
           isOpen: true,
