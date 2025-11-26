@@ -236,11 +236,11 @@ export type AttributeChangesDto = {
    */
   plantStart?: string;
   /**
-   * Updated practice type
+   * Updated practice type(s) as array of strings
    *
-   * @example agroforestry
+   * @example tree-planting
    */
-  practice?: string;
+  practice?: string[];
   /**
    * Updated target system
    *
@@ -248,11 +248,12 @@ export type AttributeChangesDto = {
    */
   targetSys?: string;
   /**
-   * Updated distribution method
+   * Updated distribution method(s) as array of strings
    *
-   * @example direct seeding
+   * @example full
+   * @example single-line
    */
-  distr?: string;
+  distr?: string[];
   /**
    * Updated number of trees
    *
@@ -467,6 +468,62 @@ export type VersionUpdateBody = {
   data: VersionUpdateData;
 };
 
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+};
+
+export type GeometryUploadAttributesDto = {
+  siteId: string;
+};
+
+export type GeometryUploadData = {
+  type: "sitePolygons";
+  attributes: GeometryUploadAttributesDto;
+};
+
+export type GeometryUploadRequestDto = {
+  data: GeometryUploadData;
+};
+
 export type BoundingBoxDto = {
   /**
    * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
@@ -537,49 +594,6 @@ export type ValidationSummaryDto = {
    * @format date-time
    */
   completedAt: string;
-};
-
-export type DelayedJobDto = {
-  /**
-   * The unique identifier for the delayed job.
-   */
-  uuid: string;
-  /**
-   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
-   */
-  status: "pending" | "failed" | "succeeded";
-  /**
-   * If the job is out of pending state, this is the HTTP status code for the completed process
-   */
-  statusCode: number | null;
-  /**
-   * If the job is out of pending state, this is the JSON payload for the completed process
-   */
-  payload: Record<string, any> | null;
-  /**
-   * If the job is in progress, this is the total content to process
-   */
-  totalContent: number | null;
-  /**
-   * If the job is in progress, this is the total content processed
-   */
-  processedContent: number | null;
-  /**
-   * If the job is in progress, this is the progress message
-   */
-  progressMessage: string | null;
-  /**
-   * Indicates whether the jobs have been acknowledged (cleared)
-   */
-  isAcknowledged: boolean | null;
-  /**
-   * The name of the delayedJob
-   */
-  name: string | null;
-  /**
-   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
-   */
-  entityName?: string | null;
 };
 
 export type SiteValidationRequestAttributes = {
