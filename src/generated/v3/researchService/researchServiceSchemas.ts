@@ -236,11 +236,11 @@ export type AttributeChangesDto = {
    */
   plantStart?: string;
   /**
-   * Updated practice type
+   * Updated practice type(s) as array of strings
    *
-   * @example agroforestry
+   * @example tree-planting
    */
-  practice?: string;
+  practice?: string[];
   /**
    * Updated target system
    *
@@ -248,11 +248,12 @@ export type AttributeChangesDto = {
    */
   targetSys?: string;
   /**
-   * Updated distribution method
+   * Updated distribution method(s) as array of strings
    *
-   * @example direct seeding
+   * @example full
+   * @example single-line
    */
-  distr?: string;
+  distr?: string[];
   /**
    * Updated number of trees
    *

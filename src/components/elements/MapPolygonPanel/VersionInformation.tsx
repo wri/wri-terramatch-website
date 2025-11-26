@@ -7,6 +7,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { createBlankVersion } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -14,7 +15,6 @@ import {
   fetchGetV2SitePolygonUuid,
   fetchGetV2SitePolygonUuidVersions,
   fetchGetV2TerrafundGeojsonComplete,
-  fetchPostV2SitePolygonUuidNewVersion,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile,
@@ -23,6 +23,7 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
@@ -62,7 +63,7 @@ const VersionInformation = ({
       setEditPolygon({
         isOpen: true,
         uuid: polygonActive?.poly_id as string,
-        primary_uuid: polygonActive?.primary_uuid
+        primary_uuid: polygonActive?.primary_uuid ?? undefined
       });
       openNotification("success", t("Success!"), t("Polygon version deleted successfully"));
     },
@@ -77,7 +78,7 @@ const VersionInformation = ({
       await refetchPolygonVersions?.();
       setPreviewVersion(false);
       setOpenModalConfirmation(false);
-      setSelectedPolyVersion({});
+      setSelectedPolyVersion({} as any);
     },
     onError: () => {
       openNotification("error", t("Error!"), t("Error making polygon version active"));
@@ -103,13 +104,21 @@ const VersionInformation = ({
   const uploadFiles = async () => {
     const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
     const uploadPromises = [];
-    const polygonSelectedUuid = selectedPolyVersion?.primary_uuid ?? editPolygon.primary_uuid;
+    const polygonSelectedUuid =
+      (selectedPolyVersion as any)?.primaryUuid ??
+      (selectedPolyVersion as any)?.primary_uuid ??
+      editPolygon.primary_uuid;
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
-      formData.append("uuid", (selectedPolyVersion?.site_id ?? polygonDefault?.site_id) as string);
+      formData.append(
+        "uuid",
+        ((selectedPolyVersion as any)?.siteId ??
+          (selectedPolyVersion as any)?.site_id ??
+          polygonDefault?.site_id) as string
+      );
       formData.append("primary_uuid", polygonSelectedUuid as string);
       let newRequest: any = formData;
 
@@ -137,7 +146,7 @@ const VersionInformation = ({
       setEditPolygon({
         isOpen: true,
         uuid: polygonActive?.poly_id as string,
-        primary_uuid: polygonActive?.primary_uuid
+        primary_uuid: polygonActive?.primary_uuid ?? undefined
       });
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
@@ -211,19 +220,22 @@ const VersionInformation = ({
   };
 
   const createNewVersion = async () => {
-    const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-      pathParams: { uuid: editPolygon.primary_uuid as string }
-    })) as SitePolygon[];
-    const polygonActive = polygonVersionData?.find(item => item.is_active);
-    const polygonUuid = selectedPolyVersion?.uuid ?? polygonActive?.uuid;
+    if (!editPolygon.primary_uuid) {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      return;
+    }
+
     try {
-      const newVersion = (await fetchPostV2SitePolygonUuidNewVersion({
-        pathParams: { uuid: polygonUuid as string }
-      })) as SitePolygon;
+      const newVersion = await createBlankVersion(editPolygon.primary_uuid, "Created new version");
+
+      if (editPolygon.uuid) {
+        ApiSlice.pruneCache("sitePolygons", [editPolygon.uuid]);
+      }
+
       setEditPolygon?.({
         isOpen: true,
-        uuid: newVersion?.poly_id as string,
-        primary_uuid: newVersion?.primary_uuid
+        uuid: newVersion.polygonUuid as string,
+        primary_uuid: newVersion.primaryUuid ?? undefined
       });
       refetchPolygonVersions?.();
       recallEntityData?.();
@@ -243,11 +255,11 @@ const VersionInformation = ({
         </Text>
       ),
       onClick: async () => {
-        setSelectedPolyVersion({});
+        setSelectedPolyVersion({} as any);
         const response = await fetchGetV2SitePolygonUuid({
           pathParams: { uuid: versionUuid as string }
         });
-        setSelectedPolyVersion(response as SitePolygon);
+        setSelectedPolyVersion(response as any);
         setPreviewVersion?.(true);
       }
     },
@@ -284,7 +296,7 @@ const VersionInformation = ({
       setEditPolygon?.({
         isOpen: true,
         uuid: polygon?.poly_id as string,
-        primary_uuid: polygon?.primary_uuid
+        primary_uuid: polygon?.primary_uuid ?? undefined
       });
       return;
     }
@@ -349,8 +361,14 @@ const VersionInformation = ({
           className="text-white hover:text-primary-300"
           onClick={() => {
             const polygonDefault = polygonVersionData?.find(polygon => polygon.poly_id == editPolygon?.uuid);
-            const polygonUuid = selectedPolyVersion?.poly_id ?? polygonDefault?.poly_id;
-            const polygonName = selectedPolyVersion?.poly_name ?? polygonDefault?.poly_name;
+            const polygonUuid =
+              (selectedPolyVersion as any)?.polygonUuid ??
+              (selectedPolyVersion as any)?.poly_id ??
+              polygonDefault?.poly_id;
+            const polygonName =
+              (selectedPolyVersion as any)?.name ??
+              (selectedPolyVersion as any)?.poly_name ??
+              polygonDefault?.poly_name;
             downloadGeoJsonPolygon(polygonUuid as string, polygonName ? formatStringName(polygonName) : "polygon");
           }}
         >

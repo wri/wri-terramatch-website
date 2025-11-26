@@ -1792,7 +1792,7 @@ export type SrpReportFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
-  otherRestorationPartnersDescription: string | null;
+  restorationPartnersDescription: string | null;
   totalUniqueRestorationPartners: number;
   media: MediaDto[];
 };

@@ -78,12 +78,10 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t }) => {
+  addFormEntries: (entries, field, formValues, { t, record, type }) => {
     const values = formValues[field.name];
 
-    const currencyCode =
-      Array.isArray(values) && values.length > 0 ? values[0].currency ?? values[0].local_currency : undefined;
-
+    const currencyCode = type === "financial-reports" ? record?.currency : record?.organisation?.currency;
     const currencyDisplayName = currencyCode
       ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
       : undefined;
@@ -167,9 +165,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else if (col === "revenue" || col === "expenses") {
                   const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) ?? 0;
-                  displayValue = isEmptyValue(row[col])
-                    ? "-"
-                    : `${numericValue.toLocaleString()} ${currencyCode ?? ""}`.trim();
+                  displayValue = isEmptyValue(row[col]) ? "-" : numericValue.toLocaleString();
                 } else {
                   displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
                 }
