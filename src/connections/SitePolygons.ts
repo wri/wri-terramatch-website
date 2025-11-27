@@ -1,15 +1,17 @@
 import { isEmpty } from "lodash";
 import { useCallback, useEffect, useState } from "react";
 
+import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceMutator";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
   createSitePolygons,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
-  CreateSitePolygonJsonApiRequestDto,
+  AttributeChangesDto,
+  CreateSitePolygonAttributesDto,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -35,6 +37,17 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
     return {};
   })
   .buildConnection();
+
+const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
+  .create<SitePolygonLightDto, CreateSitePolygonAttributesDto>()
+  .refetch(() => {
+    ApiSlice.pruneCache("sitePolygons");
+    ApiSlice.pruneIndex("sitePolygons", "");
+  })
+  .buildConnection();
+
+export const useCreateSitePolygon = connectionHook(createSitePolygonsConnection);
+export const loadCreateSitePolygon = connectionLoader(createSitePolygonsConnection);
 
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
@@ -155,8 +168,97 @@ export const useAllSitePolygons = (
   };
 };
 
-const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
-  .create<SitePolygonLightDto, CreateSitePolygonJsonApiRequestDto>()
-  .buildConnection();
+export const createSitePolygonsResource = async (
+  attributes: CreateSitePolygonAttributesDto
+): Promise<SitePolygonLightDto> => {
+  const response = await createSitePolygons.fetchParallel({
+    body: {
+      data: {
+        type: "sitePolygons",
+        attributes
+      }
+    }
+  });
 
-export const createSitePolygonsResource = resourceCreator(createSitePolygonsConnection);
+  ApiSlice.pruneCache("sitePolygons");
+  ApiSlice.pruneIndex("sitePolygons", "");
+
+  return response.data?.attributes!;
+};
+
+export type CreateVersionOptions = {
+  primaryUuid: string;
+  changeReason: string;
+  geometry?: {
+    type: "Feature";
+    geometry: any;
+    properties: {
+      site_id: string;
+    };
+  };
+  attributeChanges?: AttributeChangesDto;
+};
+
+export const createPolygonVersion = async (options: CreateVersionOptions): Promise<SitePolygonLightDto> => {
+  const { primaryUuid, changeReason, geometry, attributeChanges } = options;
+
+  const geometries = geometry
+    ? [
+        {
+          type: "FeatureCollection",
+          features: [geometry] as any
+        }
+      ]
+    : undefined;
+
+  const attributes: CreateSitePolygonAttributesDto = {
+    baseSitePolygonUuid: primaryUuid,
+    changeReason,
+    ...(geometries && { geometries }),
+    ...(attributeChanges && { attributeChanges })
+  };
+
+  const result = await createSitePolygonsResource(attributes);
+  return result;
+};
+
+export const createBlankVersion = async (primaryUuid: string, changeReason: string): Promise<SitePolygonLightDto> => {
+  const versionsResponse = await loadListPolygonVersions({ uuid: primaryUuid });
+  const latestVersion = versionsResponse?.data?.[0];
+  const latestVersionName = latestVersion?.name;
+
+  const attributeChanges: AttributeChangesDto = latestVersionName ? { polyName: latestVersionName } : { polyName: "" };
+
+  return createPolygonVersion({
+    primaryUuid,
+    changeReason,
+    attributeChanges
+  });
+};
+
+export const createVersionWithGeometry = async (
+  primaryUuid: string,
+  changeReason: string,
+  geometry: CreateVersionOptions["geometry"]
+): Promise<SitePolygonLightDto> => {
+  if (!geometry) {
+    throw new Error("Geometry is required for createVersionWithGeometry");
+  }
+  return createPolygonVersion({
+    primaryUuid,
+    changeReason,
+    geometry
+  });
+};
+
+export const createVersionWithAttributes = async (
+  primaryUuid: string,
+  changeReason: string,
+  attributeChanges: AttributeChangesDto
+): Promise<SitePolygonLightDto> => {
+  return createPolygonVersion({
+    primaryUuid,
+    changeReason,
+    attributeChanges
+  });
+};

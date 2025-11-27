@@ -20,6 +20,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import { prepareGeometryForUpload, useUploadGeometry } from "@/connections/GeometryUpload";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -95,6 +96,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
   const { openNotification } = useNotificationContext();
   const { hideLoader } = useLoading();
+  const uploadGeometry = useUploadGeometry({});
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -128,18 +130,52 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   };
 
   const uploadFiles = async () => {
-    const uploadPromises = [];
+    const siteUuid = site.uuid;
 
+    if (!polygonLoaded) {
+      const uploadPromises = files.map(
+        file =>
+          new Promise((resolve, reject) => {
+            const fileToUpload = file.rawFile as File;
+            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+            (uploadGeometry as any)(attributes, {
+              onSuccess: (response: any) => resolve(response),
+              onError: (error: any) => reject(error)
+            });
+          })
+      );
+
+      try {
+        await Promise.all(uploadPromises);
+        setShouldRefetchPolygonData(true);
+        openNotification("success", t("Success!"), t("File uploaded successfully"));
+        closeModal(ModalId.UPLOAD_IMAGES);
+      } catch (error) {
+        const errorMessage =
+          error && typeof error === "object" && "message" in error
+            ? (error.message as string)
+            : t("An unknown error occurred");
+        openNotification("error", t("Error uploading file"), errorMessage);
+      } finally {
+        setPolygonLoaded(false);
+        setSubmitPolygonLoaded(false);
+        hideLoader();
+      }
+      return;
+    }
+
+    const uploadPromises = [];
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
-      const site_uuid = site.uuid;
       const formData = new FormData();
       const fileType = getFileType(file);
       formData.append("file", fileToUpload);
-      formData.append("uuid", site_uuid);
+      formData.append("uuid", siteUuid);
       formData.append("polygon_loaded", polygonLoaded.toString());
       formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
-      let newRequest: any = formData;
+      const newRequest: any = formData;
+
       switch (fileType) {
         case "geojson":
           uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
@@ -154,17 +190,10 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           break;
       }
     }
+
     try {
       const promise = await Promise.all(uploadPromises);
-      if (polygonLoaded) {
-        openFormModalHandlerIdentifiedPolygons(promise);
-      } else {
-        setShouldRefetchPolygonData(true);
-        openNotification("success", t("Success!"), t("File uploaded successfully"));
-        closeModal(ModalId.UPLOAD_IMAGES);
-      }
-      setPolygonLoaded(false);
-      setSubmitPolygonLoaded(false);
+      openFormModalHandlerIdentifiedPolygons(promise);
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = (error as { message: string }).message;
@@ -178,6 +207,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         openNotification("error", t("Error uploading file"), t(errorMessage));
       }
     } finally {
+      setPolygonLoaded(false);
+      setSubmitPolygonLoaded(false);
       hideLoader();
     }
   };
@@ -203,11 +234,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            openNotification(
-              "warning",
-              t("Your polygon includes attributes that are beyond the scope!"),
-              t("These attributes are not shown in TerraMatch and only be available when downloading the polygon.")
-            );
             setSaveFlags(true);
           }
         }}
