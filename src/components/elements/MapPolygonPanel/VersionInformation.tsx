@@ -190,7 +190,7 @@ const VersionInformation = ({
 
   const createNewVersion = async () => {
     if (!editPolygon.primary_uuid) {
-      openNotification("error", t("Error!"), t("Missing polygon informaticcon"));
+      openNotification("error", t("Error!"), t("Missing polygon information"));
       return;
     }
 

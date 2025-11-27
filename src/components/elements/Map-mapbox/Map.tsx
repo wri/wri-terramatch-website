@@ -637,7 +637,7 @@ export const MapContainer = ({
           const feature = geojson.features[0];
           const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
           if (!selectedPolygon?.primary_uuid) {
-            openNotification("error", t("Error"), t("Missing polygon informaaxxtion"));
+            openNotification("error", t("Error"), t("Missing polygon information"));
             return;
           }
 
