@@ -234,11 +234,13 @@ const FloatNotification = () => {
                         </div>
                       )}
 
-                      {item.status === "succeeded" && listOfPolygonsFixed(item.payload) && (
-                        <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                          {listOfPolygonsFixed(item.payload)}
-                        </Text>
-                      )}
+                      {item.status === "succeeded" &&
+                        item.name === "Polygon Clipping" &&
+                        listOfPolygonsFixed(item.payload) && (
+                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                            {listOfPolygonsFixed(item.payload)}
+                          </Text>
+                        )}
 
                       {item.status === "succeeded" && getValidationMessages(item.payload).length > 0 && (
                         <div className="mt-2 flex flex-col gap-1">
