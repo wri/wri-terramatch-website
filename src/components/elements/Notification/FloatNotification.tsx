@@ -15,20 +15,25 @@ import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
 const listOfPolygonsFixed = (data: Record<string, any> | null) => {
-  if (data?.updated_polygons) {
-    const updatedPolygonNames = data.updated_polygons
-      ?.map((p: any) => p.poly_name)
+  if (!data?.data) return null;
+
+  let clippedPolygonNames = "";
+
+  if (Array.isArray(data.data)) {
+    clippedPolygonNames = data.data
+      .map((item: any) => item.attributes?.polyName)
       .filter(Boolean)
       .join(", ");
-    if (updatedPolygonNames) {
-      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
-    } else {
-      return "No polygons were fixed";
-    }
+  } else if (typeof data.data === "object" && data.data.attributes?.polyName) {
+    clippedPolygonNames = data.data.attributes.polyName;
   }
-  return null;
-};
 
+  if (clippedPolygonNames) {
+    return "Success! The following polygons have been fixed: " + clippedPolygonNames;
+  } else {
+    return "No polygons were fixed";
+  }
+};
 const getValidationMessages = (data: Record<string, any> | null): string[] => {
   if (data?.included == null) return [];
   const messageGroups: Record<string, string[]> = {};
@@ -73,6 +78,16 @@ const clearJob = (item: DelayedJobDto) => {
     }
   ];
   triggerBulkUpdate(newJobsData);
+};
+
+const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
+  if (job.entityName) {
+    return job.entityName;
+  }
+  if (cachedSiteNames[job.uuid]) {
+    return cachedSiteNames[job.uuid];
+  }
+  return "Unknown";
 };
 const FloatNotification = () => {
   const firstRender = useRef(true);
@@ -170,7 +185,7 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{item.entityName ?? cachedSiteNames[item.uuid]}</b>
+                      Site: <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (

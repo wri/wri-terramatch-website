@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -7,18 +7,17 @@ import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
 import ModalProcessBulkPolygons from "@/components/extensive/Modal/ModalProcessBulkPolygons";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { clipPolygonList } from "@/connections/PolygonClipping";
 import { useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  useDeleteV2TerrafundProjectPolygons,
-  usePostV2TerrafundClipPolygonsPolygons,
-  usePostV2TerrafundValidationPolygons
-} from "@/generated/apiComponents";
+import { useDeleteV2TerrafundProjectPolygons, usePostV2TerrafundValidationPolygons } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
@@ -43,15 +42,16 @@ const ProcessBulkPolygonsControl = ({
     setShouldRefetchPolygonData,
     setShouldRefetchValidation
   } = useMapAreaContext();
-  const refetchData = () => {
+  const refetchData = useCallback(() => {
     context?.reloadSiteData();
     setShouldRefetchValidation(true);
     setShouldRefetchPolygonData(true);
     setSelectedPolygonsInCheckbox([]);
-  };
+  }, [context, setShouldRefetchValidation, setShouldRefetchPolygonData, setSelectedPolygonsInCheckbox]);
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
-  const { mutate: fixPolygons } = usePostV2TerrafundClipPolygonsPolygons();
+  const [, { delayedJobs }] = useDelayedJobs();
+  const [pendingClipping, setPendingClipping] = useState(false);
   const sitePolygonData = context?.sitePolygonData as Array<SitePolygonLightDto>;
   const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
 
@@ -62,6 +62,59 @@ const ProcessBulkPolygonsControl = ({
   }>({ fixableCount: 0, totalCount: 0, canFixAny: false });
 
   const { allValidations: overlapValidations } = useAllSiteValidations(entityData?.uuid ?? "", OVERLAPPING_CRITERIA_ID);
+
+  useEffect(() => {
+    if (!(pendingClipping && delayedJobs && delayedJobs.length > 0)) {
+      return;
+    }
+
+    const completedClippingJob = delayedJobs.find(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      const isPolygonClipping = job.name === "Polygon Clipping";
+      return isCompleted && isPolygonClipping;
+    });
+
+    if (completedClippingJob) {
+      if (completedClippingJob.status === "succeeded") {
+        const clippedData = completedClippingJob.payload?.data;
+        let polygonNames = "";
+
+        if (Array.isArray(clippedData) && clippedData.length > 0) {
+          polygonNames = clippedData
+            .map((item: any) => item.attributes?.polyName)
+            .filter(Boolean)
+            .join(", ");
+        } else if (clippedData && typeof clippedData === "object" && clippedData.attributes?.polyName) {
+          polygonNames = clippedData.attributes.polyName;
+        }
+
+        setIsLoadingDelayedJob?.(false);
+        if (polygonNames) {
+          openNotification("success", t("Success!"), t(`Polygons fixed successfully. Fixed: ${polygonNames}`));
+        } else {
+          openNotification("warning", t("Warning"), t("No polygons were fixed."));
+        }
+        ApiSlice.pruneCache("validations");
+
+        refetchData?.();
+      } else {
+        hideLoader();
+        setIsLoadingDelayedJob?.(false);
+        openNotification("error", t("Error!"), t("Failed to fix polygons"));
+      }
+
+      setPendingClipping(false);
+    }
+  }, [
+    delayedJobs,
+    pendingClipping,
+    setIsLoadingDelayedJob,
+    openNotification,
+    t,
+    refetchData,
+    hideLoader,
+    sitePolygonData
+  ]);
 
   useEffect(() => {
     if (selectedPolygonsInCheckbox.length > 0 && overlapValidations.length > 0) {
@@ -154,37 +207,8 @@ const ProcessBulkPolygonsControl = ({
             closeModal(ModalId.FIX_POLYGONS);
             setIsLoadingDelayedJob?.(true);
             setAlertTitle?.("Fix Polygons");
-            fixPolygons(
-              {
-                body: {
-                  uuids: selectedUUIDs,
-                  entity_uuid: entityData?.uuid,
-                  entity_type: "sites"
-                }
-              },
-              {
-                onSuccess: response => {
-                  const processedNames = response?.processed?.map(item => item.poly_name).join(", ");
-
-                  setIsLoadingDelayedJob?.(false);
-                  if (processedNames) {
-                    openNotification(
-                      "success",
-                      t("Success!"),
-                      t(`Polygons fixed successfully. Fixed: ${processedNames}`)
-                    );
-                  } else {
-                    openNotification("warning", t("Warning"), t("No polygons were fixed."));
-                  }
-                  refetchData?.();
-                },
-                onError: () => {
-                  hideLoader();
-                  setIsLoadingDelayedJob?.(false);
-                  openNotification("error", t("Error!"), t("Failed to fix polygons"));
-                }
-              }
-            );
+            clipPolygonList(selectedUUIDs);
+            setPendingClipping(true);
           }
         }}
         secondaryButtonText={t("Cancel")}
