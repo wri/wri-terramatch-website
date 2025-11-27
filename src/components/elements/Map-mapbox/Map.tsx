@@ -27,10 +27,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2TerrafundPolygonGeojsonUuid,
-  usePostV2ExportImage
-} from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonGeojsonUuid, usePostV2ExportImage } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -489,7 +486,6 @@ export const MapContainer = ({
   }, [projectUUID, userChangedStyle]);
 
   useEffect(() => {
-    const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
     const handleDelete = async (id: string) => {
       try {
@@ -640,7 +636,6 @@ export const MapContainer = ({
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
           const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
-
           if (!selectedPolygon?.primary_uuid) {
             openNotification("error", t("Error"), t("Missing polygon information"));
             return;
