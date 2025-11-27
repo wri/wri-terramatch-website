@@ -229,6 +229,7 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
+  map.hasImage("pulsing-dot") && map.removeImage("pulsing-dot");
 };
 
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -321,7 +322,9 @@ export const addMediaSourceAndLayer = (
 
   const pulsingDot = getPulsingDot(map, 120);
 
-  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  if (!map.hasImage("pulsing-dot")) {
+    map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  }
 
   map.addSource(layerName, {
     type: "geojson",

@@ -1,10 +1,10 @@
 export interface OverlapExtraInfo {
-  poly_uuid: string;
-  poly_name: string;
+  polyUuid: string;
+  polyName: string;
   percentage: number;
   intersectionArea: number;
   intersectSmaller: boolean;
-  site_name: string;
+  siteName: string;
 }
 
 export interface PolygonFixabilityResult {
@@ -37,7 +37,7 @@ export const checkPolygonFixability = (
     if (!percentageValid) {
       canBeFixed = false;
       reasons.push(
-        `Overlap percentage (${overlap.percentage.toFixed(2)}%) exceeds 3.5% limit for polygon "${overlap.poly_name}"`
+        `Overlap percentage (${overlap.percentage.toFixed(2)}%) exceeds 3.5% limit for polygon "${overlap.polyName}"`
       );
     }
 
@@ -45,7 +45,7 @@ export const checkPolygonFixability = (
       canBeFixed = false;
       reasons.push(
         `Overlap area (${overlap.intersectionArea.toFixed(4)} ha) exceeds 0.1 ha limit for polygon "${
-          overlap.poly_name
+          overlap.polyName
         }"`
       );
     }
