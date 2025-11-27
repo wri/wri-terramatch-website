@@ -11,7 +11,7 @@ import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2MediaProjectProjectMediaUuid, usePostV2ExportImage } from "@/generated/apiComponents";
+import { usePostV2ExportImage } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -20,6 +20,7 @@ import Log from "@/utils/log";
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_RIGHT } from "../Menu/MenuVariant";
+import { updateMedia } from "@/connections/Media";
 
 export type ImageGalleryItemData = {
   uuid: string;
@@ -54,21 +55,18 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
   const { mutateAsync } = usePostV2ExportImage();
-  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const handleDelete = useCallback(() => {
     onDelete?.(data.uuid);
   }, [data.uuid, onDelete]);
   const setImageCover = useCallback(async () => {
-    const result = await updateIsCoverAsync({
-      pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
-    });
+    const result = await updateMedia({ isCover: true }, { id: data.uuid });
     if (result) {
       openNotification("success", t("Success!"), t("Image set as cover successfully"));
       reloadGalleryImages?.();
     } else {
       openNotification("error", t("Error!"), t("Failed to set image as cover"));
     }
-  }, [data.uuid, entityData.uuid, openNotification, reloadGalleryImages, t, updateIsCoverAsync]);
+  }, [data.uuid, openNotification, reloadGalleryImages, t]);
   const openModalImageDetail = useCallback(() => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,

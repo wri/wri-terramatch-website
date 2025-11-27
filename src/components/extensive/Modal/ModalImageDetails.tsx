@@ -12,10 +12,8 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
-import { useMedia } from "@/connections/Media";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePatchV2MediaProjectProjectMediaUuid } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
@@ -25,6 +23,7 @@ import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
 import { ModalProps } from "./Modal";
 import { ModalId } from "./ModalConst";
 import { ModalBaseImageDetail } from "./ModalsBases";
+import { updateMedia } from "@/connections/Media";
 
 export interface ModalImageDetailProps extends ModalProps {
   onClose?: () => void;
@@ -65,8 +64,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   const [descriptionCharCount, setDescriptionCharCount] = useState(data.description?.length ?? 0);
   const maxDescriptionLength = 500;
   const mapFunctions = useMap();
-  const [, { update: updateMedia, isUpdating }] = useMedia({ id: data.uuid });
-  const { mutateAsync: updateIsCoverAsync, isLoading: isUpdatingCover } = usePatchV2MediaProjectProjectMediaUuid();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useOnMount(() => {
     setInitialFormData({ ...formData });
@@ -99,6 +97,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       formData.photographer !== initialFormData.photographer ||
       formData.is_public !== initialFormData.is_public
     ) {
+      setIsUpdating(true);
       const mediaUpdate = updateMedia({
         name: formData.name,
         title: formData.name,
@@ -106,15 +105,13 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         description: formData.description ?? undefined,
         isPublic: formData.is_public,
         isCover: formData.is_cover
-      });
+      }, { id: data.uuid });
 
       updatePromises.push(mediaUpdate);
     }
 
     if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
-      const result = updateIsCoverAsync({
-        pathParams: { project: entityData.uuid, mediaUuid: data.uuid }
-      });
+      const result = updateMedia({ isCover: true }, { id: data.uuid });
       updatePromises.push(result);
     }
 
@@ -138,6 +135,8 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     } catch (error) {
       openNotification("error", t("Error"), t("Failed to update image details"));
       Log.error("Failed to update image details:", error);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -354,9 +353,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <Button
           className="w-1/6 rounded-full"
           onClick={handleSave}
-          disabled={isUpdating || isUpdatingCover || !hasChanges()}
+          disabled={isUpdating || !hasChanges()}
         >
-          {isUpdating || isUpdatingCover ? t("Saving...") : t("Save")}
+          {isUpdating ? t("Saving...") : t("Save")}
         </Button>
       </div>
     </ModalBaseImageDetail>

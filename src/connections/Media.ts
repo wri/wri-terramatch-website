@@ -18,11 +18,14 @@ import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook
 
 import { v3Resource } from "./util/apiConnectionFactory";
 import { connectionHook } from "./util/connectionShortcuts";
+import { resourceUpdater } from "./util/resourceMutator";
 
 export const mediaConnection = v3Resource("media", getMedia)
   .singleResource<MediaDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .update(mediaUpdate)
   .buildConnection();
+
+export const updateMedia = resourceUpdater(mediaConnection);
 
 export const useMedia = connectionHook(mediaConnection);
 

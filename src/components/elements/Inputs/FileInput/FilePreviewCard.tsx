@@ -9,7 +9,6 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useMedia } from "@/connections/Media";
 import { useFileSize } from "@/hooks/useFileSize";
 import { UploadedFile } from "@/types/common";
 
@@ -18,6 +17,7 @@ import { SUBTITLE_MAP_ON_FAILED } from "./constants/subtitleMapOnFailed";
 import { SUBTITLE_MAP_ON_UPLOADED } from "./constants/subtitleMapOnUploaded";
 import { SUBTITLE_MAP_ON_UPLOADING } from "./constants/subtitleMapOnUploading";
 import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./FileInputVariants";
+import { updateMedia } from "@/connections/Media";
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;
@@ -33,18 +33,16 @@ const FilePreviewCard = ({
   className,
   showPrivateCheckbox,
   onDelete,
-  onPrivateChange,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
 }: FilePreviewCardProps) => {
-  const [, { update: updateMedia }] = useMedia({ id: file.uuid });
 
   const handlePrivateChange = useCallback(
     (checked: boolean) => {
       if (file == null) return;
 
-      updateMedia({ isPublic: checked });
+      updateMedia({ isPublic: checked }, { id: file.uuid });
     },
-    [file, updateMedia]
+    [file]
   );
 
   const t = useT();

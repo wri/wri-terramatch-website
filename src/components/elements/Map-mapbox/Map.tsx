@@ -16,7 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { deleteMedia } from "@/connections/Media";
+import { deleteMedia, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -29,7 +29,6 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import {
   fetchGetV2TerrafundPolygonGeojsonUuid,
-  usePatchV2MediaProjectProjectMediaUuid,
   usePostV2ExportImage
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
@@ -260,7 +259,6 @@ export const MapContainer = ({
   const { showLoader, hideLoader } = useLoading();
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
-  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const { openNotification } = useNotificationContext();
   const {
     isUserDrawingEnabled,
@@ -521,9 +519,7 @@ export const MapContainer = ({
     };
 
     const setImageCover = async (uuid: string) => {
-      const result = await updateIsCoverAsync({
-        pathParams: { project: projectUUID, mediaUuid: uuid }
-      });
+      const result = await updateMedia({ isCover: true }, { id: uuid });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
         setShouldRefetchMediaData(true);
