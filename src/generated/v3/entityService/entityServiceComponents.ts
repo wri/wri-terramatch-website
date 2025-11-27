@@ -863,6 +863,17 @@ export type MediaUpdateResponse = {
     id?: string;
     attributes?: Schemas.MediaDto;
   };
+  included?: {
+    /**
+     * @example media
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.MediaDto;
+  }[];
 };
 
 export type MediaUpdateVariables = {
