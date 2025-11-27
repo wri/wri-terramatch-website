@@ -19,7 +19,6 @@ import {
   fetchPostV2TerrafundUploadShapefile
 } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
-import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
 import { getErrorMessageFromPayload } from "@/utils/errors";
@@ -103,7 +102,14 @@ const VersionInformation = ({
     }
     try {
       await Promise.all(uploadPromises);
+
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
       await refetchPolygonVersions?.();
+
+      await recallEntityData?.();
+
       if (editPolygon?.primary_uuid) {
         const response = await loadListPolygonVersions({
           uuid: editPolygon.primary_uuid
@@ -117,6 +123,7 @@ const VersionInformation = ({
           });
         }
       }
+
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
@@ -197,17 +204,19 @@ const VersionInformation = ({
     try {
       const newVersion = await createBlankVersion(editPolygon.primary_uuid, "Created new version");
 
-      if (editPolygon.uuid) {
-        ApiSlice.pruneCache("sitePolygons", [editPolygon.uuid]);
-      }
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
+      await refetchPolygonVersions?.();
+
+      await recallEntityData?.();
 
       setEditPolygon?.({
         isOpen: true,
         uuid: newVersion.polygonUuid as string,
         primary_uuid: newVersion.primaryUuid ?? undefined
       });
-      refetchPolygonVersions?.();
-      recallEntityData?.();
+
       openNotification("success", t("Success!"), t("New version created successfully"));
     } catch (error) {
       openNotification("error", t("Error!"), t("Error creating new version"));
@@ -259,7 +268,11 @@ const VersionInformation = ({
   const handleDeletePolygonVersion = async (polyId: string) => {
     try {
       await deletePolygonVersion(polyId);
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
       await refetchPolygonVersions?.();
+
       await recallEntityData?.();
 
       if (editPolygon?.primary_uuid) {
@@ -275,15 +288,12 @@ const VersionInformation = ({
           });
         }
       }
+
       openNotification("success", t("Success!"), t("Polygon version deleted successfully"));
     } catch (error) {
       openNotification("error", t("Error!"), t("Error deleting polygon version"));
     }
   };
-
-  useValueChanged(selectedPolyVersion, () => {
-    recallEntityData?.();
-  });
 
   const makeActivePolygon = async (polygon: any) => {
     const versionActive = polygonVersionData?.find(item => item?.uuid === (polygon?.uuid as string));
@@ -297,8 +307,13 @@ const VersionInformation = ({
         await updatePolygonVersionAsync(polygon?.uuid as string, {
           isActive: true
         });
-        openNotification("success", t("Success!"), t("Polygon version made active successfully"));
+
+        ApiSlice.pruneCache("sitePolygons");
+        ApiSlice.pruneIndex("sitePolygons", "");
         await refetchPolygonVersions?.();
+
+        await recallEntityData?.();
+
         setPreviewVersion(false);
         setOpenModalConfirmation(false);
         setSelectedPolyVersion({} as any);
@@ -307,6 +322,8 @@ const VersionInformation = ({
           uuid: polygon?.poly_id as string,
           primary_uuid: polygon?.primary_uuid ?? undefined
         });
+
+        openNotification("success", t("Success!"), t("Polygon version made active successfully"));
       } catch (error) {
         openNotification("error", t("Error!"), t("Error making polygon version active"));
       }

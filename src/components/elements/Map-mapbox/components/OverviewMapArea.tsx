@@ -55,6 +55,7 @@ const OverviewMapArea = ({
     setPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
+    setShouldRefetchPolygonData,
     polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
@@ -127,10 +128,10 @@ const OverviewMapArea = ({
     }
   }, [editPolygon, setSelectedPolygonsInCheckbox]);
 
-  useValueChanged(shouldRefetchPolygonData, () => {
+  useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
-      reloadSiteData?.();
-      refetch();
+      await Promise.all([refetch(), reloadSiteData?.()]);
+      setShouldRefetchPolygonData(false);
     }
   });
   useValueChanged(shouldRefetchValidation, () => {

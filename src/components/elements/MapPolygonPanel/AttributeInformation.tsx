@@ -44,12 +44,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
 
       if (activePolygon) {
         setPolygonData(activePolygon);
-      } else {
-        Log.warn("Active polygon not found in context. Polygon UUID:", editPolygon.uuid);
-        Log.warn(
-          "Available polygons:",
-          polygonDataContext.map(p => ({ uuid: p.uuid, polygonUuid: p.polygonUuid, name: p.name }))
-        );
       }
     }
   }, [polygonDataContext, editPolygon.uuid]);
@@ -112,9 +106,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     const primaryUuid = isV3
       ? (polygonData as SitePolygonLightDto).primaryUuid
       : (polygonData as SitePolygon)?.primary_uuid;
-    const polygonUuidForCache = isV3
-      ? (polygonData as SitePolygonLightDto).polygonUuid
-      : (polygonData as SitePolygon)?.poly_id;
 
     if (!primaryUuid) {
       openNotification("error", t("Error!"), t("Missing polygon information"));
@@ -122,6 +113,7 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     }
 
     try {
+      // Step 1: Create new version with attributes
       await createVersionWithAttributes(primaryUuid, "Updated polygon attributes", {
         polyName: polygonName,
         plantStart: plantStartDate,
@@ -131,11 +123,13 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
         numTrees: treesPlanted
       });
 
-      if (polygonUuidForCache) {
-        ApiSlice.pruneCache("sitePolygons", [polygonUuidForCache]);
-      }
+      // Step 2: Clear cache
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
 
+      // Step 3: Set flag to trigger refetch in parent components
       setShouldRefetchPolygonData(true);
+
       openNotification("success", t("Success!"), t("Polygon version created successfully"));
     } catch (error) {
       Log.error("Error creating polygon version:", error);
