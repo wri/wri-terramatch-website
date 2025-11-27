@@ -1376,6 +1376,74 @@ export const createPolygonListClippedVersions = new V3ApiEndpoint<
   {}
 >("/polygonClipping/v3/polygons", "POST");
 
+export type StartIndicatorCalculationPathParams = {
+  /**
+   * Entity type for associations
+   */
+  slug:
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon";
+};
+
+export type StartIndicatorCalculationError = Fetcher.ErrorWrapper<undefined>;
+
+export type StartIndicatorCalculationVariables = {
+  body: Schemas.IndicatorsBodyDto;
+  pathParams: StartIndicatorCalculationPathParams;
+};
+
+export const startIndicatorCalculation = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example indicatorsSummary
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example indicatorsSummary
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.IndicatorsSummaryDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  StartIndicatorCalculationError,
+  StartIndicatorCalculationVariables,
+  {}
+>("/research/v3/indicators/{slug}", "POST");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -1395,5 +1463,6 @@ export const operationsByTag = {
     createSiteValidation,
     validateGeometries
   },
-  polygonClipping: { createClippedVersions, createPolygonListClippedVersions }
+  polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
+  indicators: { startIndicatorCalculation }
 };

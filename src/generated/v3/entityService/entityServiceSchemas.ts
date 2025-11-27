@@ -1194,6 +1194,7 @@ export type SiteFullDto = {
   aimNumberOfMatureTrees: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
+  anrPractices: string[] | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
