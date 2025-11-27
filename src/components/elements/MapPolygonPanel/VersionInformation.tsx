@@ -190,7 +190,7 @@ const VersionInformation = ({
 
   const createNewVersion = async () => {
     if (!editPolygon.primary_uuid) {
-      openNotification("error", t("Error!"), t("Missing polygon information"));
+      openNotification("error", t("Error!"), t("Missing polygon informaticcon"));
       return;
     }
 
@@ -330,7 +330,7 @@ const VersionInformation = ({
         </Text>
       </div>
       {polygonVersionData?.map((item: any) => (
-        <div key={item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
+        <div key={item.uuid ?? item.id} className="grid grid-flow-col grid-cols-4 border-b border-[#ffffff1a] py-2 ">
           <Text variant="text-10" className="col-span-1 break-words pr-2 text-white sm:col-span-2">
             {item.version_name ?? item.poly_name}
           </Text>

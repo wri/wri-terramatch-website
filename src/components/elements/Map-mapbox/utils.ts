@@ -1135,7 +1135,7 @@ export async function storePolygon(
         await refetchSitePolygons();
       }
       if (setPolygonFromMap) {
-        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true });
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true, primary_uuid: result.primaryUuid });
       }
     } catch (error) {
       console.error("Failed to create site polygon:", error);

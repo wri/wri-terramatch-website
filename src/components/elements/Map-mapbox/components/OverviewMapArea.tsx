@@ -44,7 +44,6 @@ const OverviewMapArea = ({
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
-  const sitePolygonDataV3 = context?.sitePolygonData;
 
   const {
     isMonitoring,
@@ -56,6 +55,7 @@ const OverviewMapArea = ({
     setPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
+    polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
   const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
