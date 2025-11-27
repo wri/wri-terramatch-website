@@ -113,7 +113,6 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     }
 
     try {
-      // Step 1: Create new version with attributes
       await createVersionWithAttributes(primaryUuid, "Updated polygon attributes", {
         polyName: polygonName,
         plantStart: plantStartDate,
@@ -123,11 +122,9 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
         numTrees: treesPlanted
       });
 
-      // Step 2: Clear cache
       ApiSlice.pruneCache("sitePolygons");
       ApiSlice.pruneIndex("sitePolygons", "");
 
-      // Step 3: Set flag to trigger refetch in parent components
       setShouldRefetchPolygonData(true);
 
       openNotification("success", t("Success!"), t("Polygon version created successfully"));
