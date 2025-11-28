@@ -365,7 +365,7 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
 >("/research/v3/sitePolygons", "PATCH");
 
 export type ListSitePolygonVersionsPathParams = {
-  uuid: string;
+  primaryUuid: string;
 };
 
 export type ListSitePolygonVersionsError = Fetcher.ErrorWrapper<
@@ -449,7 +449,7 @@ export const listSitePolygonVersions = new V3ApiEndpoint<
   ListSitePolygonVersionsError,
   ListSitePolygonVersionsVariables,
   {}
->("/research/v3/sitePolygons/{uuid}/versions", "GET");
+>("/research/v3/sitePolygons/{primaryUuid}/versions", "GET");
 
 export type UpdateSitePolygonVersionPathParams = {
   uuid: string;
