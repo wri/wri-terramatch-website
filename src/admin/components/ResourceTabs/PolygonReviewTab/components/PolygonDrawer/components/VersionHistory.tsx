@@ -88,6 +88,8 @@ const VersionHistory = ({
   const versionUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const isActiveVersion = selectPolygonVersion?.isActive ?? selectedPolygon.isActive ?? false;
+
   const getPolygonSelectedUuid = useCallback(() => {
     return selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
   }, [selectPolygonVersion, selectedPolygon]);
@@ -314,8 +316,9 @@ const VersionHistory = ({
       openNotification("success", "Success!", "Polygon version deleted successfully");
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
-    } catch (error) {
-      openNotification("error", "Error!", "Error deleting polygon version");
+    } catch (error: any) {
+      const errorMessage = error?.message ?? "Error deleting polygon version";
+      openNotification("error", "Error!", errorMessage);
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
     }
@@ -445,7 +448,17 @@ const VersionHistory = ({
             }}
           />
           <div className="mt-auto flex items-center justify-end gap-5">
-            <Button onClick={onDeleteVersion} variant="semi-red" className="w-full" disabled={isLoadingDelete}>
+            <Button
+              onClick={onDeleteVersion}
+              variant="semi-red"
+              className="w-full"
+              disabled={isLoadingDelete || isActiveVersion}
+              title={
+                isActiveVersion
+                  ? t("Cannot delete the active version. Please activate another version first.")
+                  : undefined
+              }
+            >
               {t("Delete")}
             </Button>
             <Button onClick={makeActivePolygon} variant="semi-black" className="w-full" disabled={isUpdating}>
