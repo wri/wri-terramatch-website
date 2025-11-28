@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
-import { ErrorPayload, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore, ResourceType } from "@/store/apiSlice";
+import { ErrorPayload, RequestVariables, resolveUrl, V3ApiEndpoint } from "@/generated/v3/utils";
+import ApiSlice, { ApiDataStore, Method, ResourceType } from "@/store/apiSlice";
 
 export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiDataStore) =>
   store.meta.deleted[resource];
@@ -27,8 +27,9 @@ export const deleterAsync = <R, E extends ErrorPayload | undefined, V extends Re
    * with the state of the component (useState calls, etc) after this promise has completed.
    */
   return async function deleteResource(id: string) {
+    const variables = variablesFactory(id);
     const selector = createSelector(
-      [resourcesDeletedSelector(type), endpoint.fetchFailedSelector(variablesFactory(id))],
+      [resourcesDeletedSelector(type), endpoint.fetchFailedSelector(variables)],
       (deleted, deleteFailure) => ({
         isDeleted: id != null && deleted.includes(id),
         deleteFailure
@@ -37,9 +38,16 @@ export const deleterAsync = <R, E extends ErrorPayload | undefined, V extends Re
 
     const { isDeleted, deleteFailure } = selector(ApiSlice.currentState);
     if (isDeleted) return;
-    if (deleteFailure != null) throw deleteFailure;
 
-    endpoint.fetch(variablesFactory(id));
+    // Clear cached error to allow retries
+    // (e.g., "cannot delete active version" - user can fix and retry)
+    // This addresses the case where DELETE errors represent resolvable state conflicts
+    if (deleteFailure != null) {
+      const fullUrl = resolveUrl(endpoint.url, variables);
+      ApiSlice.clearPending(fullUrl, endpoint.method.toUpperCase() as Method);
+    }
+
+    endpoint.fetch(variables);
 
     await new Promise<void>((resolve, reject) => {
       const unsubscribe = ApiSlice.redux.subscribe(() => {

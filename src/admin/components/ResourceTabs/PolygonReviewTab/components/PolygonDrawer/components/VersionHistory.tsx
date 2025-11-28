@@ -189,8 +189,6 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refreshPolygonList?.();
 
-      await refetchVersionsList();
-
       const versionsResponse = await loadListPolygonVersions({ uuid: polygonSelectedPrimaryUuid as string });
       const versionsList = versionsResponse?.data;
       // when the upload function is ready,replace this to be updated this part of the code to update the polygon data
@@ -272,10 +270,8 @@ const VersionHistory = ({
       const versionsResponse = await loadListPolygonVersions({ uuid: primaryUuid as string });
       const versionsList = versionsResponse?.data;
       const newlyActiveVersion = versionsList?.find(v => v.uuid === versionUuid) ?? selectPolygonVersion;
-      await refreshSiteData?.();
-      await refreshPolygonList?.();
 
-      await refetchVersionsList();
+      await refreshPolygonList?.();
       if (setSelectedPolygonData != null && newlyActiveVersion) {
         setSelectedPolygonData(newlyActiveVersion);
       }
