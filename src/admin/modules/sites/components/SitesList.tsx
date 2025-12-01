@@ -94,6 +94,17 @@ const SiteDataGrid: FC = () => {
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
+      <FunctionField
+        source="plantingStatus"
+        label="Planting Status"
+        sortable={false}
+        render={(record: any) => {
+          const readablePlantingStatus = getPlantingStatusOptions().find(
+            (option: any) => option.value === record.plantingStatus
+          );
+          return <CustomChipField label={readablePlantingStatus?.title} />;
+        }}
+      />
       <ColoredChipFieldArray
         source="status"
         label="Polygon Submitted"

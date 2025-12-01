@@ -77,6 +77,15 @@ const ProjectDataGrid = () => {
           return <CustomChipField label={title} />;
         }}
       />
+      <FunctionField
+        source="plantingStatus"
+        label="Planting Status"
+        sortable={false}
+        render={({ plantingStatus }: ProjectLightDto) => {
+          const { title } = getPlantingStatusOptions().find((option: any) => option.value === plantingStatus) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
       <TextField source="organisationName" label="Organization" />
       <NumberField source="totalHectaresRestoredSum" label="Hectares Restored" sortable={false} emptyText="0" />
       <FunctionField
