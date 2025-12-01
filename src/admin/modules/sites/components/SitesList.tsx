@@ -27,7 +27,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
-import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
+import {
+  getChangeRequestStatusOptions,
+  getPlantingStatusOptions,
+  getPolygonOptions,
+  getStatusOptions
+} from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -168,6 +173,13 @@ export const SitesList: FC = () => {
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="plantingStatus"
+      label="Planting Status"
+      source="plantingStatus"
+      choices={optionToChoices(getPlantingStatusOptions())}
       className="select-page-admin"
     />,
     <SelectInput

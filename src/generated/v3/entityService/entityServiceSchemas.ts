@@ -487,6 +487,46 @@ export type MediaRequestBody = {
   data: MediaRequestData;
 };
 
+export type MediaUpdateAttributes = {
+  /**
+   * The name of the media
+   */
+  name?: string;
+  /**
+   * The title of the media
+   */
+  title?: string;
+  /**
+   * The description of the media
+   */
+  description?: string;
+  /**
+   * The photographer of the media
+   */
+  photographer?: string;
+  /**
+   * The public status of the media
+   */
+  isPublic?: boolean;
+  /**
+   * The cover of the project
+   */
+  isCover?: boolean;
+};
+
+export type MediaData = {
+  type: "media";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: MediaUpdateAttributes;
+};
+
+export type MediaUpdateBody = {
+  data: MediaData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -755,6 +795,16 @@ export type ProjectLightDto = {
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
    * Update request status for this project
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
@@ -799,6 +849,16 @@ export type SiteLightDto = {
    * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * Update request status for this site
    */
@@ -968,6 +1028,8 @@ export type DisturbanceReportLightDto = {
   reportId: number;
 };
 
+export type Object = {};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -990,6 +1052,16 @@ export type ProjectFullDto = {
    * Entity status for this project
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * Update request status for this project
    */
@@ -1101,6 +1173,16 @@ export type SiteFullDto = {
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
   /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
    * Update request status for this site
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
@@ -1154,6 +1236,7 @@ export type SiteFullDto = {
   aimNumberOfMatureTrees: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
+  anrPractices: string[] | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
