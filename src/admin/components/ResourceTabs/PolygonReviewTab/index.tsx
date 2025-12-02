@@ -187,6 +187,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   // Local table pagination/sorting over the full dataset already loaded for the map
@@ -365,6 +366,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
+  const isVersioningUploadRef = useRef<boolean>(false);
+
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
@@ -391,51 +394,72 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
-  const uploadFiles = async () => {
-    closeModal(ModalId.ADD_POLYGON);
-    const siteUuid = record?.uuid;
-    if (!siteUuid) return;
-
-    if (!polygonLoaded) {
-      const uploadPromises = files.map(
-        file =>
-          new Promise((resolve, reject) => {
-            const fileToUpload = file.rawFile as File;
-            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-            uploadGeometry(attributes, {
-              onSuccess: (response: Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>) => resolve(response),
-              onError: (error: UploadGeometryFileError) => reject(error)
-            });
-          })
-      );
-
-      try {
-        await Promise.all(uploadPromises);
-        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
-        refetch();
-      } catch (error) {
-        const errorMessage =
-          error && typeof error === "object" && "message" in error
-            ? (error.message as string)
-            : t("An unknown error occurred");
-        openNotification("error", t("Error uploading file"), errorMessage);
-      } finally {
-        setPolygonLoaded(false);
-        setSubmitPolygonLoaded(false);
+  const extractErrorMessage = (error: unknown): string => {
+    if (error && typeof error === "object" && "error" in error) {
+      const nestedError = error.error;
+      if (typeof nestedError === "string") {
+        try {
+          const parsedNestedError = JSON.parse(nestedError);
+          if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
+            return parsedNestedError.message;
+          }
+          return nestedError;
+        } catch {
+          return nestedError;
+        }
       }
-      return;
+      return String(nestedError);
     }
+    if (error && typeof error === "object" && "message" in error) {
+      return String(error.message);
+    }
+    return t("An unknown error occurred");
+  };
 
-    const uploadPromises = [];
+  const uploadPolygonsNew = async (siteUuid: string): Promise<void> => {
+    const uploadPromises = files.map(
+      file =>
+        new Promise((resolve, reject) => {
+          const fileToUpload = file.rawFile as File;
+          const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+          uploadGeometry(attributes, {
+            onSuccess: (response: Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>) => resolve(response),
+            onError: (error: UploadGeometryFileError) => reject(error)
+          });
+        })
+    );
+
+    try {
+      await Promise.all(uploadPromises);
+      openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
+      refetch();
+    } catch (error) {
+      const errorMessage = extractErrorMessage(error);
+      openNotification("error", t("Error uploading file"), errorMessage);
+    }
+  };
+
+  const uploadPolygonsWithVersioning = async (siteUuid: string): Promise<void> => {
+    const uploadPromises: Promise<any>[] = [];
+    const isPreviewMode = !submitPolygonLoaded;
+
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
       const formData = new FormData();
       const fileType = getFileType(file);
+
       formData.append("file", fileToUpload);
       formData.append("uuid", siteUuid);
-      formData.append("polygon_loaded", polygonLoaded.toString());
-      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
+
+      if (isPreviewMode) {
+        formData.append("polygon_loaded", "true");
+        formData.append("submit_polygon_loaded", "false");
+      } else {
+        formData.append("polygon_loaded", "false");
+        formData.append("submit_polygon_loaded", "true");
+      }
+
       const newRequest: any = formData;
 
       switch (fileType) {
@@ -455,35 +479,44 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     try {
       const promise = await Promise.all(uploadPromises);
-      openFormModalHandlerIdentifiedPolygons(promise);
-      refetch();
-    } catch (error) {
-      let errorMessage;
-      if (error && typeof error === "object" && "error" in error) {
-        const nestedError = error.error;
-        if (typeof nestedError === "string") {
-          try {
-            const parsedNestedError = JSON.parse(nestedError);
-            if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
-              errorMessage = parsedNestedError.message;
-            } else {
-              errorMessage = nestedError;
-            }
-          } catch (parseError) {
-            errorMessage = nestedError;
-          }
-        } else {
-          errorMessage = nestedError;
-        }
-      } else if (error && typeof error === "object" && "message" in error) {
-        errorMessage = error.message;
+
+      if (isPreviewMode) {
+        openFormModalHandlerIdentifiedPolygons(promise as SitePolygonsLoadedDataResponse);
       } else {
-        errorMessage = t("An unknown error occurred");
+        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        refetch();
       }
-      openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
+    } catch (error) {
+      const errorMessage = extractErrorMessage(error);
+      openNotification("error", t("Error uploading file"), errorMessage);
+    }
+  };
+
+  const uploadFiles = async (): Promise<void> => {
+    const siteUuid = record?.uuid;
+    if (!siteUuid) {
+      openNotification("error", t("Error"), t("Site UUID is required"));
+      return;
+    }
+
+    const isVersioningUpload = isVersioningUploadRef.current || submitPolygonLoaded;
+
+    if (isVersioningUpload) {
+      closeModal(ModalId.REPLACEMENT_POLYGONS);
+    } else {
+      closeModal(ModalId.ADD_POLYGON);
+    }
+
+    try {
+      if (isVersioningUpload) {
+        await uploadPolygonsWithVersioning(siteUuid);
+      } else {
+        await uploadPolygonsNew(siteUuid);
+      }
     } finally {
       setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
+      isVersioningUploadRef.current = false;
     }
   };
 
@@ -494,6 +527,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const openFormModalHandlerAddPolygon = () => {
     setPolygonLoaded(false);
     setSubmitPolygonLoaded(false);
+    isVersioningUploadRef.current = false;
     openModal(
       ModalId.ADD_POLYGON,
       <ModalAdd
@@ -588,6 +622,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           closeModal(ModalId.REPLACEMENT_POLYGONS);
           setPolygonLoaded(false);
           setSubmitPolygonLoaded(false);
+          isVersioningUploadRef.current = false;
         }}
         content={t(
           "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
@@ -600,7 +635,9 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            isVersioningUploadRef.current = true;
             setPolygonLoaded(true);
+            setSubmitPolygonLoaded(false);
             setSaveFlags(true);
           }
         }}
@@ -666,6 +703,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
+            isVersioningUploadRef.current = true;
             setPolygonLoaded(false);
             setSubmitPolygonLoaded(true);
             setSaveFlags(true);
@@ -680,6 +718,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           onClick: () => {
             setPolygonLoaded(false);
             setSubmitPolygonLoaded(false);
+            isVersioningUploadRef.current = false;
             closeModal(ModalId.IDENTIFIED_POLYGONS);
             setSaveFlags(false);
           }
