@@ -187,8 +187,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   // Local table pagination/sorting over the full dataset already loaded for the map
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -514,7 +512,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         await uploadPolygonsNew(siteUuid);
       }
     } finally {
-      setPolygonLoaded(false);
       setSubmitPolygonLoaded(false);
       isVersioningUploadRef.current = false;
     }
@@ -525,7 +522,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
   const openFormModalHandlerAddPolygon = () => {
-    setPolygonLoaded(false);
     setSubmitPolygonLoaded(false);
     isVersioningUploadRef.current = false;
     openModal(
@@ -620,7 +616,6 @@ const PolygonReviewTab: FC<IProps> = props => {
         }
         onClose={() => {
           closeModal(ModalId.REPLACEMENT_POLYGONS);
-          setPolygonLoaded(false);
           setSubmitPolygonLoaded(false);
           isVersioningUploadRef.current = false;
         }}
@@ -636,7 +631,6 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: () => {
             isVersioningUploadRef.current = true;
-            setPolygonLoaded(true);
             setSubmitPolygonLoaded(false);
             setSaveFlags(true);
           }
@@ -690,10 +684,8 @@ const PolygonReviewTab: FC<IProps> = props => {
         polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
-        setPolygonLoaded={setPolygonLoaded}
         onClose={() => {
           closeModal(ModalId.IDENTIFIED_POLYGONS);
-          setPolygonLoaded(false);
         }}
         content={t(
           "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
@@ -704,7 +696,6 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: () => {
             isVersioningUploadRef.current = true;
-            setPolygonLoaded(false);
             setSubmitPolygonLoaded(true);
             setSaveFlags(true);
             closeModal(ModalId.REPLACEMENT_POLYGONS);
@@ -716,7 +707,6 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "white-page-admin",
           onClick: () => {
-            setPolygonLoaded(false);
             setSubmitPolygonLoaded(false);
             isVersioningUploadRef.current = false;
             closeModal(ModalId.IDENTIFIED_POLYGONS);
