@@ -4,14 +4,19 @@ import { useCallback, useEffect, useState } from "react";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   createSitePolygons,
+  deleteSitePolygon as deleteSitePolygonEndpoint,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
+  SitePolygonBulkDeleteBodyDto,
+  SitePolygonDeleteResource,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -48,6 +53,26 @@ const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygo
 
 export const useCreateSitePolygon = connectionHook(createSitePolygonsConnection);
 export const loadCreateSitePolygon = connectionLoader(createSitePolygonsConnection);
+
+export const deleteSitePolygon = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
+  pathParams: { uuid }
+}));
+
+export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
+  const deleteResources: SitePolygonDeleteResource[] = uuids.map(uuid => ({
+    type: "sitePolygons",
+    id: uuid
+  }));
+
+  const body: SitePolygonBulkDeleteBodyDto = {
+    data: deleteResources
+  };
+
+  await bulkDeleteSitePolygonsEndpoint.fetchParallel({ body });
+
+  ApiSlice.pruneCache("sitePolygons");
+  ApiSlice.pruneIndex("sitePolygons", "");
+};
 
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {

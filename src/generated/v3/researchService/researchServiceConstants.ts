@@ -2,9 +2,9 @@ import { StoreResourceMap } from "@/store/apiSlice";
 import {
   SitePolygonLightDto,
   SitePolygonFullDto,
+  ValidationDto,
   DelayedJobDto,
   BoundingBoxDto,
-  ValidationDto,
   ValidationSummaryDto,
   ClippedVersionDto,
   IndicatorsSummaryDto
@@ -12,9 +12,9 @@ import {
 
 export const RESEARCH_SERVICE_RESOURCES = [
   "sitePolygons",
+  "validations",
   "delayedJobs",
   "boundingBoxes",
-  "validations",
   "validationSummaries",
   "clippedVersions",
   "indicatorsSummary"
@@ -22,9 +22,9 @@ export const RESEARCH_SERVICE_RESOURCES = [
 
 export type ResearchServiceApiResources = {
   sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
+  validations: StoreResourceMap<ValidationDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
-  validations: StoreResourceMap<ValidationDto>;
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
   indicatorsSummary: StoreResourceMap<IndicatorsSummaryDto>;
