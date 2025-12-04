@@ -17,10 +17,11 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
@@ -79,6 +80,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
+  const sitePolygonData = context?.sitePolygonData;
 
   const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox, setValidFilter, validFilter } = contextMapArea;
 
@@ -172,16 +174,20 @@ const Polygons = (props: IPolygonProps) => {
   const deletePolygon = useCallback(
     async (polygon: IPolygonItem) => {
       try {
-        const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
-        if (response?.uuid) {
-          reloadSiteData?.();
-          closeModal(ModalId.CONFIRM_POLYGON_DELETION);
+        const sitePolygon = sitePolygonData?.find(p => p.polygonUuid === polygon.uuid);
+        const sitePolygonUuid = sitePolygon?.uuid;
+        if (!sitePolygonUuid) {
+          Log.error("Could not find sitePolygon UUID for polygon:", polygon.uuid);
+          return;
         }
+        await deleteSitePolygon(sitePolygonUuid);
+        reloadSiteData?.();
+        closeModal(ModalId.CONFIRM_POLYGON_DELETION);
       } catch (error) {
         Log.error("Failed to delete polygon:", error);
       }
     },
-    [reloadSiteData, closeModal]
+    [reloadSiteData, closeModal, sitePolygonData]
   );
 
   const openFormModalHandlerConfirm = useCallback(

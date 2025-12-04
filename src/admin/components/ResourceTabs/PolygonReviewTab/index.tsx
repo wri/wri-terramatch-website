@@ -330,7 +330,6 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const deletePolygon = async (uuid: string) => {
     try {
-      console.log("REACHING HERE");
       await deleteSitePolygon(uuid);
       refetch?.();
       const { map } = mapFunctions;
