@@ -8,9 +8,9 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { updateMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { usePatchV2MediaProjectProjectMediaUuid, usePatchV2MediaUuid } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
@@ -58,9 +58,6 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { showLoader, hideLoader } = useLoading();
-
-  const { mutate: updateMedia } = usePatchV2MediaUuid();
-  const { mutateAsync: updateIsCover } = usePatchV2MediaProjectProjectMediaUuid();
 
   const openModalImageDetail = useCallback(
     (item: Partial<UploadedFile>) => {
@@ -113,9 +110,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
         updatedItems.forEach(item => updateFile?.(item));
 
         if (checked) {
-          await updateIsCover({
-            pathParams: { project: entityData.uuid, mediaUuid: selectedItem.uuid! }
-          });
+          await updateMedia({ isCover: checked }, { id: selectedItem.uuid });
         }
       } catch (error) {
         Log.error("Error updating cover status:", error);
@@ -123,14 +118,14 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
         hideLoader();
       }
     },
-    [entityData.uuid, hideLoader, items, showLoader, updateFile, updateIsCover]
+    [hideLoader, items, showLoader, updateFile]
   );
 
   const handleUpdateIsPublic = useCallback(
     (item: Partial<UploadedFile>, checked: boolean) => {
       showLoader();
       try {
-        updateMedia({ pathParams: { uuid: item.uuid! }, body: { is_public: checked } });
+        updateMedia({ isPublic: checked }, { id: item.uuid });
         updateFile?.({ ...item, isPublic: checked });
       } catch (error) {
         Log.error("Error updating public status:", error);
@@ -138,7 +133,7 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
         hideLoader();
       }
     },
-    [hideLoader, showLoader, updateFile, updateMedia]
+    [hideLoader, showLoader, updateFile]
   );
 
   const data = useMemo(

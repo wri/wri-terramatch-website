@@ -128,11 +128,18 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const [polygonData, setPolygonData] = useState<any[]>([]);
   const [validFilter, setValidFilter] = useState<string>("all");
   const [isFetchingValidationData, setIsFetchingValidationData] = useState<boolean>(false);
-  const [editPolygon, setEditPolygon] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
+  const [editPolygon, setEditPolygonInternal] = useState<{ isOpen: boolean; uuid: string; primary_uuid?: string }>({
     isOpen: false,
     uuid: "",
     primary_uuid: ""
   });
+
+  const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
+    setEditPolygonInternal(value);
+    if (!value.isOpen) {
+      setShouldRefetchPolygonData(false);
+    }
+  };
   const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
     open: boolean;
     message: string;

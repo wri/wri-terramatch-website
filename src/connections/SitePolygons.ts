@@ -142,8 +142,8 @@ export const useAllSitePolygons = (
     [stableProps]
   );
 
-  const refetch = useCallback(() => {
-    fetchAllPages(true);
+  const refetch = useCallback(async () => {
+    await fetchAllPages(true);
   }, [fetchAllPages]);
 
   useEffect(() => {

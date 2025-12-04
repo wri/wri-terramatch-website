@@ -2333,6 +2333,7 @@ export type V2SiteRead = {
   aim_natural_regeneration_hectares?: number;
   aim_soil_condition?: string;
   aim_number_of_mature_trees?: number;
+  anr_practices?: string[];
   hectares_to_restore?: number;
   landscape_community_contribution?: string;
   disturbances?: string;

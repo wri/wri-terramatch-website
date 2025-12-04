@@ -73,22 +73,27 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
           isActive: true
         });
 
-        openNotification("success", t("Success!"), t("Polygon version made active successfully"));
-
         ApiSlice.pruneCache("sitePolygons");
         ApiSlice.pruneIndex("sitePolygons", "");
 
         await refetchPolygonVersions();
+
+        await refetch?.();
+
         setSelectedPolyVersion({} as any);
         setPreviewVersion(false);
         setOpenModalConfirmation(false);
-        setShouldRefetchPolygonData(true);
+
         const selectedVersion = selectedPolyVersion as any;
         setEditPolygon?.({
           isOpen: true,
           uuid: selectedVersion?.poly_id as string,
           primary_uuid: selectedVersion?.primary_uuid ?? undefined
         });
+
+        setShouldRefetchPolygonData(true);
+
+        openNotification("success", t("Success!"), t("Polygon version made active successfully"));
       } catch (error) {
         openNotification("error", t("Error!"), t("Error making polygon version active"));
       }
