@@ -22,13 +22,13 @@ import {
 import LinearProgressBarMonitored from "@/components/elements/ProgressBar/LinearProgressBar/LineProgressBarMonitored";
 import Text from "@/components/elements/Text/Text";
 import ToolTip from "@/components/elements/Tooltip/Tooltip";
-import Icon from "@/components/extensive/Icon/Icon";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
+import { prepareGeometryForUpload, useUploadGeometry } from "@/connections/GeometryUpload";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -42,6 +42,7 @@ import {
   fetchPutV2SitePolygonStatusBulk
 } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { uploadGeometryFile, UploadGeometryFileError } from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -64,9 +65,9 @@ interface IProps extends Omit<TabProps, "label" | "children"> {
 
 export type SitePolygonRow = {
   "polygon-name": string;
-  "restoration-practice": string;
+  "restoration-practice": string[];
   "target-land-use-system": string;
-  "tree-distribution": string;
+  "tree-distribution": string[];
   "planting-start-date": string;
   "num-trees": number;
   "calc-area": number;
@@ -186,7 +187,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     setShouldRefetchValidation,
     validFilter
   } = useMapAreaContext();
-  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   // Local table pagination/sorting over the full dataset already loaded for the map
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -195,6 +195,7 @@ const PolygonReviewTab: FC<IProps> = props => {
   const t = useT();
 
   const { openNotification } = useNotificationContext();
+  const uploadGeometry = useUploadGeometry({});
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
@@ -248,9 +249,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       site_id: polygon.siteId ?? undefined,
       site_name: polygon.siteName ?? undefined,
       plantstart: polygon.plantStart ?? undefined,
-      practice: polygon.practice ?? undefined,
+      practice: polygon.practice?.join(",") ?? undefined,
       target_sys: polygon.targetSys ?? undefined,
-      distr: polygon.distr ?? undefined,
+      distr: polygon.distr?.join(",") ?? undefined,
       num_trees: polygon.numTrees ?? undefined,
       calc_area: polygon.calcArea ?? undefined,
       created_by: undefined,
@@ -272,9 +273,9 @@ const PolygonReviewTab: FC<IProps> = props => {
       (sitePolygonData ?? []).map(
         (data: SitePolygonLightDto, index): SitePolygonRow => ({
           "polygon-name": data?.name ?? `Unnamed Polygon`,
-          "restoration-practice": data?.practice ?? "",
+          "restoration-practice": data?.practice ?? [],
           "target-land-use-system": data?.targetSys ?? "",
-          "tree-distribution": data?.distr ?? "",
+          "tree-distribution": data?.distr ?? [],
           "planting-start-date": data?.plantStart ?? "",
           "num-trees": data?.numTrees ?? 0,
           "calc-area": data?.calcArea ?? 0,
@@ -363,6 +364,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
+  const isVersioningUploadRef = useRef<boolean>(false);
+
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
@@ -389,20 +392,73 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
-  // Table pagination handled by ConnectionTable; no local pagination state
-  const uploadFiles = async () => {
-    const uploadPromises = [];
-    closeModal(ModalId.ADD_POLYGON);
+  const extractErrorMessage = (error: unknown): string => {
+    if (error && typeof error === "object" && "error" in error) {
+      const nestedError = error.error;
+      if (typeof nestedError === "string") {
+        try {
+          const parsedNestedError = JSON.parse(nestedError);
+          if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
+            return parsedNestedError.message;
+          }
+          return nestedError;
+        } catch {
+          return nestedError;
+        }
+      }
+      return String(nestedError);
+    }
+    if (error && typeof error === "object" && "message" in error) {
+      return String(error.message);
+    }
+    return t("An unknown error occurred");
+  };
+
+  const uploadPolygonsNew = async (siteUuid: string): Promise<void> => {
+    const uploadPromises = files.map(
+      file =>
+        new Promise((resolve, reject) => {
+          const fileToUpload = file.rawFile as File;
+          const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+          uploadGeometry(attributes, {
+            onSuccess: (response: Awaited<ReturnType<typeof uploadGeometryFile.fetchParallel>>) => resolve(response),
+            onError: (error: UploadGeometryFileError) => reject(error)
+          });
+        })
+    );
+
+    try {
+      await Promise.all(uploadPromises);
+      openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
+      refetch();
+    } catch (error) {
+      const errorMessage = extractErrorMessage(error);
+      openNotification("error", t("Error uploading file"), errorMessage);
+    }
+  };
+
+  const uploadPolygonsWithVersioning = async (siteUuid: string): Promise<void> => {
+    const uploadPromises: Promise<any>[] = [];
+    const isPreviewMode = !submitPolygonLoaded;
+
     for (const file of files) {
       const fileToUpload = file.rawFile as File;
-      const site_uuid = record?.uuid;
       const formData = new FormData();
       const fileType = getFileType(file);
+
       formData.append("file", fileToUpload);
-      formData.append("uuid", site_uuid);
-      formData.append("polygon_loaded", polygonLoaded.toString());
-      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
-      let newRequest: any = formData;
+      formData.append("uuid", siteUuid);
+
+      if (isPreviewMode) {
+        formData.append("polygon_loaded", "true");
+        formData.append("submit_polygon_loaded", "false");
+      } else {
+        formData.append("polygon_loaded", "false");
+        formData.append("submit_polygon_loaded", "true");
+      }
+
+      const newRequest: any = formData;
 
       switch (fileType) {
         case "geojson":
@@ -418,41 +474,46 @@ const PolygonReviewTab: FC<IProps> = props => {
           break;
       }
     }
+
     try {
       const promise = await Promise.all(uploadPromises);
-      if (polygonLoaded) {
-        openFormModalHandlerIdentifiedPolygons(promise);
-      } else {
-        openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
-      }
-      refetch();
-      setPolygonLoaded(false);
-      setSubmitPolygonLoaded(false);
-    } catch (error) {
-      let errorMessage;
 
-      if (error && typeof error === "object" && "error" in error) {
-        const nestedError = error.error;
-        if (typeof nestedError === "string") {
-          try {
-            const parsedNestedError = JSON.parse(nestedError);
-            if (parsedNestedError && typeof parsedNestedError === "object" && "message" in parsedNestedError) {
-              errorMessage = parsedNestedError.message;
-            } else {
-              errorMessage = nestedError;
-            }
-          } catch (parseError) {
-            errorMessage = nestedError;
-          }
-        } else {
-          errorMessage = nestedError;
-        }
-      } else if (error && typeof error === "object" && "message" in error) {
-        errorMessage = error.message;
+      if (isPreviewMode) {
+        openFormModalHandlerIdentifiedPolygons(promise as SitePolygonsLoadedDataResponse);
       } else {
-        errorMessage = t("An unknown error occurred");
+        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        refetch();
       }
-      openNotification("error", t("Error uploading file"), errorMessage || t("An unknown error occurred"));
+    } catch (error) {
+      const errorMessage = extractErrorMessage(error);
+      openNotification("error", t("Error uploading file"), errorMessage);
+    }
+  };
+
+  const uploadFiles = async (): Promise<void> => {
+    const siteUuid = record?.uuid;
+    if (!siteUuid) {
+      openNotification("error", t("Error"), t("Site UUID is required"));
+      return;
+    }
+
+    const isVersioningUpload = isVersioningUploadRef.current || submitPolygonLoaded;
+
+    if (isVersioningUpload) {
+      closeModal(ModalId.REPLACEMENT_POLYGONS);
+    } else {
+      closeModal(ModalId.ADD_POLYGON);
+    }
+
+    try {
+      if (isVersioningUpload) {
+        await uploadPolygonsWithVersioning(siteUuid);
+      } else {
+        await uploadPolygonsNew(siteUuid);
+      }
+    } finally {
+      setSubmitPolygonLoaded(false);
+      isVersioningUploadRef.current = false;
     }
   };
 
@@ -461,8 +522,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
   };
   const openFormModalHandlerAddPolygon = () => {
-    setPolygonLoaded(false);
     setSubmitPolygonLoaded(false);
+    isVersioningUploadRef.current = false;
     openModal(
       ModalId.ADD_POLYGON,
       <ModalAdd
@@ -555,8 +616,8 @@ const PolygonReviewTab: FC<IProps> = props => {
         }
         onClose={() => {
           closeModal(ModalId.REPLACEMENT_POLYGONS);
-          setPolygonLoaded(false);
           setSubmitPolygonLoaded(false);
+          isVersioningUploadRef.current = false;
         }}
         content={t(
           "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
@@ -569,7 +630,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setPolygonLoaded(true);
+            isVersioningUploadRef.current = true;
+            setSubmitPolygonLoaded(false);
             setSaveFlags(true);
           }
         }}
@@ -622,10 +684,8 @@ const PolygonReviewTab: FC<IProps> = props => {
         polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
-        setPolygonLoaded={setPolygonLoaded}
         onClose={() => {
           closeModal(ModalId.IDENTIFIED_POLYGONS);
-          setPolygonLoaded(false);
         }}
         content={t(
           "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
@@ -635,7 +695,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "primary",
           onClick: () => {
-            setPolygonLoaded(false);
+            isVersioningUploadRef.current = true;
             setSubmitPolygonLoaded(true);
             setSaveFlags(true);
             closeModal(ModalId.REPLACEMENT_POLYGONS);
@@ -647,8 +707,8 @@ const PolygonReviewTab: FC<IProps> = props => {
           className: "px-8 py-3",
           variant: "white-page-admin",
           onClick: () => {
-            setPolygonLoaded(false);
             setSubmitPolygonLoaded(false);
+            isVersioningUploadRef.current = false;
             closeModal(ModalId.IDENTIFIED_POLYGONS);
             setSaveFlags(false);
           }

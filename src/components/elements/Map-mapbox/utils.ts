@@ -17,8 +17,10 @@ import {
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+import {
+  CreateSitePolygonAttributesDto,
+  SitePolygonLightDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
@@ -227,6 +229,7 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
+  map.hasImage("pulsing-dot") && map.removeImage("pulsing-dot");
 };
 
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -319,7 +322,9 @@ export const addMediaSourceAndLayer = (
 
   const pulsingDot = getPulsingDot(map, 120);
 
-  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  if (!map.hasImage("pulsing-dot")) {
+    map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  }
 
   map.addSource(layerName, {
     type: "geojson",
@@ -980,15 +985,16 @@ export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePol
   indicators: [],
   siteName: sitePolygonData.site_name ?? null,
   versionName: sitePolygonData.version_name ?? null,
-  practice: sitePolygonData.practice ?? null,
+  practice: sitePolygonData.practice?.split(",") ?? null,
   targetSys: sitePolygonData.target_sys ?? null,
-  distr: sitePolygonData.distr ?? null,
+  distr: sitePolygonData.distr?.split(",") ?? null,
   numTrees: sitePolygonData.num_trees ?? null,
   source: sitePolygonData.source ?? null,
   validationStatus: sitePolygonData.validation_status?.toString() ?? null,
   primaryUuid: sitePolygonData.primary_uuid ?? null,
   uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? "",
-  disturbanceableId: null
+  disturbanceableId: null,
+  isActive: sitePolygonData.is_active ?? false
 });
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
@@ -1105,33 +1111,31 @@ export async function storePolygon(
   refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
-    const payload = {
+    const attributes: CreateSitePolygonAttributesDto = {
       geometries: [
         {
-          type: "FeatureCollection" as const,
+          type: "FeatureCollection",
           features: [
             {
-              type: "Feature" as const,
-              geometry: geojson[0].geometry as any,
+              type: "Feature",
+              geometry: geojson[0].geometry,
               properties: {
                 site_id: record.uuid
               }
             }
-          ]
+          ] as any
         }
       ]
     };
 
     try {
-      const result = await (createSitePolygonsResource as any)(payload);
-
-      ApiSlice.pruneCache("sitePolygons");
+      const result = await createSitePolygonsResource(attributes);
 
       if (refetchSitePolygons) {
         await refetchSitePolygons();
       }
       if (setPolygonFromMap) {
-        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true });
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true, primary_uuid: result.primaryUuid });
       }
     } catch (error) {
       console.error("Failed to create site polygon:", error);

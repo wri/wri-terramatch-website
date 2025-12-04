@@ -17,6 +17,7 @@ import { SUBTITLE_MAP_ON_FAILED } from "./constants/subtitleMapOnFailed";
 import { SUBTITLE_MAP_ON_UPLOADED } from "./constants/subtitleMapOnUploaded";
 import { SUBTITLE_MAP_ON_UPLOADING } from "./constants/subtitleMapOnUploading";
 import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./FileInputVariants";
+import { updateMedia } from "@/connections/Media";
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;
@@ -32,17 +33,18 @@ const FilePreviewCard = ({
   className,
   showPrivateCheckbox,
   onDelete,
-  onPrivateChange,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
 }: FilePreviewCardProps) => {
+
   const handlePrivateChange = useCallback(
     (checked: boolean) => {
       if (file == null) return;
 
-      onPrivateChange?.(file, checked);
+      updateMedia({ isPublic: checked }, { id: file.uuid });
     },
-    [file, onPrivateChange]
+    [file]
   );
+
   const t = useT();
 
   const geotagged = file.lat != null && file.lng != null && (file.lat != 0 || file.lng != 0);

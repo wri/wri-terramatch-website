@@ -2,17 +2,32 @@ import exifr from "exifr";
 
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  getMedia,
   mediaDelete,
+  mediaUpdate,
   uploadFile,
   UploadFileError,
   UploadFileResponse,
   UploadFileVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
-import { MediaRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { MediaDto, MediaRequestAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { WithFormData } from "@/generated/v3/utils";
 import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 import { parallelRequestHook, RequestOptions } from "@/utils/parallelRequestHook";
+
+import { v3Resource } from "./util/apiConnectionFactory";
+import { connectionHook } from "./util/connectionShortcuts";
+import { resourceUpdater } from "./util/resourceMutator";
+
+export const mediaConnection = v3Resource("media", getMedia)
+  .singleResource<MediaDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .update(mediaUpdate)
+  .buildConnection();
+
+export const updateMedia = resourceUpdater(mediaConnection);
+
+export const useMedia = connectionHook(mediaConnection);
 
 export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathParams: { uuid: uuid } }));
 

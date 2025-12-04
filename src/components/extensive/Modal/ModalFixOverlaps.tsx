@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -7,8 +7,9 @@ import Button from "@/components/elements/Button/Button";
 import { validationLabels } from "@/components/elements/MapPolygonPanel/ChecklistInformation";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import { sitePolygonsConnection } from "@/connections/SitePolygons";
 import { useAllSiteValidations } from "@/connections/Validation";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { useConnection } from "@/hooks/useConnection";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
 import { checkPolygonFixability, PolygonFixabilityResult } from "@/utils/polygonFixValidation";
 
@@ -51,9 +52,6 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
   selectedUUIDs,
   ...rest
 }) => {
-  const { data: polygonList } = useGetV2SitesSitePolygon({
-    pathParams: { site: site.uuid }
-  });
   const { allValidations: overlapValidations, fetchAllValidationPages: fetchOverlapValidations } =
     useAllSiteValidations(site.uuid, OVERLAPPING_CRITERIA_ID);
   const t = useT();
@@ -67,47 +65,69 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
     }
   }, [site?.uuid, fetchOverlapValidations]);
 
-  useEffect(() => {
-    if (!polygonList || overlapValidations.length === 0) return;
-
-    const overlappingPolygonUuids = overlapValidations
+  const polygonUuidsToFetch = useMemo(() => {
+    const overlappingUuids = overlapValidations
       .map(validation => validation.polygonUuid)
-      .filter(id => id != null);
+      .filter((id): id is string => id != null);
 
-    let overlappingPolygons = polygonList.filter(
-      polygon => polygon.poly_id && overlappingPolygonUuids.includes(polygon.poly_id)
-    );
-
-    if (selectedUUIDs != null) {
-      overlappingPolygons = overlappingPolygons.filter(
-        polygon => polygon.poly_id != null && selectedUUIDs.includes(polygon.poly_id)
-      );
+    if (selectedUUIDs != null && selectedUUIDs.length > 0) {
+      // Only include selected UUIDs that have overlap validations
+      return overlappingUuids.filter(uuid => selectedUUIDs.includes(uuid));
     }
 
-    const polygons = overlappingPolygons.map(polygon => {
-      const validation = overlapValidations.find(v => v.polygonUuid === polygon.poly_id);
-      const overlapCriteria = validation?.criteriaList.find(
+    return overlappingUuids;
+  }, [selectedUUIDs, overlapValidations]);
+
+  const [, polygonData] = useConnection(sitePolygonsConnection, {
+    filter: {
+      "polygonUuid[]": polygonUuidsToFetch
+    },
+    entityName: "sites",
+    entityUuid: site.uuid,
+    enabled: polygonUuidsToFetch.length > 0 && site?.uuid != null,
+    pageSize: 100,
+    pageNumber: 1
+  });
+
+  const polygonList = useMemo(() => polygonData.data ?? [], [polygonData.data]);
+
+  // Build displayed polygons by matching polygon data with validations
+  // Only show polygons that have overlap validations
+  useEffect(() => {
+    if (polygonList.length === 0 || overlapValidations.length === 0) {
+      setDisplayedPolygons([]);
+      setCanFixAnyPolygon(false);
+      return;
+    }
+
+    const polygons: DisplayedPolygonType[] = [];
+
+    for (const polygon of polygonList) {
+      const validation = overlapValidations.find(v => v.polygonUuid === polygon.polygonUuid);
+      if (validation == null) continue;
+
+      const overlapCriteria = validation.criteriaList?.find(
         criteria => criteria.criteriaId === OVERLAPPING_CRITERIA_ID
       );
-      const fixabilityResult = overlapCriteria?.extraInfo
-        ? checkPolygonFixability(overlapCriteria.extraInfo)
-        : undefined;
+      if (overlapCriteria == null) continue;
 
-      return {
+      const fixabilityResult =
+        overlapCriteria.extraInfo != null ? checkPolygonFixability(overlapCriteria.extraInfo) : undefined;
+
+      polygons.push({
         id: polygon.uuid,
         checked: true,
-        name: polygon.poly_name ?? t("Unnamed Polygon"),
+        name: polygon.name ?? t("Unnamed Polygon"),
         canBeApproved: false,
         failingCriterias: [`${OVERLAPPING_CRITERIA_ID}`],
         fixabilityResult
-      };
-    });
+      });
+    }
 
     setDisplayedPolygons(polygons);
-
     const canFixAny = polygons.some(polygon => polygon.fixabilityResult?.canBeFixed === true);
     setCanFixAnyPolygon(canFixAny);
-  }, [polygonList, overlapValidations, t, selectedUUIDs]);
+  }, [polygonList, overlapValidations, t]);
 
   return (
     <ModalBaseSubmit {...rest}>
@@ -151,56 +171,44 @@ const ModalFixOverlaps: FC<ModalFixOverlapsProps> = ({
               </Text>
               <div className="flex flex-1 items-center justify-center">
                 <div className="flex w-full items-center justify-start gap-2">
-                  <When condition={!item.canBeApproved}>
-                    <div className="h-4 w-4">
-                      <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
-                    </div>
-                    <Text variant="text-10-light">
-                      <When condition={!item.checked}>{"Run Polygon Check"}</When>
-                      <When condition={!item.canBeApproved}>
-                        {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ")}
-                      </When>
-                    </Text>
-                  </When>
+                  <div className="h-4 w-4">
+                    <Icon name={IconNames.ROUND_RED_CROSS} width={16} height={16} className="text-red-500" />
+                  </div>
+                  <Text variant="text-10-light">
+                    {item.failingCriterias?.map(fc => validationLabels[fc]).join(", ") ?? ""}
+                  </Text>
                 </div>
               </div>
               <div className="flex flex-1 items-center justify-start">
-                <When condition={item.fixabilityResult != null}>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <div className="h-4 w-4">
-                        <Icon
-                          name={
-                            item.fixabilityResult?.canBeFixed ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS
-                          }
-                          width={16}
-                          height={16}
-                          className={item.fixabilityResult?.canBeFixed ? "text-green-500" : "text-red-500"}
-                        />
-                      </div>
-                      <Text
-                        variant="text-10-light"
-                        className={item.fixabilityResult?.canBeFixed ? "text-green-700" : "text-red-700"}
-                      >
-                        {item.fixabilityResult?.canBeFixed ? t("Can be fixed") : t("Cannot be fixed")}
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4">
+                      <Icon
+                        name={
+                          item.fixabilityResult?.canBeFixed ? IconNames.ROUND_GREEN_TICK : IconNames.ROUND_RED_CROSS
+                        }
+                        width={16}
+                        height={16}
+                        className={item.fixabilityResult?.canBeFixed ? "text-green-500" : "text-red-500"}
+                      />
+                    </div>
+                    <Text
+                      variant="text-10-light"
+                      className={item.fixabilityResult?.canBeFixed ? "text-green-700" : "text-red-700"}
+                    >
+                      {item.fixabilityResult?.canBeFixed ? t("Can be fixed") : t("Cannot be fixed")}
+                    </Text>
+                  </div>
+                  <When condition={item.fixabilityResult?.reasons && item.fixabilityResult.reasons.length > 0}>
+                    <div className="pl-6">
+                      <Text variant="text-8-light" className="text-gray-600">
+                        {item.fixabilityResult?.canBeFixed
+                          ? t("Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)")
+                          : item.fixabilityResult?.reasons.join(". ")}
                       </Text>
                     </div>
-                    <When condition={item.fixabilityResult?.reasons && item.fixabilityResult.reasons.length > 0}>
-                      <div className="pl-6">
-                        <Text variant="text-8-light" className="text-gray-600">
-                          {item.fixabilityResult?.canBeFixed
-                            ? t("Meets all fixable criteria (≤3.5% overlap, ≤0.1 ha area)")
-                            : item.fixabilityResult?.reasons.join(". ")}
-                        </Text>
-                      </div>
-                    </When>
-                  </div>
-                </When>
-                <When condition={item.fixabilityResult == null}>
-                  <Text variant="text-10-light" className="text-gray-500">
-                    {t("No data")}
-                  </Text>
-                </When>
+                  </When>
+                </div>
               </div>
             </div>
           ))}

@@ -487,6 +487,46 @@ export type MediaRequestBody = {
   data: MediaRequestData;
 };
 
+export type MediaUpdateAttributes = {
+  /**
+   * The name of the media
+   */
+  name?: string;
+  /**
+   * The title of the media
+   */
+  title?: string;
+  /**
+   * The description of the media
+   */
+  description?: string;
+  /**
+   * The photographer of the media
+   */
+  photographer?: string;
+  /**
+   * The public status of the media
+   */
+  isPublic?: boolean;
+  /**
+   * The cover of the project
+   */
+  isCover?: boolean;
+};
+
+export type MediaData = {
+  type: "media";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: MediaUpdateAttributes;
+};
+
+export type MediaUpdateBody = {
+  data: MediaData;
+};
+
 export type PlantingCountDto = {
   /**
    * Taxonomic ID for this tree species row
@@ -1154,6 +1194,7 @@ export type SiteFullDto = {
   aimNumberOfMatureTrees: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
+  anrPractices: string[] | null;
   feedback: string | null;
   feedbackFields: string[] | null;
   detailedInterventionTypes: string[] | null;
@@ -1792,7 +1833,7 @@ export type SrpReportFullDto = {
   feedback: string | null;
   feedbackFields: string[] | null;
   answers: string | null;
-  otherRestorationPartnersDescription: string | null;
+  restorationPartnersDescription: string | null;
   totalUniqueRestorationPartners: number;
   media: MediaDto[];
 };

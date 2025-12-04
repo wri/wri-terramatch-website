@@ -182,9 +182,9 @@ export type SitePolygonLightDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -205,6 +205,10 @@ export type SitePolygonLightDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -222,11 +226,69 @@ export type CreateSitePolygonRequestDto = {
   features: any[][];
 };
 
+export type AttributeChangesDto = {
+  /**
+   * Updated polygon name
+   *
+   * @example North Field Updated
+   */
+  polyName?: string;
+  /**
+   * Updated planting start date (ISO 8601 format)
+   *
+   * @example 2023-01-15T00:00:00Z
+   */
+  plantStart?: string;
+  /**
+   * Updated practice type(s) as array of strings
+   *
+   * @example tree-planting
+   */
+  practice?: string[];
+  /**
+   * Updated target system
+   *
+   * @example restoration
+   */
+  targetSys?: string;
+  /**
+   * Updated distribution method(s) as array of strings
+   *
+   * @example full
+   * @example single-line
+   */
+  distr?: string[];
+  /**
+   * Updated number of trees
+   *
+   * @example 150
+   */
+  numTrees?: number;
+};
+
 export type CreateSitePolygonAttributesDto = {
   /**
-   * Array of feature collections (supports multi-site batch creation)
+   * Array of feature collections (optional when creating version with attribute-only changes)
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000"}}]}
    */
-  geometries: CreateSitePolygonRequestDto[];
+  geometries?: CreateSitePolygonRequestDto[];
+  /**
+   * UUID of existing site polygon to create version from. When provided, creates a new version instead of a new polygon.
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  baseSitePolygonUuid?: string;
+  /**
+   * Reason for creating version (required when baseSitePolygonUuid is provided)
+   *
+   * @example Updated polygon boundary based on field survey data
+   */
+  changeReason?: string;
+  /**
+   * Attribute changes to apply when creating version (optional, for attribute-only or mixed updates)
+   */
+  attributeChanges?: AttributeChangesDto;
 };
 
 export type CreateSitePolygonDataDto = {
@@ -321,9 +383,9 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -344,6 +406,10 @@ export type SitePolygonFullDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -380,6 +446,90 @@ export type SitePolygonUpdate = {
 
 export type SitePolygonBulkUpdateBodyDto = {
   data: SitePolygonUpdate[];
+};
+
+export type VersionUpdateAttributes = {
+  /**
+   * Set to true to activate this version, false to deactivate
+   *
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Optional comment explaining the version change
+   *
+   * @example Activating this version to revert recent changes
+   */
+  comment?: string;
+};
+
+export type VersionUpdateData = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: VersionUpdateAttributes;
+};
+
+export type VersionUpdateBody = {
+  data: VersionUpdateData;
+};
+
+export type DelayedJobDto = {
+  /**
+   * The unique identifier for the delayed job.
+   */
+  uuid: string;
+  /**
+   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
+   */
+  status: "pending" | "failed" | "succeeded";
+  /**
+   * If the job is out of pending state, this is the HTTP status code for the completed process
+   */
+  statusCode: number | null;
+  /**
+   * If the job is out of pending state, this is the JSON payload for the completed process
+   */
+  payload: Record<string, any> | null;
+  /**
+   * If the job is in progress, this is the total content to process
+   */
+  totalContent: number | null;
+  /**
+   * If the job is in progress, this is the total content processed
+   */
+  processedContent: number | null;
+  /**
+   * If the job is in progress, this is the progress message
+   */
+  progressMessage: string | null;
+  /**
+   * Indicates whether the jobs have been acknowledged (cleared)
+   */
+  isAcknowledged: boolean | null;
+  /**
+   * The name of the delayedJob
+   */
+  name: string | null;
+  /**
+   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
+   */
+  entityName?: string | null;
+};
+
+export type GeometryUploadAttributesDto = {
+  siteId: string;
+};
+
+export type GeometryUploadData = {
+  type: "sitePolygons";
+  attributes: GeometryUploadAttributesDto;
+};
+
+export type GeometryUploadRequestDto = {
+  data: GeometryUploadData;
 };
 
 export type BoundingBoxDto = {
@@ -454,49 +604,6 @@ export type ValidationSummaryDto = {
   completedAt: string;
 };
 
-export type DelayedJobDto = {
-  /**
-   * The unique identifier for the delayed job.
-   */
-  uuid: string;
-  /**
-   * The current status of the job. If the status is not pending, the payload and statusCode will be provided.
-   */
-  status: "pending" | "failed" | "succeeded";
-  /**
-   * If the job is out of pending state, this is the HTTP status code for the completed process
-   */
-  statusCode: number | null;
-  /**
-   * If the job is out of pending state, this is the JSON payload for the completed process
-   */
-  payload: Record<string, any> | null;
-  /**
-   * If the job is in progress, this is the total content to process
-   */
-  totalContent: number | null;
-  /**
-   * If the job is in progress, this is the total content processed
-   */
-  processedContent: number | null;
-  /**
-   * If the job is in progress, this is the progress message
-   */
-  progressMessage: string | null;
-  /**
-   * Indicates whether the jobs have been acknowledged (cleared)
-   */
-  isAcknowledged: boolean | null;
-  /**
-   * The name of the delayedJob
-   */
-  name: string | null;
-  /**
-   * The name of the related entity (e.g., Kerrawarra, New Site, etc).
-   */
-  entityName?: string | null;
-};
-
 export type SiteValidationRequestAttributes = {
   /**
    * Array of validation types to run on all polygons in the site. If not provided or empty, all validation types will be run.
@@ -555,6 +662,39 @@ export type GeometryValidationRequestBody = {
   data: GeometryValidationRequestData;
 };
 
+export type ClippedVersionDto = {
+  /**
+   * The UUID of the newly created polygon version
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  uuid: string;
+  /**
+   * The name of the polygon
+   *
+   * @example Plot_1_2024
+   */
+  polyName: Record<string, any>;
+  /**
+   * The original area in hectares before clipping
+   *
+   * @example 2.5
+   */
+  originalArea: number;
+  /**
+   * The new area in hectares after clipping
+   *
+   * @example 2.35
+   */
+  newArea: number;
+  /**
+   * The area removed in hectares
+   *
+   * @example 0.15
+   */
+  areaRemoved: number;
+};
+
 export type PolygonListClippingAttributes = {
   /**
    * Array of polygon UUIDs to check and clip for fixable overlaps
@@ -572,4 +712,48 @@ export type PolygonListClippingData = {
 
 export type PolygonListClippingRequestBody = {
   data: PolygonListClippingData;
+};
+
+export type IndicatorsSummaryDto = {
+  /**
+   * The UUID of the site that was validated
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  polygonUuids: string[];
+  /**
+   * Total number of polygons
+   */
+  totalPolygons: number;
+};
+
+export type IndicatorsAttributes = {
+  /**
+   * The UUIDs of the polygons to calculate indicators for
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  polygonUuids: string[];
+  /**
+   * Whether to update the existing indicators
+   *
+   * @example true
+   */
+  updateExisting: Record<string, any>;
+  /**
+   * Whether to force recalculation of the indicators
+   *
+   * @example true
+   */
+  forceRecalculation: Record<string, any>;
+};
+
+export type IndicatorsRequestData = {
+  type: "indicators";
+  attributes: IndicatorsAttributes;
+};
+
+export type IndicatorsBodyDto = {
+  data: IndicatorsRequestData;
 };
