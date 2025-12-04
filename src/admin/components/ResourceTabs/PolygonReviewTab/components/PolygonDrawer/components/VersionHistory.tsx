@@ -88,6 +88,8 @@ const VersionHistory = ({
   const versionUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const isActiveVersion = selectPolygonVersion?.isActive ?? selectedPolygon.isActive ?? false;
+
   const getPolygonSelectedUuid = useCallback(() => {
     return selectPolygonVersion?.primaryUuid ?? selectedPolygon.primaryUuid;
   }, [selectPolygonVersion, selectedPolygon]);
@@ -189,8 +191,6 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refreshPolygonList?.();
 
-      await refetchVersionsList();
-
       const versionsResponse = await loadListPolygonVersions({ uuid: polygonSelectedPrimaryUuid as string });
       const versionsList = versionsResponse?.data;
       // when the upload function is ready,replace this to be updated this part of the code to update the polygon data
@@ -272,10 +272,8 @@ const VersionHistory = ({
       const versionsResponse = await loadListPolygonVersions({ uuid: primaryUuid as string });
       const versionsList = versionsResponse?.data;
       const newlyActiveVersion = versionsList?.find(v => v.uuid === versionUuid) ?? selectPolygonVersion;
-      await refreshSiteData?.();
-      await refreshPolygonList?.();
 
-      await refetchVersionsList();
+      await refreshPolygonList?.();
       if (setSelectedPolygonData != null && newlyActiveVersion) {
         setSelectedPolygonData(newlyActiveVersion);
       }
@@ -318,8 +316,9 @@ const VersionHistory = ({
       openNotification("success", "Success!", "Polygon version deleted successfully");
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
-    } catch (error) {
-      openNotification("error", "Error!", "Error deleting polygon version");
+    } catch (error: any) {
+      const errorMessage = error?.message ?? "Error deleting polygon version";
+      openNotification("error", "Error!", errorMessage);
       setIsLoadingDelete(false);
       setIsLoadingDropdown(false);
     }
@@ -449,7 +448,17 @@ const VersionHistory = ({
             }}
           />
           <div className="mt-auto flex items-center justify-end gap-5">
-            <Button onClick={onDeleteVersion} variant="semi-red" className="w-full" disabled={isLoadingDelete}>
+            <Button
+              onClick={onDeleteVersion}
+              variant="semi-red"
+              className="w-full"
+              disabled={isLoadingDelete || isActiveVersion}
+              title={
+                isActiveVersion
+                  ? t("Cannot delete the active version. Please activate another version first.")
+                  : undefined
+              }
+            >
               {t("Delete")}
             </Button>
             <Button onClick={makeActivePolygon} variant="semi-black" className="w-full" disabled={isUpdating}>
