@@ -19,6 +19,7 @@ import {
   SitePolygonDeleteResource,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
@@ -68,7 +69,30 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     data: deleteResources
   };
 
-  await bulkDeleteSitePolygonsEndpoint.fetchParallel({ body });
+  const failureSelector = bulkDeleteSitePolygonsEndpoint.fetchFailedSelector({});
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(resolveUrl(bulkDeleteSitePolygonsEndpoint.url, {}), bulkDeleteSitePolygonsEndpoint.method);
+  }
+
+  bulkDeleteSitePolygonsEndpoint.fetch({ body });
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const deleted = currentState.meta.deleted.sitePolygons ?? [];
+      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
+      const failure = failureSelector(currentState);
+
+      if (allDeleted) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
 
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
