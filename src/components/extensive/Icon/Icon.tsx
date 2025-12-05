@@ -247,7 +247,8 @@ export enum IconNames {
   SRP_REPORT = "srp-report",
   AREA = "Area",
   SEARCH_WRI = "search-wri",
-  TRASH_WRI = "trash-wri"
+  TRASH_WRI = "trash-wri",
+  WARNING_TRIANGLE = "warning-triangle"
 }
 
 export interface IconProps {
