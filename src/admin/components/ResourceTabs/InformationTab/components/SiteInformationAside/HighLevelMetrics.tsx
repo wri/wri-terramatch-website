@@ -53,7 +53,7 @@ const HighLevelMetrics: FC = () => {
               label={
                 <span className="flex items-center gap-2">
                   Hectares Under Restoration{" "}
-                  {record?.totalHectaresRestoredSum == record?.hectaresRestoredPolygonsCount ? (
+                  {record?.totalHectaresRestoredSum == record?.hectaresToRestoreGoal ? (
                     ""
                   ) : (
                     <Icon name={IconNames.WARNING_TRIANGLE} />
@@ -72,7 +72,11 @@ const HighLevelMetrics: FC = () => {
                   <Typography variant="body2" color="text.secondary">
                     Polygons
                   </Typography>
-                  <NumberField source="hectaresRestoredPolygonsCount" emptyText="0" />
+                  <NumberField
+                    source="hectaresRestoredPolygonsCount"
+                    emptyText="0"
+                    color={record?.totalHectaresRestoredSum == record?.hectaresToRestoreGoal ? "" : "red"}
+                  />
                 </Box>
               </Stack>
             </Labeled>
