@@ -16,7 +16,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { deleteMedia } from "@/connections/Media";
+import { deleteMedia, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -27,11 +27,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchGetV2TerrafundPolygonGeojsonUuid,
-  usePatchV2MediaProjectProjectMediaUuid,
-  usePostV2ExportImage
-} from "@/generated/apiComponents";
+import { fetchGetV2TerrafundPolygonGeojsonUuid, usePostV2ExportImage } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -260,7 +256,6 @@ export const MapContainer = ({
   const { showLoader, hideLoader } = useLoading();
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
-  const { mutateAsync: updateIsCoverAsync } = usePatchV2MediaProjectProjectMediaUuid();
   const { openNotification } = useNotificationContext();
   const {
     isUserDrawingEnabled,
@@ -491,7 +486,6 @@ export const MapContainer = ({
   }, [projectUUID, userChangedStyle]);
 
   useEffect(() => {
-    const projectUUID = router.query.uuid as string;
     const isProjectPath = router.isReady && router.asPath.includes("project");
     const handleDelete = async (id: string) => {
       try {
@@ -521,9 +515,7 @@ export const MapContainer = ({
     };
 
     const setImageCover = async (uuid: string) => {
-      const result = await updateIsCoverAsync({
-        pathParams: { project: projectUUID, mediaUuid: uuid }
-      });
+      const result = await updateMedia({ isCover: true }, { id: uuid });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
         setShouldRefetchMediaData(true);
@@ -644,7 +636,6 @@ export const MapContainer = ({
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
           const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
-
           if (!selectedPolygon?.primary_uuid) {
             openNotification("error", t("Error"), t("Missing polygon information"));
             return;
