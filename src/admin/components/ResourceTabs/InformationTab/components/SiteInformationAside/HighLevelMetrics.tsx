@@ -7,10 +7,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 
-const verficationDifferentCount = (count: number, polygonsCount: number) => {
-  return count == polygonsCount;
-};
-
 const HighLevelMetrics: FC = () => {
   const inlineLabelSx: SxProps<Theme> = {
     flexDirection: "row",
@@ -57,10 +53,7 @@ const HighLevelMetrics: FC = () => {
               label={
                 <span className="flex items-center gap-2">
                   Hectares Under Restoration{" "}
-                  {verficationDifferentCount(
-                    record?.totalHectaresRestoredSum,
-                    record?.hectaresRestoredPolygonsCount
-                  ) ? (
+                  {record?.totalHectaresRestoredSum == record?.hectaresRestoredPolygonsCount ? (
                     ""
                   ) : (
                     <Icon name={IconNames.WARNING_TRIANGLE} />
@@ -88,7 +81,7 @@ const HighLevelMetrics: FC = () => {
               label={
                 <span className="flex items-center gap-2">
                   Total Number of Trees Planted{" "}
-                  {verficationDifferentCount(record?.treesPlantedCount, record?.treesPlantedPolygonsCount) ? (
+                  {record?.treesPlantedCount == record?.treesPlantedPolygonsCount ? (
                     ""
                   ) : (
                     <Icon name={IconNames.WARNING_TRIANGLE} />
@@ -110,11 +103,7 @@ const HighLevelMetrics: FC = () => {
                   <NumberField
                     source="treesPlantedPolygonsCount"
                     emptyText="0"
-                    color={
-                      verficationDifferentCount(record?.treesPlantedCount, record?.treesPlantedPolygonsCount)
-                        ? ""
-                        : "red"
-                    }
+                    color={record?.treesPlantedCount == record?.treesPlantedPolygonsCount ? "" : "red"}
                   />
                 </Box>
               </Stack>
