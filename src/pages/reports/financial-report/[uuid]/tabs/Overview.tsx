@@ -17,6 +17,7 @@ import {
 } from "@/utils/financialReport";
 
 import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
+import FinancialBudgetStackedBarChart from "../components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "../components/FinancialStackedBarChart";
 
@@ -63,6 +64,8 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
   const hasCurrentRatioData =
     Array.isArray(financialCollection) &&
     financialCollection.some(item => item.collection === "current-ratio" && item.amount);
+  const hasBudgetData =
+    Array.isArray(financialCollection) && financialCollection.some(item => item.collection === "budget" && item.amount);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -140,6 +143,32 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
                   currency={""}
                 />
               </div>
+            </div>
+          </div>
+        </Container>
+      )}
+
+      {hasBudgetData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Budget By Year")}
+          </Text>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <FinancialBudgetStackedBarChart data={financialCollection} currency={report?.currency} />
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+              {financialCollection
+                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
+                .map((item: FinancialStackedBarChartProps) => (
+                  <CardFinancial
+                    key={item.uuid}
+                    title={t(item.year.toString())}
+                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                    description={t("Budget")}
+                    currency={report?.currency}
+                  />
+                ))}
             </div>
           </div>
         </Container>
