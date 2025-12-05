@@ -66,7 +66,7 @@ const HighLevelMetrics: FC = () => {
                   <Typography variant="body2" color="text.secondary">
                     Target
                   </Typography>
-                  <NumberField source="totalHectaresRestoredSum" emptyText="0" />
+                  <NumberField source="hectaresToRestoreGoal" emptyText="0" />
                 </Box>
                 <Box>
                   <Typography variant="body2" color="text.secondary">
@@ -109,13 +109,13 @@ const HighLevelMetrics: FC = () => {
               </Stack>
             </Labeled>
           </>
-
-          <ContextCondition frameworksShow={[Framework.TF]}>
-            <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
-              <NumberField source="hectaresToRestoreGoal" emptyText="0" />
-            </Labeled>
-          </ContextCondition>
           <div className="hidden">
+            <ContextCondition frameworksShow={[Framework.TF]}>
+              <Labeled label="Hectares Restored Goal" sx={inlineLabelSx} className="label-field-aside">
+                <NumberField source="hectaresToRestoreGoal" emptyText="0" />
+              </Labeled>
+            </ContextCondition>
+
             <Labeled label="Hectares Under Restoration" sx={inlineLabelSx} className="label-field-aside">
               <NumberField source="totalHectaresRestoredSum" emptyText="0" />
             </Labeled>
