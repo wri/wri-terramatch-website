@@ -19,6 +19,9 @@ export const SelectField: FormFieldFactory = {
       optionsList={optionsList ?? undefined}
       linkedFieldKey={linkedFieldKey ?? undefined}
       enableAdditionalOptions
+      className={multiChoice ? "!h-auto min-h-[40px]" : undefined}
+      titleContainerClassName={multiChoice ? "flex items-start gap-2 min-w-0" : undefined}
+      titleClassname={multiChoice ? "!whitespace-normal !break-words" : undefined}
     />
   ),
 
