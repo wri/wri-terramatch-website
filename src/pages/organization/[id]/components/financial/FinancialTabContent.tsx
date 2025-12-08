@@ -18,6 +18,7 @@ import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
 import {
@@ -209,7 +210,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
-              <FinancialStackedBarChart data={financialData} currency={organization?.currency} />
+              <FinancialBudgetStackedBarChart data={financialData} currency={organization?.currency} />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData
