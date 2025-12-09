@@ -53,282 +53,6 @@ export const authLogin = new V3ApiEndpoint<AuthLoginResponse, AuthLoginError, Au
   "POST"
 );
 
-export type UsersFindPathParams = {
-  /**
-   * A valid user UUID or "me"
-   *
-   * @example me
-   */
-  uuid: string;
-};
-
-export type UsersFindError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type UsersFindResponse = {
-  meta?: {
-    /**
-     * @example users
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example users
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserDto;
-    relationships?: {
-      org?: {
-        /**
-         * @example organisations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
-        };
-      };
-    };
-  };
-  included?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  }[];
-};
-
-export type UsersFindVariables = {
-  pathParams: UsersFindPathParams;
-};
-
-/**
- * Fetch a user by UUID, or with the 'me' identifier
- */
-export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
-  "/users/v3/users/{uuid}",
-  "GET"
-);
-
-export type UserUpdatePathParams = {
-  /**
-   * A valid user uuid
-   */
-  uuid: string;
-};
-
-export type UserUpdateError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type UserUpdateResponse = {
-  meta?: {
-    /**
-     * @example users
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example users
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserDto;
-    relationships?: {
-      org?: {
-        /**
-         * @example organisations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
-        };
-      };
-    };
-  };
-  included?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  }[];
-};
-
-export type UserUpdateVariables = {
-  body: Schemas.UserUpdateBody;
-  pathParams: UserUpdatePathParams;
-};
-
-/**
- * Update a user by UUID
- */
-export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
-  "/users/v3/users/{uuid}",
-  "PATCH"
-);
-
-export type UserCreationError = Fetcher.ErrorWrapper<{
-  status: 401;
-  payload: {
-    /**
-     * @example 401
-     */
-    statusCode: number;
-    /**
-     * @example Unauthorized
-     */
-    message: string;
-  };
-}>;
-
-export type UserCreationResponse = {
-  meta?: {
-    /**
-     * @example users
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example users
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserDto;
-    relationships?: {
-      org?: {
-        /**
-         * @example organisations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
-        };
-      };
-    };
-  };
-  included?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  }[];
-};
-
-export type UserCreationVariables = {
-  body: Schemas.UserCreateBody;
-};
-
-/**
- * Create a new user
- */
-export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
-  "/users/v3/users",
-  "POST"
-);
-
 export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -561,12 +285,288 @@ export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationError,
   OrganisationCreationVariables,
   {}
->("/organisations/v3/organisations", "POST");
+>("/organisations/v3", "POST");
+
+export type UsersFindPathParams = {
+  /**
+   * A valid user UUID or "me"
+   *
+   * @example me
+   */
+  uuid: string;
+};
+
+export type UsersFindError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UsersFindResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UsersFindVariables = {
+  pathParams: UsersFindPathParams;
+};
+
+/**
+ * Fetch a user by UUID, or with the 'me' identifier
+ */
+export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
+  "/users/v3/{uuid}",
+  "GET"
+);
+
+export type UserUpdatePathParams = {
+  /**
+   * A valid user uuid
+   */
+  uuid: string;
+};
+
+export type UserUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UserUpdateResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserUpdateVariables = {
+  body: Schemas.UserUpdateBody;
+  pathParams: UserUpdatePathParams;
+};
+
+/**
+ * Update a user by UUID
+ */
+export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
+  "/users/v3/{uuid}",
+  "PATCH"
+);
+
+export type UserCreationError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type UserCreationResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type UserCreationVariables = {
+  body: Schemas.UserCreateBody;
+};
+
+/**
+ * Create a new user
+ */
+export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
+  "/users/v3",
+  "POST"
+);
 
 export const operationsByTag = {
   login: { authLogin },
-  users: { usersFind, userUpdate, userCreation },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: { organisationCreation }
+  organisations: { organisationCreation },
+  users: { usersFind, userUpdate, userCreation }
 };

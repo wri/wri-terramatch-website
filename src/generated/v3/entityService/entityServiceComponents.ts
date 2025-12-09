@@ -3207,6 +3207,24 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   {}
 >("/forms/v3/linkedFields", "GET");
 
+export type SubmissionGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type SubmissionGetError = Fetcher.ErrorWrapper<undefined>;
+
+export type SubmissionGetVariables = {
+  pathParams: SubmissionGetPathParams;
+};
+
+export const submissionGet = new V3ApiEndpoint<undefined, SubmissionGetError, SubmissionGetVariables, {}>(
+  "/forms/v3/submissions/{uuid}",
+  "GET"
+);
+
 export type FormIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -3305,7 +3323,7 @@ export type FormIndexVariables = {
  * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
  */
 export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, FormIndexVariables, {}>(
-  "/forms/v3/forms",
+  "/forms/v3",
   "GET"
 );
 
@@ -3366,7 +3384,7 @@ export type FormCreateVariables = {
  * Create a new form
  */
 export const formCreate = new V3ApiEndpoint<FormCreateResponse, FormCreateError, FormCreateVariables, {}>(
-  "/forms/v3/forms",
+  "/forms/v3",
   "POST"
 );
 
@@ -3442,7 +3460,7 @@ export type FormGetVariables = {
  * Get a form by uuid. Includes all sections and questions within the form.
  */
 export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
-  "/forms/v3/forms/{uuid}",
+  "/forms/v3/{uuid}",
   "GET"
 );
 
@@ -3510,7 +3528,7 @@ export type FormDeleteVariables = {
 };
 
 export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError, FormDeleteVariables, {}>(
-  "/forms/v3/forms/{uuid}",
+  "/forms/v3/{uuid}",
   "DELETE"
 );
 
@@ -3589,7 +3607,7 @@ export type FormUpdateVariables = {
  * Update a form
  */
 export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError, FormUpdateVariables, {}>(
-  "/forms/v3/forms/{uuid}",
+  "/forms/v3/{uuid}",
   "PUT"
 );
 
@@ -3666,25 +3684,7 @@ export const applicationGet = new V3ApiEndpoint<
   ApplicationGetError,
   ApplicationGetVariables,
   {}
->("/applications/v3/applications/{uuid}", "GET");
-
-export type SubmissionGetPathParams = {
-  /**
-   * UUID of the resource.
-   */
-  uuid: string;
-};
-
-export type SubmissionGetError = Fetcher.ErrorWrapper<undefined>;
-
-export type SubmissionGetVariables = {
-  pathParams: SubmissionGetPathParams;
-};
-
-export const submissionGet = new V3ApiEndpoint<undefined, SubmissionGetError, SubmissionGetVariables, {}>(
-  "/forms/v3/submissions/{uuid}",
-  "GET"
-);
+>("/applications/v3/{uuid}", "GET");
 
 export type FundingProgrammesIndexQueryParams = {
   /**
@@ -3756,7 +3756,7 @@ export const fundingProgrammesIndex = new V3ApiEndpoint<
   FundingProgrammesIndexError,
   FundingProgrammesIndexVariables,
   {}
->("/fundingProgrammes/v3/fundingProgrammes", "GET");
+>("/fundingProgrammes/v3", "GET");
 
 export type FundingProgrammeGetPathParams = {
   /**
@@ -3831,7 +3831,7 @@ export const fundingProgrammeGet = new V3ApiEndpoint<
   FundingProgrammeGetError,
   FundingProgrammeGetVariables,
   {}
->("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "GET");
+>("/fundingProgrammes/v3/{uuid}", "GET");
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
@@ -3847,8 +3847,8 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
+  submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationGet },
-  submissions: { submissionGet },
   fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
 };
