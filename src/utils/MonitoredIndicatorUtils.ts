@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 
 import { Indicator } from "@/connections/SitePolygons";
+import { Indicators } from "@/generated/apiSchemas";
 import {
   IndicatorHectaresDto,
   IndicatorTreeCoverDto,
@@ -259,4 +260,84 @@ const formatDate = (dateString?: null | string | number | Date) => {
   if (dateString == null) return "";
   const date = new Date(dateString);
   return date.toLocaleDateString();
+};
+
+export const transformSitePolygonsToIndicators = (
+  polygons: SitePolygonLightDto[],
+  indicatorSlug: Indicator
+): Indicators[] => {
+  if (isEmpty(polygons)) {
+    return [];
+  }
+
+  return polygons
+    .filter(sitePolygon => sitePolygon.status === "approved")
+    .map(sitePolygon => {
+      const indicator = sitePolygon?.indicators?.find(
+        (ind: { indicatorSlug: string }) => ind.indicatorSlug === indicatorSlug
+      );
+
+      if (indicator == null) return null;
+
+      const baseIndicator = {
+        poly_name: sitePolygon.name || undefined,
+        status: sitePolygon.status || undefined,
+        plantstart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
+        site_name: sitePolygon.siteName || undefined,
+        size: sitePolygon.calcArea != null ? formattedValue(sitePolygon.calcArea, 1) : undefined,
+        poly_id: sitePolygon.polygonUuid || undefined,
+        site_id: sitePolygon.siteId || undefined,
+        indicator_slug: indicatorSlug,
+        year_of_analysis: (indicator as { yearOfAnalysis?: number }).yearOfAnalysis
+      };
+
+      switch (indicatorSlug) {
+        case "treeCoverLoss":
+        case "treeCoverLossFires": {
+          const treeCoverLoss = indicator as IndicatorTreeCoverLossDto;
+          // Return numeric values for chart calculations (parseTreeCoverData expects numbers)
+          // Convert to number explicitly in case API returns strings
+          const convertToNumber = (val: any): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+          return {
+            ...baseIndicator,
+            data: {
+              "2010": convertToNumber(treeCoverLoss.value?.["2010"]),
+              "2011": convertToNumber(treeCoverLoss.value?.["2011"]),
+              "2012": convertToNumber(treeCoverLoss.value?.["2012"]),
+              "2013": convertToNumber(treeCoverLoss.value?.["2013"]),
+              "2014": convertToNumber(treeCoverLoss.value?.["2014"]),
+              "2015": convertToNumber(treeCoverLoss.value?.["2015"]),
+              "2016": convertToNumber(treeCoverLoss.value?.["2016"]),
+              "2017": convertToNumber(treeCoverLoss.value?.["2017"]),
+              "2018": convertToNumber(treeCoverLoss.value?.["2018"]),
+              "2019": convertToNumber(treeCoverLoss.value?.["2019"]),
+              "2020": convertToNumber(treeCoverLoss.value?.["2020"]),
+              "2021": convertToNumber(treeCoverLoss.value?.["2021"]),
+              "2022": convertToNumber(treeCoverLoss.value?.["2022"]),
+              "2023": convertToNumber(treeCoverLoss.value?.["2023"]),
+              "2024": convertToNumber(treeCoverLoss.value?.["2024"]),
+              "2025": convertToNumber(treeCoverLoss.value?.["2025"])
+            }
+          };
+        }
+
+        case "restorationByStrategy":
+        case "restorationByEcoRegion":
+        case "restorationByLandUse": {
+          const hectares = indicator as IndicatorHectaresDto;
+          return {
+            ...baseIndicator,
+            value: hectares.value
+          };
+        }
+
+        default:
+          return baseIndicator;
+      }
+    })
+    .filter((row): row is NonNullable<typeof row> => row != null);
 };

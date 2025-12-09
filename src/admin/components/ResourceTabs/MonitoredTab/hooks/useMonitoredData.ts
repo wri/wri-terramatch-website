@@ -2,20 +2,20 @@ import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { Indicator, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
   useGetV2IndicatorsEntityUuid,
-  useGetV2IndicatorsEntityUuidSlug,
   useGetV2IndicatorsEntityUuidSlugVerify,
   usePostV2IndicatorsSlug
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
+import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
 
 const dataPolygonOverview = [
   {
@@ -122,37 +122,63 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [rerunDropdownOptions, setRerunDropdownOptions] = useState(DROPDOWN_OPTIONS);
   const [totalPolygonsForRerun, setTotalPolygonsForRerun] = useState<number>(0);
 
+  const getComplementarySlug = (slug: string): Indicator | undefined =>
+    slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
+
+  // Fetch site polygons with the main indicator filter (v3)
   const {
-    data: indicatorData,
-    refetch: refetchDataIndicators,
-    isLoading: isLoadingIndicator
-  } = useGetV2IndicatorsEntityUuidSlug(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: indicatorSlug!
-      }
-    },
-    {
-      enabled: !!indicatorSlug && !!entity_uuid
+    data: sitePolygonsData,
+    isLoading: isLoadingSitePolygons,
+    refetch: refetchSitePolygons
+  } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
+    filter: {
+      "presentIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined,
+      "polygonStatus[]": ["approved"]
     }
-  );
+  });
 
-  const getComplementarySlug = (slug: string) => (slug === "treeCoverLoss" ? "treeCoverLossFires" : "treeCoverLoss");
-
-  const { data: complementaryData } = useGetV2IndicatorsEntityUuidSlug(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: getComplementarySlug(indicatorSlug || "")
-      }
-    },
-    {
-      enabled: (indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires") && !!entity_uuid
+  // Fetch complementary data for treeCoverLoss/treeCoverLossFires (v3)
+  const complementarySlug = getComplementarySlug(indicatorSlug || "");
+  const {
+    data: complementarySitePolygonsData,
+    isLoading: isLoadingComplementary,
+    refetch: refetchComplementarySitePolygons
+  } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled:
+      (indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires") &&
+      !!entity_uuid &&
+      !!entity &&
+      !!complementarySlug,
+    filter: {
+      "presentIndicator[]": complementarySlug ? [complementarySlug] : undefined,
+      "polygonStatus[]": ["approved"]
     }
-  );
+  });
+
+  // Transform v3 data to v2 Indicators format for charts
+  const indicatorData = useMemo(() => {
+    if (!sitePolygonsData || !indicatorSlug) return [];
+    return transformSitePolygonsToIndicators(sitePolygonsData, indicatorSlug as Indicator);
+  }, [sitePolygonsData, indicatorSlug]);
+
+  const complementaryData = useMemo(() => {
+    if (!complementarySitePolygonsData || !complementarySlug) return [];
+    return transformSitePolygonsToIndicators(complementarySitePolygonsData, complementarySlug);
+  }, [complementarySitePolygonsData, complementarySlug]);
+
+  const isLoadingIndicator = isLoadingSitePolygons || isLoadingComplementary;
+
+  const refetchDataIndicators = () => {
+    refetchSitePolygons();
+    if (complementarySlug) {
+      refetchComplementarySitePolygons();
+    }
+  };
 
   useEffect(() => {
     if (indicatorSlug === "treeCoverLoss") {
