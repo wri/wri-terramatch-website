@@ -284,7 +284,6 @@ export const transformSitePolygonsToIndicators = (
         status: sitePolygon.status || undefined,
         plantstart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
         site_name: sitePolygon.siteName || undefined,
-        size: sitePolygon.calcArea != null ? formattedValue(sitePolygon.calcArea, 1) : undefined,
         poly_id: sitePolygon.polygonUuid || undefined,
         site_id: sitePolygon.siteId || undefined,
         indicator_slug: indicatorSlug,
@@ -339,5 +338,5 @@ export const transformSitePolygonsToIndicators = (
           return baseIndicator;
       }
     })
-    .filter((row): row is NonNullable<typeof row> => row != null);
+    .filter((row): row is NonNullable<typeof row> => row != null) as Indicators[];
 };
