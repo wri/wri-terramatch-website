@@ -6,8 +6,6 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
-import { useMonitoredDataContext } from "@/context/monitoredData.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -38,21 +36,6 @@ const listOfPolygonsFixed = (data: Record<string, any> | null) => {
   }
 };
 
-const getIndicatorCalculationMessage = (
-  data: Record<string, any> | null,
-  totalContent?: number | null
-): string | null => {
-  if (!data?.data) return null;
-
-  const polygonCount = Array.isArray(data.data) ? data.data.length : data.data ? 1 : 0;
-  const total = totalContent ?? polygonCount;
-
-  if (polygonCount > 0) {
-    return `Success! Indicators analysis completed for ${polygonCount} of ${total} polygon${total !== 1 ? "s" : ""}.`;
-  }
-
-  return null;
-};
 const getValidationMessages = (data: Record<string, any> | null): string[] => {
   if (data?.included == null) return [];
   const messageGroups: Record<string, string[]> = {};
@@ -116,8 +99,6 @@ const FloatNotification = () => {
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
   const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
   const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
-  const { openNotification } = useNotificationContext();
-  const { setLoadingAnalysis } = useMonitoredDataContext();
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
@@ -171,24 +152,14 @@ const FloatNotification = () => {
           setProcessedIndicatorJobs(prev => new Set(prev).add(job.uuid));
 
           if (job.status === "succeeded") {
-            const message = getIndicatorCalculationMessage(job.payload, job.totalContent);
-            openNotification(
-              "success",
-              t("Success! Analysis completed."),
-              message || t("The analysis has been completed successfully.")
-            );
-            setLoadingAnalysis?.(false);
             // Prune cache for sitePolygons since indicators are related to polygons
             ApiSlice.pruneCache("sitePolygons");
             ApiSlice.pruneIndex("sitePolygons", "");
-          } else if (job.status === "failed") {
-            setLoadingAnalysis?.(false);
-            openNotification("error", t("Error! Analysis failed."), t("The analysis has failed. Please try again."));
           }
         }
       }
     });
-  }, [delayedJobs, processedIndicatorJobs, openNotification, t, setLoadingAnalysis]);
+  }, [delayedJobs, processedIndicatorJobs]);
 
   return (
     <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">
