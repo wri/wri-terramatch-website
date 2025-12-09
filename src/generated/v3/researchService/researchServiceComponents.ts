@@ -54,6 +54,17 @@ export type CreateSitePolygonsResponse = {
     id?: string;
     attributes?: Schemas.SitePolygonLightDto;
   };
+  included?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  }[];
 };
 
 export type CreateSitePolygonsVariables = {
@@ -62,9 +73,26 @@ export type CreateSitePolygonsVariables = {
 
 /**
  * Create site polygons OR create a new version of an existing polygon.
- *     **Normal Creation**: Provide geometries array with site_id in properties.
- *     **Version Creation**: Provide baseSitePolygonUuid + changeReason + (geometries and/or attributeChanges).
- *     Duplicate validation results are always included in the response when duplicates are found.
+ *
+ *     Normal Creation (new polygons):
+ *     - Provide `geometries` array with `siteId`in feature properties (required)
+ *     - Attributes (polyName, plantstart, practice, etc.) come from feature `properties`
+ *     - Properties support both camelCase and snake_case
+ *     - Do NOT provide `baseSitePolygonUuid` or `attributeChanges`
+ *
+ *     Version Creation (new version of existing polygon):
+ *     - Provide `baseSitePolygonUuid` (required) + `changeReason` (optional, defaults to "Version created via API")
+ *     - Then provide ONE of the following:
+ *       - Geometry only: Provide `geometries` array (geometry properties are ignored)
+ *       - Attributes only: Provide `attributeChanges` object
+ *       - Both: Provide both `geometries` and `attributeChanges`
+ *     - At least one of `geometries` or `attributeChanges` must be provided
+ *
+ *     Important: When creating versions, `attributeChanges` is the ONLY way to update attributes.
+ *     Geometry properties are ignored during version creation - use `attributeChanges` instead.
+ *
+ *     Duplicate validation results are included in the `included` section of the JSON:API response when duplicates are found.
+ *     Property naming: GeoJSON properties support both camelCase and snake_case.
  */
 export const createSitePolygons = new V3ApiEndpoint<
   CreateSitePolygonsResponse,
@@ -1162,7 +1190,35 @@ export type ValidateGeometriesVariables = {
 };
 
 /**
- * Validates geometries in-memory without persisting results to database. Returns validation results in included array.
+ * Validates raw GeoJSON geometries in-memory without persisting results to the database.
+ *
+ *     This endpoint is useful for validating geometries before creating site polygons, allowing you to check
+ *     for issues without saving the data.
+ *
+ *     Input:
+ *     - Provide an array of GeoJSON FeatureCollections containing the geometries to validate
+ *     - Optionally specify which validation types to run (defaults to all non-persistent validation types)
+ *
+ *     Supported validation types (non-persistent):
+ *     - SELF_INTERSECTION: Checks if polygon edges intersect with themselves
+ *     - POLYGON_SIZE: Validates polygon area is within acceptable range ( 1000 ha )
+ *     - SPIKES: Detects spikes in polygon boundaries
+ *     - DUPLICATE_GEOMETRY: Checks if geometry already exists (requires siteId or site_id in feature properties)
+ *     - DATA_COMPLETENESS: Validates required properties are present
+ *     - FEATURE_BOUNDS: Validates geometry coordinates are within valid bounds
+ *     - GEOMETRY_TYPE: Validates geometry type is supported (multipolygon, polygon or point)
+ *
+ *     Response:
+ *     - Returns a JSON:API document with validation results in the `data` array
+ *     - Each validation result contains a `polygonUuid` identifier (from feature properties.id if provided, otherwise auto-generated as "feature-{index}")
+ *     - This identifier is NOT a database UUID - it's only used to match validation results back to the input features
+ *     - Each result includes a `criteriaList` with validation details for each criteria checked
+ *     - Results are not persisted to the database and are only returned in the response
+ *
+ *     Note: For duplicate geometry validation, features must include `siteId`in their properties.
+ *
+ *     Property naming: GeoJSON properties support both camelCase and snake_case.
+ *     camelCase takes precedence if both formats are present for the same property.
  */
 export const validateGeometries = new V3ApiEndpoint<
   ValidateGeometriesResponse,
@@ -1404,25 +1460,6 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example indicatorsSummary
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example indicatorsSummary
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.IndicatorsSummaryDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
          * @example delayedJobs
          */
         resourceType?: string;
@@ -1437,6 +1474,25 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DelayedJobDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
       };
     },
   StartIndicatorCalculationError,

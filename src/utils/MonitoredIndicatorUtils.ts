@@ -11,7 +11,7 @@ import {
 type EcoRegionCategory = "australasian" | "afrotropical" | "paleartic" | "neotropical";
 
 const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
-  australasian: ["Southeast Australia temperate forests", "Palawan rain forests"],
+  australasian: ["Southeast Australia temperate forests", "Palawan rain forests", "Naracoorte woodlands"],
   afrotropical: [
     "Southern Miombo woodlands",
     "Northern Acacia-Commiphora bushlands and thickets",

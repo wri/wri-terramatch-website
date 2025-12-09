@@ -12,6 +12,7 @@ import Text from "@/components/elements/Text/Text";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { EntityName } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -74,13 +75,11 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
       }
 
       await runAnalysisIndicator({
-        pathParams: {
-          slug: indicatorSlugSelected!
-        },
+        slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
-          uuids: rerunAnalysisToSlug[`${indicatorSlugSelected}`],
-          force: true,
-          update_existing: true
+          polygonUuids: rerunAnalysisToSlug[`${indicatorSlugSelected}`] || [],
+          forceRecalculation: false,
+          updateExisting: true
         }
       });
     } else {
@@ -89,12 +88,23 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         return openNotification("warning", t("Warning"), analysisToSlug[`${indicatorSlugSelected}`].message);
       }
 
+      let polygonUuids: string[] = [];
+
+      if (Array.isArray(analysisToSlug[`${indicatorSlugSelected}`])) {
+        polygonUuids = analysisToSlug[`${indicatorSlugSelected}`]?.filter((v: string) => typeof v === "string");
+      } else if (
+        typeof analysisToSlug[`${indicatorSlugSelected}`] === "object" &&
+        analysisToSlug[`${indicatorSlugSelected}`] !== null
+      ) {
+        polygonUuids = Object.values(analysisToSlug[`${indicatorSlugSelected}`])?.filter(v => typeof v === "string");
+      }
+
       await runAnalysisIndicator({
-        pathParams: {
-          slug: indicatorSlugSelected!
-        },
+        slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
-          uuids: analysisToSlug[`${indicatorSlugSelected}`]
+          polygonUuids: polygonUuids,
+          forceRecalculation: false,
+          updateExisting: false
         }
       });
     }

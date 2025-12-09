@@ -82,7 +82,7 @@ use the "Rerun existing analysis" option in the analysis modal. This will overwr
               Polygon Overview
               <Icon name={IconNames.IC_INFO} className="h-4 w-4 text-darkCustom" />
             </Text>
-            <div className="flex items-center gap-1">
+            <div className="flex hidden items-center gap-1">
               {loadingAnalysis ? (
                 <Icon name={IconNames.IC_LOADING} className="h-4 w-4 animate-spin text-success-600" />
               ) : null}
