@@ -198,6 +198,107 @@ export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError,
   "POST"
 );
 
+export type OrganisationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  fundingProgrammeUuid?: string;
+};
+
+export type OrganisationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationIndexResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type OrganisationIndexVariables = {
+  queryParams?: OrganisationIndexQueryParams;
+};
+
+export const organisationIndex = new V3ApiEndpoint<
+  OrganisationIndexResponse,
+  OrganisationIndexError,
+  OrganisationIndexVariables,
+  {}
+>("/organisations/v3", "GET");
+
 export type OrganisationCreationError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -567,6 +668,6 @@ export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: { organisationCreation },
+  organisations: { organisationIndex, organisationCreation },
   users: { usersFind, userUpdate, userCreation }
 };

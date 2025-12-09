@@ -30,18 +30,20 @@ export type TranslatableError = ErrorPayload & { code: string; variables?: Dicti
 export const isTranslatableError = (payload: ErrorPayload): payload is TranslatableError =>
   (payload as TranslatableError).code != null;
 
-const V3_NAMESPACES: Record<string, string> = {
+const V3_NAMESPACES: Dictionary<string> = {
+  applications: entityServiceUrl,
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
-  validations: researchServiceUrl,
+  dashboard: dashboardServiceUrl,
   entities: entityServiceUrl,
   forms: entityServiceUrl,
-  dashboard: dashboardServiceUrl,
+  fundingProgrammes: entityServiceUrl,
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
-  users: userServiceUrl
+  users: userServiceUrl,
+  validations: researchServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {

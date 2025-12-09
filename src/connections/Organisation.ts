@@ -3,11 +3,15 @@ import { createSelector } from "reselect";
 import { selectMe, useMyUser } from "@/connections/User";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { resourceCreator } from "@/connections/util/resourceMutator";
-import { organisationCreation } from "@/generated/v3/userService/userServiceComponents";
+import {
+  organisationCreation,
+  organisationIndex,
+  OrganisationIndexQueryParams
+} from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
-import { Connected, Connection } from "@/types/connection";
+import { Connected, Connection, Filter } from "@/types/connection";
 
 type OrganisationConnection = {
   organisation?: OrganisationDto;
@@ -33,6 +37,12 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
     };
   })
 };
+
+export const indexOrgsConnection = v3Resource("organisations", organisationIndex)
+  .index<OrganisationDto>()
+  .pagination()
+  .filter<Filter<OrganisationIndexQueryParams>>()
+  .buildConnection();
 
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
