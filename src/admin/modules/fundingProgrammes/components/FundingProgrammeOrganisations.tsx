@@ -1,24 +1,14 @@
-import { ArrayField, Datagrid, ShowButton, TextField, useRecordContext } from "react-admin";
+import { Datagrid, ReferenceManyField, ShowButton, TextField } from "react-admin";
 
 import modules from "../..";
 
-const OrgShowButton = () => {
-  const record = useRecordContext();
-
-  return record ? (
-    <ShowButton resource={modules.organisation.ResourceName} record={{ ...record, id: record.uuid }} />
-  ) : null;
-};
-
-const FundingProgrammeOrganisations = () => {
-  return (
-    <ArrayField label="Organisations" source="organisations">
-      <Datagrid bulkActionButtons={false}>
-        <TextField source="name" />
-        <OrgShowButton />
-      </Datagrid>
-    </ArrayField>
-  );
-};
+const FundingProgrammeOrganisations = () => (
+  <ReferenceManyField label="Organisations" reference={modules.organisation.ResourceName} target="organisationUuid">
+    <Datagrid bulkActionButtons={false}>
+      <TextField source="name" />
+      <ShowButton />
+    </Datagrid>
+  </ReferenceManyField>
+);
 
 export default FundingProgrammeOrganisations;

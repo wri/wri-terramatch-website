@@ -447,7 +447,7 @@ export const taskIndex = new V3ApiEndpoint<TaskIndexResponse, TaskIndexError, Ta
 
 export type TaskGetPathParams = {
   /**
-   * Task UUID for task to retrieve
+   * UUID of the resource.
    */
   uuid: string;
 };
@@ -600,7 +600,7 @@ export const taskGet = new V3ApiEndpoint<TaskGetResponse, TaskGetError, TaskGetV
 
 export type TaskUpdatePathParams = {
   /**
-   * Task UUID for task to retrieve
+   * UUID of the resource.
    */
   uuid: string;
 };
@@ -733,6 +733,10 @@ export const taskUpdate = new V3ApiEndpoint<TaskUpdateResponse, TaskUpdateError,
 
 export type UploadFilePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -751,10 +755,6 @@ export type UploadFilePathParams = {
     | "financialIndicators"
     | "projectPitches"
     | "disturbanceReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
   /**
    * Media collection to retrieve
    */
@@ -903,6 +903,10 @@ export const treeScientificNamesSearch = new V3ApiEndpoint<
 
 export type EstablishmentTreesFindPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type for which to retrieve the establishment tree data.
    */
   entity:
@@ -914,10 +918,6 @@ export type EstablishmentTreesFindPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for which to retrieve the establishment tree data.
-   */
-  uuid: string;
 };
 
 export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
@@ -979,6 +979,10 @@ export const establishmentTreesFind = new V3ApiEndpoint<
 
 export type TreeReportCountsFindPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type for which to retrieve the associated report count data.
    */
   entity:
@@ -991,10 +995,6 @@ export type TreeReportCountsFindPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for which to retrieve the associated report count data.
-   */
-  uuid: string;
 };
 
 export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
@@ -1835,6 +1835,10 @@ export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreate
 
 export type EntityGetPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -1847,10 +1851,6 @@ export type EntityGetPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityGetError = Fetcher.ErrorWrapper<
@@ -2084,6 +2084,10 @@ export const entityGet = new V3ApiEndpoint<
 
 export type EntityDeletePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2096,10 +2100,6 @@ export type EntityDeletePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityDeleteError = Fetcher.ErrorWrapper<
@@ -2152,6 +2152,10 @@ export const entityDelete = new V3ApiEndpoint<EntityDeleteResponse, EntityDelete
 
 export type EntityUpdatePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2164,10 +2168,6 @@ export type EntityUpdatePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityUpdateError = Fetcher.ErrorWrapper<
@@ -2224,6 +2224,10 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
 
 export type FormDataGetPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2236,10 +2240,6 @@ export type FormDataGetPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type FormDataGetError = Fetcher.ErrorWrapper<
@@ -2315,6 +2315,10 @@ export const formDataGet = new V3ApiEndpoint<FormDataGetResponse, FormDataGetErr
 
 export type FormDataUpdatePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2327,10 +2331,6 @@ export type FormDataUpdatePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type FormDataUpdateError = Fetcher.ErrorWrapper<
@@ -2409,6 +2409,10 @@ export const formDataUpdate = new V3ApiEndpoint<
 
 export type UpdateRequestGetPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2421,10 +2425,6 @@ export type UpdateRequestGetPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type UpdateRequestGetError = Fetcher.ErrorWrapper<
@@ -2489,6 +2489,10 @@ export const updateRequestGet = new V3ApiEndpoint<
 
 export type UpdateRequestUpdatePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2501,10 +2505,6 @@ export type UpdateRequestUpdatePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type UpdateRequestUpdateError = Fetcher.ErrorWrapper<
@@ -2583,6 +2583,10 @@ export const updateRequestUpdate = new V3ApiEndpoint<
 
 export type EntityAssociationIndexPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type for associations
    */
   entity:
@@ -2595,10 +2599,6 @@ export type EntityAssociationIndexPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for association
-   */
-  uuid: string;
   /**
    * Association type to retrieve
    */
@@ -3593,6 +3593,246 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
+export type ApplicationGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationGetQueryParams = {
+  /**
+   * sideloads to include
+   */
+  sideloads?: ("currentSubmission" | "fundingProgramme")[];
+};
+
+export type ApplicationGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationGetResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example applications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationDto;
+  };
+};
+
+export type ApplicationGetVariables = {
+  pathParams: ApplicationGetPathParams;
+  queryParams?: ApplicationGetQueryParams;
+};
+
+export const applicationGet = new V3ApiEndpoint<
+  ApplicationGetResponse,
+  ApplicationGetError,
+  ApplicationGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}", "GET");
+
+export type SubmissionGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type SubmissionGetError = Fetcher.ErrorWrapper<undefined>;
+
+export type SubmissionGetVariables = {
+  pathParams: SubmissionGetPathParams;
+};
+
+export const submissionGet = new V3ApiEndpoint<undefined, SubmissionGetError, SubmissionGetVariables, {}>(
+  "/forms/v3/submissions/{uuid}",
+  "GET"
+);
+
+export type FundingProgrammesIndexQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FundingProgrammesIndexError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type FundingProgrammesIndexResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  }[];
+};
+
+export type FundingProgrammesIndexVariables = {
+  queryParams?: FundingProgrammesIndexQueryParams;
+};
+
+export const fundingProgrammesIndex = new V3ApiEndpoint<
+  FundingProgrammesIndexResponse,
+  FundingProgrammesIndexError,
+  FundingProgrammesIndexVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes", "GET");
+
+export type FundingProgrammeGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeGetQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FundingProgrammeGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeGetResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeGetVariables = {
+  pathParams: FundingProgrammeGetPathParams;
+  queryParams?: FundingProgrammeGetQueryParams;
+};
+
+export const fundingProgrammeGet = new V3ApiEndpoint<
+  FundingProgrammeGetResponse,
+  FundingProgrammeGetError,
+  FundingProgrammeGetVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -3607,5 +3847,8 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
+  applications: { applicationGet },
+  submissions: { submissionGet },
+  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
 };

@@ -2433,8 +2433,6 @@ export type LinkedFieldDto = {
   name: string;
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2465,7 +2463,9 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   optionListKey: string | null;
   multiChoice: boolean | null;
   collection: string | null;
@@ -2538,8 +2538,6 @@ export type FormQuestionDto = {
   name: string;
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2570,7 +2568,9 @@ export type FormQuestionDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   label: string;
   placeholder?: string | null;
   description?: string | null;
@@ -2686,8 +2686,6 @@ export type StoreFormQuestionOptionAttributes = {
 export type StoreFormQuestionAttributes = {
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2718,7 +2716,9 @@ export type StoreFormQuestionAttributes = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   label: string;
   placeholder?: string | null;
   description?: string | null;
@@ -2812,4 +2812,72 @@ export type UpdateFormData = {
 
 export type UpdateFormBody = {
   data: UpdateFormData;
+};
+
+export type ApplicationDto = {
+  uuid: string;
+  currentSubmissionUuid: string | null;
+  organisationName: string | null;
+  organisationUuid: string | null;
+  fundingProgrammeName: string | null;
+  fundingProgrammeUuid: string | null;
+};
+
+export type EmbeddedMediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
+export type StageDto = {
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt: string | null;
+  formUuid: string | null;
+};
+
+export type FundingProgrammeDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  framework:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  name: string;
+  description: string;
+  location: string | null;
+  readMoreUrl: string | null;
+  status: "inactive" | "active" | "disabled";
+  organisationTypes: ("for-profit-organization" | "non-profit-organization")[];
+  cover: EmbeddedMediaDto;
+  stages: StageDto[] | null;
 };
