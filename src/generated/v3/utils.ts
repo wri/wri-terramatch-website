@@ -264,7 +264,7 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
     const response = await fetch(url, requestInit);
 
     if (!response.ok) {
-      if (url.endsWith("/users/me") && response.status === 401) {
+      if (url.endsWith("users/v3/me") && response.status === 401) {
         // If the users/me fetch is unauthorized, our login has timed out and we need to transition
         // to a logged out state.
         logout();
