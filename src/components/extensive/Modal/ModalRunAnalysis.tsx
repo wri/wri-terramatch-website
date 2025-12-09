@@ -96,7 +96,9 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         typeof analysisToSlug[`${indicatorSlugSelected}`] === "object" &&
         analysisToSlug[`${indicatorSlugSelected}`] !== null
       ) {
-        polygonUuids = Object.values(analysisToSlug[`${indicatorSlugSelected}`])?.filter(v => typeof v === "string");
+        polygonUuids = Object.values(analysisToSlug[`${indicatorSlugSelected}`]).filter(
+          (v): v is string => typeof v === "string"
+        );
       }
 
       await runAnalysisIndicator({
