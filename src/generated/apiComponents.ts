@@ -9058,103 +9058,6 @@ export const usePostV2FormsSubmissions = (
   );
 };
 
-export type GetV2FormsSubmissionsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FormsSubmissionsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FormsSubmissionsUUIDResponse = {
-  id?: string;
-  uuid?: string;
-  name?: string;
-  form_uuid?: string;
-  framework_key?: string;
-  stage?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-  answers?: Record<string, any>;
-  status?: string;
-  readable_status?: string;
-  audits?: {
-    id?: number;
-    event?: string;
-    user_id?: number;
-    old_values?: Record<string, any>;
-    new_values?: Record<string, any>;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  /**
-   * this is a list of key value pairs eg slug: name
-   */
-  tags?: string[];
-  project_pitch_uuid?: string;
-  application_uuid?: string;
-  organisation_uuid?: string;
-  organisation_attributes?: {
-    uuid?: string;
-    type?: string;
-    currency?: string;
-    start_month?: string;
-  };
-  feedback?: void;
-  feedback_fields?: string[];
-  translated_feedback_fields?: string[];
-  updated_by?: string;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type GetV2FormsSubmissionsUUIDVariables = {
-  pathParams: GetV2FormsSubmissionsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FormsSubmissionsUUID = (variables: GetV2FormsSubmissionsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FormsSubmissionsUUIDResponse,
-    GetV2FormsSubmissionsUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2FormsSubmissionsUUIDPathParams
-  >({ url: "/v2/forms/submissions/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2FormsSubmissionsUUID = <TData = GetV2FormsSubmissionsUUIDResponse>(
-  variables: GetV2FormsSubmissionsUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FormsSubmissionsUUIDResponse, GetV2FormsSubmissionsUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FormsSubmissionsUUIDResponse, GetV2FormsSubmissionsUUIDError, TData>(
-    queryKeyFn({ path: "/v2/forms/submissions/{UUID}", operationId: "getV2FormsSubmissionsUUID", variables }),
-    ({ signal }) => fetchGetV2FormsSubmissionsUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PatchV2FormsSubmissionsUUIDPathParams = {
   uuid: string;
 };
@@ -19481,11 +19384,6 @@ export type QueryOperation =
       path: "/v2/funding-programme/stage";
       operationId: "getV2FundingProgrammeStage";
       variables: GetV2FundingProgrammeStageVariables;
-    }
-  | {
-      path: "/v2/forms/submissions/{UUID}";
-      operationId: "getV2FormsSubmissionsUUID";
-      variables: GetV2FormsSubmissionsUUIDVariables;
     }
   | {
       path: "/v2/admin/forms/applications";
