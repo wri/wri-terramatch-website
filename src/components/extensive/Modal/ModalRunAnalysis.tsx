@@ -83,14 +83,15 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         }
       });
     } else {
-      if (analysisToSlug[`${indicatorSlugSelected}`]?.message) {
+      const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
+
+      if (analysisData && typeof analysisData === "object" && "message" in analysisData && analysisData.message) {
         setLoadingAnalysis?.(false);
-        return openNotification("warning", t("Warning"), analysisToSlug[`${indicatorSlugSelected}`].message);
+        return openNotification("warning", t("Warning"), analysisData.message);
       }
 
       let polygonUuids: string[] = [];
 
-      const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
       if (Array.isArray(analysisData)) {
         polygonUuids = analysisData.filter((v: string) => typeof v === "string");
       } else if (
