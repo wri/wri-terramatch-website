@@ -12,7 +12,7 @@ import {
 type EcoRegionCategory = "australasian" | "afrotropical" | "paleartic" | "neotropical";
 
 const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
-  australasian: ["Southeast Australia temperate forests", "Palawan rain forests"],
+  australasian: ["Southeast Australia temperate forests", "Palawan rain forests", "Naracoorte woodlands"],
   afrotropical: [
     "Southern Miombo woodlands",
     "Northern Acacia-Commiphora bushlands and thickets",
@@ -301,36 +301,120 @@ export const transformSitePolygonsToIndicators = (
             const num = typeof val === "string" ? parseFloat(val) : Number(val);
             return Number.isNaN(num) ? 0 : num;
           };
+
+          const transformedData = {
+            "2010": convertToNumber(treeCoverLoss.value?.["2010"]),
+            "2011": convertToNumber(treeCoverLoss.value?.["2011"]),
+            "2012": convertToNumber(treeCoverLoss.value?.["2012"]),
+            "2013": convertToNumber(treeCoverLoss.value?.["2013"]),
+            "2014": convertToNumber(treeCoverLoss.value?.["2014"]),
+            "2015": convertToNumber(treeCoverLoss.value?.["2015"]),
+            "2016": convertToNumber(treeCoverLoss.value?.["2016"]),
+            "2017": convertToNumber(treeCoverLoss.value?.["2017"]),
+            "2018": convertToNumber(treeCoverLoss.value?.["2018"]),
+            "2019": convertToNumber(treeCoverLoss.value?.["2019"]),
+            "2020": convertToNumber(treeCoverLoss.value?.["2020"]),
+            "2021": convertToNumber(treeCoverLoss.value?.["2021"]),
+            "2022": convertToNumber(treeCoverLoss.value?.["2022"]),
+            "2023": convertToNumber(treeCoverLoss.value?.["2023"]),
+            "2024": convertToNumber(treeCoverLoss.value?.["2024"]),
+            "2025": convertToNumber(treeCoverLoss.value?.["2025"])
+          };
+
+          // Debug log to inspect treeCoverLoss data
+          if (process.env.NODE_ENV === "development") {
+            const totalLoss = Object.values(transformedData).reduce((sum, val) => sum + val, 0);
+            console.log("🌳 treeCoverLoss transformation:", {
+              indicatorSlug,
+              polygonName: sitePolygon.name,
+              originalValue: treeCoverLoss.value,
+              transformedData,
+              totalLoss,
+              hasData: totalLoss > 0
+            });
+          }
+
+          return {
+            ...baseIndicator,
+            data: transformedData
+          };
+        }
+
+        case "restorationByStrategy": {
+          const hectares = indicator as IndicatorHectaresDto;
+          // Convert to same format as processIndicatorData for compatibility with parsePolygonsIndicatorDataForStrategies
+          // V3 returns keys with hyphens (tree-planting), but parser expects underscores (tree_planting)
+          const convertToNumber = (val: any): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+
+          // Debug log to inspect indicator structure
+          if (process.env.NODE_ENV === "development") {
+            console.log("🔍 restorationByStrategy indicator:", {
+              indicatorSlug: hectares.indicatorSlug,
+              value: hectares.value,
+              valueKeys: hectares.value ? Object.keys(hectares.value) : [],
+              treePlanting: hectares.value?.["tree-planting"],
+              directSeeding: hectares.value?.["direct-seeding"],
+              anr: hectares.value?.["assisted-natural-regeneration"]
+            });
+          }
+
           return {
             ...baseIndicator,
             data: {
-              "2010": convertToNumber(treeCoverLoss.value?.["2010"]),
-              "2011": convertToNumber(treeCoverLoss.value?.["2011"]),
-              "2012": convertToNumber(treeCoverLoss.value?.["2012"]),
-              "2013": convertToNumber(treeCoverLoss.value?.["2013"]),
-              "2014": convertToNumber(treeCoverLoss.value?.["2014"]),
-              "2015": convertToNumber(treeCoverLoss.value?.["2015"]),
-              "2016": convertToNumber(treeCoverLoss.value?.["2016"]),
-              "2017": convertToNumber(treeCoverLoss.value?.["2017"]),
-              "2018": convertToNumber(treeCoverLoss.value?.["2018"]),
-              "2019": convertToNumber(treeCoverLoss.value?.["2019"]),
-              "2020": convertToNumber(treeCoverLoss.value?.["2020"]),
-              "2021": convertToNumber(treeCoverLoss.value?.["2021"]),
-              "2022": convertToNumber(treeCoverLoss.value?.["2022"]),
-              "2023": convertToNumber(treeCoverLoss.value?.["2023"]),
-              "2024": convertToNumber(treeCoverLoss.value?.["2024"]),
-              "2025": convertToNumber(treeCoverLoss.value?.["2025"])
+              tree_planting: convertToNumber(hectares.value?.["tree-planting"]),
+              assisted_natural_regeneration: convertToNumber(hectares.value?.["assisted-natural-regeneration"]),
+              direct_seeding: convertToNumber(hectares.value?.["direct-seeding"])
             }
           };
         }
 
-        case "restorationByStrategy":
-        case "restorationByEcoRegion":
-        case "restorationByLandUse": {
+        case "restorationByEcoRegion": {
           const hectares = indicator as IndicatorHectaresDto;
+          // Convert to same format as processIndicatorData
+          const convertToNumber = (val: any): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+          const data: Record<EcoRegionCategory, number> = {
+            australasian: 0,
+            afrotropical: 0,
+            paleartic: 0,
+            neotropical: 0
+          };
+
+          for (const region in hectares.value) {
+            const category = getEcoRegionCategory(region);
+            if (category) {
+              data[category] = convertToNumber(hectares.value[region]);
+            }
+          }
+
           return {
             ...baseIndicator,
-            value: hectares.value
+            data: data
+          };
+        }
+
+        case "restorationByLandUse": {
+          const hectares = indicator as IndicatorHectaresDto;
+          // Convert to same format as processIndicatorData
+          const convertToNumber = (val: any): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+          return {
+            ...baseIndicator,
+            data: {
+              agroforest: convertToNumber(hectares.value?.agroforest),
+              natural_forest: convertToNumber(hectares.value?.["natural-forest"]),
+              mangrove: convertToNumber(hectares.value?.mangrove)
+            }
           };
         }
 

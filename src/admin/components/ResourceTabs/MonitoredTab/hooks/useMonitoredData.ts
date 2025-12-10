@@ -1,18 +1,18 @@
-import { useT } from "@transifex/react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { startIndicatorCalculationResource } from "@/connections/Indicators";
 import { Indicator, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
   useGetV2IndicatorsEntityUuid,
-  useGetV2IndicatorsEntityUuidSlugVerify,
-  usePostV2IndicatorsSlug
+  useGetV2IndicatorsEntityUuidSlugVerify
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
+import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
+import { IndicatorsAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
@@ -95,12 +95,10 @@ interface PolygonOption {
 }
 
 export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
-  const t = useT();
-  const { searchTerm, indicatorSlug, setLoadingAnalysis, setIndicatorSlugAnalysis } = useMonitoredDataContext();
+  const { searchTerm, indicatorSlug, loadingAnalysis } = useMonitoredDataContext();
   const { modalOpened } = useModalContext();
   const [isLoadingVerify, setIsLoadingVerify] = useState<boolean>(false);
   const [isLoadingRerunVerify, setIsLoadingRerunVerify] = useState<boolean>(false);
-  const { openNotification } = useNotificationContext();
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
@@ -126,11 +124,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
 
   // Fetch site polygons with the main indicator filter (v3)
-  const {
-    data: sitePolygonsData,
-    isLoading: isLoadingSitePolygons,
-    refetch: refetchSitePolygons
-  } = useAllSitePolygons({
+  const { data: sitePolygonsData, isLoading: isLoadingSitePolygons } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
     entityUuid: entity_uuid!,
     enabled: !!indicatorSlug && !!entity_uuid && !!entity,
@@ -142,11 +136,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   // Fetch complementary data for treeCoverLoss/treeCoverLossFires (v3)
   const complementarySlug = getComplementarySlug(indicatorSlug || "");
-  const {
-    data: complementarySitePolygonsData,
-    isLoading: isLoadingComplementary,
-    refetch: refetchComplementarySitePolygons
-  } = useAllSitePolygons({
+  const { data: complementarySitePolygonsData, isLoading: isLoadingComplementary } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
     entityUuid: entity_uuid!,
     enabled:
@@ -163,7 +153,35 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   // Transform v3 data to v2 Indicators format for charts
   const indicatorData = useMemo(() => {
     if (!sitePolygonsData || !indicatorSlug) return [];
-    return transformSitePolygonsToIndicators(sitePolygonsData, indicatorSlug as Indicator);
+    const transformed = transformSitePolygonsToIndicators(sitePolygonsData, indicatorSlug as Indicator);
+    // Debug log to verify V3 is being used and inspect transformed data
+    if (process.env.NODE_ENV === "development") {
+      console.log("✅ V3 Endpoint Active:", {
+        endpoint: "/research/v3/sitePolygons",
+        indicatorSlug,
+        polygonsCount: sitePolygonsData.length,
+        transformedCount: transformed.length,
+        samplePolygon: sitePolygonsData[0],
+        sampleTransformed: transformed[0],
+        // For treeCoverLoss, show data structure
+        ...(indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires"
+          ? {
+              sampleData: transformed[0]?.data,
+              hasData: transformed.some(t => t.data && Object.values(t.data).some(v => v > 0))
+            }
+          : {}),
+        // For restoration indicators, show value structure
+        ...(indicatorSlug === "restorationByStrategy" ||
+        indicatorSlug === "restorationByEcoRegion" ||
+        indicatorSlug === "restorationByLandUse"
+          ? {
+              sampleData: transformed[0]?.data,
+              hasData: transformed.some(t => t.data && Object.values(t.data).some(v => v > 0))
+            }
+          : {})
+      });
+    }
+    return transformed;
   }, [sitePolygonsData, indicatorSlug]);
 
   const complementaryData = useMemo(() => {
@@ -172,13 +190,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   }, [complementarySitePolygonsData, complementarySlug]);
 
   const isLoadingIndicator = isLoadingSitePolygons || isLoadingComplementary;
-
-  const refetchDataIndicators = () => {
-    refetchSitePolygons();
-    if (complementarySlug) {
-      refetchComplementarySitePolygons();
-    }
-  };
 
   useEffect(() => {
     if (indicatorSlug === "treeCoverLoss") {
@@ -190,25 +201,14 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     }
   }, [indicatorData, complementaryData, indicatorSlug]);
 
-  const { mutate, isLoading } = usePostV2IndicatorsSlug({
-    onSuccess: () => {
-      openNotification(
-        "success",
-        t("Success! Analysis completed."),
-        t("The analysis has been completed successfully.")
-      );
-      refetchDataIndicators();
-      setLoadingAnalysis?.(false);
-      setIndicatorSlugAnalysis?.("treeCoverLoss");
-    },
-    onError: () => {
-      openNotification("error", t("Error! Analysis failed."), t("The analysis has failed. Please try again."));
-      refetchDataIndicators();
-      setLoadingAnalysis?.(false);
-      setIndicatorSlugAnalysis?.("treeCoverLoss");
-    }
-  });
-
+  const mutate = async (params: {
+    slug?: StartIndicatorCalculationPathParams["slug"];
+    body?: IndicatorsAttributes;
+  }) => {
+    const slug = (params.slug || indicatorSlug || "treeCoverLoss") as StartIndicatorCalculationPathParams["slug"];
+    const body = params.body || { polygonUuids: [], forceRecalculation: false, updateExisting: false };
+    return startIndicatorCalculationResource({ slug, body });
+  };
   const { data: indicatorPolygonsStatus } = useGetV2IndicatorsEntityUuid<IndicatorPolygonsStatus>(
     {
       pathParams: {
@@ -405,7 +405,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     headerBarPolygonStatus,
     totalPolygonsStatus: totalPolygonsApproved,
     runAnalysisIndicator: mutate,
-    loadingAnalysis: isLoading,
+    loadingAnalysis: loadingAnalysis,
     loadingVerify: isLoadingVerify,
     loadingRerunVerify: isLoadingRerunVerify,
     isLoadingIndicator,

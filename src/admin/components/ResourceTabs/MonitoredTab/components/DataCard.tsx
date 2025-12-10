@@ -211,7 +211,11 @@ const noDataGraph = (
 
 const sumValuesTreeCoverLoss = (data: any) => {
   return data?.reduce((totalAcc: number, data: { [key: number | string]: number }) => {
-    const sum = Object.values(data?.data).reduce((acc: number, curr: number) => acc + curr, 0);
+    // Check if data.data exists and is an object before calling Object.values
+    if (!data?.data || typeof data.data !== "object") {
+      return totalAcc;
+    }
+    const sum = Object.values(data.data).reduce((acc: number, curr: number) => acc + curr, 0);
     return totalAcc + sum;
   }, 0);
 };
