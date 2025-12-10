@@ -1,20 +1,33 @@
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
-import { SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
 import { ModalBaseSubmit } from "../../../../components/extensive/Modal/ModalsBases";
+
+type IdentifiedPolygonItem = {
+  id: number | string;
+  poly_name: string;
+  is_present: boolean;
+};
+
 export interface ModalApproveProps extends ModalProps {
   primaryButtonText?: string;
   secondaryButtonText?: string;
   onClose?: () => void;
-  polygonsList?: SitePolygonsLoadedDataResponse;
+  existingUuids: string[];
+  sitePolygonData: SitePolygonLightDto[];
+  summary?: {
+    featuresForVersioning: number;
+    featuresForCreation: number;
+    totalFeatures: number;
+  };
   setSubmitPolygonLoaded?: (value: boolean) => void;
   setSaveFlags?: (value: boolean) => void;
   setPolygonLoaded?: (value: boolean) => void;
@@ -28,11 +41,30 @@ const ModalIdentified: FC<ModalApproveProps> = ({
   primaryButtonText,
   secondaryButtonProps,
   secondaryButtonText,
-  polygonsList,
+  existingUuids,
+  sitePolygonData,
+  summary,
+  setSubmitPolygonLoaded,
+  setSaveFlags,
+  setPolygonLoaded,
   onClose,
   ...rest
 }) => {
   const t = useT();
+
+  const transformedPolygons = useMemo<IdentifiedPolygonItem[]>(() => {
+    return existingUuids
+      .map(uuid => {
+        const polygon = sitePolygonData.find(p => p.uuid === uuid);
+        return {
+          id: polygon?.uuid ?? uuid,
+          poly_name: polygon?.name ?? t("Unnamed Polygon"),
+          is_present: polygon != null
+        };
+      })
+      .filter(item => item.is_present);
+  }, [existingUuids, sitePolygonData, t]);
+
   return (
     <ModalBaseSubmit {...rest}>
       <header className="flex w-full items-center justify-between border-b border-b-neutral-200 px-8 py-5">
@@ -55,6 +87,25 @@ const ModalIdentified: FC<ModalApproveProps> = ({
             {content}
           </Text>
         </When>
+        <When condition={summary != null}>
+          <div className="mb-4 rounded-lg border border-grey-750 bg-neutral-50 px-4 py-3">
+            <div className="flex flex-col gap-1">
+              <When condition={(summary?.featuresForVersioning ?? 0) > 0}>
+                <Text variant="text-12-light">
+                  {t("Features that will create new versions")}: <strong>{summary?.featuresForVersioning ?? 0}</strong>
+                </Text>
+              </When>
+              <When condition={(summary?.featuresForCreation ?? 0) > 0}>
+                <Text variant="text-12-light">
+                  {t("Features that will create new polygons")}: <strong>{summary?.featuresForCreation ?? 0}</strong>
+                </Text>
+              </When>
+              <Text variant="text-12-light" className="mt-1">
+                {t("Total features in file")}: <strong>{summary?.totalFeatures ?? 0}</strong>
+              </Text>
+            </div>
+          </div>
+        </When>
         <div className="mb-6 flex flex-col rounded-lg border border-grey-750">
           <header className="flex items-center border-b border-grey-750 bg-neutral-150 px-4 py-2">
             <Text variant="text-12" className="flex-[2]">
@@ -64,8 +115,8 @@ const ModalIdentified: FC<ModalApproveProps> = ({
               {t("Identified")}
             </Text>
           </header>
-          {(polygonsList as SitePolygonsLoadedDataResponse)?.map(item => (
-            <div key={item.id} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
+          {transformedPolygons.map((item, index) => (
+            <div key={item.id ?? index} className="flex items-center border-b border-grey-750 px-4 py-2 last:border-0">
               <Text variant="text-12" className="flex-[2]">
                 {item.poly_name}
               </Text>
