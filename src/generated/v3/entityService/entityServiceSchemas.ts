@@ -767,6 +767,10 @@ export type ProjectLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * The associated organisation type
    */
   organisationType: string | null;
@@ -869,6 +873,10 @@ export type NurseryLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * @format date-time
    */
   startDate: string | null;
@@ -905,6 +913,10 @@ export type FinancialReportLightDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   yearOfReport: number | null;
   /**
    * @format date-time
@@ -981,6 +993,10 @@ export type DisturbanceReportLightDto = {
    */
   organisationName: string | null;
   /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
    * @format date-time
    */
   intensity: string | null;
@@ -1014,6 +1030,10 @@ export type ProjectFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * The associated organisation type
    */
@@ -1209,6 +1229,10 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
 };
 
 export type NurseryFullDto = {
@@ -1238,6 +1262,10 @@ export type NurseryFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
@@ -1683,6 +1711,10 @@ export type FinancialReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   yearOfReport: number | null;
   /**
    * @format date-time
@@ -1714,10 +1746,6 @@ export type FinancialReportFullDto = {
   finStartMonth: number | null;
   financialCollection: FinancialIndicatorDto[] | null;
   currency: string | null;
-  /**
-   * The associated organisation uuid
-   */
-  organisationUuid: string | null;
   /**
    * The associated organisation type
    */
@@ -1755,6 +1783,10 @@ export type DisturbanceReportFullDto = {
    * The associated organisation name
    */
   organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
@@ -1867,10 +1899,6 @@ export type SrpReportFullDto = {
 
 export type ProjectUpdateAttributes = {
   /**
-   * Request to change to the status of the given entity
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
    * Specific feedback for the PD
    */
   feedback?: string;
@@ -1878,6 +1906,10 @@ export type ProjectUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update the isTest flag.
    */
@@ -1893,11 +1925,7 @@ export type ProjectUpdateData = {
   attributes: ProjectUpdateAttributes;
 };
 
-export type SiteUpdateAttributes = {
-  /**
-   * Request to change to the status of the given site
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+export type EntityUpdateAttributes = {
   /**
    * Specific feedback for the PD
    */
@@ -1906,6 +1934,10 @@ export type SiteUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
 };
 
 export type SiteUpdateData = {
@@ -1914,22 +1946,7 @@ export type SiteUpdateData = {
    * @format uuid
    */
   id: string;
-  attributes: SiteUpdateAttributes;
-};
-
-export type EntityUpdateAttributes = {
-  /**
-   * Request to change to the status of the given entity
-   */
-  status?: "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
-   * Specific feedback for the PD
-   */
-  feedback?: string;
-  /**
-   * The fields in the entity form that need attention from the PD
-   */
-  feedbackFields?: string[];
+  attributes: EntityUpdateAttributes;
 };
 
 export type NurseryUpdateData = {
@@ -1943,10 +1960,6 @@ export type NurseryUpdateData = {
 
 export type ReportUpdateAttributes = {
   /**
-   * Request to change to the status of the given report
-   */
-  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
-  /**
    * Specific feedback for the PD
    */
   feedback?: string;
@@ -1954,6 +1967,10 @@ export type ReportUpdateAttributes = {
    * The fields in the entity form that need attention from the PD
    */
   feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given report
+   */
+  status?: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
    * Update the nothingToReport flag.
    */
@@ -2029,7 +2046,7 @@ export type EntityUpdateBody = {
 
 export type EntityCreateAttributes = {
   /**
-   * UUID of the entity related to the report
+   * UUID of the parent entity.
    */
   parentUuid: string;
 };
@@ -2039,8 +2056,34 @@ export type DisturbanceReportCreateData = {
   attributes: EntityCreateAttributes;
 };
 
+export type SiteCreateData = {
+  type: "sites";
+  attributes: EntityCreateAttributes;
+};
+
+export type NurseryCreateData = {
+  type: "nurseries";
+  attributes: EntityCreateAttributes;
+};
+
+export type ProjectCreateAttributes = {
+  /**
+   * UUID of the application.
+   */
+  applicationUuid?: string;
+  /**
+   * UUID of the form for project creation.
+   */
+  formUuid: string;
+};
+
+export type ProjectCreateData = {
+  type: "projects";
+  attributes: ProjectCreateAttributes;
+};
+
 export type EntityCreateBody = {
-  data: DisturbanceReportCreateData;
+  data: DisturbanceReportCreateData | SiteCreateData | NurseryCreateData | ProjectCreateData;
 };
 
 export type FormDataDto = {
@@ -2071,9 +2114,10 @@ export type FormDataDto = {
 
 export type StoreFormDataAttributes = {
   answers: Record<string, any>;
+  isContinueLater?: boolean;
 };
 
-export type UpdateFormDataDAta = {
+export type UpdateFormDataData = {
   type: "formData";
   /**
    * @format uuid
@@ -2083,7 +2127,7 @@ export type UpdateFormDataDAta = {
 };
 
 export type UpdateFormDataBody = {
-  data: UpdateFormDataDAta;
+  data: UpdateFormDataData;
 };
 
 export type UpdateRequestDto = {
@@ -2091,6 +2135,34 @@ export type UpdateRequestDto = {
   status: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
   entityAnswers: Record<string, any>;
   updateRequestAnswers: Record<string, any>;
+};
+
+export type UpdateRequestAttributes = {
+  /**
+   * Specific feedback for the PD
+   */
+  feedback?: string;
+  /**
+   * The fields in the entity form that need attention from the PD
+   */
+  feedbackFields?: string[];
+  /**
+   * Request to change to the status of the given entity
+   */
+  status?: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information";
+};
+
+export type UpdateRequestData = {
+  type: "updateRequests";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateRequestAttributes;
+};
+
+export type UpdateRequestUpdateBody = {
+  data: UpdateRequestData;
 };
 
 /**

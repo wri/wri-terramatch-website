@@ -1,8 +1,11 @@
 import { EnabledProp, FilterProp, IdProp, SideloadsProp, v3Resource } from "@/connections/util/apiConnectionFactory";
-import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   entityCreate,
+  EntityCreateError,
+  EntityCreateResponse,
+  EntityCreateVariables,
   entityDelete,
   entityGet,
   EntityGetPathParams,
@@ -21,18 +24,21 @@ import {
   FinancialReportFullDto,
   FinancialReportLightDto,
   FinancialReportUpdateData,
+  NurseryCreateData,
   NurseryFullDto,
   NurseryLightDto,
   NurseryReportFullDto,
   NurseryReportLightDto,
   NurseryReportUpdateData,
   NurseryUpdateData,
+  ProjectCreateData,
   ProjectFullDto,
   ProjectLightDto,
   ProjectReportFullDto,
   ProjectReportLightDto,
   ProjectReportUpdateData,
   ProjectUpdateData,
+  SiteCreateData,
   SiteFullDto,
   SiteLightDto,
   SiteReportFullDto,
@@ -47,16 +53,15 @@ import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import { Filter, PaginatedConnectionProps } from "@/types/connection";
 
-export type EntityFullDto =
-  | ProjectFullDto
-  | SiteFullDto
-  | NurseryFullDto
-  | ProjectReportFullDto
-  | NurseryReportFullDto
-  | SiteReportFullDto
-  | FinancialReportFullDto
+export type ReportFullDto =
   | DisturbanceReportFullDto
+  | FinancialReportFullDto
+  | NurseryReportFullDto
+  | ProjectReportFullDto
+  | SiteReportFullDto
   | SrpReportFullDto;
+
+export type EntityFullDto = ReportFullDto | ProjectFullDto | SiteFullDto | NurseryFullDto;
 export type EntityLightDto =
   | ProjectLightDto
   | SiteLightDto
@@ -79,8 +84,6 @@ export type EntityUpdateData =
   | FinancialReportUpdateData
   | DisturbanceReportUpdateData
   | SrpReportUpdateData;
-
-export type EntityCreateData = DisturbanceReportCreateData;
 
 export type EntityIndexConnectionProps = PaginatedConnectionProps &
   FilterProp<Filter<EntityIndexQueryParams>> &
@@ -121,10 +124,13 @@ const createEntityIndexConnection = <T extends EntityLightDto>(entity: Supported
 const createEntityDeleter = (entity: SupportedEntity) =>
   deleterAsync(entity, entityDelete, uuid => specificEntityParams(entity, uuid));
 
+export type EntityCreateData = EntityCreateVariables["body"]["data"];
+type SpecificEntityCreateVariables<C extends EntityCreateData> = Omit<EntityCreateVariables, "body"> & {
+  body: { data: C };
+};
 const createEntityCreateConnection = <D extends EntityDtoType, C extends EntityCreateData>(entity: C["type"]) => {
-  return v3Resource(entity, entityCreate)
-    .create<D, C["attributes"]>(() => ({ pathParams: { entity } }))
-    .refetch(() => ApiSlice.pruneCache(entity))
+  return v3Resource<EntityCreateResponse, EntityCreateError, SpecificEntityCreateVariables<C>, {}>(entity, entityCreate)
+    .create<D>(() => ({ pathParams: { entity } }))
     .buildConnection();
 };
 
@@ -148,10 +154,12 @@ export const useFullProject = connectionHook(fullProjectConnection);
 export const deleteProject = createEntityDeleter("projects");
 const lightProjectConnection = createEntityGetConnection<ProjectLightDto, ProjectUpdateData>("projects", false);
 export const useLightProject = connectionHook(lightProjectConnection);
-
 const indexProjectConnection = createEntityIndexConnection<ProjectLightDto>("projects");
 export const loadProjectIndex = connectionLoader(indexProjectConnection);
 export const useProjectIndex = connectionHook(indexProjectConnection);
+export const useCreateProject = creationHook(
+  createEntityCreateConnection<ProjectFullDto, ProjectCreateData>("projects")
+);
 
 // Sites
 const fullSiteConnection = createEntityGetConnection<SiteFullDto, EntityUpdateData>("sites");
@@ -161,6 +169,7 @@ export const deleteSite = createEntityDeleter("sites");
 export const indexSiteConnection = createEntityIndexConnection<SiteLightDto>("sites");
 export const loadSiteIndex = connectionLoader(indexSiteConnection);
 export const useSiteIndex = connectionHook(indexSiteConnection);
+export const useCreateSite = creationHook(createEntityCreateConnection<SiteFullDto, SiteCreateData>("sites"));
 
 // Nurseries
 const fullNurseryConnection = createEntityGetConnection<NurseryFullDto, EntityUpdateData>("nurseries");
@@ -170,11 +179,13 @@ export const deleteNursery = createEntityDeleter("nurseries");
 export const indexNurseryConnection = createEntityIndexConnection<NurseryLightDto>("nurseries");
 export const loadNurseryIndex = connectionLoader(indexNurseryConnection);
 export const useNurseryIndex = connectionHook(indexNurseryConnection);
+export const useCreateNursery = creationHook(
+  createEntityCreateConnection<NurseryFullDto, NurseryCreateData>("nurseries")
+);
 
 // Project Reports
 const indexProjectReportConnection = createEntityIndexConnection<ProjectReportLightDto>("projectReports");
 export const loadProjectReportIndex = connectionLoader(indexProjectReportConnection);
-export const useProjectReportIndex = connectionHook(indexProjectReportConnection);
 const fullProjectReportConnection = createEntityGetConnection<ProjectReportFullDto, ProjectReportUpdateData>(
   "projectReports"
 );
@@ -191,7 +202,6 @@ export const deleteProjectReport = createEntityDeleter("projectReports");
 // Site Reports
 export const indexSiteReportConnection = createEntityIndexConnection<SiteReportLightDto>("siteReports");
 export const loadSiteReportIndex = connectionLoader(indexSiteReportConnection);
-export const useSiteReportIndex = connectionHook(indexSiteReportConnection);
 const fullSiteReportConnection = createEntityGetConnection<SiteReportFullDto, SiteReportUpdateData>("siteReports");
 const lightSiteReportConnection = createEntityGetConnection<SiteReportLightDto, SiteReportUpdateData>(
   "siteReports",
@@ -234,31 +244,17 @@ export const deleteNurseryReport = createEntityDeleter("nurseryReports");
 // Financial Reports
 export const indexFinancialReportConnection = createEntityIndexConnection<FinancialReportLightDto>("financialReports");
 export const loadFinancialReportIndex = connectionLoader(indexFinancialReportConnection);
-export const useFinancialReportIndex = connectionHook(indexFinancialReportConnection);
 const fullFinancialReportConnection = createEntityGetConnection<FinancialReportFullDto, FinancialReportUpdateData>(
   "financialReports"
 );
-const lightFinancialReportConnection = createEntityGetConnection<FinancialReportLightDto, FinancialReportUpdateData>(
-  "financialReports",
-  false
-);
 export const loadFullFinancialReport = connectionLoader(fullFinancialReportConnection);
 export const useFullFinancialReport = connectionHook(fullFinancialReportConnection);
-export const useLightFinancialReport = connectionHook(lightFinancialReportConnection);
-const financialReportListConnection = v3Resource("financialReports").list<FinancialReportLightDto>().buildConnection();
-/**
- * Delivers the cached light DTOs for financial reports corresponding to the UUIDs in the props. Does
- * not attempt to load them from the server.
- */
-export const useLightFinancialReportList = connectionHook(financialReportListConnection);
-export const loadLightFinancialReportList = connectionLoader(financialReportListConnection);
 export const deleteFinancialReport = createEntityDeleter("financialReports");
 
 // Disturbance Reports
 export const indexDisturbanceReportConnection =
   createEntityIndexConnection<DisturbanceReportLightDto>("disturbanceReports");
 export const loadDisturbanceReportIndex = connectionLoader(indexDisturbanceReportConnection);
-export const useDisturbanceReportIndex = connectionHook(indexDisturbanceReportConnection);
 const fullDisturbanceReportConnection = createEntityGetConnection<
   DisturbanceReportFullDto,
   DisturbanceReportUpdateData
@@ -270,39 +266,23 @@ const lightDisturbanceReportConnection = createEntityGetConnection<
 export const loadFullDisturbanceReport = connectionLoader(fullDisturbanceReportConnection);
 export const useFullDisturbanceReport = connectionHook(fullDisturbanceReportConnection);
 export const useLightDisturbanceReport = connectionHook(lightDisturbanceReportConnection);
-const disturbanceReportListConnection = v3Resource("disturbanceReports")
-  .list<DisturbanceReportLightDto>()
-  .buildConnection();
-/**
- * Delivers the cached light DTOs for disturbance reports corresponding to the UUIDs in the props. Does
- * not attempt to load them from the server.
- */
-export const useLightDisturbanceReportList = connectionHook(disturbanceReportListConnection);
-export const loadLightDisturbanceReportList = connectionLoader(disturbanceReportListConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
-
-const createDisturbanceReportConnection = createEntityCreateConnection<DisturbanceReportFullDto, EntityCreateData>(
-  "disturbanceReports"
+export const useCreateDisturbanceReport = creationHook(
+  createEntityCreateConnection<DisturbanceReportFullDto, DisturbanceReportCreateData>("disturbanceReports")
 );
-export const loadCreateDisturbanceReport = connectionLoader(createDisturbanceReportConnection);
-export const useCreateDisturbanceReport = connectionHook(createDisturbanceReportConnection);
 
 // SRP Reports
 export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
 export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
-export const useSRPReportIndex = connectionHook(indexSRPReportConnection);
 const fullSRPReportConnection = createEntityGetConnection<SrpReportFullDto, EntityUpdateData>("srpReports");
-const lightSRPReportConnection = createEntityGetConnection<SrpReportLightDto, EntityUpdateData>("srpReports", false);
 export const loadFullSRPReport = connectionLoader(fullSRPReportConnection);
 export const useFullSRPReport = connectionHook(fullSRPReportConnection);
-export const useLightSRPReport = connectionHook(lightSRPReportConnection);
 const srpReportListConnection = v3Resource("srpReports").list<SrpReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for disturbance reports corresponding to the UUIDs in the props. Does
  * not attempt to load them from the server.
  */
 export const useLightSRPReportList = connectionHook(srpReportListConnection);
-export const loadLightSRPReportList = connectionLoader(srpReportListConnection);
 export const deleteSRPReport = createEntityDeleter("srpReports");
 
 /**

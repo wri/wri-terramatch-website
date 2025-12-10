@@ -18,7 +18,8 @@ import {
   optionLabelsGetList,
   optionLabelsIndex,
   updateRequestGet,
-  UpdateRequestGetPathParams
+  UpdateRequestGetPathParams,
+  updateRequestUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
   FormDataDto,
@@ -112,6 +113,7 @@ const updateRequestConnection = v3Resource("updateRequests", updateRequestGet)
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
     ({ entity, uuid }) => `${entity}|${uuid}`
   )
+  .update(updateRequestUpdate)
   .enabledProp()
   .buildConnection();
 export const useUpdateRequest = connectionHook(updateRequestConnection);

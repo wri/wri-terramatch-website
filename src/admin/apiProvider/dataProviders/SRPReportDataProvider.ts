@@ -1,4 +1,4 @@
-import { deleteSRPReport, loadSRPReportIndex, loadFullSRPReport } from "@/connections/Entity";
+import { deleteSRPReport, loadFullSRPReport, loadSRPReportIndex } from "@/connections/Entity";
 
 import { connectionDataProvider } from "../utils/listing";
 

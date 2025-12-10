@@ -23,7 +23,6 @@ import { FormEntity } from "@/connections/Form";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
-import { SiteUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityName, v3EntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -137,8 +136,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
           body: { feedback: feedbackValue }
         });
       } else {
-        // A little type munging to get this happy with the site-specific status update.
-        (update as (attributes: Partial<SiteUpdateAttributes>) => undefined)({
+        update({
           status,
           feedback: feedbackValue,
           feedbackFields: data.feedback_fields
