@@ -2,13 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { Indicator, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
   useGetV2IndicatorsEntityUuid,
-  useGetV2IndicatorsEntityUuidSlug,
   useGetV2IndicatorsEntityUuidSlugVerify
 } from "@/generated/apiComponents";
 import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
@@ -16,6 +15,7 @@ import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchServ
 import { IndicatorsAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
+import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
 
 const dataPolygonOverview = [
   {
@@ -102,14 +102,14 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
-  const [analysisToSlug, setAnalysisToSlug] = useState<any>({
-    treeCoverLoss: [],
-    treeCoverLossFires: [],
-    restorationByEcoRegion: [],
-    restorationByStrategy: [],
-    restorationByLandUse: []
+  const [analysisToSlug, setAnalysisToSlug] = useState<Record<string, Record<string, string> | { message?: string }>>({
+    treeCoverLoss: {},
+    treeCoverLossFires: {},
+    restorationByEcoRegion: {},
+    restorationByStrategy: {},
+    restorationByLandUse: {}
   });
-  const [rerunAnalysisToSlug, setRerunAnalysisToSlug] = useState<any>({
+  const [rerunAnalysisToSlug, setRerunAnalysisToSlug] = useState<Record<string, string[]>>({
     treeCoverLoss: [],
     treeCoverLossFires: [],
     restorationByEcoRegion: [],
@@ -120,33 +120,45 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [rerunDropdownOptions, setRerunDropdownOptions] = useState(DROPDOWN_OPTIONS);
   const [totalPolygonsForRerun, setTotalPolygonsForRerun] = useState<number>(0);
 
-  const { data: indicatorData, isLoading: isLoadingIndicator } = useGetV2IndicatorsEntityUuidSlug(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: indicatorSlug!
-      }
-    },
-    {
-      enabled: !!indicatorSlug && !!entity_uuid
+  const { data: sitePolygonsData, isLoading: isLoadingSitePolygons } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
+    filter: {
+      "presentIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined,
+      "polygonStatus[]": ["approved"]
     }
-  );
+  });
 
-  const getComplementarySlug = (slug: string) => (slug === "treeCoverLoss" ? "treeCoverLossFires" : "treeCoverLoss");
+  const getComplementarySlug = (slug: string): Indicator | undefined =>
+    slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
 
-  const { data: complementaryData } = useGetV2IndicatorsEntityUuidSlug(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: getComplementarySlug(indicatorSlug || "")
-      }
-    },
-    {
-      enabled: (indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires") && !!entity_uuid
+  const complementarySlug = getComplementarySlug(indicatorSlug || "");
+  const { data: complementarySitePolygonsData, isLoading: isLoadingComplementary } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled:
+      (indicatorSlug === "treeCoverLoss" || indicatorSlug === "treeCoverLossFires") &&
+      !!entity_uuid &&
+      !!entity &&
+      !!complementarySlug,
+    filter: {
+      "presentIndicator[]": complementarySlug ? [complementarySlug] : undefined,
+      "polygonStatus[]": ["approved"]
     }
-  );
+  });
+
+  const indicatorData = useMemo(() => {
+    if (!sitePolygonsData || !indicatorSlug) return [];
+    return transformSitePolygonsToIndicators(sitePolygonsData, indicatorSlug as Indicator);
+  }, [sitePolygonsData, indicatorSlug]);
+
+  const complementaryData = useMemo(() => {
+    if (!complementarySitePolygonsData || !complementarySlug) return [];
+    return transformSitePolygonsToIndicators(complementarySitePolygonsData, complementarySlug);
+  }, [complementarySitePolygonsData, complementarySlug]);
+
+  const isLoadingIndicator = isLoadingSitePolygons || isLoadingComplementary;
 
   useEffect(() => {
     if (indicatorSlug === "treeCoverLoss") {
@@ -197,8 +209,8 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const options = [
       { title: "All Polygons", value: "0" },
       ...indicatorData
-        .filter((item: any) => item.status === "approved")
-        .map((item: any) => ({
+        .filter((item: Indicators) => item.status === "approved")
+        .map((item: Indicators) => ({
           title: item.poly_name || "",
           value: item.poly_id || ""
         }))
@@ -249,10 +261,13 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const fetchSlugs = async () => {
       setIsLoadingVerify(true);
       const slugVerify = await Promise.all(SLUGS_INDICATORS.map(verifySlug));
-      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug, index) => {
-        acc[slug] = slugVerify[index];
-        return acc;
-      }, {});
+      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, Record<string, string> | { message?: string }>>(
+        (acc, slug, index) => {
+          acc[slug] = slugVerify[index];
+          return acc;
+        },
+        {}
+      );
       const updateTitleDropdownOptions = () => {
         return DROPDOWN_OPTIONS.map(option => {
           if (slugToAnalysis[`${option.slug}`]?.message) {
@@ -322,9 +337,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
       }
 
       try {
-        const polygonUuids = allPolygonsData.map((polygon: any) => polygon.polygonUuid).filter(Boolean);
+        const polygonUuids = allPolygonsData.map(polygon => polygon.polygonUuid).filter(Boolean) as string[];
 
-        const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug) => {
+        const rerunSlugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, string[]>>((acc, slug) => {
           acc[slug] = polygonUuids;
           return acc;
         }, {});
