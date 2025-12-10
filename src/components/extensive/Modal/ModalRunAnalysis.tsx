@@ -93,8 +93,15 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
       const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
       if (Array.isArray(analysisData)) {
         polygonUuids = analysisData.filter((v: string) => typeof v === "string");
-      } else if (typeof analysisData === "object" && analysisData !== null && !("message" in analysisData)) {
-        polygonUuids = Object.values(analysisData).filter((v): v is string => typeof v === "string");
+      } else if (
+        typeof analysisData === "object" &&
+        analysisData !== null &&
+        !("message" in analysisData) &&
+        analysisData.constructor === Object
+      ) {
+        polygonUuids = Object.values(analysisData as Record<string, string>).filter(
+          (v): v is string => typeof v === "string"
+        );
       }
 
       await runAnalysisIndicator({
