@@ -6,7 +6,6 @@ import { loadFundingProgramme } from "@/connections/FundingProgramme";
 import {
   DeleteV2AdminFormsApplicationsUUIDError,
   fetchDeleteV2AdminFormsApplicationsUUID,
-  fetchGetV2AdminFormsApplications,
   fetchPatchV2AdminFormsSubmissionsUUIDStatus,
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
@@ -18,7 +17,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raConnectionProps, raListParamsToQueryParams } from "../utils/listing";
+import { raConnectionProps } from "../utils/listing";
 
 export type ApplicationShowRecord = ApplicationDto & {
   id: string;
@@ -28,7 +27,6 @@ export type ApplicationShowRecord = ApplicationDto & {
 
 export type ApplicationListRecord = ApplicationDto & { id: string; currentSubmission: SubmissionReferenceDto | null };
 
-export const applicationSortableList: string[] = ["organisationName", "createdAt", "updatedAt"];
 export interface ApplicationDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
   exportSubmission: (uuid: string) => Promise<void>;
@@ -91,17 +89,6 @@ export const applicationDataProvider: ApplicationDataProvider = {
         fundingProgramme: fundingProgramme.data
       }
     } as RecordType;
-  },
-
-  async getManyReference(_, params) {
-    const res = await fetchGetV2AdminFormsApplications({
-      queryParams: {
-        ...raListParamsToQueryParams(params, applicationSortableList),
-        ["filter[organisation_uuid]"]: params.id
-      }
-    });
-
-    return apiListResponseToRAListResult(res);
   },
 
   //@ts-ignore

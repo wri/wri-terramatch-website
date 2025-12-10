@@ -82,12 +82,6 @@ const App = () => {
               recordRepresentation={record => `${record?.id}`}
             />
             <Resource
-              name={modules.stage.ResourceName}
-              show={modules.stage.Show}
-              edit={modules.stage.Edit}
-              create={modules.stage.Create}
-            />
-            <Resource
               name={modules.form.ResourceName}
               list={modules.form.List}
               edit={modules.form.Edit}
@@ -198,7 +192,7 @@ const App = () => {
           list={modules.srpReport.List}
           show={modules.srpReport.Show}
           edit={modules.srpReport.Edit}
-          icon={() => <Icon className="w-7 h-7" name={IconNames.SRP_REPORT} />}
+          icon={() => <Icon className="h-7 w-7" name={IconNames.SRP_REPORT} />}
           options={{ label: "SRP Reports" }}
         />
       </Admin>

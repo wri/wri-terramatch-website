@@ -15,7 +15,7 @@ const applicationConnection = v3Resource("applications", applicationGet)
   .addProps<ApplicationGetQueryParams>(({ translated, sideloads }) => ({ queryParams: { translated, sideloads } }))
   .buildConnection();
 
-const applicationsConnection = v3Resource("applications", applicationIndex)
+export const applicationsConnection = v3Resource("applications", applicationIndex)
   .index<ApplicationDto>()
   .pagination()
   .filter<Filter<ApplicationIndexQueryParams>>()

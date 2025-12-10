@@ -8854,71 +8854,6 @@ export const usePatchV2AdminFundingProgrammeStageUUIDStatus = (
   );
 };
 
-export type GetV2FundingProgrammeStageUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2FundingProgrammeStageUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FundingProgrammeStageUUIDResponse = {
-  id?: number;
-  uuid?: string;
-  status?: string;
-  deadline_at?: string;
-  readable_status?: string;
-  funding_programme_id?: number;
-  name?: string;
-  order?: number;
-  form?: {
-    uuid?: string;
-    title?: string;
-    type?: string;
-    published?: boolean;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type GetV2FundingProgrammeStageUUIDVariables = {
-  pathParams: GetV2FundingProgrammeStageUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FundingProgrammeStageUUID = (
-  variables: GetV2FundingProgrammeStageUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2FundingProgrammeStageUUIDResponse,
-    GetV2FundingProgrammeStageUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2FundingProgrammeStageUUIDPathParams
-  >({ url: "/v2/funding-programme/stage/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2FundingProgrammeStageUUID = <TData = GetV2FundingProgrammeStageUUIDResponse>(
-  variables: GetV2FundingProgrammeStageUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FundingProgrammeStageUUIDResponse, GetV2FundingProgrammeStageUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FundingProgrammeStageUUIDResponse, GetV2FundingProgrammeStageUUIDError, TData>(
-    queryKeyFn({
-      path: "/v2/funding-programme/stage/{UUID}",
-      operationId: "getV2FundingProgrammeStageUUID",
-      variables
-    }),
-    ({ signal }) => fetchGetV2FundingProgrammeStageUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PatchV2AdminFormsSubmissionsUUIDStatusError = Fetcher.ErrorWrapper<undefined>;
 
 export type PatchV2AdminFormsSubmissionsUUIDStatusResponse = {
@@ -19546,11 +19481,6 @@ export type QueryOperation =
       path: "/v2/funding-programme/stage";
       operationId: "getV2FundingProgrammeStage";
       variables: GetV2FundingProgrammeStageVariables;
-    }
-  | {
-      path: "/v2/funding-programme/stage/{UUID}";
-      operationId: "getV2FundingProgrammeStageUUID";
-      variables: GetV2FundingProgrammeStageUUIDVariables;
     }
   | {
       path: "/v2/forms/submissions/{UUID}";

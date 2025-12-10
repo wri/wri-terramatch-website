@@ -27,9 +27,6 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "application" })}>
         <Menu.ResourceItem name={modules.application.ResourceName} />
       </div>
-      <div className={classNames({ "Sidebar-active": hash === "stage" })}>
-        <Menu.ResourceItem name={modules.stage.ResourceName} />
-      </div>
       <div className={classNames({ "Sidebar-active": hash === "form" })}>
         <Menu.ResourceItem name={modules.form.ResourceName} />
       </div>
