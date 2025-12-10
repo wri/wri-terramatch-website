@@ -17,6 +17,11 @@ import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
 
+type IndicatorsWithPolyId = Indicators & {
+  poly_id?: string;
+  site_id?: string;
+};
+
 const dataPolygonOverview = [
   {
     status: "Draft",
@@ -209,8 +214,8 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const options = [
       { title: "All Polygons", value: "0" },
       ...indicatorData
-        .filter((item: Indicators) => item.status === "approved")
-        .map((item: Indicators) => ({
+        .filter((item: IndicatorsWithPolyId) => item.status === "approved")
+        .map((item: IndicatorsWithPolyId) => ({
           title: item.poly_name || "",
           value: item.poly_id || ""
         }))
@@ -261,13 +266,10 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const fetchSlugs = async () => {
       setIsLoadingVerify(true);
       const slugVerify = await Promise.all(SLUGS_INDICATORS.map(verifySlug));
-      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, Record<string, string> | { message?: string }>>(
-        (acc, slug, index) => {
-          acc[slug] = slugVerify[index];
-          return acc;
-        },
-        {}
-      );
+      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug, index) => {
+        acc[slug] = slugVerify[index];
+        return acc;
+      }, {});
       const updateTitleDropdownOptions = () => {
         return DROPDOWN_OPTIONS.map(option => {
           if (slugToAnalysis[`${option.slug}`]?.message) {
