@@ -147,6 +147,34 @@ export type ValidationDto = {
   criteriaList: ValidationCriteriaDto[];
 };
 
+export type GeometryUploadComparisonSummaryDto = {
+  /**
+   * Array of UUIDs of existing SitePolygons found in the database
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   * @example 660e8400-e29b-41d4-a716-446655440001
+   */
+  existingUuids: string[];
+  /**
+   * Total number of features in the uploaded file
+   *
+   * @example 800
+   */
+  totalFeatures: number;
+  /**
+   * Number of features that will create new versions (UUIDs found in database)
+   *
+   * @example 150
+   */
+  featuresForVersioning: number;
+  /**
+   * Number of features that will create new polygons (UUIDs not found or missing UUIDs)
+   *
+   * @example 650
+   */
+  featuresForCreation: number;
+};
+
 export type SitePolygonLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -539,6 +567,19 @@ export type VersionUpdateBody = {
   data: VersionUpdateData;
 };
 
+export type GeometryUploadAttributesDto = {
+  siteId: string;
+};
+
+export type GeometryUploadData = {
+  type: "sitePolygons";
+  attributes: GeometryUploadAttributesDto;
+};
+
+export type GeometryUploadRequestDto = {
+  data: GeometryUploadData;
+};
+
 export type DelayedJobDto = {
   /**
    * The unique identifier for the delayed job.
@@ -580,19 +621,6 @@ export type DelayedJobDto = {
    * The name of the related entity (e.g., Kerrawarra, New Site, etc).
    */
   entityName?: string | null;
-};
-
-export type GeometryUploadAttributesDto = {
-  siteId: string;
-};
-
-export type GeometryUploadData = {
-  type: "sitePolygons";
-  attributes: GeometryUploadAttributesDto;
-};
-
-export type GeometryUploadRequestDto = {
-  data: GeometryUploadData;
 };
 
 export type BoundingBoxDto = {
@@ -781,6 +809,19 @@ export type PolygonListClippingRequestBody = {
   data: PolygonListClippingData;
 };
 
+export type IndicatorsSummaryDto = {
+  /**
+   * The UUID of the site that was validated
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  polygonUuids: string[];
+  /**
+   * Total number of polygons
+   */
+  totalPolygons: number;
+};
+
 export type IndicatorsAttributes = {
   /**
    * The UUIDs of the polygons to calculate indicators for
@@ -794,17 +835,17 @@ export type IndicatorsAttributes = {
    *
    * @example true
    */
-  updateExisting: boolean;
+  updateExisting: Record<string, any>;
   /**
    * Whether to force recalculation of the indicators
    *
    * @example true
    */
-  forceRecalculation: boolean;
+  forceRecalculation: Record<string, any>;
 };
 
 export type IndicatorsRequestData = {
-  type: "sitePolygons";
+  type: "indicators";
   attributes: IndicatorsAttributes;
 };
 

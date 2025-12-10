@@ -695,6 +695,82 @@ export const deleteSitePolygon = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/{uuid}", "DELETE");
 
+export type CompareGeometryFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CompareGeometryFileResponse = {
+  meta?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeometryUploadComparisonSummaryDto;
+  };
+};
+
+export type CompareGeometryFileVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and returns UUIDs of existing SitePolygons found in the database.
+ */
+export const compareGeometryFile = new V3ApiEndpoint<
+  CompareGeometryFileResponse,
+  CompareGeometryFileError,
+  CompareGeometryFileVariables,
+  {}
+>("/research/v3/sitePolygons/upload/comparison", "POST");
+
 export type UploadGeometryFileError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -788,6 +864,103 @@ export const uploadGeometryFile = new V3ApiEndpoint<
   UploadGeometryFileVariables,
   {}
 >("/research/v3/sitePolygons/upload", "POST");
+
+export type UploadGeometryFileWithVersionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadGeometryFileWithVersionsVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and processes it with versioning enabled.
+ *       Features with UUIDs in properties.uuid that match existing active SitePolygons will create new versions.
+ *       Features without matching UUIDs (or without UUIDs) will create new polygons.
+ *       Attributes are extracted from GeoJSON feature properties for both versions and new polygons.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadGeometryFileWithVersions = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  UploadGeometryFileWithVersionsError,
+  UploadGeometryFileWithVersionsVariables,
+  {}
+>("/research/v3/sitePolygons/upload/versions", "POST");
 
 export type BoundingBoxGetQueryParams = {
   /**
@@ -1460,6 +1633,25 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   | {
       meta?: {
         /**
+         * @example indicatorsSummary
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example indicatorsSummary
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.IndicatorsSummaryDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
          * @example delayedJobs
          */
         resourceType?: string;
@@ -1474,25 +1666,6 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DelayedJobDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
-         * @example sitePolygons
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example sitePolygons
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.SitePolygonLightDto;
       };
     },
   StartIndicatorCalculationError,
@@ -1509,7 +1682,9 @@ export const operationsByTag = {
     updateSitePolygonVersion,
     deleteSitePolygonVersion,
     deleteSitePolygon,
-    uploadGeometryFile
+    compareGeometryFile,
+    uploadGeometryFile,
+    uploadGeometryFileWithVersions
   },
   boundingBoxes: { boundingBoxGet },
   validations: {

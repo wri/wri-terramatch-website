@@ -1117,6 +1117,7 @@ export type ProjectFullDto = {
   survivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
+  incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
   workdayCount: number;
@@ -1260,6 +1261,8 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  treesPlantedPolygonsCount: number | null;
+  hectaresRestoredPolygonsCount: number | null;
 };
 
 export type NurseryFullDto = {
