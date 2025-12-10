@@ -107,7 +107,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const [treeCoverLossData, setTreeCoverLossData] = useState<Indicators[]>([]);
   const [polygonOptions, setPolygonOptions] = useState<PolygonOption[]>([{ title: "All Polygons", value: "0" }]);
   const [treeCoverLossFiresData, setTreeCoverLossFiresData] = useState<Indicators[]>([]);
-  const [analysisToSlug, setAnalysisToSlug] = useState<Record<string, Record<string, string> | { message?: string }>>({
+  const [analysisToSlug, setAnalysisToSlug] = useState<
+    Record<string, string[] | Record<string, string> | { message?: string }>
+  >({
     treeCoverLoss: {},
     treeCoverLossFires: {},
     restorationByEcoRegion: {},
