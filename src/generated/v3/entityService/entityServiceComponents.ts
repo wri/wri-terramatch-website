@@ -3214,13 +3214,60 @@ export type SubmissionGetPathParams = {
   uuid: string;
 };
 
-export type SubmissionGetError = Fetcher.ErrorWrapper<undefined>;
+export type SubmissionGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionGetResponse = {
+  meta?: {
+    /**
+     * @example submissions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example submissions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SubmissionDto;
+  };
+};
 
 export type SubmissionGetVariables = {
   pathParams: SubmissionGetPathParams;
 };
 
-export const submissionGet = new V3ApiEndpoint<undefined, SubmissionGetError, SubmissionGetVariables, {}>(
+export const submissionGet = new V3ApiEndpoint<SubmissionGetResponse, SubmissionGetError, SubmissionGetVariables, {}>(
   "/forms/v3/submissions/{uuid}",
   "GET"
 );
@@ -3611,6 +3658,123 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
+export type ApplicationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  fundingProgrammeUuid?: string;
+  organisationUuid?: string;
+  currentSubmissionStatus?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started";
+};
+
+export type ApplicationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationIndexResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example applications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationDto;
+  }[];
+};
+
+export type ApplicationIndexVariables = {
+  queryParams?: ApplicationIndexQueryParams;
+};
+
+export const applicationIndex = new V3ApiEndpoint<
+  ApplicationIndexResponse,
+  ApplicationIndexError,
+  ApplicationIndexVariables,
+  {}
+>("/applications/v3", "GET");
+
 export type ApplicationGetPathParams = {
   /**
    * UUID of the resource.
@@ -3623,6 +3787,10 @@ export type ApplicationGetQueryParams = {
    * sideloads to include
    */
   sideloads?: ("currentSubmission" | "fundingProgramme")[];
+  /**
+   * @default true
+   */
+  translated?: boolean;
 };
 
 export type ApplicationGetError = Fetcher.ErrorWrapper<
@@ -3849,6 +4017,6 @@ export const operationsByTag = {
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
-  applications: { applicationGet },
+  applications: { applicationIndex, applicationGet },
   fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
 };

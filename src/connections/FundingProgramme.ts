@@ -7,6 +7,7 @@ const fundingProgrammeConnection = v3Resource("fundingProgrammes", fundingProgra
   .singleResource<FundingProgrammeDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .addProps<{ translated?: boolean }>(({ translated }) => ({ queryParams: { translated: translated } }))
   .isLoading()
+  .enabledProp()
   .buildConnection();
 
 const fundingProgrammesConnection = v3Resource("fundingProgrammes", fundingProgrammesIndex)

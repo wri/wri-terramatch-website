@@ -2471,6 +2471,28 @@ export type LinkedFieldDto = {
   collection: string | null;
 };
 
+export type SubmissionDto = {
+  applicationUuid: string | null;
+  projectPitchUuid: string | null;
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  formUuid: string | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  answers: Record<string, any>;
+  organisationUuid: string | null;
+  organisationName: string | null;
+  feedback: string | null;
+  translatedFeedbackFields: string[] | null;
+  stageName: string | null;
+};
+
 /**
  * CONSTANTS
  */
@@ -2814,9 +2836,18 @@ export type UpdateFormBody = {
   data: UpdateFormData;
 };
 
+export type SubmissionReferenceDto = {
+  uuid: string;
+  status: string | null;
+  stageName: string | null;
+};
+
 export type ApplicationDto = {
   uuid: string;
-  currentSubmissionUuid: string | null;
+  /**
+   * List of submissions for this application. The last is the current submission.
+   */
+  submissions: SubmissionReferenceDto[];
   organisationName: string | null;
   organisationUuid: string | null;
   fundingProgrammeName: string | null;

@@ -2,8 +2,8 @@ import { Box, Button, Divider, Grid, Stack } from "@mui/material";
 import { useState } from "react";
 import { FunctionField, Labeled, TextField, useRecordContext, useShowContext } from "react-admin";
 
+import { ApplicationShowRecord } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import Aside from "@/admin/components/Aside/Aside";
-import { ApplicationRead } from "@/generated/apiSchemas";
 
 import ApplicationRequestMoreInfoModal from "./ApplicationChangeStatusModal";
 import { statusChoices } from "./ApplicationList";
@@ -15,7 +15,7 @@ const ApplicationShowAside = () => {
 
   const { isLoading } = useShowContext();
 
-  const application = useRecordContext<ApplicationRead>();
+  const application = useRecordContext<ApplicationShowRecord>();
 
   const handleClose = () => {
     setShouldRequestMessageWithStatus(null);
@@ -27,17 +27,17 @@ const ApplicationShowAside = () => {
         <Grid container spacing={2} marginY={2}>
           <Grid item xs={6}>
             <Labeled label="Organisation">
-              <TextField source="organisation.name" />
+              <TextField source="organisationName" />
             </Labeled>
           </Grid>
           <Grid item xs={6}>
             <Labeled>
               <FunctionField
                 label="Status"
-                source="current_submission.status"
+                source="currentSubmission.status"
                 render={(record: any) =>
-                  statusChoices.find(status => status.id === record?.current_submission?.status)?.name ||
-                  record?.current_submission?.status
+                  statusChoices.find(status => status.id === record?.currentSubmission?.status)?.name ||
+                  record?.currentSubmission?.status
                 }
                 sortable={false}
               />
@@ -45,7 +45,7 @@ const ApplicationShowAside = () => {
           </Grid>
           <Grid item xs={12}>
             <Labeled label="Stage">
-              <TextField source="current_submission.stage.name" />
+              <TextField source="currentSubmission.stageName" />
             </Labeled>
           </Grid>
         </Grid>
@@ -56,7 +56,7 @@ const ApplicationShowAside = () => {
               variant="contained"
               onClick={() => setShouldRequestMessageWithStatus("approved")}
               // @ts-ignore typo in response
-              disabled={application?.current_submission?.status === "approved" || isLoading}
+              disabled={application?.currentSubmission?.status === "approved" || isLoading}
             >
               Approve
             </Button>
@@ -64,7 +64,7 @@ const ApplicationShowAside = () => {
               variant="outlined"
               onClick={() => setShouldRequestMessageWithStatus("requires-more-information")}
               // @ts-ignore typo in response
-              disabled={application?.current_submission?.status === "requires-more-information" || isLoading}
+              disabled={application?.currentSubmission?.status === "requires-more-information" || isLoading}
             >
               Request More Information
             </Button>
@@ -72,7 +72,7 @@ const ApplicationShowAside = () => {
               variant="outlined"
               color="error"
               onClick={() => setShouldRequestMessageWithStatus("rejected")} // @ts-ignore typo in response
-              disabled={application?.current_submission?.status === "rejected" || isLoading}
+              disabled={application?.currentSubmission?.status === "rejected" || isLoading}
             >
               Reject
             </Button>
