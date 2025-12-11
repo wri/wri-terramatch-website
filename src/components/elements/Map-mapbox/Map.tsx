@@ -954,7 +954,7 @@ export const MapContainer = ({
             </ControlGroup>
           </When>
           <When condition={isEditing}>
-            <ControlGroup position="top-right" className="top-[249px]">
+            <ControlGroup position="top-right" className="top-[272px]">
               <TrashButton onClick={mapFunctions?.handleTrashDelete} />
             </ControlGroup>
           </When>
