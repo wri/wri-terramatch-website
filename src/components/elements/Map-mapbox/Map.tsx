@@ -63,6 +63,7 @@ import {
   addDeleteLayer,
   addFilterOnLayer,
   addGeojsonToDraw,
+  addGoogleSatelliteLayer,
   addMarkerAndZoom,
   addMediaSourceAndLayer,
   addPopupsToMap,
@@ -71,11 +72,13 @@ import {
   getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
+  removeGoogleSatelliteLayer,
   removeMediaLayer,
   removePopups,
   setMapStyle,
   startDrawing,
   stopDrawing,
+  updateMapProjection,
   zoomToBbox,
   zoomToCenter
 } from "./utils";
@@ -383,7 +386,8 @@ export const MapContainer = ({
     tooltipType,
     projectUUID,
     hasAccess,
-    dashboardContext
+    dashboardContext,
+    currentStyle
   ]);
 
   useValueChanged(currentStyle, () => {
@@ -397,6 +401,52 @@ export const MapContainer = ({
       setStyleLoaded(false);
     }
   });
+
+  useEffect(() => {
+    if (!map.current) return;
+
+    const currentMap = map.current;
+    let isEffectActive = true;
+
+    if (currentStyle === MapStyle.GoogleSatellite) {
+      const addGoogleLayer = () => {
+        if (!isEffectActive) return true;
+        if (currentMap.isStyleLoaded()) {
+          addGoogleSatelliteLayer(currentMap);
+          updateMapProjection(currentMap, MapStyle.GoogleSatellite);
+          return true;
+        }
+        return false;
+      };
+
+      let rafId: number | null = null;
+      const pollForStyleLoaded = (attemptsLeft = 60, totalAttempts = 60) => {
+        if (addGoogleLayer()) return;
+
+        if (attemptsLeft > 0) {
+          rafId = requestAnimationFrame(() => pollForStyleLoaded(attemptsLeft - 1, totalAttempts));
+        } else {
+          Log.error("Failed to add Google layer after 60 attempts");
+        }
+      };
+
+      if (currentMap.isStyleLoaded()) {
+        addGoogleLayer();
+      } else {
+        pollForStyleLoaded();
+      }
+
+      return () => {
+        isEffectActive = false;
+        if (rafId != null) {
+          cancelAnimationFrame(rafId);
+        }
+      };
+    } else {
+      removeGoogleSatelliteLayer(currentMap);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStyle, map]);
 
   useEffect(() => {
     if (!map.current || !styleLoaded) return;
