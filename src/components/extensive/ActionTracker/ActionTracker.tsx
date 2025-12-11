@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2MyActions, useGetV2MyApplications } from "@/generated/apiComponents";
-import { ApplicationLiteRead } from "@/generated/apiSchemas";
+import { applicationsConnection } from "@/connections/Application";
+import { useGetV2MyActions } from "@/generated/apiComponents";
+import { useAllPages } from "@/hooks/useConnection";
 
 import ApplicationsCard from "./cards/ApplicationsCard";
 import ProjectsCard from "./cards/ProjectsCard";
@@ -12,15 +13,7 @@ const PROJECT_TARGETABLE_TYPES = ["Project", "Site", "Nursery"];
 const REPORT_TARGETABLE_TYPES = ["ProjectReport", "SiteReport", "NurseryReport", "FinancialReport"];
 
 const ActionTracker = () => {
-  // Queries
-  const { data: myApplications, isLoading: isLoadingApplications } = useGetV2MyApplications<{
-    data: ApplicationLiteRead[];
-  }>({
-    queryParams: {
-      page: 1,
-      per_page: 1000
-    }
-  });
+  const [applicationsLoaded, applications] = useAllPages(applicationsConnection, {});
 
   const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({}, { retry: false });
 
@@ -41,9 +34,9 @@ const ActionTracker = () => {
   );
 
   return (
-    <LoadingContainer loading={isLoadingApplications || isLoadingActions}>
+    <LoadingContainer loading={!applicationsLoaded || isLoadingActions}>
       <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-3">
-        <ApplicationsCard applications={myApplications?.data} />
+        <ApplicationsCard applications={applications} />
         <ProjectsCard actions={projectActions} />
         <ReportsCard actions={reportActions} />
       </div>

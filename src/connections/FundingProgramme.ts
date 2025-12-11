@@ -1,5 +1,5 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { connectionLoader } from "@/connections/util/connectionShortcuts";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { fundingProgrammeGet, fundingProgrammesIndex } from "@/generated/v3/entityService/entityServiceComponents";
 import { FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
@@ -17,3 +17,5 @@ const fundingProgrammesConnection = v3Resource("fundingProgrammes", fundingProgr
 
 export const loadFundingProgramme = connectionLoader(fundingProgrammeConnection);
 export const loadFundingProgrammes = connectionLoader(fundingProgrammesConnection);
+
+export const useFundingProgramme = connectionHook(fundingProgrammeConnection);

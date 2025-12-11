@@ -3854,6 +3854,73 @@ export const applicationGet = new V3ApiEndpoint<
   {}
 >("/applications/v3/{uuid}", "GET");
 
+export type ApplicationHistoryGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationHistoryGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationHistoryGetResponse = {
+  meta?: {
+    /**
+     * @example applicationHistories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example applicationHistories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationHistoryDto;
+  };
+};
+
+export type ApplicationHistoryGetVariables = {
+  pathParams: ApplicationHistoryGetPathParams;
+};
+
+export const applicationHistoryGet = new V3ApiEndpoint<
+  ApplicationHistoryGetResponse,
+  ApplicationHistoryGetError,
+  ApplicationHistoryGetVariables,
+  {}
+>("/applications/v3/{uuid}/history", "GET");
+
 export type FundingProgrammesIndexQueryParams = {
   /**
    * @default true
@@ -4017,6 +4084,6 @@ export const operationsByTag = {
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
-  applications: { applicationIndex, applicationGet },
+  applications: { applicationIndex, applicationGet, applicationHistoryGet },
   fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
 };

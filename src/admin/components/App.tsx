@@ -170,7 +170,6 @@ const App = () => {
         />
         {isAdmin && (
           <>
-            <Resource name={modules.audit.ResourceName} />
             <Resource
               name={modules.validatePolygonFile.ResourceName}
               list={modules.validatePolygonFile.List}

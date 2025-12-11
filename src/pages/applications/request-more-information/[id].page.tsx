@@ -1,17 +1,19 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
-import { Dictionary } from "lodash";
+import { Dictionary, last } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useApplication } from "@/connections/Application";
 import { useForm } from "@/connections/Form";
+import { useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2ApplicationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
-import { ApplicationRead } from "@/generated/apiSchemas";
+import { useGetV2OrganisationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
+import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
@@ -23,14 +25,9 @@ const RequestMoreInformationPage = () => {
   const uuid = router.query.id as string;
   const queryClient = useQueryClient();
 
-  const { data: applicationData, isLoading: applicationLoading } = useGetV2ApplicationsUUID<{
-    data: ApplicationRead;
-  }>({
-    pathParams: {
-      uuid
-    },
-    queryParams: { lang: router.locale }
-  });
+  const [applicationLoaded, { data: application }] = useApplication({ id: uuid, sideloads: ["currentSubmission"] });
+  const currentSubmissionUuid = last(application?.submissions)?.uuid;
+  const [, { data: submission }] = useSubmission({ id: currentSubmissionUuid, enabled: currentSubmissionUuid != null });
 
   const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
     onSuccess: () => {
@@ -39,27 +36,23 @@ const RequestMoreInformationPage = () => {
     }
   });
 
-  const submission = (applicationData?.data?.form_submissions ?? []).find(
-    ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
-  );
-
   const { updateSubmission, isSuccess, isUpdating } = useSubmissionUpdate(submission?.uuid ?? "");
 
-  const framework = useFramework(submission?.framework_key);
+  const framework = useFramework(submission?.frameworkKey);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
-    if (submission?.organisation_uuid != null) {
-      models.push({ model: "organisations", uuid: submission.organisation_uuid });
+    if (submission?.organisationUuid != null) {
+      models.push({ model: "organisations", uuid: submission.organisationUuid });
     }
-    if (submission?.project_pitch_uuid != null) {
-      models.push({ model: "projectPitches", uuid: submission.project_pitch_uuid });
+    if (submission?.projectPitchUuid != null) {
+      models.push({ model: "projectPitches", uuid: submission.projectPitchUuid });
     }
     return models;
-  }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
+  }, [submission?.organisationUuid, submission?.projectPitchUuid]);
   const feedbackFields = useMemo(
-    () => submission?.translated_feedback_fields ?? [],
-    [submission?.translated_feedback_fields]
+    () => submission?.translatedFeedbackFields ?? [],
+    [submission?.translatedFeedbackFields]
   );
   const requestedInformationFilter = useCallback(
     // TODO: this should not be using the label. It will require an API change and a data migration
@@ -68,7 +61,7 @@ const RequestMoreInformationPage = () => {
     [feedbackFields]
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(
-    submission?.form_uuid,
+    submission?.formUuid,
     feedbackFields,
     requestedInformationFilter
   );
@@ -76,18 +69,20 @@ const RequestMoreInformationPage = () => {
     () => formDefaultValues(submission?.answers ?? {}, fieldsProvider),
     [fieldsProvider, submission?.answers]
   );
-  const [, { data: form }] = useForm({ id: submission?.form_uuid, enabled: submission?.form_uuid != null });
+  const [, { data: form }] = useForm({ id: submission?.formUuid ?? undefined, enabled: submission?.formUuid != null });
+
+  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
+    { pathParams: { uuid: submission?.organisationUuid ?? "" } },
+    { enabled: submission?.organisationUuid != null }
+  );
 
   const orgDetails = useMemo(
-    (): OrgFormDetails | undefined =>
-      submission?.organisation_attributes == null
-        ? undefined
-        : {
-            uuid: submission.organisation_attributes.uuid,
-            currency: submission.organisation_attributes.currency,
-            startMonth: submission.organisation_attributes.start_month
-          },
-    [submission?.organisation_attributes]
+    (): OrgFormDetails => ({
+      uuid: orgData?.data.uuid,
+      currency: orgData?.data.currency ?? undefined,
+      startMonth: orgData?.data.fin_start_month ?? undefined
+    }),
+    [orgData?.data.currency, orgData?.data.fin_start_month, orgData?.data.uuid]
   );
 
   const onChange = useCallback(
@@ -99,7 +94,7 @@ const RequestMoreInformationPage = () => {
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={applicationLoading || !providerLoaded}>
+      <LoadingContainer loading={!applicationLoaded || !providerLoaded || orgLoading}>
         <WizardForm
           fieldsProvider={fieldsProvider}
           models={formModels}

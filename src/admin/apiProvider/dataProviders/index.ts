@@ -5,7 +5,6 @@ import { taskDataProvider } from "@/admin/apiProvider/dataProviders/taskDataProv
 import modules from "@/admin/modules";
 
 import { applicationDataProvider } from "./applicationDataProvider";
-import { auditDataProvider } from "./auditDataProvider";
 import { disturbanceReportDataProvider } from "./disturbanceReportDataProvider";
 import { financialReportDataProvider } from "./financialReportDataProvider";
 import { formDataProvider } from "./formDataProvider";
@@ -19,9 +18,9 @@ import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
+import { srpReportDataProvider } from "./SRPReportDataProvider";
 import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
-import { srpReportDataProvider } from "./SRPReportDataProvider";
 
 //@ts-ignore
 export const dataProvider = combineDataProviders(resource => {
@@ -73,9 +72,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.financialReport.ResourceName:
       return financialReportDataProvider;
-
-    case modules.audit.ResourceName:
-      return auditDataProvider;
 
     case modules.impactStories.ResourceName:
       return impactStoriesDataProvider;

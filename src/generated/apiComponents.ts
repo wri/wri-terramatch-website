@@ -9168,41 +9168,6 @@ export const usePatchV2FormsSubmissionsUUID = (
   );
 };
 
-export type DeleteV2FormsSubmissionsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2FormsSubmissionsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2FormsSubmissionsUUIDVariables = {
-  pathParams: DeleteV2FormsSubmissionsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2FormsSubmissionsUUID = (
-  variables: DeleteV2FormsSubmissionsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, DeleteV2FormsSubmissionsUUIDError, undefined, {}, {}, DeleteV2FormsSubmissionsUUIDPathParams>({
-    url: "/v2/forms/submissions/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2FormsSubmissionsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2FormsSubmissionsUUIDError, DeleteV2FormsSubmissionsUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2FormsSubmissionsUUIDError, DeleteV2FormsSubmissionsUUIDVariables>(
-    (variables: DeleteV2FormsSubmissionsUUIDVariables) =>
-      fetchDeleteV2FormsSubmissionsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PostV2FormsSubmissionsUUIDNextStagePathParams = {
   uuid: string;
 };
@@ -9737,33 +9702,47 @@ export const usePatchV2MyBanners = (
   );
 };
 
-export type DeleteV2MyBannersPathParams = {
+export type DeleteV2AdminFormsApplicationsUUIDPathParams = {
   uuid: string;
 };
 
-export type DeleteV2MyBannersError = Fetcher.ErrorWrapper<undefined>;
+export type DeleteV2AdminFormsApplicationsUUIDError = Fetcher.ErrorWrapper<undefined>;
 
-export type DeleteV2MyBannersVariables = {
-  pathParams: DeleteV2MyBannersPathParams;
+export type DeleteV2AdminFormsApplicationsUUIDVariables = {
+  pathParams: DeleteV2AdminFormsApplicationsUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchDeleteV2MyBanners = (variables: DeleteV2MyBannersVariables, signal?: AbortSignal) =>
-  apiFetch<undefined, DeleteV2MyBannersError, undefined, {}, {}, DeleteV2MyBannersPathParams>({
-    url: "/v2/my/banners",
-    method: "delete",
-    ...variables,
-    signal
-  });
+export const fetchDeleteV2AdminFormsApplicationsUUID = (
+  variables: DeleteV2AdminFormsApplicationsUUIDVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    undefined,
+    DeleteV2AdminFormsApplicationsUUIDError,
+    undefined,
+    {},
+    {},
+    DeleteV2AdminFormsApplicationsUUIDPathParams
+  >({ url: "/v2/admin/forms/applications/{uuid}", method: "delete", ...variables, signal });
 
-export const useDeleteV2MyBanners = (
+export const useDeleteV2AdminFormsApplicationsUUID = (
   options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2MyBannersError, DeleteV2MyBannersVariables>,
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2AdminFormsApplicationsUUIDError,
+      DeleteV2AdminFormsApplicationsUUIDVariables
+    >,
     "mutationFn"
   >
 ) => {
   const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2MyBannersError, DeleteV2MyBannersVariables>(
-    (variables: DeleteV2MyBannersVariables) => fetchDeleteV2MyBanners({ ...fetcherOptions, ...variables }),
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2AdminFormsApplicationsUUIDError,
+    DeleteV2AdminFormsApplicationsUUIDVariables
+  >(
+    (variables: DeleteV2AdminFormsApplicationsUUIDVariables) =>
+      fetchDeleteV2AdminFormsApplicationsUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -9812,516 +9791,6 @@ export const useGetV2AdminFormsApplicationsUUIDExport = <TData = undefined>(
       variables
     }),
     ({ signal }) => fetchGetV2AdminFormsApplicationsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2MyApplicationsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2MyApplicationsResponse = {
-  data?: {
-    uuid?: string;
-    current_submission?: {
-      uuid?: string;
-      name?: string;
-      status?: string;
-      readable_status?: string;
-      created_at?: string;
-      updated_at?: string;
-      updated_by_uuid?: string;
-      updated_by_name?: string;
-      project_pitch_uuid?: string;
-      form_uuid?: string;
-      stage?: {
-        uuid?: string;
-        name?: string;
-        order?: string;
-      };
-    };
-    funding_programme_name?: string;
-    funding_programme_uuid?: string;
-    organisation_name?: string;
-    organisation_uuid?: string;
-    /**
-     * @format date-time
-     */
-    created_at?: string;
-    /**
-     * @format date-time
-     */
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2MyApplicationsVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2MyApplications = (variables: GetV2MyApplicationsVariables, signal?: AbortSignal) =>
-  apiFetch<GetV2MyApplicationsResponse, GetV2MyApplicationsError, undefined, {}, {}, {}>({
-    url: "/v2/my/applications",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2MyApplications = <TData = GetV2MyApplicationsResponse>(
-  variables: GetV2MyApplicationsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2MyApplicationsResponse, GetV2MyApplicationsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2MyApplicationsResponse, GetV2MyApplicationsError, TData>(
-    queryKeyFn({ path: "/v2/my/applications", operationId: "getV2MyApplications", variables }),
-    ({ signal }) => fetchGetV2MyApplications({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2ApplicationsUUIDPathParams = {
-  uuid: string;
-};
-
-export type GetV2ApplicationsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ApplicationsUUIDResponse = {
-  uuid?: string;
-  form_submissions?: {
-    id?: string;
-    uuid?: string;
-    name?: string;
-    form_uuid?: string;
-    framework_key?: string;
-    stage?: {
-      id?: number;
-      uuid?: string;
-      status?: string;
-      deadline_at?: string;
-      readable_status?: string;
-      funding_programme_id?: number;
-      name?: string;
-      order?: number;
-      form?: {
-        uuid?: string;
-        title?: string;
-        type?: string;
-        published?: boolean;
-      };
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    };
-    answers?: Record<string, any>;
-    status?: string;
-    readable_status?: string;
-    audits?: {
-      id?: number;
-      event?: string;
-      user_id?: number;
-      old_values?: Record<string, any>;
-      new_values?: Record<string, any>;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg slug: name
-     */
-    tags?: string[];
-    project_pitch_uuid?: string;
-    application_uuid?: string;
-    organisation_uuid?: string;
-    organisation_attributes?: {
-      uuid?: string;
-      type?: string;
-      currency?: string;
-      start_month?: string;
-    };
-    feedback?: void;
-    feedback_fields?: string[];
-    translated_feedback_fields?: string[];
-    updated_by?: string;
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  /**
-   * @format uuid
-   */
-  current_submission_uuid?: string;
-  funding_programme?: {
-    id?: number;
-    uuid?: string;
-    name?: string;
-    description?: string;
-    location?: string;
-    read_more_url?: string;
-    framework_key?: string;
-    status?: string;
-    organisation_types?: string[];
-    stages?: {
-      id?: number;
-      uuid?: string;
-      status?: string;
-      deadline_at?: string;
-      readable_status?: string;
-      funding_programme_id?: number;
-      name?: string;
-      order?: number;
-      form?: {
-        uuid?: string;
-        title?: string;
-        type?: string;
-        published?: boolean;
-      };
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    organisations?: {
-      uuid?: string;
-      name?: string;
-    }[];
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-  organisation?: {
-    uuid?: string;
-    status?: string;
-    readable_status?: string;
-    type?: string;
-    is_test?: boolean;
-    private?: boolean;
-    name?: string;
-    phone?: string;
-    founding_date?: string;
-    description?: string;
-    countries?: string[];
-    languages?: string[];
-    tree_species?: {
-      uuid?: string;
-      name?: string;
-      amount?: number;
-      type?: string;
-      collection?: string;
-    }[];
-    web_url?: string;
-    facebook_url?: string;
-    instagram_url?: string;
-    linkedin_url?: string;
-    twitter_url?: string;
-    hq_street_1?: string;
-    hq_street_2?: string;
-    hq_city?: string;
-    hq_state?: string;
-    hq_zipcode?: string;
-    hq_country?: string;
-    fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
-    ha_restored_total?: number;
-    /**
-     * @format float
-     */
-    ha_restored_3year?: number;
-    relevant_experience_years?: number;
-    trees_grown_total?: number;
-    trees_grown_3year?: number;
-    tree_care_approach?: string;
-    ft_permanent_employees?: number;
-    pt_permanent_employees?: number;
-    temp_employees?: number;
-    female_employees?: number;
-    male_employees?: number;
-    young_employees?: number;
-    additional_funding_details?: string;
-    community_experience?: string;
-    total_engaged_community_members_3yr?: number;
-    percent_engaged_women_3yr?: number;
-    percent_engaged_men_3yr?: number;
-    percent_engaged_under_35_3yr?: number;
-    percent_engaged_over_35_3yr?: number;
-    percent_engaged_smallholder_3yr?: number;
-    total_trees_grown?: number;
-    avg_tree_survival_rate?: number;
-    tree_maintenance_aftercare_approach?: string;
-    restored_areas_description?: string;
-    monitoring_evaluation_experience?: string;
-    funding_history?: string;
-    shapefiles?: {
-      uuid?: string;
-      shapefileable_type?: string;
-      shapefileable_id?: number;
-      geojson?: string;
-      created_at?: string;
-      updated_at?: string;
-      deleted_at?: string;
-    }[];
-    bank_statements?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    previous_annual_reports?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    logo?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    reference?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    additional?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_2year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_last_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_this_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    op_budget_next_year?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    legal_registration?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    }[];
-    /**
-     * this is a list of key value pairs eg. slug: name
-     */
-    tags?: string[];
-    created_at?: string;
-    updated_at?: string;
-  };
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-};
-
-export type GetV2ApplicationsUUIDVariables = {
-  pathParams: GetV2ApplicationsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ApplicationsUUID = (variables: GetV2ApplicationsUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2ApplicationsUUIDResponse,
-    GetV2ApplicationsUUIDError,
-    undefined,
-    {},
-    {},
-    GetV2ApplicationsUUIDPathParams
-  >({ url: "/v2/applications/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2ApplicationsUUID = <TData = GetV2ApplicationsUUIDResponse>(
-  variables: GetV2ApplicationsUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ApplicationsUUIDResponse, GetV2ApplicationsUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ApplicationsUUIDResponse, GetV2ApplicationsUUIDError, TData>(
-    queryKeyFn({ path: "/v2/applications/{UUID}", operationId: "getV2ApplicationsUUID", variables }),
-    ({ signal }) => fetchGetV2ApplicationsUUID({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -12327,81 +11796,6 @@ export const useDeleteV2ProjectsUUIDManagersUSERUUID = (
     (variables: DeleteV2ProjectsUUIDManagersUSERUUIDVariables) =>
       fetchDeleteV2ProjectsUUIDManagersUSERUUID({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2AdminAuditsENTITYUUIDPathParams = {
-  /**
-   * allowed values project/site/nursery/project-reports/site-reports/nursery-reports
-   */
-  entity: string;
-  uuid: string;
-};
-
-export type GetV2AdminAuditsENTITYUUIDQueryParams = {
-  /**
-   * number of results (per page) to return
-   */
-  per_page?: number;
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2AdminAuditsENTITYUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminAuditsENTITYUUIDResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    type?: number;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    current_page?: number;
-    from?: number;
-    last_page?: number;
-    next?: number;
-    unfiltered_total?: number;
-  };
-};
-
-export type GetV2AdminAuditsENTITYUUIDVariables = {
-  pathParams: GetV2AdminAuditsENTITYUUIDPathParams;
-  queryParams?: GetV2AdminAuditsENTITYUUIDQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminAuditsENTITYUUID = (variables: GetV2AdminAuditsENTITYUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2AdminAuditsENTITYUUIDResponse,
-    GetV2AdminAuditsENTITYUUIDError,
-    undefined,
-    {},
-    GetV2AdminAuditsENTITYUUIDQueryParams,
-    GetV2AdminAuditsENTITYUUIDPathParams
-  >({ url: "/v2/admin/audits/{entity}/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2AdminAuditsENTITYUUID = <TData = GetV2AdminAuditsENTITYUUIDResponse>(
-  variables: GetV2AdminAuditsENTITYUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2AdminAuditsENTITYUUIDResponse, GetV2AdminAuditsENTITYUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2AdminAuditsENTITYUUIDResponse, GetV2AdminAuditsENTITYUUIDError, TData>(
-    queryKeyFn({ path: "/v2/admin/audits/{ENTITY}/{UUID}", operationId: "getV2AdminAuditsENTITYUUID", variables }),
-    ({ signal }) => fetchGetV2AdminAuditsENTITYUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -18824,16 +18218,6 @@ export type QueryOperation =
       variables: GetV2AdminFormsApplicationsUUIDExportVariables;
     }
   | {
-      path: "/v2/my/applications";
-      operationId: "getV2MyApplications";
-      variables: GetV2MyApplicationsVariables;
-    }
-  | {
-      path: "/v2/applications/{UUID}";
-      operationId: "getV2ApplicationsUUID";
-      variables: GetV2ApplicationsUUIDVariables;
-    }
-  | {
       path: "/v2/applications/{UUID}/export";
       operationId: "getV2ApplicationsUUIDExport";
       variables: GetV2ApplicationsUUIDExportVariables;
@@ -18887,11 +18271,6 @@ export type QueryOperation =
       path: "/v2/projects/{UUID}/managers";
       operationId: "getV2ProjectsUUIDManagers";
       variables: GetV2ProjectsUUIDManagersVariables;
-    }
-  | {
-      path: "/v2/admin/audits/{ENTITY}/{UUID}";
-      operationId: "getV2AdminAuditsENTITYUUID";
-      variables: GetV2AdminAuditsENTITYUUIDVariables;
     }
   | {
       path: "/v2/admin/{ENTITY}/export/{FRAMEWORK}";

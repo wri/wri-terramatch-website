@@ -2472,6 +2472,16 @@ export type LinkedFieldDto = {
 };
 
 export type SubmissionDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  updatedByName: string | null;
   applicationUuid: string | null;
   projectPitchUuid: string | null;
   frameworkKey:
@@ -2491,6 +2501,7 @@ export type SubmissionDto = {
   feedback: string | null;
   translatedFeedbackFields: string[] | null;
   stageName: string | null;
+  stageUuid: string | null;
 };
 
 /**
@@ -2836,22 +2847,66 @@ export type UpdateFormBody = {
   data: UpdateFormData;
 };
 
-export type SubmissionReferenceDto = {
+export type EmbeddedSubmissionDto = {
   uuid: string;
-  status: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  updatedByName: string | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   stageName: string | null;
 };
 
 export type ApplicationDto = {
   uuid: string;
   /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
    * List of submissions for this application. The last is the current submission.
    */
-  submissions: SubmissionReferenceDto[];
+  submissions: EmbeddedSubmissionDto[];
   organisationName: string | null;
   organisationUuid: string | null;
   fundingProgrammeName: string | null;
   fundingProgrammeUuid: string | null;
+};
+
+export type ApplicationHistoryEntryDto = {
+  eventType:
+    | "change-request"
+    | "status"
+    | "submission"
+    | "comment"
+    | "change-request-updated"
+    | "updated"
+    | "reminder-sent"
+    | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  /**
+   * @format date-time
+   */
+  date: string;
+  stageName: string | null;
+  comment: string | null;
+};
+
+export type ApplicationHistoryDto = {
+  applicationUuid: string;
+  /**
+   * List of application history entries sorted in reverse chronological order. The first entry is the most recent.
+   */
+  entries: ApplicationHistoryEntryDto[];
 };
 
 export type EmbeddedMediaDto = {
@@ -2876,6 +2931,7 @@ export type EmbeddedMediaDto = {
 };
 
 export type StageDto = {
+  uuid: string;
   name: string | null;
   /**
    * @format date-time

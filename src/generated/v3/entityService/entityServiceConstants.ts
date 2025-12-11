@@ -41,6 +41,7 @@ import {
   FormLightDto,
   FormFullDto,
   ApplicationDto,
+  ApplicationHistoryDto,
   FundingProgrammeDto
 } from "./entityServiceSchemas";
 
@@ -74,6 +75,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "submissions",
   "forms",
   "applications",
+  "applicationHistories",
   "fundingProgrammes"
 ] as const;
 
@@ -107,6 +109,7 @@ export type EntityServiceApiResources = {
   submissions: StoreResourceMap<SubmissionDto>;
   forms: StoreResourceMap<FormLightDto | FormFullDto>;
   applications: StoreResourceMap<ApplicationDto>;
+  applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
   fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;
 };
 

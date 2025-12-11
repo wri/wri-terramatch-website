@@ -11,9 +11,9 @@ import {
 } from "@/generated/apiComponents";
 import {
   ApplicationDto,
+  EmbeddedSubmissionDto,
   FundingProgrammeDto,
-  SubmissionDto,
-  SubmissionReferenceDto
+  SubmissionDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
@@ -25,7 +25,7 @@ export type ApplicationShowRecord = ApplicationDto & {
   fundingProgramme: FundingProgrammeDto | null;
 };
 
-export type ApplicationListRecord = ApplicationDto & { id: string; currentSubmission: SubmissionReferenceDto | null };
+export type ApplicationListRecord = ApplicationDto & { id: string; currentSubmission: EmbeddedSubmissionDto | null };
 
 export interface ApplicationDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
