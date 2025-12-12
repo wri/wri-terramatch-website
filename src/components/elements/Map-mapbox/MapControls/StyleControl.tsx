@@ -34,7 +34,7 @@ export const StyleControl = ({
         )}
         aria-label="Google satellite style"
       >
-        {t("Satellite-2")}
+        {t("Google")}
       </button>
       <ControlDivider direction="vertical" className="m-0 h-auto bg-neutral-200" />
       <button
@@ -54,7 +54,7 @@ export const StyleControl = ({
         )}
         aria-label="Mapbox satellite style"
       >
-        {t("Satellite-1")}
+        {t("Satellite")}
       </button>
     </ControlButtonsGroup>
   );
