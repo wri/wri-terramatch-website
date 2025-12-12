@@ -1572,25 +1572,6 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example indicatorsSummary
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example indicatorsSummary
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.IndicatorsSummaryDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
          * @example delayedJobs
          */
         resourceType?: string;
@@ -1605,6 +1586,25 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
          */
         id?: string;
         attributes?: Schemas.DelayedJobDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
       };
     },
   StartIndicatorCalculationError,
