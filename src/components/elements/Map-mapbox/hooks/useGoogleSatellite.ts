@@ -1,5 +1,5 @@
 import mapboxgl from "mapbox-gl";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import Log from "@/utils/log";
 
@@ -12,6 +12,9 @@ export const useGoogleSatellite = (
   map: React.RefObject<mapboxgl.Map | null>,
   mapContainer: React.RefObject<HTMLDivElement | null>
 ) => {
+  const currentStyleRef = useRef(currentStyle);
+  currentStyleRef.current = currentStyle;
+
   useEffect(() => {
     const currentMap = map.current;
     const currentContainer = mapContainer.current;
@@ -36,7 +39,7 @@ export const useGoogleSatellite = (
 
       const existingGoogle = attributionInner.querySelector(".google-attribution-text");
 
-      if (currentStyle === MapStyle.GoogleSatellite) {
+      if (currentStyleRef.current === MapStyle.GoogleSatellite) {
         if (!existingGoogle) {
           const googleText = document.createElement("span");
           googleText.className = "google-attribution-text";
@@ -52,6 +55,7 @@ export const useGoogleSatellite = (
 
     const pollForGoogleSetup = (attemptsLeft = 120) => {
       if (!isEffectActive) return;
+      if (currentStyleRef.current !== MapStyle.GoogleSatellite) return;
 
       const layerAdded = addGoogleLayer();
       const attributionAdded = updateAttribution();
@@ -68,18 +72,18 @@ export const useGoogleSatellite = (
     };
 
     if (currentStyle === MapStyle.GoogleSatellite) {
-      if (styleLoaded && currentMap.isStyleLoaded()) {
-        addGoogleLayer();
-        updateAttribution();
-      } else if (styleLoaded) {
-        pollForGoogleSetup();
-      }
-
       const handleStyleLoad = () => {
-        if (currentStyle === MapStyle.GoogleSatellite) {
+        if (isEffectActive && currentStyleRef.current === MapStyle.GoogleSatellite) {
           pollForGoogleSetup();
         }
       };
+
+      const layerAdded = addGoogleLayer();
+      const attributionAdded = updateAttribution();
+
+      if (!layerAdded || !attributionAdded) {
+        pollForGoogleSetup();
+      }
 
       currentMap.on("style.load", handleStyleLoad);
 
