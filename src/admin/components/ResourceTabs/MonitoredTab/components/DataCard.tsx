@@ -210,8 +210,11 @@ const noDataGraph = (
 );
 
 const sumValuesTreeCoverLoss = (data: any) => {
-  return data?.reduce((totalAcc: number, data: { [key: number | string]: number }) => {
-    const sum = Object.values(data?.data).reduce((acc: number, curr: number) => acc + curr, 0);
+  return data?.reduce((totalAcc: number, polygon: { data?: Record<string, number> }) => {
+    if (!polygon?.data || typeof polygon.data !== "object") {
+      return totalAcc;
+    }
+    const sum = Object.values(polygon.data).reduce((acc: number, curr: number) => acc + curr, 0);
     return totalAcc + sum;
   }, 0);
 };
@@ -925,8 +928,8 @@ const DataCard = ({
         Math.round(
           parseInt(
             getOrderTop3(landUseData.graphicTargetLandUseTypes)?.[0]
-              ?.valueText?.match(/^(.*?)ha/)[1]
-              .trim(),
+              ?.valueText?.match(/^(.*?)ha/)?.[1]
+              ?.trim() || "0",
             10
           )
         ) ?? "NaN",
