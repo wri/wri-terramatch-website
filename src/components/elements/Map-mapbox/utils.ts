@@ -27,7 +27,7 @@ import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
-import { MapStyle } from "./MapControls/types";
+import { BASEMAP_CONFIGS, MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
 type DataPolygonOverview = {
@@ -863,10 +863,123 @@ export const addLayerStyle = (
 };
 
 export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) => {
-  if (currentStyle === MapStyle.Street) {
-    map.setProjection("mercator");
-  } else if (currentStyle === MapStyle.Satellite) {
-    map.setProjection("globe");
+  const config = BASEMAP_CONFIGS[currentStyle];
+  if (config?.projection) {
+    map.setProjection(config.projection);
+  }
+};
+
+const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
+const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
+
+export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) {
+    Log.warn("Map or style not loaded, cannot add Google satellite layer");
+    return;
+  }
+
+  removeGoogleSatelliteLayer(map);
+
+  const config = BASEMAP_CONFIGS[MapStyle.GoogleSatellite];
+  if (!config.rasterUrl) {
+    Log.warn("Google satellite raster URL not configured");
+    return;
+  }
+
+  try {
+    const layers = map.getStyle().layers ?? [];
+    const layersToHide = layers.filter(
+      layer =>
+        layer.type === "background" ||
+        layer.type === "fill" ||
+        (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)
+    );
+
+    let hiddenCount = 0;
+    layersToHide.forEach(layer => {
+      try {
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
+        if (currentVisibility !== "none") {
+          map.setLayoutProperty(layer.id, "visibility", "none");
+          hiddenCount++;
+        }
+      } catch (e) {
+        // Ignore
+      }
+    });
+
+    if (hiddenCount > 0) {
+      Log.info(`Hidden ${hiddenCount} Street layers`);
+    }
+
+    map.addSource(GOOGLE_RASTER_SOURCE_ID, {
+      type: "raster",
+      tiles: [config.rasterUrl],
+      tileSize: 256,
+      minzoom: 0,
+      maxzoom: 22
+    });
+
+    let firstLayerId: string | undefined;
+    for (const layer of layers) {
+      if (layer.type !== "background") {
+        firstLayerId = layer.id;
+        break;
+      }
+    }
+
+    map.addLayer(
+      {
+        id: GOOGLE_RASTER_LAYER_ID,
+        type: "raster",
+        source: GOOGLE_RASTER_SOURCE_ID,
+        paint: {
+          "raster-opacity": 1
+        }
+      },
+      firstLayerId
+    );
+
+    Log.info("Google satellite layer added");
+  } catch (error) {
+    Log.error("Error adding Google satellite layer:", error);
+  }
+};
+
+export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
+  if (!map) return;
+
+  try {
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+      map.removeLayer(GOOGLE_RASTER_LAYER_ID);
+    }
+    if (map.getSource(GOOGLE_RASTER_SOURCE_ID)) {
+      map.removeSource(GOOGLE_RASTER_SOURCE_ID);
+    }
+
+    const layers = map.getStyle()?.layers ?? [];
+    const layersToRestore = layers.filter(
+      layer => layer.type === "background" || layer.type === "fill" || layer.type === "raster"
+    );
+
+    let restoredCount = 0;
+    layersToRestore.forEach(layer => {
+      try {
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
+        if (currentVisibility === "none") {
+          map.setLayoutProperty(layer.id, "visibility", "visible");
+          restoredCount++;
+        }
+      } catch (e) {
+        // Ignore
+      }
+    });
+
+    if (restoredCount > 0) {
+      Log.info(`Restored ${restoredCount} Street layers`);
+    }
+  } catch (error) {
+    Log.warn("Error removing Google satellite layer:", error);
   }
 };
 
@@ -1238,6 +1351,10 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
 export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
   if (!map) return undefined;
   try {
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+      return MapStyle.GoogleSatellite;
+    }
+
     const styleUrl = (map as any).style?.url || (map as any).style?.name;
     if (styleUrl) {
       if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) {
@@ -1254,16 +1371,47 @@ export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
 };
 
 export const setMapStyle = (
-  style: MapStyle,
+  targetStyle: MapStyle,
   map: mapboxgl.Map,
   setCurrentStyle: (style: MapStyle) => void,
   currentStyle: string | MapStyle
 ) => {
-  if (map && currentStyle !== style) {
-    setCurrentStyle(style);
-    map.setStyle(style);
-    updateMapProjection(map, style);
+  if (!map || currentStyle === targetStyle) return;
+
+  const targetConfig = BASEMAP_CONFIGS[targetStyle];
+
+  if (targetStyle === MapStyle.GoogleSatellite) {
+    setCurrentStyle(targetStyle);
+
+    if (currentStyle === MapStyle.Street) {
+      if (map.isStyleLoaded()) {
+        addGoogleSatelliteLayer(map);
+        updateMapProjection(map, targetStyle);
+      } else {
+        map.once("style.load", () => {
+          addGoogleSatelliteLayer(map);
+          updateMapProjection(map, targetStyle);
+        });
+      }
+    } else {
+      map.setStyle(targetConfig.style);
+    }
+    return;
   }
+
+  if (currentStyle === MapStyle.GoogleSatellite) {
+    removeGoogleSatelliteLayer(map);
+
+    if (targetStyle === MapStyle.Street) {
+      setCurrentStyle(targetStyle);
+      updateMapProjection(map, targetStyle);
+      return;
+    }
+  }
+
+  setCurrentStyle(targetStyle);
+  map.setStyle(targetConfig.style);
+  updateMapProjection(map, targetStyle);
 };
 
 export type ValidationRecordV3 = {

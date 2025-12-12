@@ -40,6 +40,7 @@ import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
 import { PopupMobile } from "./components/PopupMobile";
 import { BBox } from "./GeoJSON";
+import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
@@ -383,7 +384,8 @@ export const MapContainer = ({
     tooltipType,
     projectUUID,
     hasAccess,
-    dashboardContext
+    dashboardContext,
+    currentStyle
   ]);
 
   useValueChanged(currentStyle, () => {
@@ -397,6 +399,8 @@ export const MapContainer = ({
       setStyleLoaded(false);
     }
   });
+
+  useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
 
   useEffect(() => {
     if (!map.current || !styleLoaded) return;
