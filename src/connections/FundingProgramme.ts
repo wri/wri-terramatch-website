@@ -19,3 +19,4 @@ export const loadFundingProgramme = connectionLoader(fundingProgrammeConnection)
 export const loadFundingProgrammes = connectionLoader(fundingProgrammesConnection);
 
 export const useFundingProgramme = connectionHook(fundingProgrammeConnection);
+export const useFundingProgrammes = connectionHook(fundingProgrammesConnection);

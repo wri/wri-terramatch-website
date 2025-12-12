@@ -8001,122 +8001,6 @@ export const usePatchV2AdminFundingProgrammeStageUUID = (
   );
 };
 
-export type GetV2FundingProgrammeQueryParams = {
-  /**
-   * page number you want results from
-   */
-  page?: number;
-};
-
-export type GetV2FundingProgrammeError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FundingProgrammeResponse = {
-  data?: {
-    id?: number;
-    uuid?: string;
-    name?: string;
-    description?: string;
-    location?: string;
-    read_more_url?: string;
-    framework_key?: string;
-    status?: string;
-    organisation_types?: string[];
-    stages?: {
-      id?: number;
-      uuid?: string;
-      status?: string;
-      deadline_at?: string;
-      readable_status?: string;
-      funding_programme_id?: number;
-      name?: string;
-      order?: number;
-      form?: {
-        uuid?: string;
-        title?: string;
-        type?: string;
-        published?: boolean;
-      };
-      deleted_at?: string;
-      created_at?: string;
-      updated_at?: string;
-    }[];
-    organisations?: {
-      uuid?: string;
-      name?: string;
-    }[];
-    cover?: {
-      uuid?: string;
-      url?: string;
-      thumb_url?: string;
-      collection_name?: string;
-      title?: string;
-      file_name?: string;
-      mime_type?: string;
-      size?: number;
-      lat?: number;
-      lng?: number;
-      is_public?: boolean;
-      is_cover?: boolean;
-      created_at?: string;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  links?: {
-    first?: string;
-    last?: string;
-    prev?: string;
-    next?: string;
-  };
-  meta?: {
-    from?: number;
-    to?: number;
-    current_page?: number;
-    last_page?: number;
-    per_page?: number;
-    total?: number;
-    path?: string;
-    links?: {
-      url?: string;
-      label?: string;
-      active?: boolean;
-    }[];
-  };
-};
-
-export type GetV2FundingProgrammeVariables = {
-  queryParams?: GetV2FundingProgrammeQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FundingProgramme = (variables: GetV2FundingProgrammeVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FundingProgrammeResponse,
-    GetV2FundingProgrammeError,
-    undefined,
-    {},
-    GetV2FundingProgrammeQueryParams,
-    {}
-  >({ url: "/v2/funding-programme", method: "get", ...variables, signal });
-
-export const useGetV2FundingProgramme = <TData = GetV2FundingProgrammeResponse>(
-  variables: GetV2FundingProgrammeVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FundingProgrammeResponse, GetV2FundingProgrammeError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FundingProgrammeResponse, GetV2FundingProgrammeError, TData>(
-    queryKeyFn({ path: "/v2/funding-programme", operationId: "getV2FundingProgramme", variables }),
-    ({ signal }) => fetchGetV2FundingProgramme({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminFundingProgrammeQueryParams = {
   /**
    * page number you want results from
@@ -8331,93 +8215,6 @@ export const usePostV2AdminFundingProgramme = (
   );
 };
 
-export type GetV2FundingProgrammeUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FundingProgrammeUUIDResponse = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type GetV2FundingProgrammeUUIDVariables = {
-  body?: RequestBodies.GetV2FundingProgrammeIDBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2FundingProgrammeUUID = (variables: GetV2FundingProgrammeUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2FundingProgrammeUUIDResponse,
-    GetV2FundingProgrammeUUIDError,
-    RequestBodies.GetV2FundingProgrammeIDBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/funding-programme/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2FundingProgrammeUUID = <TData = GetV2FundingProgrammeUUIDResponse>(
-  variables: GetV2FundingProgrammeUUIDVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2FundingProgrammeUUIDResponse, GetV2FundingProgrammeUUIDError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2FundingProgrammeUUIDResponse, GetV2FundingProgrammeUUIDError, TData>(
-    queryKeyFn({ path: "/v2/funding-programme/{UUID}", operationId: "getV2FundingProgrammeUUID", variables }),
-    ({ signal }) => fetchGetV2FundingProgrammeUUID({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminFundingProgrammeUUIDPathParams = {
   uuid: string;
 };
@@ -8477,8 +8274,61 @@ export type GetV2AdminFundingProgrammeUUIDResponse = {
   updated_at?: string;
 };
 
+export type GetV2AdminFundingProgrammeUUIDRequestBody = {
+  id?: number;
+  uuid?: string;
+  name?: string;
+  description?: string;
+  location?: string;
+  read_more_url?: string;
+  framework_key?: string;
+  status?: string;
+  organisation_types?: string[];
+  stages?: {
+    id?: number;
+    uuid?: string;
+    status?: string;
+    deadline_at?: string;
+    readable_status?: string;
+    funding_programme_id?: number;
+    name?: string;
+    order?: number;
+    form?: {
+      uuid?: string;
+      title?: string;
+      type?: string;
+      published?: boolean;
+    };
+    deleted_at?: string;
+    created_at?: string;
+    updated_at?: string;
+  }[];
+  organisations?: {
+    uuid?: string;
+    name?: string;
+  }[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  deleted_at?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type GetV2AdminFundingProgrammeUUIDVariables = {
-  body?: RequestBodies.GetV2FundingProgrammeIDBody;
+  body?: GetV2AdminFundingProgrammeUUIDRequestBody;
   pathParams: GetV2AdminFundingProgrammeUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -8489,7 +8339,7 @@ export const fetchGetV2AdminFundingProgrammeUUID = (
   apiFetch<
     GetV2AdminFundingProgrammeUUIDResponse,
     GetV2AdminFundingProgrammeUUIDError,
-    RequestBodies.GetV2FundingProgrammeIDBody,
+    GetV2AdminFundingProgrammeUUIDRequestBody,
     {},
     {},
     GetV2AdminFundingProgrammeUUIDPathParams
@@ -18188,19 +18038,9 @@ export type QueryOperation =
       variables: GetV2AdminFormsSubmissionsUUIDExportVariables;
     }
   | {
-      path: "/v2/funding-programme";
-      operationId: "getV2FundingProgramme";
-      variables: GetV2FundingProgrammeVariables;
-    }
-  | {
       path: "/v2/admin/funding-programme";
       operationId: "getV2AdminFundingProgramme";
       variables: GetV2AdminFundingProgrammeVariables;
-    }
-  | {
-      path: "/v2/funding-programme/{UUID}";
-      operationId: "getV2FundingProgrammeUUID";
-      variables: GetV2FundingProgrammeUUIDVariables;
     }
   | {
       path: "/v2/admin/funding-programme/{UUID}";

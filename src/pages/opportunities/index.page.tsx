@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
 
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
 import Text from "@/components/elements/Text/Text";
@@ -14,23 +13,14 @@ import PageSection from "@/components/extensive/PageElements/Section/PageSection
 import ApplicationsTable from "@/components/extensive/Tables/ApplicationsTable";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplications } from "@/connections/Application";
+import { useFundingProgrammes } from "@/connections/FundingProgramme";
 import { useMyOrg } from "@/connections/Organisation";
-import { useGetV2FundingProgramme } from "@/generated/apiComponents";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const OpportunitiesPage = () => {
   const t = useT();
-  const route = useRouter();
   const [, { organisation }] = useMyOrg();
-
-  const { data: fundingProgrammes, isLoading: loadingFundingProgrammes } = useGetV2FundingProgramme({
-    queryParams: {
-      //@ts-ignore
-      lang: route.locale,
-      per_page: 1000
-    }
-  });
-
+  const [loaded, { data: fundingProgrammes }] = useFundingProgrammes({});
   const [, { indexTotal }] = useApplications({});
 
   return (
@@ -42,12 +32,11 @@ const OpportunitiesPage = () => {
       <PageBody>
         {organisation?.status === "approved" ? (
           <>
-            <LoadingContainer loading={loadingFundingProgrammes}>
+            <LoadingContainer loading={!loaded}>
               <PageSection hasCarousel>
                 <FundingCarouselList
                   items={
-                    //@ts-ignore
-                    fundingProgrammes?.data
+                    fundingProgrammes
                       ?.filter(item => item.status !== "disabled")
                       .map(item => fundingProgrammeToFundingCardProps(item)) || []
                   }
