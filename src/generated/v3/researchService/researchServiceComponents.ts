@@ -392,6 +392,118 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type GetSitePolygonsGeoJsonQueryParams = {
+  /**
+   * UUID of a specific polygon
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * UUID of a site to get all its polygons
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get all its polygons across all sites
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174002
+   */
+  projectUuid?: string;
+  /**
+   * Include extended data from site_polygon_data table
+   *
+   * @default true
+   */
+  includeExtendedData?: boolean;
+  /**
+   * Return only geometry without properties
+   *
+   * @default false
+   */
+  geometryOnly?: boolean;
+};
+
+export type GetSitePolygonsGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSitePolygonsGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetSitePolygonsGeoJsonVariables = {
+  queryParams?: GetSitePolygonsGeoJsonQueryParams;
+};
+
+/**
+ * Export site polygons as GeoJSON FeatureCollection.
+ *     Provide exactly one of: uuid (single polygon), siteUuid (all active polygons in a site), or projectUuid (all active polygons across all sites in a project).
+ *     Use includeExtendedData to include additional data from site_polygon_data table.
+ *     Use geometryOnly to return only geometry without properties (only applicable when using uuid).
+ */
+export const getSitePolygonsGeoJson = new V3ApiEndpoint<
+  GetSitePolygonsGeoJsonResponse,
+  GetSitePolygonsGeoJsonError,
+  GetSitePolygonsGeoJsonVariables,
+  {}
+>("/research/v3/sitePolygons/geojson", "GET");
+
 export type ListSitePolygonVersionsPathParams = {
   primaryUuid: string;
 };
@@ -1633,25 +1745,6 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example indicatorsSummary
-         */
-        resourceType?: string;
-      };
-      data?: {
-        /**
-         * @example indicatorsSummary
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        attributes?: Schemas.IndicatorsSummaryDto;
-      };
-    }
-  | {
-      meta?: {
-        /**
          * @example delayedJobs
          */
         resourceType?: string;
@@ -1667,6 +1760,25 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
         id?: string;
         attributes?: Schemas.DelayedJobDto;
       };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
     },
   StartIndicatorCalculationError,
   StartIndicatorCalculationVariables,
@@ -1678,6 +1790,7 @@ export const operationsByTag = {
     createSitePolygons,
     sitePolygonsIndex,
     bulkUpdateSitePolygons,
+    getSitePolygonsGeoJson,
     listSitePolygonVersions,
     updateSitePolygonVersion,
     deleteSitePolygonVersion,

@@ -147,6 +147,23 @@ export type ValidationDto = {
   criteriaList: ValidationCriteriaDto[];
 };
 
+export type GeoJsonExportDto = {
+  /**
+   * @example FeatureCollection
+   */
+  type: "FeatureCollection";
+  /**
+   * Array of GeoJSON Feature objects
+   *
+   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"uuid":"123e4567-e89b-12d3-a456-426614174000","polyName":"Forest Plot A","plantStart":"2024-01-01","practice":["direct-seeding"],"targetSys":"agroforestry","distr":["single-line"],"numTrees":1500,"siteId":"123e4567-e89b-12d3-a456-426614174001"}}
+   */
+  features: {
+    type?: "Feature";
+    geometry?: Record<string, any>;
+    properties?: Record<string, any> | null;
+  }[];
+};
+
 export type GeometryUploadComparisonSummaryDto = {
   /**
    * Array of UUIDs of existing SitePolygons found in the database
@@ -809,19 +826,6 @@ export type PolygonListClippingRequestBody = {
   data: PolygonListClippingData;
 };
 
-export type IndicatorsSummaryDto = {
-  /**
-   * The UUID of the site that was validated
-   *
-   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
-   */
-  polygonUuids: string[];
-  /**
-   * Total number of polygons
-   */
-  totalPolygons: number;
-};
-
 export type IndicatorsAttributes = {
   /**
    * The UUIDs of the polygons to calculate indicators for
@@ -835,17 +839,17 @@ export type IndicatorsAttributes = {
    *
    * @example true
    */
-  updateExisting: Record<string, any>;
+  updateExisting: boolean;
   /**
    * Whether to force recalculation of the indicators
    *
    * @example true
    */
-  forceRecalculation: Record<string, any>;
+  forceRecalculation: boolean;
 };
 
 export type IndicatorsRequestData = {
-  type: "indicators";
+  type: "sitePolygons";
   attributes: IndicatorsAttributes;
 };
 
