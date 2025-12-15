@@ -27,7 +27,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundPolygonGeojsonUuid, usePostV2ExportImage } from "@/generated/apiComponents";
+import { usePostV2ExportImage } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -40,6 +40,7 @@ import { AdminPopup } from "./components/AdminPopup";
 import { DashboardPopup } from "./components/DashboardPopup";
 import { PopupMobile } from "./components/PopupMobile";
 import { BBox } from "./GeoJSON";
+import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
@@ -67,7 +68,9 @@ import {
   addMediaSourceAndLayer,
   addPopupsToMap,
   addSourcesToLayers,
+  downloadMultiplePolygonsGeoJson,
   drawTemporaryPolygon,
+  fetchPolygonGeometry,
   getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
@@ -383,7 +386,8 @@ export const MapContainer = ({
     tooltipType,
     projectUUID,
     hasAccess,
-    dashboardContext
+    dashboardContext,
+    currentStyle
   ]);
 
   useValueChanged(currentStyle, () => {
@@ -397,6 +401,8 @@ export const MapContainer = ({
       setStyleLoaded(false);
     }
   });
+
+  useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
 
   useEffect(() => {
     if (!map.current || !styleLoaded) return;
@@ -619,11 +625,9 @@ export const MapContainer = ({
     removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap?.uuid as string;
-      const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-        pathParams: { uuid: polygonuuid }
-      });
-      if (map.current && draw.current && polygonGeojson) {
-        addGeojsonToDraw(polygonGeojson.geojson, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
+      const geometry = await fetchPolygonGeometry(polygonuuid);
+      if (map.current && draw.current && geometry) {
+        addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
       }
     }
   };
@@ -696,10 +700,12 @@ export const MapContainer = ({
 
   const addGeometryVersion = async () => {
     const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
-    const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-      pathParams: { uuid: polygonUuid as string }
-    });
-    drawTemporaryPolygon(polygonGeojson?.geojson, () => {}, map.current, selectedPolyVersion);
+    if (!polygonUuid) {
+      Log.warn("Cannot add geometry version: polygonUuid is undefined", selectedPolyVersion);
+      return;
+    }
+    const geometry = await fetchPolygonGeometry(polygonUuid);
+    drawTemporaryPolygon(geometry, () => {}, map.current, selectedPolyVersion);
   };
 
   useValueChanged(selectedPolyVersion, () => {
@@ -709,7 +715,8 @@ export const MapContainer = ({
       map?.current?.removeSource("temp-polygon-source");
     }
 
-    if (selectedPolyVersion) {
+    const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
+    if (selectedPolyVersion && polygonUuid) {
       addGeometryVersion();
     }
   });
@@ -738,43 +745,10 @@ export const MapContainer = ({
         openNotification("error", t("Error"), t("No polygons found to download."));
         return;
       }
-      const polygonPromises = polygonsToDownload.map(uuid =>
-        fetchGetV2TerrafundPolygonGeojsonUuid({ pathParams: { uuid } })
-      );
 
-      const polygonResults = await Promise.all(polygonPromises);
-
-      const features: any[] = [];
-      polygonResults.forEach((result, index) => {
-        if (result?.geojson?.coordinates) {
-          result.geojson.coordinates.forEach((feature: any) => {
-            features.push({
-              type: "Feature",
-              geometry: {
-                type: "Polygon",
-                coordinates: [feature]
-              },
-              properties: {
-                polygon_uuid: polygonsToDownload[index]
-              }
-            });
-          });
-        }
-      });
-
-      const combinedGeojson = {
-        type: "FeatureCollection",
-        features: features
-      };
-
-      const blob = new Blob([JSON.stringify(combinedGeojson, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
       const nameFile = record?.organisation?.name || "polygons";
-      link.href = url;
-      link.download = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.geojson`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
+      await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
       openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
     } catch (error) {
       Log.error("Download error:", error);
@@ -954,7 +928,7 @@ export const MapContainer = ({
             </ControlGroup>
           </When>
           <When condition={isEditing}>
-            <ControlGroup position="top-right" className="top-[249px]">
+            <ControlGroup position="top-right" className="top-[272px]">
               <TrashButton onClick={mapFunctions?.handleTrashDelete} />
             </ControlGroup>
           </When>

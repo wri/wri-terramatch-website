@@ -83,20 +83,24 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         }
       });
     } else {
-      if (analysisToSlug[`${indicatorSlugSelected}`]?.message) {
+      const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
+
+      if (analysisData && typeof analysisData === "object" && "message" in analysisData && analysisData.message) {
         setLoadingAnalysis?.(false);
-        return openNotification("warning", t("Warning"), analysisToSlug[`${indicatorSlugSelected}`].message);
+        return openNotification("warning", t("Warning"), analysisData.message);
       }
 
       let polygonUuids: string[] = [];
 
-      if (Array.isArray(analysisToSlug[`${indicatorSlugSelected}`])) {
-        polygonUuids = analysisToSlug[`${indicatorSlugSelected}`]?.filter((v: string) => typeof v === "string");
+      if (Array.isArray(analysisData)) {
+        polygonUuids = analysisData.filter((v: string) => typeof v === "string");
       } else if (
-        typeof analysisToSlug[`${indicatorSlugSelected}`] === "object" &&
-        analysisToSlug[`${indicatorSlugSelected}`] !== null
+        typeof analysisData === "object" &&
+        analysisData !== null &&
+        !("message" in analysisData) &&
+        analysisData.constructor === Object
       ) {
-        polygonUuids = Object.values(analysisToSlug[`${indicatorSlugSelected}`]).filter(
+        polygonUuids = Object.values(analysisData as Record<string, string>).filter(
           (v): v is string => typeof v === "string"
         );
       }

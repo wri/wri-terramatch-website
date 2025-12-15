@@ -1,6 +1,7 @@
 import { isEmpty } from "lodash";
 
 import { Indicator } from "@/connections/SitePolygons";
+import { Indicators } from "@/generated/apiSchemas";
 import {
   IndicatorHectaresDto,
   IndicatorTreeCoverDto,
@@ -73,15 +74,15 @@ const categoriesFromEcoRegion: Record<EcoRegionCategory, string[]> = {
   ]
 };
 
-export const replaceTextWithParams = (params: Record<string, any>, text: string): string => {
+export const replaceTextWithParams = (params: Record<string, string | number>, text: string): string => {
   return Object.entries(params).reduce((result, [key, value]) => {
     const escapedKey = key.replace(/([.*+?^=!:${}()|[\]/\\])/g, "\\$1");
     return result.replace(new RegExp(escapedKey, "g"), value?.toString() || "");
   }, text);
 };
 
-export const getOrderTop3 = (data: any[]) => {
-  return data.sort((a, b) => b.value - a.value).slice(0, 3);
+export const getOrderTop3 = <T extends { value: number }>(data: T[]): T[] => {
+  return [...data].sort((a, b) => b.value - a.value).slice(0, 3);
 };
 
 export const getKeyValue = (data: { [key: string]: number }) => {
@@ -259,4 +260,188 @@ const formatDate = (dateString?: null | string | number | Date) => {
   if (dateString == null) return "";
   const date = new Date(dateString);
   return date.toLocaleDateString();
+};
+
+export const transformSitePolygonsToIndicators = (
+  polygons: SitePolygonLightDto[],
+  indicatorSlug: Indicator
+): Indicators[] => {
+  if (isEmpty(polygons)) {
+    return [];
+  }
+
+  return polygons
+    .filter(sitePolygon => sitePolygon.status === "approved")
+    .map(sitePolygon => {
+      const indicator = sitePolygon?.indicators?.find(
+        (ind: { indicatorSlug: string }) => ind.indicatorSlug === indicatorSlug
+      );
+
+      if (indicator == null) return null;
+
+      const baseIndicator = {
+        poly_name: sitePolygon.name || undefined,
+        status: sitePolygon.status || undefined,
+        plantstart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
+        site_name: sitePolygon.siteName || undefined,
+        poly_id: sitePolygon.polygonUuid || undefined,
+        site_id: sitePolygon.siteId || undefined,
+        indicator_slug: indicatorSlug,
+        year_of_analysis: (indicator as { yearOfAnalysis?: number }).yearOfAnalysis
+      } as Indicators & { poly_id?: string; site_id?: string };
+
+      switch (indicatorSlug) {
+        case "treeCoverLoss":
+        case "treeCoverLossFires": {
+          const treeCoverLoss = indicator as IndicatorTreeCoverLossDto;
+          const convertToNumber = (val: number | string | null | undefined): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+
+          const transformedData: Record<string, number> = {
+            "2010": convertToNumber(treeCoverLoss.value?.["2010"]),
+            "2011": convertToNumber(treeCoverLoss.value?.["2011"]),
+            "2012": convertToNumber(treeCoverLoss.value?.["2012"]),
+            "2013": convertToNumber(treeCoverLoss.value?.["2013"]),
+            "2014": convertToNumber(treeCoverLoss.value?.["2014"]),
+            "2015": convertToNumber(treeCoverLoss.value?.["2015"]),
+            "2016": convertToNumber(treeCoverLoss.value?.["2016"]),
+            "2017": convertToNumber(treeCoverLoss.value?.["2017"]),
+            "2018": convertToNumber(treeCoverLoss.value?.["2018"]),
+            "2019": convertToNumber(treeCoverLoss.value?.["2019"]),
+            "2020": convertToNumber(treeCoverLoss.value?.["2020"]),
+            "2021": convertToNumber(treeCoverLoss.value?.["2021"]),
+            "2022": convertToNumber(treeCoverLoss.value?.["2022"]),
+            "2023": convertToNumber(treeCoverLoss.value?.["2023"]),
+            "2024": convertToNumber(treeCoverLoss.value?.["2024"]),
+            "2025": convertToNumber(treeCoverLoss.value?.["2025"])
+          };
+
+          return {
+            ...baseIndicator,
+            data: transformedData
+          };
+        }
+
+        case "restorationByStrategy": {
+          const hectares = indicator as IndicatorHectaresDto;
+          const convertToNumber = (val: number | string | null | undefined): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+
+          const data: Record<string, number> = {};
+
+          const treePlanting = convertToNumber(hectares.value?.["tree-planting"]);
+          const assistedNaturalRegeneration = convertToNumber(hectares.value?.["assisted-natural-regeneration"]);
+          const directSeeding = convertToNumber(hectares.value?.["direct-seeding"]);
+
+          if (treePlanting > 0) {
+            data.tree_planting = treePlanting;
+          }
+          if (assistedNaturalRegeneration > 0) {
+            data.assisted_natural_regeneration = assistedNaturalRegeneration;
+          }
+          if (directSeeding > 0) {
+            data.direct_seeding = directSeeding;
+          }
+
+          if (hectares.value) {
+            Object.keys(hectares.value).forEach(key => {
+              if (!["tree-planting", "assisted-natural-regeneration", "direct-seeding"].includes(key)) {
+                const value = convertToNumber(hectares.value[key]);
+                if (value > 0) {
+                  const convertedKey = key.replace(/-/g, "_");
+                  data[convertedKey] = value;
+                }
+              }
+            });
+          }
+
+          return {
+            ...baseIndicator,
+            data
+          };
+        }
+
+        case "restorationByEcoRegion": {
+          const hectares = indicator as IndicatorHectaresDto;
+          const convertToNumber = (val: number | string | null | undefined): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+
+          const data: Record<string, number> = {};
+
+          for (const region in hectares.value) {
+            const category = getEcoRegionCategory(region);
+            if (category) {
+              const value = convertToNumber(hectares.value[region]);
+              if (value > 0) {
+                data[category] = value;
+              }
+            }
+          }
+
+          return {
+            ...baseIndicator,
+            data
+          };
+        }
+
+        case "restorationByLandUse": {
+          const hectares = indicator as IndicatorHectaresDto;
+          const convertToNumber = (val: number | string | null | undefined): number => {
+            if (val == null) return 0;
+            const num = typeof val === "string" ? parseFloat(val) : Number(val);
+            return Number.isNaN(num) ? 0 : num;
+          };
+
+          const data: Record<string, number> = {};
+
+          const agroforest = convertToNumber(hectares.value?.agroforest);
+          const naturalForest = convertToNumber(hectares.value?.["natural-forest"]);
+          const mangrove = convertToNumber(hectares.value?.mangrove);
+          const silvopasture = convertToNumber(hectares.value?.silvopasture);
+
+          if (agroforest > 0) {
+            data.agroforest = agroforest;
+          }
+          if (naturalForest > 0) {
+            data.natural_forest = naturalForest;
+          }
+          if (mangrove > 0) {
+            data.mangrove = mangrove;
+          }
+          if (silvopasture > 0) {
+            data.silvopasture = silvopasture;
+          }
+
+          if (hectares.value) {
+            Object.keys(hectares.value).forEach(key => {
+              if (!["agroforest", "natural-forest", "mangrove", "silvopasture"].includes(key)) {
+                const value = convertToNumber(hectares.value[key]);
+                if (value > 0) {
+                  const convertedKey = key.replace(/-/g, "_");
+                  data[convertedKey] = value;
+                }
+              }
+            });
+          }
+
+          return {
+            ...baseIndicator,
+            data
+          };
+        }
+
+        default:
+          return baseIndicator;
+      }
+    })
+    .filter((row): row is Indicators => row != null);
 };

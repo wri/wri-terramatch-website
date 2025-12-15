@@ -147,51 +147,6 @@ export type ValidationDto = {
   criteriaList: ValidationCriteriaDto[];
 };
 
-export type GeoJsonExportDto = {
-  /**
-   * @example FeatureCollection
-   */
-  type: "FeatureCollection";
-  /**
-   * Array of GeoJSON Feature objects
-   *
-   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"uuid":"123e4567-e89b-12d3-a456-426614174000","polyName":"Forest Plot A","plantStart":"2024-01-01","practice":["direct-seeding"],"targetSys":"agroforestry","distr":["single-line"],"numTrees":1500,"siteId":"123e4567-e89b-12d3-a456-426614174001"}}
-   */
-  features: {
-    type?: "Feature";
-    geometry?: Record<string, any>;
-    properties?: Record<string, any> | null;
-  }[];
-};
-
-export type GeometryUploadComparisonSummaryDto = {
-  /**
-   * Array of UUIDs of existing SitePolygons found in the database
-   *
-   * @example 550e8400-e29b-41d4-a716-446655440000
-   * @example 660e8400-e29b-41d4-a716-446655440001
-   */
-  existingUuids: string[];
-  /**
-   * Total number of features in the uploaded file
-   *
-   * @example 800
-   */
-  totalFeatures: number;
-  /**
-   * Number of features that will create new versions (UUIDs found in database)
-   *
-   * @example 150
-   */
-  featuresForVersioning: number;
-  /**
-   * Number of features that will create new polygons (UUIDs not found or missing UUIDs)
-   *
-   * @example 650
-   */
-  featuresForCreation: number;
-};
-
 export type SitePolygonLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
