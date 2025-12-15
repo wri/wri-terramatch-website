@@ -1,9 +1,11 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+import { IndexConnection } from "@/connections/util/apiConnectionFactory";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { AppStore } from "@/store/store";
-import { Connected, Connection, OptionalProps } from "@/types/connection";
+import { Connected, Connection, OptionalProps, PaginatedConnectionProps } from "@/types/connection";
 
 import { useStableProps } from "./useStableProps";
 
@@ -31,3 +33,33 @@ export function useConnection<TSelected, TProps extends OptionalProps, State>(
 
   return selected == null ? [false, {}] : [true, selected];
 }
+
+const PAGE_SIZE = 100;
+export const useAllPages = <D, S extends IndexConnection<D>, P extends PaginatedConnectionProps>(
+  // & IndexConnection<D> needed to get TS to correctly infer D for the return type
+  // https://stackoverflow.com/a/76295763/139109
+  connection: Connection<S & IndexConnection<D>, P>,
+  props: Omit<P, "pageNumber" | "pageSize">
+): [boolean, D[]] => {
+  const [data, setData] = useState<D[]>([]);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [dataStable, { data: pageData, indexTotal }] = useConnection(connection, {
+    ...props,
+    pageNumber,
+    pageSize: PAGE_SIZE
+  } as P);
+  useEffect(() => {
+    if (pageData != null) setData(data => [...data, ...pageData]);
+  }, [pageData]);
+  useValueChanged(dataStable, () => {
+    if (dataStable && indexTotal != null) {
+      setPageNumber(pageNumber => {
+        const maxPage = Math.ceil(indexTotal / PAGE_SIZE);
+        return pageNumber < maxPage ? pageNumber + 1 : pageNumber;
+      });
+    }
+  });
+
+  const allPagesLoaded = indexTotal == null ? false : dataStable && pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
+  return [allPagesLoaded, data];
+};

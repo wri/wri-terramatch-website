@@ -115,9 +115,7 @@ export const formDataProvider: FormDataProvider = {
   },
 
   async getMany(_, params) {
-    const response = await Promise.all(
-      params.ids.map(async id => await loadForm({ id: id as string, translated: false }))
-    );
+    const response = await Promise.all(params.ids.map(id => loadForm({ id: id as string, translated: false })));
     const failed = response.find(({ loadFailure }) => loadFailure != null);
     if (failed != null) {
       throw v3ErrorForRA("Form get fetch failed", failed.loadFailure);

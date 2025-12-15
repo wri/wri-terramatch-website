@@ -1,112 +1,94 @@
-/**
- * Application Data Provider
- * API Documentation: https://test.wrirestorationmarketplace.cubeapis.com/documentation#tag/Form-Submissions
- * An Application is another word for a Form Submission.
- */
+import { DataProvider, GetListParams, GetOneParams } from "react-admin";
 
-import { DataProvider, Identifier } from "react-admin";
-
+import { loadApplication, loadApplicationIndex } from "@/connections/Application";
+import { loadSubmission } from "@/connections/FormSubmission";
+import { loadFundingProgramme } from "@/connections/FundingProgramme";
 import {
   DeleteV2AdminFormsApplicationsUUIDError,
   fetchDeleteV2AdminFormsApplicationsUUID,
-  fetchGetV2AdminFormsApplications,
-  fetchGetV2AdminFormsApplicationsUUID,
   fetchPatchV2AdminFormsSubmissionsUUIDStatus,
-  GetV2AdminFormsApplicationsError,
-  GetV2AdminFormsApplicationsUUIDError,
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
-import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
+import {
+  ApplicationDto,
+  EmbeddedSubmissionDto,
+  FundingProgrammeDto,
+  SubmissionDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
-import { extractLocaleFromAdminPath } from "../utils/localeExtractor";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
-export const applicationSortableList: string[] = [
-  "organisation_name",
-  "funding_programme_name",
-  "created_at",
-  "updated_at"
-];
+export type ApplicationShowRecord = ApplicationDto & {
+  id: string;
+  currentSubmission: SubmissionDto | null;
+  fundingProgramme: FundingProgrammeDto | null;
+};
+
+export type ApplicationListRecord = ApplicationDto & { id: string; currentSubmission: EmbeddedSubmissionDto | null };
+
 export interface ApplicationDataProvider extends DataProvider {
   export: (resource: string) => Promise<void>;
   exportSubmission: (uuid: string) => Promise<void>;
 }
 
-const normalizeApplicationObject = (item: FormSubmissionRead) => ({
-  ...item,
-  id: item.uuid as Identifier
-});
-
 export const applicationDataProvider: ApplicationDataProvider = {
-  //@ts-ignore
-  async getList(_, params) {
-    if (params.filter.current_submission) {
-      params.filter.current_submission = params.filter.current_submission.uuid;
+  async getList<RecordType>(_: string, params: GetListParams) {
+    let { filter, ...props } = params;
+    if (filter != null) {
+      const { currentSubmission, ...rest } = filter;
+      filter = rest;
+      if (currentSubmission?.status != null) filter.currentSubmissionStatus = currentSubmission.status;
+    }
+    const connected = await loadApplicationIndex(raConnectionProps({ ...props, filter }));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Application index fetch failed", connected.loadFailure);
     }
 
-    try {
-      const response = await fetchGetV2AdminFormsApplications({
-        // Sort field currently broken.
-        queryParams: raListParamsToQueryParams(
-          params,
-          applicationSortableList,
-          [{ key: "current_submission", replaceWith: "current_stage" }],
-          [
-            { key: "organisation_uuid", replaceWith: "organisation_name" },
-            { key: "funding_programme_uuid", replaceWith: "funding_programme_name" },
-            { key: "current_submission.created_at", replaceWith: "created_at" },
-            { key: "current_submission.updated_at", replaceWith: "updated_at" }
-          ]
-        )
-      });
+    const data =
+      connected.data?.map((application): ApplicationListRecord => {
+        const currentSubmission =
+          application.submissions.length === 0 ? null : application.submissions[application.submissions.length - 1];
+        return {
+          ...application,
+          id: application.uuid,
+          currentSubmission
+        };
+      }) ?? [];
 
-      const result = apiListResponseToRAListResult(response);
-
-      return {
-        ...result,
-        data: result.data?.map((item: FormSubmissionRead) => normalizeApplicationObject(item))
-      };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsApplicationsError);
-    }
+    return { data: data as RecordType[], total: connected.indexTotal };
   },
 
-  // @ts-ignore
-  async getOne(_, params) {
-    const locale = extractLocaleFromAdminPath();
-    try {
-      const response = await fetchGetV2AdminFormsApplicationsUUID({
-        pathParams: { uuid: params.id },
-        queryParams: { ...(locale == null ? {} : { lang: locale }) }
-      });
-
-      // @ts-ignore
-      const application = response.data as ApplicationRead;
-      const data = {
-        ...application,
-        // We took this field out of the BE API response to cut down the render time for this
-        // massive object, but a bunch of admin code still wants it, so map it in here.
-        current_submission: (application?.form_submissions ?? []).find(
-          ({ uuid }) => uuid === application?.current_submission_uuid
-        ),
-        id: application.uuid
-      };
-      return { data };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFormsApplicationsUUIDError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    // Disable translations for admin data provider.
+    const application = await loadApplication({
+      id,
+      translated: false,
+      sideloads: ["fundingProgramme", "currentSubmission"]
+    });
+    if (application.loadFailure != null) {
+      throw v3ErrorForRA("Application fetch failed", application.loadFailure);
     }
-  },
 
-  async getManyReference(_, params) {
-    const res = await fetchGetV2AdminFormsApplications({
-      queryParams: {
-        ...raListParamsToQueryParams(params, applicationSortableList),
-        ["filter[organisation_uuid]"]: params.id
-      }
+    const fundingProgramme = await loadFundingProgramme({
+      id: application.data?.fundingProgrammeUuid ?? "",
+      enabled: application.data?.fundingProgrammeUuid != null
+    });
+    const submissions = application.data?.submissions ?? [];
+    const currentSubmissionUuid = submissions.length === 0 ? undefined : submissions[submissions.length - 1].uuid;
+    const submission = await loadSubmission({
+      id: currentSubmissionUuid ?? "",
+      enabled: currentSubmissionUuid != null
     });
 
-    return apiListResponseToRAListResult(res);
+    return {
+      data: {
+        ...application.data,
+        id: application.data?.uuid,
+        currentSubmission: submission.data,
+        fundingProgramme: fundingProgramme.data
+      }
+    } as RecordType;
   },
 
   //@ts-ignore

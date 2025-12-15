@@ -13,7 +13,7 @@ export const FundingProgrammeShow = () => (
         <SimpleShowLayout>
           <TextField source="name" label="Name" fullWidth />
           <TextField source="description" label="Description" fullWidth />
-          <ImageField source="cover.url" label="Cover Photo" title="cover.file_name" emptyText="Not Provided" />
+          <ImageField source="cover.url" label="Cover Photo" title="cover.fileName" emptyText="Not Provided" />
           <TextField source="status" label="Status" fullWidth sx={{ textTransform: "capitalize" }} />
         </SimpleShowLayout>
         <Divider />

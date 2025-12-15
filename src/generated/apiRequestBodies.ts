@@ -22,59 +22,6 @@ export type PostAuthResetBody = {
   callback_url?: string;
 };
 
-export type GetV2FundingProgrammeIDBody = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
 export type V2PostOrganisationsBody = {
   /**
    * Available type are for-profit-organization, non-profit-organization, government-agency

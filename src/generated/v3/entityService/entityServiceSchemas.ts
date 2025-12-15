@@ -2433,8 +2433,6 @@ export type LinkedFieldDto = {
   name: string;
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2465,10 +2463,45 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   optionListKey: string | null;
   multiChoice: boolean | null;
   collection: string | null;
+};
+
+export type SubmissionDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  updatedByName: string | null;
+  applicationUuid: string | null;
+  projectPitchUuid: string | null;
+  frameworkKey:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  formUuid: string | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  answers: Record<string, any>;
+  organisationUuid: string | null;
+  organisationName: string | null;
+  feedback: string | null;
+  translatedFeedbackFields: string[] | null;
+  stageName: string | null;
+  stageUuid: string | null;
 };
 
 /**
@@ -2538,8 +2571,6 @@ export type FormQuestionDto = {
   name: string;
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2570,7 +2601,9 @@ export type FormQuestionDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   label: string;
   placeholder?: string | null;
   description?: string | null;
@@ -2686,8 +2719,6 @@ export type StoreFormQuestionOptionAttributes = {
 export type StoreFormQuestionAttributes = {
   inputType:
     | "boolean"
-    | "conditional"
-    | "tableInput"
     | "date"
     | "long-text"
     | "mapInput"
@@ -2718,7 +2749,9 @@ export type StoreFormQuestionAttributes = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
-    | "workdays";
+    | "workdays"
+    | "conditional"
+    | "tableInput";
   label: string;
   placeholder?: string | null;
   description?: string | null;
@@ -2812,4 +2845,126 @@ export type UpdateFormData = {
 
 export type UpdateFormBody = {
   data: UpdateFormData;
+};
+
+export type EmbeddedSubmissionDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  updatedByName: string | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  stageName: string | null;
+};
+
+export type ApplicationDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * List of submissions for this application. The last is the current submission.
+   */
+  submissions: EmbeddedSubmissionDto[];
+  organisationName: string | null;
+  organisationUuid: string | null;
+  fundingProgrammeName: string | null;
+  fundingProgrammeUuid: string | null;
+};
+
+export type ApplicationHistoryEntryDto = {
+  eventType:
+    | "change-request"
+    | "status"
+    | "submission"
+    | "comment"
+    | "change-request-updated"
+    | "updated"
+    | "reminder-sent"
+    | null;
+  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  /**
+   * @format date-time
+   */
+  date: string;
+  stageName: string | null;
+  comment: string | null;
+};
+
+export type ApplicationHistoryDto = {
+  applicationUuid: string;
+  /**
+   * List of application history entries sorted in reverse chronological order. The first entry is the most recent.
+   */
+  entries: ApplicationHistoryEntryDto[];
+};
+
+export type EmbeddedMediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
+export type StageDto = {
+  uuid: string;
+  name: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt: string | null;
+  formUuid: string | null;
+};
+
+export type FundingProgrammeDto = {
+  uuid: string;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  framework:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  name: string;
+  description: string;
+  location: string | null;
+  readMoreUrl: string | null;
+  status: "inactive" | "active" | "disabled";
+  organisationTypes: ("for-profit-organization" | "non-profit-organization")[];
+  cover: EmbeddedMediaDto;
+  stages: StageDto[] | null;
 };

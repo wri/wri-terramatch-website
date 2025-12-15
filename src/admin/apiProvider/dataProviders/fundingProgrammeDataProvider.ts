@@ -1,88 +1,59 @@
-import lo, { sortBy } from "lodash";
-import { DataProvider, GetManyResult, GetOneResult, Identifier, RaRecord } from "react-admin";
+import lo from "lodash";
+import { DataProvider, GetManyResult, GetOneParams } from "react-admin";
 
 import { stageDataProvider } from "@/admin/apiProvider/dataProviders/stageDataProvider";
+import { loadFundingProgramme, loadFundingProgrammes } from "@/connections/FundingProgramme";
 import {
   DeleteV2AdminFundingProgrammeUUIDError,
   fetchDeleteV2AdminFundingProgrammeUUID,
-  fetchGetV2AdminFundingProgramme,
-  fetchGetV2AdminFundingProgrammeUUID,
   fetchPostV2AdminFundingProgramme,
   fetchPutV2AdminFundingProgrammeUUID,
-  GetV2AdminFundingProgrammeError,
-  GetV2AdminFundingProgrammeUUIDError,
   PostV2AdminFundingProgrammeError,
   PutV2AdminFundingProgrammeUUIDError
 } from "@/generated/apiComponents";
-import { FundingProgramme } from "@/generated/apiSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
 
 export interface FundingDataProvider extends DataProvider {}
 
-interface Record extends Omit<FundingProgramme, "id">, RaRecord {
-  id: Identifier;
-}
-
-/**
- * add replace `id` with `uuid`, sort stages based on order attribute
- * @param object api response
- * @returns normalized version of api response
- */
-const normalizeFundingProgrammeObject = (object: FundingProgramme): Record => ({
-  ...object,
-  id: object.uuid as Identifier,
-  //@ts-ignore
-  stages: sortBy(object.stages?.data, "order"),
-  // @ts-ignore
-  organisationIds: object.data?.organisations?.map(org => org.uuid) || []
-});
-
 export const fundingProgrammeDataProvider: FundingDataProvider = {
-  async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminFundingProgramme({
-        queryParams: raListParamsToQueryParams(params)
-      });
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeError);
+  async getList<RecordType>() {
+    // note: we don't use any filtering, sorting or pagination on this list view
+    const connection = await loadFundingProgrammes({ translated: false });
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Funding Programme index fetch failed", connection.loadFailure);
     }
+    return {
+      data: (connection.data?.map(fundingProgramme => ({
+        ...fundingProgramme,
+        id: fundingProgramme.uuid
+      })) ?? []) as RecordType[],
+      total: connection.data?.length ?? 0
+    };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2AdminFundingProgrammeUUID({
-        pathParams: { uuid: params.id }
-      });
-
-      return {
-        //@ts-ignore
-        data: normalizeFundingProgrammeObject(response.data)
-      } as GetOneResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeUUIDError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    const { loadFailure, data: fundingProgramme } = await loadFundingProgramme({ id, translated: false });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Funding Programme get fetch failed", loadFailure);
     }
+
+    return { data: { ...fundingProgramme, id: fundingProgramme?.uuid } } as RecordType;
   },
 
   async getMany(_, params) {
-    try {
-      const data: FundingProgramme[] = [];
-
-      for (const id of params.ids) {
-        const resp = await fetchGetV2AdminFundingProgrammeUUID({
-          pathParams: { uuid: id as string }
-        });
-
-        // @ts-ignore issue with ids
-        data.push({ ...resp.data, id: resp.data.uuid });
-      }
-      return { data } as GetManyResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeUUIDError);
+    const response = await Promise.all(
+      params.ids.map(id => loadFundingProgramme({ id: id as string, translated: false }))
+    );
+    const failed = response.find(({ loadFailure }) => loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Funding Programme get fetch failed", failed.loadFailure);
     }
+
+    return {
+      data: response.map(({ data }) => ({ ...data, id: data?.uuid }))
+    } as GetManyResult;
   },
 
   async update(_, params) {
