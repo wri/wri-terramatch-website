@@ -1,6 +1,11 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
-import { fundingProgrammeGet, fundingProgrammesIndex } from "@/generated/v3/entityService/entityServiceComponents";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
+import {
+  fundingProgrammeDelete,
+  fundingProgrammeGet,
+  fundingProgrammesIndex
+} from "@/generated/v3/entityService/entityServiceComponents";
 import { FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const fundingProgrammeConnection = v3Resource("fundingProgrammes", fundingProgrammeGet)
@@ -17,6 +22,9 @@ const fundingProgrammesConnection = v3Resource("fundingProgrammes", fundingProgr
 
 export const loadFundingProgramme = connectionLoader(fundingProgrammeConnection);
 export const loadFundingProgrammes = connectionLoader(fundingProgrammesConnection);
+export const deleteFundingProgramme = deleterAsync("fundingProgrammes", fundingProgrammeDelete, uuid => ({
+  pathParams: { uuid }
+}));
 
 export const useFundingProgramme = connectionHook(fundingProgrammeConnection);
 export const useFundingProgrammes = connectionHook(fundingProgrammesConnection);

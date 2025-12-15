@@ -16,7 +16,8 @@ import * as yup from "yup";
 
 import { useExportContext } from "@/admin/modules/application/context/export.provider";
 import { validateForm } from "@/admin/utils/forms";
-import { useGetV2AdminFundingProgramme, useGetV2FundingProgrammeStage } from "@/generated/apiComponents";
+import { useFundingProgrammes } from "@/connections/FundingProgramme";
+import { useGetV2FundingProgrammeStage } from "@/generated/apiComponents";
 import { StageRead } from "@/generated/apiSchemas";
 import { Option } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
@@ -35,7 +36,7 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
   const { control, setValue } = useFormContext();
   const choice = useWatch({ control, name: "export_choice" });
 
-  const { data: fundingProgrammesData, isLoading: fundingProgrammesLoading } = useGetV2AdminFundingProgramme({});
+  const [fpsLoaded, { data: fundingProgrammes }] = useFundingProgrammes({ translated: false });
   const { data: stageData, isLoading: stagesLoading } = useGetV2FundingProgrammeStage({
     queryParams: {
       per_page: 100,
@@ -45,13 +46,10 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
   });
 
   const fpChoices = useMemo(() => {
-    const data = fundingProgrammesData?.data?.map(f => ({
-      title: f.name ?? "",
-      value: f.uuid ?? ""
-    })) as Option[];
+    const data = fundingProgrammes?.map(({ name, uuid }) => ({ title: name, value: uuid })) as Option[];
 
     return optionToChoices(data ?? []);
-  }, [fundingProgrammesData]);
+  }, [fundingProgrammes]);
 
   const stageChoices = useMemo(() => {
     // @ts-ignore incorrect docs
@@ -79,7 +77,7 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
     <>
       <DialogTitle>Please select the funding framework or stage you&apos;d like to export.</DialogTitle>
       <DialogContent>
-        <If condition={fundingProgrammesLoading || stagesLoading}>
+        <If condition={!fpsLoaded || stagesLoading}>
           <Then>
             <CircularProgress size={22} />
           </Then>
@@ -100,7 +98,7 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
                 <DialogContentText>You can export one framework at a time.</DialogContentText>
 
                 <AutocompleteInput
-                  loading={fundingProgrammesLoading}
+                  loading={!fpsLoaded}
                   source="funding_programme_uuid"
                   label="Funding Programme"
                   choices={fpChoices}
@@ -130,7 +128,7 @@ const FormContent = ({ handleClose }: { handleClose: ApplicationsExportModalProp
 
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" type="submit" disabled={fundingProgrammesLoading || stagesLoading}>
+        <Button variant="contained" type="submit" disabled={!fpsLoaded || stagesLoading}>
           Confirm
         </Button>
       </DialogActions>

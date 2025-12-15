@@ -1,11 +1,9 @@
 import lo from "lodash";
-import { DataProvider, GetManyResult, GetOneParams } from "react-admin";
+import { DataProvider, DeleteParams, GetManyResult, GetOneParams } from "react-admin";
 
 import { stageDataProvider } from "@/admin/apiProvider/dataProviders/stageDataProvider";
-import { loadFundingProgramme, loadFundingProgrammes } from "@/connections/FundingProgramme";
+import { deleteFundingProgramme, loadFundingProgramme, loadFundingProgrammes } from "@/connections/FundingProgramme";
 import {
-  DeleteV2AdminFundingProgrammeUUIDError,
-  fetchDeleteV2AdminFundingProgrammeUUID,
   fetchPostV2AdminFundingProgramme,
   fetchPutV2AdminFundingProgrammeUUID,
   PostV2AdminFundingProgrammeError,
@@ -15,9 +13,7 @@ import {
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
 
-export interface FundingDataProvider extends DataProvider {}
-
-export const fundingProgrammeDataProvider: FundingDataProvider = {
+export const fundingProgrammeDataProvider: Partial<DataProvider> = {
   async getList<RecordType>() {
     // note: we don't use any filtering, sorting or pagination on this list view
     const connection = await loadFundingProgrammes({ translated: false });
@@ -134,29 +130,21 @@ export const fundingProgrammeDataProvider: FundingDataProvider = {
     }
   },
 
-  // @ts-ignore
-  async delete(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
     try {
-      await fetchDeleteV2AdminFundingProgrammeUUID({
-        pathParams: { uuid: params.id as string }
-      });
-      return { data: { id: params.id } };
+      await deleteFundingProgramme(id as string);
+      return { data: { id } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding programme delete fetch failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
-      for (const id of params.ids) {
-        await fetchDeleteV2AdminFundingProgrammeUUID({
-          pathParams: { uuid: id as string }
-        });
-      }
-
+      await Promise.all(params.ids.map(id => deleteFundingProgramme(id as string)));
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding programme delete fetch failed", err);
     }
   }
 };

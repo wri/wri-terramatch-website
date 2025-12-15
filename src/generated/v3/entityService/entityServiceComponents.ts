@@ -4408,6 +4408,66 @@ export const fundingProgrammeGet = new V3ApiEndpoint<
   {}
 >("/fundingProgrammes/v3/{uuid}", "GET");
 
+export type FundingProgrammeDeletePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeDeleteResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type FundingProgrammeDeleteVariables = {
+  pathParams: FundingProgrammeDeletePathParams;
+};
+
+export const fundingProgrammeDelete = new V3ApiEndpoint<
+  FundingProgrammeDeleteResponse,
+  FundingProgrammeDeleteError,
+  FundingProgrammeDeleteVariables,
+  {}
+>("/fundingProgrammes/v3/{uuid}", "DELETE");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -4425,5 +4485,5 @@ export const operationsByTag = {
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
-  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
+  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet, fundingProgrammeDelete }
 };
