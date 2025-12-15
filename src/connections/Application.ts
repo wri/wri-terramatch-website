@@ -1,6 +1,8 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  applicationDelete,
   applicationGet,
   ApplicationGetQueryParams,
   applicationHistoryGet,
@@ -30,6 +32,7 @@ export const applicationsConnection = v3Resource("applications", applicationInde
 
 export const loadApplicationIndex = connectionLoader(applicationsConnection);
 export const loadApplication = connectionLoader(applicationConnection);
+export const deleteApplication = deleterAsync("applications", applicationDelete, uuid => ({ pathParams: { uuid } }));
 
 export const useApplication = connectionHook(applicationConnection);
 export const useApplications = connectionHook(applicationsConnection);

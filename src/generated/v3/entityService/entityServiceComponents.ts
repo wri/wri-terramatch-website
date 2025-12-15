@@ -91,6 +91,16 @@ export type ProjectPitchIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -263,6 +273,16 @@ export type ImpactStoryIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -421,6 +441,16 @@ export type TaskIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -876,6 +906,16 @@ export type TreeScientificNamesSearchResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -1145,6 +1185,16 @@ export type DemographicsIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -1252,6 +1302,16 @@ export type DisturbanceIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -1396,6 +1456,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1438,6 +1508,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1482,6 +1562,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1524,6 +1614,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1568,6 +1668,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1610,6 +1720,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1654,6 +1774,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1697,6 +1827,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1739,6 +1879,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2736,6 +2886,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2774,6 +2934,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2814,6 +2984,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2852,6 +3032,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2892,6 +3082,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2931,6 +3131,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2969,6 +3179,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -3047,6 +3267,16 @@ export type OptionLabelsIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3116,6 +3346,16 @@ export type OptionLabelsGetListResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3184,6 +3424,16 @@ export type LinkedFieldsIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -3347,6 +3597,16 @@ export type FormIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -3750,6 +4010,16 @@ export type ApplicationIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3853,6 +4123,66 @@ export const applicationGet = new V3ApiEndpoint<
   ApplicationGetVariables,
   {}
 >("/applications/v3/{uuid}", "GET");
+
+export type ApplicationDeletePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationDeleteResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ApplicationDeleteVariables = {
+  pathParams: ApplicationDeletePathParams;
+};
+
+export const applicationDelete = new V3ApiEndpoint<
+  ApplicationDeleteResponse,
+  ApplicationDeleteError,
+  ApplicationDeleteVariables,
+  {}
+>("/applications/v3/{uuid}", "DELETE");
 
 export type ApplicationHistoryGetPathParams = {
   /**
@@ -3967,6 +4297,16 @@ export type FundingProgrammesIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -4084,6 +4424,6 @@ export const operationsByTag = {
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
-  applications: { applicationIndex, applicationGet, applicationHistoryGet },
+  applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
   fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet }
 };

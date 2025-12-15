@@ -9552,51 +9552,6 @@ export const usePatchV2MyBanners = (
   );
 };
 
-export type DeleteV2AdminFormsApplicationsUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2AdminFormsApplicationsUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2AdminFormsApplicationsUUIDVariables = {
-  pathParams: DeleteV2AdminFormsApplicationsUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2AdminFormsApplicationsUUID = (
-  variables: DeleteV2AdminFormsApplicationsUUIDVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    undefined,
-    DeleteV2AdminFormsApplicationsUUIDError,
-    undefined,
-    {},
-    {},
-    DeleteV2AdminFormsApplicationsUUIDPathParams
-  >({ url: "/v2/admin/forms/applications/{uuid}", method: "delete", ...variables, signal });
-
-export const useDeleteV2AdminFormsApplicationsUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      undefined,
-      DeleteV2AdminFormsApplicationsUUIDError,
-      DeleteV2AdminFormsApplicationsUUIDVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    undefined,
-    DeleteV2AdminFormsApplicationsUUIDError,
-    DeleteV2AdminFormsApplicationsUUIDVariables
-  >(
-    (variables: DeleteV2AdminFormsApplicationsUUIDVariables) =>
-      fetchDeleteV2AdminFormsApplicationsUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2AdminFormsApplicationsUUIDExportPathParams = {
   uuid: string;
 };

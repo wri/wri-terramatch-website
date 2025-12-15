@@ -1,11 +1,9 @@
-import { DataProvider, GetListParams, GetOneParams } from "react-admin";
+import { DataProvider, DeleteParams, GetListParams, GetOneParams } from "react-admin";
 
-import { loadApplication, loadApplicationIndex } from "@/connections/Application";
+import { deleteApplication, loadApplication, loadApplicationIndex } from "@/connections/Application";
 import { loadSubmission } from "@/connections/FormSubmission";
 import { loadFundingProgramme } from "@/connections/FundingProgramme";
 import {
-  DeleteV2AdminFormsApplicationsUUIDError,
-  fetchDeleteV2AdminFormsApplicationsUUID,
   fetchPatchV2AdminFormsSubmissionsUUIDStatus,
   PatchV2AdminFormsSubmissionsUUIDStatusError
 } from "@/generated/apiComponents";
@@ -27,12 +25,7 @@ export type ApplicationShowRecord = ApplicationDto & {
 
 export type ApplicationListRecord = ApplicationDto & { id: string; currentSubmission: EmbeddedSubmissionDto | null };
 
-export interface ApplicationDataProvider extends DataProvider {
-  export: (resource: string) => Promise<void>;
-  exportSubmission: (uuid: string) => Promise<void>;
-}
-
-export const applicationDataProvider: ApplicationDataProvider = {
+export const applicationDataProvider: Partial<DataProvider> = {
   async getList<RecordType>(_: string, params: GetListParams) {
     let { filter, ...props } = params;
     if (filter != null) {
@@ -91,29 +84,21 @@ export const applicationDataProvider: ApplicationDataProvider = {
     } as RecordType;
   },
 
-  //@ts-ignore
-  async delete(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
     try {
-      await fetchDeleteV2AdminFormsApplicationsUUID({
-        pathParams: { uuid: params.id as string }
-      });
-      return { data: { id: params.id } };
+      await deleteApplication(id as string);
+      return { data: { id } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsApplicationsUUIDError);
+      throw v3ErrorForRA("Application delete fetch failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
-      for (const id of params.ids) {
-        await fetchDeleteV2AdminFormsApplicationsUUID({
-          pathParams: { uuid: id as string }
-        });
-      }
-
+      await Promise.all(params.ids.map(id => deleteApplication(id as string)));
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFormsApplicationsUUIDError);
+      throw v3ErrorForRA("Application delete fetch failed", err);
     }
   },
 
