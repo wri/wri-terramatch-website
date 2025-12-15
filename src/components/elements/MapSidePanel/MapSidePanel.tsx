@@ -3,13 +3,14 @@ import classNames from "classnames";
 import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
+import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
+import { fetchDeleteV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -96,16 +97,7 @@ const MapSidePanel = ({
   };
 
   const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
-      queryParams: { uuid: polygonUuid }
-    });
-    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${polygon_name}.geojson`;
-    link.click();
-    URL.revokeObjectURL(url);
+    await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
   };
 
   const deletePolygon = async (polygonUuid: string) => {
