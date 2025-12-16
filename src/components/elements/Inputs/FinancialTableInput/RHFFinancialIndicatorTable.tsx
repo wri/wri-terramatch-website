@@ -123,7 +123,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const { files, addFile, removeFile } = useFiles(true);
     const { years, collection } = props;
     const orgDetails = useOrgFormDetails();
-    console.log("orgDetails", orgDetails);
+
     const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
       getValueFromData(value, "currency", orgDetails?.currency ?? "")
     );
@@ -907,9 +907,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     });
 
     const initialized = useRef(false);
-    const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
-      orgDetails?.title ?? ""
+    const isFundoFloraNonProfitOrEnterprise = useMemo(
+      () => /fundo flora application.*(non[- ]?profit|enterprise)/i.test(orgDetails?.title ?? ""),
+      [orgDetails?.title]
     );
+    const isNonProfitOrganization = useMemo(() => orgDetails?.type === "non-profit-organization", [orgDetails?.type]);
 
     useValueChanged(value, () => {
       if (!initialized.current && !isEmpty(value)) {
@@ -1198,7 +1200,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             resetTable={resetTable}
             label={t("Documentation")}
             description={t(
-              isFundoFloraNonProfitOrEnterprise
+              isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
                 ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
                 : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
             )}
