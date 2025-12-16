@@ -7,10 +7,9 @@ import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import {
   fetchGetV2IndicatorsEntityUuidSlugVerify,
-  useGetV2IndicatorsEntityUuid,
   useGetV2IndicatorsEntityUuidSlugVerify
 } from "@/generated/apiComponents";
-import { IndicatorPolygonsStatus, Indicators } from "@/generated/apiSchemas";
+import { Indicators } from "@/generated/apiSchemas";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { IndicatorsAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
@@ -130,12 +129,24 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   const { data: sitePolygonsData, isLoading: isLoadingSitePolygons } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
     entityUuid: entity_uuid!,
-    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
-    filter: {
-      "presentIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined,
-      "polygonStatus[]": ["approved"]
-    }
+    enabled: !!entity_uuid && !!entity
   });
+
+  const [sitePolygonsApprovedData, indicatorPolygonsStatus] = useMemo(() => {
+    const polygonStatuses = ["draft", "submitted", "needs-more-information", "approved"];
+    const polygonStatusCount = [0, 0, 0, 0];
+    if (sitePolygonsData.length > 0 && !isLoadingSitePolygons) {
+      sitePolygonsData.forEach(polygon => {
+        const statusIndex = polygonStatuses.indexOf(polygon.status);
+        polygonStatusCount[statusIndex]++;
+      });
+    }
+    const sitePolygonsApprovedData = sitePolygonsData?.filter(polygon => polygon.status === "approved");
+    const indicatorPolygonsStatus = Object.fromEntries(
+      polygonStatuses.map((status, index) => [status, polygonStatusCount[index]])
+    );
+    return [sitePolygonsApprovedData, indicatorPolygonsStatus];
+  }, [sitePolygonsData, isLoadingSitePolygons]);
 
   const getComplementarySlug = (slug: string): Indicator | undefined =>
     slug === "treeCoverLoss" ? "treeCoverLossFires" : slug === "treeCoverLossFires" ? "treeCoverLoss" : undefined;
@@ -156,9 +167,9 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
   });
 
   const indicatorData = useMemo(() => {
-    if (!sitePolygonsData || !indicatorSlug) return [];
-    return transformSitePolygonsToIndicators(sitePolygonsData, indicatorSlug as Indicator);
-  }, [sitePolygonsData, indicatorSlug]);
+    if (!sitePolygonsApprovedData || !indicatorSlug) return [];
+    return transformSitePolygonsToIndicators(sitePolygonsApprovedData, indicatorSlug as Indicator);
+  }, [sitePolygonsApprovedData, indicatorSlug]);
 
   const complementaryData = useMemo(() => {
     if (!complementarySitePolygonsData || !complementarySlug) return [];
@@ -185,17 +196,6 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     const body = params.body || { polygonUuids: [], forceRecalculation: false, updateExisting: false };
     return startIndicatorCalculationResource({ slug, body });
   };
-  const { data: indicatorPolygonsStatus } = useGetV2IndicatorsEntityUuid<IndicatorPolygonsStatus>(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!
-      }
-    },
-    {
-      enabled: !!entity_uuid
-    }
-  );
 
   const filteredPolygons = useMemo(() => {
     if (!indicatorData) return [];
