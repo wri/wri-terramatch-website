@@ -12,6 +12,7 @@ import MapContainer from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import Toggle from "@/components/elements/Toggle/Toggle";
 import Modal from "@/components/extensive/Modal/Modal";
+import { updateMedia } from "@/connections/Media";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -23,7 +24,6 @@ import PageBreadcrumbs from "../PageElements/Breadcrumbs/PageBreadcrumbs";
 import { ModalProps } from "./Modal";
 import { ModalId } from "./ModalConst";
 import { ModalBaseImageDetail } from "./ModalsBases";
-import { updateMedia } from "@/connections/Media";
 
 export interface ModalImageDetailProps extends ModalProps {
   onClose?: () => void;
@@ -98,14 +98,17 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       formData.is_public !== initialFormData.is_public
     ) {
       setIsUpdating(true);
-      const mediaUpdate = updateMedia({
-        name: formData.name,
-        title: formData.name,
-        photographer: formData.photographer,
-        description: formData.description ?? undefined,
-        isPublic: formData.is_public,
-        isCover: formData.is_cover
-      }, { id: data.uuid });
+      const mediaUpdate = updateMedia(
+        {
+          name: formData.name,
+          title: formData.name,
+          photographer: formData.photographer,
+          description: formData.description ?? undefined,
+          isPublic: formData.is_public,
+          isCover: formData.is_cover
+        },
+        { id: data.uuid }
+      );
 
       updatePromises.push(mediaUpdate);
     }
@@ -350,11 +353,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
         <Button className="w-1/6 rounded-full" variant="secondary" onClick={onClose}>
           {t("Cancel")}
         </Button>
-        <Button
-          className="w-1/6 rounded-full"
-          onClick={handleSave}
-          disabled={isUpdating || !hasChanges()}
-        >
+        <Button className="w-1/6 rounded-full" onClick={handleSave} disabled={isUpdating || !hasChanges()}>
           {isUpdating ? t("Saving...") : t("Save")}
         </Button>
       </div>

@@ -795,6 +795,16 @@ export type ProjectLightDto = {
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
   /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
    * Update request status for this project
    */
   updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
@@ -839,6 +849,16 @@ export type SiteLightDto = {
    * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * Update request status for this site
    */
@@ -1008,6 +1028,8 @@ export type DisturbanceReportLightDto = {
   reportId: number;
 };
 
+export type Object = {};
+
 export type ProjectFullDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1030,6 +1052,16 @@ export type ProjectFullDto = {
    * Entity status for this project
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * Update request status for this project
    */
@@ -1085,6 +1117,7 @@ export type ProjectFullDto = {
   survivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
+  incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
   workdayCount: number;
@@ -1140,6 +1173,16 @@ export type SiteFullDto = {
    * Entity status for this site
    */
   status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
   /**
    * Update request status for this site
    */
@@ -1218,6 +1261,8 @@ export type SiteFullDto = {
    * The associated project organisation name
    */
   organisationName: string | null;
+  treesPlantedPolygonsCount: number | null;
+  hectaresRestoredPolygonsCount: number | null;
 };
 
 export type NurseryFullDto = {

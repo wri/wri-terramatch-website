@@ -8,6 +8,7 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { updateMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -19,7 +20,6 @@ import Table from "../../Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "../../Table/TableVariants";
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
-import { updateMedia } from "@/connections/Media";
 
 type FilePreviewTableProps = {
   items: Partial<UploadedFile>[];

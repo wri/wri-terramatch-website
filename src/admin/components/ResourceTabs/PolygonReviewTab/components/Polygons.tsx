@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { formatFileName } from "@/components/elements/Map-mapbox/utils";
+import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -21,7 +21,6 @@ import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
@@ -152,16 +151,8 @@ const Polygons = (props: IPolygonProps) => {
 
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
-      const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
-        queryParams: { uuid: polygon.uuid }
-      });
-      const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${formatFileName(polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label)}.geojson`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const filename = polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label;
+      await downloadPolygonGeoJson(polygon.uuid, filename, { includeExtendedData: true });
     } catch (error) {
       Log.error("Failed to download polygon:", error);
     }

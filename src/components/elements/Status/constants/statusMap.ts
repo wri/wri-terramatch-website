@@ -10,6 +10,14 @@ export const STATUS_MAP: { [key: string]: string } = {
   "no-update": "No Update"
 };
 
+export const PLANTING_STATUS_MAP: { [key: string]: string } = {
+  "no-restoration-expected": "No Restoration Expected",
+  "not-started": "Not Started",
+  "in-progress": "In Progress",
+  "replacement-planting": "Replacement Planting",
+  completed: "Completed"
+};
+
 export enum StatusEnum {
   // eslint-disable-next-line no-unused-vars
   DRAFT = "draft",

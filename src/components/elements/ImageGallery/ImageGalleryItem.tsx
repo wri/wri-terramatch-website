@@ -8,6 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { updateMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -20,7 +21,6 @@ import Log from "@/utils/log";
 import ImageWithChildren from "../ImageWithChildren/ImageWithChildren";
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_RIGHT } from "../Menu/MenuVariant";
-import { updateMedia } from "@/connections/Media";
 
 export type ImageGalleryItemData = {
   uuid: string;

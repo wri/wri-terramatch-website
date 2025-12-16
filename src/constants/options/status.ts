@@ -118,3 +118,27 @@ export const getNothingReportOptions = (t: typeof useT | Function = (t: string) 
       title: t("Nothing to Report")
     }
   ] as Option[];
+
+export const getPlantingStatusOptions = (t: typeof useT | Function = (t: string) => t) =>
+  [
+    {
+      value: "no-restoration-expected",
+      title: t("No Restoration Expected")
+    },
+    {
+      value: "not-started",
+      title: t("Not Started")
+    },
+    {
+      value: "in-progress",
+      title: t("In Progress")
+    },
+    {
+      value: "replacement-planting",
+      title: t("Replacement Planting")
+    },
+    {
+      value: "completed",
+      title: t("Completed")
+    }
+  ] as Option[];
