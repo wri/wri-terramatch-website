@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxgl from "mapbox-gl";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
 import { mapboxToken } from "@/constants/environment";
@@ -20,6 +20,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
+  const styleLoadListenerRef = useRef<(() => void) | null>(null);
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [styleLoaded, setStyleLoaded] = useState(false);
   const [changeStyle, setChangeStyle] = useState(false);
@@ -48,6 +49,10 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
+  const handleStyleLoad = useCallback(() => {
+    setStyleLoaded(true);
+  }, []);
+
   const initMap = (isDashboard?: boolean, initialStyle?: MapStyle) => {
     if (map.current) return;
 
@@ -70,15 +75,11 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
         point: false,
         line_string: false,
         polygon: false,
-        trash: true, // Re-enable trash control for built-in functionality
+        trash: true,
         combine_features: false,
         uncombine_features: false
       }
     });
-
-    const onLoad = () => {
-      setStyleLoaded(true);
-    };
 
     const addControlToMap = () => {
       const currentMap = map.current as mapboxgl.Map;
@@ -88,17 +89,15 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
       }
       currentMap.addControl(currentDraw, "top-right");
     };
+
     if (map?.current && draw?.current) {
+      styleLoadListenerRef.current = handleStyleLoad;
+      map.current.on("style.load", handleStyleLoad);
+
       if (map.current.isStyleLoaded()) {
-        onLoad();
+        handleStyleLoad();
         addControlToMap();
       } else {
-        map.current.on("style.load", () => {
-          onLoad();
-        });
-        map.current.once("styledata", () => {
-          onLoad();
-        });
         addControlToMap();
       }
 
@@ -114,6 +113,10 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
+  const notifyStyleChanging = useCallback(() => {
+    setStyleLoaded(false);
+  }, []);
+
   return {
     mapContainer,
     map,
@@ -127,6 +130,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     changeStyle,
     mapLoaded,
     setMapLoaded,
-    handleTrashDelete
+    handleTrashDelete,
+    notifyStyleChanging
   };
 };
