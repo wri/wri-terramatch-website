@@ -123,7 +123,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const { files, addFile, removeFile } = useFiles(true);
     const { years, collection } = props;
     const orgDetails = useOrgFormDetails();
-
+    console.log("orgDetails", orgDetails);
     const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
       getValueFromData(value, "currency", orgDetails?.currency ?? "")
     );
