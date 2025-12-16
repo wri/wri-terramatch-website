@@ -25,6 +25,12 @@ export const useGoogleSatellite = (
 
     const addGoogleLayer = () => {
       if (!isEffectActive) return true;
+
+      const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
+      if (currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+        return true;
+      }
+
       if (currentMap.isStyleLoaded()) {
         addGoogleSatelliteLayer(currentMap);
         updateMapProjection(currentMap, MapStyle.GoogleSatellite);
@@ -53,7 +59,7 @@ export const useGoogleSatellite = (
       }
     };
 
-    const pollForGoogleSetup = (attemptsLeft = 120) => {
+    const pollForGoogleSetup = (attemptsLeft = 180) => {
       if (!isEffectActive) return;
       if (currentStyleRef.current !== MapStyle.GoogleSatellite) return;
 
@@ -66,7 +72,7 @@ export const useGoogleSatellite = (
         rafId = requestAnimationFrame(() => pollForGoogleSetup(attemptsLeft - 1));
       } else {
         if (!layerAdded) {
-          Log.error("Failed to add Google layer after 120 attempts");
+          Log.error("Failed to add Google layer after 180 attempts");
         }
       }
     };

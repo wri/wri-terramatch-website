@@ -8,7 +8,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 
 import { FeatureCollection } from "../GeoJSON";
 import type { ControlType } from "../Map.d";
-import { MapStyle } from "../MapControls/types";
+import { BASEMAP_CONFIGS, MapStyle } from "../MapControls/types";
 import { addFilterOfPolygonsData, convertToGeoJSON } from "../utils";
 
 const INITIAL_ZOOM = 2.4;
@@ -51,7 +51,10 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const initMap = (isDashboard?: boolean, initialStyle?: MapStyle) => {
     if (map.current) return;
 
-    const styleToUse = initialStyle !== undefined ? initialStyle : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    const requestedStyle =
+      initialStyle !== undefined ? initialStyle : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    const styleToUse =
+      requestedStyle === MapStyle.GoogleSatellite ? BASEMAP_CONFIGS[MapStyle.GoogleSatellite].style : requestedStyle;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
