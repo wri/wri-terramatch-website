@@ -2493,7 +2493,7 @@ export type SubmissionDto = {
     | "hbf"
     | "fundo-flora"
     | null;
-  formUuid: string | null;
+  formUuid: string;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   answers: Record<string, any>;
   organisationUuid: string | null;
@@ -2502,6 +2502,19 @@ export type SubmissionDto = {
   translatedFeedbackFields: string[] | null;
   stageName: string | null;
   stageUuid: string | null;
+};
+
+export type CreateSubmissionAttributes = {
+  formUuid: string;
+};
+
+export type CreateSubmissionData = {
+  type: "submissions";
+  attributes: CreateSubmissionAttributes;
+};
+
+export type CreateSubmissionBody = {
+  data: CreateSubmissionData;
 };
 
 /**

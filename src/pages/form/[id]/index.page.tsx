@@ -7,7 +7,8 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/Form";
-import { usePostV2FormsSubmissions } from "@/generated/apiComponents";
+import { useSubmissionCreate } from "@/connections/FormSubmission";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 import ApplicationsTable from "../cards/ApplicationsTable";
 
@@ -18,12 +19,15 @@ const FormIntroPage = () => {
 
   const [, { data: form }] = useForm({ id: formUUID, enabled: formUUID != null });
 
-  const { mutate: create, isLoading } = usePostV2FormsSubmissions({
-    onSuccess(data) {
-      // @ts-ignore
-      router.push(`/form/submission/${data.data.uuid}`);
-    }
-  });
+  const [, { create, data: submission, isCreating, createFailure }] = useSubmissionCreate({});
+  useRequestSuccess(
+    isCreating,
+    createFailure,
+    () => {
+      router.push(`/form/submission/${submission?.uuid}`);
+    },
+    "Application creation failed"
+  );
 
   return (
     <BackgroundLayout>
@@ -45,8 +49,8 @@ const FormIntroPage = () => {
                 }}
                 submitButtonProps={{
                   children: t("Start Application"),
-                  onClick: () => create({ body: { form_uuid: formUUID } }),
-                  disabled: isLoading
+                  onClick: () => create({ formUuid: formUUID }),
+                  disabled: isCreating
                 }}
                 backButtonProps={{
                   children: t("Cancel"),

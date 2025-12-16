@@ -3081,11 +3081,6 @@ export type StageRead = {
   updated_at?: string;
 };
 
-export type FormSubmissionCreate = {
-  form_uuid?: string;
-  project_pitch_uuid?: string;
-};
-
 export type FormSubmissionUpdate = {
   status?: string;
   answers?: Record<string, any>;

@@ -3522,6 +3522,69 @@ export const submissionGet = new V3ApiEndpoint<SubmissionGetResponse, Submission
   "GET"
 );
 
+export type SubmissionCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionCreateResponse = {
+  meta?: {
+    /**
+     * @example submissions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example submissions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SubmissionDto;
+  };
+};
+
+export type SubmissionCreateVariables = {
+  body: Schemas.CreateSubmissionBody;
+};
+
+/**
+ * Create a new form submission
+ */
+export const submissionCreate = new V3ApiEndpoint<
+  SubmissionCreateResponse,
+  SubmissionCreateError,
+  SubmissionCreateVariables,
+  {}
+>("/forms/v3/submissions", "POST");
+
 export type FormIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -4629,7 +4692,7 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  submissions: { submissionGet },
+  submissions: { submissionGet, submissionCreate },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
   fundingProgrammes: {
