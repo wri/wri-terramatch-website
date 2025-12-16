@@ -2976,6 +2976,7 @@ export type StoreStageAttributes = {
    */
   deadlineAt?: string | null;
   formUuid?: string | null;
+  uuid?: string;
 };
 
 export type StoreFundingProgrammeAttributes = {
@@ -3004,4 +3005,17 @@ export type CreateFundingProgrammeData = {
 
 export type CreateFundingProgrammeBody = {
   data: CreateFundingProgrammeData;
+};
+
+export type UpdateFundingProgrammeData = {
+  type: "fundingProgrammes";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreFundingProgrammeAttributes;
+};
+
+export type UpdateFundingProgrammeBody = {
+  data: UpdateFundingProgrammeData;
 };

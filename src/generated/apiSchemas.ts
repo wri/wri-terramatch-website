@@ -714,30 +714,6 @@ export type FundingProgrammeStatus = {
   status?: string;
 };
 
-export type FundingProgrammeCreate = {
-  name?: string;
-  description?: string;
-  read_more_url?: string;
-  location?: string;
-  organisation_types?: string[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  status?: string;
-};
-
 export type FormLiteRead = {
   uuid?: string;
   title?: string;

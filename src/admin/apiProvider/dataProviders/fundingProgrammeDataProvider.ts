@@ -1,17 +1,16 @@
 import { omit } from "lodash";
-import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams } from "react-admin";
+import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
 
-import { stageDataProvider } from "@/admin/apiProvider/dataProviders/stageDataProvider";
 import {
   createFundingProgramme,
   deleteFundingProgramme,
   loadFundingProgramme,
-  loadFundingProgrammes
+  loadFundingProgrammes,
+  updateFundingProgramme
 } from "@/connections/FundingProgramme";
-import { fetchPutV2AdminFundingProgrammeUUID, PutV2AdminFundingProgrammeUUIDError } from "@/generated/apiComponents";
 import { StoreFundingProgrammeAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
 
 const UPLOAD_KEYS = ["cover"];
@@ -55,48 +54,17 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
     } as GetManyResult;
   },
 
-  async update(_, params) {
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     try {
-      const uuid = params.id as string;
-      const uploadKeys = ["cover"];
-      const { stages, ...body } = omit(params.data, uploadKeys) as any;
+      const attributes = omit(params.data, UPLOAD_KEYS) as unknown as StoreFundingProgrammeAttributes;
 
-      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
+      // In update, do the cover upload first so that the update response shows the new cover media.
+      await handleUploads(params, UPLOAD_KEYS, { entity: "fundingProgrammes", uuid: params.id as string });
+      const programme = await updateFundingProgramme(attributes, { id: params.id as string, translated: false });
 
-      // TODO: For each stage - update
-
-      const resp = await fetchPutV2AdminFundingProgrammeUUID({ pathParams: { uuid }, body });
-
-      for (let index = 0; index < stages.length; index++) {
-        const stage = stages[index];
-
-        if (stage.uuid) {
-          await stageDataProvider.update("", {
-            id: stage.uuid,
-            previousData: {},
-            data: {
-              ...stage,
-              //@ts-ignore
-              funding_programme_id: resp.data.uuid,
-              order: index + 1
-            }
-          });
-        } else {
-          await stageDataProvider.create("", {
-            data: {
-              ...stage,
-              //@ts-ignore
-              funding_programme_id: resp.data.uuid,
-              order: index + 1
-            }
-          });
-        }
-      }
-
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid, framework_key: body.framework_key } };
+      return { data: { ...programme, id: programme.uuid } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding Programme update fetch failed", err);
     }
   },
 

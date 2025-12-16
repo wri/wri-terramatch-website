@@ -4531,6 +4531,90 @@ export const fundingProgrammeDelete = new V3ApiEndpoint<
   {}
 >("/fundingProgrammes/v3/{uuid}", "DELETE");
 
+export type FundingProgrammeUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeUpdateResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeUpdateVariables = {
+  body: Schemas.UpdateFundingProgrammeBody;
+  pathParams: FundingProgrammeUpdatePathParams;
+};
+
+/**
+ * Update a funding programme
+ */
+export const fundingProgrammeUpdate = new V3ApiEndpoint<
+  FundingProgrammeUpdateResponse,
+  FundingProgrammeUpdateError,
+  FundingProgrammeUpdateVariables,
+  {}
+>("/fundingProgrammes/v3/{uuid}", "PUT");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -4548,5 +4632,11 @@ export const operationsByTag = {
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
-  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeCreate, fundingProgrammeGet, fundingProgrammeDelete }
+  fundingProgrammes: {
+    fundingProgrammesIndex,
+    fundingProgrammeCreate,
+    fundingProgrammeGet,
+    fundingProgrammeDelete,
+    fundingProgrammeUpdate
+  }
 };
