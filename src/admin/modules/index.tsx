@@ -30,9 +30,6 @@ import { NurseryReportsList } from "./nurseryReports/components/NurseryReportsLi
 import { OrganisationEdit } from "./organisations/components/OrganisationEdit";
 import { OrganisationShow } from "./organisations/components/OrganisationShow";
 import { OrganisationsList } from "./organisations/components/OrganisationsList";
-import PitchEdit from "./pitch/components/PitchEdit";
-import { PitchesList } from "./pitch/components/PitchesList";
-import { PitchShow } from "./pitch/components/PitchShow";
 import ProjectReportShow from "./projectReports/components/ProjectReportShow";
 import { ProjectReportsList } from "./projectReports/components/ProjectReportsList";
 import ProjectShow from "./projects/components/ProjectShow";
@@ -62,13 +59,6 @@ const organisation = {
   Show: OrganisationShow,
   Edit: OrganisationEdit,
   Create: OrganisationCreate
-};
-
-const pitch = {
-  ResourceName: "pitch",
-  List: PitchesList,
-  Show: PitchShow,
-  Edit: PitchEdit
 };
 
 const fundingProgramme = {
@@ -188,7 +178,6 @@ const srpReport = {
 const modules = {
   user,
   organisation,
-  pitch,
   application,
   fundingProgramme,
   reportingFramework,

@@ -13,7 +13,6 @@ import { impactStoriesDataProvider } from "./impactStoriesDataProvider";
 import { nurseryDataProvider } from "./nurseryDataProvider";
 import { nurseryReportDataProvider } from "./nurseryReportDataProvider";
 import { organisationDataProvider } from "./organisationDataProvider";
-import { pitchDataProvider } from "./pitchDataProviders";
 import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
@@ -29,9 +28,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.organisation.ResourceName:
       return organisationDataProvider;
-
-    case modules.pitch.ResourceName:
-      return pitchDataProvider;
 
     case modules.application.ResourceName:
       return applicationDataProvider;
