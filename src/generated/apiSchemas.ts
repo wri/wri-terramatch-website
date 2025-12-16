@@ -3591,14 +3591,6 @@ export type StageRead = {
   updated_at?: string;
 };
 
-export type StageCreate = {
-  name?: string;
-  funding_programme_id?: number;
-  form_id?: string;
-  deadline_at?: string;
-  order?: number;
-};
-
 export type FormSubmissionCreate = {
   form_uuid?: string;
   project_pitch_uuid?: string;

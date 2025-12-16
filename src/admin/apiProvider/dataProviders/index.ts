@@ -19,7 +19,6 @@ import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
 import { srpReportDataProvider } from "./SRPReportDataProvider";
-import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
 
 //@ts-ignore
@@ -42,9 +41,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.reportingFramework.ResourceName:
       return reportingFrameworkDataProvider;
-
-    case modules.stage.ResourceName:
-      return stageDataProvider;
 
     case modules.form.ResourceName:
       return formDataProvider;

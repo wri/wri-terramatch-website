@@ -7,9 +7,6 @@ import { ReportingFrameworkCreate } from "@/admin/modules/reportingFramework/com
 import { ReportingFrameworkEdit } from "@/admin/modules/reportingFramework/components/ReportingFrameworkEdit";
 import { ReportingFrameworkList } from "@/admin/modules/reportingFramework/components/ReportingFrameworkList";
 import { ReportingFrameworkShow } from "@/admin/modules/reportingFramework/components/ReportingFrameworkShow";
-import { StageCreate } from "@/admin/modules/stages/StageCreate";
-import { StageEdit } from "@/admin/modules/stages/StageEdit";
-import { StageShow } from "@/admin/modules/stages/StageShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
 import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/ValidationPolygonFileShow";
@@ -86,13 +83,6 @@ const application = {
   ResourceName: "application",
   List: ApplicationList,
   Show: ApplicationShow
-};
-
-const stage = {
-  ResourceName: "stage",
-  Show: StageShow,
-  Edit: StageEdit,
-  Create: StageCreate
 };
 
 const form = {
@@ -202,7 +192,6 @@ const modules = {
   application,
   fundingProgramme,
   reportingFramework,
-  stage,
   form,
   project,
   site,

@@ -141,14 +141,6 @@ export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
 
-export type PostV2AdminFundingProgrammeStageBody = {
-  name?: string;
-  funding_programme_id?: number;
-  form_id?: string;
-  deadline_at?: string;
-  order?: number;
-};
-
 export type PostV2GeometryValidateBody = {
   geometries?: {
     type?: "FeatureCollection";
