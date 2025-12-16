@@ -8001,100 +8001,6 @@ export const usePatchV2AdminFundingProgrammeStageUUID = (
   );
 };
 
-export type PostV2AdminFundingProgrammeError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2AdminFundingProgrammeResponse = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type PostV2AdminFundingProgrammeVariables = {
-  body?: RequestBodies.PostV2FundingProgrammeBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2AdminFundingProgramme = (
-  variables: PostV2AdminFundingProgrammeVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2AdminFundingProgrammeResponse,
-    PostV2AdminFundingProgrammeError,
-    RequestBodies.PostV2FundingProgrammeBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/admin/funding-programme", method: "post", ...variables, signal });
-
-export const usePostV2AdminFundingProgramme = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2AdminFundingProgrammeResponse,
-      PostV2AdminFundingProgrammeError,
-      PostV2AdminFundingProgrammeVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2AdminFundingProgrammeResponse,
-    PostV2AdminFundingProgrammeError,
-    PostV2AdminFundingProgrammeVariables
-  >(
-    (variables: PostV2AdminFundingProgrammeVariables) =>
-      fetchPostV2AdminFundingProgramme({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type PutV2AdminFundingProgrammeUUIDPathParams = {
   uuid: string;
 };
@@ -8154,8 +8060,32 @@ export type PutV2AdminFundingProgrammeUUIDResponse = {
   updated_at?: string;
 };
 
+export type PutV2AdminFundingProgrammeUUIDRequestBody = {
+  name?: string;
+  description?: string;
+  read_more_url?: string;
+  location?: string;
+  organisation_types?: string[];
+  cover?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  };
+  status?: string;
+};
+
 export type PutV2AdminFundingProgrammeUUIDVariables = {
-  body?: RequestBodies.PostV2FundingProgrammeBody;
+  body?: PutV2AdminFundingProgrammeUUIDRequestBody;
   pathParams: PutV2AdminFundingProgrammeUUIDPathParams;
 } & ApiContext["fetcherOptions"];
 
@@ -8166,7 +8096,7 @@ export const fetchPutV2AdminFundingProgrammeUUID = (
   apiFetch<
     PutV2AdminFundingProgrammeUUIDResponse,
     PutV2AdminFundingProgrammeUUIDError,
-    RequestBodies.PostV2FundingProgrammeBody,
+    PutV2AdminFundingProgrammeUUIDRequestBody,
     {},
     {},
     PutV2AdminFundingProgrammeUUIDPathParams

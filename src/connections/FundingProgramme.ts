@@ -1,7 +1,9 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { resourceCreator } from "@/connections/util/resourceMutator";
 import {
+  fundingProgrammeCreate,
   fundingProgrammeDelete,
   fundingProgrammeGet,
   fundingProgrammesIndex
@@ -28,3 +30,8 @@ export const deleteFundingProgramme = deleterAsync("fundingProgrammes", fundingP
 
 export const useFundingProgramme = connectionHook(fundingProgrammeConnection);
 export const useFundingProgrammes = connectionHook(fundingProgrammesConnection);
+
+const createFundingProgrammeConnection = v3Resource("fundingProgrammes", fundingProgrammeCreate)
+  .create<FundingProgrammeDto>()
+  .buildConnection();
+export const createFundingProgramme = resourceCreator(createFundingProgrammeConnection);

@@ -4333,6 +4333,69 @@ export const fundingProgrammesIndex = new V3ApiEndpoint<
   {}
 >("/fundingProgrammes/v3", "GET");
 
+export type FundingProgrammeCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeCreateResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeCreateVariables = {
+  body: Schemas.CreateFundingProgrammeBody;
+};
+
+/**
+ * Create a new funding programme
+ */
+export const fundingProgrammeCreate = new V3ApiEndpoint<
+  FundingProgrammeCreateResponse,
+  FundingProgrammeCreateError,
+  FundingProgrammeCreateVariables,
+  {}
+>("/fundingProgrammes/v3", "POST");
+
 export type FundingProgrammeGetPathParams = {
   /**
    * UUID of the resource.
@@ -4485,5 +4548,5 @@ export const operationsByTag = {
   submissions: { submissionGet },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
-  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeGet, fundingProgrammeDelete }
+  fundingProgrammes: { fundingProgrammesIndex, fundingProgrammeCreate, fundingProgrammeGet, fundingProgrammeDelete }
 };

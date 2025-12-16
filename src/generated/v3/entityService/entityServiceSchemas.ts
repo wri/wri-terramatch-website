@@ -2932,12 +2932,12 @@ export type EmbeddedMediaDto = {
 
 export type StageDto = {
   uuid: string;
-  name: string | null;
+  name?: string | null;
   /**
    * @format date-time
    */
-  deadlineAt: string | null;
-  formUuid: string | null;
+  deadlineAt?: string | null;
+  formUuid?: string | null;
 };
 
 export type FundingProgrammeDto = {
@@ -2950,7 +2950,7 @@ export type FundingProgrammeDto = {
    * @format date-time
    */
   updatedAt: string;
-  framework:
+  framework?:
     | "terrafund"
     | "terrafund-landscapes"
     | "enterprises"
@@ -2961,10 +2961,47 @@ export type FundingProgrammeDto = {
     | null;
   name: string;
   description: string;
-  location: string | null;
-  readMoreUrl: string | null;
+  location?: string | null;
+  readMoreUrl?: string | null;
   status: "inactive" | "active" | "disabled";
-  organisationTypes: ("for-profit-organization" | "non-profit-organization")[];
+  organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
   cover: EmbeddedMediaDto;
   stages: StageDto[] | null;
+};
+
+export type StoreStageAttributes = {
+  name?: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt?: string | null;
+  formUuid?: string | null;
+};
+
+export type StoreFundingProgrammeAttributes = {
+  framework?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  name: string;
+  description: string;
+  location?: string | null;
+  readMoreUrl?: string | null;
+  status: "inactive" | "active" | "disabled";
+  organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
+  stages?: StoreStageAttributes[];
+};
+
+export type CreateFundingProgrammeData = {
+  type: "fundingProgrammes";
+  attributes: StoreFundingProgrammeAttributes;
+};
+
+export type CreateFundingProgrammeBody = {
+  data: CreateFundingProgrammeData;
 };

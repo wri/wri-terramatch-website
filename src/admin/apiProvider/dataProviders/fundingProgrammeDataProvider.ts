@@ -1,17 +1,20 @@
-import lo from "lodash";
-import { DataProvider, DeleteParams, GetManyResult, GetOneParams } from "react-admin";
+import { omit } from "lodash";
+import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams } from "react-admin";
 
 import { stageDataProvider } from "@/admin/apiProvider/dataProviders/stageDataProvider";
-import { deleteFundingProgramme, loadFundingProgramme, loadFundingProgrammes } from "@/connections/FundingProgramme";
 import {
-  fetchPostV2AdminFundingProgramme,
-  fetchPutV2AdminFundingProgrammeUUID,
-  PostV2AdminFundingProgrammeError,
-  PutV2AdminFundingProgrammeUUIDError
-} from "@/generated/apiComponents";
+  createFundingProgramme,
+  deleteFundingProgramme,
+  loadFundingProgramme,
+  loadFundingProgrammes
+} from "@/connections/FundingProgramme";
+import { fetchPutV2AdminFundingProgrammeUUID, PutV2AdminFundingProgrammeUUIDError } from "@/generated/apiComponents";
+import { StoreFundingProgrammeAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
+
+const UPLOAD_KEYS = ["cover"];
 
 export const fundingProgrammeDataProvider: Partial<DataProvider> = {
   async getList<RecordType>() {
@@ -56,7 +59,7 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
     try {
       const uuid = params.id as string;
       const uploadKeys = ["cover"];
-      const { stages, ...body } = lo.omit(params.data, uploadKeys) as any;
+      const { stages, ...body } = omit(params.data, uploadKeys) as any;
 
       await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
 
@@ -99,34 +102,14 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
 
   async create(_, params) {
     try {
-      const uploadKeys = ["cover"];
-      const { stages, ...body } = lo.omit(params.data, uploadKeys) as any;
+      const attributes = omit(params.data, UPLOAD_KEYS) as StoreFundingProgrammeAttributes;
 
-      const resp = await fetchPostV2AdminFundingProgramme({ body });
+      const fundingProgramme = await createFundingProgramme(attributes);
+      await handleUploads(params, UPLOAD_KEYS, { uuid: fundingProgramme.uuid, entity: "fundingProgrammes" });
 
-      for (let index = 0; index < stages.length; index++) {
-        const stage = stages[index];
-
-        await stageDataProvider.create("", {
-          data: {
-            ...stage,
-            //@ts-ignore
-            funding_programme_id: resp.data.uuid,
-            order: index + 1
-          }
-        });
-      }
-
-      // @ts-expect-error
-      const uuid = resp.data.uuid;
-      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
-
-      // TODO: For each stage - create
-
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+      return { data: { id: fundingProgramme.uuid } } as CreateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFundingProgrammeError);
+      throw v3ErrorForRA("Funding Programme create fetch failed", err);
     }
   },
 
