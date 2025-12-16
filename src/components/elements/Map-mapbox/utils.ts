@@ -970,8 +970,6 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
 
 export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
   if (!map) return;
-
-  // Don't try to remove sources during style transitions
   if (!map.isStyleLoaded()) {
     return;
   }
@@ -998,7 +996,7 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
           restoredCount++;
         }
       } catch (e) {
-        // Ignore
+        Log.warn("Error removing Google satellite layer:", e);
       }
     });
 
