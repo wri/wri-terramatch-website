@@ -16,7 +16,6 @@ import {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
   SitePolygonBulkDeleteBodyDto,
-  SitePolygonDeleteResource,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
@@ -59,15 +58,22 @@ export const deleteSitePolygon = deleterAsync("sitePolygons", deleteSitePolygonE
   pathParams: { uuid }
 }));
 
+type SitePolygonResourceIdentifier = {
+  type: "sitePolygons";
+  id: string;
+};
+
+const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SitePolygonBulkDeleteBodyDto => {
+  return {
+    data: resources as never
+  };
+};
+
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
-  const deleteResources: SitePolygonDeleteResource[] = uuids.map(uuid => ({
+  const deleteResources: SitePolygonResourceIdentifier[] = uuids.map(uuid => ({
     type: "sitePolygons",
     id: uuid
   }));
-
-  const body: SitePolygonBulkDeleteBodyDto = {
-    data: deleteResources
-  };
 
   const failureSelector = bulkDeleteSitePolygonsEndpoint.fetchFailedSelector({});
   const previousFailure = failureSelector(ApiSlice.currentState);
@@ -75,6 +81,7 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
     ApiSlice.clearPending(resolveUrl(bulkDeleteSitePolygonsEndpoint.url, {}), bulkDeleteSitePolygonsEndpoint.method);
   }
 
+  const body = createBulkDeleteBody(deleteResources);
   bulkDeleteSitePolygonsEndpoint.fetch({ body });
 
   await new Promise<void>((resolve, reject) => {
