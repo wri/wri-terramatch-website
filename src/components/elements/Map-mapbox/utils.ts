@@ -419,9 +419,19 @@ export const addPolygonCentroidsLayer = (
   zoomFilterValue?: number
 ) => {
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
-  if (map.getSource(layerName)) {
-    map.removeLayer(`${layerName}`);
-    map.removeSource(layerName);
+  if (!map || !map.isStyleLoaded()) {
+    return;
+  }
+
+  try {
+    if (map.getLayer(`${layerName}`)) {
+      map.removeLayer(`${layerName}`);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing polygon centroids layer:", error);
   }
 
   if (map.hasImage("pulsing-dot-centroids")) {
@@ -818,22 +828,34 @@ export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
   setFilterLandscape(map, sourceName, landscapes);
 };
 export const removeBorderLandscape = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) return;
+
   const layerName = `${LAYERS_NAMES.LANDSCAPES}`;
-  if (map.getLayer(layerName)) {
-    map.removeLayer(layerName);
-  }
-  if (map.getSource(layerName)) {
-    map.removeSource(layerName);
+  try {
+    if (map.getLayer(layerName)) {
+      map.removeLayer(layerName);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing border landscape:", error);
   }
 };
 
 export const removeBorderCountry = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) return;
+
   const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-  if (map.getLayer(layerName)) {
-    map.removeLayer(layerName);
-  }
-  if (map.getSource(layerName)) {
-    map.removeSource(layerName);
+  try {
+    if (map.getLayer(layerName)) {
+      map.removeLayer(layerName);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing border country:", error);
   }
 };
 
@@ -941,8 +963,6 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
       },
       firstLayerId
     );
-
-    Log.info("Google satellite layer added");
   } catch (error) {
     Log.error("Error adding Google satellite layer:", error);
   }
@@ -950,6 +970,9 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
 
 export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
   if (!map) return;
+  if (!map.isStyleLoaded()) {
+    return;
+  }
 
   try {
     if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) {
@@ -973,7 +996,7 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
           restoredCount++;
         }
       } catch (e) {
-        // Ignore
+        Log.warn("Error removing Google satellite layer:", e);
       }
     });
 
@@ -1584,18 +1607,27 @@ export const setMapStyle = (
   }
 
   if (currentStyle === MapStyle.GoogleSatellite) {
-    removeGoogleSatelliteLayer(map);
-
     if (targetStyle === MapStyle.Street) {
-      setCurrentStyle(targetStyle);
-      updateMapProjection(map, targetStyle);
+      if (map.isStyleLoaded()) {
+        removeGoogleSatelliteLayer(map);
+        setCurrentStyle(targetStyle);
+        updateMapProjection(map, targetStyle);
+      } else {
+        map.once("style.load", () => {
+          removeGoogleSatelliteLayer(map);
+          setCurrentStyle(targetStyle);
+          updateMapProjection(map, targetStyle);
+        });
+      }
       return;
     }
   }
 
   setCurrentStyle(targetStyle);
   map.setStyle(targetConfig.style);
-  updateMapProjection(map, targetStyle);
+  map.once("style.load", () => {
+    updateMapProjection(map, targetStyle);
+  });
 };
 
 export type ValidationRecordV3 = {
