@@ -392,6 +392,76 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type BulkDeleteSitePolygonsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BulkDeleteSitePolygonsResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type BulkDeleteSitePolygonsVariables = {
+  body: Schemas.SitePolygonBulkDeleteBodyDto;
+};
+
+/**
+ * Deletes multiple site polygons and all their associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons. The request body follows JSON:API format with
+ *        an array of resource identifiers (type and id).
+ */
+export const bulkDeleteSitePolygons = new V3ApiEndpoint<
+  BulkDeleteSitePolygonsResponse,
+  BulkDeleteSitePolygonsError,
+  BulkDeleteSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "DELETE");
+
 export type GetSitePolygonsGeoJsonQueryParams = {
   /**
    * UUID of a specific polygon
@@ -1790,6 +1860,7 @@ export const operationsByTag = {
     createSitePolygons,
     sitePolygonsIndex,
     bulkUpdateSitePolygons,
+    bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
     listSitePolygonVersions,
     updateSitePolygonVersion,

@@ -9,16 +9,17 @@ import ModalFixOverlaps from "@/components/extensive/Modal/ModalFixOverlaps";
 import ModalProcessBulkPolygons from "@/components/extensive/Modal/ModalProcessBulkPolygons";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { clipPolygonList } from "@/connections/PolygonClipping";
+import { bulkDeleteSitePolygons } from "@/connections/SitePolygons";
 import { createPolygonValidation, useAllSiteValidations } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { useDeleteV2TerrafundProjectPolygons } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { OVERLAPPING_CRITERIA_ID } from "@/types/validation";
+import Log from "@/utils/log";
 import { checkPolygonsFixability, getFixabilitySummaryMessage } from "@/utils/polygonFixValidation";
 
 const ProcessBulkPolygonsControl = ({
@@ -49,7 +50,6 @@ const ProcessBulkPolygonsControl = ({
     () => (context?.sitePolygonData ?? []) as Array<SitePolygonLightDto>,
     [context?.sitePolygonData]
   );
-  const { mutate: deletePolygons } = useDeleteV2TerrafundProjectPolygons();
 
   const refetchData = useCallback(() => {
     context?.reloadSiteData();
@@ -162,29 +162,42 @@ const ProcessBulkPolygonsControl = ({
   }, [selectedPolygonsInCheckbox, overlapValidations]);
 
   const handleDeletePolygons = useCallback(
-    (currentSelectedUuids: string[]) => {
+    async (currentSelectedUuids: string[]) => {
       showLoader();
       closeModal(ModalId.DELETE_BULK_POLYGONS);
-      deletePolygons(
-        {
-          body: {
-            uuids: currentSelectedUuids
-          }
-        },
-        {
-          onSuccess: () => {
-            refetchData();
-            hideLoader();
-            openNotification("success", t("Success!"), t("Polygons deleted successfully"));
-          },
-          onError: () => {
-            hideLoader();
-            openNotification("error", t("Error!"), t("Failed to delete polygons"));
-          }
-        }
-      );
+      const sitePolygonUuids = sitePolygonData
+        .filter(polygon => {
+          const polygonUuid = polygon.polygonUuid ?? "";
+          return currentSelectedUuids.includes(polygonUuid);
+        })
+        .map(polygon => polygon.uuid)
+        .filter((uuid): uuid is string => uuid != null && uuid.length > 0);
+
+      if (sitePolygonUuids.length === 0) {
+        hideLoader();
+        openNotification("error", t("Error!"), t("Could not find sitePolygon UUIDs for selected polygons"));
+        return;
+      }
+
+      if (sitePolygonUuids.length !== currentSelectedUuids.length) {
+        Log.warn(
+          `Mismatch: ${currentSelectedUuids.length} polygonUuids selected but only ${sitePolygonUuids.length} sitePolygon UUIDs found`
+        );
+      }
+
+      try {
+        await bulkDeleteSitePolygons(sitePolygonUuids);
+
+        refetchData();
+        hideLoader();
+        openNotification("success", t("Success!"), t("Polygons deleted successfully"));
+      } catch (error) {
+        hideLoader();
+        Log.error("Failed to delete polygons:", error);
+        openNotification("error", t("Error!"), t("Failed to delete polygons"));
+      }
     },
-    [deletePolygons, refetchData, hideLoader, openNotification, t, showLoader, closeModal]
+    [sitePolygonData, refetchData, hideLoader, openNotification, t, showLoader, closeModal]
   );
 
   const openFormModalHandlerProcessBulkPolygons = useCallback(() => {

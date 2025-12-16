@@ -8,13 +8,14 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { STATUSES } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { fetchDeleteV2TerrafundPolygonUuid } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
+import Log from "@/utils/log";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -101,8 +102,17 @@ const MapSidePanel = ({
   };
 
   const deletePolygon = async (polygonUuid: string) => {
-    await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygonUuid } });
-    recallEntityData?.();
+    if (!selected?.uuid) {
+      Log.error("Could not find sitePolygon UUID");
+      return;
+    }
+
+    try {
+      await deleteSitePolygon(selected.uuid);
+      recallEntityData?.();
+    } catch (error) {
+      Log.error("Failed to delete polygon:", error);
+    }
   };
   const formatStringName = (name: string) => {
     return name.replace(/ /g, "_");

@@ -34,12 +34,13 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
+import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchDeleteV2TerrafundPolygonUuid, fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
+import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import {
   CompareGeometryFileResponse,
@@ -88,11 +89,6 @@ export interface IPolygonItem {
   status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
-}
-
-interface DeletePolygonProps {
-  uuid: string;
-  message: string;
 }
 
 const PolygonReviewAside: FC<{
@@ -338,24 +334,27 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openModal, closeModal } = useModalContext();
 
-  const deletePolygon = (uuid: string) => {
-    fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
-      .then((response: DeletePolygonProps | undefined) => {
-        if (response && response?.uuid) {
-          refetch?.();
-          const { map } = mapFunctions;
-          if (map?.current) {
-            addSourcesToLayers(map.current, polygonDataMap, undefined);
-          }
-          closeModal(ModalId.DELETE_POLYGON);
-        }
-      })
-      .catch(error => {
-        Log.error("Error deleting polygon:", error);
-      });
+  const deletePolygon = async (uuid: string) => {
+    try {
+      await deleteSitePolygon(uuid);
+      refetch?.();
+      const { map } = mapFunctions;
+      if (map?.current) {
+        addSourcesToLayers(map.current, polygonDataMap, undefined);
+      }
+      closeModal(ModalId.DELETE_POLYGON);
+    } catch (error) {
+      Log.error("Error deleting polygon:", error);
+    }
   };
 
   const openFormModalHandlerConfirmDeletion = (uuid: string) => {
+    const sitePolygon = sitePolygonData?.find(polygon => polygon.polygonUuid === uuid);
+    const sitePolygonUuid = sitePolygon?.uuid;
+    if (!sitePolygonUuid) {
+      Log.error("Site polygon not found", { uuid });
+      return;
+    }
     openModal(
       ModalId.DELETE_POLYGON,
       <ModalConfirm
@@ -363,7 +362,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Do you want to delete this polygon?"
         onClose={() => closeModal(ModalId.DELETE_POLYGON)}
         onConfirm={() => {
-          deletePolygon(uuid);
+          deletePolygon(sitePolygonUuid);
         }}
       />
     );
