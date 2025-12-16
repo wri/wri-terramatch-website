@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
 import { useNotify } from "react-admin";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
@@ -12,12 +12,11 @@ type ExportType = {
   loading: boolean;
   error?: string;
   exportApplications: (
-    data: { funding_programme_uuid?: string; export_choice: "funding-programme" | "stage"; form_uuid?: string },
+    data: { fundingProgrammeUuid: string } | { formUuid: string },
     fileName: string
   ) => Promise<void>;
 };
 
-/* eslint-disable */
 export const ExportContext = createContext<ExportType>({
   loading: false,
   error: undefined,
@@ -33,71 +32,43 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
   const [error, setError] = useState<string>();
   const notify = useNotify();
 
-  /**
-   * PRIVATE function, to be reused in local context export functions
-   * @param fileName
-   * @param fn Fetcher Function
-   * @returns Blob
-   */
-  const exporter = async (fileName: string, fn: () => Promise<any>) => {
-    try {
-      setLoading(true);
-      const res = await fn();
-      if (res?.url) {
-        await downloadPresignedUrl(res.url, fileName);
-      } else {
-        await downloadFileBlob(res, fileName);
+  const exportApplications = useCallback(
+    async (
+      { fundingProgrammeUuid, formUuid }: { fundingProgrammeUuid?: string; formUuid?: string },
+      fileName: string
+    ) => {
+      const exporter = async (fileName: string, fn: () => Promise<any>) => {
+        try {
+          setLoading(true);
+          const res = await fn();
+          if (res?.url) {
+            await downloadPresignedUrl(res.url, fileName);
+          } else {
+            await downloadFileBlob(res, fileName);
+          }
+          setLoading(false);
+          return res;
+        } catch (err: any) {
+          setLoading(false);
+          setError(err.message);
+          notify(err.message ?? "Export Error", { undoable: false, type: "error" });
+        }
+      };
+
+      if (formUuid != null) {
+        return exporter(fileName, () => fetchGetV2AdminFormsSubmissionsUUIDExport({ pathParams: { uuid: formUuid } }));
+      } else if (fundingProgrammeUuid != null) {
+        return exporter(fileName, () =>
+          fetchGetV2AdminFormsApplicationsUUIDExport({ pathParams: { uuid: fundingProgrammeUuid } })
+        );
       }
-      setLoading(false);
-      return res;
-    } catch (err: any) {
-      setLoading(false);
-      setError(err.message);
-      notify(err.message ?? "Export Error", { undoable: false, type: "error" });
-    }
-  };
 
-  /**
-   * Exports Applications filtered by funding programme uuid
-   * @param data { funding_programme_uuid?: string, export_choice: "funding-programme" | "stage", form_uuid?: string }
-   * @param fileName string
-   * @returns Exporter Function
-   */
-  const exportApplications = async (
-    data: { funding_programme_uuid?: string; export_choice: "funding-programme" | "stage"; form_uuid?: string },
-    fileName: string
-  ) => {
-    if (data.export_choice === "funding-programme" && data.funding_programme_uuid) {
-      return exporter(fileName, () =>
-        fetchGetV2AdminFormsApplicationsUUIDExport({
-          pathParams: {
-            uuid: data.funding_programme_uuid || ""
-          }
-        })
-      );
-    } else if (data.export_choice === "stage" && data.form_uuid) {
-      return exporter(fileName, () =>
-        fetchGetV2AdminFormsSubmissionsUUIDExport({
-          pathParams: {
-            uuid: data.form_uuid || ""
-          }
-        })
-      );
-    }
-
-    throw new Error("Incorrect Props supplied to export applications");
-  };
-
-  // All exported values go here
-  const value = useMemo(
-    () => ({
-      loading,
-      error,
-      exportApplications
-    }),
-    // eslint-disable-next-line
-    []
+      throw new Error("Incorrect Props supplied to export applications");
+    },
+    [notify]
   );
+
+  const value = useMemo(() => ({ loading, error, exportApplications }), [error, exportApplications, loading]);
 
   return (
     <ExportContext.Provider value={value}>
