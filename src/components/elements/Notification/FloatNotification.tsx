@@ -6,12 +6,20 @@ import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
-import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
+
+type DelayedJobBulkUpdateData = Array<{
+  type: "delayedJobs";
+  id: string;
+  attributes: {
+    isAcknowledged: boolean;
+  };
+}>;
 import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
@@ -70,9 +78,9 @@ const getValidationMessages = (data: Record<string, any> | null): string[] => {
 };
 
 const clearJob = (item: DelayedJobDto) => {
-  const newJobsData: DelayedJobData[] = [
+  const newJobsData: DelayedJobBulkUpdateData = [
     {
-      uuid: item.uuid,
+      id: item.uuid,
       type: "delayedJobs",
       attributes: {
         isAcknowledged: true
@@ -102,11 +110,11 @@ const FloatNotification = () => {
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
-    const newJobsData: DelayedJobData[] = delayedJobs
+    const newJobsData: DelayedJobBulkUpdateData = delayedJobs
       .filter((job: DelayedJobDto) => job.status !== "pending")
       .map((job: DelayedJobDto) => {
         return {
-          uuid: job.uuid,
+          id: job.uuid,
           type: "delayedJobs",
           attributes: {
             isAcknowledged: true
