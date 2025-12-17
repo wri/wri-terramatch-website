@@ -49,7 +49,6 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
     runAnalysisIndicator,
     dropdownAnalysisOptions,
     loadingVerify,
-    analysisToSlug,
     rerunDropdownOptions,
     rerunAnalysisToSlug,
     totalPolygonsForRerun,
@@ -83,7 +82,7 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
         }
       });
     } else {
-      const analysisData = analysisToSlug[`${indicatorSlugSelected}`];
+      const analysisData = rerunAnalysisToSlug[`${indicatorSlugSelected}`];
 
       if (analysisData && typeof analysisData === "object" && "message" in analysisData && analysisData.message) {
         setLoadingAnalysis?.(false);
@@ -91,15 +90,9 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
       }
 
       let polygonUuids: string[] = [];
-
       if (Array.isArray(analysisData)) {
         polygonUuids = analysisData.filter((v: string) => typeof v === "string");
-      } else if (
-        typeof analysisData === "object" &&
-        analysisData !== null &&
-        !("message" in analysisData) &&
-        analysisData.constructor === Object
-      ) {
+      } else if (typeof analysisData === "object" && analysisData !== null && !("message" in analysisData)) {
         polygonUuids = Object.values(analysisData as Record<string, string>).filter(
           (v): v is string => typeof v === "string"
         );
