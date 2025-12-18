@@ -1620,6 +1620,7 @@ export type EntityIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
+  plantingStatus?: Schemas.Object;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -2572,6 +2573,7 @@ export type EntityAssociationIndexQueryParams = {
   polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
   nothingToReport?: boolean;
   shortName?: string;
+  plantingStatus?: Schemas.Object;
   modelType?: string;
   /**
    * @default false

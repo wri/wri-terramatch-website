@@ -46,38 +46,9 @@ export type DelayedJobDto = {
   entityName?: string | null;
 };
 
-export type DelayedJobAttributes = {
-  /**
-   * Value to set for isAcknowledged
-   *
-   * @example true
-   */
-  isAcknowledged: boolean;
-};
-
-export type DelayedJobData = {
-  /**
-   * Type of the resource
-   *
-   * @example delayedJobs
-   */
-  type: "delayedJobs";
-  /**
-   * UUID of the job
-   *
-   * @format uuid
-   * @example uuid-1
-   */
-  uuid: string;
-  /**
-   * Attributes to update for the job
-   */
-  attributes: DelayedJobAttributes;
-};
-
 export type DelayedJobBulkUpdateBodyDto = {
   /**
    * List of jobs to update isAcknowledged
    */
-  data: DelayedJobData[];
+  data: any[][];
 };

@@ -126,7 +126,8 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     (): OrgFormDetails => ({
       uuid: organisation?.uuid,
       currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
-      startMonth: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month
+      startMonth: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month,
+      type: entityName === "financial-reports" ? entity?.organisation?.type : organisation?.type
     }),
     [
       entity?.currency,
@@ -134,7 +135,9 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
       entityName,
       organisation?.currency,
       organisation?.fin_start_month,
-      organisation?.uuid
+      organisation?.uuid,
+      organisation?.type,
+      entity?.organisation?.type
     ]
   );
 

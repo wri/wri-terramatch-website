@@ -9,6 +9,7 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { updateMedia } from "@/connections/Media";
 import { useFileSize } from "@/hooks/useFileSize";
 import { UploadedFile } from "@/types/common";
 
@@ -17,7 +18,6 @@ import { SUBTITLE_MAP_ON_FAILED } from "./constants/subtitleMapOnFailed";
 import { SUBTITLE_MAP_ON_UPLOADED } from "./constants/subtitleMapOnUploaded";
 import { SUBTITLE_MAP_ON_UPLOADING } from "./constants/subtitleMapOnUploading";
 import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./FileInputVariants";
-import { updateMedia } from "@/connections/Media";
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;
@@ -35,7 +35,6 @@ const FilePreviewCard = ({
   onDelete,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
 }: FilePreviewCardProps) => {
-
   const handlePrivateChange = useCallback(
     (checked: boolean) => {
       if (file == null) return;

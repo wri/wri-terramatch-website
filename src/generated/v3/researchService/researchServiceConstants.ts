@@ -2,30 +2,33 @@ import { StoreResourceMap } from "@/store/apiSlice";
 import {
   SitePolygonLightDto,
   SitePolygonFullDto,
+  ValidationDto,
+  GeoJsonExportDto,
+  GeometryUploadComparisonSummaryDto,
   DelayedJobDto,
   BoundingBoxDto,
-  ValidationDto,
   ValidationSummaryDto,
-  ClippedVersionDto,
-  IndicatorsSummaryDto
+  ClippedVersionDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
   "sitePolygons",
+  "validations",
+  "geojsonExports",
+  "geometryUploadComparisonSummaries",
   "delayedJobs",
   "boundingBoxes",
-  "validations",
   "validationSummaries",
-  "clippedVersions",
-  "indicatorsSummary"
+  "clippedVersions"
 ] as const;
 
 export type ResearchServiceApiResources = {
   sitePolygons: StoreResourceMap<SitePolygonLightDto | SitePolygonFullDto>;
+  validations: StoreResourceMap<ValidationDto>;
+  geojsonExports: StoreResourceMap<GeoJsonExportDto>;
+  geometryUploadComparisonSummaries: StoreResourceMap<GeometryUploadComparisonSummaryDto>;
   delayedJobs: StoreResourceMap<DelayedJobDto>;
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
-  validations: StoreResourceMap<ValidationDto>;
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
-  indicatorsSummary: StoreResourceMap<IndicatorsSummaryDto>;
 };

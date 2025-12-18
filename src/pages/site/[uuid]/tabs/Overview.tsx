@@ -20,21 +20,22 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { prepareGeometryForUpload, useUploadGeometry } from "@/connections/GeometryUpload";
+import {
+  prepareGeometryForUpload,
+  useCompareGeometry,
+  useUploadGeometry,
+  useUploadGeometryWithVersions
+} from "@/connections/GeometryUpload";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import {
-  fetchPostV2TerrafundUploadGeojson,
-  fetchPostV2TerrafundUploadKml,
-  fetchPostV2TerrafundUploadShapefile,
-  fetchPutV2SitePolygonStatusBulk
-} from "@/generated/apiComponents";
-import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
+import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
 import { FileType, UploadedFile } from "@/types/common";
@@ -97,6 +98,8 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const { openNotification } = useNotificationContext();
   const { hideLoader } = useLoading();
   const uploadGeometry = useUploadGeometry({});
+  const compareGeometry = useCompareGeometry({});
+  const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
   const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
@@ -123,11 +126,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
-
-  const getFileType = (file: UploadedFile) => {
-    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
-    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
-  };
 
   const uploadFiles = async () => {
     const siteUuid = site.uuid;
@@ -165,35 +163,61 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
       return;
     }
 
-    const uploadPromises = [];
-    for (const file of files) {
-      const fileToUpload = file.rawFile as File;
-      const formData = new FormData();
-      const fileType = getFileType(file);
-      formData.append("file", fileToUpload);
-      formData.append("uuid", siteUuid);
-      formData.append("polygon_loaded", polygonLoaded.toString());
-      formData.append("submit_polygon_loaded", submitPolygonLoaded.toString());
-      const newRequest: any = formData;
-
-      switch (fileType) {
-        case "geojson":
-          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
-          break;
-        case "shapefile":
-          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
-          break;
-        case "kml":
-          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
-          break;
-        default:
-          break;
-      }
-    }
+    const isPreviewMode = polygonLoaded && !submitPolygonLoaded;
 
     try {
-      const promise = await Promise.all(uploadPromises);
-      openFormModalHandlerIdentifiedPolygons(promise);
+      if (isPreviewMode) {
+        const file = files[0];
+        if (!file) {
+          openNotification("error", t("Error"), t("No file selected"));
+          return;
+        }
+
+        const fileToUpload = file.rawFile as File;
+        const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+        compareGeometry(attributes, {
+          onSuccess: (response: CompareGeometryFileResponse) => {
+            const dataArray = Array.isArray(response.data)
+              ? response.data
+              : response.data != null
+              ? [response.data]
+              : [];
+            const responseAttributes = dataArray[0]?.attributes;
+
+            openFormModalHandlerIdentifiedPolygons(responseAttributes?.existingUuids ?? [], {
+              featuresForVersioning: responseAttributes?.featuresForVersioning ?? 0,
+              featuresForCreation: responseAttributes?.featuresForCreation ?? 0,
+              totalFeatures: responseAttributes?.totalFeatures ?? 0
+            });
+          },
+          onError: (error: any) => {
+            const errorMessage =
+              error && typeof error === "object" && "message" in error
+                ? (error.message as string)
+                : t("An unknown error occurred");
+            openNotification("error", t("Error uploading file"), errorMessage);
+          }
+        });
+      } else if (submitPolygonLoaded) {
+        const uploadPromises = files.map(
+          file =>
+            new Promise((resolve, reject) => {
+              const fileToUpload = file.rawFile as File;
+              const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+              uploadGeometryWithVersions(attributes, {
+                onSuccess: (response: any) => resolve(response),
+                onError: (error: any) => reject(error)
+              });
+            })
+        );
+
+        await Promise.all(uploadPromises);
+        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        setShouldRefetchPolygonData(true);
+        refetchV3();
+      }
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
         let errorMessage = (error as { message: string }).message;
@@ -317,12 +341,17 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     );
   };
 
-  const openFormModalHandlerIdentifiedPolygons = (polygonsLoaded: SitePolygonsLoadedDataResponse) => {
+  const openFormModalHandlerIdentifiedPolygons = (
+    existingUuids: string[],
+    summary?: { featuresForVersioning: number; featuresForCreation: number; totalFeatures: number }
+  ) => {
     openModal(
       ModalId.IDENTIFIED_POLYGONS,
       <ModalIdentified
         title={t("Polygons Identified")}
-        polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
+        existingUuids={existingUuids}
+        sitePolygonData={sitePolygonDataV3}
+        summary={summary}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
         setPolygonLoaded={setPolygonLoaded}

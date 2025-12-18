@@ -18,6 +18,7 @@ import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
 import {
@@ -107,6 +108,8 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     );
   const hasCurrentRatioData =
     Array.isArray(financialData) && financialData.some(item => item.collection === "current-ratio" && item.amount);
+  const hasBudgetData =
+    Array.isArray(financialData) && financialData.some(item => item.collection === "budget" && item.amount);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -195,6 +198,32 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
                   currency={""}
                 />
               </div>
+            </div>
+          </div>
+        </Container>
+      )}
+
+      {hasBudgetData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Budget By Year")}
+          </Text>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <FinancialBudgetStackedBarChart data={financialData} currency={organization?.currency} />
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+              {financialData
+                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
+                .map((item: FinancialStackedBarChartProps) => (
+                  <CardFinancial
+                    key={item.uuid}
+                    title={t(item.year.toString())}
+                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                    description={t("Budget")}
+                    currency={organization?.currency}
+                  />
+                ))}
             </div>
           </div>
         </Container>
