@@ -2,19 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { startIndicatorCalculationResource } from "@/connections/Indicators";
-import { Indicator, useAllSitePolygons } from "@/connections/SitePolygons";
+import { Indicator, sitePolygonsConnection, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
-import {
-  fetchGetV2IndicatorsEntityUuidSlugVerify,
-  useGetV2IndicatorsEntityUuidSlugVerify
-} from "@/generated/apiComponents";
 import { Indicators } from "@/generated/apiSchemas";
 import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { IndicatorsAttributes } from "@/generated/v3/researchService/researchServiceSchemas";
 import { EntityName } from "@/types/common";
+import { loadConnection } from "@/utils/loadConnection";
 import Log from "@/utils/log";
 import { transformSitePolygonsToIndicators } from "@/utils/MonitoredIndicatorUtils";
+
+const ALL_POLYGONS_PAGE_SIZE = 100;
 
 type IndicatorsWithPolyId = Indicators & {
   poly_id?: string;
@@ -237,62 +236,78 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
 
   const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key === "approved")?.count;
 
-  const { data: dataToMissingPolygonVerify } = useGetV2IndicatorsEntityUuidSlugVerify(
-    {
-      pathParams: {
-        entity: entity!,
-        uuid: entity_uuid!,
-        slug: indicatorSlug!
-      }
-    },
-    {
-      enabled: !!indicatorSlug
+  const { data: missingPolygonsData } = useAllSitePolygons({
+    entityName: entity as "sites" | "projects",
+    entityUuid: entity_uuid!,
+    enabled: !!indicatorSlug && !!entity_uuid && !!entity,
+    filter: {
+      "polygonStatus[]": ["approved"],
+      "missingIndicator[]": indicatorSlug ? [indicatorSlug as Indicator] : undefined
     }
-  );
+  });
 
-  // @ts-ignore
-  const polygonMissingAnalysis = dataToMissingPolygonVerify?.message
-    ? totalPolygonsApproved
-    : totalPolygonsApproved! - Object?.keys(dataToMissingPolygonVerify ?? {})?.length;
+  const polygonMissingAnalysis = totalPolygonsApproved ? totalPolygonsApproved - (missingPolygonsData?.length ?? 0) : 0;
 
   useEffect(() => {
-    const verifySlug = async (slug: string) =>
-      fetchGetV2IndicatorsEntityUuidSlugVerify({
-        pathParams: {
-          entity: entity!,
-          uuid: entity_uuid!,
-          slug: slug!
-        }
-      });
-
     const fetchSlugs = async () => {
+      if (!entity || !entity_uuid) {
+        setIsLoadingVerify(false);
+        return;
+      }
+
       setIsLoadingVerify(true);
-      const slugVerify = await Promise.all(SLUGS_INDICATORS.map(verifySlug));
-      const slugToAnalysis = SLUGS_INDICATORS.reduce<Record<string, any>>((acc, slug, index) => {
-        acc[slug] = slugVerify[index];
-        return acc;
-      }, {});
-      const updateTitleDropdownOptions = () => {
-        return DROPDOWN_OPTIONS.map(option => {
-          if (slugToAnalysis[`${option.slug}`]?.message) {
+
+      try {
+        const slugToAnalysis: Record<string, any> = {};
+
+        for (const slug of SLUGS_INDICATORS) {
+          try {
+            const { indexTotal } = await loadConnection(sitePolygonsConnection, {
+              entityName: entity as "sites" | "projects",
+              entityUuid: entity_uuid,
+              filter: {
+                "polygonStatus[]": ["approved"],
+                "missingIndicator[]": [slug as Indicator]
+              },
+              pageSize: ALL_POLYGONS_PAGE_SIZE,
+              pageNumber: 1
+            });
+
+            const missingCount = indexTotal ?? 0;
+            slugToAnalysis[slug] = missingCount > 0 ? { count: missingCount } : { message: "No missing polygons" };
+          } catch (error) {
+            Log.error(`Error fetching missing polygons for indicator ${slug}:`, error);
+            slugToAnalysis[slug] = { message: "Error fetching data" };
+          }
+        }
+
+        const updateTitleDropdownOptions = () => {
+          return DROPDOWN_OPTIONS.map(option => {
+            const slugData = slugToAnalysis[`${option.slug}`];
+            if (slugData?.message) {
+              return {
+                ...option,
+                title: `${option.title} (0 polygons not run)`
+              };
+            }
+            if (!slugData) {
+              return option;
+            }
             return {
               ...option,
-              title: `${option.title} (0 polygons not run)`
+              title: `${option.title} (${slugData.count ?? 0} polygons not run)`
             };
-          }
-          if (!slugToAnalysis[`${option.slug}`]) {
-            return option;
-          }
-          return {
-            ...option,
-            title: `${option.title} (${Object?.keys(slugToAnalysis[`${option.slug}`]).length} polygons not run)`
-          };
-        });
-      };
-      setAnalysisToSlug(slugToAnalysis);
-      setDropdownAnalysisOptions(updateTitleDropdownOptions);
-      setIsLoadingVerify(false);
+          });
+        };
+        setAnalysisToSlug(slugToAnalysis);
+        setDropdownAnalysisOptions(updateTitleDropdownOptions);
+      } catch (error) {
+        Log.error("Error fetching missing polygons for indicators:", error);
+      } finally {
+        setIsLoadingVerify(false);
+      }
     };
+
     if (modalOpened(ModalId.MODAL_RUN_ANALYSIS)) {
       fetchSlugs();
     }
