@@ -1,7 +1,8 @@
 import {
   compareGeometryFile,
   uploadGeometryFile,
-  uploadGeometryFileWithVersions
+  uploadGeometryFileWithVersions,
+  uploadVersionForSitePolygon
 } from "@/generated/v3/researchService/researchServiceComponents";
 import { GeometryUploadAttributesDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { WithFormData } from "@/generated/v3/utils";
@@ -16,3 +17,16 @@ export const prepareGeometryForUpload = (file: File, siteId: string): WithFormDa
 export const useUploadGeometry = parallelRequestHook("sitePolygons", uploadGeometryFile);
 export const useCompareGeometry = parallelRequestHook("sitePolygons", compareGeometryFile);
 export const useUploadGeometryWithVersions = parallelRequestHook("sitePolygons", uploadGeometryFileWithVersions);
+
+export const uploadVersionForPolygon = async (polygonUuid: string, file: File, siteId: string): Promise<void> => {
+  const attributes = prepareGeometryForUpload(file, siteId);
+  await uploadVersionForSitePolygon.fetchParallel({
+    pathParams: { uuid: polygonUuid },
+    body: {
+      data: {
+        type: "sitePolygons",
+        attributes
+      }
+    }
+  });
+};

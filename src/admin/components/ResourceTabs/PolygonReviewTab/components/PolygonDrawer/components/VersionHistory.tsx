@@ -10,6 +10,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { uploadVersionForPolygon } from "@/connections/GeometryUpload";
 import {
   deletePolygonVersion,
   loadListPolygonVersions,
@@ -19,11 +20,6 @@ import {
 import { createBlankVersion } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  fetchPostV2TerrafundUploadGeojson,
-  fetchPostV2TerrafundUploadKml,
-  fetchPostV2TerrafundUploadShapefile
-} from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
@@ -146,43 +142,33 @@ const VersionHistory = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
-  const getFileType = (file: UploadedFile) => {
-    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
-    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
-  };
-
   const uploadFiles = async () => {
-    const uploadPromises = [];
-    const polygonSelectedUuid = getPolygonSelectedUuid();
-    setIsLoadingDropdown(true);
-    for (const file of files) {
-      const fileToUpload = file.rawFile as File;
-      const formData = new FormData();
-      const fileType = getFileType(file);
-      formData.append("file", fileToUpload);
-      formData.append("uuid", ctx?.record?.uuid as string);
-      formData.append("primary_uuid", polygonSelectedUuid as string);
-      let newRequest: any = formData;
+    const polygonUuid = selectPolygonVersion?.uuid ?? selectedPolygon.uuid;
+    const siteId = ctx?.record?.uuid as string;
 
-      switch (fileType) {
-        case "geojson":
-          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
-          break;
-        case "shapefile":
-          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
-          break;
-        case "kml":
-          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
-          break;
-        default:
-          break;
-      }
+    if (!polygonUuid) {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      setIsLoadingDropdown(false);
+      return;
     }
-    try {
-      const polygonSelectedPrimaryUuid = getPolygonSelectedUuid();
-      const polygonUuid = selectPolygonVersion?.polygonUuid ?? selectedPolygon.polygonUuid;
 
-      await Promise.all(uploadPromises);
+    if (!siteId) {
+      openNotification("error", t("Error!"), t("Missing site information"));
+      setIsLoadingDropdown(false);
+      return;
+    }
+
+    const file = files[0];
+    if (!file?.rawFile) {
+      openNotification("error", t("Error!"), t("No file selected"));
+      setIsLoadingDropdown(false);
+      return;
+    }
+
+    setIsLoadingDropdown(true);
+
+    try {
+      await uploadVersionForPolygon(polygonUuid, file.rawFile as File, siteId);
 
       if (polygonUuid) {
         ApiSlice.pruneCache("sitePolygons", [polygonUuid]);
@@ -191,9 +177,9 @@ const VersionHistory = ({
       await refreshSiteData?.();
       await refreshPolygonList?.();
 
+      const polygonSelectedPrimaryUuid = getPolygonSelectedUuid();
       const versionsResponse = await loadListPolygonVersions({ uuid: polygonSelectedPrimaryUuid as string });
       const versionsList = versionsResponse?.data;
-      // when the upload function is ready,replace this to be updated this part of the code to update the polygon data
       const polygonActive = versionsList?.[0];
 
       if (polygonActive) {

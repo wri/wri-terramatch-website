@@ -10,7 +10,6 @@ import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -22,7 +21,7 @@ interface EntityAreaProps {
   entityModel: any;
   type: string;
   refetch?: () => void;
-  polygonVersionData?: SitePolygonsDataResponse;
+  polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
 }
 
@@ -186,7 +185,7 @@ const OverviewMapArea = ({
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
           recallEntityData={refetch}
-          polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
+          polygonVersionData={polygonVersionData}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
           entityUuid={entityModel?.uuid}

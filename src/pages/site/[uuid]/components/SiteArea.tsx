@@ -9,7 +9,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 
@@ -41,33 +40,20 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     enabled: !!polygon?.primary_uuid
   });
 
-  const polygonVersions = polygonVersionsV3?.map(v3Version => ({
-    uuid: v3Version.uuid,
-    poly_id: v3Version.polygonUuid,
-    poly_name: v3Version.name,
-    primary_uuid: v3Version.primaryUuid,
-    status: v3Version.status,
-    practice: v3Version.practice?.join?.(", ") || (v3Version.practice as any),
-    target_sys: v3Version.targetSys,
-    distr: v3Version.distr?.join?.(", ") || (v3Version.distr as any),
-    source: v3Version.source,
-    is_active: v3Version.isActive
-  }));
-
   const makeActivePolygon = async () => {
     if (!selectedPolyVersion?.uuid) {
       openNotification("error", t("Error!"), t("No polygon version selected"));
       return;
     }
 
-    const versionActive = polygonVersions?.find(item => item?.uuid === selectedPolyVersion?.uuid);
+    const versionActive = polygonVersionsV3?.find(item => item?.uuid === selectedPolyVersion?.uuid);
 
     if (!versionActive) {
       openNotification("error", t("Error!"), t("Polygon version not found"));
       return;
     }
 
-    if (!versionActive.is_active) {
+    if (!versionActive.isActive) {
       try {
         await updatePolygonVersionAsync(selectedPolyVersion?.uuid as string, {
           isActive: true
@@ -203,7 +189,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
         entityModel={sites}
         type="sites"
         refetch={refetch}
-        polygonVersionData={polygonVersions as SitePolygonsDataResponse}
+        polygonVersionData={polygonVersionsV3}
         refetchPolygonVersions={refetchPolygonVersions}
       />
     </div>
