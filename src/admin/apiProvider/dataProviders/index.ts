@@ -13,13 +13,11 @@ import { impactStoriesDataProvider } from "./impactStoriesDataProvider";
 import { nurseryDataProvider } from "./nurseryDataProvider";
 import { nurseryReportDataProvider } from "./nurseryReportDataProvider";
 import { organisationDataProvider } from "./organisationDataProvider";
-import { pitchDataProvider } from "./pitchDataProviders";
 import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
 import { srpReportDataProvider } from "./SRPReportDataProvider";
-import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
 
 //@ts-ignore
@@ -31,9 +29,6 @@ export const dataProvider = combineDataProviders(resource => {
     case modules.organisation.ResourceName:
       return organisationDataProvider;
 
-    case modules.pitch.ResourceName:
-      return pitchDataProvider;
-
     case modules.application.ResourceName:
       return applicationDataProvider;
 
@@ -42,9 +37,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.reportingFramework.ResourceName:
       return reportingFrameworkDataProvider;
-
-    case modules.stage.ResourceName:
-      return stageDataProvider;
 
     case modules.form.ResourceName:
       return formDataProvider;

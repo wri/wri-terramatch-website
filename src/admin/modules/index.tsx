@@ -7,9 +7,6 @@ import { ReportingFrameworkCreate } from "@/admin/modules/reportingFramework/com
 import { ReportingFrameworkEdit } from "@/admin/modules/reportingFramework/components/ReportingFrameworkEdit";
 import { ReportingFrameworkList } from "@/admin/modules/reportingFramework/components/ReportingFrameworkList";
 import { ReportingFrameworkShow } from "@/admin/modules/reportingFramework/components/ReportingFrameworkShow";
-import { StageCreate } from "@/admin/modules/stages/StageCreate";
-import { StageEdit } from "@/admin/modules/stages/StageEdit";
-import { StageShow } from "@/admin/modules/stages/StageShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
 import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/ValidationPolygonFileShow";
@@ -33,9 +30,6 @@ import { NurseryReportsList } from "./nurseryReports/components/NurseryReportsLi
 import { OrganisationEdit } from "./organisations/components/OrganisationEdit";
 import { OrganisationShow } from "./organisations/components/OrganisationShow";
 import { OrganisationsList } from "./organisations/components/OrganisationsList";
-import PitchEdit from "./pitch/components/PitchEdit";
-import { PitchesList } from "./pitch/components/PitchesList";
-import { PitchShow } from "./pitch/components/PitchShow";
 import ProjectReportShow from "./projectReports/components/ProjectReportShow";
 import { ProjectReportsList } from "./projectReports/components/ProjectReportsList";
 import ProjectShow from "./projects/components/ProjectShow";
@@ -67,13 +61,6 @@ const organisation = {
   Create: OrganisationCreate
 };
 
-const pitch = {
-  ResourceName: "pitch",
-  List: PitchesList,
-  Show: PitchShow,
-  Edit: PitchEdit
-};
-
 const fundingProgramme = {
   ResourceName: "fundingProgramme",
   List: FundingProgrammeList,
@@ -86,13 +73,6 @@ const application = {
   ResourceName: "application",
   List: ApplicationList,
   Show: ApplicationShow
-};
-
-const stage = {
-  ResourceName: "stage",
-  Show: StageShow,
-  Edit: StageEdit,
-  Create: StageCreate
 };
 
 const form = {
@@ -198,11 +178,9 @@ const srpReport = {
 const modules = {
   user,
   organisation,
-  pitch,
   application,
   fundingProgramme,
   reportingFramework,
-  stage,
   form,
   project,
   site,

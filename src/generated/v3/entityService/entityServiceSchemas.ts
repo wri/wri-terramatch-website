@@ -2493,7 +2493,7 @@ export type SubmissionDto = {
     | "hbf"
     | "fundo-flora"
     | null;
-  formUuid: string | null;
+  formUuid: string;
   status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   answers: Record<string, any>;
   organisationUuid: string | null;
@@ -2502,6 +2502,19 @@ export type SubmissionDto = {
   translatedFeedbackFields: string[] | null;
   stageName: string | null;
   stageUuid: string | null;
+};
+
+export type CreateSubmissionAttributes = {
+  formUuid: string;
+};
+
+export type CreateSubmissionData = {
+  type: "submissions";
+  attributes: CreateSubmissionAttributes;
+};
+
+export type CreateSubmissionBody = {
+  data: CreateSubmissionData;
 };
 
 /**
@@ -2932,12 +2945,12 @@ export type EmbeddedMediaDto = {
 
 export type StageDto = {
   uuid: string;
-  name: string | null;
+  name?: string | null;
   /**
    * @format date-time
    */
-  deadlineAt: string | null;
-  formUuid: string | null;
+  deadlineAt?: string | null;
+  formUuid?: string | null;
 };
 
 export type FundingProgrammeDto = {
@@ -2950,7 +2963,7 @@ export type FundingProgrammeDto = {
    * @format date-time
    */
   updatedAt: string;
-  framework:
+  framework?:
     | "terrafund"
     | "terrafund-landscapes"
     | "enterprises"
@@ -2961,10 +2974,61 @@ export type FundingProgrammeDto = {
     | null;
   name: string;
   description: string;
-  location: string | null;
-  readMoreUrl: string | null;
+  location?: string | null;
+  readMoreUrl?: string | null;
   status: "inactive" | "active" | "disabled";
-  organisationTypes: ("for-profit-organization" | "non-profit-organization")[];
+  organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
   cover: EmbeddedMediaDto;
   stages: StageDto[] | null;
+};
+
+export type StoreStageAttributes = {
+  name?: string | null;
+  /**
+   * @format date-time
+   */
+  deadlineAt?: string | null;
+  formUuid?: string | null;
+  uuid?: string;
+};
+
+export type StoreFundingProgrammeAttributes = {
+  framework?:
+    | "terrafund"
+    | "terrafund-landscapes"
+    | "enterprises"
+    | "epa-ghana-pilot"
+    | "ppc"
+    | "hbf"
+    | "fundo-flora"
+    | null;
+  name: string;
+  description: string;
+  location?: string | null;
+  readMoreUrl?: string | null;
+  status: "inactive" | "active" | "disabled";
+  organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
+  stages?: StoreStageAttributes[];
+};
+
+export type CreateFundingProgrammeData = {
+  type: "fundingProgrammes";
+  attributes: StoreFundingProgrammeAttributes;
+};
+
+export type CreateFundingProgrammeBody = {
+  data: CreateFundingProgrammeData;
+};
+
+export type UpdateFundingProgrammeData = {
+  type: "fundingProgrammes";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreFundingProgrammeAttributes;
+};
+
+export type UpdateFundingProgrammeBody = {
+  data: UpdateFundingProgrammeData;
 };

@@ -120,10 +120,19 @@ export type IndexData = {
   pageNumber?: number;
 };
 
+/**
+ * Resources that were deleted as a side effect of an API action.
+ */
+export type DeletedData = {
+  resource: ResourceType;
+  id: string;
+};
+
 export type ResponseMeta = {
   resourceType: ResourceType;
   resourceId?: string;
   indices?: IndexData[];
+  deleted?: DeletedData[];
 };
 
 export type JsonApiResponse = {
@@ -299,6 +308,14 @@ export const apiSlice = createSlice({
         clearApiCache(state);
       } else {
         clearPending(state, apiSlice.actions.clearPending({ urlPrefix: url, method }));
+      }
+
+      if (response.meta.deleted != null) {
+        // Any request can specify resources that were deleted as a side effect.
+        for (const deleted of response.meta.deleted) {
+          pruneCache(state, apiSlice.actions.pruneCache({ resource: deleted.resource, ids: [deleted.id] }));
+          state.meta.deleted[deleted.resource] = uniq([...state.meta.deleted[deleted.resource], deleted.id]);
+        }
       }
 
       if (isDeleteResponse(method, response)) {

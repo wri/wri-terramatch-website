@@ -23,7 +23,7 @@ import { Option } from "@/types/common";
 import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 
-export interface FormDataProvider extends Partial<DataProvider> {}
+const UPLOAD_KEYS = ["banner"];
 
 const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderData) => {
   const uploadPromises: Promise<unknown>[] = [];
@@ -58,15 +58,14 @@ const handleOptionFilesUpload = async (form: FormFullDto, payload: FormBuilderDa
   }
 };
 
-export const formDataProvider: FormDataProvider = {
+export const formDataProvider: Partial<DataProvider> = {
   async create(_, params) {
     try {
-      const uploadKeys = ["banner"];
-      const body = omit(params.data, uploadKeys) as FormBuilderData;
+      const body = omit(params.data, UPLOAD_KEYS) as FormBuilderData;
       const form = await createForm(formBuilderToAttributes(body));
 
       await handleOptionFilesUpload(form, body);
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid: form.uuid });
+      await handleUploads(params, UPLOAD_KEYS, { entity: "forms", uuid: form.uuid });
 
       return { data: { id: form.uuid } } as CreateResult;
     } catch (createFailure) {
@@ -76,11 +75,10 @@ export const formDataProvider: FormDataProvider = {
 
   async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     try {
-      const uploadKeys = ["banner"];
-      const body = omitBy(omit(params.data, uploadKeys), isUndefined) as FormBuilderData;
+      const body = omitBy(omit(params.data, UPLOAD_KEYS), isUndefined) as FormBuilderData;
 
       // In update, do the banner upload first so that the update response shows the new banner media.
-      await handleUploads(params, uploadKeys, { entity: "forms", uuid: params.id as string });
+      await handleUploads(params, UPLOAD_KEYS, { entity: "forms", uuid: params.id as string });
       const form = await updateForm(formBuilderToAttributes(body), { id: params.id as string, translated: false });
 
       await handleOptionFilesUpload(form, body);

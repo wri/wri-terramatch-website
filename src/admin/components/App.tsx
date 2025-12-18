@@ -48,14 +48,6 @@ const App = () => {
               recordRepresentation={record => record?.name}
             />
             <Resource
-              name={modules.pitch.ResourceName}
-              list={modules.pitch.List}
-              show={modules.pitch.Show}
-              edit={modules.pitch.Edit}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
-              recordRepresentation={record => record?.project_name}
-            />
-            <Resource
               name={modules.fundingProgramme.ResourceName}
               list={modules.fundingProgramme.List}
               edit={modules.fundingProgramme.Edit}
