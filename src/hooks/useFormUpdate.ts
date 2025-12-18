@@ -4,13 +4,13 @@ import { v4 as uuidv4 } from "uuid";
 
 import { pruneEntityCache } from "@/connections/Entity";
 import { FormEntity, useEntityFormData } from "@/connections/Form";
+import { useSubmission } from "@/connections/FormSubmission";
 import { useToastContext } from "@/context/toast.provider";
-import { PatchV2FormsSubmissionsUUIDRequestBody, usePatchV2FormsSubmissionsUUID } from "@/generated/apiComponents";
-import { StoreFormDataAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { StoreFormDataAttributes, UpdateSubmissionAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-type FormBody = StoreFormDataAttributes | PatchV2FormsSubmissionsUUIDRequestBody;
+type FormBody = StoreFormDataAttributes | UpdateSubmissionAttributes;
 
 type FormUpdateState<T extends FormBody> = {
   id: string;
@@ -101,21 +101,30 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
   return { updateEntityAnswers, entityAnswersUpdating: isUpdating };
 };
 
-export const useSubmissionUpdate = (submissionUUID: string) => {
-  const { mutate, error, isSuccess, isLoading: isUpdating } = usePatchV2FormsSubmissionsUUID({});
+export const useSubmissionUpdate = (submissionUUID?: string) => {
+  const enabled = submissionUUID != null;
+  const [, { update, isUpdating, updateFailure }] = useSubmission({ id: submissionUUID, enabled });
+
+  const { openToast } = useToastContext();
+  useValueChanged(updateFailure, () => {
+    if (updateFailure != null) {
+      Log.error("Form submission save failed", updateFailure);
+      openToast("Application save failed");
+    }
+  });
 
   const updateSubmission = useFormReducer(
     useCallback(
-      (body: PatchV2FormsSubmissionsUUIDRequestBody) => {
-        mutate({
-          pathParams: { uuid: submissionUUID },
-          body
-        });
+      (body: UpdateSubmissionAttributes) => {
+        if (enabled) update(body);
+        else {
+          Log.error("Asked to update submission data uuid not provided");
+        }
       },
-      [mutate, submissionUUID]
+      [enabled, update]
     ),
     isUpdating
   );
 
-  return { updateSubmission, error, isSuccess, isUpdating };
+  return { updateSubmission, submissionUpdating: isUpdating };
 };

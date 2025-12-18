@@ -3081,11 +3081,6 @@ export type StageRead = {
   updated_at?: string;
 };
 
-export type FormSubmissionUpdate = {
-  status?: string;
-  answers?: Record<string, any>;
-};
-
 export type NurseryPaginated = {
   data?: {
     uuid?: string;
