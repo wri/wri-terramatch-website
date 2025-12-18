@@ -28,21 +28,25 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useMedias } from "@/connections/EntityAssociation";
-import { prepareGeometryForUpload, useUploadGeometry } from "@/connections/GeometryUpload";
+import {
+  prepareGeometryForUpload,
+  useCompareGeometry,
+  useUploadGeometry,
+  useUploadGeometryWithVersions
+} from "@/connections/GeometryUpload";
+import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
+import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import {
-  fetchDeleteV2TerrafundPolygonUuid,
-  fetchPostV2TerrafundUploadGeojson,
-  fetchPostV2TerrafundUploadKml,
-  fetchPostV2TerrafundUploadShapefile,
-  fetchPutV2SitePolygonStatusBulk
-} from "@/generated/apiComponents";
-import { SitePolygonsDataResponse, SitePolygonsLoadedDataResponse } from "@/generated/apiSchemas";
-import { uploadGeometryFile, UploadGeometryFileError } from "@/generated/v3/researchService/researchServiceComponents";
+  CompareGeometryFileResponse,
+  uploadGeometryFile,
+  UploadGeometryFileError
+} from "@/generated/v3/researchService/researchServiceComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -85,11 +89,6 @@ export interface IPolygonItem {
   status: "draft" | "submitted" | "approved" | "needs-more-information";
   label: string;
   uuid: string;
-}
-
-interface DeletePolygonProps {
-  uuid: string;
-  message: string;
 }
 
 const PolygonReviewAside: FC<{
@@ -196,6 +195,8 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openNotification } = useNotificationContext();
   const uploadGeometry = useUploadGeometry({});
+  const compareGeometry = useCompareGeometry({});
+  const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
@@ -333,24 +334,27 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   const { openModal, closeModal } = useModalContext();
 
-  const deletePolygon = (uuid: string) => {
-    fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid } })
-      .then((response: DeletePolygonProps | undefined) => {
-        if (response && response?.uuid) {
-          refetch?.();
-          const { map } = mapFunctions;
-          if (map?.current) {
-            addSourcesToLayers(map.current, polygonDataMap, undefined);
-          }
-          closeModal(ModalId.DELETE_POLYGON);
-        }
-      })
-      .catch(error => {
-        Log.error("Error deleting polygon:", error);
-      });
+  const deletePolygon = async (uuid: string) => {
+    try {
+      await deleteSitePolygon(uuid);
+      refetch?.();
+      const { map } = mapFunctions;
+      if (map?.current) {
+        addSourcesToLayers(map.current, polygonDataMap, undefined);
+      }
+      closeModal(ModalId.DELETE_POLYGON);
+    } catch (error) {
+      Log.error("Error deleting polygon:", error);
+    }
   };
 
   const openFormModalHandlerConfirmDeletion = (uuid: string) => {
+    const sitePolygon = sitePolygonData?.find(polygon => polygon.polygonUuid === uuid);
+    const sitePolygonUuid = sitePolygon?.uuid;
+    if (!sitePolygonUuid) {
+      Log.error("Site polygon not found", { uuid });
+      return;
+    }
     openModal(
       ModalId.DELETE_POLYGON,
       <ModalConfirm
@@ -358,7 +362,7 @@ const PolygonReviewTab: FC<IProps> = props => {
         content="Do you want to delete this polygon?"
         onClose={() => closeModal(ModalId.DELETE_POLYGON)}
         onConfirm={() => {
-          deletePolygon(uuid);
+          deletePolygon(sitePolygonUuid);
         }}
       />
     );
@@ -439,48 +443,54 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
 
   const uploadPolygonsWithVersioning = async (siteUuid: string): Promise<void> => {
-    const uploadPromises: Promise<any>[] = [];
     const isPreviewMode = !submitPolygonLoaded;
 
-    for (const file of files) {
-      const fileToUpload = file.rawFile as File;
-      const formData = new FormData();
-      const fileType = getFileType(file);
-
-      formData.append("file", fileToUpload);
-      formData.append("uuid", siteUuid);
-
-      if (isPreviewMode) {
-        formData.append("polygon_loaded", "true");
-        formData.append("submit_polygon_loaded", "false");
-      } else {
-        formData.append("polygon_loaded", "false");
-        formData.append("submit_polygon_loaded", "true");
-      }
-
-      const newRequest: any = formData;
-
-      switch (fileType) {
-        case "geojson":
-          uploadPromises.push(fetchPostV2TerrafundUploadGeojson({ body: newRequest }));
-          break;
-        case "shapefile":
-          uploadPromises.push(fetchPostV2TerrafundUploadShapefile({ body: newRequest }));
-          break;
-        case "kml":
-          uploadPromises.push(fetchPostV2TerrafundUploadKml({ body: newRequest }));
-          break;
-        default:
-          break;
-      }
-    }
-
     try {
-      const promise = await Promise.all(uploadPromises);
-
       if (isPreviewMode) {
-        openFormModalHandlerIdentifiedPolygons(promise as SitePolygonsLoadedDataResponse);
+        const file = files[0];
+        if (!file) {
+          openNotification("error", t("Error"), t("No file selected"));
+          return;
+        }
+
+        const fileToUpload = file.rawFile as File;
+        const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+        compareGeometry(attributes, {
+          onSuccess: (response: CompareGeometryFileResponse) => {
+            const dataArray = Array.isArray(response.data)
+              ? response.data
+              : response.data != null
+              ? [response.data]
+              : [];
+            const responseAttributes = dataArray[0]?.attributes;
+
+            openFormModalHandlerIdentifiedPolygons(responseAttributes?.existingUuids ?? [], {
+              featuresForVersioning: responseAttributes?.featuresForVersioning ?? 0,
+              featuresForCreation: responseAttributes?.featuresForCreation ?? 0,
+              totalFeatures: responseAttributes?.totalFeatures ?? 0
+            });
+          },
+          onError: (error: any) => {
+            const errorMessage = extractErrorMessage(error);
+            openNotification("error", t("Error uploading file"), errorMessage);
+          }
+        });
       } else {
+        const uploadPromises = files.map(
+          file =>
+            new Promise((resolve, reject) => {
+              const fileToUpload = file.rawFile as File;
+              const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+              uploadGeometryWithVersions(attributes, {
+                onSuccess: (response: any) => resolve(response),
+                onError: (error: any) => reject(error)
+              });
+            })
+        );
+
+        await Promise.all(uploadPromises);
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
         refetch();
       }
@@ -517,10 +527,6 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   };
 
-  const getFileType = (file: UploadedFile) => {
-    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
-    return ["geojson", "zip", "kml"].includes(fileType as string) ? (fileType == "zip" ? "shapefile" : fileType) : null;
-  };
   const openFormModalHandlerAddPolygon = () => {
     setSubmitPolygonLoaded(false);
     isVersioningUploadRef.current = false;
@@ -676,12 +682,17 @@ const PolygonReviewTab: FC<IProps> = props => {
     );
   };
 
-  const openFormModalHandlerIdentifiedPolygons = (polygonsLoaded: SitePolygonsLoadedDataResponse) => {
+  const openFormModalHandlerIdentifiedPolygons = (
+    existingUuids: string[],
+    summary?: { featuresForVersioning: number; featuresForCreation: number; totalFeatures: number }
+  ) => {
     openModal(
       ModalId.IDENTIFIED_POLYGONS,
       <ModalIdentified
         title={t("Polygons Identified")}
-        polygonsList={polygonsLoaded[0] as SitePolygonsLoadedDataResponse}
+        existingUuids={existingUuids}
+        sitePolygonData={sitePolygonData}
+        summary={summary}
         setSubmitPolygonLoaded={setSubmitPolygonLoaded}
         setSaveFlags={setSaveFlags}
         onClose={() => {

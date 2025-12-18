@@ -13,12 +13,19 @@ interface IntersectionInfo {
 }
 
 interface ProjectGoalInfo {
-  sumAreaProject: number;
-  percentageProject: number;
-  totalAreaProject: number;
-  sumAreaSite: number;
-  percentageSite: number;
-  totalAreaSite: number;
+  polygonStatus?: string;
+  polygonArea?: number;
+  isPolygonApproved?: boolean;
+  sumAreaSiteApproved?: number;
+  percentageSiteApproved?: number;
+  totalAreaSite?: number;
+  sumAreaProjectApproved?: number;
+  percentageProjectApproved?: number;
+  totalAreaProject?: number;
+  projectedSumAreaSite?: number;
+  projectedPercentageSite?: number;
+  projectedSumAreaProject?: number;
+  projectedPercentageProject?: number;
 }
 
 interface ExtraInfoItem {
@@ -174,57 +181,105 @@ export const useMessageValidators = () => {
     () => (extraInfo: any) => {
       if (extraInfo == null) return [];
       try {
-        const infoArray: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
-        const { sumAreaProject, percentageProject, totalAreaProject, sumAreaSite, percentageSite, totalAreaSite } =
-          infoArray;
+        const info: ProjectGoalInfo = typeof extraInfo === "string" ? JSON.parse(extraInfo) : extraInfo;
         const messages: string[] = [];
 
-        if (totalAreaSite === null) {
-          messages.push(t("Site Goal: A goal has not been specified."));
-        } else if (sumAreaSite !== undefined && percentageSite !== undefined && totalAreaSite !== undefined) {
-          // Ensure numeric values are properly formatted
-          const formattedSumAreaSite = typeof sumAreaSite === "number" ? sumAreaSite.toFixed(2) : sumAreaSite;
-          const formattedPercentageSite =
-            typeof percentageSite === "number" ? percentageSite.toFixed(2) : percentageSite;
-          const formattedTotalAreaSite = typeof totalAreaSite === "number" ? totalAreaSite.toFixed(2) : totalAreaSite;
+        const formatNumber = (value: number | undefined) => (typeof value === "number" ? value.toFixed(2) : value);
 
-          messages.push(
-            t(
-              "Site Goal: The sum of all site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
-              {
-                sumAreaSite: formattedSumAreaSite,
-                percentageSite: formattedPercentageSite,
-                totalAreaSite: formattedTotalAreaSite
-              }
-            )
-          );
+        const sumAreaSite = info.sumAreaSiteApproved;
+        const percentageSite = info.percentageSiteApproved;
+        const totalAreaSite = info.totalAreaSite;
+        const sumAreaProject = info.sumAreaProjectApproved;
+        const percentageProject = info.percentageProjectApproved;
+        const totalAreaProject = info.totalAreaProject;
+
+        if (totalAreaSite === null || totalAreaSite === undefined) {
+          messages.push(t("Site Goal: A goal has not been specified."));
+        } else if (sumAreaSite !== undefined && percentageSite !== undefined) {
+          if (info.isPolygonApproved) {
+            messages.push(
+              t(
+                "Site Goal: The sum of all site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
+                {
+                  sumAreaSite: formatNumber(sumAreaSite),
+                  percentageSite: formatNumber(percentageSite),
+                  totalAreaSite: formatNumber(totalAreaSite)
+                }
+              )
+            );
+          } else if (info.projectedSumAreaSite !== undefined && info.projectedPercentageSite !== undefined) {
+            messages.push(
+              t(
+                "Site Goal: Approved polygons sum to {sumAreaSite} ha ({percentageSite}%). If this polygon ({polygonArea} ha) is approved, the total would be {projectedSum} ha ({projectedPercentage}%) of total hectares to be restored ({totalAreaSite} ha)",
+                {
+                  sumAreaSite: formatNumber(sumAreaSite),
+                  percentageSite: formatNumber(percentageSite),
+                  polygonArea: formatNumber(info.polygonArea),
+                  projectedSum: formatNumber(info.projectedSumAreaSite),
+                  projectedPercentage: formatNumber(info.projectedPercentageSite),
+                  totalAreaSite: formatNumber(totalAreaSite)
+                }
+              )
+            );
+          } else {
+            messages.push(
+              t(
+                "Site Goal: The sum of all approved site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
+                {
+                  sumAreaSite: formatNumber(sumAreaSite),
+                  percentageSite: formatNumber(percentageSite),
+                  totalAreaSite: formatNumber(totalAreaSite)
+                }
+              )
+            );
+          }
         }
 
-        if (totalAreaProject === null) {
+        if (totalAreaProject === null || totalAreaProject === undefined) {
           messages.push(t("Project Goal: A goal has not been specified."));
-        } else if (sumAreaProject !== undefined && percentageProject !== undefined && totalAreaProject !== undefined) {
-          // Ensure numeric values are properly formatted
-          const formattedSumAreaProject =
-            typeof sumAreaProject === "number" ? sumAreaProject.toFixed(2) : sumAreaProject;
-          const formattedPercentageProject =
-            typeof percentageProject === "number" ? percentageProject.toFixed(2) : percentageProject;
-          const formattedTotalAreaProject =
-            typeof totalAreaProject === "number" ? totalAreaProject.toFixed(2) : totalAreaProject;
-
-          messages.push(
-            t(
-              "Project Goal: The sum of all project polygons {sumAreaProject} ha is {percentageProject}% of total hectares to be restored ({totalAreaProject} ha)",
-              {
-                sumAreaProject: formattedSumAreaProject,
-                percentageProject: formattedPercentageProject,
-                totalAreaProject: formattedTotalAreaProject
-              }
-            )
-          );
+        } else if (sumAreaProject !== undefined && percentageProject !== undefined) {
+          if (info.isPolygonApproved) {
+            messages.push(
+              t(
+                "Project Goal: The sum of all project polygons {sumAreaProject} ha is {percentageProject}% of total hectares to be restored ({totalAreaProject} ha)",
+                {
+                  sumAreaProject: formatNumber(sumAreaProject),
+                  percentageProject: formatNumber(percentageProject),
+                  totalAreaProject: formatNumber(totalAreaProject)
+                }
+              )
+            );
+          } else if (info.projectedSumAreaProject !== undefined && info.projectedPercentageProject !== undefined) {
+            messages.push(
+              t(
+                "Project Goal: Approved polygons sum to {sumAreaProject} ha ({percentageProject}%). If this polygon ({polygonArea} ha) is approved, the total would be {projectedSum} ha ({projectedPercentage}%) of total hectares to be restored ({totalAreaProject} ha)",
+                {
+                  sumAreaProject: formatNumber(sumAreaProject),
+                  percentageProject: formatNumber(percentageProject),
+                  polygonArea: formatNumber(info.polygonArea),
+                  projectedSum: formatNumber(info.projectedSumAreaProject),
+                  projectedPercentage: formatNumber(info.projectedPercentageProject),
+                  totalAreaProject: formatNumber(totalAreaProject)
+                }
+              )
+            );
+          } else {
+            messages.push(
+              t(
+                "Project Goal: The sum of all approved project polygons {sumAreaProject} ha is {percentageProject}% of total hectares to be restored ({totalAreaProject} ha)",
+                {
+                  sumAreaProject: formatNumber(sumAreaProject),
+                  percentageProject: formatNumber(percentageProject),
+                  totalAreaProject: formatNumber(totalAreaProject)
+                }
+              )
+            );
+          }
         }
 
         return messages;
-      } catch {
+      } catch (error) {
+        Log.error("Failed to parse project goal message", error);
         return [t("Error parsing extra info.")];
       }
     },

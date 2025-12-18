@@ -392,6 +392,188 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type BulkDeleteSitePolygonsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BulkDeleteSitePolygonsResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type BulkDeleteSitePolygonsVariables = {
+  body: Schemas.SitePolygonBulkDeleteBodyDto;
+};
+
+/**
+ * Deletes multiple site polygons and all their associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons. The request body follows JSON:API format with
+ *        an array of resource identifiers (type and id).
+ */
+export const bulkDeleteSitePolygons = new V3ApiEndpoint<
+  BulkDeleteSitePolygonsResponse,
+  BulkDeleteSitePolygonsError,
+  BulkDeleteSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "DELETE");
+
+export type GetSitePolygonsGeoJsonQueryParams = {
+  /**
+   * UUID of a specific polygon
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * UUID of a site to get all its polygons
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get all its polygons across all sites
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174002
+   */
+  projectUuid?: string;
+  /**
+   * Include extended data from site_polygon_data table
+   *
+   * @default true
+   */
+  includeExtendedData?: boolean;
+  /**
+   * Return only geometry without properties
+   *
+   * @default false
+   */
+  geometryOnly?: boolean;
+};
+
+export type GetSitePolygonsGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSitePolygonsGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetSitePolygonsGeoJsonVariables = {
+  queryParams?: GetSitePolygonsGeoJsonQueryParams;
+};
+
+/**
+ * Export site polygons as GeoJSON FeatureCollection.
+ *     Provide exactly one of: uuid (single polygon), siteUuid (all active polygons in a site), or projectUuid (all active polygons across all sites in a project).
+ *     Use includeExtendedData to include additional data from site_polygon_data table.
+ *     Use geometryOnly to return only geometry without properties (only applicable when using uuid).
+ */
+export const getSitePolygonsGeoJson = new V3ApiEndpoint<
+  GetSitePolygonsGeoJsonResponse,
+  GetSitePolygonsGeoJsonError,
+  GetSitePolygonsGeoJsonVariables,
+  {}
+>("/research/v3/sitePolygons/geojson", "GET");
+
 export type ListSitePolygonVersionsPathParams = {
   primaryUuid: string;
 };
@@ -695,6 +877,82 @@ export const deleteSitePolygon = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/{uuid}", "DELETE");
 
+export type CompareGeometryFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CompareGeometryFileResponse = {
+  meta?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeometryUploadComparisonSummaryDto;
+  };
+};
+
+export type CompareGeometryFileVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and returns UUIDs of existing SitePolygons found in the database.
+ */
+export const compareGeometryFile = new V3ApiEndpoint<
+  CompareGeometryFileResponse,
+  CompareGeometryFileError,
+  CompareGeometryFileVariables,
+  {}
+>("/research/v3/sitePolygons/upload/comparison", "POST");
+
 export type UploadGeometryFileError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -788,6 +1046,103 @@ export const uploadGeometryFile = new V3ApiEndpoint<
   UploadGeometryFileVariables,
   {}
 >("/research/v3/sitePolygons/upload", "POST");
+
+export type UploadGeometryFileWithVersionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadGeometryFileWithVersionsVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and processes it with versioning enabled.
+ *       Features with UUIDs in properties.uuid that match existing active SitePolygons will create new versions.
+ *       Features without matching UUIDs (or without UUIDs) will create new polygons.
+ *       Attributes are extracted from GeoJSON feature properties for both versions and new polygons.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadGeometryFileWithVersions = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  UploadGeometryFileWithVersionsError,
+  UploadGeometryFileWithVersionsVariables,
+  {}
+>("/research/v3/sitePolygons/upload/versions", "POST");
 
 export type BoundingBoxGetQueryParams = {
   /**
@@ -1505,11 +1860,15 @@ export const operationsByTag = {
     createSitePolygons,
     sitePolygonsIndex,
     bulkUpdateSitePolygons,
+    bulkDeleteSitePolygons,
+    getSitePolygonsGeoJson,
     listSitePolygonVersions,
     updateSitePolygonVersion,
     deleteSitePolygonVersion,
     deleteSitePolygon,
-    uploadGeometryFile
+    compareGeometryFile,
+    uploadGeometryFile,
+    uploadGeometryFileWithVersions
   },
   boundingBoxes: { boundingBoxGet },
   validations: {

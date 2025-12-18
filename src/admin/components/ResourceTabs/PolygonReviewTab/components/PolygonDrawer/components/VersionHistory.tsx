@@ -4,6 +4,7 @@ import { useShowContext } from "react-admin";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
+import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
@@ -19,7 +20,6 @@ import { createBlankVersion } from "@/connections/SitePolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import {
-  fetchGetV2TerrafundGeojsonComplete,
   fetchPostV2TerrafundUploadGeojson,
   fetchPostV2TerrafundUploadKml,
   fetchPostV2TerrafundUploadShapefile
@@ -364,16 +364,7 @@ const VersionHistory = ({
   };
 
   const downloadGeoJsonPolygon = async (polygonUuid: string, polygon_name: string) => {
-    const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
-      queryParams: { uuid: polygonUuid }
-    });
-    const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${polygon_name}.geojson`;
-    link.click();
-    URL.revokeObjectURL(url);
+    await downloadPolygonGeoJson(polygonUuid, polygon_name, { includeExtendedData: true });
   };
 
   const formatStringName = (name: string) => {

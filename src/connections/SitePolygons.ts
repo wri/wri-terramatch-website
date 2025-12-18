@@ -4,16 +4,21 @@ import { useCallback, useEffect, useState } from "react";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
+  bulkDeleteSitePolygons as bulkDeleteSitePolygonsEndpoint,
   createSitePolygons,
+  deleteSitePolygon as deleteSitePolygonEndpoint,
   sitePolygonsIndex,
   SitePolygonsIndexQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
+  SitePolygonBulkDeleteBodyDto,
   SitePolygonLightDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { ConnectionProps, Filter } from "@/types/connection";
@@ -48,6 +53,57 @@ const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygo
 
 export const useCreateSitePolygon = connectionHook(createSitePolygonsConnection);
 export const loadCreateSitePolygon = connectionLoader(createSitePolygonsConnection);
+
+export const deleteSitePolygon = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
+  pathParams: { uuid }
+}));
+
+type SitePolygonResourceIdentifier = {
+  type: "sitePolygons";
+  id: string;
+};
+
+const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SitePolygonBulkDeleteBodyDto => {
+  return {
+    data: resources as never
+  };
+};
+
+export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
+  const deleteResources: SitePolygonResourceIdentifier[] = uuids.map(uuid => ({
+    type: "sitePolygons",
+    id: uuid
+  }));
+
+  const failureSelector = bulkDeleteSitePolygonsEndpoint.fetchFailedSelector({});
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(resolveUrl(bulkDeleteSitePolygonsEndpoint.url, {}), bulkDeleteSitePolygonsEndpoint.method);
+  }
+
+  const body = createBulkDeleteBody(deleteResources);
+  bulkDeleteSitePolygonsEndpoint.fetch({ body });
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const deleted = currentState.meta.deleted.sitePolygons ?? [];
+      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
+      const failure = failureSelector(currentState);
+
+      if (allDeleted) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
+
+  ApiSlice.pruneCache("sitePolygons");
+  ApiSlice.pruneIndex("sitePolygons", "");
+};
 
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
