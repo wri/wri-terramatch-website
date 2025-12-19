@@ -15,8 +15,9 @@ import * as yup from "yup";
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
 import { useForm } from "@/connections/Form";
-import { usePatchV2AdminFormsSubmissionsUUIDStatus } from "@/generated/apiComponents";
+import { useSubmission } from "@/connections/FormSubmission";
 import { FormSubmissionRead } from "@/generated/apiSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { optionToChoices } from "@/utils/options";
 
 import { status } from "./ApplicationShowAside";
@@ -34,7 +35,7 @@ const statusTitles = {
 
 const moreInfoValidationSchema = yup.object({
   feedback: yup.string().nullable(),
-  feedback_fields: yup.array().min(1).of(yup.string()).required()
+  feedbackFields: yup.array().min(1).of(yup.string()).required()
 });
 const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
@@ -64,33 +65,30 @@ const ApplicationRequestMoreInfoModal = ({
     [form?.sections]
   );
 
-  const { mutateAsync: requestMoreInfo, isLoading: isUpdating } = usePatchV2AdminFormsSubmissionsUUIDStatus({
-    onSuccess() {
+  const [, { update, isUpdating, updateFailure }] = useSubmission({ id: uuid, enabled: uuid != null });
+  useRequestSuccess(
+    isUpdating,
+    updateFailure,
+    () => {
       refresh();
       notify("Application status updated", { type: "success" });
-    }
-  });
+    },
+    "Application update failed"
+  );
 
   const handleSave = useCallback(
-    async (data: any) => {
-      if (status) {
-        await requestMoreInfo({
-          // @ts-ignore client error
-          pathParams: {
-            uuid
-          },
-          body: {
-            feedback: data.feedback,
-            status,
-            //@ts-ignore
-            feedback_fields: isAllSelected ? feedbackFields.map(f => f.id) : data.feedback_fields
-          }
+    (data: any) => {
+      if (status != null && update != null) {
+        update({
+          status,
+          feedback: data.feedback,
+          feedbackFields: isAllSelected ? feedbackFields.map(f => f.id) : data.feedbackFields
         });
       }
 
       return handleClose();
     },
-    [feedbackFields, handleClose, isAllSelected, requestMoreInfo, status, uuid]
+    [feedbackFields, handleClose, isAllSelected, status, update]
   );
 
   return (
@@ -106,7 +104,7 @@ const ApplicationRequestMoreInfoModal = ({
           <TextInput source="feedback" label="Feedback" fullWidth multiline margin="dense" helperText={false} />
           {status === "requires-more-information" && feedbackFields.length > 0 && !isAllSelected ? (
             <AutocompleteArrayInput
-              source="feedback_fields"
+              source="feedbackFields"
               label="Fields"
               choices={feedbackFields}
               fullWidth
