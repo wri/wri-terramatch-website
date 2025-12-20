@@ -9,14 +9,14 @@ import {
 } from "@mui/material";
 import { flatten } from "lodash";
 import { useCallback, useMemo, useState } from "react";
-import { AutocompleteArrayInput, Form, RaRecord, TextInput, useNotify, useRefresh, useShowContext } from "react-admin";
+import { AutocompleteArrayInput, Form, TextInput, useNotify, useRefresh, useShowContext } from "react-admin";
 import * as yup from "yup";
 
+import { ApplicationShowRecord } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import { Choice } from "@/admin/types/common";
 import { validateForm } from "@/admin/utils/forms";
 import { useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
-import { FormSubmissionRead } from "@/generated/apiSchemas";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { optionToChoices } from "@/utils/options";
 
@@ -48,9 +48,9 @@ const ApplicationRequestMoreInfoModal = ({
 }: ApplicationRequestMoreInfoModalProps) => {
   const refresh = useRefresh();
   const notify = useNotify();
-  const { record } = useShowContext<FormSubmissionRead & RaRecord>();
-  const uuid = record?.current_submission?.uuid as string;
-  const formUuid = record?.current_submission?.form_uuid as string;
+  const { record } = useShowContext<ApplicationShowRecord>();
+  const uuid = record?.currentSubmission?.uuid as string;
+  const formUuid = record?.currentSubmission?.formUuid as string;
   const [, { data: form }] = useForm({ id: formUuid, enabled: formUuid != null });
   const [isAllSelected, setIsAllSelected] = useState(false);
 

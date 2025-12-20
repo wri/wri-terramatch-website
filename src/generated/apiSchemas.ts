@@ -646,13 +646,6 @@ export type UserReadAll = {
   created_at?: string;
 }[];
 
-export type FormLiteRead = {
-  uuid?: string;
-  title?: string;
-  type?: string;
-  published?: boolean;
-};
-
 export type ReportingFrameworkRead = {
   uuid?: string;
   name?: string;
@@ -2982,103 +2975,6 @@ export type AuditsPaginated = {
     next?: number;
     unfiltered_total?: number;
   };
-};
-
-export type FormSubmissionRead = {
-  id?: string;
-  uuid?: string;
-  name?: string;
-  form_uuid?: string;
-  framework_key?: string;
-  stage?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  };
-  answers?: Record<string, any>;
-  status?: string;
-  readable_status?: string;
-  audits?: {
-    id?: number;
-    event?: string;
-    user_id?: number;
-    old_values?: Record<string, any>;
-    new_values?: Record<string, any>;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  /**
-   * this is a list of key value pairs eg slug: name
-   */
-  tags?: string[];
-  project_pitch_uuid?: string;
-  application_uuid?: string;
-  organisation_uuid?: string;
-  organisation_attributes?: {
-    uuid?: string;
-    type?: string;
-    currency?: string;
-    start_month?: string;
-  };
-  feedback?: void;
-  feedback_fields?: string[];
-  translated_feedback_fields?: string[];
-  updated_by?: string;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type FormSubmissionLiteRead = {
-  uuid?: string;
-  name?: string;
-  status?: string;
-  readable_status?: string;
-  created_at?: string;
-  updated_at?: string;
-  updated_by_uuid?: string;
-  updated_by_name?: string;
-  project_pitch_uuid?: string;
-  form_uuid?: string;
-  stage?: {
-    uuid?: string;
-    name?: string;
-    order?: string;
-  };
-};
-
-export type StageRead = {
-  id?: number;
-  uuid?: string;
-  status?: string;
-  deadline_at?: string;
-  readable_status?: string;
-  funding_programme_id?: number;
-  name?: string;
-  order?: number;
-  form?: {
-    uuid?: string;
-    title?: string;
-    type?: string;
-    published?: boolean;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
 };
 
 export type NurseryPaginated = {

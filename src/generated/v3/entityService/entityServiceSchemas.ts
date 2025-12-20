@@ -2505,7 +2505,11 @@ export type SubmissionDto = {
 };
 
 export type CreateSubmissionAttributes = {
-  formUuid: string;
+  fundingProgrammeUuid: string;
+  /**
+   * If supplied, a submission will be created for the stage following this one.
+   */
+  nextStageFromSubmissionUuid?: string;
 };
 
 export type CreateSubmissionData = {

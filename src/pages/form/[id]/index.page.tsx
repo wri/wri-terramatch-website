@@ -9,6 +9,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/Form";
 import { useSubmissionCreate } from "@/connections/FormSubmission";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import Log from "@/utils/log";
 
 import ApplicationsTable from "../cards/ApplicationsTable";
 
@@ -49,7 +50,13 @@ const FormIntroPage = () => {
                 }}
                 submitButtonProps={{
                   children: t("Start Application"),
-                  onClick: () => create({ formUuid: formUUID }),
+                  onClick: () => {
+                    if (form?.fundingProgrammeId == null) {
+                      Log.error("Funding programme ID is missing");
+                    } else {
+                      create({ fundingProgrammeUuid: form.fundingProgrammeId });
+                    }
+                  },
                   disabled: isCreating
                 }}
                 backButtonProps={{
