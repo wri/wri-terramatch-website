@@ -2114,7 +2114,6 @@ export type FormDataDto = {
 
 export type StoreFormDataAttributes = {
   answers: Record<string, any>;
-  isContinueLater?: boolean;
 };
 
 export type UpdateFormDataData = {

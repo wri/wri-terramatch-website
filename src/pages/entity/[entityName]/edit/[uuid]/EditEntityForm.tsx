@@ -120,11 +120,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   }, [feedbackFields, fieldsProvider, providerLoaded]);
 
   const onChange = useCallback(
-    (data: Dictionary<any>, closeAndSave?: boolean) => {
-      updateEntityAnswers({
-        answers: normalizedFormData(data, fieldsProvider),
-        isContinueLater: closeAndSave
-      });
+    (data: Dictionary<any>) => {
+      updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) });
     },
     [fieldsProvider, updateEntityAnswers]
   );
