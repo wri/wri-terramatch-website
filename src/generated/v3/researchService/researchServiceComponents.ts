@@ -574,6 +574,107 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
 
+export type UpdateSitePolygonStatusPathParams = {
+  status: string;
+};
+
+export type UpdateSitePolygonStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateSitePolygonStatusResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  }[];
+};
+
+export type UpdateSitePolygonStatusVariables = {
+  body: Schemas.SitePolygonStatusBulkUpdateBodyDto;
+  pathParams: UpdateSitePolygonStatusPathParams;
+};
+
+/**
+ * Update the status of a site polygon
+ */
+export const updateSitePolygonStatus = new V3ApiEndpoint<
+  UpdateSitePolygonStatusResponse,
+  UpdateSitePolygonStatusError,
+  UpdateSitePolygonStatusVariables,
+  {}
+>("/research/v3/sitePolygons/status/{status}", "PATCH");
+
 export type ListSitePolygonVersionsPathParams = {
   primaryUuid: string;
 };
@@ -1862,6 +1963,7 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    updateSitePolygonStatus,
     listSitePolygonVersions,
     updateSitePolygonVersion,
     deleteSitePolygonVersion,

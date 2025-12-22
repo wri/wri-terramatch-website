@@ -529,6 +529,20 @@ export type SitePolygonFullDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
+export type SitePolygonStatusBulkUpdateBodyDto = {
+  /**
+   * Array of site polygons to update
+   *
+   * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: any[][];
+  /**
+   * Comment for the status update
+   */
+  comment?: string;
+};
+
 export type SitePolygonBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
