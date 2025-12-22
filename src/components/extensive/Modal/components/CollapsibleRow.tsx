@@ -90,7 +90,7 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
             checked={!!polygonsSelected?.[index]}
             disabled={
               type === "modalApprove"
-                ? !canBeApproved()
+                ? !canBeApproved() || item.status === StatusEnum.APPROVED
                 : type === "modalSubmit"
                 ? item.status === StatusEnum.SUBMITTED || item.status === StatusEnum.APPROVED
                 : false
