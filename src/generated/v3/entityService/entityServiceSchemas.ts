@@ -2114,7 +2114,6 @@ export type FormDataDto = {
 
 export type StoreFormDataAttributes = {
   answers: Record<string, any>;
-  isContinueLater?: boolean;
 };
 
 export type UpdateFormDataData = {
@@ -2494,18 +2493,22 @@ export type SubmissionDto = {
     | "fundo-flora"
     | null;
   formUuid: string;
-  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   answers: Record<string, any>;
   organisationUuid: string | null;
   organisationName: string | null;
-  feedback: string | null;
+  feedback?: string | null;
   translatedFeedbackFields: string[] | null;
   stageName: string | null;
   stageUuid: string | null;
 };
 
 export type CreateSubmissionAttributes = {
-  formUuid: string;
+  fundingProgrammeUuid: string;
+  /**
+   * If supplied, a submission will be created for the stage following this one.
+   */
+  nextStageFromSubmissionUuid?: string;
 };
 
 export type CreateSubmissionData = {
@@ -2515,6 +2518,26 @@ export type CreateSubmissionData = {
 
 export type CreateSubmissionBody = {
   data: CreateSubmissionData;
+};
+
+export type UpdateSubmissionAttributes = {
+  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  feedback?: string | null;
+  answers?: Record<string, any>;
+  feedbackFields?: string[];
+};
+
+export type UpdateSubmissionData = {
+  type: "submissions";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateSubmissionAttributes;
+};
+
+export type UpdateSubmissionBody = {
+  data: UpdateSubmissionData;
 };
 
 /**
@@ -2871,7 +2894,7 @@ export type EmbeddedSubmissionDto = {
    */
   updatedAt: string;
   updatedByName: string | null;
-  status: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
+  status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
   stageName: string | null;
 };
 

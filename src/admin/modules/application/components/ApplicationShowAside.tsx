@@ -55,7 +55,6 @@ const ApplicationShowAside = () => {
             <Button
               variant="contained"
               onClick={() => setShouldRequestMessageWithStatus("approved")}
-              // @ts-ignore typo in response
               disabled={application?.currentSubmission?.status === "approved" || isLoading}
             >
               Approve
@@ -63,7 +62,6 @@ const ApplicationShowAside = () => {
             <Button
               variant="outlined"
               onClick={() => setShouldRequestMessageWithStatus("requires-more-information")}
-              // @ts-ignore typo in response
               disabled={application?.currentSubmission?.status === "requires-more-information" || isLoading}
             >
               Request More Information
@@ -71,7 +69,7 @@ const ApplicationShowAside = () => {
             <Button
               variant="outlined"
               color="error"
-              onClick={() => setShouldRequestMessageWithStatus("rejected")} // @ts-ignore typo in response
+              onClick={() => setShouldRequestMessageWithStatus("rejected")}
               disabled={application?.currentSubmission?.status === "rejected" || isLoading}
             >
               Reject

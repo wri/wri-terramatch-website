@@ -12,7 +12,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2OrganisationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
+import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
@@ -24,17 +24,7 @@ const SubmissionPage = () => {
   const submissionUUID = router.query.submissionUUID as string;
 
   const { isLoading, formData, form } = useFormSubmission(submissionUUID);
-  const { updateSubmission, isSuccess, isUpdating, error } = useSubmissionUpdate(submissionUUID);
-
-  const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
-    onSuccess() {
-      if (form?.type === "application") {
-        router.push(`/applications/request-more-information/success/${formData?.applicationUuid}?isSendRequest=true`);
-      } else {
-        router.push(`/form/submission/${submissionUUID}/confirm`);
-      }
-    }
-  });
+  const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submissionUUID);
 
   const framework = useFramework(formData?.frameworkKey);
 
@@ -84,11 +74,7 @@ const SubmissionPage = () => {
           children: t("Submit"),
           onClick: () => {
             closeModal(ModalId.MODAL_CONFIRM);
-            submitFormSubmission({
-              pathParams: {
-                uuid: submissionUUID
-              }
-            });
+            updateSubmission({ status: "awaiting-approval" });
           }
         }}
         secondaryButtonProps={{
@@ -97,7 +83,7 @@ const SubmissionPage = () => {
         }}
       />
     );
-  }, [closeModal, openModal, submissionUUID, submitFormSubmission, t]);
+  }, [closeModal, openModal, t, updateSubmission]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -113,13 +99,12 @@ const SubmissionPage = () => {
           models={formModels}
           framework={framework}
           fieldsProvider={fieldsProvider}
-          errors={error}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push("/home")}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          formStatus={submissionUpdating ? "saving" : "saved"}
           onSubmit={handleSubmit}
-          submitButtonDisable={isSubmitting}
+          submitButtonDisable={!submissionUpdating}
           defaultValues={defaultValues}
           title={form?.title}
           tabOptions={{

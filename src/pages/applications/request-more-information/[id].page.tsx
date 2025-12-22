@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { Dictionary, last } from "lodash";
 import { useRouter } from "next/router";
@@ -12,31 +11,31 @@ import { useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2OrganisationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
+import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
-//Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
-  const queryClient = useQueryClient();
 
   const [applicationLoaded, { data: application }] = useApplication({ id: uuid, sideloads: ["currentSubmission"] });
   const currentSubmissionUuid = last(application?.submissions)?.uuid;
-  const [, { data: submission }] = useSubmission({ id: currentSubmissionUuid, enabled: currentSubmissionUuid != null });
+  const [, { data: submission, isUpdating: isSubmitting }] = useSubmission({
+    id: currentSubmissionUuid,
+    enabled: currentSubmissionUuid != null
+  });
 
-  const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["v2", "applications", uuid] });
+  const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submission?.uuid);
+  useValueChanged(submissionUpdating, () => {
+    if (!submissionUpdating && submission?.status === "awaiting-approval") {
       router.push(`/applications/request-more-information/success/${uuid}`);
     }
   });
-
-  const { updateSubmission, isSuccess, isUpdating } = useSubmissionUpdate(submission?.uuid ?? "");
 
   const framework = useFramework(submission?.frameworkKey);
 
@@ -92,6 +91,10 @@ const RequestMoreInformationPage = () => {
     [fieldsProvider, updateSubmission]
   );
 
+  const onSubmit = useCallback(() => {
+    updateSubmission({ status: "awaiting-approval" });
+  }, [updateSubmission]);
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={!applicationLoaded || !providerLoaded || orgLoading}>
@@ -106,14 +109,8 @@ const RequestMoreInformationPage = () => {
           onBackFirstStep={router.back}
           onCloseForm={() => router.push(`/applications/${uuid}`)}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitFormSubmission({
-              pathParams: {
-                uuid: submission?.uuid ?? ""
-              }
-            })
-          }
+          formStatus={submissionUpdating ? "saving" : "saved"}
+          onSubmit={onSubmit}
           submitButtonDisable={isSubmitting}
           defaultValues={defaultValues}
           tabOptions={{

@@ -10,16 +10,17 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useSubmission } from "@/connections/FormSubmission";
+import { useSubmission, useSubmissionCreate } from "@/connections/FormSubmission";
 import { useFundingProgramme } from "@/connections/FundingProgramme";
 import { useModalContext } from "@/context/modal.provider";
 import {
   GetV2ReportingFrameworksAccessCodeACCESSCODEResponse,
-  useGetV2ReportingFrameworksAccessCodeACCESSCODE,
-  usePostV2FormsSubmissionsUUIDNextStage
+  useGetV2ReportingFrameworksAccessCodeACCESSCODE
 } from "@/generated/apiComponents";
 import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { Colors } from "@/types/common";
+import Log from "@/utils/log";
 
 interface ApplicationStatusProps {
   application?: ApplicationDto;
@@ -67,12 +68,15 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const nextStage =
     stageIndex != null && stages != null && stageIndex < stages.length - 1 ? stages[stageIndex + 1] : undefined;
 
-  const { mutate: submitToNextStage, isLoading } = usePostV2FormsSubmissionsUUIDNextStage({
-    onSuccess(data) {
-      // @ts-expect-error
-      router.push(`/form/submission/${data?.data?.uuid}/intro`);
-    }
-  });
+  const [, { create, data: submission, isCreating, createFailure }] = useSubmissionCreate({});
+  useRequestSuccess(
+    isCreating,
+    createFailure,
+    () => {
+      router.push(`/form/submission/${submission?.uuid}/intro`);
+    },
+    "Form submission creation failed"
+  );
 
   const statusProps = useMemo((): StatusProps | null => {
     switch (currentSubmission?.status) {
@@ -139,8 +143,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         };
 
       case "approved":
-        if (nextStage) {
-          //There is another staging for user to go through
+        if (nextStage != null) {
           return {
             title: t("Status: Application Approved! You are invited to submit {name}", { name: nextStage.name }),
             subtitle: currentSubmission.feedback ?? undefined,
@@ -148,13 +151,17 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             icon: IconNames.CHECK_CIRCLE,
             primaryAction: {
               children: t("Start {name}", { name: nextStage.name }),
-              onClick: () =>
-                submitToNextStage({
-                  pathParams: {
-                    uuid: currentSubmission.uuid ?? ""
-                  }
-                }),
-              disabled: isLoading
+              onClick: () => {
+                if (fundingProgramme?.uuid == null) {
+                  Log.error("Funding programme UUID is missing");
+                } else {
+                  create({
+                    fundingProgrammeUuid: fundingProgramme.uuid,
+                    nextStageFromSubmissionUuid: currentSubmission.uuid
+                  });
+                }
+              },
+              disabled: isCreating
             }
           };
         } else {

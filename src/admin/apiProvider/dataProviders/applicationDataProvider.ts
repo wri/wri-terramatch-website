@@ -4,17 +4,13 @@ import { deleteApplication, loadApplication, loadApplicationIndex } from "@/conn
 import { loadSubmission } from "@/connections/FormSubmission";
 import { loadFundingProgramme } from "@/connections/FundingProgramme";
 import {
-  fetchPatchV2AdminFormsSubmissionsUUIDStatus,
-  PatchV2AdminFormsSubmissionsUUIDStatusError
-} from "@/generated/apiComponents";
-import {
   ApplicationDto,
   EmbeddedSubmissionDto,
   FundingProgrammeDto,
   SubmissionDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 
 export type ApplicationShowRecord = ApplicationDto & {
@@ -99,24 +95,6 @@ export const applicationDataProvider: Partial<DataProvider> = {
       return { data: params.ids };
     } catch (err) {
       throw v3ErrorForRA("Application delete fetch failed", err);
-    }
-  },
-
-  async update(_, params) {
-    try {
-      const resp = await fetchPatchV2AdminFormsSubmissionsUUIDStatus({
-        // @ts-ignore
-        pathParams: { uuid: params.id },
-        body: {
-          feedback: params.data.feedback,
-          status: params.data.status
-        }
-      });
-
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PatchV2AdminFormsSubmissionsUUIDStatusError);
     }
   }
 };
