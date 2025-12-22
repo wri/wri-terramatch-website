@@ -6,26 +6,30 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
+import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import {
-  fetchGetV2TerrafundGeojsonSite,
   fetchGetV2TypeEntity,
   fetchPostV2TerrafundPolygon, // will be deprecated in the future, currently used for project creation
   fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType
 } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
+import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
+import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import {
+  CreateSitePolygonAttributesDto,
+  SitePolygonLightDto
+} from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
-import { MapStyle } from "./MapControls/types";
+import { BASEMAP_CONFIGS, MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
 type DataPolygonOverview = {
@@ -227,6 +231,7 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
+  map.hasImage("pulsing-dot") && map.removeImage("pulsing-dot");
 };
 
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
@@ -319,7 +324,9 @@ export const addMediaSourceAndLayer = (
 
   const pulsingDot = getPulsingDot(map, 120);
 
-  map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  if (!map.hasImage("pulsing-dot")) {
+    map.addImage("pulsing-dot", pulsingDot, { pixelRatio: 4 });
+  }
 
   map.addSource(layerName, {
     type: "geojson",
@@ -412,9 +419,19 @@ export const addPolygonCentroidsLayer = (
   zoomFilterValue?: number
 ) => {
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
-  if (map.getSource(layerName)) {
-    map.removeLayer(`${layerName}`);
-    map.removeSource(layerName);
+  if (!map || !map.isStyleLoaded()) {
+    return;
+  }
+
+  try {
+    if (map.getLayer(`${layerName}`)) {
+      map.removeLayer(`${layerName}`);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing polygon centroids layer:", error);
   }
 
   if (map.hasImage("pulsing-dot-centroids")) {
@@ -811,22 +828,34 @@ export const addBorderLandscape = (map: mapboxgl.Map, landscapes: string[]) => {
   setFilterLandscape(map, sourceName, landscapes);
 };
 export const removeBorderLandscape = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) return;
+
   const layerName = `${LAYERS_NAMES.LANDSCAPES}`;
-  if (map.getLayer(layerName)) {
-    map.removeLayer(layerName);
-  }
-  if (map.getSource(layerName)) {
-    map.removeSource(layerName);
+  try {
+    if (map.getLayer(layerName)) {
+      map.removeLayer(layerName);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing border landscape:", error);
   }
 };
 
 export const removeBorderCountry = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) return;
+
   const layerName = `${LAYERS_NAMES.WORLD_COUNTRIES}-line`;
-  if (map.getLayer(layerName)) {
-    map.removeLayer(layerName);
-  }
-  if (map.getSource(layerName)) {
-    map.removeSource(layerName);
+  try {
+    if (map.getLayer(layerName)) {
+      map.removeLayer(layerName);
+    }
+    if (map.getSource(layerName)) {
+      map.removeSource(layerName);
+    }
+  } catch (error) {
+    Log.warn("Error removing border country:", error);
   }
 };
 
@@ -858,10 +887,124 @@ export const addLayerStyle = (
 };
 
 export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle) => {
-  if (currentStyle === MapStyle.Street) {
-    map.setProjection("mercator");
-  } else if (currentStyle === MapStyle.Satellite) {
-    map.setProjection("globe");
+  const config = BASEMAP_CONFIGS[currentStyle];
+  if (config?.projection) {
+    map.setProjection(config.projection);
+  }
+};
+
+const GOOGLE_RASTER_SOURCE_ID = "google-satellite-source";
+const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
+
+export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
+  if (!map || !map.isStyleLoaded()) {
+    Log.warn("Map or style not loaded, cannot add Google satellite layer");
+    return;
+  }
+
+  removeGoogleSatelliteLayer(map);
+
+  const config = BASEMAP_CONFIGS[MapStyle.GoogleSatellite];
+  if (!config.rasterUrl) {
+    Log.warn("Google satellite raster URL not configured");
+    return;
+  }
+
+  try {
+    const layers = map.getStyle().layers ?? [];
+    const layersToHide = layers.filter(
+      layer =>
+        layer.type === "background" ||
+        layer.type === "fill" ||
+        (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)
+    );
+
+    let hiddenCount = 0;
+    layersToHide.forEach(layer => {
+      try {
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
+        if (currentVisibility !== "none") {
+          map.setLayoutProperty(layer.id, "visibility", "none");
+          hiddenCount++;
+        }
+      } catch (e) {
+        // Ignore
+      }
+    });
+
+    if (hiddenCount > 0) {
+      Log.info(`Hidden ${hiddenCount} Street layers`);
+    }
+
+    map.addSource(GOOGLE_RASTER_SOURCE_ID, {
+      type: "raster",
+      tiles: [config.rasterUrl],
+      tileSize: 256,
+      minzoom: 0,
+      maxzoom: 22
+    });
+
+    let firstLayerId: string | undefined;
+    for (const layer of layers) {
+      if (layer.type !== "background") {
+        firstLayerId = layer.id;
+        break;
+      }
+    }
+
+    map.addLayer(
+      {
+        id: GOOGLE_RASTER_LAYER_ID,
+        type: "raster",
+        source: GOOGLE_RASTER_SOURCE_ID,
+        paint: {
+          "raster-opacity": 1
+        }
+      },
+      firstLayerId
+    );
+  } catch (error) {
+    Log.error("Error adding Google satellite layer:", error);
+  }
+};
+
+export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
+  if (!map) return;
+  if (!map.isStyleLoaded()) {
+    return;
+  }
+
+  try {
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+      map.removeLayer(GOOGLE_RASTER_LAYER_ID);
+    }
+    if (map.getSource(GOOGLE_RASTER_SOURCE_ID)) {
+      map.removeSource(GOOGLE_RASTER_SOURCE_ID);
+    }
+
+    const layers = map.getStyle()?.layers ?? [];
+    const layersToRestore = layers.filter(
+      layer => layer.type === "background" || layer.type === "fill" || layer.type === "raster"
+    );
+
+    let restoredCount = 0;
+    layersToRestore.forEach(layer => {
+      try {
+        const currentVisibility = map.getLayoutProperty(layer.id, "visibility");
+        if (currentVisibility === "none") {
+          map.setLayoutProperty(layer.id, "visibility", "visible");
+          restoredCount++;
+        }
+      } catch (e) {
+        Log.warn("Error removing Google satellite layer:", e);
+      }
+    });
+
+    if (restoredCount > 0) {
+      Log.info(`Restored ${restoredCount} Street layers`);
+    }
+  } catch (error) {
+    Log.warn("Error removing Google satellite layer:", error);
   }
 };
 
@@ -980,15 +1123,16 @@ export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePol
   indicators: [],
   siteName: sitePolygonData.site_name ?? null,
   versionName: sitePolygonData.version_name ?? null,
-  practice: sitePolygonData.practice ?? null,
+  practice: sitePolygonData.practice?.split(",") ?? null,
   targetSys: sitePolygonData.target_sys ?? null,
-  distr: sitePolygonData.distr ?? null,
+  distr: sitePolygonData.distr?.split(",") ?? null,
   numTrees: sitePolygonData.num_trees ?? null,
   source: sitePolygonData.source ?? null,
   validationStatus: sitePolygonData.validation_status?.toString() ?? null,
   primaryUuid: sitePolygonData.primary_uuid ?? null,
   uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? "",
-  disturbanceableId: null
+  disturbanceableId: null,
+  isActive: sitePolygonData.is_active ?? false
 });
 
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
@@ -1085,56 +1229,234 @@ export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
 
+export const extractGeoJsonFromResponse = (
+  response: GeoJsonExportDto | { data?: { attributes?: GeoJsonExportDto } } | undefined
+): GeoJSON.FeatureCollection | undefined => {
+  if (!response) return undefined;
+
+  if ("type" in response && response.type === "FeatureCollection") {
+    return response as unknown as GeoJSON.FeatureCollection;
+  }
+
+  if ("data" in response && response.data?.attributes) {
+    const attributes = response.data.attributes;
+    if (attributes.type === "FeatureCollection") {
+      return attributes as unknown as GeoJSON.FeatureCollection;
+    }
+  }
+
+  return undefined;
+};
+
+export const isValidGeoJsonFeatureCollection = (data: any): data is GeoJSON.FeatureCollection => {
+  return data != null && typeof data === "object" && data.type === "FeatureCollection" && Array.isArray(data.features);
+};
+
+export function downloadGeoJsonFile(geojson: GeoJSON.FeatureCollection | any, filename: string): void {
+  try {
+    const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${filename}.geojson`;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    Log.error("Failed to download GeoJSON file:", error);
+    throw error;
+  }
+}
+
+export async function downloadPolygonGeoJson(
+  polygonUuid: string,
+  filename?: string,
+  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid">
+): Promise<void> {
+  try {
+    const result = await loadPolygonGeoJson({
+      uuid: polygonUuid,
+      ...options
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson) {
+      throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    const safeFilename = formatFileName(filename ?? polygonUuid);
+    downloadGeoJsonFile(geojson, safeFilename);
+  } catch (error) {
+    Log.error("Failed to download polygon GeoJSON:", error);
+    throw error;
+  }
+}
+
+export async function downloadSitePolygonsGeoJson(
+  siteUuid: string,
+  siteName: string,
+  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid">
+): Promise<void> {
+  try {
+    const result = await loadSitePolygonsGeoJson({
+      siteUuid,
+      ...options
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson) {
+      throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    const safeFilename = formatFileName(siteName);
+    downloadGeoJsonFile(geojson, safeFilename);
+  } catch (error) {
+    Log.error("Failed to download site polygons GeoJSON:", error);
+    throw error;
+  }
+}
+
+export async function fetchPolygonGeometry(polygonUuid: string, geometryOnly: boolean = true): Promise<any> {
+  if (!polygonUuid) {
+    Log.error("fetchPolygonGeometry called with undefined polygonUuid");
+    throw new Error("polygonUuid is required");
+  }
+
+  try {
+    const result = await loadPolygonGeoJson({
+      uuid: polygonUuid,
+      geometryOnly,
+      includeExtendedData: false,
+      enabled: true
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson || !geojson.features || geojson.features.length === 0) {
+      throw new Error("No geometry found for polygon");
+    }
+
+    return geojson.features[0].geometry;
+  } catch (error) {
+    Log.error("Failed to fetch polygon geometry:", error);
+    throw error;
+  }
+}
+
+export async function fetchMultiplePolygonsGeoJson(
+  polygonUuids: string[],
+  includeExtendedData: boolean = true
+): Promise<GeoJSON.FeatureCollection> {
+  try {
+    const promises = polygonUuids.map(uuid =>
+      loadPolygonGeoJson({
+        uuid,
+        includeExtendedData
+      })
+    );
+
+    const results = await Promise.all(promises);
+    const features: GeoJSON.Feature[] = [];
+
+    results.forEach((result, index) => {
+      const geojson = extractGeoJsonFromResponse(result.data);
+      if (geojson && geojson.features) {
+        geojson.features.forEach(feature => {
+          if (!feature.properties) {
+            feature.properties = {};
+          }
+          if (!feature.properties.uuid) {
+            feature.properties.uuid = polygonUuids[index];
+          }
+          features.push(feature);
+        });
+      }
+    });
+
+    return {
+      type: "FeatureCollection",
+      features
+    };
+  } catch (error) {
+    Log.error("Failed to fetch multiple polygons GeoJSON:", error);
+    throw error;
+  }
+}
+
+export async function downloadMultiplePolygonsGeoJson(
+  polygonUuids: string[],
+  filename: string,
+  includeExtendedData: boolean = true
+): Promise<void> {
+  try {
+    const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, includeExtendedData);
+    const safeFilename = formatFileName(filename);
+    downloadGeoJsonFile(combinedGeojson, safeFilename);
+  } catch (error) {
+    Log.error("Failed to download multiple polygons GeoJSON:", error);
+    throw error;
+  }
+}
+
 export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: string): Promise<void> {
-  const polygonGeojson = await fetchGetV2TerrafundGeojsonSite({
-    queryParams: { uuid: siteUuid }
-  });
-  const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${formatFileName(siteName)}.geojson`;
-  link.click();
-  URL.revokeObjectURL(url);
+  await downloadSitePolygonsGeoJson(siteUuid, siteName, { includeExtendedData: true });
+}
+
+export async function downloadProjectPolygonsGeoJson(
+  projectUuid: string,
+  projectName: string,
+  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid" | "projectUuid">
+): Promise<void> {
+  try {
+    const result = await loadProjectPolygonsGeoJson({
+      projectUuid,
+      ...options
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson) {
+      throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    const safeFilename = formatFileName(projectName);
+    downloadGeoJsonFile(geojson, `${safeFilename}_polygons`);
+  } catch (error) {
+    Log.error("Failed to download project polygons GeoJSON:", error);
+    throw error;
+  }
 }
 
 export async function storePolygon(
   geojson: any,
   record: any,
   setPolygonFromMap?: any,
-  refreshEntity?: any,
   refetchSitePolygons?: () => any
 ) {
   if (geojson?.length) {
-    const payload = {
+    const attributes: CreateSitePolygonAttributesDto = {
       geometries: [
         {
-          type: "FeatureCollection" as const,
+          type: "FeatureCollection",
           features: [
             {
-              type: "Feature" as const,
-              geometry: geojson[0].geometry as any,
+              type: "Feature",
+              geometry: geojson[0].geometry,
               properties: {
                 site_id: record.uuid
               }
             }
-          ]
+          ] as any
         }
       ]
     };
 
     try {
-      const result = await (createSitePolygonsResource as any)(payload);
-
-      ApiSlice.pruneCache("sitePolygons");
+      const result = await createSitePolygonsResource(attributes);
 
       if (refetchSitePolygons) {
         await refetchSitePolygons();
       }
-
-      setPolygonFromMap?.({ uuid: result.polygonUuid, isOpen: true });
-
-      refreshEntity?.();
+      if (setPolygonFromMap) {
+        setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true, primary_uuid: result.primaryUuid });
+      }
     } catch (error) {
       console.error("Failed to create site polygon:", error);
       throw error;
@@ -1236,6 +1558,10 @@ export const createMarker = (lngLat: LngLat, map: mapboxgl.Map) => {
 export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
   if (!map) return undefined;
   try {
+    if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) {
+      return MapStyle.GoogleSatellite;
+    }
+
     const styleUrl = (map as any).style?.url || (map as any).style?.name;
     if (styleUrl) {
       if (styleUrl === MapStyle.Street || styleUrl.includes("clve3yxzq01w101pefkkg3rci")) {
@@ -1252,16 +1578,56 @@ export const getCurrentMapStyle = (map: mapboxgl.Map): MapStyle | undefined => {
 };
 
 export const setMapStyle = (
-  style: MapStyle,
+  targetStyle: MapStyle,
   map: mapboxgl.Map,
   setCurrentStyle: (style: MapStyle) => void,
   currentStyle: string | MapStyle
 ) => {
-  if (map && currentStyle !== style) {
-    setCurrentStyle(style);
-    map.setStyle(style);
-    updateMapProjection(map, style);
+  if (!map || currentStyle === targetStyle) return;
+
+  const targetConfig = BASEMAP_CONFIGS[targetStyle];
+
+  if (targetStyle === MapStyle.GoogleSatellite) {
+    setCurrentStyle(targetStyle);
+
+    if (currentStyle === MapStyle.Street) {
+      if (map.isStyleLoaded()) {
+        addGoogleSatelliteLayer(map);
+        updateMapProjection(map, targetStyle);
+      } else {
+        map.once("style.load", () => {
+          addGoogleSatelliteLayer(map);
+          updateMapProjection(map, targetStyle);
+        });
+      }
+    } else {
+      map.setStyle(targetConfig.style);
+    }
+    return;
   }
+
+  if (currentStyle === MapStyle.GoogleSatellite) {
+    if (targetStyle === MapStyle.Street) {
+      if (map.isStyleLoaded()) {
+        removeGoogleSatelliteLayer(map);
+        setCurrentStyle(targetStyle);
+        updateMapProjection(map, targetStyle);
+      } else {
+        map.once("style.load", () => {
+          removeGoogleSatelliteLayer(map);
+          setCurrentStyle(targetStyle);
+          updateMapProjection(map, targetStyle);
+        });
+      }
+      return;
+    }
+  }
+
+  setCurrentStyle(targetStyle);
+  map.setStyle(targetConfig.style);
+  map.once("style.load", () => {
+    updateMapProjection(map, targetStyle);
+  });
 };
 
 export type ValidationRecordV3 = {

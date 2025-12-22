@@ -4,9 +4,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { FormModelType } from "@/connections/Form";
-import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
+import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
-import { DeleteV2FilesUUIDResponse, useDeleteV2FilesUUID, usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
 import { useFiles } from "@/hooks/useFiles";
@@ -52,15 +51,6 @@ const RHFFileInput = ({
     Log.error("Missing a model UUID for this file input", { model, collection });
   }
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: uuid ?? "" } });
-
-  const { mutate: update } = usePutV2FilesUUID();
-
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess(data) {
-      removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
-      onChangeCapture?.();
-    }
-  });
 
   const onSelectFile = useCallback(
     async (file: File) => {
@@ -132,25 +122,8 @@ const RHFFileInput = ({
     ]
   );
 
-  const handleFileUpdate = useCallback(
-    (file: Partial<UploadedFile>, isPrivate: boolean) => {
-      if (file.uuid == null) return;
-
-      update({
-        pathParams: {
-          uuid: file.uuid
-        },
-        body: {
-          title: file.fileName ?? "",
-          is_public: !isPrivate
-        }
-      });
-    },
-    [update]
-  );
-
   const onDeleteFile = useCallback(
-    (file: Partial<UploadedFile>) => {
+    async (file: Partial<UploadedFile>) => {
       if (file.uuid) {
         addFile({
           ...file,
@@ -160,12 +133,14 @@ const RHFFileInput = ({
             isDeleting: true
           }
         });
-        deleteFile({ pathParams: { uuid: file.uuid } });
+        await deleteMedia(file.uuid);
+        removeFile(file);
+        onChangeCapture?.();
       } else if (file.fileName != null) {
         removeFile(file);
       }
     },
-    [addFile, deleteFile, removeFile]
+    [addFile, removeFile, onChangeCapture]
   );
 
   useEffect(() => {
@@ -190,7 +165,6 @@ const RHFFileInput = ({
       })}
       onDelete={onDeleteFile}
       onChange={_onChange}
-      onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
       formHook={formHook}
       updateFile={updateFile}

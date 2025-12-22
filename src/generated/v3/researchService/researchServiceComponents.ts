@@ -54,6 +54,17 @@ export type CreateSitePolygonsResponse = {
     id?: string;
     attributes?: Schemas.SitePolygonLightDto;
   };
+  included?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  }[];
 };
 
 export type CreateSitePolygonsVariables = {
@@ -61,8 +72,27 @@ export type CreateSitePolygonsVariables = {
 };
 
 /**
- * Create site polygons. Supports multi-site batch creation.
- *       Duplicate validation results are always included in the response when duplicates are found.
+ * Create site polygons OR create a new version of an existing polygon.
+ *
+ *     Normal Creation (new polygons):
+ *     - Provide `geometries` array with `siteId`in feature properties (required)
+ *     - Attributes (polyName, plantstart, practice, etc.) come from feature `properties`
+ *     - Properties support both camelCase and snake_case
+ *     - Do NOT provide `baseSitePolygonUuid` or `attributeChanges`
+ *
+ *     Version Creation (new version of existing polygon):
+ *     - Provide `baseSitePolygonUuid` (required) + `changeReason` (optional, defaults to "Version created via API")
+ *     - Then provide ONE of the following:
+ *       - Geometry only: Provide `geometries` array (geometry properties are ignored)
+ *       - Attributes only: Provide `attributeChanges` object
+ *       - Both: Provide both `geometries` and `attributeChanges`
+ *     - At least one of `geometries` or `attributeChanges` must be provided
+ *
+ *     Important: When creating versions, `attributeChanges` is the ONLY way to update attributes.
+ *     Geometry properties are ignored during version creation - use `attributeChanges` instead.
+ *
+ *     Duplicate validation results are included in the `included` section of the JSON:API response when duplicates are found.
+ *     Property naming: GeoJSON properties support both camelCase and snake_case.
  */
 export const createSitePolygons = new V3ApiEndpoint<
   CreateSitePolygonsResponse,
@@ -235,6 +265,16 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -285,6 +325,16 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -362,6 +412,441 @@ export const bulkUpdateSitePolygons = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons", "PATCH");
 
+export type BulkDeleteSitePolygonsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type BulkDeleteSitePolygonsResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type BulkDeleteSitePolygonsVariables = {
+  body: Schemas.SitePolygonBulkDeleteBodyDto;
+};
+
+/**
+ * Deletes multiple site polygons and all their associated records including indicators,
+ *        criteria site records, audit statuses, and geometry data. This operation soft deletes
+ *        ALL related site polygons by primaryUuid (version management) and deletes polygon
+ *        geometry for all related site polygons. The request body follows JSON:API format with
+ *        an array of resource identifiers (type and id).
+ */
+export const bulkDeleteSitePolygons = new V3ApiEndpoint<
+  BulkDeleteSitePolygonsResponse,
+  BulkDeleteSitePolygonsError,
+  BulkDeleteSitePolygonsVariables,
+  {}
+>("/research/v3/sitePolygons", "DELETE");
+
+export type GetSitePolygonsGeoJsonQueryParams = {
+  /**
+   * UUID of a specific polygon
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  uuid?: string;
+  /**
+   * UUID of a site to get all its polygons
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  siteUuid?: string;
+  /**
+   * UUID of a project to get all its polygons across all sites
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174002
+   */
+  projectUuid?: string;
+  /**
+   * Include extended data from site_polygon_data table
+   *
+   * @default true
+   */
+  includeExtendedData?: boolean;
+  /**
+   * Return only geometry without properties
+   *
+   * @default false
+   */
+  geometryOnly?: boolean;
+};
+
+export type GetSitePolygonsGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetSitePolygonsGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetSitePolygonsGeoJsonVariables = {
+  queryParams?: GetSitePolygonsGeoJsonQueryParams;
+};
+
+/**
+ * Export site polygons as GeoJSON FeatureCollection.
+ *     Provide exactly one of: uuid (single polygon), siteUuid (all active polygons in a site), or projectUuid (all active polygons across all sites in a project).
+ *     Use includeExtendedData to include additional data from site_polygon_data table.
+ *     Use geometryOnly to return only geometry without properties (only applicable when using uuid).
+ */
+export const getSitePolygonsGeoJson = new V3ApiEndpoint<
+  GetSitePolygonsGeoJsonResponse,
+  GetSitePolygonsGeoJsonError,
+  GetSitePolygonsGeoJsonVariables,
+  {}
+>("/research/v3/sitePolygons/geojson", "GET");
+
+export type ListSitePolygonVersionsPathParams = {
+  primaryUuid: string;
+};
+
+export type ListSitePolygonVersionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ListSitePolygonVersionsResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  }[];
+};
+
+export type ListSitePolygonVersionsVariables = {
+  pathParams: ListSitePolygonVersionsPathParams;
+};
+
+/**
+ * Returns all versions sharing the same primaryUuid, ordered by creation date (newest first)
+ */
+export const listSitePolygonVersions = new V3ApiEndpoint<
+  ListSitePolygonVersionsResponse,
+  ListSitePolygonVersionsError,
+  ListSitePolygonVersionsVariables,
+  {}
+>("/research/v3/sitePolygons/{primaryUuid}/versions", "GET");
+
+export type UpdateSitePolygonVersionPathParams = {
+  uuid: string;
+};
+
+export type UpdateSitePolygonVersionError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateSitePolygonVersionResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  };
+};
+
+export type UpdateSitePolygonVersionVariables = {
+  body: Schemas.VersionUpdateBody;
+  pathParams: UpdateSitePolygonVersionPathParams;
+};
+
+/**
+ * Update version properties. Setting isActive to true will activate this version and deactivate all others in the version group.
+ *       Both admins and project developers can manage versions.
+ */
+export const updateSitePolygonVersion = new V3ApiEndpoint<
+  UpdateSitePolygonVersionResponse,
+  UpdateSitePolygonVersionError,
+  UpdateSitePolygonVersionVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}/version", "PATCH");
+
+export type DeleteSitePolygonVersionPathParams = {
+  uuid: string;
+};
+
+export type DeleteSitePolygonVersionError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteSitePolygonVersionResponse = {
+  meta?: {
+    resourceType?: "sitePolygons" | "sitePolygons";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteSitePolygonVersionVariables = {
+  pathParams: DeleteSitePolygonVersionPathParams;
+};
+
+/**
+ * Deletes a specific version of a site polygon. Restrictions:
+ *        - Cannot delete the last version (use DELETE /:uuid to delete all versions)
+ *        - Cannot delete the active version (activate another version first)
+ *        - Only deletes polygon_geometry if not used by other versions
+ *        - Deletes all associations (indicators, criteria_site, audit_status) for this version
+ */
+export const deleteSitePolygonVersion = new V3ApiEndpoint<
+  DeleteSitePolygonVersionResponse,
+  DeleteSitePolygonVersionError,
+  DeleteSitePolygonVersionVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}/version", "DELETE");
+
 export type DeleteSitePolygonPathParams = {
   uuid: string;
 };
@@ -421,6 +906,273 @@ export const deleteSitePolygon = new V3ApiEndpoint<
   DeleteSitePolygonVariables,
   {}
 >("/research/v3/sitePolygons/{uuid}", "DELETE");
+
+export type CompareGeometryFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CompareGeometryFileResponse = {
+  meta?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geometryUploadComparisonSummaries
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeometryUploadComparisonSummaryDto;
+  };
+};
+
+export type CompareGeometryFileVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and returns UUIDs of existing SitePolygons found in the database.
+ */
+export const compareGeometryFile = new V3ApiEndpoint<
+  CompareGeometryFileResponse,
+  CompareGeometryFileError,
+  CompareGeometryFileVariables,
+  {}
+>("/research/v3/sitePolygons/upload/comparison", "POST");
+
+export type UploadGeometryFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadGeometryFileVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file (KML, Shapefile, or GeoJSON) and creates site polygons asynchronously.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadGeometryFile = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  UploadGeometryFileError,
+  UploadGeometryFileVariables,
+  {}
+>("/research/v3/sitePolygons/upload", "POST");
+
+export type UploadGeometryFileWithVersionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadGeometryFileWithVersionsVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+};
+
+/**
+ * Parses a geometry file and processes it with versioning enabled.
+ *       Features with UUIDs in properties.uuid that match existing active SitePolygons will create new versions.
+ *       Features without matching UUIDs (or without UUIDs) will create new polygons.
+ *       Attributes are extracted from GeoJSON feature properties for both versions and new polygons.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadGeometryFileWithVersions = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    },
+  UploadGeometryFileWithVersionsError,
+  UploadGeometryFileWithVersionsVariables,
+  {}
+>("/research/v3/sitePolygons/upload/versions", "POST");
 
 export type BoundingBoxGetQueryParams = {
   /**
@@ -784,72 +1536,98 @@ export const createSiteValidation = new V3ApiEndpoint<
   {}
 >("/validations/v3/sites/{siteUuid}/validation", "POST");
 
-export type CreateSitePolygonClippingPathParams = {
-  siteUuid: string;
+export type ValidateGeometriesError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ValidateGeometriesResponse = {
+  meta?: {
+    /**
+     * @example validations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example validations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ValidationDto;
+  };
 };
 
-export type CreateSitePolygonClippingError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type CreateSitePolygonClippingVariables = {
-  pathParams: CreateSitePolygonClippingPathParams;
+export type ValidateGeometriesVariables = {
+  body: Schemas.GeometryValidationRequestBody;
 };
 
 /**
- * Finds and clips all fixable overlapping polygons in a site (overlap ≤3.5% AND ≤0.118 hectares).
- *       Returns GeoJSON of original and clipped polygons for verification.
+ * Validates raw GeoJSON geometries in-memory without persisting results to the database.
+ *
+ *     This endpoint is useful for validating geometries before creating site polygons, allowing you to check
+ *     for issues without saving the data.
+ *
+ *     Input:
+ *     - Provide an array of GeoJSON FeatureCollections containing the geometries to validate
+ *     - Optionally specify which validation types to run (defaults to all non-persistent validation types)
+ *
+ *     Supported validation types (non-persistent):
+ *     - SELF_INTERSECTION: Checks if polygon edges intersect with themselves
+ *     - POLYGON_SIZE: Validates polygon area is within acceptable range ( 1000 ha )
+ *     - SPIKES: Detects spikes in polygon boundaries
+ *     - DUPLICATE_GEOMETRY: Checks if geometry already exists (requires siteId or site_id in feature properties)
+ *     - DATA_COMPLETENESS: Validates required properties are present
+ *     - FEATURE_BOUNDS: Validates geometry coordinates are within valid bounds
+ *     - GEOMETRY_TYPE: Validates geometry type is supported (multipolygon, polygon or point)
+ *
+ *     Response:
+ *     - Returns a JSON:API document with validation results in the `data` array
+ *     - Each validation result contains a `polygonUuid` identifier (from feature properties.id if provided, otherwise auto-generated as "feature-{index}")
+ *     - This identifier is NOT a database UUID - it's only used to match validation results back to the input features
+ *     - Each result includes a `criteriaList` with validation details for each criteria checked
+ *     - Results are not persisted to the database and are only returned in the response
+ *
+ *     Note: For duplicate geometry validation, features must include `siteId`in their properties.
+ *
+ *     Property naming: GeoJSON properties support both camelCase and snake_case.
+ *     camelCase takes precedence if both formats are present for the same property.
  */
-export const createSitePolygonClipping = new V3ApiEndpoint<
-  undefined,
-  CreateSitePolygonClippingError,
-  CreateSitePolygonClippingVariables,
+export const validateGeometries = new V3ApiEndpoint<
+  ValidateGeometriesResponse,
+  ValidateGeometriesError,
+  ValidateGeometriesVariables,
   {}
->("/polygonClipping/v3/sites/{siteUuid}/clippedPolygons", "POST");
+>("/validations/v3/geometries", "POST");
 
-export type CreateProjectPolygonClippingPathParams = {
-  siteUuid: string;
+export type CreateClippedVersionsQueryParams = {
+  /**
+   * Site UUID to clip polygons for all polygons in the site
+   *
+   * @format uuid
+   */
+  siteUuid?: string;
+  /**
+   * Project UUID to clip polygons for all polygons in the project
+   *
+   * @format uuid
+   */
+  projectUuid?: string;
 };
 
-export type CreateProjectPolygonClippingError = Fetcher.ErrorWrapper<
+export type CreateClippedVersionsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -891,22 +1669,60 @@ export type CreateProjectPolygonClippingError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type CreateProjectPolygonClippingVariables = {
-  pathParams: CreateProjectPolygonClippingPathParams;
+export type CreateClippedVersionsVariables = {
+  queryParams?: CreateClippedVersionsQueryParams;
 };
 
 /**
- * Finds all polygons in a project (via site UUID) and clips fixable overlaps (≤3.5% AND ≤0.118 hectares).
- *       Returns GeoJSON of original and clipped polygons for verification.
+ * Finds and clips all fixable overlapping polygons (overlap ≤3.5% AND ≤0.118 hectares) for a site or project.
+ *       Creates new versions asynchronously with clipped geometries. Returns a delayed job to track progress.
+ *       Provide either siteUuid or projectUuid as a query parameter, but not both.
  */
-export const createProjectPolygonClipping = new V3ApiEndpoint<
-  undefined,
-  CreateProjectPolygonClippingError,
-  CreateProjectPolygonClippingVariables,
+export const createClippedVersions = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example clippedVersions
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example clippedVersions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ClippedVersionDto;
+      };
+    },
+  CreateClippedVersionsError,
+  CreateClippedVersionsVariables,
   {}
->("/polygonClipping/v3/projects/{siteUuid}/clippedPolygons", "POST");
+>("/polygonClipping/v3/clippedVersions", "POST");
 
-export type CreatePolygonListClippingError = Fetcher.ErrorWrapper<
+export type CreatePolygonListClippedVersionsError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -948,25 +1764,150 @@ export type CreatePolygonListClippingError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type CreatePolygonListClippingVariables = {
+export type CreatePolygonListClippedVersionsVariables = {
   body: Schemas.PolygonListClippingRequestBody;
 };
 
 /**
  * Clips a specific list of polygons for fixable overlaps (≤3.5% AND ≤0.118 hectares).
- *       Returns GeoJSON of original and clipped polygons for verification.
- *       Does NOT modify the database or create new versions yet.
+ *       Creates new versions with clipped geometries. For a single polygon, returns immediately.
+ *       For multiple polygons, returns a delayed job to track progress.
  */
-export const createPolygonListClipping = new V3ApiEndpoint<
-  undefined,
-  CreatePolygonListClippingError,
-  CreatePolygonListClippingVariables,
+export const createPolygonListClippedVersions = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example clippedVersions
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example clippedVersions
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.ClippedVersionDto;
+      };
+    },
+  CreatePolygonListClippedVersionsError,
+  CreatePolygonListClippedVersionsVariables,
   {}
 >("/polygonClipping/v3/polygons", "POST");
 
+export type StartIndicatorCalculationPathParams = {
+  /**
+   * Entity type for associations
+   */
+  slug:
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon";
+};
+
+export type StartIndicatorCalculationError = Fetcher.ErrorWrapper<undefined>;
+
+export type StartIndicatorCalculationVariables = {
+  body: Schemas.IndicatorsBodyDto;
+  pathParams: StartIndicatorCalculationPathParams;
+};
+
+export const startIndicatorCalculation = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example delayedJobs
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example delayedJobs
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.DelayedJobDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example sitePolygons
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example sitePolygons
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.SitePolygonLightDto;
+      };
+    },
+  StartIndicatorCalculationError,
+  StartIndicatorCalculationVariables,
+  {}
+>("/research/v3/indicators/{slug}", "POST");
+
 export const operationsByTag = {
-  sitePolygons: { createSitePolygons, sitePolygonsIndex, bulkUpdateSitePolygons, deleteSitePolygon },
+  sitePolygons: {
+    createSitePolygons,
+    sitePolygonsIndex,
+    bulkUpdateSitePolygons,
+    bulkDeleteSitePolygons,
+    getSitePolygonsGeoJson,
+    listSitePolygonVersions,
+    updateSitePolygonVersion,
+    deleteSitePolygonVersion,
+    deleteSitePolygon,
+    compareGeometryFile,
+    uploadGeometryFile,
+    uploadGeometryFileWithVersions
+  },
   boundingBoxes: { boundingBoxGet },
-  validations: { getPolygonValidation, getSiteValidation, createPolygonValidations, createSiteValidation },
-  polygonClipping: { createSitePolygonClipping, createProjectPolygonClipping, createPolygonListClipping }
+  validations: {
+    getPolygonValidation,
+    getSiteValidation,
+    createPolygonValidations,
+    createSiteValidation,
+    validateGeometries
+  },
+  polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
+  indicators: { startIndicatorCalculation }
 };

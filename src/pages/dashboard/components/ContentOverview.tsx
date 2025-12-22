@@ -255,6 +255,14 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
   };
 
   const handleCloseModal = () => {
+    const { map: modalMap } = modalMapFunctions;
+    if (modalMap.current) {
+      const modalStyle = getCurrentMapStyle(modalMap.current);
+      if (modalStyle) {
+        setCurrentMapStyle(modalStyle);
+      }
+    }
+
     const { map } = modalMapFunctions;
     const currentMap = map.current as mapboxgl.Map;
     if (currentMap) {

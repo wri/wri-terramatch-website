@@ -140,22 +140,6 @@ export type GetV2AdminProjectsMultiResponse = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -192,7 +176,6 @@ export type GetV2AdminProjectsMultiResponse = {
     tree_restoration_practices?: string[];
     business_model?: string;
     subtype?: string;
-    organisation_revenue_this_year?: number;
     shapefiles?: {
       uuid?: string;
       shapefileable_type?: string;
@@ -471,22 +454,6 @@ export type GetV2AdminNurseriesMultiResponse = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -523,7 +490,6 @@ export type GetV2AdminNurseriesMultiResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -807,22 +773,6 @@ export type GetV2AdminSitesMultiResponse = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -859,7 +809,6 @@ export type GetV2AdminSitesMultiResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -1122,22 +1071,6 @@ export type PostUsersResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -2117,22 +2050,6 @@ export type GetV2AdminOrganisationsResponse = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -2370,7 +2287,7 @@ export type GetV2AdminOrganisationsVariables = {
 } & ApiContext["fetcherOptions"];
 
 /**
- * Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at
+ * Currently available sort is status, type, trees_grown_total, name, created_at
  */
 export const fetchGetV2AdminOrganisations = (variables: GetV2AdminOrganisationsVariables, signal?: AbortSignal) =>
   apiFetch<
@@ -2383,7 +2300,7 @@ export const fetchGetV2AdminOrganisations = (variables: GetV2AdminOrganisationsV
   >({ url: "/v2/admin/organisations", method: "get", ...variables, signal });
 
 /**
- * Currently available sort is status, type, trees_grown_total, name, fin_budget_1year, created_at
+ * Currently available sort is status, type, trees_grown_total, name, created_at
  */
 export const useGetV2AdminOrganisations = <TData = GetV2AdminOrganisationsResponse>(
   variables: GetV2AdminOrganisationsVariables,
@@ -2444,22 +2361,6 @@ export type GetV2AdminOrganisationsMultiResponse = {
   hq_zipcode?: string;
   hq_country?: string;
   fin_start_month?: number;
-  /**
-   * @format float
-   */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
   /**
    * @format float
    */
@@ -2750,22 +2651,6 @@ export type GetV2AdminOrganisationsUUIDResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3053,22 +2938,6 @@ export type PutV2AdminOrganisationsUUIDResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3312,22 +3181,6 @@ export type PutV2AdminOrganisationsUUIDRequestBody = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3364,7 +3217,6 @@ export type PutV2AdminOrganisationsUUIDRequestBody = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -3491,22 +3343,6 @@ export type PutV2AdminOrganisationsApproveResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3543,7 +3379,6 @@ export type PutV2AdminOrganisationsApproveResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -3629,22 +3464,6 @@ export type PutV2AdminOrganisationsRejectResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3681,7 +3500,6 @@ export type PutV2AdminOrganisationsRejectResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -3811,22 +3629,6 @@ export type PostV2OrganisationsResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -3863,7 +3665,6 @@ export type PostV2OrganisationsResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4118,22 +3919,6 @@ export type GetV2OrganisationsUUIDResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4170,7 +3955,6 @@ export type GetV2OrganisationsUUIDResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4432,22 +4216,6 @@ export type PutV2OrganisationsUUIDResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4484,7 +4252,6 @@ export type PutV2OrganisationsUUIDResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -4798,22 +4565,6 @@ export type PostV2OrganisationsJoinExistingResponse = {
   /**
    * @format float
    */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
-  /**
-   * @format float
-   */
   ha_restored_total?: number;
   /**
    * @format float
@@ -4850,7 +4601,6 @@ export type PostV2OrganisationsJoinExistingResponse = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   shapefiles?: {
     uuid?: string;
     shapefileable_type?: string;
@@ -5122,22 +4872,6 @@ export type GetV2OrganisationsUserRequestsUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -5470,22 +5204,6 @@ export type GetV2OrganisationsApprovedUsersUUIDResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -6218,22 +5936,6 @@ export type PutV2AdminUsersUUIDRequestBody = {
     /**
      * @format float
      */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
-    /**
-     * @format float
-     */
     ha_restored_total?: number;
     /**
      * @format float
@@ -6803,94 +6505,6 @@ export const useDeleteV2Media = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<undefined, DeleteV2MediaError, DeleteV2MediaVariables>(
     (variables: DeleteV2MediaVariables) => fetchDeleteV2Media({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PutV2FilesUUIDPathParams = {
-  uuid: string;
-};
-
-export type PutV2FilesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type PutV2FilesUUIDResponse = {
-  uuid?: string;
-  url?: string;
-  thumb_url?: string;
-  collection_name?: string;
-  title?: string;
-  file_name?: string;
-  mime_type?: string;
-  size?: number;
-  lat?: number;
-  lng?: number;
-  is_public?: boolean;
-  is_cover?: boolean;
-  created_at?: string;
-};
-
-export type PutV2FilesUUIDRequestBody = {
-  title: string;
-  is_public?: boolean;
-};
-
-export type PutV2FilesUUIDVariables = {
-  body: PutV2FilesUUIDRequestBody;
-  pathParams: PutV2FilesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPutV2FilesUUID = (variables: PutV2FilesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<PutV2FilesUUIDResponse, PutV2FilesUUIDError, PutV2FilesUUIDRequestBody, {}, {}, PutV2FilesUUIDPathParams>({
-    url: "/v2/files/{uuid}",
-    method: "put",
-    ...variables,
-    signal
-  });
-
-export const usePutV2FilesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PutV2FilesUUIDResponse, PutV2FilesUUIDError, PutV2FilesUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PutV2FilesUUIDResponse, PutV2FilesUUIDError, PutV2FilesUUIDVariables>(
-    (variables: PutV2FilesUUIDVariables) => fetchPutV2FilesUUID({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2FilesUUIDPathParams = {
-  uuid: string;
-};
-
-export type DeleteV2FilesUUIDError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2FilesUUIDResponse = {
-  uuid?: string;
-};
-
-export type DeleteV2FilesUUIDVariables = {
-  pathParams: DeleteV2FilesUUIDPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2FilesUUID = (variables: DeleteV2FilesUUIDVariables, signal?: AbortSignal) =>
-  apiFetch<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, undefined, {}, {}, DeleteV2FilesUUIDPathParams>({
-    url: "/v2/files/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2FilesUUID = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<DeleteV2FilesUUIDResponse, DeleteV2FilesUUIDError, DeleteV2FilesUUIDVariables>(
-    (variables: DeleteV2FilesUUIDVariables) => fetchDeleteV2FilesUUID({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -7484,22 +7098,6 @@ export type PatchV2MyBannersResponse = {
     hq_zipcode?: string;
     hq_country?: string;
     fin_start_month?: number;
-    /**
-     * @format float
-     */
-    fin_budget_3year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_2year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_1year?: number;
-    /**
-     * @format float
-     */
-    fin_budget_current_year?: number;
     /**
      * @format float
      */
@@ -8844,22 +8442,6 @@ export type GetV2SitesUUIDResponse = {
       /**
        * @format float
        */
-      fin_budget_3year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_2year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_1year?: number;
-      /**
-       * @format float
-       */
-      fin_budget_current_year?: number;
-      /**
-       * @format float
-       */
       ha_restored_total?: number;
       /**
        * @format float
@@ -8896,7 +8478,6 @@ export type GetV2SitesUUIDResponse = {
       tree_restoration_practices?: string[];
       business_model?: string;
       subtype?: string;
-      organisation_revenue_this_year?: number;
       shapefiles?: {
         uuid?: string;
         shapefileable_type?: string;
@@ -9848,182 +9429,6 @@ export const usePostV2ExportImage = (
   const { fetcherOptions } = useApiContext();
   return reactQuery.useMutation<undefined, PostV2ExportImageError, PostV2ExportImageVariables>(
     (variables: PostV2ExportImageVariables) => fetchPostV2ExportImage({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2MediaUuidPathParams = {
-  /**
-   * UUID of the media to update
-   */
-  uuid: string;
-};
-
-export type PatchV2MediaUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type PatchV2MediaUuidResponse = {
-  id?: number;
-  model_id?: number;
-  model_type?: string;
-  collection_name?: string;
-  name?: string;
-  file_name?: string;
-  mime_type?: string;
-  disk?: string;
-  size?: number;
-  manipulations?: Record<string, any>;
-  custom_properties?: Record<string, any>;
-  responsive_images?: Record<string, any>;
-  order_column?: number;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  description?: string;
-  photographer?: string;
-  is_public?: boolean;
-  is_cover?: boolean;
-};
-
-export type PatchV2MediaUuidRequestBody = {
-  /**
-   * Name of the media
-   */
-  name?: string;
-  /**
-   * New description for the media
-   */
-  description?: string;
-  /**
-   * Name of the photographer
-   */
-  photographer?: string;
-  /**
-   * Whether the media is public or not
-   */
-  is_public?: boolean;
-};
-
-export type PatchV2MediaUuidVariables = {
-  body?: PatchV2MediaUuidRequestBody;
-  pathParams: PatchV2MediaUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Update description, photographer, is_public, and is_cover attributes of a media item
- */
-export const fetchPatchV2MediaUuid = (variables: PatchV2MediaUuidVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PatchV2MediaUuidResponse,
-    PatchV2MediaUuidError,
-    PatchV2MediaUuidRequestBody,
-    {},
-    {},
-    PatchV2MediaUuidPathParams
-  >({ url: "/v2/media/{uuid}", method: "patch", ...variables, signal });
-
-/**
- * Update description, photographer, is_public, and is_cover attributes of a media item
- */
-export const usePatchV2MediaUuid = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<PatchV2MediaUuidResponse, PatchV2MediaUuidError, PatchV2MediaUuidVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<PatchV2MediaUuidResponse, PatchV2MediaUuidError, PatchV2MediaUuidVariables>(
-    (variables: PatchV2MediaUuidVariables) => fetchPatchV2MediaUuid({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PatchV2MediaProjectProjectMediaUuidPathParams = {
-  /**
-   * The ID or UUID of the project.
-   */
-  project: string;
-  /**
-   * The UUID of the media item.
-   */
-  mediaUuid: string;
-};
-
-export type PatchV2MediaProjectProjectMediaUuidError = Fetcher.ErrorWrapper<
-  | {
-      status: 403;
-      payload: {
-        message?: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        message?: string;
-      };
-    }
->;
-
-export type PatchV2MediaProjectProjectMediaUuidResponse = {
-  message?: string;
-  mediaUuid?: string;
-};
-
-export type PatchV2MediaProjectProjectMediaUuidRequestBody = {
-  /**
-   * This allows PATCH requests via form submissions, used for Laravel.
-   *
-   * @example PATCH
-   */
-  _method?: string;
-};
-
-export type PatchV2MediaProjectProjectMediaUuidVariables = {
-  body?: PatchV2MediaProjectProjectMediaUuidRequestBody;
-  pathParams: PatchV2MediaProjectProjectMediaUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint allows you to update a specific media item's "is_cover" field to true.
- */
-export const fetchPatchV2MediaProjectProjectMediaUuid = (
-  variables: PatchV2MediaProjectProjectMediaUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PatchV2MediaProjectProjectMediaUuidResponse,
-    PatchV2MediaProjectProjectMediaUuidError,
-    PatchV2MediaProjectProjectMediaUuidRequestBody,
-    {},
-    {},
-    PatchV2MediaProjectProjectMediaUuidPathParams
-  >({ url: "/v2/media/project/{project}/{mediaUuid}", method: "patch", ...variables, signal });
-
-/**
- * This endpoint allows you to update a specific media item's "is_cover" field to true.
- */
-export const usePatchV2MediaProjectProjectMediaUuid = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PatchV2MediaProjectProjectMediaUuidResponse,
-      PatchV2MediaProjectProjectMediaUuidError,
-      PatchV2MediaProjectProjectMediaUuidVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PatchV2MediaProjectProjectMediaUuidResponse,
-    PatchV2MediaProjectProjectMediaUuidError,
-    PatchV2MediaProjectProjectMediaUuidVariables
-  >(
-    (variables: PatchV2MediaProjectProjectMediaUuidVariables) =>
-      fetchPatchV2MediaProjectProjectMediaUuid({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -11390,44 +10795,6 @@ export const usePutV2TerrafundPolygonUuid = (
   );
 };
 
-export type DeleteV2TerrafundPolygonUuidPathParams = {
-  /**
-   * The UUID of the polygon geometry to delete
-   */
-  uuid: string;
-};
-
-export type DeleteV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2TerrafundPolygonUuidVariables = {
-  pathParams: DeleteV2TerrafundPolygonUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2TerrafundPolygonUuid = (
-  variables: DeleteV2TerrafundPolygonUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, DeleteV2TerrafundPolygonUuidError, undefined, {}, {}, DeleteV2TerrafundPolygonUuidPathParams>({
-    url: "/v2/terrafund/polygon/{uuid}",
-    method: "delete",
-    ...variables,
-    signal
-  });
-
-export const useDeleteV2TerrafundPolygonUuid = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<undefined, DeleteV2TerrafundPolygonUuidError, DeleteV2TerrafundPolygonUuidVariables>,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<undefined, DeleteV2TerrafundPolygonUuidError, DeleteV2TerrafundPolygonUuidVariables>(
-    (variables: DeleteV2TerrafundPolygonUuidVariables) =>
-      fetchDeleteV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
 export type GetV2TerrafundGeojsonSiteQueryParams = {
   /**
    * UUID of the aite.
@@ -11704,168 +11071,6 @@ export const usePostV2TerrafundUploadKml = (
   >(
     (variables: PostV2TerrafundUploadKmlVariables) =>
       fetchPostV2TerrafundUploadKml({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundUploadGeojsonValidateError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundUploadGeojsonValidateRequestBody = {
-  /**
-   * The GeoJSON file to test
-   *
-   * @format binary
-   */
-  file: Blob;
-};
-
-export type PostV2TerrafundUploadGeojsonValidateVariables = {
-  body: PostV2TerrafundUploadGeojsonValidateRequestBody;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
- */
-export const fetchPostV2TerrafundUploadGeojsonValidate = (
-  variables: PostV2TerrafundUploadGeojsonValidateVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    Blob,
-    PostV2TerrafundUploadGeojsonValidateError,
-    PostV2TerrafundUploadGeojsonValidateRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/terrafund/upload-geojson-validate", method: "post", ...variables, signal });
-
-/**
- * Uploads a GeoJSON file, converts it to GeoJSON, and validate the polygons.
- */
-export const usePostV2TerrafundUploadGeojsonValidate = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      Blob,
-      PostV2TerrafundUploadGeojsonValidateError,
-      PostV2TerrafundUploadGeojsonValidateVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    Blob,
-    PostV2TerrafundUploadGeojsonValidateError,
-    PostV2TerrafundUploadGeojsonValidateVariables
-  >(
-    (variables: PostV2TerrafundUploadGeojsonValidateVariables) =>
-      fetchPostV2TerrafundUploadGeojsonValidate({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundUploadShapefileValidateError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundUploadShapefileValidateRequestBody = {
-  /**
-   * The Shapefile file to test
-   *
-   * @format binary
-   */
-  file: Blob;
-};
-
-export type PostV2TerrafundUploadShapefileValidateVariables = {
-  body: PostV2TerrafundUploadShapefileValidateRequestBody;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
- */
-export const fetchPostV2TerrafundUploadShapefileValidate = (
-  variables: PostV2TerrafundUploadShapefileValidateVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    Blob,
-    PostV2TerrafundUploadShapefileValidateError,
-    PostV2TerrafundUploadShapefileValidateRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/terrafund/upload-shapefile-validate", method: "post", ...variables, signal });
-
-/**
- * Uploads a Shapefile file, converts it to GeoJSON, and validate the polygons.
- */
-export const usePostV2TerrafundUploadShapefileValidate = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      Blob,
-      PostV2TerrafundUploadShapefileValidateError,
-      PostV2TerrafundUploadShapefileValidateVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    Blob,
-    PostV2TerrafundUploadShapefileValidateError,
-    PostV2TerrafundUploadShapefileValidateVariables
-  >(
-    (variables: PostV2TerrafundUploadShapefileValidateVariables) =>
-      fetchPostV2TerrafundUploadShapefileValidate({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundUploadKmlValidateError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundUploadKmlValidateRequestBody = {
-  /**
-   * The KML file to test
-   *
-   * @format binary
-   */
-  file: Blob;
-};
-
-export type PostV2TerrafundUploadKmlValidateVariables = {
-  body: PostV2TerrafundUploadKmlValidateRequestBody;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
- */
-export const fetchPostV2TerrafundUploadKmlValidate = (
-  variables: PostV2TerrafundUploadKmlValidateVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateRequestBody, {}, {}, {}>({
-    url: "/v2/terrafund/upload-kml-validate",
-    method: "post",
-    ...variables,
-    signal
-  });
-
-/**
- * Uploads a KML file, converts it to GeoJSON, and validate the polygons.
- */
-export const usePostV2TerrafundUploadKmlValidate = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      Blob,
-      PostV2TerrafundUploadKmlValidateError,
-      PostV2TerrafundUploadKmlValidateVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<Blob, PostV2TerrafundUploadKmlValidateError, PostV2TerrafundUploadKmlValidateVariables>(
-    (variables: PostV2TerrafundUploadKmlValidateVariables) =>
-      fetchPostV2TerrafundUploadKmlValidate({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -12427,74 +11632,6 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
   >(
     (variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables) =>
       fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type DeleteV2TerrafundProjectPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type DeleteV2TerrafundProjectPolygonsResponse = {
-  /**
-   * Success message
-   */
-  message?: string;
-  deleted?: {
-    /**
-     * UUID of the deleted polygon geometry
-     */
-    uuid?: string;
-  }[];
-  failed?: {
-    /**
-     * UUID of the polygon geometry that failed to delete
-     */
-    uuid?: string;
-    /**
-     * Error message for the failed deletion
-     */
-    error?: string;
-  }[];
-};
-
-export type DeleteV2TerrafundProjectPolygonsRequestBody = {
-  uuids?: string[];
-};
-
-export type DeleteV2TerrafundProjectPolygonsVariables = {
-  body?: DeleteV2TerrafundProjectPolygonsRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchDeleteV2TerrafundProjectPolygons = (
-  variables: DeleteV2TerrafundProjectPolygonsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    DeleteV2TerrafundProjectPolygonsResponse,
-    DeleteV2TerrafundProjectPolygonsError,
-    DeleteV2TerrafundProjectPolygonsRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/terrafund/project-polygons", method: "delete", ...variables, signal });
-
-export const useDeleteV2TerrafundProjectPolygons = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      DeleteV2TerrafundProjectPolygonsResponse,
-      DeleteV2TerrafundProjectPolygonsError,
-      DeleteV2TerrafundProjectPolygonsVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    DeleteV2TerrafundProjectPolygonsResponse,
-    DeleteV2TerrafundProjectPolygonsError,
-    DeleteV2TerrafundProjectPolygonsVariables
-  >(
-    (variables: DeleteV2TerrafundProjectPolygonsVariables) =>
-      fetchDeleteV2TerrafundProjectPolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -14636,218 +13773,6 @@ export const usePutV2SitePolygonUuidMakeActive = (
   >(
     (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
       fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundClipPolygonsPolygonUuidPathParams = {
-  /**
-   * The UUID of the polygon to clip polygons for.
-   */
-  uuid: string;
-};
-
-export type PostV2TerrafundClipPolygonsPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundClipPolygonsPolygonUuidResponse = {
-  updated_polygons?: {
-    uuid?: string;
-    poly_name?: string;
-  }[];
-};
-
-export type PostV2TerrafundClipPolygonsPolygonUuidVariables = {
-  pathParams: PostV2TerrafundClipPolygonsPolygonUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
- */
-export const fetchPostV2TerrafundClipPolygonsPolygonUuid = (
-  variables: PostV2TerrafundClipPolygonsPolygonUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2TerrafundClipPolygonsPolygonUuidResponse,
-    PostV2TerrafundClipPolygonsPolygonUuidError,
-    undefined,
-    {},
-    {},
-    PostV2TerrafundClipPolygonsPolygonUuidPathParams
-  >({ url: "/v2/terrafund/clip-polygons/polygon/{uuid}", method: "post", ...variables, signal });
-
-/**
- * Clips overlapping polygons based on the provided polygon UUID and returns the updated polygons.
- */
-export const usePostV2TerrafundClipPolygonsPolygonUuid = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2TerrafundClipPolygonsPolygonUuidResponse,
-      PostV2TerrafundClipPolygonsPolygonUuidError,
-      PostV2TerrafundClipPolygonsPolygonUuidVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2TerrafundClipPolygonsPolygonUuidResponse,
-    PostV2TerrafundClipPolygonsPolygonUuidError,
-    PostV2TerrafundClipPolygonsPolygonUuidVariables
-  >(
-    (variables: PostV2TerrafundClipPolygonsPolygonUuidVariables) =>
-      fetchPostV2TerrafundClipPolygonsPolygonUuid({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundClipPolygonsSiteUuidPathParams = {
-  /**
-   * The UUID of the site to clip polygons for.
-   */
-  uuid: string;
-};
-
-export type PostV2TerrafundClipPolygonsSiteUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundClipPolygonsSiteUuidResponse = {
-  updated_polygons?: {
-    uuid?: string;
-    poly_name?: string;
-  }[];
-};
-
-export type PostV2TerrafundClipPolygonsSiteUuidVariables = {
-  pathParams: PostV2TerrafundClipPolygonsSiteUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
- */
-export const fetchPostV2TerrafundClipPolygonsSiteUuid = (
-  variables: PostV2TerrafundClipPolygonsSiteUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2TerrafundClipPolygonsSiteUuidResponse,
-    PostV2TerrafundClipPolygonsSiteUuidError,
-    undefined,
-    {},
-    {},
-    PostV2TerrafundClipPolygonsSiteUuidPathParams
-  >({ url: "/v2/terrafund/clip-polygons/site/{uuid}", method: "post", ...variables, signal });
-
-/**
- * Clips overlapping polygons based on the provided site UUID and returns the updated polygons.
- */
-export const usePostV2TerrafundClipPolygonsSiteUuid = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2TerrafundClipPolygonsSiteUuidResponse,
-      PostV2TerrafundClipPolygonsSiteUuidError,
-      PostV2TerrafundClipPolygonsSiteUuidVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2TerrafundClipPolygonsSiteUuidResponse,
-    PostV2TerrafundClipPolygonsSiteUuidError,
-    PostV2TerrafundClipPolygonsSiteUuidVariables
-  >(
-    (variables: PostV2TerrafundClipPolygonsSiteUuidVariables) =>
-      fetchPostV2TerrafundClipPolygonsSiteUuid({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2TerrafundClipPolygonsPolygonsError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2TerrafundClipPolygonsPolygonsResponse = {
-  /**
-   * A list of processed polygons
-   */
-  processed?: {
-    /**
-     * The UUID of the unprocessed polygon
-     *
-     * @example uuid1
-     */
-    uuid?: string;
-    /**
-     * The name of the unprocessed polygon
-     *
-     * @example Polygon Name
-     */
-    poly_name?: string;
-  }[];
-  /**
-   * A list of polygons that couldn't be processed
-   */
-  unprocessed?: {
-    /**
-     * The UUID of the unprocessed polygon
-     *
-     * @example uuid1
-     */
-    uuid?: string;
-    /**
-     * The name of the unprocessed polygon
-     *
-     * @example Polygon Name
-     */
-    poly_name?: string;
-  }[];
-};
-
-export type PostV2TerrafundClipPolygonsPolygonsRequestBody = {
-  uuids?: string[];
-  /**
-   * The entity type of the polygon geometries to be fixed
-   */
-  entity_type?: string;
-  /**
-   * The entity ID of the polygon geometries to be fixed
-   */
-  entity_uuid?: string;
-};
-
-export type PostV2TerrafundClipPolygonsPolygonsVariables = {
-  body?: PostV2TerrafundClipPolygonsPolygonsRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2TerrafundClipPolygonsPolygons = (
-  variables: PostV2TerrafundClipPolygonsPolygonsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    PostV2TerrafundClipPolygonsPolygonsResponse,
-    PostV2TerrafundClipPolygonsPolygonsError,
-    PostV2TerrafundClipPolygonsPolygonsRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/terrafund/clip-polygons/polygons", method: "post", ...variables, signal });
-
-export const usePostV2TerrafundClipPolygonsPolygons = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2TerrafundClipPolygonsPolygonsResponse,
-      PostV2TerrafundClipPolygonsPolygonsError,
-      PostV2TerrafundClipPolygonsPolygonsVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2TerrafundClipPolygonsPolygonsResponse,
-    PostV2TerrafundClipPolygonsPolygonsError,
-    PostV2TerrafundClipPolygonsPolygonsVariables
-  >(
-    (variables: PostV2TerrafundClipPolygonsPolygonsVariables) =>
-      fetchPostV2TerrafundClipPolygonsPolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };

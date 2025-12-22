@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Button from "@/components/elements/Button/Button";
 import Drawer from "@/components/elements/Drawer/Drawer";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
-import { formatFileName } from "@/components/elements/Map-mapbox/utils";
+import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_LEFT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
 import { MENU_ITEM_VARIANT_DIVIDER } from "@/components/elements/MenuItem/MenuItemVariant";
@@ -17,10 +17,10 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchDeleteV2TerrafundPolygonUuid, fetchGetV2TerrafundGeojsonComplete } from "@/generated/apiComponents";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
@@ -79,6 +79,7 @@ const Polygons = (props: IPolygonProps) => {
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const reloadSiteData = context?.reloadSiteData;
+  const sitePolygonData = context?.sitePolygonData;
 
   const { setSelectedPolygonsInCheckbox, selectedPolygonsInCheckbox, setValidFilter, validFilter } = contextMapArea;
 
@@ -111,8 +112,14 @@ const Polygons = (props: IPolygonProps) => {
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
-      setSelectedPolygon(newSelectedPolygon);
-      setIsOpenPolygonDrawer(true);
+
+      if (newSelectedPolygon) {
+        setSelectedPolygon(newSelectedPolygon);
+        setIsOpenPolygonDrawer(true);
+      } else {
+        setSelectedPolygon(undefined);
+        setIsOpenPolygonDrawer(true);
+      }
     } else {
       setIsOpenPolygonDrawer(false);
       setSelectedPolygon(undefined);
@@ -144,16 +151,8 @@ const Polygons = (props: IPolygonProps) => {
 
   const downloadGeoJsonPolygon = useCallback(async (polygon: IPolygonItem) => {
     try {
-      const polygonGeojson = await fetchGetV2TerrafundGeojsonComplete({
-        queryParams: { uuid: polygon.uuid }
-      });
-      const blob = new Blob([JSON.stringify(polygonGeojson)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${formatFileName(polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label)}.geojson`;
-      link.click();
-      URL.revokeObjectURL(url);
+      const filename = polygon?.label === "Unnamed Polygon" ? "polygon" : polygon?.label;
+      await downloadPolygonGeoJson(polygon.uuid, filename, { includeExtendedData: true });
     } catch (error) {
       Log.error("Failed to download polygon:", error);
     }
@@ -166,16 +165,20 @@ const Polygons = (props: IPolygonProps) => {
   const deletePolygon = useCallback(
     async (polygon: IPolygonItem) => {
       try {
-        const response: any = await fetchDeleteV2TerrafundPolygonUuid({ pathParams: { uuid: polygon.uuid } });
-        if (response?.uuid) {
-          reloadSiteData?.();
-          closeModal(ModalId.CONFIRM_POLYGON_DELETION);
+        const sitePolygon = sitePolygonData?.find(p => p.polygonUuid === polygon.uuid);
+        const sitePolygonUuid = sitePolygon?.uuid;
+        if (!sitePolygonUuid) {
+          Log.error("Could not find sitePolygon UUID for polygon:", polygon.uuid);
+          return;
         }
+        await deleteSitePolygon(sitePolygonUuid);
+        reloadSiteData?.();
+        closeModal(ModalId.CONFIRM_POLYGON_DELETION);
       } catch (error) {
         Log.error("Failed to delete polygon:", error);
       }
     },
-    [reloadSiteData, closeModal]
+    [reloadSiteData, closeModal, sitePolygonData]
   );
 
   const openFormModalHandlerConfirm = useCallback(
@@ -304,7 +307,7 @@ const Polygons = (props: IPolygonProps) => {
       <Drawer isOpen={isOpenPolygonDrawer} setIsOpen={setIsOpenPolygonDrawer} setPolygonFromMap={setPolygonFromMap}>
         {isOpenPolygonDrawer && (
           <PolygonDrawer
-            polygonSelected={selectedPolygon?.uuid ?? ""}
+            polygonSelected={selectedPolygon?.uuid ?? polygonFromMap?.uuid ?? ""}
             isPolygonStatusOpen={isPolygonStatusOpen}
             refresh={props?.refresh}
             isOpenPolygonDrawer={isOpenPolygonDrawer}

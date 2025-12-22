@@ -12,6 +12,7 @@ import Text from "@/components/elements/Text/Text";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import { StartIndicatorCalculationPathParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { EntityName } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -48,7 +49,6 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
     runAnalysisIndicator,
     dropdownAnalysisOptions,
     loadingVerify,
-    analysisToSlug,
     rerunDropdownOptions,
     rerunAnalysisToSlug,
     totalPolygonsForRerun,
@@ -74,27 +74,36 @@ const ModalRunAnalysis: FC<ModalRunAnalysisProps> = ({
       }
 
       await runAnalysisIndicator({
-        pathParams: {
-          slug: indicatorSlugSelected!
-        },
+        slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
-          uuids: rerunAnalysisToSlug[`${indicatorSlugSelected}`],
-          force: true,
-          update_existing: true
+          polygonUuids: rerunAnalysisToSlug[`${indicatorSlugSelected}`] || [],
+          forceRecalculation: false,
+          updateExisting: true
         }
       });
     } else {
-      if (analysisToSlug[`${indicatorSlugSelected}`]?.message) {
+      const analysisData = rerunAnalysisToSlug[`${indicatorSlugSelected}`];
+
+      if (analysisData && typeof analysisData === "object" && "message" in analysisData && analysisData.message) {
         setLoadingAnalysis?.(false);
-        return openNotification("warning", t("Warning"), analysisToSlug[`${indicatorSlugSelected}`].message);
+        return openNotification("warning", t("Warning"), analysisData.message);
+      }
+
+      let polygonUuids: string[] = [];
+      if (Array.isArray(analysisData)) {
+        polygonUuids = analysisData.filter((v: string) => typeof v === "string");
+      } else if (typeof analysisData === "object" && analysisData !== null && !("message" in analysisData)) {
+        polygonUuids = Object.values(analysisData as Record<string, string>).filter(
+          (v): v is string => typeof v === "string"
+        );
       }
 
       await runAnalysisIndicator({
-        pathParams: {
-          slug: indicatorSlugSelected!
-        },
+        slug: indicatorSlugSelected as StartIndicatorCalculationPathParams["slug"],
         body: {
-          uuids: analysisToSlug[`${indicatorSlugSelected}`]
+          polygonUuids: polygonUuids,
+          forceRecalculation: false,
+          updateExisting: false
         }
       });
     }

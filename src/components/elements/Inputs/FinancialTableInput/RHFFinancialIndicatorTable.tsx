@@ -16,17 +16,13 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
-import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
+import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useOrgFormDetails } from "@/context/wizardForm.provider";
-import {
-  DeleteV2FilesUUIDResponse,
-  useDeleteV2FilesUUID,
-  usePatchV2FinancialIndicators
-} from "@/generated/apiComponents";
+import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -223,14 +219,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       pathParams: { entity: "financialIndicators", collection: "documentation", uuid: "" }
     });
 
-    const { mutate: deleteFile } = useDeleteV2FilesUUID({
-      onSuccess(data) {
-        setResetTable(prev => prev + 1);
-        removeFile((data as { data: DeleteV2FilesUUIDResponse }).data);
-        onChangeCapture?.();
-      }
-    });
-
     const { mutate: createFinancialData } = usePatchV2FinancialIndicators({
       onSuccess(data) {
         if (data && Array.isArray(data)) {
@@ -320,12 +308,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               isDeleting: true
             }
           });
-          deleteFile({ pathParams: { uuid: file.uuid } });
+          deleteMedia(file.uuid);
         } else if (file.fileName) {
           removeFile(file);
         }
       },
-      [addFile, deleteFile, removeFile]
+      [addFile, removeFile]
     );
 
     const handleDeleteFile = useCallback(
@@ -917,9 +905,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     });
 
     const initialized = useRef(false);
-    const isFundoFloraNonProfitOrEnterprise = /fundo flora application.*(non[- ]?profit|enterprise)/i.test(
-      orgDetails?.title ?? ""
+    const isFundoFloraNonProfitOrEnterprise = useMemo(
+      () => /fundo flora application.*(non[- ]?profit|enterprise)/i.test(orgDetails?.title ?? ""),
+      [orgDetails?.title]
     );
+    const isNonProfitOrganization = useMemo(() => orgDetails?.type === "non-profit-organization", [orgDetails?.type]);
 
     useValueChanged(value, () => {
       if (!initialized.current && !isEmpty(value)) {
@@ -1208,9 +1198,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             resetTable={resetTable}
             label={t("Documentation")}
             description={t(
-              isFundoFloraNonProfitOrEnterprise
-                ? "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Budgets must detail your entire organisation's expenses. Audited budgets are preferred, if available, but are not required at this stage.<br><br>Include in the financial statements, if possible: Income Statement (DRE) or Statement of Surplus and Losses (DSP) - in the case of non-profit organisations, Balance Sheet and Cash Flow Statement."
-                : "Please provide supporting documentation for each year’s financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
+              isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
+                ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
+                : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
             )}
             tableColumns={documentationColumns}
             value={documentationData ?? []}

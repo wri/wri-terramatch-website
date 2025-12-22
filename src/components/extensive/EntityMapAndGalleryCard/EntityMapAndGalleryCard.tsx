@@ -9,15 +9,17 @@ import ImageGallery from "@/components/elements/ImageGallery/ImageGallery";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
-import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { deleteMedia } from "@/connections/Media";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { GetV2TypeEntityResponse, useDeleteV2FilesUUID, useGetV2TypeEntity } from "@/generated/apiComponents";
+import { SitePolygon } from "@/generated/apiSchemas";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -105,21 +107,46 @@ const EntityMapAndGalleryCard = ({
     ])
   );
 
-  const { data: sitePolygonData } = useGetV2TypeEntity<GetV2TypeEntityResponse>({
-    queryParams: {
-      uuid: entityUUID,
-      type: modelName
-    }
+  // Fetch site polygons using V3 endpoint
+  const { data: sitePolygonDataV3 } = useAllSitePolygons({
+    entityName: modelName as "projects" | "sites",
+    entityUuid: entityUUID,
+    enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
   });
+
+  // Transform V3 data to V2 format for MapContainer compatibility
+  const sitePolygonData: SitePolygon[] | undefined = useMemo(
+    () =>
+      sitePolygonDataV3?.map(
+        v3Polygon =>
+          ({
+            id: undefined,
+            uuid: v3Polygon.uuid,
+            poly_id: v3Polygon.polygonUuid,
+            poly_name: v3Polygon.name,
+            primary_uuid: v3Polygon.primaryUuid,
+            status: v3Polygon.status,
+            site_id: v3Polygon.siteId,
+            site_name: v3Polygon.siteName,
+            project_id: v3Polygon.projectId,
+            proj_name: v3Polygon.projectShortName,
+            practice: Array.isArray(v3Polygon.practice) ? v3Polygon.practice.join(",") : v3Polygon.practice,
+            target_sys: v3Polygon.targetSys,
+            distr: Array.isArray(v3Polygon.distr) ? v3Polygon.distr.join(",") : v3Polygon.distr,
+            num_trees: v3Polygon.numTrees,
+            calc_area: v3Polygon.calcArea,
+            plantstart: v3Polygon.plantStart,
+            source: v3Polygon.source,
+            is_active: v3Polygon.isActive,
+            version_name: v3Polygon.versionName,
+            validation_status: v3Polygon.validationStatus != null
+          } as SitePolygon)
+      ),
+    [sitePolygonDataV3]
+  );
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
-  const polygonDataMap = parsePolygonData(sitePolygonData?.polygonsData);
-
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      refetch?.();
-    }
-  });
+  const polygonDataMap = parsePolygonDataV3(sitePolygonDataV3);
 
   const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
 
@@ -196,11 +223,18 @@ const EntityMapAndGalleryCard = ({
         <PageCard title={`${modelTitle} ${t("Area")}`}>
           <MapContainer
             polygonsData={polygonDataMap}
-            sitePolygonData={sitePolygonData?.polygonsData}
+            sitePolygonData={sitePolygonData}
             bbox={mapBbox}
             className="rounded-lg"
             imageLayerGeojson={imagesGeoJson}
-            onDeleteImage={uuid => deleteFile({ pathParams: { uuid } })}
+            onDeleteImage={async uuid => {
+              try {
+                await deleteMedia(uuid);
+                refetch?.();
+              } catch (error) {
+                Log.error(error);
+              }
+            }}
             mapFunctions={mapFunctions}
             showLegend
             hasControls
@@ -230,7 +264,14 @@ const EntityMapAndGalleryCard = ({
                 entity={modelName}
                 entityData={entityData}
                 pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
-                onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+                onDeleteConfirm={async uuid => {
+                  try {
+                    await deleteMedia(uuid);
+                    refetch?.();
+                  } catch (error) {
+                    Log.error(error);
+                  }
+                }}
                 onGalleryStateChange={(pagination, filter) => {
                   setPagination(pagination);
                   setFilter(filter);

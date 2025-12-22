@@ -12,6 +12,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
 import FinancialReportHeader from "./components/FinancialReportHeader";
+import AuditLog from "./tabs/AuditLog";
 import FinancialReportOverviewTab from "./tabs/Overview";
 
 const FinancialReportDetailPage = () => {
@@ -52,7 +53,8 @@ const FinancialReportDetailPage = () => {
           <EntityStatusBar entityName="financialReports" entity={financialReport} />
           <SecondaryTabs
             tabItems={[
-              { key: "overview", title: t("Overview"), body: <FinancialReportOverviewTab report={financialReport} /> }
+              { key: "overview", title: t("Overview"), body: <FinancialReportOverviewTab report={financialReport} /> },
+              { key: "audit-log", title: t("Audit Log"), body: <AuditLog financialReport={financialReport} /> }
             ]}
             containerClassName="max-w-[82vw] px-10 xl:px-0 w-full  overflow-y-hidden"
           />

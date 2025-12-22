@@ -17,7 +17,6 @@ import {
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SupportedEntities } from "@/generated/v3/entityService/entityServiceConstants";
 import {
-  DisturbanceReportCreateData,
   DisturbanceReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportUpdateData,
@@ -267,16 +266,15 @@ export const loadFullDisturbanceReport = connectionLoader(fullDisturbanceReportC
 export const useFullDisturbanceReport = connectionHook(fullDisturbanceReportConnection);
 export const useLightDisturbanceReport = connectionHook(lightDisturbanceReportConnection);
 export const deleteDisturbanceReport = createEntityDeleter("disturbanceReports");
-export const useCreateDisturbanceReport = creationHook(
-  createEntityCreateConnection<DisturbanceReportFullDto, DisturbanceReportCreateData>("disturbanceReports")
-);
 
 // SRP Reports
 export const indexSRPReportConnection = createEntityIndexConnection<SrpReportLightDto>("srpReports");
 export const loadSRPReportIndex = connectionLoader(indexSRPReportConnection);
 const fullSRPReportConnection = createEntityGetConnection<SrpReportFullDto, EntityUpdateData>("srpReports");
+const lightSRPReportConnection = createEntityGetConnection<SrpReportLightDto, EntityUpdateData>("srpReports", false);
 export const loadFullSRPReport = connectionLoader(fullSRPReportConnection);
 export const useFullSRPReport = connectionHook(fullSRPReportConnection);
+export const useLightSRPReport = connectionHook(lightSRPReportConnection);
 const srpReportListConnection = v3Resource("srpReports").list<SrpReportLightDto>().buildConnection();
 /**
  * Delivers the cached light DTOs for disturbance reports corresponding to the UUIDs in the props. Does

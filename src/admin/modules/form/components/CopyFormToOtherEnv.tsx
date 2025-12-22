@@ -3,29 +3,27 @@ import { useState } from "react";
 import { useNotify, useRecordContext } from "react-admin";
 import { useForm } from "react-hook-form";
 
-import { normalizeFormCreatePayload } from "@/admin/apiProvider/dataNormalizers/formDataNormalizer";
-import { appendAdditionalFormQuestionFields } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
+import { formBuilderToAttributes } from "@/admin/modules/form/components/FormBuilder/types";
 import RHFDropdown from "@/components/elements/Inputs/Dropdown/RHFDropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
-import { loadLinkedFields } from "@/connections/Form";
 import Log from "@/utils/log";
 
 const envOptions = [
   {
     title: "Dev",
-    value: "https://new-wri-dev.wri-restoration-marketplace-api.com"
+    value: "https://api-dev.terramatch.org"
   },
   {
     title: "Test",
-    value: "https://new-wri-test.wri-restoration-marketplace-api.com"
+    value: "https://api-test.terramatch.org"
   },
   {
     title: "Staging",
-    value: "https://new-wri-staging.wri-restoration-marketplace-api.com"
+    value: "https://api-staging.terramatch.org"
   },
   {
     title: "Production",
-    value: "https://new-wri-prod.wri-restoration-marketplace-api.com"
+    value: "https://api.terramatch.org"
   }
 ];
 
@@ -42,55 +40,48 @@ export const CopyFormToOtherEnv = () => {
   const { register, handleSubmit, formState, getValues } = formHook;
   Log.info("Copy form values", { ...getValues(), formErrors: formState.errors });
 
-  const copyToDestinationEnv = async ({ env: baseUrl, title: formTitle, framework_key, ...body }: any) => {
-    const { data: linkedFieldsData } = await loadLinkedFields({});
-    const loginResp = await fetch(`${baseUrl}/api/auth/login`, {
+  const copyToDestinationEnv = async ({
+    env: baseUrl,
+    title: formTitle,
+    frameworkKey,
+    emailAddress,
+    password
+  }: any) => {
+    const loginResp = await fetch(`${baseUrl}/auth/v3/logins`, {
       method: "POST",
       headers: {
         "content-type": "application/json"
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify({
+        data: {
+          type: "logins",
+          attributes: { emailAddress, password }
+        }
+      })
     });
     Log.debug("Login response", loginResp);
 
-    if (loginResp.status !== 200) {
-      return notify("wrong username password", { type: "error" });
+    if (loginResp.status !== 201) {
+      return notify("Email or password incorrect", { type: "error" });
     }
 
-    const token = (await loginResp.json()).data.token;
-    const formData = { ...record, title: formTitle, framework_key };
-    const formBody = JSON.parse(
-      JSON.stringify(
-        normalizeFormCreatePayload(formData, appendAdditionalFormQuestionFields(linkedFieldsData ?? [])),
-        null,
-        2
+    const token = (await loginResp.json()).data.attributes.token;
+    const formData = { ...record, title: formTitle, frameworkKey };
+    const formAttributes = JSON.parse(
+      JSON.stringify(formBuilderToAttributes(formData)).replace(
+        /"(uuid|stageId|id|formId)":\s?("[^"]+"|null|undefined),?/gim,
+        ""
       )
-        .replace(/"(uuid|stage_id|id|form_id)":\s?("\w.+"|null|undefined),?/gim, "")
-        .replace(/,\n\s*(])/gim, "]")
-        .replace(/,\n\s*(})/gim, "}")
     );
-    if (!formBody.document) {
-      delete formBody.document;
-    }
-    if (!formBody.documentation) {
-      delete formBody.documentation;
-    }
-    if (!formBody.documentation_label) {
-      delete formBody.documentation_label;
-    }
-    if (!formBody.subtitle) {
-      delete formBody.subtitle;
-    }
-    delete formBody.framework_key;
 
-    const response = await fetch(`${baseUrl}/api/v2/admin/forms`, {
+    const response = await fetch(`${baseUrl}/forms/v3/forms`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
         //@ts-ignore
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(formBody)
+      body: JSON.stringify({ data: { type: "forms", attributes: formAttributes } })
     });
 
     if (response.status === 201) {
@@ -131,10 +122,10 @@ export const CopyFormToOtherEnv = () => {
           />
           <Input
             type="text"
-            {...register("email_address", { required: true })}
-            label="Username"
+            {...register("emailAddress", { required: true })}
+            label="Email Address"
             //@ts-ignore
-            error={formState.errors.email_address}
+            error={formState.errors.emailAddress}
           />
           <Input
             type="password"
@@ -149,7 +140,7 @@ export const CopyFormToOtherEnv = () => {
           <Button variant="outlined" onClick={handleSubmit(copyToDestinationEnv)}>
             Copy
           </Button>
-          <Button variant="outlined" onClick={e => setOpen(false)}>
+          <Button variant="outlined" onClick={() => setOpen(false)}>
             Close
           </Button>
         </DialogActions>

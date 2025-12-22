@@ -3,10 +3,11 @@ import { When } from "react-if";
 
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
-import { getPolygonsData, parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import LoadingContainerOpacity from "@/components/generic/Loading/LoadingContainerOpacity";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { OptionValue } from "@/types/common";
 
 import NoDataMap from "./NoDataMap";
@@ -28,19 +29,33 @@ const MonitoredDataMap = ({
 
   const entityBbox = useBoundingBox(entityName === "sites" ? { siteUuid: entityUuid } : { projectUuid: entityUuid });
 
+  const { data: sitePolygons, isLoading: isLoadingSitePolygons } = useAllSitePolygons({
+    entityName: entityName as "sites" | "projects",
+    entityUuid,
+    enabled: !!entityName && !!entityUuid,
+    filter: {
+      "polygonStatus[]": ["approved"]
+    }
+  });
+
   const [, { data: modelFilesData }] = useMedias({
     entity: entityName as SupportedEntity,
     uuid: entityUuid
   });
 
   useEffect(() => {
-    setLoading(true);
-    getPolygonsData(entityUuid, "approved", "created_at", entityName, (data: any) => {
-      const parsedData = parsePolygonData(data.polygonsData);
-      setPolygonsData(parsedData);
-      setLoading(false);
-    });
-  }, [entityName, entityUuid]);
+    if (!sitePolygons) {
+      setPolygonsData(null);
+      return;
+    }
+
+    const parsedData = parsePolygonDataV3(sitePolygons);
+    setPolygonsData(parsedData);
+  }, [entityName, entityUuid, sitePolygons]);
+
+  useEffect(() => {
+    setLoading(isLoadingSitePolygons);
+  }, [isLoadingSitePolygons]);
 
   // Transform record to the structure expected by ModalImageDetails
   const transformedEntityData = record

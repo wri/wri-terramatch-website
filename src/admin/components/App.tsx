@@ -160,16 +160,6 @@ const App = () => {
           options={{ label: "Disturbance Reports" }}
           recordRepresentation={record => record?.title}
         />
-        {isAdmin && (
-          <>
-            <Resource
-              name={modules.validatePolygonFile.ResourceName}
-              list={modules.validatePolygonFile.List}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.REPORTS} />}
-              options={{ label: "Test Polygon" }}
-            />
-          </>
-        )}
         <Resource
           name={modules.impactStories.ResourceName}
           list={modules.impactStories.List}

@@ -10,8 +10,8 @@ import Text from "@/components/elements/Text/Text";
 import ModalAddImages, { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { deleteMedia } from "@/connections/Media";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteV2FilesUUID } from "@/generated/apiComponents";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
@@ -76,12 +76,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ])
   );
 
-  const { mutate: deleteFile } = useDeleteV2FilesUUID({
-    onSuccess() {
-      refetch?.();
-    }
-  });
-
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -131,7 +125,14 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           onGalleryStateChange={pagination => {
             setPagination(pagination);
           }}
-          onDeleteConfirm={uuid => deleteFile({ pathParams: { uuid } })}
+          onDeleteConfirm={async uuid => {
+            try {
+              await deleteMedia(uuid);
+              refetch?.();
+            } catch (error) {
+              Log.error(error);
+            }
+          }}
           ItemComponent={ImageGalleryItem}
           onChangeSearch={setSearchString}
           onChangeGeotagged={setIsGeotagged}

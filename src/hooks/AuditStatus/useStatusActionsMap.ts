@@ -120,6 +120,18 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
           { id: "5", label: t("Approved") }
         ],
         entityType: ENTITY_REPORT
+      },
+      [AuditLogButtonStates.FINANCIAL_REPORT as number]: {
+        mutateEntity: fetchPutV2ENTITYUUIDStatus,
+        valuesForStatus: getValueForStatusEntityReport,
+        statusLabels: [
+          { id: "1", label: t("Due") },
+          { id: "2", label: t("Started") },
+          { id: "3", label: t("Needs More Information") },
+          { id: "4", label: t("Awaiting Approval") },
+          { id: "5", label: t("Approved") }
+        ],
+        entityType: ENTITY_REPORT
       }
     }),
     [t]

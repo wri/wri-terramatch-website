@@ -26,7 +26,7 @@ import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVaria
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices, useGadmOptions } from "@/connections/Gadm";
-import { getChangeRequestStatusOptions, getStatusOptions } from "@/constants/options/status";
+import { getChangeRequestStatusOptions, getPlantingStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formatOptionsList, optionToChoices } from "@/utils/options";
@@ -74,6 +74,15 @@ const ProjectDataGrid = () => {
         render={({ updateRequestStatus }: ProjectLightDto) => {
           const { title } =
             getChangeRequestStatusOptions().find((option: any) => option.value === updateRequestStatus) ?? {};
+          return <CustomChipField label={title} />;
+        }}
+      />
+      <FunctionField
+        source="plantingStatus"
+        label="Planting Status"
+        sortable={false}
+        render={({ plantingStatus }: ProjectLightDto) => {
+          const { title } = getPlantingStatusOptions().find((option: any) => option.value === plantingStatus) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -146,6 +155,13 @@ export const ProjectsList: FC = () => {
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="status"
+      label="Planting Status"
+      source="plantingStatus"
+      choices={optionToChoices(getPlantingStatusOptions())}
       className="select-page-admin"
     />,
     <SelectInput

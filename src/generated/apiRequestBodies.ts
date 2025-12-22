@@ -22,6 +22,10 @@ export type PostAuthResetBody = {
   callback_url?: string;
 };
 
+export type V2AdminOrganisationApproveBody = {
+  uuid: string;
+};
+
 export type V2PostOrganisationsBody = {
   /**
    * Available type are for-profit-organization, non-profit-organization, government-agency
@@ -63,7 +67,6 @@ export type V2PostOrganisationsBody = {
   tree_restoration_practices?: string[];
   business_model?: string;
   subtype?: string;
-  organisation_revenue_this_year?: number;
   languages?: string[];
   web_url?: string;
   facebook_url?: string;
@@ -77,22 +80,6 @@ export type V2PostOrganisationsBody = {
   hq_zipcode?: string;
   hq_country?: string;
   fin_start_month?: number;
-  /**
-   * @format float
-   */
-  fin_budget_3year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_2year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_1year?: number;
-  /**
-   * @format float
-   */
-  fin_budget_current_year?: number;
   /**
    * @format float
    */
@@ -135,10 +122,6 @@ export type V2PostOrganisationsBody = {
     deleted_at?: string;
   }[];
   tags?: string[];
-};
-
-export type V2AdminOrganisationApproveBody = {
-  uuid: string;
 };
 
 export type PostV2GeometryValidateBody = {

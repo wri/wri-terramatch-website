@@ -1,38 +1,86 @@
 import { LinearProgress } from "@mui/material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { triggerBulkUpdate, useDelayedJobs } from "@/connections/DelayedJob";
-import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import LinearProgressBar from "../ProgressBar/LinearProgressBar/LinearProgressBar";
+
+type DelayedJobBulkUpdateData = Array<{
+  type: "delayedJobs";
+  id: string;
+  attributes: {
+    isAcknowledged: boolean;
+  };
+}>;
 import Text from "../Text/Text";
 import ToolTip from "../Tooltip/Tooltip";
 
 const listOfPolygonsFixed = (data: Record<string, any> | null) => {
-  if (data?.updated_polygons) {
-    const updatedPolygonNames = data.updated_polygons
-      ?.map((p: any) => p.poly_name)
+  if (!data?.data) return null;
+
+  let clippedPolygonNames = "";
+
+  if (Array.isArray(data.data)) {
+    clippedPolygonNames = data.data
+      .map((item: any) => item.attributes?.polyName)
       .filter(Boolean)
       .join(", ");
-    if (updatedPolygonNames) {
-      return "Success! The following polygons have been fixed: " + updatedPolygonNames;
-    } else {
-      return "No polygons were fixed";
-    }
+  } else if (typeof data.data === "object" && data.data.attributes?.polyName) {
+    clippedPolygonNames = data.data.attributes.polyName;
   }
-  return null;
+
+  if (clippedPolygonNames) {
+    return "Success! The following polygons have been fixed: " + clippedPolygonNames;
+  } else {
+    return "No polygons were fixed";
+  }
+};
+
+const getValidationMessages = (data: Record<string, any> | null): string[] => {
+  if (data?.included == null) return [];
+  const messageGroups: Record<string, string[]> = {};
+
+  data.included.forEach((item: any) => {
+    if (item?.attributes?.criteriaList != null) {
+      item.attributes.criteriaList.forEach((criteria: any) => {
+        if (criteria?.extraInfo?.message != null && criteria?.extraInfo?.sitePolygonName != null) {
+          const message = criteria.extraInfo.message;
+          const polygonName = criteria.extraInfo.sitePolygonName;
+
+          if (messageGroups[message] == null) {
+            messageGroups[message] = [];
+          }
+          messageGroups[message].push(polygonName);
+        }
+      });
+    }
+  });
+
+  const formattedMessages: string[] = [];
+  Object.entries(messageGroups).forEach(([message, polygonNames]) => {
+    const uniqueNames = Array.from(new Set(polygonNames));
+    if (uniqueNames.length === 1) {
+      formattedMessages.push(`${message}: ${uniqueNames[0]}`);
+    } else {
+      formattedMessages.push(`${message} (${uniqueNames.length} polygons): ${uniqueNames.join(", ")}`);
+    }
+  });
+
+  return formattedMessages;
 };
 
 const clearJob = (item: DelayedJobDto) => {
-  const newJobsData: DelayedJobData[] = [
+  const newJobsData: DelayedJobBulkUpdateData = [
     {
-      uuid: item.uuid,
+      id: item.uuid,
       type: "delayedJobs",
       attributes: {
         isAcknowledged: true
@@ -41,6 +89,16 @@ const clearJob = (item: DelayedJobDto) => {
   ];
   triggerBulkUpdate(newJobsData);
 };
+
+const getSiteNameForJob = (job: DelayedJobDto, cachedSiteNames: Record<string, string>): string => {
+  if (job.entityName) {
+    return job.entityName;
+  }
+  if (cachedSiteNames[job.uuid]) {
+    return cachedSiteNames[job.uuid];
+  }
+  return "Unknown";
+};
 const FloatNotification = () => {
   const firstRender = useRef(true);
   const t = useT();
@@ -48,14 +106,15 @@ const FloatNotification = () => {
   const [isLoaded, { delayedJobs }] = useDelayedJobs();
   const [notAcknowledgedJobs, setNotAcknowledgedJobs] = useState<DelayedJobDto[]>([]);
   const [cachedSiteNames, setCachedSiteNames] = useState<Record<string, string>>({});
+  const [processedIndicatorJobs, setProcessedIndicatorJobs] = useState<Set<string>>(new Set());
 
   const clearJobs = useCallback(() => {
     if (delayedJobs == null) return;
-    const newJobsData: DelayedJobData[] = delayedJobs
+    const newJobsData: DelayedJobBulkUpdateData = delayedJobs
       .filter((job: DelayedJobDto) => job.status !== "pending")
       .map((job: DelayedJobDto) => {
         return {
-          uuid: job.uuid,
+          id: job.uuid,
           type: "delayedJobs",
           attributes: {
             isAcknowledged: true
@@ -88,6 +147,27 @@ const FloatNotification = () => {
       setOpenModalNotification(false);
     }
   });
+
+  // Handle Indicator Calculation job completion notifications
+  useEffect(() => {
+    if (!delayedJobs || delayedJobs.length === 0) return;
+
+    delayedJobs.forEach(job => {
+      if (job.name === "Indicator Calculation" && !processedIndicatorJobs.has(job.uuid)) {
+        const isCompleted = job.status === "succeeded" || job.status === "failed";
+
+        if (isCompleted) {
+          setProcessedIndicatorJobs(prev => new Set(prev).add(job.uuid));
+
+          if (job.status === "succeeded") {
+            // Prune cache for sitePolygons since indicators are related to polygons
+            ApiSlice.pruneCache("sitePolygons");
+            ApiSlice.pruneIndex("sitePolygons", "");
+          }
+        }
+      }
+    });
+  }, [delayedJobs, processedIndicatorJobs]);
 
   return (
     <div className="fixed bottom-[3.5rem] right-6 z-50 mobile:bottom-2.5">
@@ -137,12 +217,16 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{item.entityName ?? cachedSiteNames[item.uuid]}</b>
+                      Site: <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (
                         <Text variant="text-12-semibold" className="text-error-600">
-                          {item.payload ? t(getErrorMessageFromPayload(item.payload)) : t("Failed to complete")}
+                          {item.payload?.message != null
+                            ? t(item.payload.message)
+                            : item.payload != null
+                            ? t(getErrorMessageFromPayload(item.payload))
+                            : t("Failed to complete")}
                         </Text>
                       ) : (
                         <div className="flex items-center gap-2">
@@ -182,10 +266,22 @@ const FloatNotification = () => {
                         </div>
                       )}
 
-                      {item.status === "succeeded" && listOfPolygonsFixed(item.payload) && (
-                        <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
-                          {listOfPolygonsFixed(item.payload)}
-                        </Text>
+                      {item.status === "succeeded" &&
+                        item.name === "Polygon Clipping" &&
+                        listOfPolygonsFixed(item.payload) && (
+                          <Text variant="text-12-light" className="mt-2 text-blueCustom-250 text-opacity-60">
+                            {listOfPolygonsFixed(item.payload)}
+                          </Text>
+                        )}
+
+                      {item.status === "succeeded" && getValidationMessages(item.payload).length > 0 && (
+                        <div className="mt-2 flex flex-col gap-1">
+                          {getValidationMessages(item.payload).map((message, msgIndex) => (
+                            <Text key={msgIndex} variant="text-12-light" className="text-warning-600">
+                              {message}
+                            </Text>
+                          ))}
+                        </div>
                       )}
                     </div>
                   </div>

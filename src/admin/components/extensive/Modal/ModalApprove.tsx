@@ -107,7 +107,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
     if (displayedPolygons) {
       const newSelected = displayedPolygons.map((polygon, index) => {
         if (isChecked) {
-          return polygonsSelected[index] || polygon.canBeApproved;
+          return polygonsSelected[index] || (polygon.canBeApproved && polygon.status !== StatusEnum.APPROVED);
         }
         return false;
       });

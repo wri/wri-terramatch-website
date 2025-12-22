@@ -90,20 +90,44 @@ export type IndicatorMsuCarbonDto = {
 export type ValidationCriteriaDto = {
   /**
    * The validation criteria ID
+   *
+   * @example 16
    */
-  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15 | 16;
+  criteriaId: 3 | 4 | 6 | 7 | 8 | 12 | 14 | 15 | 16 | 5 | 10;
+  /**
+   * The validation type name (e.g., 'SELF_INTERSECTION', 'POLYGON_SIZE', 'DUPLICATE_GEOMETRY')
+   *
+   * @example DUPLICATE_GEOMETRY
+   */
+  validationType:
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE";
   /**
    * Whether the polygon passed this validation
+   *
+   * @example false
    */
   valid: boolean;
   /**
-   * When this validation was last run
+   * When this validation was last run (null for non-persistent validations)
    *
    * @format date-time
+   * @example 2025-11-28T20:41:50.060Z
    */
-  createdAt: string;
+  createdAt: string | null;
   /**
    * Additional information about the validation result
+   *
+   * @example {"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME"}
    */
   extraInfo?: Record<string, any>;
 };
@@ -117,8 +141,55 @@ export type ValidationDto = {
   polygonUuid: string;
   /**
    * List of validation criteria results for this polygon
+   *
+   * @example {"criteriaId":16,"validationType":"DUPLICATE_GEOMETRY","valid":false,"createdAt":"2025-11-28T20:41:50.060Z","extraInfo":{"polygonUuid":"54aa2c7a-e139-4017-b86b-d904f4a3ed5c","message":"This geometry already exists in the project","sitePolygonUuid":"fd6cd4e8-0c56-45dc-8991-1cebfd3871ca","sitePolygonName":"AREA_NAME"}}
    */
   criteriaList: ValidationCriteriaDto[];
+};
+
+export type GeoJsonExportDto = {
+  /**
+   * @example FeatureCollection
+   */
+  type: "FeatureCollection";
+  /**
+   * Array of GeoJSON Feature objects
+   *
+   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"uuid":"123e4567-e89b-12d3-a456-426614174000","polyName":"Forest Plot A","plantStart":"2024-01-01","practice":["direct-seeding"],"targetSys":"agroforestry","distr":["single-line"],"numTrees":1500,"siteId":"123e4567-e89b-12d3-a456-426614174001"}}
+   */
+  features: {
+    type?: "Feature";
+    geometry?: Record<string, any>;
+    properties?: Record<string, any> | null;
+  }[];
+};
+
+export type GeometryUploadComparisonSummaryDto = {
+  /**
+   * Array of UUIDs of existing SitePolygons found in the database
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   * @example 660e8400-e29b-41d4-a716-446655440001
+   */
+  existingUuids: string[];
+  /**
+   * Total number of features in the uploaded file
+   *
+   * @example 800
+   */
+  totalFeatures: number;
+  /**
+   * Number of features that will create new versions (UUIDs found in database)
+   *
+   * @example 150
+   */
+  featuresForVersioning: number;
+  /**
+   * Number of features that will create new polygons (UUIDs not found or missing UUIDs)
+   *
+   * @example 650
+   */
+  featuresForCreation: number;
 };
 
 export type SitePolygonLightDto = {
@@ -167,9 +238,9 @@ export type SitePolygonLightDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -190,6 +261,10 @@ export type SitePolygonLightDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -200,18 +275,128 @@ export type CreateSitePolygonRequestDto = {
    */
   type: string;
   /**
-   * Array of features to create
+   * Array of features to create. Properties support both camelCase (primary/preferred) and snake_case (backward compatibility).
+   *     camelCase takes precedence if both formats are present for the same property.
    *
-   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"site_id":"550e8400-e29b-41d4-a716-446655440000","poly_name":"North Field","plantstart":"2023-01-15T00:00:00Z"}}
+   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"siteId":"550e8400-e29b-41d4-a716-446655440000","polyName":"North Field","plantStart":"2023-01-15T00:00:00Z"}}
    */
   features: any[][];
 };
 
+export type AttributeChangesDto = {
+  /**
+   * Updated polygon name
+   *
+   * @example North Field Updated
+   */
+  polyName?: string;
+  /**
+   * Updated planting start date (ISO 8601 format)
+   *
+   * @example 2023-01-15T00:00:00Z
+   */
+  plantStart?: string;
+  /**
+   * Updated practice type(s) as array of strings
+   *
+   * @example tree-planting
+   */
+  practice?: string[];
+  /**
+   * Updated target system
+   *
+   * @example restoration
+   */
+  targetSys?: string;
+  /**
+   * Updated distribution method(s) as array of strings
+   *
+   * @example full
+   * @example single-line
+   */
+  distr?: string[];
+  /**
+   * Updated number of trees
+   *
+   * @example 150
+   */
+  numTrees?: number;
+  /**
+   * Updated polygon name (snake_case, backward compatibility)
+   *
+   * @example North Field Updated
+   */
+  poly_name?: string;
+  /**
+   * Updated planting start date (snake_case, backward compatibility)
+   *
+   * @example 2023-01-15T00:00:00Z
+   */
+  plantstart?: string;
+  /**
+   * Updated target system (snake_case, backward compatibility)
+   *
+   * @example restoration
+   */
+  target_sys?: string;
+  /**
+   * Updated number of trees (snake_case, backward compatibility)
+   *
+   * @example 150
+   */
+  num_trees?: number;
+};
+
 export type CreateSitePolygonAttributesDto = {
   /**
-   * Array of feature collections (supports multi-site batch creation)
+   * Array of feature collections containing geometries to create or update.
+   *
+   *     Normal Creation (required):
+   *     - Must provide `geometries` array
+   *     - Attributes come from `properties` within each feature
+   *     - Each feature must have `siteId` (camelCase, preferred) or `site_id` (snake_case, backward compatibility) in properties
+   *
+   *     Version Creation (optional):
+   *     - Provide `geometries` to update geometry only, or together with `attributeChanges` to update both
+   *     - When provided, only the geometry is used - feature properties are ignored
+   *     - For attribute-only updates, omit this field and use `attributeChanges` instead
+   *     - Must provide at least one of `geometries` or `attributeChanges` when creating a version
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"siteId":"550e8400-e29b-41d4-a716-446655440000"}}]}
    */
-  geometries: CreateSitePolygonRequestDto[];
+  geometries?: CreateSitePolygonRequestDto[];
+  /**
+   * UUID of existing site polygon to create version from. When provided, creates a new version instead of a new polygon.
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  baseSitePolygonUuid?: string;
+  /**
+   * Reason for creating version (optional when baseSitePolygonUuid is provided, defaults to 'Version created via API')
+   *
+   * @example Updated polygon boundary based on field survey data
+   */
+  changeReason?: string;
+  /**
+   * Attribute changes to apply when creating a version.
+   *
+   *     Only used when `baseSitePolygonUuid` is provided (version creation mode).
+   *
+   *     Version Creation Scenarios:
+   *     - Attributes only: Provide `attributeChanges` without `geometries`
+   *     - Both geometry and attributes: Provide both `geometries` and `attributeChanges`
+   *     - Geometry only: Provide `geometries` without `attributeChanges`
+   *
+   *     Important: This is the ONLY way to update attributes during version creation.
+   *     For normal creation, attributes should be provided in feature `properties` within `geometries`.
+   *     Geometry properties are ignored during version creation - use this field instead.
+   *
+   *     `attributeChanges` supports both camelCase (primary/preferred) and snake_case (backward compatibility).
+   *     camelCase takes precedence if both formats are present for the same property.
+   *
+   *     Must provide at least one of `geometries` or `attributeChanges` when creating a version.
+   */
+  attributeChanges?: AttributeChangesDto;
 };
 
 export type CreateSitePolygonDataDto = {
@@ -306,9 +491,9 @@ export type SitePolygonFullDto = {
    */
   siteName: string | null;
   versionName: string | null;
-  practice: string | null;
+  practice: string[] | null;
   targetSys: string | null;
-  distr: string | null;
+  distr: string[] | null;
   numTrees: number | null;
   /**
    * Source of the site polygon
@@ -329,6 +514,10 @@ export type SitePolygonFullDto = {
    */
   uuid: string;
   disturbanceableId: number | null;
+  /**
+   * Whether the site polygon is active
+   */
+  isActive: boolean;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -340,101 +529,62 @@ export type SitePolygonFullDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
-export type SitePolygonUpdateAttributes = {
+export type SitePolygonBulkUpdateBodyDto = {
   /**
-   * All indicators to update for this polygon
+   * Array of site polygons to update
    */
-  indicators: (
-    | IndicatorTreeCoverLossDto
-    | IndicatorHectaresDto
-    | IndicatorTreeCountDto
-    | IndicatorTreeCoverDto
-    | IndicatorFieldMonitoringDto
-    | IndicatorMsuCarbonDto
-  )[];
+  data: any[][];
 };
 
-export type SitePolygonUpdate = {
+export type SitePolygonBulkDeleteBodyDto = {
+  /**
+   * Array of site polygon resource identifiers to delete
+   *
+   * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: any[][];
+};
+
+export type VersionUpdateAttributes = {
+  /**
+   * Set to true to activate this version, false to deactivate
+   *
+   * @example true
+   */
+  isActive: boolean;
+  /**
+   * Optional comment explaining the version change
+   *
+   * @example Activating this version to revert recent changes
+   */
+  comment?: string;
+};
+
+export type VersionUpdateData = {
   type: "sitePolygons";
   /**
    * @format uuid
    */
   id: string;
-  attributes: SitePolygonUpdateAttributes;
+  attributes: VersionUpdateAttributes;
 };
 
-export type SitePolygonBulkUpdateBodyDto = {
-  data: SitePolygonUpdate[];
+export type VersionUpdateBody = {
+  data: VersionUpdateData;
 };
 
-export type BoundingBoxDto = {
-  /**
-   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
-   *
-   * @example -13.17273163
-   * @example -21.3169788
-   * @example 48.8126753
-   * @example 13.47775425
-   */
-  bbox: number[];
+export type GeometryUploadAttributesDto = {
+  siteId: string;
 };
 
-export type Object = {};
-
-export type ValidationRequestAttributes = {
-  /**
-   * Array of polygon UUIDs to validate
-   *
-   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
-   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
-   */
-  polygonUuids: string[];
-  /**
-   * Array of validation types to run. If not provided or empty, all validation types will be run.
-   */
-  validationTypes?: (
-    | "OVERLAPPING"
-    | "SELF_INTERSECTION"
-    | "POLYGON_SIZE"
-    | "SPIKES"
-    | "ESTIMATED_AREA"
-    | "DATA_COMPLETENESS"
-    | "PLANT_START_DATE"
-    | "DUPLICATE_GEOMETRY"
-    | "WITHIN_COUNTRY"
-  )[];
+export type GeometryUploadData = {
+  type: "sitePolygons";
+  attributes: GeometryUploadAttributesDto;
 };
 
-export type ValidationRequestData = {
-  type: "validations";
-  attributes: ValidationRequestAttributes;
-};
-
-export type ValidationRequestBody = {
-  data: ValidationRequestData;
-};
-
-export type ValidationSummaryDto = {
-  /**
-   * The UUID of the site that was validated
-   *
-   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
-   */
-  siteUuid: string;
-  /**
-   * Total number of polygons in the site
-   */
-  totalPolygons: number;
-  /**
-   * Number of polygons that were validated
-   */
-  validatedPolygons: number;
-  /**
-   * When the validation was completed
-   *
-   * @format date-time
-   */
-  completedAt: string;
+export type GeometryUploadRequestDto = {
+  data: GeometryUploadData;
 };
 
 export type DelayedJobDto = {
@@ -480,6 +630,78 @@ export type DelayedJobDto = {
   entityName?: string | null;
 };
 
+export type BoundingBoxDto = {
+  /**
+   * The bounding box coordinates in [minLng, minLat, maxLng, maxLat] format
+   *
+   * @example -13.17273163
+   * @example -21.3169788
+   * @example 48.8126753
+   * @example 13.47775425
+   */
+  bbox: number[];
+};
+
+export type Object = {};
+
+export type ValidationRequestAttributes = {
+  /**
+   * Array of polygon UUIDs to validate
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   * @example d6502d4c-dfd6-461e-af62-21a0ec2f3e65
+   */
+  polygonUuids: string[];
+  /**
+   * Array of validation types to run. If not provided or empty, all validation types will be run.
+   */
+  validationTypes?: (
+    | "OVERLAPPING"
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "ESTIMATED_AREA"
+    | "DATA_COMPLETENESS"
+    | "PLANT_START_DATE"
+    | "DUPLICATE_GEOMETRY"
+    | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type ValidationRequestData = {
+  type: "validations";
+  attributes: ValidationRequestAttributes;
+};
+
+export type ValidationRequestBody = {
+  data: ValidationRequestData;
+};
+
+export type ValidationSummaryDto = {
+  /**
+   * The UUID of the site that was validated
+   *
+   * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
+   */
+  siteUuid: string;
+  /**
+   * Total number of polygons in the site
+   */
+  totalPolygons: number;
+  /**
+   * Number of polygons that were validated
+   */
+  validatedPolygons: number;
+  /**
+   * When the validation was completed
+   *
+   * @format date-time
+   */
+  completedAt: string;
+};
+
 export type SiteValidationRequestAttributes = {
   /**
    * Array of validation types to run on all polygons in the site. If not provided or empty, all validation types will be run.
@@ -494,6 +716,8 @@ export type SiteValidationRequestAttributes = {
     | "PLANT_START_DATE"
     | "DUPLICATE_GEOMETRY"
     | "WITHIN_COUNTRY"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
   )[];
 };
 
@@ -504,6 +728,73 @@ export type SiteValidationRequestData = {
 
 export type SiteValidationRequestBody = {
   data: SiteValidationRequestData;
+};
+
+export type GeometryValidationRequestAttributes = {
+  /**
+   * Array of GeoJSON FeatureCollections containing geometries to validate.
+   *     Properties support both camelCase and snake_case.
+   *     camelCase takes precedence if both formats are present for the same property.
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"siteId":"550e8400-e29b-41d4-a716-446655440000","polyName":"Test Polygon"}}]}
+   */
+  geometries: any[];
+  /**
+   * Array of validation types to run. If not provided or empty, all non persistent validation types will be run.
+   *
+   * @example DUPLICATE_GEOMETRY
+   */
+  validationTypes?: (
+    | "SELF_INTERSECTION"
+    | "POLYGON_SIZE"
+    | "SPIKES"
+    | "DUPLICATE_GEOMETRY"
+    | "DATA_COMPLETENESS"
+    | "FEATURE_BOUNDS"
+    | "GEOMETRY_TYPE"
+  )[];
+};
+
+export type GeometryValidationRequestData = {
+  type: "geometryValidations";
+  attributes: GeometryValidationRequestAttributes;
+};
+
+export type GeometryValidationRequestBody = {
+  data: GeometryValidationRequestData;
+};
+
+export type ClippedVersionDto = {
+  /**
+   * The UUID of the newly created polygon version
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  uuid: string;
+  /**
+   * The name of the polygon
+   *
+   * @example Plot_1_2024
+   */
+  polyName: Record<string, any>;
+  /**
+   * The original area in hectares before clipping
+   *
+   * @example 2.5
+   */
+  originalArea: number;
+  /**
+   * The new area in hectares after clipping
+   *
+   * @example 2.35
+   */
+  newArea: number;
+  /**
+   * The area removed in hectares
+   *
+   * @example 0.15
+   */
+  areaRemoved: number;
 };
 
 export type PolygonListClippingAttributes = {
@@ -523,4 +814,35 @@ export type PolygonListClippingData = {
 
 export type PolygonListClippingRequestBody = {
   data: PolygonListClippingData;
+};
+
+export type IndicatorsAttributes = {
+  /**
+   * The UUIDs of the polygons to calculate indicators for
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  polygonUuids: string[];
+  /**
+   * Whether to update the existing indicators
+   *
+   * @example true
+   */
+  updateExisting: boolean;
+  /**
+   * Whether to force recalculation of the indicators
+   *
+   * @example true
+   */
+  forceRecalculation: boolean;
+};
+
+export type IndicatorsRequestData = {
+  type: "sitePolygons";
+  attributes: IndicatorsAttributes;
+};
+
+export type IndicatorsBodyDto = {
+  data: IndicatorsRequestData;
 };

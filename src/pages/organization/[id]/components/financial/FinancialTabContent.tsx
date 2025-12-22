@@ -18,6 +18,7 @@ import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
 import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
 import {
@@ -31,7 +32,6 @@ import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
 import Files from "../Files";
 import CardFinancial from "./components/cardFinancial";
-import FinancialInformation from "./FinancialInformation";
 
 type FinancialTabContentProps = {
   organization?: V2OrganisationRead;
@@ -57,13 +57,6 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
-    const financial = _.pick<any, keyof V2OrganisationRead>(organization, [
-      "fin_budget_current_year",
-      "fin_budget_3year",
-      "fin_budget_2year",
-      "fin_budget_1year"
-    ]);
-
     const statementFiles = _.pick<any, keyof V2OrganisationRead>(
       organization,
       // @ts-ignore
@@ -71,7 +64,6 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     );
 
     return {
-      financial: _.some(financial, _.isNull || _.isNaN),
       statementFiles: _.some(statementFiles, _.isEmpty)
     };
   }, [organization]);
@@ -116,6 +108,8 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     );
   const hasCurrentRatioData =
     Array.isArray(financialData) && financialData.some(item => item.collection === "current-ratio" && item.amount);
+  const hasBudgetData =
+    Array.isArray(financialData) && financialData.some(item => item.collection === "budget" && item.amount);
 
   return (
     <Container className="mx-0 flex max-w-full flex-col gap-14 px-0 pb-15">
@@ -209,6 +203,32 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         </Container>
       )}
 
+      {hasBudgetData && (
+        <Container className="mx-auto rounded-2xl p-8 shadow-all">
+          <Text variant="text-24-bold" className="mb-2">
+            {t("Budget By Year")}
+          </Text>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="flex flex-col gap-6">
+              <FinancialBudgetStackedBarChart data={financialData} currency={organization?.currency} />
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-4">
+              {financialData
+                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
+                .map((item: FinancialStackedBarChartProps) => (
+                  <CardFinancial
+                    key={item.uuid}
+                    title={t(item.year.toString())}
+                    data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
+                    description={t("Budget")}
+                    currency={organization?.currency}
+                  />
+                ))}
+            </div>
+          </div>
+        </Container>
+      )}
+
       <Container className="mx-auto grid grid-cols-2 gap-6">
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
@@ -240,10 +260,6 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
       <Container className="hidden py-15">
         <Text variant="text-heading-2000">{t("Financial Information")}</Text>
 
-        {/* Information */}
-        <When condition={!incompleteSteps.financial}>
-          <FinancialInformation organization={organization} />
-        </When>
         {/* Files */}
         <When condition={!incompleteSteps.statementFiles}>
           <Files files={files} />
@@ -252,13 +268,6 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         <When condition={showIncompleteStepsSection}>
           <BuildStrongerProfile
             steps={[
-              {
-                showWhen: incompleteSteps.financial,
-                title: t("Add Organizational Budget"),
-                subtitle: t(
-                  "Note that the budget denotes the amount of money managed by your organization in the given year, converted into USD."
-                )
-              },
               {
                 showWhen: incompleteSteps.statementFiles,
                 title: t("Add Financial Documents"),

@@ -40,6 +40,7 @@ const V3_NAMESPACES: Dictionary<string> = {
   fundingProgrammes: entityServiceUrl,
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
+  polygonClipping: researchServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
   users: userServiceUrl,

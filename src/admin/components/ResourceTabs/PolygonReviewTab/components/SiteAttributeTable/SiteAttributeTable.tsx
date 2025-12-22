@@ -1,5 +1,5 @@
 import { SortingState } from "@tanstack/react-table";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_TOP } from "@/components/elements/Menu/MenuVariant";
@@ -16,11 +16,26 @@ interface TableItemMenuProps {
   ellipse: boolean;
   "planting-start-date": string | null;
   "polygon-name": string;
-  "restoration-practice": string;
-  source?: string;
+  "restoration-practice": string[];
   "target-land-use-system": string | null;
-  "tree-distribution": string | null;
+  "tree-distribution": string[] | null;
   uuid: string;
+}
+
+interface SiteAttributeTableProps {
+  setPolygonFromMap: (polygon: { isOpen: boolean; uuid: string }) => void;
+  flyToPolygonBounds: (uuid: string) => void;
+  openFormModalHandlerConfirmDeletion: (uuid: string) => void;
+  setSorting: (sorting: SortingState) => void;
+  sorting: SortingState;
+  paginatedData: SitePolygonRow[];
+  allData: SitePolygonRow[];
+  currentPage: number;
+  totalPages: number;
+  pageSize: number;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
+  setPageSize: Dispatch<SetStateAction<number>>;
+  containerRef: React.RefObject<HTMLDivElement>;
 }
 
 export default function SiteAttributeTable({
@@ -30,36 +45,36 @@ export default function SiteAttributeTable({
   setSorting,
   sorting,
   paginatedData,
+  allData,
   currentPage,
   totalPages,
   pageSize,
   setCurrentPage,
   setPageSize,
   containerRef
-}: {
-  setPolygonFromMap: (polygon: { isOpen: boolean; uuid: string }) => void;
-  flyToPolygonBounds: (uuid: string) => void;
-  openFormModalHandlerConfirmDeletion: (uuid: string) => void;
-  setSorting: (sorting: SortingState) => void;
-  sorting: SortingState;
-  paginatedData: SitePolygonRow[];
-  currentPage: number;
-  totalPages: number;
-  pageSize: number;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
-  setPageSize: Dispatch<SetStateAction<number>>;
-  containerRef: React.RefObject<HTMLDivElement>;
-}) {
+}: SiteAttributeTableProps) {
+  // Calculate totals from all data (not just current page)
+  const totals = useMemo(() => {
+    return allData.reduce(
+      (acc, row) => {
+        acc.totalTreesPlanted += row["num-trees"] ?? 0;
+        acc.totalCalculatedArea += row["calc-area"] ?? 0;
+        return acc;
+      },
+      { totalTreesPlanted: 0, totalCalculatedArea: 0 }
+    );
+  }, [allData]);
+
   const tableItemMenu = (props: TableItemMenuProps) => [
     {
       id: "1",
       render: () => (
         <div
-          className="-mb-1.5 flex w-full items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
+          className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
           onClick={() => setPolygonFromMap({ isOpen: true, uuid: props.uuid })}
         >
-          <Icon name={IconNames.AREA} className="h-4 max-h-4 w-4" />
-          <Text variant="text-16-light" className="w-[11.5rem] text-left">
+          <Icon name={IconNames.AREA} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
             Open Polygon
           </Text>
         </div>
@@ -69,11 +84,11 @@ export default function SiteAttributeTable({
       id: "2",
       render: () => (
         <div
-          className="-mb-1.5 flex w-full items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
+          className="flex w-full min-w-[12rem] items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
           onClick={() => flyToPolygonBounds(props.uuid)}
         >
-          <Icon name={IconNames.SEARCH_WRI} className="h-4 max-h-4 w-4" />
-          <Text variant="text-16-light" className="w-[11.5rem] text-left">
+          <Icon name={IconNames.SEARCH_WRI} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
             Zoom to
           </Text>
         </div>
@@ -83,11 +98,11 @@ export default function SiteAttributeTable({
       id: "3",
       render: () => (
         <div
-          className="-mb-1.5 flex w-full items-center gap-2 border-b border-[#E7E6E6] pb-1.5"
+          className="flex w-full min-w-[12rem] items-center gap-2 pb-1.5"
           onClick={() => openFormModalHandlerConfirmDeletion(props.uuid)}
         >
-          <Icon name={IconNames.TRASH_WRI} className="h-4 max-h-4 w-4" />
-          <Text variant="text-16-light" className="w-[11.5rem] text-left">
+          <Icon name={IconNames.TRASH_WRI} className="h-4 w-4 flex-shrink-0" />
+          <Text variant="text-16-light" className="flex-1 text-left">
             Delete Polygon
           </Text>
         </div>
@@ -105,21 +120,27 @@ export default function SiteAttributeTable({
           Edit attribute table for all polygons quickly through the table below. Alternatively, open a polygon and edit
           the attributes in the map above.
         </Text>
-        <div className="mt-4 flex gap-3">
-          <div className="w-[12.5rem] rounded-lg border-2 border-neutral-300 p-3">
-            <Text variant="text-14-light" className="flex items-center gap-1 text-[#5C5959]">
-              <Icon name={IconNames.TREE_DASHABOARD} className="h-3.5 w-3.5 text-[#477010]" /> Trees Planted
-            </Text>
-            <Text variant="text-16-bold" className="text-[#1A1919]">
-              X,XXX
+        <div className="mt-4 flex gap-4">
+          <div className="shadow-sm hover:shadow-md flex w-[14rem] flex-col items-center justify-center gap-1 rounded-lg border border-neutral-200 bg-white p-4 transition-shadow">
+            <div className="mb-1 flex items-center gap-2">
+              <Icon name={IconNames.TREE_DASHABOARD} className="h-4 w-4 text-[#477010]" />
+              <Text variant="text-14-light" className="text-neutral-600">
+                Trees Planted
+              </Text>
+            </div>
+            <Text variant="text-24-bold" className="text-center text-[#1A1919]">
+              {totals.totalTreesPlanted.toLocaleString()}
             </Text>
           </div>
-          <div className="w-[12.5rem] rounded-lg border-2 border-neutral-300 p-3">
-            <Text variant="text-14-light" className="flex items-center gap-1 text-[#5C5959]">
-              <Icon name={IconNames.AREA} className="h-3.5 w-3.5 text-[#477010]" /> Calculated Area
-            </Text>
-            <Text variant="text-16-bold" className="text-[#1A1919]">
-              X,XXX
+          <div className="shadow-sm hover:shadow-md flex w-[14rem] flex-col items-center justify-center gap-1 rounded-lg border border-neutral-200 bg-white p-4 transition-shadow">
+            <div className="mb-1 flex items-center gap-2">
+              <Icon name={IconNames.AREA} className="h-4 w-4 text-[#477010]" />
+              <Text variant="text-14-light" className="text-neutral-600">
+                Calculated Area
+              </Text>
+            </div>
+            <Text variant="text-24-bold" className="text-center text-[#1A1919]">
+              {totals.totalCalculatedArea.toLocaleString()} ha
             </Text>
           </div>
         </div>
@@ -132,9 +153,13 @@ export default function SiteAttributeTable({
         serverSideData
         classNameWrapper="!px-0"
         contentClassName={"w-[inherit] !px-0"}
-        onTableStateChange={state =>
-          setSorting(typeof state.sorting === "function" ? state.sorting(sorting) : state.sorting)
-        }
+        onTableStateChange={state => {
+          if (typeof state.sorting === "function") {
+            setSorting(state.sorting(sorting));
+          } else {
+            setSorting(state.sorting);
+          }
+        }}
         columns={[
           {
             header: "Polygon Name",
@@ -152,60 +177,95 @@ export default function SiteAttributeTable({
             header: "Restoration Practice",
             accessorKey: "restoration-practice",
             meta: {
-              style: { width: "8.0625rem" },
-              cellStyles: { className: "w-[8.0625rem] wide:w-[13.0625rem] min-w-[8.0625rem]" }
+              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+              },
+              className: "!px-4"
             }
           },
           {
             header: "Target Land Use System",
             accessorKey: "target-land-use-system",
             meta: {
-              style: { width: "9.1875rem" },
-              cellStyles: { className: "w-[9.1875rem] wide:w-[14.1875rem] min-w-[9.1875rem]" }
+              style: { width: "11rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[11rem] wide:w-[16rem] min-w-[11rem]"
+              },
+              className: "!px-4"
             }
           },
           {
             header: "Tree Distribution",
             accessorKey: "tree-distribution",
             meta: {
-              style: { width: "8.1875rem" },
-              cellStyles: { className: "w-[8.1875rem] wide:w-[13.1875rem] min-w-[8.1875rem]" }
+              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+              },
+              className: "!px-4"
             }
           },
           {
             header: "Planting Start Date",
             accessorKey: "planting-start-date",
             meta: {
-              style: { width: "7.5875rem" },
-              cellStyles: { className: "w-[7.5875rem] wide:w-[12.5875rem] min-w-[7.5875rem]" }
+              style: { width: "9.5rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[9.5rem] wide:w-[14.5rem] min-w-[9.5rem]"
+              },
+              className: "!px-4"
             }
           },
           {
             header: "Trees Planted",
             accessorKey: "num-trees",
             meta: {
-              style: { width: "7.1875rem" },
-              cellStyles: { className: "w-[7.1875rem] wide:w-[12.1875rem] min-w-[7.1875rem]" }
+              style: { width: "9rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[9rem] wide:w-[14rem] min-w-[9rem]"
+              },
+              className: "!px-4"
             },
-            cell: (_: any) => <span>XXX,XXX.XX</span>
+            cell: (info: { row: { original: SitePolygonRow } }) => {
+              const value = info.row.original["num-trees"];
+              return <span className="whitespace-nowrap">{value.toLocaleString()}</span>;
+            }
           },
           {
             header: "Calculated Area",
-            accessorKey: "size",
+            accessorKey: "calc-area",
             meta: {
-              style: { width: "7.1875rem" },
-              cellStyles: { className: "w-[7.1875rem] wide:w-[12.1875rem] min-w-[7.1875rem]" }
+              style: { width: "10rem", paddingLeft: "1rem", paddingRight: "1rem" },
+              cellStyles: {
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[10rem] wide:w-[15rem] min-w-[10rem]"
+              },
+              className: "!px-4"
             },
-            cell: (_: any) => <span>XXX,XXX.XX</span>
+            cell: (info: { row: { original: SitePolygonRow } }) => {
+              const calculatedArea = info.row.original["calc-area"].toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+              return <span className="whitespace-nowrap">{`${calculatedArea} ha`}</span>;
+            }
           },
           {
             header: "Source",
             accessorKey: "source",
             meta: {
-              style: { width: "5.1875rem" },
+              style: { width: "7rem", paddingLeft: "1rem", paddingRight: "1rem" },
               cellStyles: {
-                className: "w-[5.1875rem] wide:w-[10.1875rem] wide:min-w-[10.1875rem] min-w-[5.1875rem]"
-              }
+                style: { paddingLeft: "1rem", paddingRight: "1rem" },
+                className: "w-[7rem] wide:w-[12rem] wide:min-w-[12rem] min-w-[7rem]"
+              },
+              className: "!px-4"
             }
           },
           {
@@ -220,16 +280,22 @@ export default function SiteAttributeTable({
               },
               className: "whitespace-nowrap pr-6 sticky right-0 z-20 relative"
             },
-            cell: props => (
-              <Menu
-                menu={tableItemMenu(props?.row?.original as TableItemMenuProps)}
-                placement={MENU_PLACEMENT_RIGHT_TOP}
-              >
-                <div className="rounded p-1 hover:bg-primary-200">
-                  <Icon name={IconNames.ELIPSES} className="h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
-                </div>
-              </Menu>
-            )
+            cell: (props: { row: { original: SitePolygonRow } }) => {
+              const rowData = props.row.original;
+              if (!rowData.uuid) {
+                return null;
+              }
+              return (
+                <Menu
+                  menu={tableItemMenu({ ...rowData, uuid: rowData.uuid } as TableItemMenuProps)}
+                  placement={MENU_PLACEMENT_RIGHT_TOP}
+                >
+                  <div className="rounded p-1 hover:bg-primary-200">
+                    <Icon name={IconNames.ELIPSES} className="h-4 w-4 rounded-sm text-grey-720 hover:bg-primary-200" />
+                  </div>
+                </Menu>
+              );
+            }
           }
         ]}
         data={paginatedData}

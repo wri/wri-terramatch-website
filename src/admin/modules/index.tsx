@@ -9,7 +9,6 @@ import { ReportingFrameworkList } from "@/admin/modules/reportingFramework/compo
 import { ReportingFrameworkShow } from "@/admin/modules/reportingFramework/components/ReportingFrameworkShow";
 import TaskShow from "@/admin/modules/tasks/components/TaskShow";
 import { TasksList } from "@/admin/modules/tasks/components/TasksList";
-import ValidatePolygonFileShow from "@/admin/modules/validationPolygonFile/components/ValidationPolygonFileShow";
 
 import { ApplicationList } from "./application/components/ApplicationList";
 import { ApplicationShow } from "./application/components/ApplicationShow";
@@ -149,11 +148,6 @@ const audit = {
   ResourceName: "audit"
 };
 
-const validatePolygonFile = {
-  ResourceName: "validatePolygonFile",
-  List: ValidatePolygonFileShow
-};
-
 const impactStories = {
   ResourceName: "impactStories",
   List: ImpactStoriesList,
@@ -191,7 +185,6 @@ const modules = {
   nurseryReport,
   financialReport,
   audit,
-  validatePolygonFile,
   impactStories,
   disturbanceReport,
   srpReport

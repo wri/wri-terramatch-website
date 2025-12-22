@@ -24,9 +24,12 @@ export const useProjectOrgFormData = (entityName: EntityName, entity?: EntityFul
       startMonth:
         (v3Name === "financialReports"
           ? (entity as FinancialReportFullDto)?.finStartMonth
-          : orgData?.data.fin_start_month) ?? undefined
+          : orgData?.data.fin_start_month) ?? undefined,
+      type:
+        (v3Name === "financialReports" ? (entity as FinancialReportFullDto)?.organisationType : orgData?.data.type) ??
+        undefined
     }),
-    [entity, orgData?.data.currency, orgData?.data.fin_start_month, orgData?.data.uuid, v3Name]
+    [entity, orgData?.data.currency, orgData?.data.fin_start_month, orgData?.data.type, orgData?.data.uuid, v3Name]
   );
 
   const projectDetails = useMemo((): ProjectFormDetails => {

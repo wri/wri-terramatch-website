@@ -281,7 +281,6 @@ const ReportingTaskPage = () => {
       header: t("Status"),
       cell: props => {
         const value = props.getValue() as string;
-        console.log("value", value);
         const { status, statusText } = CompletionStatusMapping(t)?.[value] || {};
         if (!status) return null;
 
@@ -367,11 +366,13 @@ const ReportingTaskPage = () => {
                 <Table data={reports.mandatory} hasPagination={false} columns={tableColumns} />
               </PageCard>
             </PageSection>
-            <PageSection>
-              <PageCard title={t("SRP Reports")}>
-                <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
-              </PageCard>
-            </PageSection>
+            {project?.frameworkKey === "ppc" && (
+              <PageSection>
+                <PageCard title={t("Annual Socioeconomic Restoration Partners Report")}>
+                  <Table data={srpReportsTableData} hasPagination={false} columns={tableColumnsSRP} />
+                </PageCard>
+              </PageSection>
+            )}
             <PageSection>
               <PageCard title={t("Additional Reports")}>
                 <Table

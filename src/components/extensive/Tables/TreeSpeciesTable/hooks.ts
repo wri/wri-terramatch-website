@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 import { getTreeSpeciesColumns, TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { PlantData } from "@/components/extensive/Tables/TreeSpeciesTable/index";
-import { PlantDto, SupportedEntity, usePlants } from "@/connections/EntityAssociation";
+import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import { TreeReportCountsEntity, useTreeReportCounts } from "@/connections/TreeReportCounts";
 import { Framework, isTerrafund, useFrameworkContext } from "@/context/framework.provider";
 
@@ -72,14 +72,33 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   });
 
   return useMemo(() => {
+    // For nurseries with nursery-seedling collection, combine plants and reportCounts to match table data
+    // The table shows both entityPlants (from plants) and reportPlants (from reportCounts not in plants)
+    if (entity === "nurseries" && collection === "nursery-seedling") {
+      const plantsTotal = sumBy(plants ?? [], "amount");
+      const reportCountsEntries = Object.entries(reportCounts ?? {});
+      if (reportCountsEntries.length > 0) {
+        const reportPlantsTotal = reportCountsEntries
+          .filter(
+            ([reportName]) => !(plants ?? []).some(({ name }) => name?.toLowerCase() === reportName?.toLowerCase())
+          )
+          .reduce((sum, [, { amount }]) => sum + (amount ?? 0), 0);
+        return plantsTotal + reportPlantsTotal;
+      }
+      return plantsTotal;
+    }
+
     const usesReportCounts =
       !entity.endsWith("Reports") ||
       // Special case: for projectReports with "replanting" collection, data comes within reportCounts
       (entity === "projectReports" && collection === "replanting");
 
-    const records = usesReportCounts ? Object.values(reportCounts ?? {}) : plants;
+    if (usesReportCounts) {
+      const reportCountsValues = Object.values(reportCounts ?? {});
+      return sumBy(reportCountsValues, "amount");
+    }
 
-    return sumBy(records as PlantDto[], "amount");
+    return sumBy(plants ?? [], "amount");
   }, [entity, plants, reportCounts, collection]);
 };
 

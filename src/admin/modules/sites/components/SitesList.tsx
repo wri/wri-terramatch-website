@@ -27,7 +27,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { useGadmChoices } from "@/connections/Gadm";
 import { getPolygonsSubmittedTypes } from "@/constants/options/polygonsSubmittedTypes";
-import { getChangeRequestStatusOptions, getPolygonOptions, getStatusOptions } from "@/constants/options/status";
+import {
+  getChangeRequestStatusOptions,
+  getPlantingStatusOptions,
+  getPolygonOptions,
+  getStatusOptions
+} from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { optionToChoices } from "@/utils/options";
@@ -87,6 +92,17 @@ const SiteDataGrid: FC = () => {
             (option: any) => option.value === record.updateRequestStatus
           );
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
+        }}
+      />
+      <FunctionField
+        source="plantingStatus"
+        label="Planting Status"
+        sortable={false}
+        render={(record: any) => {
+          const readablePlantingStatus = getPlantingStatusOptions().find(
+            (option: any) => option.value === record.plantingStatus
+          );
+          return <CustomChipField label={readablePlantingStatus?.title} />;
         }}
       />
       <ColoredChipFieldArray
@@ -168,6 +184,13 @@ export const SitesList: FC = () => {
       label="Status"
       source="status"
       choices={optionToChoices(getStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="plantingStatus"
+      label="Planting Status"
+      source="plantingStatus"
+      choices={optionToChoices(getPlantingStatusOptions())}
       className="select-page-admin"
     />,
     <SelectInput
