@@ -26,13 +26,12 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
@@ -402,14 +401,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         onConfirm={async data => {
           closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
           try {
-            await fetchPutV2SitePolygonStatusBulk({
-              body: {
-                comment: data,
-                updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
-                  return { uuid: polygon.uuid, status: "submitted" };
-                })
-              }
-            });
+            await bulkUpdateSitePolygonStatus(
+              (polygons as SitePolygonsDataResponse).map(polygon => polygon.uuid) as string[],
+              "submitted",
+              data
+            );
             setShouldRefetchPolygonData(true);
             openNotification("success", t("Success! Your polygons were submitted."));
           } catch (error) {
