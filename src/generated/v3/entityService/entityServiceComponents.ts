@@ -3512,6 +3512,124 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
+export type FormTranslatePathParams = {
+  uuid: string;
+};
+
+export type FormTranslateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormTranslateVariables = {
+  pathParams: FormTranslatePathParams;
+};
+
+/**
+ * Translate a form
+ */
+export const formTranslate = new V3ApiEndpoint<undefined, FormTranslateError, FormTranslateVariables, {}>(
+  "/forms/v3/forms/{uuid}/translate",
+  "POST"
+);
+
+export type FormPullTranslationsPathParams = {
+  uuid: string;
+};
+
+export type FormPullTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormPullTranslationsVariables = {
+  pathParams: FormPullTranslationsPathParams;
+};
+
+/**
+ * Pull translations for a form
+ */
+export const formPullTranslations = new V3ApiEndpoint<
+  undefined,
+  FormPullTranslationsError,
+  FormPullTranslationsVariables,
+  {}
+>("/forms/v3/forms/{uuid}/translate", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -3524,5 +3642,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formTranslate, formPullTranslations }
 };
