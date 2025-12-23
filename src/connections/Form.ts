@@ -97,12 +97,14 @@ export const createForm = resourceCreator(createFormConnection);
 export const useFormCreate = connectionHook(createFormConnection);
 
 export type FormEntity = FormDataGetPathParams["entity"];
+const idFactory = (props: { entity?: FormEntity; uuid?: string }) => `${props.entity}|${props.uuid}`;
+
 const entityFormDataConnection = v3Resource("formData", formDataGet)
   .singleByCustomId<FormDataDto, Partial<FormDataGetPathParams>>(
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
-    ({ entity, uuid }) => `${entity}|${uuid}`
+    idFactory
   )
-  .update(formDataUpdate)
+  .update(formDataUpdate, idFactory)
   .enabledProp()
   .buildConnection();
 export const useEntityFormData = connectionHook(entityFormDataConnection);
@@ -110,9 +112,9 @@ export const useEntityFormData = connectionHook(entityFormDataConnection);
 const updateRequestConnection = v3Resource("updateRequests", updateRequestGet)
   .singleByCustomId<UpdateRequestDto, Partial<UpdateRequestGetPathParams>>(
     ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
-    ({ entity, uuid }) => `${entity}|${uuid}`
+    idFactory
   )
-  .update(updateRequestUpdate)
+  .update(updateRequestUpdate, idFactory)
   .enabledProp()
   .buildConnection();
 export const useUpdateRequest = connectionHook(updateRequestConnection);

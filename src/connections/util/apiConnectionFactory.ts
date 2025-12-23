@@ -677,7 +677,8 @@ class ApiConnectionFactory<
    * of body data. In that case, both must be provided. See Entity.ts for an example.
    */
   public update<Attributes extends UpdateAttributes<UpdateVariables>, UpdateVariables extends Variables>(
-    updateEndpoint: V3ApiEndpoint<unknown, ErrorPayload, UpdateVariables>
+    updateEndpoint: V3ApiEndpoint<unknown, ErrorPayload, UpdateVariables>,
+    customIdFactory?: (props: Props) => string
   ) {
     return this.chain<UpdateConnection<Attributes>, IdProp & Props>({
       selectors: [
@@ -691,10 +692,14 @@ class ApiConnectionFactory<
           // Avoid creating inline in the createSelector call so that the function has the same identity on every
           // state update, preventing some possible re-renders when the function is a dependency in useEffect.
           const update = (attributes: Attributes) => {
-            if (props.id == null) return;
+            const id = props.id ?? customIdFactory?.(props);
+            if (id == null) {
+              Log.error("No ID available for update payload", props);
+              return;
+            }
             updateEndpoint.fetch({
               ...variables,
-              body: { data: { type: resource, id: props.id, attributes } }
+              body: { data: { type: resource, id, attributes } }
             } as unknown as UpdateVariables);
           };
           return createSelector(
