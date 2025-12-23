@@ -2,7 +2,6 @@ import { isEqual } from "lodash";
 import { useCallback, useEffect, useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { pruneEntityCache } from "@/connections/Entity";
 import { FormEntity, useEntityFormData } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { useToastContext } from "@/context/toast.provider";
@@ -87,8 +86,6 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
       (body: StoreFormDataAttributes) => {
         if (enabled) {
           update(body);
-          // prune the cache for this entity so it gets refetched after we leave the edit flow.
-          pruneEntityCache(entity, uuid);
         } else {
           Log.error("Asked to update form data, but entity or uuid not provided", { entity, uuid });
         }

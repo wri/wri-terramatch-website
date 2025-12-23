@@ -1,13 +1,13 @@
 import { Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { useCreatePath, useResourceContext } from "react-admin";
+import { useCreatePath, useEditContext, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useFullEntity } from "@/connections/Entity";
+import { pruneEntityCache, useFullEntity } from "@/connections/Entity";
 import { FormEntity, FormModelType } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -16,6 +16,7 @@ import { normalizedFormData } from "@/helpers/customForms";
 import { v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
@@ -23,6 +24,7 @@ import Log from "@/utils/log";
 export const EntityEdit = () => {
   const { id } = useParams<"id">();
   const resource = useResourceContext();
+  const { refetch } = useEditContext();
   const navigate = useNavigate();
   const createPath = useCreatePath();
 
@@ -48,6 +50,12 @@ export const EntityEdit = () => {
   const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
   const [, { data: entity }] = useFullEntity(formEntity, entityUUID);
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
+
+  // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
+  useOnUnmount(() => {
+    pruneEntityCache(formEntity, entityUUID);
+    refetch();
+  });
 
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),

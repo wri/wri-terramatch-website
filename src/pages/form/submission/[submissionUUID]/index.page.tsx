@@ -9,6 +9,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { pruneSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -17,6 +18,7 @@ import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useFormSubmission } from "@/hooks/useFormGet";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -91,6 +93,10 @@ const SubmissionPage = () => {
     },
     [fieldsProvider, updateSubmission]
   );
+
+  useOnUnmount(() => {
+    if (submissionUUID != null) pruneSubmission(submissionUUID);
+  });
 
   return (
     <BackgroundLayout>

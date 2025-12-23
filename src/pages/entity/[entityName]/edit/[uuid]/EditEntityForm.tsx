@@ -7,7 +7,7 @@ import { useCallback, useMemo } from "react";
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { ReportFullDto, useFullEntity } from "@/connections/Entity";
+import { pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
@@ -22,6 +22,7 @@ import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName } from "@/types/common";
@@ -48,6 +49,9 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(model.model, entityUUID);
   const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(model.model, entityUUID);
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
+
+  // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
+  useOnUnmount(() => pruneEntityCache(model.model, entityUUID));
 
   const framework = toFramework(formData?.frameworkKey);
 

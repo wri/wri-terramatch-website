@@ -6,6 +6,11 @@ import {
   submissionUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
+
+export const pruneSubmission = (uuid: string) => {
+  ApiSlice.pruneCache("submissions", [uuid]);
+};
 
 const formSubmissionConnection = v3Resource("submissions", submissionGet)
   .singleResource<SubmissionDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))

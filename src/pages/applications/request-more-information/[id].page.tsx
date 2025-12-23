@@ -8,7 +8,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useApplication } from "@/connections/Application";
 import { useForm } from "@/connections/Form";
-import { useSubmission } from "@/connections/FormSubmission";
+import { pruneSubmission, useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
@@ -16,6 +16,7 @@ import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 const RequestMoreInformationPage = () => {
@@ -94,6 +95,10 @@ const RequestMoreInformationPage = () => {
   const onSubmit = useCallback(() => {
     updateSubmission({ status: "awaiting-approval" });
   }, [updateSubmission]);
+
+  useOnUnmount(() => {
+    if (currentSubmissionUuid != null) pruneSubmission(currentSubmissionUuid);
+  });
 
   return (
     <BackgroundLayout>
