@@ -37,7 +37,7 @@ const STATUS_TITLES = {
 
 const moreInfoValidationSchema = yup.object({
   feedback: yup.string().nullable(),
-  feedback_fields: yup.array().min(1).of(yup.string()).required()
+  feedbackFields: yup.array().min(1).of(yup.string()).required()
 });
 const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
@@ -66,7 +66,8 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
       notify("Change Request status updated", { type: "success" });
       refetchEntity?.();
       ctx?.refetch?.();
-    }, [ctx, notify, refetchEntity]),
+      handleClose();
+    }, [ctx, handleClose, notify, refetchEntity]),
     "Change request failed to update"
   );
 
@@ -81,21 +82,20 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
     [fieldsProvider]
   );
 
-  const handleSave = async (data: any) => {
+  const handleSave = (data: any) => {
     if (status != null) {
       const attributes: UpdateRequestAttributes = {
         status,
         feedback: feedbackValue
       };
 
-      if (data.feedback_fields && status === "needs-more-information") {
-        attributes.feedbackFields = data.feedback_fields;
+      if (data.feedbackFields && status === "needs-more-information") {
+        attributes.feedbackFields = data.feedbackFields;
       }
 
       update(attributes);
     }
     setFeedbackValue("");
-    return handleClose();
   };
 
   return (
@@ -119,7 +119,7 @@ const ChangeRequestRequestMoreInfoModal: FC<ChangeRequestRequestMoreInfoModalPro
           />
           {status === "needs-more-information" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
-              source="feedback_fields"
+              source="feedbackFields"
               label="Fields"
               choices={feedbackChoices}
               fullWidth

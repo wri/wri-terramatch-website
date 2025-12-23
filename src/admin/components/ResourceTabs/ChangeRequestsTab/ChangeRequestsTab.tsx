@@ -100,12 +100,11 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                     <Labeled label="Status">
                       <FunctionField
                         render={() => {
-                          switch (status) {
+                          switch (updateRequest.status) {
                             case "draft":
                               return "Draft";
                             case "awaiting-approval":
                               return "Awaiting Approval";
-                            case "more-information":
                             case "needs-more-information":
                               return "More information requested";
                             case "approved":
@@ -130,14 +129,14 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
                     <Button
                       variant="contained"
                       startIcon={<Check />}
-                      disabled={["approved", "draft"].includes(status ?? "")}
+                      disabled={["approved", "draft"].includes(updateRequest.status ?? "")}
                       onClick={() => handleStatusUpdate("approved")}
                     >
                       Approve
                     </Button>
                     <Button
                       variant="outlined"
-                      disabled={["more-information", "draft"].includes(status ?? "")}
+                      disabled={["more-information", "draft"].includes(updateRequest.status ?? "")}
                       onClick={() => handleStatusUpdate("needs-more-information")}
                     >
                       Request More Information

@@ -69,10 +69,10 @@ const ApplicationRequestMoreInfoModal = ({
   useRequestSuccess(
     isUpdating,
     updateFailure,
-    () => {
+    useCallback(() => {
       refresh();
       notify("Application status updated", { type: "success" });
-    },
+    }, [notify, refresh]),
     "Application update failed"
   );
 

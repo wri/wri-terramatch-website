@@ -3,7 +3,7 @@ import cn from "classnames";
 import { last } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -72,9 +72,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   useRequestSuccess(
     isCreating,
     createFailure,
-    () => {
+    useCallback(() => {
       router.push(`/form/submission/${submission?.uuid}/intro`);
-    },
+    }, [router, submission?.uuid]),
     "Form submission creation failed"
   );
 
