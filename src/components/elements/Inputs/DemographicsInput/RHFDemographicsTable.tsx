@@ -47,23 +47,23 @@ const RHFDemographicsTable = ({
   const entries = useMemo(() => ensureCorrectSubtypes((value?.[0]?.entries ?? []) as DemographicEntryDto[]), [value]);
 
   const updateDemographics = useCallback(
-    (updatedDemographics: DemographicEntryDto[]) => {
+    (updatedEntries: DemographicEntryDto[]) => {
       // Clean up the data before calling onChange. While waiting for changes to propagate through
       // the form, it's possible for this function get called multiple times, adding the same type / subtype / name
       // set to the collection multiple times. Here, we take the last value for each combo, and discard
       // the rest. Once the changes have propagated through the form system, the risk of duplicates
       // goes away because the useSectionData hook will see the new value and provide the correct
       // data to the individual DemographicsRows
-      updatedDemographics = ensureCorrectSubtypes(updatedDemographics).filter(
+      updatedEntries = ensureCorrectSubtypes(updatedEntries).filter(
         ({ type, subtype, name }, index) =>
           index ===
           findLastIndex(
-            updatedDemographics,
+            updatedEntries,
             demographic => demographic.type === type && demographic.subtype === subtype && demographic.name === name
           )
       );
 
-      onChange([{ ...value[0], collection, demographics: updatedDemographics }]);
+      onChange([{ ...value[0], collection, entries: updatedEntries }]);
       props.formHook?.trigger();
     },
     [onChange, value, collection, props.formHook]
