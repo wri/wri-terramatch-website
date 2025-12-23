@@ -1,6 +1,6 @@
 import { SortingState } from "@tanstack/react-table";
 
-import { FundingCardProps, FundingStatus } from "@/components/elements/Cards/FundingCard/FundingCard";
+import { FundingCardProps } from "@/components/elements/Cards/FundingCard/FundingCard";
 import { FundingProgrammeDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export const fundingProgrammeToFundingCardProps = (item: FundingProgrammeDto): FundingCardProps => ({
@@ -10,7 +10,7 @@ export const fundingProgrammeToFundingCardProps = (item: FundingProgrammeDto): F
   primaryLink: item.stages?.[0]?.formUuid != null ? `/form/${item.stages?.[0]?.formUuid}` : "",
   secondaryLink: item.readMoreUrl ?? "",
   location: item.location || "N/A",
-  status: (item.status as FundingStatus) || "inactive"
+  status: item.status
 });
 
 export const tableSortingStateToQueryParamsSort = (sorting: SortingState) =>
