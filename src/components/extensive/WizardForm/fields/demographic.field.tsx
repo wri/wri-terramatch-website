@@ -62,7 +62,7 @@ export const DemographicField: FormFieldFactory = {
   appendAnswers: () => undefined,
 
   addFormEntries: addEntryWith(({ name, inputType }, formValues) => {
-    const entries = ((formValues[name]?.[0] ?? {}).demographics ?? []) as DemographicEntryDto[];
+    const entries = ((formValues[name]?.[0] ?? {}).entries ?? []) as DemographicEntryDto[];
     return (
       <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
     );
