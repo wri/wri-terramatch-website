@@ -2208,9 +2208,6 @@ export type StoreFormDataAttributes = {
 
 export type UpdateFormDataData = {
   type: "formData";
-  /**
-   * @format uuid
-   */
   id: string;
   attributes: StoreFormDataAttributes;
 };
@@ -2243,9 +2240,6 @@ export type UpdateRequestAttributes = {
 
 export type UpdateRequestData = {
   type: "updateRequests";
-  /**
-   * @format uuid
-   */
   id: string;
   attributes: UpdateRequestAttributes;
 };

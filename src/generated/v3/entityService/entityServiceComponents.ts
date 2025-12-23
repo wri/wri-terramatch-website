@@ -2723,9 +2723,6 @@ export type FormDataGetResponse = {
      * @example formData
      */
     type?: string;
-    /**
-     * @format uuid
-     */
     id?: string;
     attributes?: Schemas.FormDataDto;
   };
@@ -2814,9 +2811,6 @@ export type FormDataUpdateResponse = {
      * @example formData
      */
     type?: string;
-    /**
-     * @format uuid
-     */
     id?: string;
     attributes?: Schemas.FormDataDto;
   };
@@ -2895,9 +2889,6 @@ export type UpdateRequestGetResponse = {
      * @example updateRequests
      */
     type?: string;
-    /**
-     * @format uuid
-     */
     id?: string;
     attributes?: Schemas.UpdateRequestDto;
   };
@@ -2988,9 +2979,6 @@ export type UpdateRequestUpdateResponse = {
      * @example updateRequests
      */
     type?: string;
-    /**
-     * @format uuid
-     */
     id?: string;
     attributes?: Schemas.UpdateRequestDto;
   };
@@ -3800,6 +3788,84 @@ export const submissionGet = new V3ApiEndpoint<SubmissionGetResponse, Submission
   "GET"
 );
 
+export type SubmissionUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type SubmissionUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionUpdateResponse = {
+  meta?: {
+    /**
+     * @example formData
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formData
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FormDataDto;
+  };
+};
+
+export type SubmissionUpdateVariables = {
+  body: Schemas.UpdateSubmissionBody;
+  pathParams: SubmissionUpdatePathParams;
+};
+
+export const submissionUpdate = new V3ApiEndpoint<
+  SubmissionUpdateResponse,
+  SubmissionUpdateError,
+  SubmissionUpdateVariables,
+  {}
+>("/forms/v3/submissions/{uuid}", "PUT");
+
 export type SubmissionCreateError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -3862,87 +3928,6 @@ export const submissionCreate = new V3ApiEndpoint<
   SubmissionCreateVariables,
   {}
 >("/forms/v3/submissions", "POST");
-
-export type SubmissionUpdatePathParams = {
-  /**
-   * UUID of the resource.
-   */
-  uuid: string;
-};
-
-export type SubmissionUpdateError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type SubmissionUpdateResponse = {
-  meta?: {
-    /**
-     * @example formData
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example formData
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.FormDataDto;
-  };
-};
-
-export type SubmissionUpdateVariables = {
-  body: Schemas.UpdateSubmissionBody;
-  pathParams: SubmissionUpdatePathParams;
-};
-
-export const submissionUpdate = new V3ApiEndpoint<
-  SubmissionUpdateResponse,
-  SubmissionUpdateError,
-  SubmissionUpdateVariables,
-  {}
->("/forms/v3/submissions", "PUT");
 
 export type FormIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -5051,7 +5036,7 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  submissions: { submissionGet, submissionCreate, submissionUpdate },
+  submissions: { submissionGet, submissionUpdate, submissionCreate },
   forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
   fundingProgrammes: {

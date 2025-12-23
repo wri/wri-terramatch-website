@@ -1,10 +1,11 @@
+import { useT } from "@transifex/react";
 import { isEqual } from "lodash";
 import { useCallback, useEffect, useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { FormEntity, useEntityFormData } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
-import { useToastContext } from "@/context/toast.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { StoreFormDataAttributes, UpdateSubmissionAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -72,12 +73,13 @@ const useFormReducer = <T extends FormBody>(update: (body: T) => void, isUpdatin
 export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
   const enabled = entity != null && uuid != null;
   const [, { update, isUpdating, updateFailure }] = useEntityFormData({ entity, uuid, enabled });
+  const t = useT();
 
   const { openToast } = useToastContext();
   useValueChanged(updateFailure, () => {
     if (updateFailure != null) {
       Log.error("Form data save failed", updateFailure);
-      openToast("Form data save failed");
+      openToast(t("Form data save failed"), ToastType.ERROR);
     }
   });
 
@@ -101,12 +103,13 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
 export const useSubmissionUpdate = (submissionUUID?: string) => {
   const enabled = submissionUUID != null;
   const [, { update, isUpdating, updateFailure }] = useSubmission({ id: submissionUUID, enabled });
+  const t = useT();
 
   const { openToast } = useToastContext();
   useValueChanged(updateFailure, () => {
     if (updateFailure != null) {
       Log.error("Form submission save failed", updateFailure);
-      openToast("Application save failed");
+      openToast(t("Application save failed"), ToastType.ERROR);
     }
   });
 
