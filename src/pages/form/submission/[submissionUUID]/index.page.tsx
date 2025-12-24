@@ -9,16 +9,15 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { pruneSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useFormSubmission } from "@/hooks/useFormGet";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
-import { useOnUnmount } from "@/hooks/useOnMount";
 
 const SubmissionPage = () => {
   const t = useT();
@@ -26,7 +25,17 @@ const SubmissionPage = () => {
   const submissionUUID = router.query.submissionUUID as string;
 
   const { isLoading, formData, form } = useFormSubmission(submissionUUID);
-  const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submissionUUID);
+  const { submission, updateSubmission, submissionUpdating, submissionUpdateFailure } =
+    useSubmissionUpdate(submissionUUID);
+  useRequestSuccess(
+    submissionUpdating,
+    submissionUpdateFailure,
+    useCallback(() => {
+      if (submission?.status === "awaiting-approval") {
+        router.push(`/applications/request-more-information/success/${submission?.applicationUuid}?isSendRequest=true`);
+      }
+    }, [router, submission?.applicationUuid, submission?.status])
+  );
 
   const framework = useFramework(formData?.frameworkKey);
 
@@ -94,10 +103,6 @@ const SubmissionPage = () => {
     [fieldsProvider, updateSubmission]
   );
 
-  useOnUnmount(() => {
-    if (submissionUUID != null) pruneSubmission(submissionUUID);
-  });
-
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading || orgLoading || !providerLoaded}>
@@ -110,7 +115,7 @@ const SubmissionPage = () => {
           onChange={onChange}
           formStatus={submissionUpdating ? "saving" : "saved"}
           onSubmit={handleSubmit}
-          submitButtonDisable={!submissionUpdating}
+          submitButtonDisable={submissionUpdating}
           defaultValues={defaultValues}
           title={form?.title}
           tabOptions={{

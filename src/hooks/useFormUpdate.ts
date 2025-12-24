@@ -102,7 +102,7 @@ export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
 
 export const useSubmissionUpdate = (submissionUUID?: string) => {
   const enabled = submissionUUID != null;
-  const [, { update, isUpdating, updateFailure }] = useSubmission({ id: submissionUUID, enabled });
+  const [, { data, update, isUpdating, updateFailure }] = useSubmission({ id: submissionUUID, enabled });
   const t = useT();
 
   const { openToast } = useToastContext();
@@ -126,5 +126,5 @@ export const useSubmissionUpdate = (submissionUUID?: string) => {
     isUpdating
   );
 
-  return { updateSubmission, submissionUpdating: isUpdating };
+  return { submission: data, updateSubmission, submissionUpdating: isUpdating, submissionUpdateFailure: updateFailure };
 };
