@@ -23,6 +23,26 @@ export interface RHFLeadershipsTableProps
   collection?: string;
 }
 
+// TODO: these normalize methods are only needed until we move leaders creation to v3 (and probably
+//  have it sync as part of the form data instead of creating with API calls.
+const v2Normalize = (data: any) => {
+  const { firstName, lastName, ...rest } = data;
+  return {
+    first_name: firstName,
+    last_name: lastName,
+    ...rest
+  };
+};
+
+const v3Normalize = (data: any) => {
+  const { first_name, last_name, ...rest } = data;
+  return {
+    firstName: first_name,
+    lastName: last_name,
+    ...rest
+  };
+};
+
 export const getLeadershipsTableColumns = (
   t: typeof useT | Function = (t: string) => t
 ): AccessorKeyColumnDef<any>[] => [
@@ -103,7 +123,7 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
     onSuccess(data) {
       const _tmp = [...value];
       //@ts-ignore
-      _tmp.push(data.data);
+      _tmp.push(v3Normalize(data.data));
       field.onChange(_tmp);
       clearErrors();
     }
@@ -126,7 +146,7 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
 
       if (index !== -1) {
         //@ts-ignore
-        _tmp[index] = data.data;
+        _tmp[index] = v3Normalize(data.data);
         field.onChange(_tmp);
         onChangeCapture?.();
         formHook?.reset(formHook.getValues());
@@ -144,10 +164,10 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
     collection === "leadership-team"
       ? {
           handleUpdate: (data: V2LeadershipsRead) => {
-            if (data.uuid) {
+            if (data.uuid != null) {
               updateTeamMember({
                 pathParams: { uuid: data.uuid },
-                body: { ...data }
+                body: { ...v2Normalize(data) }
               });
             }
           }
@@ -172,7 +192,7 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
       handleCreate={data => {
         createMember({
           body: {
-            ...data,
+            ...v2Normalize(data),
             organisation_id: organisationId,
             collection
           }
