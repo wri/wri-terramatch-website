@@ -307,7 +307,7 @@ export const organisationIndex = new V3ApiEndpoint<
   OrganisationIndexError,
   OrganisationIndexVariables,
   {}
->("/organisations/v3", "GET");
+>("/organisations/v3/organisations", "GET");
 
 export type OrganisationCreationError = Fetcher.ErrorWrapper<
   | {
@@ -396,7 +396,7 @@ export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationError,
   OrganisationCreationVariables,
   {}
->("/organisations/v3", "POST");
+>("/organisations/v3/organisations", "POST");
 
 export type UsersFindPathParams = {
   /**

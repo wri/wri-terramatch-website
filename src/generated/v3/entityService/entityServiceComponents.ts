@@ -4037,7 +4037,7 @@ export type FormIndexVariables = {
  * Get a paginated and filtered list of forms. Includes all sections and questions within the form.
  */
 export const formIndex = new V3ApiEndpoint<FormIndexResponse, FormIndexError, FormIndexVariables, {}>(
-  "/forms/v3",
+  "/forms/v3/forms",
   "GET"
 );
 
@@ -4098,7 +4098,7 @@ export type FormCreateVariables = {
  * Create a new form
  */
 export const formCreate = new V3ApiEndpoint<FormCreateResponse, FormCreateError, FormCreateVariables, {}>(
-  "/forms/v3",
+  "/forms/v3/forms",
   "POST"
 );
 
@@ -4174,7 +4174,7 @@ export type FormGetVariables = {
  * Get a form by uuid. Includes all sections and questions within the form.
  */
 export const formGet = new V3ApiEndpoint<FormGetResponse, FormGetError, FormGetVariables, {}>(
-  "/forms/v3/{uuid}",
+  "/forms/v3/forms/{uuid}",
   "GET"
 );
 
@@ -4242,7 +4242,7 @@ export type FormDeleteVariables = {
 };
 
 export const formDelete = new V3ApiEndpoint<FormDeleteResponse, FormDeleteError, FormDeleteVariables, {}>(
-  "/forms/v3/{uuid}",
+  "/forms/v3/forms/{uuid}",
   "DELETE"
 );
 
@@ -4321,7 +4321,7 @@ export type FormUpdateVariables = {
  * Update a form
  */
 export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError, FormUpdateVariables, {}>(
-  "/forms/v3/{uuid}",
+  "/forms/v3/forms/{uuid}",
   "PUT"
 );
 
@@ -4450,7 +4450,7 @@ export const applicationIndex = new V3ApiEndpoint<
   ApplicationIndexError,
   ApplicationIndexVariables,
   {}
->("/applications/v3", "GET");
+>("/applications/v3/applications", "GET");
 
 export type ApplicationGetPathParams = {
   /**
@@ -4529,7 +4529,7 @@ export const applicationGet = new V3ApiEndpoint<
   ApplicationGetError,
   ApplicationGetVariables,
   {}
->("/applications/v3/{uuid}", "GET");
+>("/applications/v3/applications/{uuid}", "GET");
 
 export type ApplicationDeletePathParams = {
   /**
@@ -4589,7 +4589,7 @@ export const applicationDelete = new V3ApiEndpoint<
   ApplicationDeleteError,
   ApplicationDeleteVariables,
   {}
->("/applications/v3/{uuid}", "DELETE");
+>("/applications/v3/applications/{uuid}", "DELETE");
 
 export type ApplicationHistoryGetPathParams = {
   /**
@@ -4656,7 +4656,7 @@ export const applicationHistoryGet = new V3ApiEndpoint<
   ApplicationHistoryGetError,
   ApplicationHistoryGetVariables,
   {}
->("/applications/v3/{uuid}/history", "GET");
+>("/applications/v3/applications/{uuid}/history", "GET");
 
 export type FundingProgrammesIndexQueryParams = {
   /**
@@ -4738,7 +4738,7 @@ export const fundingProgrammesIndex = new V3ApiEndpoint<
   FundingProgrammesIndexError,
   FundingProgrammesIndexVariables,
   {}
->("/fundingProgrammes/v3", "GET");
+>("/fundingProgrammes/v3/fundingProgrammes", "GET");
 
 export type FundingProgrammeCreateError = Fetcher.ErrorWrapper<
   | {
@@ -4801,7 +4801,7 @@ export const fundingProgrammeCreate = new V3ApiEndpoint<
   FundingProgrammeCreateError,
   FundingProgrammeCreateVariables,
   {}
->("/fundingProgrammes/v3", "POST");
+>("/fundingProgrammes/v3/fundingProgrammes", "POST");
 
 export type FundingProgrammeGetPathParams = {
   /**
@@ -4876,7 +4876,7 @@ export const fundingProgrammeGet = new V3ApiEndpoint<
   FundingProgrammeGetError,
   FundingProgrammeGetVariables,
   {}
->("/fundingProgrammes/v3/{uuid}", "GET");
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "GET");
 
 export type FundingProgrammeDeletePathParams = {
   /**
@@ -4936,7 +4936,7 @@ export const fundingProgrammeDelete = new V3ApiEndpoint<
   FundingProgrammeDeleteError,
   FundingProgrammeDeleteVariables,
   {}
->("/fundingProgrammes/v3/{uuid}", "DELETE");
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "DELETE");
 
 export type FundingProgrammeUpdatePathParams = {
   /**
@@ -5020,7 +5020,7 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
   FundingProgrammeUpdateError,
   FundingProgrammeUpdateVariables,
   {}
->("/fundingProgrammes/v3/{uuid}", "PUT");
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "PUT");
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },

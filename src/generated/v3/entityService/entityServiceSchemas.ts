@@ -1712,6 +1712,27 @@ export type SiteReportFullDto = {
   soilWaterConservationPhotos: MediaDto[];
 };
 
+export type EmbeddedMediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
 export type FinancialIndicatorDto = {
   /**
    * The entity type this resource is associated with.
@@ -1744,7 +1765,7 @@ export type FinancialIndicatorDto = {
   amount: number | null;
   exchangeRate: number | null;
   year: number;
-  documentation: MediaDto[] | null;
+  documentation: EmbeddedMediaDto[] | null;
 };
 
 export type FundingTypeDto = {
@@ -3027,27 +3048,6 @@ export type ApplicationHistoryDto = {
    * List of application history entries sorted in reverse chronological order. The first entry is the most recent.
    */
   entries: ApplicationHistoryEntryDto[];
-};
-
-export type EmbeddedMediaDto = {
-  uuid: string;
-  collectionName: string;
-  url: string | null;
-  thumbUrl: string | null;
-  name: string;
-  fileName: string;
-  mimeType: string | null;
-  size: number;
-  lat: number | null;
-  lng: number | null;
-  isPublic: boolean;
-  isCover: boolean;
-  /**
-   * @format date-time
-   */
-  createdAt: string;
-  description: string | null;
-  photographer: string | null;
 };
 
 export type StageDto = {
