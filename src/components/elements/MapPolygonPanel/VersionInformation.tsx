@@ -75,10 +75,6 @@ const VersionInformation = ({
       return;
     }
 
-    // Get siteId from multiple sources, prioritizing the most reliable
-    // 1. siteData.uuid (from context, set when viewing a site)
-    // 2. polygonDefault.siteId (from the polygon data itself - V3 format)
-    // 3. selectedPolyVersion (fallback)
     const siteId =
       siteData?.uuid ??
       polygonDefault?.siteId ??
