@@ -47,3 +47,19 @@ export const getErrorMessageFromPayload = (payload: any): string => {
     return String(payload);
   }
 };
+
+export const extractErrorMessage = (error: unknown): string => {
+  if (error != null && typeof error === "object" && "message" in error) {
+    const message = error.message as string;
+    try {
+      const parsed = JSON.parse(message);
+      if (parsed != null && typeof parsed === "object" && "message" in parsed) {
+        return parsed.message;
+      }
+    } catch {
+      return message;
+    }
+    return message;
+  }
+  return getErrorMessageFromPayload(error);
+};

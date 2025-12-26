@@ -265,6 +265,10 @@ export type SitePolygonLightDto = {
    * Whether the site polygon is active
    */
   isActive: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string | null;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -518,6 +522,10 @@ export type SitePolygonFullDto = {
    * Whether the site polygon is active
    */
   isActive: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
