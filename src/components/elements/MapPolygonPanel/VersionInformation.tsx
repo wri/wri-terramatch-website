@@ -17,7 +17,8 @@ import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { FileType, UploadedFile } from "@/types/common";
-import { getErrorMessageFromPayload } from "@/utils/errors";
+import { extractErrorMessage } from "@/utils/errors";
+import { getNameFromPolyVersion, getPolygonUuidFromPolyVersion, getSiteIdFromPolyVersion } from "@/utils/polygonUtils";
 
 import Menu from "../Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "../Menu/MenuVariant";
@@ -75,12 +76,7 @@ const VersionInformation = ({
       return;
     }
 
-    const siteId =
-      siteData?.uuid ??
-      polygonDefault?.siteId ??
-      (selectedPolyVersion as any)?.siteId ??
-      (selectedPolyVersion as any)?.site_id ??
-      null;
+    const siteId = siteData?.uuid ?? polygonDefault?.siteId ?? getSiteIdFromPolyVersion(selectedPolyVersion) ?? null;
 
     if (!siteId) {
       openNotification("error", t("Error!"), t("Missing site information"));
@@ -122,21 +118,8 @@ const VersionInformation = ({
       openNotification("success", t("Success!"), t("File uploaded successfully"));
       closeModal(ModalId.ADD_POLYGON);
     } catch (error) {
-      if (error != null && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message as string;
-        try {
-          const parsedMessage = JSON.parse(errorMessage);
-          if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
-            errorMessage = parsedMessage.message;
-          }
-        } catch {
-          // If parsing fails, use the original error message
-        }
-        openNotification("error", t("Error uploading file"), errorMessage);
-      } else {
-        const errorMessage = getErrorMessageFromPayload(error);
-        openNotification("error", t("Error uploading file"), t(errorMessage));
-      }
+      const errorMessage = extractErrorMessage(error);
+      openNotification("error", t("Error uploading file"), errorMessage);
     }
   };
 
@@ -389,15 +372,15 @@ const VersionInformation = ({
           onClick={() => {
             const polygonDefault = polygonVersionData?.find(polygon => polygon.polygonUuid == editPolygon?.uuid);
             const polygonUuid =
-              (selectedPolyVersion as any)?.polygonUuid ??
-              (selectedPolyVersion as any)?.poly_id ??
-              polygonDefault?.polygonUuid;
+              getPolygonUuidFromPolyVersion(selectedPolyVersion) ?? polygonDefault?.polygonUuid ?? null;
             const polygonName =
-              (selectedPolyVersion as any)?.name ??
-              (selectedPolyVersion as any)?.poly_name ??
+              getNameFromPolyVersion(selectedPolyVersion) ??
               polygonDefault?.name ??
-              polygonDefault?.versionName;
-            downloadGeoJsonPolygon(polygonUuid as string, polygonName ? formatStringName(polygonName) : "polygon");
+              polygonDefault?.versionName ??
+              null;
+            if (polygonUuid) {
+              downloadGeoJsonPolygon(polygonUuid, polygonName ? formatStringName(polygonName) : "polygon");
+            }
           }}
         >
           <Text variant="text-14-bold" className="flex items-center uppercase ">
