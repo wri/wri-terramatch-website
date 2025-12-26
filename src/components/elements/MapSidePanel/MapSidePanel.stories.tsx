@@ -56,7 +56,8 @@ const items: SitePolygonLightDto[] = [
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
-    isActive: true
+    isActive: true,
+    createdAt: null
   },
   {
     uuid: "2",
@@ -82,7 +83,8 @@ const items: SitePolygonLightDto[] = [
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
-    isActive: true
+    isActive: true,
+    createdAt: null
   },
   {
     uuid: "3",
@@ -108,6 +110,7 @@ const items: SitePolygonLightDto[] = [
     validationStatus: "notChecked",
     primaryUuid: null,
     disturbanceableId: null,
-    isActive: true
+    isActive: true,
+    createdAt: null
   }
 ];

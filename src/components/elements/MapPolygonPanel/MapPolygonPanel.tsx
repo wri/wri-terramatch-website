@@ -3,7 +3,6 @@ import { DetailedHTMLProps, Dispatch, HTMLAttributes, SetStateAction } from "rea
 import { Else, If, Then } from "react-if";
 
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import MapSidePanel from "../MapSidePanel/MapSidePanel";
@@ -28,7 +27,7 @@ export interface MapPolygonPanelProps extends DetailedHTMLProps<HTMLAttributes<H
   setSortDirection: React.Dispatch<React.SetStateAction<"ASC" | "DESC">>;
   type: string;
   recallEntityData?: () => void;
-  polygonVersionData?: SitePolygonsDataResponse;
+  polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
   refreshEntity?: () => void;
   polygonsData?: Record<string, string[]>;

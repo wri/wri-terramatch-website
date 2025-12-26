@@ -1108,33 +1108,6 @@ export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | unde
   }, {});
 }
 
-export const parseSitePolygonsDataResponseToLightDto = (sitePolygonData: SitePolygon): SitePolygonLightDto => ({
-  lightResource: true,
-  name: sitePolygonData.poly_name ?? null,
-  status: (sitePolygonData.status as "draft" | "submitted" | "needs-more-information" | "approved") ?? "draft",
-  siteId: sitePolygonData.site_id ?? null,
-  polygonUuid: sitePolygonData.poly_id ?? null,
-  projectId: sitePolygonData.project_id ?? null,
-  projectShortName: sitePolygonData.proj_name ?? null,
-  plantStart: sitePolygonData.plantstart ?? null,
-  calcArea: sitePolygonData.calc_area ?? null,
-  lat: null,
-  long: null,
-  indicators: [],
-  siteName: sitePolygonData.site_name ?? null,
-  versionName: sitePolygonData.version_name ?? null,
-  practice: sitePolygonData.practice?.split(",") ?? null,
-  targetSys: sitePolygonData.target_sys ?? null,
-  distr: sitePolygonData.distr?.split(",") ?? null,
-  numTrees: sitePolygonData.num_trees ?? null,
-  source: sitePolygonData.source ?? null,
-  validationStatus: sitePolygonData.validation_status?.toString() ?? null,
-  primaryUuid: sitePolygonData.primary_uuid ?? null,
-  uuid: sitePolygonData.uuid ?? sitePolygonData.poly_id ?? "",
-  disturbanceableId: null,
-  isActive: sitePolygonData.is_active ?? false
-});
-
 export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPolygonOverview => {
   const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
 
