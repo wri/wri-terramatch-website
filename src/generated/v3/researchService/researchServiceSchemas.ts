@@ -268,7 +268,7 @@ export type SitePolygonLightDto = {
   /**
    * @format date-time
    */
-  created_At: string | null;
+  createdAt: string | null;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -525,7 +525,7 @@ export type SitePolygonFullDto = {
   /**
    * @format date-time
    */
-  created_At: string | null;
+  createdAt: string | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
