@@ -16,3 +16,11 @@ export function useOnMount(callback: () => unknown) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }
+
+export function useOnUnmount(callback: () => void) {
+  useEffect(
+    () => callback,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+}

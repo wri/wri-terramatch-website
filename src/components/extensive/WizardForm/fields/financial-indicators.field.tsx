@@ -190,7 +190,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                         return `<a href="${
                           document.url
                         }" target="_blank" rel="noopener noreferrer" class="underline text-primary">${
-                          document.file_name ?? ""
+                          document.fileName ?? ""
                         }</a>`;
                       }
                       return "";

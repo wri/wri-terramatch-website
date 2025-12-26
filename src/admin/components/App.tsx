@@ -48,14 +48,6 @@ const App = () => {
               recordRepresentation={record => record?.name}
             />
             <Resource
-              name={modules.pitch.ResourceName}
-              list={modules.pitch.List}
-              show={modules.pitch.Show}
-              edit={modules.pitch.Edit}
-              icon={() => <Icon className="h-8 w-8" name={IconNames.PITCHES} />}
-              recordRepresentation={record => record?.project_name}
-            />
-            <Resource
               name={modules.fundingProgramme.ResourceName}
               list={modules.fundingProgramme.List}
               edit={modules.fundingProgramme.Edit}
@@ -80,12 +72,6 @@ const App = () => {
               show={modules.application.Show}
               icon={() => <Icon className="h-8 w-8" name={IconNames.APPLICATIONS} />}
               recordRepresentation={record => `${record?.id}`}
-            />
-            <Resource
-              name={modules.stage.ResourceName}
-              show={modules.stage.Show}
-              edit={modules.stage.Edit}
-              create={modules.stage.Create}
             />
             <Resource
               name={modules.form.ResourceName}
@@ -174,11 +160,6 @@ const App = () => {
           options={{ label: "Disturbance Reports" }}
           recordRepresentation={record => record?.title}
         />
-        {isAdmin && (
-          <>
-            <Resource name={modules.audit.ResourceName} />
-          </>
-        )}
         <Resource
           name={modules.impactStories.ResourceName}
           list={modules.impactStories.List}

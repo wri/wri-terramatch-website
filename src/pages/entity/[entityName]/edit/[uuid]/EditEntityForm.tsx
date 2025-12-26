@@ -7,16 +7,23 @@ import { useCallback, useMemo } from "react";
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { loadFullNurseryReport, loadFullSiteReport, pruneEntityCache } from "@/connections/Entity";
-import { FormModelType } from "@/connections/util/Form";
+import { pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
+import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
-import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { usePutV2FormsENTITYUUIDSubmit } from "@/generated/apiComponents";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import {
+  DisturbanceReportFullDto,
+  SiteReportFullDto,
+  SrpReportFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
+import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
@@ -24,75 +31,69 @@ import Log from "@/utils/log";
 interface EditEntityFormProps {
   entityName: EntityName;
   entityUUID: string;
-  entity: Record<string, any>;
 }
 
-const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps) => {
+const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
 
-  const { formData, isLoading, loadError, formLoadFailure } = useEntityForm(entityName, entityUUID);
-  const entityData = formData?.data;
-  const framework = toFramework(entityData?.framework_key);
-
   const model = useMemo(
-    () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
+    () => ({ model: v3EntityName(entityName) as FormEntity, uuid: entityUUID }),
     [entityName, entityUUID]
   );
+
+  const [
+    entityLoaded,
+    { data: entity, update: updateEntity, isUpdating: isSubmitting, updateFailure: submissionFailure }
+  ] = useFullEntity(model.model, model.uuid);
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(model.model, entityUUID);
+  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(model.model, entityUUID);
+  const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
+
+  // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
+  useOnUnmount(() => pruneEntityCache(model.model, entityUUID));
+
+  const framework = toFramework(formData?.frameworkKey);
 
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
 
   const feedbackFields = useMemo(
-    () =>
-      mode?.includes("provide-feedback")
-        ? entityData?.update_request?.feedback_fields ?? entityData?.feedback_fields ?? []
-        : [],
-    [entityData?.feedback_fields, entityData?.update_request?.feedback_fields, mode]
+    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
+    [formData?.feedbackFields, mode]
   );
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid, feedbackFields);
-  const defaultValues = useDefaultValues(formData?.data, fieldsProvider);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
 
-  const organisation = entity?.organisation;
-
-  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
-  const { mutate: submitEntity, isLoading: isSubmitting } = usePutV2FormsENTITYUUIDSubmit({
-    onSuccess() {
-      // When an entity is submitted via form, we want to forget the cached copy we might have from
-      // v3 so it gets re-fetched when a component needs it.
-      // TODO TM-2581 This will hopefully no longer be true when form submission goes through v3.
-      const v3Entity = v3EntityName(entityName);
-      pruneEntityCache(v3Entity, entityUUID);
-      // A bit of a hacky temporary workaround for reports: if the user navigates back to the
-      // task page after submitting a site or nursery report, the report is pruned but the connection
-      // expects to find it. Therefore, let's kick off a re-fetch here right away. This should also
-      // be able to go away in TM-2581, or a subsequent ticket related to form data answers.
-      if (v3Entity === "siteReports") {
-        loadFullSiteReport({ id: entityUUID });
-      } else if (v3Entity === "nurseryReports") {
-        loadFullNurseryReport({ id: entityUUID });
-      }
-
+  const submitEntity = useCallback(() => {
+    updateEntity({ status: "awaiting-approval" });
+  }, [updateEntity]);
+  useRequestSuccess(
+    isSubmitting,
+    submissionFailure,
+    useCallback(() => {
       if (mode === "edit" || mode?.includes("provide-feedback")) {
         router.push(getEntityDetailPageLink(entityName, entityUUID));
       } else {
         router.replace(`/entity/${entityName}/edit/${entityUUID}/confirm`);
       }
-    }
-  });
+    }, [entityName, entityUUID, mode, router]),
+    "Submission failed"
+  );
 
-  const reportingWindow = useReportingWindow(framework, entity?.due_at);
-  const disturbanceReportDate = entity?.entries?.find((entry: any) => entry.name === "date-of-disturbance")?.value;
+  const reportingWindow = useReportingWindow(framework, (entity as ReportFullDto)?.dueAt ?? undefined);
+  const disturbanceReportDate =
+    (entity as DisturbanceReportFullDto)?.entries?.find(({ name }) => name === "date-of-disturbance")?.value ?? null;
   const formTitle =
     entityName === "site-reports"
-      ? t("{siteName} Site Report", { siteName: entity.site.name })
+      ? t("{siteName} Site Report", { siteName: (entity as SiteReportFullDto)?.siteName })
       : entityName === "financial-reports"
-      ? t("{orgName} Financial Report", { orgName: organisation?.name })
+      ? t("{orgName} Financial Report", { orgName: entity?.organisationName })
       : entityName === "disturbance-reports"
       ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
       : entityName === "srp-reports"
-      ? t("{projectName} Socio-Economic Report", { projectName: entity.project.name })
-      : `${entityData?.form_title} ${isReport ? reportingWindow : ""}`;
+      ? t("{projectName} Socio-Economic Report", { projectName: (entity as SrpReportFullDto)?.projectName })
+      : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -122,44 +123,20 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
     return { initialStepIndex: 0, disableInitialAutoProgress: false };
   }, [feedbackFields, fieldsProvider, providerLoaded]);
 
-  const orgDetails = useMemo(
-    (): OrgFormDetails => ({
-      uuid: organisation?.uuid,
-      currency: entityName === "financial-reports" ? entity?.currency : organisation?.currency,
-      startMonth: entityName === "financial-reports" ? entity?.fin_start_month : organisation?.fin_start_month,
-      type: entityName === "financial-reports" ? entity?.organisation?.type : organisation?.type
-    }),
-    [
-      entity?.currency,
-      entity?.fin_start_month,
-      entityName,
-      organisation?.currency,
-      organisation?.fin_start_month,
-      organisation?.uuid,
-      organisation?.type,
-      entity?.organisation?.type
-    ]
-  );
-
-  const projectDetails = useMemo((): ProjectFormDetails => ({ uuid: entity?.project?.uuid }), [entity?.project?.uuid]);
-
   const onChange = useCallback(
-    (data: Dictionary<any>, closeAndSave?: boolean) => {
-      updateEntity({
-        answers: normalizedFormData(data, fieldsProvider),
-        ...(closeAndSave ? { continue_later_action: true } : {})
-      });
+    (data: Dictionary<any>) => {
+      updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) });
     },
-    [fieldsProvider, updateEntity]
+    [fieldsProvider, updateEntityAnswers]
   );
 
-  if (loadError || formLoadFailure != null) {
-    Log.error("Form data load failed", { loadError, formLoadFailure });
+  if (loadFailure != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadFailure, formLoadFailure });
     return notFound();
   }
 
   return (
-    <LoadingContainer loading={isLoading || !providerLoaded}>
+    <LoadingContainer loading={isLoading || !providerLoaded || orgLoading || !entityLoaded}>
       <CurrencyProvider>
         {providerLoaded && (
           <WizardForm
@@ -168,19 +145,11 @@ const EditEntityForm = ({ entity, entityName, entityUUID }: EditEntityFormProps)
             fieldsProvider={fieldsProvider}
             orgDetails={orgDetails}
             projectDetails={projectDetails}
-            errors={error}
             onBackFirstStep={router.back}
             onCloseForm={() => router.push("/home")}
             onChange={onChange}
-            formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-            onSubmit={() =>
-              submitEntity({
-                pathParams: {
-                  entity: entityName,
-                  uuid: entityUUID
-                }
-              })
-            }
+            formStatus={entityAnswersUpdating ? "saving" : "saved"}
+            onSubmit={submitEntity}
             submitButtonDisable={isSubmitting}
             defaultValues={defaultValues}
             title={formTitle}

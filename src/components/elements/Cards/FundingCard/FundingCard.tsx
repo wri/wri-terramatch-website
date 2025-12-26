@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Pill from "@/components/elements/Pill/Pill";
@@ -41,6 +40,7 @@ const FundingCard = (props: FundingCardProps) => {
     }
   };
   const statusProps = StatusPropsMap[status];
+  console.log("status", { status, statusProps, title, primaryLink });
 
   return (
     <div
@@ -50,13 +50,13 @@ const FundingCard = (props: FundingCardProps) => {
         "flex h-[420px] w-full flex-col overflow-auto rounded-lg border border-neutral-100 border-opacity-25 bg-white p-6 shadow wide:h-[500px]"
       )}
     >
-      <When condition={!!statusProps}>
-        <Pill className={classNames(statusProps?.className, "mb-4 w-fit")}>{statusProps?.text}</Pill>
-      </When>
+      {statusProps == null ? null : (
+        <Pill className={classNames(statusProps?.className, "mb-4 w-fit")}>{statusProps.text}</Pill>
+      )}
       <Text variant="text-bold-subtitle-500" className="mb-2">
         {title}
       </Text>
-      <When condition={!!deadline}>
+      {deadline == null ? null : (
         <CardItem
           iconProps={{
             name: IconNames.CALENDAR,
@@ -64,10 +64,10 @@ const FundingCard = (props: FundingCardProps) => {
             className: "fill-neutral-900 wide:min-h-[20px] wide:min-w-[20px] "
           }}
           title={t("Deadline") + ":"}
-          subtitle={format(Date.parse(deadline!), "do MMMM y, HH:mm")}
+          subtitle={format(Date.parse(deadline), "do MMMM y, HH:mm")}
         />
-      </When>
-      <When condition={!!location}>
+      )}
+      {location == null ? null : (
         <CardItem
           iconProps={{
             name: IconNames.MAP_PIN,
@@ -76,9 +76,9 @@ const FundingCard = (props: FundingCardProps) => {
             className: "fill-neutral-900 min-w-[13px] min-h-[18px] wide:min-w-[17px] wide:min-h-[22px]"
           }}
           title={t("Location") + ":"}
-          subtitle={location!}
+          subtitle={location}
         />
-      </When>
+      )}
       <Text variant="text-light-caption-200" className="mt-3 flex-1 line-clamp-5">
         {description}
       </Text>
@@ -89,7 +89,7 @@ const FundingCard = (props: FundingCardProps) => {
           variant="white"
           className="w-full flex-1"
           href={secondaryLink}
-          disabled={!secondaryLink}
+          disabled={secondaryLink == null || secondaryLink === ""}
           target="_blank"
         >
           {t("Read More")}
@@ -99,7 +99,7 @@ const FundingCard = (props: FundingCardProps) => {
           variant={status === "active" ? "sky" : "secondary-blue"}
           className="w-full flex-1"
           href={primaryLink}
-          disabled={!primaryLink || status === "inactive" || status === "disabled" || status === "coming-soon"}
+          disabled={primaryLink === "" || status === "inactive" || status === "disabled" || status === "coming-soon"}
         >
           {t("Apply Now")}
         </Button>

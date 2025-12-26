@@ -1,191 +1,101 @@
-import lo, { sortBy } from "lodash";
-import { DataProvider, GetManyResult, GetOneResult, Identifier, RaRecord } from "react-admin";
+import { omit } from "lodash";
+import { CreateResult, DataProvider, DeleteParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
 
-import { stageDataProvider } from "@/admin/apiProvider/dataProviders/stageDataProvider";
 import {
-  DeleteV2AdminFundingProgrammeUUIDError,
-  fetchDeleteV2AdminFundingProgrammeUUID,
-  fetchGetV2AdminFundingProgramme,
-  fetchGetV2AdminFundingProgrammeUUID,
-  fetchPostV2AdminFundingProgramme,
-  fetchPutV2AdminFundingProgrammeUUID,
-  GetV2AdminFundingProgrammeError,
-  GetV2AdminFundingProgrammeUUIDError,
-  PostV2AdminFundingProgrammeError,
-  PutV2AdminFundingProgrammeUUIDError
-} from "@/generated/apiComponents";
-import { FundingProgramme } from "@/generated/apiSchemas";
+  createFundingProgramme,
+  deleteFundingProgramme,
+  loadFundingProgramme,
+  loadFundingProgrammes,
+  updateFundingProgramme
+} from "@/connections/FundingProgramme";
+import { StoreFundingProgrammeAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
 
-export interface FundingDataProvider extends DataProvider {}
+const UPLOAD_KEYS = ["cover"];
 
-interface Record extends Omit<FundingProgramme, "id">, RaRecord {
-  id: Identifier;
-}
-
-/**
- * add replace `id` with `uuid`, sort stages based on order attribute
- * @param object api response
- * @returns normalized version of api response
- */
-const normalizeFundingProgrammeObject = (object: FundingProgramme): Record => ({
-  ...object,
-  id: object.uuid as Identifier,
-  //@ts-ignore
-  stages: sortBy(object.stages?.data, "order"),
-  // @ts-ignore
-  organisationIds: object.data?.organisations?.map(org => org.uuid) || []
-});
-
-export const fundingProgrammeDataProvider: FundingDataProvider = {
-  async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminFundingProgramme({
-        queryParams: raListParamsToQueryParams(params)
-      });
-      return apiListResponseToRAListResult(response);
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeError);
+export const fundingProgrammeDataProvider: Partial<DataProvider> = {
+  async getList<RecordType>() {
+    // note: we don't use any filtering, sorting or pagination on this list view
+    const connection = await loadFundingProgrammes({ translated: false });
+    if (connection.loadFailure != null) {
+      throw v3ErrorForRA("Funding Programme index fetch failed", connection.loadFailure);
     }
+    return {
+      data: (connection.data?.map(fundingProgramme => ({
+        ...fundingProgramme,
+        id: fundingProgramme.uuid
+      })) ?? []) as RecordType[],
+      total: connection.data?.length ?? 0
+    };
   },
 
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2AdminFundingProgrammeUUID({
-        pathParams: { uuid: params.id }
-      });
-
-      return {
-        //@ts-ignore
-        data: normalizeFundingProgrammeObject(response.data)
-      } as GetOneResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeUUIDError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    const { loadFailure, data: fundingProgramme } = await loadFundingProgramme({ id, translated: false });
+    if (loadFailure != null) {
+      throw v3ErrorForRA("Funding Programme get fetch failed", loadFailure);
     }
+
+    return { data: { ...fundingProgramme, id: fundingProgramme?.uuid } } as RecordType;
   },
 
   async getMany(_, params) {
-    try {
-      const data: FundingProgramme[] = [];
-
-      for (const id of params.ids) {
-        const resp = await fetchGetV2AdminFundingProgrammeUUID({
-          pathParams: { uuid: id as string }
-        });
-
-        // @ts-ignore issue with ids
-        data.push({ ...resp.data, id: resp.data.uuid });
-      }
-      return { data } as GetManyResult;
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminFundingProgrammeUUIDError);
+    const response = await Promise.all(
+      params.ids.map(id => loadFundingProgramme({ id: id as string, translated: false }))
+    );
+    const failed = response.find(({ loadFailure }) => loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Funding Programme get fetch failed", failed.loadFailure);
     }
+
+    return {
+      data: response.map(({ data }) => ({ ...data, id: data?.uuid }))
+    } as GetManyResult;
   },
 
-  async update(_, params) {
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     try {
-      const uuid = params.id as string;
-      const uploadKeys = ["cover"];
-      const { stages, ...body } = lo.omit(params.data, uploadKeys) as any;
+      const attributes = omit(params.data, UPLOAD_KEYS) as unknown as StoreFundingProgrammeAttributes;
 
-      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
+      // In update, do the cover upload first so that the update response shows the new cover media.
+      await handleUploads(params, UPLOAD_KEYS, { entity: "fundingProgrammes", uuid: params.id as string });
+      const programme = await updateFundingProgramme(attributes, { id: params.id as string, translated: false });
 
-      // TODO: For each stage - update
-
-      const resp = await fetchPutV2AdminFundingProgrammeUUID({ pathParams: { uuid }, body });
-
-      for (let index = 0; index < stages.length; index++) {
-        const stage = stages[index];
-
-        if (stage.uuid) {
-          await stageDataProvider.update("", {
-            id: stage.uuid,
-            previousData: {},
-            data: {
-              ...stage,
-              //@ts-ignore
-              funding_programme_id: resp.data.uuid,
-              order: index + 1
-            }
-          });
-        } else {
-          await stageDataProvider.create("", {
-            data: {
-              ...stage,
-              //@ts-ignore
-              funding_programme_id: resp.data.uuid,
-              order: index + 1
-            }
-          });
-        }
-      }
-
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid, framework_key: body.framework_key } };
+      return { data: { ...programme, id: programme.uuid } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding Programme update fetch failed", err);
     }
   },
 
   async create(_, params) {
     try {
-      const uploadKeys = ["cover"];
-      const { stages, ...body } = lo.omit(params.data, uploadKeys) as any;
+      const attributes = omit(params.data, UPLOAD_KEYS) as StoreFundingProgrammeAttributes;
 
-      const resp = await fetchPostV2AdminFundingProgramme({ body });
+      const fundingProgramme = await createFundingProgramme(attributes);
+      await handleUploads(params, UPLOAD_KEYS, { uuid: fundingProgramme.uuid, entity: "fundingProgrammes" });
 
-      for (let index = 0; index < stages.length; index++) {
-        const stage = stages[index];
-
-        await stageDataProvider.create("", {
-          data: {
-            ...stage,
-            //@ts-ignore
-            funding_programme_id: resp.data.uuid,
-            order: index + 1
-          }
-        });
-      }
-
-      // @ts-expect-error
-      const uuid = resp.data.uuid;
-      await handleUploads(params, uploadKeys, { uuid, entity: "fundingProgrammes" });
-
-      // TODO: For each stage - create
-
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+      return { data: { id: fundingProgramme.uuid } } as CreateResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminFundingProgrammeError);
+      throw v3ErrorForRA("Funding Programme create fetch failed", err);
     }
   },
 
-  // @ts-ignore
-  async delete(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
     try {
-      await fetchDeleteV2AdminFundingProgrammeUUID({
-        pathParams: { uuid: params.id as string }
-      });
-      return { data: { id: params.id } };
+      await deleteFundingProgramme(id as string);
+      return { data: { id } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding programme delete fetch failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
-      for (const id of params.ids) {
-        await fetchDeleteV2AdminFundingProgrammeUUID({
-          pathParams: { uuid: id as string }
-        });
-      }
-
+      await Promise.all(params.ids.map(id => deleteFundingProgramme(id as string)));
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminFundingProgrammeUUIDError);
+      throw v3ErrorForRA("Funding programme delete fetch failed", err);
     }
   }
 };

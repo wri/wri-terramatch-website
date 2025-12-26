@@ -103,7 +103,7 @@ const ModalAddImages: FC<ModalAddImageProps> = ({
         removeFile(file);
       }
     },
-    [addFile, deleteMedia, removeFile]
+    [addFile, removeFile]
   );
 
   const handleFileChange = useCallback(

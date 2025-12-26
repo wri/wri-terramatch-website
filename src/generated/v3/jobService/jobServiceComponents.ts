@@ -47,6 +47,16 @@ export type ListDelayedJobsResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**

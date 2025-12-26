@@ -5,8 +5,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 
 import { getHardcodedOptions, toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
 import Loader from "@/components/generic/Loading/Loader";
+import { useOptionLabels } from "@/connections/Form";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useOptionLabels } from "@/connections/util/Form";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";

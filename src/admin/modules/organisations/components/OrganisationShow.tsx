@@ -273,7 +273,6 @@ export const OrganisationShow = () => {
             </SimpleShowLayout>
           </Card>
           <Card sx={{ marginTop: 2, marginBottom: 2 }}>
-            {/* WIP waiting on a fix from bed */}
             <SimpleShowLayout>
               <OrganisationApplicationsTable />
             </SimpleShowLayout>

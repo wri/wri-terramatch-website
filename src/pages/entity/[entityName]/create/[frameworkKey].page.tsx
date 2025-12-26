@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { kebabCase } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
@@ -8,11 +9,41 @@ import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
-import { PostV2FormsENTITYResponse, usePostV2FormsENTITY } from "@/generated/apiComponents";
+import { useCreateNursery, useCreateProject, useCreateSite } from "@/connections/Entity";
+import { FormEntity, useForm } from "@/connections/Form";
+import {
+  EntityCreateAttributes,
+  NurseryFullDto,
+  ProjectCreateAttributes,
+  ProjectFullDto,
+  SiteFullDto
+} from "@/generated/v3/entityService/entityServiceSchemas";
+import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { useGetReportingFrameworkFormKey } from "@/hooks/useGetFormKey";
 import { EntityName } from "@/types/common";
+import Log from "@/utils/log";
+
+const useCreateEntity = (
+  entityName: FormEntity,
+  onSuccess: (data: ProjectFullDto | SiteFullDto | NurseryFullDto) => void,
+  failureMessage?: string
+) => {
+  const { create: createProject, isCreating: projectCreating } = useCreateProject({}, onSuccess, failureMessage);
+  const { create: createSite, isCreating: siteCreating } = useCreateSite({}, onSuccess, failureMessage);
+  const { create: createNursery, isCreating: nurseryCreating } = useCreateNursery({}, onSuccess, failureMessage);
+
+  if (entityName === "projects") {
+    return { createEntity: createProject, isCreating: projectCreating };
+  } else if (entityName === "sites") {
+    return { createEntity: createSite, isCreating: siteCreating };
+  } else if (entityName === "nurseries") {
+    return { createEntity: createNursery, isCreating: nurseryCreating };
+  } else {
+    Log.warn("useCreateEntity: Invalid entityName", { entityName });
+    return {};
+  }
+};
 
 /**
  * Starting point of creation flow
@@ -31,42 +62,35 @@ const EntityIntroPage = () => {
   const frameworkKey = router.query.frameworkKey as string;
 
   //Allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-  const parentName = router.query.parent_name as EntityName | "applications";
   const parentUUID = router.query.parent_uuid as string;
   const entityUUID = router.query.entity_uuid as string | undefined;
 
   const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
   const [, { data: frameworkForm }] = useForm({ id: formUUID, enabled: formUUID != null });
-  const { form: entityForm } = useEntityForm(entityName, entityUUID);
+  const { form: entityForm } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUUID);
   const form = frameworkForm ?? entityForm;
-
-  const {
-    mutate: createEntity,
-    isSuccess,
-    isLoading
-  } = usePostV2FormsENTITY({
-    onSuccess(response) {
-      const { uuid } = (response as { data: PostV2FormsENTITYResponse }).data;
-      router.replace(`/entity/${entityName}/edit/${uuid}`);
-    }
-  });
+  const { createEntity, isCreating } = useCreateEntity(
+    v3EntityName(entityName) as FormEntity,
+    useCallback(({ uuid }) => router.replace(`/entity/${entityName}/edit/${uuid}`), [entityName, router]),
+    `Failed to create ${kebabCase(singularEntityName(entityName)).replace("-", " ")}`
+  );
 
   const handleContinue = useCallback(() => {
     if (entityUUID != null) {
       router.push(`/entity/${entityName}/edit/${entityUUID}`);
     } else {
-      createEntity({
-        pathParams: {
-          entity: entityName
-        },
-        body: {
-          parent_entity: parentName,
-          parent_uuid: parentUUID,
-          form_uuid: formUUID
-        }
-      });
+      if (entityName === "projects") {
+        (createEntity as (attributes: ProjectCreateAttributes) => void)({
+          applicationUuid: parentUUID,
+          formUuid: formUUID ?? ""
+        });
+      } else {
+        (createEntity as (attributes: EntityCreateAttributes) => void)({
+          parentUuid: parentUUID
+        });
+      }
     }
-  }, [createEntity, entityName, entityUUID, formUUID, parentName, parentUUID, router]);
+  }, [createEntity, entityName, entityUUID, formUUID, parentUUID, router]);
 
   return (
     <BackgroundLayout>
@@ -86,7 +110,7 @@ const EntityIntroPage = () => {
               }}
               submitButtonProps={{
                 children: t("Continue"),
-                disabled: isLoading || isSuccess,
+                disabled: isCreating,
                 onClick: handleContinue
               }}
               backButtonProps={{

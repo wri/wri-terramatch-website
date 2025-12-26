@@ -12,7 +12,7 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { FormModelType } from "@/connections/util/Form";
+import { FormEntity, FormModelType } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -76,8 +76,8 @@ const InformationTab: FC<IProps> = props => {
   const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
-  const { formData: response, isLoading: queryLoading } = useEntityForm(props.type, record?.uuid);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(response?.data.form_uuid);
+  const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(props.type) as FormEntity, record?.uuid);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
 
   const model = useMemo<FormModel>(
     () => ({ model: v3EntityName(props.type) as FormModelType, uuid: record?.uuid ?? "" }),
@@ -85,8 +85,8 @@ const InformationTab: FC<IProps> = props => {
   );
 
   const values = useMemo(
-    () => formDefaultValues(response?.data.answers!, fieldsProvider),
-    [fieldsProvider, response?.data.answers]
+    () => (formData?.answers == null ? {} : formDefaultValues(formData?.answers!, fieldsProvider)),
+    [fieldsProvider, formData?.answers]
   );
 
   const fields = useMemo(

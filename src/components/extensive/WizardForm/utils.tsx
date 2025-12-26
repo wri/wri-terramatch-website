@@ -150,8 +150,8 @@ export const getFormattedAnswer = (
 ): string | undefined => {
   const answer = getAnswer(field, values, fieldsProvider);
 
-  if (Array.isArray(answer) && field.inputType === "file") {
-    return (answer as UploadedFile[])
+  if (field.inputType === "file") {
+    return toArray(answer as UploadedFile | UploadedFile[])
       .filter(file => !!file)
       ?.map(file => `<a href="${file.url}" target="_blank">${file.fileName}</a>`)
       .join(", ");
@@ -220,14 +220,14 @@ export const treeSpeciesEntryValue = (
 ) => {
   const value = (getAnswer(field, values, fieldsProvider) ?? []) as TreeSpeciesValue[];
   const plants = value.map(
-    ({ name, amount, taxon_id }) =>
+    ({ name, amount, taxonId }) =>
       ({
         name,
         amount,
         // ?? null is important here for the isEqual check in useFormChanges. The v3 API always
         // returns null, so if taxon_id is undefined here, we want it to be explicitly null
         // for comparison.
-        taxonId: taxon_id ?? null
+        taxonId: taxonId ?? null
       } as PlantData)
   );
   const supportedEntity = v3Entity(entity) as SupportedEntity | undefined;

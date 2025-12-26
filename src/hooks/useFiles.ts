@@ -1,9 +1,10 @@
 import { useCallback, useState } from "react";
 
 import { UploadedFile } from "@/types/common";
+import { toArray } from "@/utils/array";
 
-export const useFiles = (allowMultiple: boolean, initialValue: UploadedFile[] = []) => {
-  const [files, setFiles] = useState<UploadedFile[]>(initialValue);
+export const useFiles = (allowMultiple: boolean, initialValue: UploadedFile | UploadedFile[] = []) => {
+  const [files, setFiles] = useState<UploadedFile[]>(toArray(initialValue));
 
   const addFile = useCallback(
     (file: Partial<UploadedFile>) => {

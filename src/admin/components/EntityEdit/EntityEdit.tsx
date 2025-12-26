@@ -1,26 +1,30 @@
 import { Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { useCreatePath, useResourceContext } from "react-admin";
+import { useCreatePath, useEditContext, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { FormModelType } from "@/connections/util/Form";
+import { pruneEntityCache, useFullEntity } from "@/connections/Entity";
+import { FormEntity, FormModelType } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
-import { OrgFormDetails, ProjectFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2ENTITYUUID } from "@/generated/apiComponents";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
+import { NurseryReportFullDto, SiteReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
+import { useOnUnmount } from "@/hooks/useOnMount";
+import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
 export const EntityEdit = () => {
   const { id } = useParams<"id">();
   const resource = useResourceContext();
+  const { refetch } = useEditContext();
   const navigate = useNavigate();
   const createPath = useCreatePath();
 
@@ -41,17 +45,17 @@ export const EntityEdit = () => {
   const entityName = ResourceEntityMapping[resource] as EntityName;
   const entityUUID = id as string;
 
-  const { updateEntity, error, isSuccess, isUpdating } = useFormUpdate(entityName, entityUUID);
+  const formEntity = v3EntityName(entityName) as FormEntity;
+  const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(formEntity, entityUUID);
+  const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
+  const [, { data: entity }] = useFullEntity(formEntity, entityUUID);
+  const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
-  const {
-    formData: entityResponse,
-    form,
-    isLoading,
-    loadError,
-    formLoadFailure
-  } = useEntityForm(entityName, entityUUID);
-
-  const { data: entityValue } = useGetV2ENTITYUUID({ pathParams: { entity: entityName, uuid: entityUUID } });
+  // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
+  useOnUnmount(() => {
+    pruneEntityCache(formEntity, entityUUID);
+    refetch();
+  });
 
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormModelType, uuid: entityUUID }),
@@ -59,65 +63,37 @@ export const EntityEdit = () => {
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(form?.uuid);
   const framework = toFramework(form?.frameworkKey);
-  const defaultValues = useDefaultValues(entityResponse?.data, fieldsProvider);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${entityValue?.data?.site?.name} ${entityResponse?.data.form_title}`;
+      return `${(entity as SiteReportFullDto).siteName} ${formData?.formTitle}`;
     } else if (entityName === "nursery-reports") {
-      return `${entityValue?.data?.nursery?.name} ${entityResponse?.data.form_title}`;
+      return `${(entity as NurseryReportFullDto).nurseryName} ${formData?.formTitle}`;
     }
     return form?.title;
-  }, [entityName, entityResponse, entityValue, form?.title]);
-
-  const organisation = entityValue?.data?.organisation;
-
-  const orgDetails = useMemo(
-    (): OrgFormDetails => ({
-      uuid: organisation?.uuid,
-      currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
-      startMonth:
-        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month,
-      type: entityName === "financial-reports" ? entityValue?.data?.organisation?.type : organisation?.type
-    }),
-    [
-      entityName,
-      entityValue?.data?.currency,
-      entityValue?.data?.fin_start_month,
-      organisation?.currency,
-      organisation?.fin_start_month,
-      organisation?.uuid,
-      organisation?.type,
-      entityValue?.data?.organisation?.type
-    ]
-  );
-
-  const projectDetails = useMemo(
-    (): ProjectFormDetails => ({ uuid: entityValue?.data?.project?.uuid }),
-    [entityValue?.data?.project?.uuid]
-  );
+  }, [entityName, form?.title, entity, formData?.formTitle]);
 
   const onChange = useCallback(
-    (data: Dictionary<any>) => updateEntity({ answers: normalizedFormData(data, fieldsProvider) }),
-    [fieldsProvider, updateEntity]
+    (data: Dictionary<any>) => updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) }),
+    [fieldsProvider, updateEntityAnswers]
   );
 
-  if (loadError || formLoadFailure != null) {
-    Log.error("Form data load failed", { loadError, formLoadFailure });
+  if (loadFailure != null || formLoadFailure != null) {
+    Log.error("Form data load failed", { loadFailure, formLoadFailure });
     return notFound();
   }
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <LoadingContainer loading={isLoading || !providerLoaded}>
+      <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
         <WizardForm
           models={model}
           fieldsProvider={fieldsProvider}
           framework={framework}
-          errors={error}
           onBackFirstStep={() => navigate("..")}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          formStatus={entityAnswersUpdating ? "saving" : "saved"}
           onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
           defaultValues={defaultValues}
           title={bannerTitle}

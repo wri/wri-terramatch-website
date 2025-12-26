@@ -2,25 +2,24 @@ import { Divider, Typography } from "@mui/material";
 import { FC, useMemo } from "react";
 import {
   LabeledClasses,
-  RaRecord,
   TabbedShowLayout,
   TabbedShowLayoutProps,
   TabbedShowLayoutTabs,
   useShowContext
 } from "react-admin";
-import { Else, If, Then, When } from "react-if";
 
+import { ApplicationShowRecord } from "@/admin/apiProvider/dataProviders/applicationDataProvider";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import List from "@/components/extensive/List/List";
 import { FormSummaryRowProps } from "@/components/extensive/WizardForm/FormSummaryRow";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { useSubmission } from "@/connections/FormSubmission";
 import WizardFormProvider, {
   FormModel,
   useApiFieldsProvider,
   useFieldsProvider,
   useFormEntities
 } from "@/context/wizardForm.provider";
-import { ApplicationRead, FormSubmissionRead } from "@/generated/apiSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 
 const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
@@ -40,12 +39,11 @@ const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
             <Typography className={LabeledClasses.label}>
               <span>{entry.title}</span>
             </Typography>
-            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-              <Then>
-                <Typography variant="body2" dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }} />
-              </Then>
-              <Else>{formatEntryValue(entry.value)}</Else>
-            </If>
+            {typeof entry.value === "string" || typeof entry.value === "number" ? (
+              <Typography variant="body2" dangerouslySetInnerHTML={{ __html: formatEntryValue(entry.value) }} />
+            ) : (
+              formatEntryValue(entry.value)
+            )}
           </div>
         )}
       />
@@ -54,15 +52,16 @@ const ApplicationTabRow: FC<Omit<FormSummaryRowProps, "index">> = props => {
   );
 };
 
-const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(record?.form_uuid);
+const ApplicationTab: FC<{ submissionUuid: string }> = ({ submissionUuid }) => {
+  const [, { data: submission }] = useSubmission({ id: submissionUuid });
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(submission?.formUuid);
   const values = useMemo(
-    () => formDefaultValues(record?.answers ?? {}, fieldsProvider),
-    [fieldsProvider, record?.answers]
+    () => formDefaultValues(submission?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, submission?.answers]
   );
   const model = useMemo<FormModel>(
-    () => ({ model: "projectPitches", uuid: record?.project_pitch_uuid ?? "" }),
-    [record?.project_pitch_uuid]
+    () => ({ model: "projectPitches", uuid: submission?.projectPitchUuid ?? "" }),
+    [submission?.projectPitchUuid]
   );
 
   return !providerLoaded ? null : (
@@ -77,22 +76,16 @@ const ApplicationTab = ({ record }: { record: FormSubmissionRead }) => {
 };
 
 export const ApplicationTabs = (props: Omit<TabbedShowLayoutProps, "children">) => {
-  const { record } = useShowContext<ApplicationRead & RaRecord>();
+  const { record } = useShowContext<ApplicationShowRecord>();
   const { isLoading } = useShowContext();
 
-  return (
-    <When condition={!isLoading}>
-      <TabbedShowLayout {...props} tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" {...props} />}>
-        {record?.form_submissions?.map(submission => (
-          <TabbedShowLayout.Tab
-            label={submission.stage?.name || ""}
-            key={submission.id}
-            record={submission as FormSubmissionRead & RaRecord}
-          >
-            <ApplicationTab record={submission} />
-          </TabbedShowLayout.Tab>
-        ))}
-      </TabbedShowLayout>
-    </When>
+  return isLoading ? null : (
+    <TabbedShowLayout {...props} tabs={<TabbedShowLayoutTabs variant="scrollable" scrollButtons="auto" {...props} />}>
+      {record?.submissions?.map(({ stageName, uuid }) => (
+        <TabbedShowLayout.Tab label={stageName ?? ""} key={uuid}>
+          <ApplicationTab submissionUuid={uuid} />
+        </TabbedShowLayout.Tab>
+      ))}
+    </TabbedShowLayout>
   );
 };

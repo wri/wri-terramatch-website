@@ -22,92 +22,6 @@ export type PostAuthResetBody = {
   callback_url?: string;
 };
 
-export type GetV2FundingProgrammeIDBody = {
-  id?: number;
-  uuid?: string;
-  name?: string;
-  description?: string;
-  location?: string;
-  read_more_url?: string;
-  framework_key?: string;
-  status?: string;
-  organisation_types?: string[];
-  stages?: {
-    id?: number;
-    uuid?: string;
-    status?: string;
-    deadline_at?: string;
-    readable_status?: string;
-    funding_programme_id?: number;
-    name?: string;
-    order?: number;
-    form?: {
-      uuid?: string;
-      title?: string;
-      type?: string;
-      published?: boolean;
-    };
-    deleted_at?: string;
-    created_at?: string;
-    updated_at?: string;
-  }[];
-  organisations?: {
-    uuid?: string;
-    name?: string;
-  }[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
-export type PostV2FormsEntityFormUuidBody = {
-  /**
-   * allowed values projects/sites/nurseries/project-reports/site-reports/nursery-reports
-   */
-  parent_entity?: string;
-  parent_uuid?: string;
-  form_uuid?: string;
-};
-
-export type PostV2FundingProgrammeBody = {
-  name?: string;
-  description?: string;
-  read_more_url?: string;
-  location?: string;
-  organisation_types?: string[];
-  cover?: {
-    uuid?: string;
-    url?: string;
-    thumb_url?: string;
-    collection_name?: string;
-    title?: string;
-    file_name?: string;
-    mime_type?: string;
-    size?: number;
-    lat?: number;
-    lng?: number;
-    is_public?: boolean;
-    is_cover?: boolean;
-    created_at?: string;
-  };
-  status?: string;
-};
-
 export type V2AdminOrganisationApproveBody = {
   uuid: string;
 };
@@ -208,14 +122,6 @@ export type V2PostOrganisationsBody = {
     deleted_at?: string;
   }[];
   tags?: string[];
-};
-
-export type PostV2AdminFundingProgrammeStageBody = {
-  name?: string;
-  funding_programme_id?: number;
-  form_id?: string;
-  deadline_at?: string;
-  order?: number;
 };
 
 export type PostV2GeometryValidateBody = {

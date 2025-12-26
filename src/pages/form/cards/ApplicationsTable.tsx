@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { isEmpty } from "lodash";
+import { isEmpty, last } from "lodash";
 import Link from "next/link";
 import { FC, useMemo } from "react";
 
@@ -8,10 +8,11 @@ import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
-import { useGetV2MyApplications } from "@/generated/apiComponents";
-import { ApplicationLiteRead } from "@/generated/apiSchemas";
+import { applicationsConnection } from "@/connections/Application";
+import { useAllPages } from "@/hooks/useConnection";
 import { useDate } from "@/hooks/useDate";
 import { Status } from "@/types/common";
+import { isNotNull } from "@/utils/array";
 
 export type DraftApplicationsTableProps = {
   fundingProgrammeUuid?: string;
@@ -21,34 +22,29 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
   const t = useT();
   const { format } = useDate();
 
-  const { data: applicationsData } = useGetV2MyApplications<{
-    data: ApplicationLiteRead[];
-  }>(
-    {
-      queryParams: { "filter[funding_programme_uuid]": fundingProgrammeUuid }
-    },
-    {
-      enabled: fundingProgrammeUuid != null
-    }
-  );
+  const [applicationsLoaded, applicationsData] = useAllPages(applicationsConnection, {
+    filter: { fundingProgrammeUuid },
+    enabled: fundingProgrammeUuid != null
+  });
 
   const applications = useMemo(() => {
-    if (isEmpty(applicationsData?.data)) return [];
+    if (!applicationsLoaded || isEmpty(applicationsData)) return [];
 
     return applicationsData
-      ?.data!.filter(application => application.current_submission?.status != null)
       .map(application => {
-        const applicationStatus = application.current_submission?.status;
+        const currentSubmission = last(application.submissions);
+        if (currentSubmission?.status == null) return undefined;
 
         return {
-          status: applicationStatus,
+          status: currentSubmission.status,
           uuid: application.uuid,
-          submissionUuid: application.current_submission?.uuid,
-          updatedAt: application.current_submission?.updated_at,
-          updatedBy: application.current_submission?.updated_by_name
+          submissionUuid: currentSubmission.uuid,
+          updatedAt: currentSubmission.updatedAt,
+          updatedBy: currentSubmission.updatedByName
         };
-      });
-  }, [applicationsData?.data]);
+      })
+      .filter(isNotNull);
+  }, [applicationsData, applicationsLoaded]);
 
   return (
     <div>

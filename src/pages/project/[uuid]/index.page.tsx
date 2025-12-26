@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
+import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
@@ -14,7 +15,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
-import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
@@ -44,7 +44,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       </Head>
       <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project?.name ?? "" }]} />
       <ProjectHeader {...{ project }} />
-      <StatusBar entityName="projects" entity={project} />
+      <EntityStatusBar entityName="projects" entity={project} />
       <SecondaryTabs
         tabItems={[
           { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },

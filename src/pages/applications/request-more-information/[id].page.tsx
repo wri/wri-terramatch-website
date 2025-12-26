@@ -1,65 +1,57 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
-import { Dictionary } from "lodash";
+import { Dictionary, last } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
+import { useApplication } from "@/connections/Application";
+import { useForm } from "@/connections/Form";
+import { useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
 import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2ApplicationsUUID, usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
-import { ApplicationRead } from "@/generated/apiSchemas";
+import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
+import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
+import { useValueChanged } from "@/hooks/useValueChanged";
 
-//Need to refactor this page, we can just reuse submission page and pass a flag to filter questions! lot's of duplications!
 const RequestMoreInformationPage = () => {
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
-  const queryClient = useQueryClient();
 
-  const { data: applicationData, isLoading: applicationLoading } = useGetV2ApplicationsUUID<{
-    data: ApplicationRead;
-  }>({
-    pathParams: {
-      uuid
-    },
-    queryParams: { lang: router.locale }
+  const [applicationLoaded, { data: application }] = useApplication({ id: uuid, sideloads: ["currentSubmission"] });
+  const currentSubmissionUuid = last(application?.submissions)?.uuid;
+  const [, { data: submission, isUpdating: isSubmitting }] = useSubmission({
+    id: currentSubmissionUuid,
+    enabled: currentSubmissionUuid != null
   });
 
-  const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["v2", "applications", uuid] });
+  const { updateSubmission, submissionUpdating } = useSubmissionUpdate(submission?.uuid);
+  useValueChanged(submissionUpdating, () => {
+    if (!submissionUpdating && submission?.status === "awaiting-approval") {
       router.push(`/applications/request-more-information/success/${uuid}`);
     }
   });
 
-  const submission = (applicationData?.data?.form_submissions ?? []).find(
-    ({ uuid }) => uuid === applicationData?.data?.current_submission_uuid
-  );
-
-  const { updateSubmission, isSuccess, isUpdating } = useSubmissionUpdate(submission?.uuid ?? "");
-
-  const framework = useFramework(submission?.framework_key);
+  const framework = useFramework(submission?.frameworkKey);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
-    if (submission?.organisation_uuid != null) {
-      models.push({ model: "organisations", uuid: submission.organisation_uuid });
+    if (submission?.organisationUuid != null) {
+      models.push({ model: "organisations", uuid: submission.organisationUuid });
     }
-    if (submission?.project_pitch_uuid != null) {
-      models.push({ model: "projectPitches", uuid: submission.project_pitch_uuid });
+    if (submission?.projectPitchUuid != null) {
+      models.push({ model: "projectPitches", uuid: submission.projectPitchUuid });
     }
     return models;
-  }, [submission?.organisation_uuid, submission?.project_pitch_uuid]);
+  }, [submission?.organisationUuid, submission?.projectPitchUuid]);
   const feedbackFields = useMemo(
-    () => submission?.translated_feedback_fields ?? [],
-    [submission?.translated_feedback_fields]
+    () => submission?.translatedFeedbackFields ?? [],
+    [submission?.translatedFeedbackFields]
   );
   const requestedInformationFilter = useCallback(
     // TODO: this should not be using the label. It will require an API change and a data migration
@@ -68,7 +60,7 @@ const RequestMoreInformationPage = () => {
     [feedbackFields]
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(
-    submission?.form_uuid,
+    submission?.formUuid,
     feedbackFields,
     requestedInformationFilter
   );
@@ -76,18 +68,20 @@ const RequestMoreInformationPage = () => {
     () => formDefaultValues(submission?.answers ?? {}, fieldsProvider),
     [fieldsProvider, submission?.answers]
   );
-  const [, { data: form }] = useForm({ id: submission?.form_uuid, enabled: submission?.form_uuid != null });
+  const [, { data: form }] = useForm({ id: submission?.formUuid ?? undefined, enabled: submission?.formUuid != null });
+
+  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
+    { pathParams: { uuid: submission?.organisationUuid ?? "" } },
+    { enabled: submission?.organisationUuid != null }
+  );
 
   const orgDetails = useMemo(
-    (): OrgFormDetails | undefined =>
-      submission?.organisation_attributes == null
-        ? undefined
-        : {
-            uuid: submission.organisation_attributes.uuid,
-            currency: submission.organisation_attributes.currency,
-            startMonth: submission.organisation_attributes.start_month
-          },
-    [submission?.organisation_attributes]
+    (): OrgFormDetails => ({
+      uuid: orgData?.data.uuid,
+      currency: orgData?.data.currency ?? undefined,
+      startMonth: orgData?.data.fin_start_month ?? undefined
+    }),
+    [orgData?.data.currency, orgData?.data.fin_start_month, orgData?.data.uuid]
   );
 
   const onChange = useCallback(
@@ -97,9 +91,13 @@ const RequestMoreInformationPage = () => {
     [fieldsProvider, updateSubmission]
   );
 
+  const onSubmit = useCallback(() => {
+    updateSubmission({ status: "awaiting-approval" });
+  }, [updateSubmission]);
+
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={applicationLoading || !providerLoaded}>
+      <LoadingContainer loading={!applicationLoaded || !providerLoaded || orgLoading}>
         <WizardForm
           fieldsProvider={fieldsProvider}
           models={formModels}
@@ -111,14 +109,8 @@ const RequestMoreInformationPage = () => {
           onBackFirstStep={router.back}
           onCloseForm={() => router.push(`/applications/${uuid}`)}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
-          onSubmit={() =>
-            submitFormSubmission({
-              pathParams: {
-                uuid: submission?.uuid ?? ""
-              }
-            })
-          }
+          formStatus={submissionUpdating ? "saving" : "saved"}
+          onSubmit={onSubmit}
           submitButtonDisable={isSubmitting}
           defaultValues={defaultValues}
           tabOptions={{

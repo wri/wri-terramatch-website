@@ -91,6 +91,16 @@ export type ProjectPitchIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -263,6 +273,16 @@ export type ImpactStoryIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -422,6 +442,16 @@ export type TaskIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -447,7 +477,7 @@ export const taskIndex = new V3ApiEndpoint<TaskIndexResponse, TaskIndexError, Ta
 
 export type TaskGetPathParams = {
   /**
-   * Task UUID for task to retrieve
+   * UUID of the resource.
    */
   uuid: string;
 };
@@ -600,7 +630,7 @@ export const taskGet = new V3ApiEndpoint<TaskGetResponse, TaskGetError, TaskGetV
 
 export type TaskUpdatePathParams = {
   /**
-   * Task UUID for task to retrieve
+   * UUID of the resource.
    */
   uuid: string;
 };
@@ -955,6 +985,10 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
 
 export type UploadFilePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -973,10 +1007,6 @@ export type UploadFilePathParams = {
     | "financialIndicators"
     | "projectPitches"
     | "disturbanceReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
   /**
    * Media collection to retrieve
    */
@@ -1152,6 +1182,16 @@ export type TreeScientificNamesSearchResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -1179,6 +1219,10 @@ export const treeScientificNamesSearch = new V3ApiEndpoint<
 
 export type EstablishmentTreesFindPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type for which to retrieve the establishment tree data.
    */
   entity:
@@ -1190,10 +1234,6 @@ export type EstablishmentTreesFindPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for which to retrieve the establishment tree data.
-   */
-  uuid: string;
 };
 
 export type EstablishmentTreesFindError = Fetcher.ErrorWrapper<
@@ -1255,6 +1295,10 @@ export const establishmentTreesFind = new V3ApiEndpoint<
 
 export type TreeReportCountsFindPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type for which to retrieve the associated report count data.
    */
   entity:
@@ -1267,10 +1311,6 @@ export type TreeReportCountsFindPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for which to retrieve the associated report count data.
-   */
-  uuid: string;
 };
 
 export type TreeReportCountsFindError = Fetcher.ErrorWrapper<
@@ -1421,6 +1461,16 @@ export type DemographicsIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -1528,6 +1578,16 @@ export type DisturbanceIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -1673,6 +1733,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1715,6 +1785,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1759,6 +1839,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1801,6 +1891,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1845,6 +1945,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1887,6 +1997,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -1931,6 +2051,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -1974,6 +2104,16 @@ export const entityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2016,6 +2156,16 @@ export const entityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2112,6 +2262,10 @@ export const entityCreate = new V3ApiEndpoint<EntityCreateResponse, EntityCreate
 
 export type EntityGetPathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2124,10 +2278,6 @@ export type EntityGetPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityGetError = Fetcher.ErrorWrapper<
@@ -2361,6 +2511,10 @@ export const entityGet = new V3ApiEndpoint<
 
 export type EntityDeletePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2373,10 +2527,6 @@ export type EntityDeletePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityDeleteError = Fetcher.ErrorWrapper<
@@ -2429,6 +2579,10 @@ export const entityDelete = new V3ApiEndpoint<EntityDeleteResponse, EntityDelete
 
 export type EntityUpdatePathParams = {
   /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
    * Entity type to retrieve
    */
   entity:
@@ -2441,10 +2595,6 @@ export type EntityUpdatePathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for resource to retrieve
-   */
-  uuid: string;
 };
 
 export type EntityUpdateError = Fetcher.ErrorWrapper<
@@ -2499,7 +2649,358 @@ export const entityUpdate = new V3ApiEndpoint<undefined, EntityUpdateError, Enti
   "PATCH"
 );
 
+export type FormDataGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type FormDataGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDataGetResponse = {
+  meta?: {
+    /**
+     * @example formData
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formData
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FormDataDto;
+  };
+};
+
+export type FormDataGetVariables = {
+  pathParams: FormDataGetPathParams;
+};
+
+export const formDataGet = new V3ApiEndpoint<FormDataGetResponse, FormDataGetError, FormDataGetVariables, {}>(
+  "/entities/v3/{entity}/{uuid}/formData",
+  "GET"
+);
+
+export type FormDataUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type FormDataUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormDataUpdateResponse = {
+  meta?: {
+    /**
+     * @example formData
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formData
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FormDataDto;
+  };
+};
+
+export type FormDataUpdateVariables = {
+  body: Schemas.UpdateFormDataBody;
+  pathParams: FormDataUpdatePathParams;
+};
+
+export const formDataUpdate = new V3ApiEndpoint<
+  FormDataUpdateResponse,
+  FormDataUpdateError,
+  FormDataUpdateVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/formData", "PUT");
+
+export type UpdateRequestGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type UpdateRequestGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateRequestGetResponse = {
+  meta?: {
+    /**
+     * @example updateRequests
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example updateRequests
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.UpdateRequestDto;
+  };
+};
+
+export type UpdateRequestGetVariables = {
+  pathParams: UpdateRequestGetPathParams;
+};
+
+export const updateRequestGet = new V3ApiEndpoint<
+  UpdateRequestGetResponse,
+  UpdateRequestGetError,
+  UpdateRequestGetVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/updateRequest", "GET");
+
+export type UpdateRequestUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+};
+
+export type UpdateRequestUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateRequestUpdateResponse = {
+  meta?: {
+    /**
+     * @example updateRequests
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example updateRequests
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.UpdateRequestDto;
+  };
+};
+
+export type UpdateRequestUpdateVariables = {
+  body: Schemas.UpdateRequestUpdateBody;
+  pathParams: UpdateRequestUpdatePathParams;
+};
+
+export const updateRequestUpdate = new V3ApiEndpoint<
+  UpdateRequestUpdateResponse,
+  UpdateRequestUpdateError,
+  UpdateRequestUpdateVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/updateRequest", "PATCH");
+
 export type EntityAssociationIndexPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
   /**
    * Entity type for associations
    */
@@ -2513,10 +3014,6 @@ export type EntityAssociationIndexPathParams = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports";
-  /**
-   * Entity UUID for association
-   */
-  uuid: string;
   /**
    * Association type to retrieve
    */
@@ -2655,6 +3152,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2693,6 +3200,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2733,6 +3250,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2771,6 +3298,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2811,6 +3348,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2850,6 +3397,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -2888,6 +3445,16 @@ export const entityAssociationIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -2966,6 +3533,16 @@ export type OptionLabelsIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3035,6 +3612,16 @@ export type OptionLabelsGetListResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3062,17 +3649,17 @@ export const optionLabelsGetList = new V3ApiEndpoint<
 
 export type LinkedFieldsIndexQueryParams = {
   formModelTypes?: (
-    | "organisations"
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
     | "financialReports"
     | "disturbanceReports"
-    | "nurseries"
-    | "nurseryReports"
-    | "projects"
-    | "projectPitches"
-    | "projectReports"
-    | "sites"
-    | "siteReports"
     | "srpReports"
+    | "organisations"
+    | "projectPitches"
   )[];
 };
 
@@ -3104,6 +3691,16 @@ export type LinkedFieldsIndexResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -3125,6 +3722,212 @@ export const linkedFieldsIndex = new V3ApiEndpoint<
   LinkedFieldsIndexVariables,
   {}
 >("/forms/v3/linkedFields", "GET");
+
+export type SubmissionGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type SubmissionGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionGetResponse = {
+  meta?: {
+    /**
+     * @example submissions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example submissions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SubmissionDto;
+  };
+};
+
+export type SubmissionGetVariables = {
+  pathParams: SubmissionGetPathParams;
+};
+
+export const submissionGet = new V3ApiEndpoint<SubmissionGetResponse, SubmissionGetError, SubmissionGetVariables, {}>(
+  "/forms/v3/submissions/{uuid}",
+  "GET"
+);
+
+export type SubmissionUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type SubmissionUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionUpdateResponse = {
+  meta?: {
+    /**
+     * @example formData
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formData
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.FormDataDto;
+  };
+};
+
+export type SubmissionUpdateVariables = {
+  body: Schemas.UpdateSubmissionBody;
+  pathParams: SubmissionUpdatePathParams;
+};
+
+export const submissionUpdate = new V3ApiEndpoint<
+  SubmissionUpdateResponse,
+  SubmissionUpdateError,
+  SubmissionUpdateVariables,
+  {}
+>("/forms/v3/submissions/{uuid}", "PUT");
+
+export type SubmissionCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SubmissionCreateResponse = {
+  meta?: {
+    /**
+     * @example submissions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example submissions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SubmissionDto;
+  };
+};
+
+export type SubmissionCreateVariables = {
+  body: Schemas.CreateSubmissionBody;
+};
+
+/**
+ * Create a new form submission
+ */
+export const submissionCreate = new V3ApiEndpoint<
+  SubmissionCreateResponse,
+  SubmissionCreateError,
+  SubmissionCreateVariables,
+  {}
+>("/forms/v3/submissions", "POST");
 
 export type FormIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -3201,6 +4004,16 @@ export type FormIndexResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -3512,6 +4325,703 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
+export type ApplicationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  fundingProgrammeUuid?: string;
+  organisationUuid?: string;
+  currentSubmissionStatus?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started";
+};
+
+export type ApplicationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationIndexResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example applications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationDto;
+  }[];
+};
+
+export type ApplicationIndexVariables = {
+  queryParams?: ApplicationIndexQueryParams;
+};
+
+export const applicationIndex = new V3ApiEndpoint<
+  ApplicationIndexResponse,
+  ApplicationIndexError,
+  ApplicationIndexVariables,
+  {}
+>("/applications/v3/applications", "GET");
+
+export type ApplicationGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationGetQueryParams = {
+  /**
+   * sideloads to include
+   */
+  sideloads?: ("currentSubmission" | "fundingProgramme")[];
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type ApplicationGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationGetResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example applications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationDto;
+  };
+};
+
+export type ApplicationGetVariables = {
+  pathParams: ApplicationGetPathParams;
+  queryParams?: ApplicationGetQueryParams;
+};
+
+export const applicationGet = new V3ApiEndpoint<
+  ApplicationGetResponse,
+  ApplicationGetError,
+  ApplicationGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}", "GET");
+
+export type ApplicationDeletePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationDeleteResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ApplicationDeleteVariables = {
+  pathParams: ApplicationDeletePathParams;
+};
+
+export const applicationDelete = new V3ApiEndpoint<
+  ApplicationDeleteResponse,
+  ApplicationDeleteError,
+  ApplicationDeleteVariables,
+  {}
+>("/applications/v3/applications/{uuid}", "DELETE");
+
+export type ApplicationHistoryGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type ApplicationHistoryGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ApplicationHistoryGetResponse = {
+  meta?: {
+    /**
+     * @example applicationHistories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example applicationHistories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ApplicationHistoryDto;
+  };
+};
+
+export type ApplicationHistoryGetVariables = {
+  pathParams: ApplicationHistoryGetPathParams;
+};
+
+export const applicationHistoryGet = new V3ApiEndpoint<
+  ApplicationHistoryGetResponse,
+  ApplicationHistoryGetError,
+  ApplicationHistoryGetVariables,
+  {}
+>("/applications/v3/applications/{uuid}/history", "GET");
+
+export type FundingProgrammesIndexQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FundingProgrammesIndexError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type FundingProgrammesIndexResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  }[];
+};
+
+export type FundingProgrammesIndexVariables = {
+  queryParams?: FundingProgrammesIndexQueryParams;
+};
+
+export const fundingProgrammesIndex = new V3ApiEndpoint<
+  FundingProgrammesIndexResponse,
+  FundingProgrammesIndexError,
+  FundingProgrammesIndexVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes", "GET");
+
+export type FundingProgrammeCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeCreateResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeCreateVariables = {
+  body: Schemas.CreateFundingProgrammeBody;
+};
+
+/**
+ * Create a new funding programme
+ */
+export const fundingProgrammeCreate = new V3ApiEndpoint<
+  FundingProgrammeCreateResponse,
+  FundingProgrammeCreateError,
+  FundingProgrammeCreateVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes", "POST");
+
+export type FundingProgrammeGetPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeGetQueryParams = {
+  /**
+   * @default true
+   */
+  translated?: boolean;
+};
+
+export type FundingProgrammeGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeGetResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeGetVariables = {
+  pathParams: FundingProgrammeGetPathParams;
+  queryParams?: FundingProgrammeGetQueryParams;
+};
+
+export const fundingProgrammeGet = new V3ApiEndpoint<
+  FundingProgrammeGetResponse,
+  FundingProgrammeGetError,
+  FundingProgrammeGetVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "GET");
+
+export type FundingProgrammeDeletePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeDeleteResponse = {
+  meta?: {
+    /**
+     * @example applications
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type FundingProgrammeDeleteVariables = {
+  pathParams: FundingProgrammeDeletePathParams;
+};
+
+export const fundingProgrammeDelete = new V3ApiEndpoint<
+  FundingProgrammeDeleteResponse,
+  FundingProgrammeDeleteError,
+  FundingProgrammeDeleteVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "DELETE");
+
+export type FundingProgrammeUpdatePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type FundingProgrammeUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FundingProgrammeUpdateResponse = {
+  meta?: {
+    /**
+     * @example fundingProgrammes
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example fundingProgrammes
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FundingProgrammeDto;
+  };
+};
+
+export type FundingProgrammeUpdateVariables = {
+  body: Schemas.UpdateFundingProgrammeBody;
+  pathParams: FundingProgrammeUpdatePathParams;
+};
+
+/**
+ * Update a funding programme
+ */
+export const fundingProgrammeUpdate = new V3ApiEndpoint<
+  FundingProgrammeUpdateResponse,
+  FundingProgrammeUpdateError,
+  FundingProgrammeUpdateVariables,
+  {}
+>("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "PUT");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -3521,8 +5031,19 @@ export const operationsByTag = {
   demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
+  formData: { formDataGet, formDataUpdate },
+  updateRequests: { updateRequestGet, updateRequestUpdate },
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
+  submissions: { submissionGet, submissionUpdate, submissionCreate },
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate },
+  applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
+  fundingProgrammes: {
+    fundingProgrammesIndex,
+    fundingProgrammeCreate,
+    fundingProgrammeGet,
+    fundingProgrammeDelete,
+    fundingProgrammeUpdate
+  }
 };

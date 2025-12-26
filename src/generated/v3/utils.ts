@@ -30,19 +30,21 @@ export type TranslatableError = ErrorPayload & { code: string; variables?: Dicti
 export const isTranslatableError = (payload: ErrorPayload): payload is TranslatableError =>
   (payload as TranslatableError).code != null;
 
-const V3_NAMESPACES: Record<string, string> = {
+const V3_NAMESPACES: Dictionary<string> = {
+  applications: entityServiceUrl,
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
-  polygonClipping: researchServiceUrl,
-  validations: researchServiceUrl,
+  dashboard: dashboardServiceUrl,
   entities: entityServiceUrl,
   forms: entityServiceUrl,
-  dashboard: dashboardServiceUrl,
+  fundingProgrammes: entityServiceUrl,
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
+  polygonClipping: researchServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
-  users: userServiceUrl
+  users: userServiceUrl,
+  validations: researchServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
@@ -265,7 +267,7 @@ async function dispatchRequest<TResponse>(url: string, requestInit: RequestInit)
     const response = await fetch(url, requestInit);
 
     if (!response.ok) {
-      if (url.endsWith("/users/me") && response.status === 401) {
+      if (url.endsWith("users/v3/me") && response.status === 401) {
         // If the users/me fetch is unauthorized, our login has timed out and we need to transition
         // to a logged out state.
         logout();

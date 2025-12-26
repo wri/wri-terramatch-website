@@ -1,6 +1,9 @@
+import { useT } from "@transifex/react";
 import { useCallback, useEffect, useRef } from "react";
 
+import { useToastContext } from "@/context/toast.provider";
 import { PendingError } from "@/store/apiSlice";
+import Log from "@/utils/log";
 
 /**
  * Execute a callback when a request is complete based on the isFetching boolean flag.
@@ -23,10 +26,20 @@ export const useRequestComplete = (isFetching: boolean, onComplete: () => unknow
 export const useRequestSuccess = (
   isFetching: boolean,
   fetchFailure: PendingError | undefined,
-  onSuccess: () => unknown
+  onSuccess: () => unknown,
+  failureMessage?: string
 ) => {
+  const { openToast } = useToastContext();
+  const t = useT();
   useRequestComplete(
     isFetching,
-    useCallback(() => (fetchFailure == null ? onSuccess : () => {}), [fetchFailure, onSuccess])
+    useCallback(() => {
+      if (fetchFailure == null) {
+        onSuccess();
+      } else if (failureMessage != null) {
+        Log.error(`Request failed: ${failureMessage}`, fetchFailure);
+        openToast(t(failureMessage));
+      }
+    }, [failureMessage, fetchFailure, onSuccess, openToast, t])
   );
 };

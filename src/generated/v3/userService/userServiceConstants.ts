@@ -1,18 +1,18 @@
 import { StoreResourceMap } from "@/store/apiSlice";
 import {
   LoginDto,
-  UserDto,
-  OrganisationDto,
   ResetPasswordResponseDto,
-  VerificationUserResponseDto
+  VerificationUserResponseDto,
+  OrganisationDto,
+  UserDto
 } from "./userServiceSchemas";
 
-export const USER_SERVICE_RESOURCES = ["logins", "users", "organisations", "passwordResets", "verifications"] as const;
+export const USER_SERVICE_RESOURCES = ["logins", "passwordResets", "verifications", "organisations", "users"] as const;
 
 export type UserServiceApiResources = {
   logins: StoreResourceMap<LoginDto>;
-  users: StoreResourceMap<UserDto>;
-  organisations: StoreResourceMap<OrganisationDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   verifications: StoreResourceMap<VerificationUserResponseDto>;
+  organisations: StoreResourceMap<OrganisationDto>;
+  users: StoreResourceMap<UserDto>;
 };

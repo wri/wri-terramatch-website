@@ -5,7 +5,6 @@ import { taskDataProvider } from "@/admin/apiProvider/dataProviders/taskDataProv
 import modules from "@/admin/modules";
 
 import { applicationDataProvider } from "./applicationDataProvider";
-import { auditDataProvider } from "./auditDataProvider";
 import { disturbanceReportDataProvider } from "./disturbanceReportDataProvider";
 import { financialReportDataProvider } from "./financialReportDataProvider";
 import { formDataProvider } from "./formDataProvider";
@@ -14,13 +13,11 @@ import { impactStoriesDataProvider } from "./impactStoriesDataProvider";
 import { nurseryDataProvider } from "./nurseryDataProvider";
 import { nurseryReportDataProvider } from "./nurseryReportDataProvider";
 import { organisationDataProvider } from "./organisationDataProvider";
-import { pitchDataProvider } from "./pitchDataProviders";
 import { projectDataProvider } from "./projectDataProvider";
 import { projectReportDataProvider } from "./projectReportDataProvider";
 import { siteDataProvider } from "./siteDataProvider";
 import { siteReportDataProvider } from "./siteReportDataProvider";
 import { srpReportDataProvider } from "./SRPReportDataProvider";
-import { stageDataProvider } from "./stageDataProvider";
 import { userDataProvider } from "./userDataProvider";
 
 //@ts-ignore
@@ -32,9 +29,6 @@ export const dataProvider = combineDataProviders(resource => {
     case modules.organisation.ResourceName:
       return organisationDataProvider;
 
-    case modules.pitch.ResourceName:
-      return pitchDataProvider;
-
     case modules.application.ResourceName:
       return applicationDataProvider;
 
@@ -43,9 +37,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.reportingFramework.ResourceName:
       return reportingFrameworkDataProvider;
-
-    case modules.stage.ResourceName:
-      return stageDataProvider;
 
     case modules.form.ResourceName:
       return formDataProvider;
@@ -73,9 +64,6 @@ export const dataProvider = combineDataProviders(resource => {
 
     case modules.financialReport.ResourceName:
       return financialReportDataProvider;
-
-    case modules.audit.ResourceName:
-      return auditDataProvider;
 
     case modules.impactStories.ResourceName:
       return impactStoriesDataProvider;

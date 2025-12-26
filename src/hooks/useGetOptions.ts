@@ -1,4 +1,4 @@
-import { useOptionLabels } from "@/connections/util/Form";
+import { useOptionLabels } from "@/connections/Form";
 import { Option } from "@/types/common";
 import { toArray } from "@/utils/array";
 

@@ -12,8 +12,6 @@ import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Text from "@/components/elements/Text/Text";
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -32,19 +30,23 @@ import {
 import { useTask } from "@/connections/Task";
 import FrameworkProvider from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { usePutV2ENTITYUUIDNothingToReport } from "@/generated/apiComponents";
 import {
   NurseryReportLightDto,
   ProjectReportLightDto,
   SiteReportLightDto,
   SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
-import { pluralEntityName } from "@/helpers/entity";
+import { v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
+import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/NothingToReportModal";
+import {
+  NOTHING_TO_REPORT_MODELS,
+  NothingToReportEntity,
+  TaskReportDto
+} from "@/pages/project/[uuid]/reporting-task/types";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
-import { ReportsModelNames, Status } from "@/types/common";
-import { isNotNull } from "@/utils/array";
+import { Status } from "@/types/common";
 
 const StatusMapping: { [index: string]: Status } = {
   due: "edit",
@@ -70,7 +72,7 @@ export type TaskReports = {
 
 const mapTaskReport =
   (format: ReturnType<typeof useDate>["format"]) =>
-  (report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto): TaskReport => {
+  (report: TaskReportDto): TaskReport => {
     let completionStatus = "started";
     const { status: reportStatus, updateRequestStatus } = report;
     // If there is no submitted update request in play, then the report status is the source of
@@ -116,7 +118,7 @@ const ReportingTaskPage = () => {
   const t = useT();
   const { format } = useDate();
   const router = useRouter();
-  const { openModal, closeModal } = useModalContext();
+  const { openModal } = useModalContext();
   const [tourEnabled, setTourEnabled] = useState(false);
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
@@ -133,35 +135,16 @@ const ReportingTaskPage = () => {
   const [, { data: srpReports }] = useLightSRPReportList({ ids: srpReportUuids });
   const [projectLoaded, { data: project }] = useFullProject({ id: projectUUID });
 
-  const { mutate: submitNothingToReport } = usePutV2ENTITYUUIDNothingToReport({
-    onSuccess: result => {
-      const report = (result as unknown as { data: TaskReport })?.data;
-      if (report == null) return;
-
-      const index = reportsTableData.findIndex(({ uuid }) => uuid === report.uuid);
-      if (index >= 0) {
-        const tableData = [...reportsTableData];
-        tableData[index] = mapTaskReport(format)(report);
-        setReportsTableData(tableData);
-      }
-    }
-  });
-
   const reports = useMemo(() => {
-    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])]
-      // TODO TM-2581 See comment in EditEntityForm's onSuccess for submit. This will not be needed
-      // once we've switched over to v3 for submission.
-      .filter(isNotNull)
-      .map(mapTaskReport(format))
-      .filter(report => {
-        for (const filter of filters) {
-          const value = report[filter.filter.accessorKey as keyof TaskReport];
-          if (value !== filter.value) {
-            return false;
-          }
+    const additional = [...(siteReports ?? []), ...(nurseryReports ?? [])].map(mapTaskReport(format)).filter(report => {
+      for (const filter of filters) {
+        const value = report[filter.filter.accessorKey as keyof TaskReport];
+        if (value !== filter.value) {
+          return false;
         }
-        return true;
-      });
+      }
+      return true;
+    });
 
     const srpReportsMapped = srpReports?.map(mapTaskReport(format));
     setSrpReportsTableData(srpReportsMapped ?? []);
@@ -179,34 +162,28 @@ const ReportingTaskPage = () => {
 
   const tourSteps = useGetReportingTasksTourSteps(reports);
 
-  const nothingToReportHandler = (entity: ReportsModelNames, uuid: string) => {
-    openModal(
-      ModalId.CONFIRM_UPDATE,
-      <Modal
-        iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-        title={t("Are you sure you don't want to provide any updates for this {entity}?", {
-          entity: entity === "site-reports" ? t("site") : t("nursery")
-        })}
-        content={t(
-          "If you choose not to report anything, it will tell WRI that there was no planting done at these restoration {entity}. Are you sure you want to continue? This can't be undone.",
-          {
-            entity: entity === "site-reports" ? t("site") : t("nursery")
-          }
-        )}
-        primaryButtonProps={{
-          children: t("Nothing to report"),
-          onClick: async () => {
-            submitNothingToReport({ pathParams: { entity, uuid } });
-            closeModal(ModalId.CONFIRM_UPDATE);
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("Cancel"),
-          onClick: () => closeModal(ModalId.CONFIRM_UPDATE)
-        }}
-      />
-    );
-  };
+  const nothingToReportSuccess = useCallback(
+    (report: TaskReportDto) => {
+      setReportsTableData(tableData => {
+        const index = tableData.findIndex(({ uuid }) => uuid === report.uuid);
+        if (index < 0) return tableData;
+
+        const update = [...tableData];
+        update[index] = mapTaskReport(format)(report);
+        return update;
+      });
+    },
+    [format]
+  );
+  const nothingToReportHandler = useCallback(
+    (entity: NothingToReportEntity, uuid: string) => {
+      openModal(
+        ModalId.CONFIRM_UPDATE,
+        <NothingToReportModal entity={entity} uuid={uuid} onSuccess={nothingToReportSuccess} />
+      );
+    },
+    [nothingToReportSuccess, openModal]
+  );
 
   const tableColumns: ColumnDef<RowData>[] = [
     {
@@ -249,12 +226,15 @@ const ReportingTaskPage = () => {
         const { index } = props.row;
         const { status, type, completion, uuid, completionStatus } = record;
 
+        const v3Name = v3EntityName(type);
         const shouldShowButton =
-          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "project-report" || completion === 100);
+          NOTHING_TO_REPORT_MODELS.includes(v3Name as NothingToReportEntity) &&
+          NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) &&
+          completion != 100;
 
         const handleClick = useCallback(() => {
-          nothingToReportHandler(pluralEntityName(type) as ReportsModelNames, uuid);
-        }, [type, uuid]);
+          nothingToReportHandler(v3Name as NothingToReportEntity, uuid);
+        }, [uuid, v3Name]);
 
         return (
           <div className="flex justify-end gap-4">
@@ -336,7 +316,7 @@ const ReportingTaskPage = () => {
           NOTHING_TO_REPORT_DISPLAYABLE_STATUSES.includes(status) && !(type === "srp-report" || completion === 100);
 
         const handleClick = useCallback(() => {
-          nothingToReportHandler("srp-reports" as ReportsModelNames, uuid);
+          nothingToReportHandler("srpReports", uuid);
         }, [uuid]);
 
         return (

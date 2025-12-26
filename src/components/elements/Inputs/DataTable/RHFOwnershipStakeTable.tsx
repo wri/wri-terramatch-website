@@ -23,29 +23,53 @@ export interface RHFOwnershipStakeTableProps
   formHook?: UseFormReturn;
 }
 
+// TODO: these normalize methods are only needed until we move ownership stake creation to v3 (and
+//  probably have it sync as part of the form data instead of creating with API calls.
+const v2Normalize = (data: any) => {
+  const { firstName, lastName, percentOwnership, yearOfBirth, ...rest } = data;
+  return {
+    first_name: firstName,
+    last_name: lastName,
+    percent_ownership: percentOwnership,
+    year_of_birth: yearOfBirth,
+    ...rest
+  };
+};
+
+const v3Normalize = (data: any) => {
+  const { first_name, last_name, percent_ownership, year_of_birth, ...rest } = data;
+  return {
+    firstName: first_name,
+    lastName: last_name,
+    percentOwnership: percent_ownership,
+    yearOfBirth: year_of_birth,
+    ...rest
+  };
+};
+
 export const getOwnershipTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
-  { accessorKey: "first_name", header: t("First name") },
-  { accessorKey: "last_name", header: t("Last name") },
+  { accessorKey: "firstName", header: t("First name") },
+  { accessorKey: "lastName", header: t("Last name") },
   {
     accessorKey: "gender",
     header: t("Gender"),
     cell: props => formatOptionsList(getGenderOptions(t), props.getValue() as string)
   },
   { accessorKey: "title", header: t("Title") },
-  { accessorKey: "percent_ownership", header: t("Percent Ownership") },
-  { accessorKey: "year_of_birth", header: t("Year of birth") }
+  { accessorKey: "percentOwnership", header: t("Percent Ownership") },
+  { accessorKey: "yearOfBirth", header: t("Year of birth") }
 ];
 
 const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
   {
     label: t("first name"),
-    name: "first_name",
+    name: "firstName",
     inputType: "text",
     validation: { required: true }
   },
   {
     label: t("last name"),
-    name: "last_name",
+    name: "lastName",
     inputType: "text",
     validation: { required: true }
   },
@@ -64,13 +88,13 @@ const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
   },
   {
     label: t("Year of birth"),
-    name: "year_of_birth",
+    name: "yearOfBirth",
     inputType: "number",
     validation: { required: true, min: 1900, max: 2050 }
   },
   {
     label: t("Percent Ownership"),
-    name: "percent_ownership",
+    name: "percentOwnership",
     inputType: "number",
     validation: { required: true, min: 1, max: 100 }
   }
@@ -92,7 +116,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
     onSuccess(data) {
       const _tmp = [...value];
       //@ts-ignore
-      _tmp.push(data.data);
+      _tmp.push(v3Normalize(data.data));
       field.onChange(_tmp);
     }
   });
@@ -113,7 +137,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
 
       if (index !== -1) {
         //@ts-ignore
-        _tmp[index] = data.data;
+        _tmp[index] = v3Normalize(data.data);
         field.onChange(_tmp);
         onChangeCapture?.();
         props?.formHook?.reset(props?.formHook.getValues());
@@ -144,7 +168,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
       handleCreate={data => {
         createTeamMember({
           body: {
-            ...data,
+            ...v2Normalize(data),
             organisation_id: organisationId
           }
         });
@@ -158,7 +182,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
         if (data.uuid) {
           updateTeamMember({
             pathParams: { uuid: data.uuid },
-            body: { ...data }
+            body: { ...v2Normalize(data) }
           });
         }
       }}
