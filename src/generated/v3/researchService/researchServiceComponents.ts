@@ -1937,6 +1937,304 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   {}
 >("/research/v3/indicators/{slug}", "POST");
 
+export type GetProjectPolygonQueryParams = {
+  /**
+   * UUID of the project pitch to get the polygon for
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  projectPitchUuid?: string;
+};
+
+export type GetProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type GetProjectPolygonVariables = {
+  queryParams?: GetProjectPolygonQueryParams;
+};
+
+/**
+ * Get the project polygon for a specific project pitch. Only one polygon per project pitch is supported.
+ */
+export const getProjectPolygon = new V3ApiEndpoint<
+  GetProjectPolygonResponse,
+  GetProjectPolygonError,
+  GetProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons", "GET");
+
+export type CreateProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type CreateProjectPolygonVariables = {
+  body: Schemas.CreateProjectPolygonJsonApiRequestDto;
+};
+
+/**
+ * Create a project polygon for a project pitch from GeoJSON.
+ *
+ *     Each feature must have `projectPitchUuid` in properties.
+ *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, the request will fail.
+ */
+export const createProjectPolygon = new V3ApiEndpoint<
+  CreateProjectPolygonResponse,
+  CreateProjectPolygonError,
+  CreateProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons", "POST");
+
+export type UploadProjectPolygonFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadProjectPolygonFileResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type UploadProjectPolygonFileVariables = {
+  body: Schemas.ProjectPolygonUploadRequestDto;
+};
+
+/**
+ * Upload a geometry file (KML, Shapefile, or GeoJSON) to create a project polygon.
+ *
+ *     Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ *
+ *     Geometry transformation rules:
+ *     - Single point: Creates a circular polygon using est_area
+ *     - Two or more points: Uses Voronoi transformation, then convex hull to merge
+ *     - Multiple features (mixed geometries): Creates a convex hull encompassing all features
+ *     - Single polygon/line: Uses the geometry as-is
+ *
+ *
+ *     If a project polygon already exists for the project pitch, it will be replaced.
+ */
+export const uploadProjectPolygonFile = new V3ApiEndpoint<
+  UploadProjectPolygonFileResponse,
+  UploadProjectPolygonFileError,
+  UploadProjectPolygonFileVariables,
+  {}
+>("/research/v3/projectPolygons/upload", "POST");
+
+export type DeleteProjectPolygonPathParams = {
+  uuid: string;
+};
+
+export type DeleteProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteProjectPolygonVariables = {
+  pathParams: DeleteProjectPolygonPathParams;
+};
+
+/**
+ * Soft deletes a project polygon and its associated polygon geometry record.
+ */
+export const deleteProjectPolygon = new V3ApiEndpoint<
+  DeleteProjectPolygonResponse,
+  DeleteProjectPolygonError,
+  DeleteProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons/{uuid}", "DELETE");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -1962,5 +2260,6 @@ export const operationsByTag = {
     validateGeometries
   },
   polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
-  indicators: { startIndicatorCalculation }
+  indicators: { startIndicatorCalculation },
+  projectPolygons: { getProjectPolygon, createProjectPolygon, uploadProjectPolygonFile, deleteProjectPolygon }
 };
