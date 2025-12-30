@@ -1937,6 +1937,91 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   {}
 >("/research/v3/indicators/{slug}", "POST");
 
+export type GetProjectPolygonGeoJsonQueryParams = {
+  /**
+   * UUID of a project pitch to get its polygon
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  projectPitchUuid: string;
+};
+
+export type GetProjectPolygonGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetProjectPolygonGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetProjectPolygonGeoJsonVariables = {
+  queryParams: GetProjectPolygonGeoJsonQueryParams;
+};
+
+/**
+ * Export a project polygon as GeoJSON FeatureCollection for a specific project pitch.
+ */
+export const getProjectPolygonGeoJson = new V3ApiEndpoint<
+  GetProjectPolygonGeoJsonResponse,
+  GetProjectPolygonGeoJsonError,
+  GetProjectPolygonGeoJsonVariables,
+  {}
+>("/research/v3/projectPolygons/geojson", "GET");
+
 export type GetProjectPolygonQueryParams = {
   /**
    * UUID of the project pitch to get the polygon for
@@ -2261,5 +2346,11 @@ export const operationsByTag = {
   },
   polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
   indicators: { startIndicatorCalculation },
-  projectPolygons: { getProjectPolygon, createProjectPolygon, uploadProjectPolygonFile, deleteProjectPolygon }
+  projectPolygons: {
+    getProjectPolygonGeoJson,
+    getProjectPolygon,
+    createProjectPolygon,
+    uploadProjectPolygonFile,
+    deleteProjectPolygon
+  }
 };

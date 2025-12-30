@@ -1374,13 +1374,13 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
 }
 
 export async function downloadProjectPolygonsGeoJson(
-  projectUuid: string,
+  projectPitchUuid: string,
   projectName: string,
   options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid" | "projectUuid">
 ): Promise<void> {
   try {
     const result = await loadProjectPolygonsGeoJson({
-      projectUuid,
+      projectPitchUuid,
       ...options
     });
 
