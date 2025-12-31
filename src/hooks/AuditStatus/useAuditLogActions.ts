@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { sitePolygonsConnection } from "@/connections/SitePolygons";
 import {
-  fetchGetV2SitesSiteCheckApprove,
   fetchPostV2TerrafundValidationPolygon,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
 } from "@/generated/apiComponents";
 import { ESTIMATED_AREA_CRITERIA_ID } from "@/types/validation";
+import { loadConnection } from "@/utils/loadConnection";
 import {
   getValueForStatusDisturbanceReport,
   getValueForStatusEntityReport,
@@ -90,10 +91,40 @@ const useAuditLogActions = ({
   useEffect(() => {
     const fetchCheckPolygons = async () => {
       if (entityType === "Site" && record?.uuid && isSite) {
-        const result = await fetchGetV2SitesSiteCheckApprove({
-          pathParams: { site: isSiteProject ? selected?.uuid : record.uuid }
-        });
-        setCheckPolygons(result.data?.can_approve);
+        const siteUuid = isSiteProject ? selected?.uuid : record.uuid;
+        if (!siteUuid) {
+          setCheckPolygons(false);
+          return;
+        }
+
+        try {
+          // Use v3 endpoint to get sitePolygons and calculate can_approve locally
+          // Equivalent to backend logic: check if there are active polygons that are not approved
+          // Filter by non-approved statuses to reduce results, then check if any are active
+          const response = await loadConnection(sitePolygonsConnection, {
+            entityName: "sites",
+            entityUuid: siteUuid,
+            pageNumber: 1,
+            pageSize: 100,
+            filter: {
+              "polygonStatus[]": ["draft", "submitted", "needs-more-information"]
+            }
+          });
+
+          if (response.loadFailure) {
+            setCheckPolygons(false);
+            return;
+          }
+
+          const polygons = response.data ?? [];
+          // Check if there are active polygons that are not approved
+          // We already filtered by non-approved statuses, so we just need to check isActive
+          const canApprove = polygons.some(polygon => polygon.isActive);
+          setCheckPolygons(canApprove);
+        } catch (error) {
+          console.error("Error checking site polygons:", error);
+          setCheckPolygons(false);
+        }
       }
     };
 
