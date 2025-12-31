@@ -18097,50 +18097,6 @@ export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSit
   );
 };
 
-export type GetV2SitesSiteCheckApprovePathParams = {
-  site: string;
-};
-
-export type GetV2SitesSiteCheckApproveError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2SitesSiteCheckApproveResponse = {
-  data?: {
-    can_approve?: boolean;
-  };
-};
-
-export type GetV2SitesSiteCheckApproveVariables = {
-  pathParams: GetV2SitesSiteCheckApprovePathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2SitesSiteCheckApprove = (variables: GetV2SitesSiteCheckApproveVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2SitesSiteCheckApproveResponse,
-    GetV2SitesSiteCheckApproveError,
-    undefined,
-    {},
-    {},
-    GetV2SitesSiteCheckApprovePathParams
-  >({ url: "/v2/sites/{site}/check-approve", method: "get", ...variables, signal });
-
-export const useGetV2SitesSiteCheckApprove = <TData = GetV2SitesSiteCheckApproveResponse>(
-  variables: GetV2SitesSiteCheckApproveVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2SitesSiteCheckApproveResponse, GetV2SitesSiteCheckApproveError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2SitesSiteCheckApproveResponse, GetV2SitesSiteCheckApproveError, TData>(
-    queryKeyFn({ path: "/v2/sites/{site}/check-approve", operationId: "getV2SitesSiteCheckApprove", variables }),
-    ({ signal }) => fetchGetV2SitesSiteCheckApprove({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PutV2SitePolygonStatusBulkError = Fetcher.ErrorWrapper<undefined>;
 
 export type PutV2SitePolygonStatusBulkResponse = {
@@ -20282,11 +20238,6 @@ export type QueryOperation =
       path: "/v2/projects/{UUID}/site-polygons/all";
       operationId: "getV2ProjectsUUIDSitePolygonsAll";
       variables: GetV2ProjectsUUIDSitePolygonsAllVariables;
-    }
-  | {
-      path: "/v2/sites/{site}/check-approve";
-      operationId: "getV2SitesSiteCheckApprove";
-      variables: GetV2SitesSiteCheckApproveVariables;
     }
   | {
       path: "/v2/site-polygon/{uuid}";

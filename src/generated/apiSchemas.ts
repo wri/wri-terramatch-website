@@ -9865,10 +9865,6 @@ export type SitePolygonResource = {
   created_by?: string;
 };
 
-export type SiteCheckApproveResponse = {
-  can_approve?: boolean;
-};
-
 export type DashboardProjectViewResponse = {
   data?: {
     allowed?: boolean;
