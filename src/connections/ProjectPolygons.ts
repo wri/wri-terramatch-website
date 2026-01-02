@@ -4,6 +4,7 @@ import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   createProjectPolygon,
   deleteProjectPolygon as deleteProjectPolygonEndpoint,
+  getProjectPolygon,
   uploadProjectPolygonFile
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
@@ -25,6 +26,23 @@ const createProjectPolygonConnection = v3Resource("projectPolygons", createProje
 
 export const useCreateProjectPolygon = connectionHook(createProjectPolygonConnection);
 export const loadCreateProjectPolygon = connectionLoader(createProjectPolygonConnection);
+
+const getProjectPolygonConnection = v3Resource("projectPolygons", getProjectPolygon)
+  .singleByFilter<ProjectPolygonDto, { projectPitchUuid?: string }>(props => ({
+    queryParams: props.filter
+  }))
+  .enabledProp()
+  .isLoading()
+  .refetch((props, variablesFactory) => {
+    const variables = variablesFactory(props);
+    if (variables?.queryParams) {
+      ApiSlice.pruneCache("projectPolygons");
+    }
+  })
+  .buildConnection();
+
+export const useProjectPolygonByPitch = connectionHook(getProjectPolygonConnection);
+export const loadProjectPolygonByPitch = connectionLoader(getProjectPolygonConnection);
 
 export const deleteProjectPolygon = deleterAsync("projectPolygons", deleteProjectPolygonEndpoint, (uuid: string) => ({
   pathParams: { uuid }
@@ -48,6 +66,22 @@ export const createProjectPolygonResource = async (
   ApiSlice.pruneIndex("projectPolygons", "");
 
   return response.data?.attributes!;
+};
+
+export const createProjectPolygonWithReplace = async (
+  attributes: CreateProjectPolygonAttributesDto,
+  projectPitchUuid: string
+): Promise<ProjectPolygonDto> => {
+  const existingPolygon = await loadProjectPolygonByPitch({
+    filter: { projectPitchUuid },
+    enabled: true
+  });
+
+  if (existingPolygon.data?.uuid) {
+    await deleteProjectPolygon(existingPolygon.data.uuid);
+  }
+
+  return createProjectPolygonResource(attributes);
 };
 
 export const prepareProjectPolygonForUpload = (
