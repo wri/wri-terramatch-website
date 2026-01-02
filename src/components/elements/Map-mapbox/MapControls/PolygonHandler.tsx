@@ -6,18 +6,13 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { uploadProjectPolygonFileResource } from "@/connections/ProjectPolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchPostV2TerrafundUploadGeojsonProject,
-  fetchPostV2TerrafundUploadKmlProject,
-  fetchPostV2TerrafundUploadShapefileProject
-} from "@/generated/apiComponents";
 import { FileType, UploadedFile } from "@/types/common";
-import { getErrorMessageFromPayload } from "@/utils/errors";
 
 import Button from "../../Button/Button";
 
@@ -43,77 +38,46 @@ export const PolygonHandler = () => {
   }, [file, saveFlags]);
 
   const uploadFile = async () => {
-    showLoader();
-    const fileToUpload = file?.rawFile as File;
-    const formData = new FormData();
-    const fileType = getFileType(file!);
-    formData.append("file", fileToUpload);
-    formData.append("entity_uuid", siteData?.entityUUID);
-    formData.append("entity_type", siteData?.entityName);
-    let newRequest: any = formData;
-
-    let uploadPromise;
-
-    switch (fileType) {
-      case "geojson":
-        uploadPromise = fetchPostV2TerrafundUploadGeojsonProject({ body: newRequest });
-        break;
-      case "shapefile":
-        uploadPromise = fetchPostV2TerrafundUploadShapefileProject({ body: newRequest });
-        break;
-      case "kml":
-        uploadPromise = fetchPostV2TerrafundUploadKmlProject({ body: newRequest });
-        break;
-      default:
-        break;
+    if (!siteData?.entityUUID) {
+      openNotification("error", t("Error"), t("Missing project pitch information"));
+      return;
     }
+
+    if (!file?.rawFile) {
+      openNotification("error", t("Error"), t("No file selected"));
+      return;
+    }
+
+    showLoader();
+    const fileToUpload = file.rawFile as File;
+    const projectPitchUuid = siteData.entityUUID;
 
     try {
-      if (uploadPromise) {
-        const response = await uploadPromise;
-        if (response instanceof Blob) {
-          openNotification("success", t("Success!"), t("File uploaded successfully"));
-          const url = window.URL.createObjectURL(response);
-          const a = document.createElement("a");
-          const getFormattedDate = () => {
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, "0");
-            const day = String(date.getDate()).padStart(2, "0");
-            return `${year}-${month}-${day}`;
-          };
-
-          const currentDate = getFormattedDate();
-          a.href = url;
-          a.download = `polygon-check-results-${currentDate}.csv`;
-          a.click();
-          window.URL.revokeObjectURL(url);
-        }
-      }
+      await uploadProjectPolygonFileResource(projectPitchUuid, fileToUpload);
+      openNotification("success", t("Success!"), t("File uploaded successfully"));
     } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = error.message as string;
-        const parsedMessage = JSON.parse(errorMessage);
-        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          errorMessage = parsedMessage.message;
-        }
-        openNotification("error", errorMessage, t("Error uploading file"));
-      } else {
-        const errorMessage = getErrorMessageFromPayload(error);
-        openNotification("error", t("Error uploading file"), t(errorMessage));
-      }
-    }
-    hideLoader();
-    closeModal(ModalId.ADD_POLYGONS);
-    reloadSiteData?.();
-  };
+      let errorMessage = t("Error uploading file");
 
-  const getFileType = (file: UploadedFile) => {
-    const fileType = file?.fileName.split(".").pop()?.toLowerCase();
-    if (fileType === "geojson") return "geojson";
-    if (fileType === "zip") return "shapefile";
-    if (fileType === "kml") return "kml";
-    return null;
+      if (error && typeof error === "object" && "message" in error) {
+        try {
+          const message = error.message as string;
+          const parsedMessage = JSON.parse(message);
+          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+            errorMessage = parsedMessage.message;
+          } else {
+            errorMessage = message;
+          }
+        } catch {
+          errorMessage = error.message as string;
+        }
+      }
+
+      openNotification("error", t("Error uploading file"), errorMessage);
+    } finally {
+      hideLoader();
+      closeModal(ModalId.ADD_POLYGONS);
+      reloadSiteData?.();
+    }
   };
 
   const openFormModalHandlerConfirmUpload = (type: string) => {
