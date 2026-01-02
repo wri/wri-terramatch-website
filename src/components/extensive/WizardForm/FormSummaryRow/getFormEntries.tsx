@@ -9,10 +9,10 @@ import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardFor
 import { GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/extensive/WizardForm/utils";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2SitesSitePolygon, useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
-import { singularEntityName } from "@/helpers/entity";
+import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -37,17 +37,11 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
     }
   );
 
-  const { data: projectPolygonData } = useGetV2TerrafundProjectPolygon(
-    {
-      queryParams: {
-        entityType: singularEntityName((entityType ?? "") as EntityName),
-        uuid: uuid ?? ""
-      }
-    },
-    {
-      enabled: (entityType === "projects" || entityType === "project-pitches") && uuid != null
-    }
-  );
+  const [, { data: projectPolygonData }] = useProjectPolygonByPitch({
+    filter: { projectPitchUuid: uuid },
+    enabled: (entityType === "projects" || entityType === "project-pitches") && uuid != null
+  });
+
   const bboxParams =
     type === "sites"
       ? { siteUuid: record?.uuid }
@@ -137,7 +131,7 @@ const getEntityPolygonData = (
   if (entityType === "sites") {
     return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
-    const polygonUuid = projectPolygonData?.project_polygon?.poly_uuid;
+    const polygonUuid = projectPolygonData?.polygonUuid;
     return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
   }
 

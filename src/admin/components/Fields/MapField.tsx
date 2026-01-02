@@ -6,8 +6,8 @@ import { useRecordContext } from "react-admin";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 
 interface MapFieldProps {
   source: string;
@@ -21,29 +21,20 @@ const MapField = ({ source, emptyText = "Not Provided" }: MapFieldProps) => {
   const [polygonBbox, setPolygonBbox] = useState<any>(null);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
 
-  const { data: projectPolygon } = useGetV2TerrafundProjectPolygon(
-    {
-      queryParams: {
-        entityType: "project-pitch",
-        uuid: record?.uuid
-      }
-    },
-    {
-      enabled: !!record,
-      staleTime: 0,
-      cacheTime: 0
-    }
-  );
+  const [, { data: projectPolygon }] = useProjectPolygonByPitch({
+    filter: { projectPitchUuid: record?.uuid },
+    enabled: !!record
+  });
 
   const bbox = useBoundingBox({ projectPitchUuid: record?.uuid });
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon?.project_polygon) {
+      if (!projectPolygon?.polygonUuid) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
       } else {
         setPolygonBbox(bbox);
-        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
+        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon.polygonUuid] });
       }
     };
     getDataProjectPolygon();
