@@ -410,27 +410,13 @@ export const useDashboardData = (filters: any) => {
   }, [calculatedTotals, filters.uuid, singleDashboardProject]);
 
   useEffect(() => {
-    const areBboxEqual = (a: BBox | undefined, b: BBox | undefined): boolean => {
-      if (a === b) return true;
-      if (a == null || b == null) return false;
-      if (a.length !== b.length) return false;
-      return a.every((val, i) => Math.abs(val - b[i]) < 0.0001);
-    };
-
-    let newBbox: BBox | undefined = undefined;
-
     if (generalBbox && Array.isArray(generalBbox) && generalBbox.length > 1) {
-      newBbox = generalBbox as BBox;
+      setGeneralBboxParsed(generalBbox as BBox);
     } else if (centroidsDataProjects?.bbox != null && centroidsDataProjects.bbox.length > 0) {
-      newBbox = centroidsDataProjects.bbox as BBox;
+      setGeneralBboxParsed(centroidsDataProjects.bbox as BBox);
+    } else {
+      setGeneralBboxParsed(undefined);
     }
-
-    setGeneralBboxParsed(prev => {
-      if (areBboxEqual(prev, newBbox)) {
-        return prev;
-      }
-      return newBbox;
-    });
   }, [generalBbox, centroidsDataProjects]);
 
   const [isLoaded, { data: impactStories }] = useImpactStories({
