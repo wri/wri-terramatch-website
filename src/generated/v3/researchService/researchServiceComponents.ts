@@ -1144,6 +1144,88 @@ export const uploadGeometryFileWithVersions = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/upload/versions", "POST");
 
+export type UploadVersionForSitePolygonPathParams = {
+  uuid: string;
+};
+
+export type UploadVersionForSitePolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadVersionForSitePolygonResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  };
+};
+
+export type UploadVersionForSitePolygonVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+  pathParams: UploadVersionForSitePolygonPathParams;
+};
+
+/**
+ * Uploads a geometry file and creates a new version of the specified site polygon.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadVersionForSitePolygon = new V3ApiEndpoint<
+  UploadVersionForSitePolygonResponse,
+  UploadVersionForSitePolygonError,
+  UploadVersionForSitePolygonVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}/upload/versions", "POST");
+
 export type BoundingBoxGetQueryParams = {
   /**
    * UUID of a polygon to get its bounding box
@@ -1868,7 +1950,8 @@ export const operationsByTag = {
     deleteSitePolygon,
     compareGeometryFile,
     uploadGeometryFile,
-    uploadGeometryFileWithVersions
+    uploadGeometryFileWithVersions,
+    uploadVersionForSitePolygon
   },
   boundingBoxes: { boundingBoxGet },
   validations: {
