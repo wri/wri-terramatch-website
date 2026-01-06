@@ -152,6 +152,7 @@ export type OrgFormDetails = {
   currency?: string;
   startMonth?: string | number;
   title?: string;
+  type?: string;
 };
 
 export type ProjectFormDetails = {

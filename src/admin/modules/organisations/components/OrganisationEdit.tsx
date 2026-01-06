@@ -29,10 +29,6 @@ const validationSchema = yup.object({
   linkedin_url: yup.string().url().nullable(),
   twitter_url: yup.string().url().nullable(),
   fin_start_month: yup.number().nullable(),
-  fin_budget_3year: yup.number().nullable(),
-  fin_budget_2year: yup.number().nullable(),
-  fin_budget_1year: yup.number().nullable(),
-  fin_budget_current_year: yup.number().nullable(),
   ha_restored_total: yup.number().nullable(),
   ha_restored_3year: yup.number().nullable(),
   trees_grown_total: yup.number().nullable(),
@@ -88,31 +84,6 @@ export const OrganisationEdit = () => {
 
         <TabbedForm.Tab label="Financial Scope of Work (Historic)">
           <TextInput source="fin_start_month" label="Start of financial year (month)" type="number" fullWidth />
-          <TextInput
-            source="fin_budget_3year"
-            label="Organization Budget in USD for (-3 years from today)"
-            type="number"
-            fullWidth
-          />
-          <TextInput
-            source="fin_budget_2year"
-            label="Organization Budget in USD for (-2 years from today)"
-            type="number"
-            fullWidth
-          />
-          <TextInput
-            source="fin_budget_1year"
-            label="Organization Budget in USD for (-1 years from today)"
-            type="number"
-            fullWidth
-          />
-          <TextInput
-            source="fin_budget_current_year"
-            label="Organization Budget in USD for (this year)"
-            type="number"
-            fullWidth
-          />
-
           <TextInput source="ha_restored_total" label="Total Hectares Restored" type="number" fullWidth />
           <TextInput source="ha_restored_3year" label="Hecatres Restored in the last 3 years" type="number" fullWidth />
           <TextInput source="trees_grown_total" label="Total Trees Grown" type="number" fullWidth />

@@ -31,9 +31,7 @@ const SocioEconomicReportHeader = ({ socioEconomicReport }: SocioEconomicReportH
     updateRequestStatus: socioEconomicReport?.updateRequestStatus
   });
 
-  const title = `Annual Socio-Economic Report ${
-    socioEconomicReport?.createdAt ? new Date(socioEconomicReport?.createdAt).toLocaleDateString() : ""
-  }`;
+  const title = `Socioeconomic Restoration Partners report ${socioEconomicReport?.year ?? ""}`;
 
   const subtitles = [
     socioEconomicReport?.projectName,

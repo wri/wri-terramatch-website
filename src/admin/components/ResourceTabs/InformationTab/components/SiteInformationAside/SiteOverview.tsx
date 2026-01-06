@@ -6,6 +6,7 @@ import { When } from "react-if";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -65,6 +66,12 @@ const SiteOverview: FC = () => {
             <Grid xs={4} item>
               <Labeled label="Change Request Status">
                 <ReadableStatusField prop="updateRequestStatus" />
+              </Labeled>
+            </Grid>
+
+            <Grid xs={6} item>
+              <Labeled label="Planting Status" className="label-field-aside">
+                <ReadablePlantingStatusField prop="plantingStatus" />
               </Labeled>
             </Grid>
           </Grid>

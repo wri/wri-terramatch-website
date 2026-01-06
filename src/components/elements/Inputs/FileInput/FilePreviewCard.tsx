@@ -9,6 +9,7 @@ import SpinnerLottie from "@/assets/animations/spinner.json";
 import IconButton from "@/components/elements/IconButton/IconButton";
 import { FileCardContent } from "@/components/elements/Inputs/FileInput/FileCardContent";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { updateMedia } from "@/connections/Media";
 import { useFileSize } from "@/hooks/useFileSize";
 import { UploadedFile } from "@/types/common";
 
@@ -32,17 +33,17 @@ const FilePreviewCard = ({
   className,
   showPrivateCheckbox,
   onDelete,
-  onPrivateChange,
   variant = VARIANT_FILE_PREVIEW_CARD_DEFAULT
 }: FilePreviewCardProps) => {
   const handlePrivateChange = useCallback(
     (checked: boolean) => {
       if (file == null) return;
 
-      onPrivateChange?.(file, checked);
+      updateMedia({ isPublic: checked }, { id: file.uuid });
     },
-    [file, onPrivateChange]
+    [file]
   );
+
   const t = useT();
 
   const geotagged = file.lat != null && file.lng != null && (file.lat != 0 || file.lng != 0);

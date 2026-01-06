@@ -6,11 +6,11 @@ import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { updatePolygonVersionAsync, useListPolygonVersions } from "@/connections/PolygonVersion";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useGetV2SitePolygonUuidVersions, usePutV2SitePolygonUuidMakeActive } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 
 interface SiteAreaProps {
   sites: any;
@@ -30,46 +30,59 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
     setPreviewVersion,
     setEditPolygon,
     setSelectedPolyVersion,
-    shouldRefetchPolygonVersions
+    shouldRefetchPolygonVersions,
+    setShouldRefetchPolygonData
   } = useMapAreaContext();
   const { openNotification } = useNotificationContext();
 
-  const { mutate: mutateMakeActive } = usePutV2SitePolygonUuidMakeActive({
-    onSuccess: async () => {
-      openNotification("success", t("Success!"), t("Polygon version made active successfully"));
-      await refetchPolygonVersions();
-      setSelectedPolyVersion({});
-      setPreviewVersion(false);
-      setOpenModalConfirmation(false);
-      setEditPolygon?.({
-        isOpen: true,
-        uuid: selectedPolyVersion?.poly_id as string,
-        primary_uuid: selectedPolyVersion?.primary_uuid
-      });
-    },
-    onError: () => {
-      openNotification("error", t("Error!"), t("Error making polygon version active"));
-    }
+  const [, { data: polygonVersionsV3, refetch: refetchPolygonVersions }] = useListPolygonVersions({
+    uuid: polygon?.primary_uuid || undefined,
+    enabled: !!polygon?.primary_uuid
   });
 
-  const { data: polygonVersions, refetch: refetchPolygonVersions } = useGetV2SitePolygonUuidVersions(
-    {
-      pathParams: { uuid: polygon?.primary_uuid as string }
-    },
-    {
-      enabled: !!polygon?.primary_uuid
-    }
-  );
-
   const makeActivePolygon = async () => {
-    const versionActive = (polygonVersions as SitePolygonsDataResponse)?.find(
-      item => item?.uuid == selectedPolyVersion?.uuid
-    );
-    if (!versionActive?.is_active) {
-      await mutateMakeActive({
-        pathParams: { uuid: selectedPolyVersion?.uuid as string }
-      });
-      await refetchPolygonVersions();
+    if (!selectedPolyVersion?.uuid) {
+      openNotification("error", t("Error!"), t("No polygon version selected"));
+      return;
+    }
+
+    const versionActive = polygonVersionsV3?.find(item => item?.uuid === selectedPolyVersion?.uuid);
+
+    if (!versionActive) {
+      openNotification("error", t("Error!"), t("Polygon version not found"));
+      return;
+    }
+
+    if (!versionActive.isActive) {
+      try {
+        await updatePolygonVersionAsync(selectedPolyVersion?.uuid as string, {
+          isActive: true
+        });
+
+        ApiSlice.pruneCache("sitePolygons");
+        ApiSlice.pruneIndex("sitePolygons", "");
+
+        await refetchPolygonVersions();
+
+        await refetch?.();
+
+        setSelectedPolyVersion({} as any);
+        setPreviewVersion(false);
+        setOpenModalConfirmation(false);
+
+        const selectedVersion = selectedPolyVersion as any;
+        setEditPolygon?.({
+          isOpen: true,
+          uuid: selectedVersion?.poly_id as string,
+          primary_uuid: selectedVersion?.primary_uuid ?? undefined
+        });
+
+        setShouldRefetchPolygonData(true);
+
+        openNotification("success", t("Success!"), t("Polygon version made active successfully"));
+      } catch (error) {
+        openNotification("error", t("Error!"), t("Error making polygon version active"));
+      }
       return;
     }
     openNotification("warning", t("Warning!"), t("Polygon version is already active"));
@@ -99,8 +112,8 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
               className="text-12-bold m-auto rounded-lg bg-[#a2a295b5] px-4 py-1 text-black underline underline-offset-2 hover:text-white"
               onClick={() => {
                 setOpenModalConfirmation(false);
-                setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: "" });
-                setSelectedPolyVersion({});
+                setEditPolygon?.({ isOpen: false, uuid: "", primary_uuid: undefined });
+                setSelectedPolyVersion({} as any);
                 setPreviewVersion(false);
                 refetch?.();
               }}
@@ -122,7 +135,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Polygon Name")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText(selectedPolyVersion?.poly_name as string) ?? "-"}
+                {convertText((selectedPolyVersion as any)?.poly_name as string) ?? "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -130,7 +143,13 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Restoration Practice")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText(selectedPolyVersion?.practice as string) ?? "-"}
+                {selectedPolyVersion?.practice
+                  ? convertText(
+                      Array.isArray(selectedPolyVersion.practice)
+                        ? selectedPolyVersion.practice.join(", ")
+                        : (selectedPolyVersion.practice as string)
+                    )
+                  : "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -138,7 +157,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Target Land Use System")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText(selectedPolyVersion?.target_sys as string) ?? "-"}
+                {convertText((selectedPolyVersion as any)?.target_sys as string) ?? "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -146,7 +165,13 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
                 {t("Tree Distribution")}
               </Text>
               <Text variant="text-10-light" className="capitalize">
-                {convertText(selectedPolyVersion?.distr as string) ?? "-"}
+                {selectedPolyVersion?.distr
+                  ? convertText(
+                      Array.isArray(selectedPolyVersion.distr)
+                        ? selectedPolyVersion.distr.join(", ")
+                        : (selectedPolyVersion.distr as string)
+                    )
+                  : "-"}
               </Text>
             </div>
             <div className="grid grid-cols-2 gap-4 border-b border-grey-750 py-2">
@@ -164,7 +189,7 @@ const SiteArea = ({ sites, refetch }: SiteAreaProps) => {
         entityModel={sites}
         type="sites"
         refetch={refetch}
-        polygonVersionData={polygonVersions as SitePolygonsDataResponse}
+        polygonVersionData={polygonVersionsV3}
         refetchPolygonVersions={refetchPolygonVersions}
       />
     </div>

@@ -32,8 +32,10 @@ export const ImageUploadInput = (props: ImageInputProps) => {
           }
         }}
       >
-        <ImageField source="url" />
-        <ImageField source="src" />
+        <>
+          <ImageField source="url" />
+          <ImageField source="src" />
+        </>
       </ImageInput>
       <Confirm
         isOpen={showModal}

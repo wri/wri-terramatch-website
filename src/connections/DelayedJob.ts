@@ -3,11 +3,19 @@ import { createSelector } from "reselect";
 
 import { useLogin } from "@/connections/Login";
 import { bulkUpdateJobs, listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
-import { DelayedJobData, DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
+import { DelayedJobDto } from "@/generated/v3/jobService/jobServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
+
+type DelayedJobBulkUpdateData = Array<{
+  type: "delayedJobs";
+  id: string;
+  attributes: {
+    isAcknowledged: boolean;
+  };
+}>;
 
 type DelayedJobCombinedConnection = {
   delayedJobs?: DelayedJobDto[] | undefined;
@@ -83,4 +91,5 @@ export const useDelayedJobs = () => {
   return connection;
 };
 
-export const triggerBulkUpdate = (jobs: DelayedJobData[]) => bulkUpdateJobs.fetch({ body: { data: jobs } });
+export const triggerBulkUpdate = (jobs: DelayedJobBulkUpdateData) =>
+  bulkUpdateJobs.fetch({ body: { data: jobs as never } });

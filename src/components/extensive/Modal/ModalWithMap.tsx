@@ -8,13 +8,13 @@ import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES_WITH_MAP } from "@/components/eleme
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
+import { fetchPolygonGeometry } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { formatFile } from "@/components/extensive/Modal/ModalAdd";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { fetchGetV2TerrafundPolygonGeojsonUuid } from "@/generated/apiComponents";
 import { UploadedFile } from "@/types/common";
 
 import Icon, { IconNames } from "../Icon/Icon";
@@ -51,10 +51,8 @@ const ModalWithMap: FC<ModalWithMapProps> = ({
   useEffect(() => {
     const getPolygonData = async () => {
       if (polygonSelected) {
-        const polygonGeojson = await fetchGetV2TerrafundPolygonGeojsonUuid({
-          pathParams: { uuid: polygonSelected }
-        });
-        setInitialPolygonData(polygonGeojson);
+        const geometry = await fetchPolygonGeometry(polygonSelected);
+        setInitialPolygonData({ geojson: geometry });
       }
     };
     getPolygonData();

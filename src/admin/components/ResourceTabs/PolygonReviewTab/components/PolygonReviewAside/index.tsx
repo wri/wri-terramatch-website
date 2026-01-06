@@ -29,5 +29,4 @@ const SitePolygonReviewAside = (props: SitePolygonReviewAsideProps) => (
     />
   </Stack>
 );
-
 export default SitePolygonReviewAside;

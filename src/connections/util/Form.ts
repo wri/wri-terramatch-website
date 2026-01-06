@@ -62,7 +62,6 @@ const linkedFieldsConnection = v3Resource("linkedFields", linkedFieldsIndex)
   .enabledProp()
   .buildConnection();
 export const useLinkedFields = connectionHook(linkedFieldsConnection);
-export const loadLinkedFields = connectionLoader(linkedFieldsConnection);
 
 const formIndexConnection = v3Resource("forms", formIndex)
   .index<FormLightDto>()

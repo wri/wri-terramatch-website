@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { ErrorPayload, RequestVariables, V3ApiEndpoint } from "@/generated/v3/utils";
+import { ErrorPayload, RequestVariables, resolveUrl, V3ApiEndpoint } from "@/generated/v3/utils";
 import ApiSlice, { ApiDataStore, ResourceType } from "@/store/apiSlice";
 
 export const resourcesDeletedSelector = (resource: ResourceType) => (store: ApiDataStore) =>
@@ -37,7 +37,11 @@ export const deleterAsync = <R, E extends ErrorPayload | undefined, V extends Re
 
     const { isDeleted, deleteFailure } = selector(ApiSlice.currentState);
     if (isDeleted) return;
-    if (deleteFailure != null) throw deleteFailure;
+
+    if (deleteFailure != null) {
+      const variables = variablesFactory(id);
+      ApiSlice.clearPending(resolveUrl(endpoint.url, variables), endpoint.method);
+    }
 
     endpoint.fetch(variablesFactory(id));
 
@@ -47,8 +51,11 @@ export const deleterAsync = <R, E extends ErrorPayload | undefined, V extends Re
         if (isDeleted || deleteFailure != null) {
           unsubscribe();
 
-          if (isDeleted) resolve();
-          else reject(deleteFailure);
+          if (isDeleted) {
+            resolve();
+          } else {
+            reject(deleteFailure);
+          }
         }
       });
     });

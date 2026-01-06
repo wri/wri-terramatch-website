@@ -3,6 +3,7 @@ import { When } from "react-if";
 
 import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import ChecklistErrorsInformation from "@/components/elements/MapPolygonPanel/ChecklistErrorsInformation";
+import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -87,7 +88,13 @@ const CollapsibleRow = (props: UnifiedCollapsibleRowProps) => {
           <Checkbox
             name=""
             checked={!!polygonsSelected?.[index]}
-            disabled={type === "modalApprove" ? !canBeApproved() : false}
+            disabled={
+              type === "modalApprove"
+                ? !canBeApproved() || item.status === StatusEnum.APPROVED
+                : type === "modalSubmit"
+                ? item.status === StatusEnum.SUBMITTED || item.status === StatusEnum.APPROVED
+                : false
+            }
             onChange={e => {
               setPolygonsSelected(prev => {
                 const newSelected = [...prev];

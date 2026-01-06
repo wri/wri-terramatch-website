@@ -33,6 +33,7 @@ export const isTranslatableError = (payload: ErrorPayload): payload is Translata
 const V3_NAMESPACES: Record<string, string> = {
   auth: userServiceUrl,
   boundingBoxes: researchServiceUrl,
+  polygonClipping: researchServiceUrl,
   validations: researchServiceUrl,
   entities: entityServiceUrl,
   forms: entityServiceUrl,

@@ -10,7 +10,6 @@ import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
@@ -22,7 +21,7 @@ interface EntityAreaProps {
   entityModel: any;
   type: string;
   refetch?: () => void;
-  polygonVersionData?: SitePolygonsDataResponse;
+  polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
 }
 
@@ -44,6 +43,7 @@ const OverviewMapArea = ({
   const [polygonFromMap, setPolygonFromMap] = useState<any>({ isOpen: false, uuid: "" });
   const context = useSitePolygonData();
   const reloadSiteData = context?.reloadSiteData;
+
   const {
     isMonitoring,
     editPolygon,
@@ -54,9 +54,11 @@ const OverviewMapArea = ({
     setPolygonData,
     shouldRefetchValidation,
     setShouldRefetchValidation,
+    setShouldRefetchPolygonData,
+    polygonData: sitePolygonDataV3,
     validFilter
   } = useMapAreaContext();
-  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refreshEntity, refetch);
+  const onSave = (geojson: any) => storePolygon(geojson, entityModel, setEditPolygon, refetch);
 
   const mapFunctions = useMap(onSave);
 
@@ -71,6 +73,24 @@ const OverviewMapArea = ({
     polygonCriteriaMap,
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
+
+  const sitePolygonDataV2 = sitePolygonDataV3?.map(v3Polygon => ({
+    id: v3Polygon.uuid,
+    uuid: v3Polygon.uuid,
+    poly_id: v3Polygon.polygonUuid,
+    poly_name: v3Polygon.name,
+    primary_uuid: v3Polygon.primaryUuid,
+    status: v3Polygon.status,
+    site_id: v3Polygon.siteId,
+    practice: Array.isArray(v3Polygon.practice) ? v3Polygon.practice.join(", ") : v3Polygon.practice,
+    target_sys: v3Polygon.targetSys,
+    distr: Array.isArray(v3Polygon.distr) ? v3Polygon.distr.join(", ") : v3Polygon.distr,
+    num_trees: v3Polygon.numTrees,
+    calc_area: v3Polygon.calcArea,
+    plantstart: v3Polygon.plantStart,
+    source: v3Polygon.source,
+    is_active: true
+  }));
 
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -107,10 +127,10 @@ const OverviewMapArea = ({
     }
   }, [editPolygon, setSelectedPolygonsInCheckbox]);
 
-  useValueChanged(shouldRefetchPolygonData, () => {
+  useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
-      reloadSiteData?.();
-      refetch();
+      await Promise.all([refetch(), reloadSiteData?.()]);
+      setShouldRefetchPolygonData(false);
     }
   });
   useValueChanged(shouldRefetchValidation, () => {
@@ -165,7 +185,7 @@ const OverviewMapArea = ({
           tabEditPolygon={tabEditPolygon}
           setTabEditPolygon={setTabEditPolygon}
           recallEntityData={refetch}
-          polygonVersionData={polygonVersionData as SitePolygonsDataResponse}
+          polygonVersionData={polygonVersionData}
           refetchPolygonVersions={refetchPolygonVersions}
           refreshEntity={refreshEntity}
           entityUuid={entityModel?.uuid}
@@ -205,6 +225,7 @@ const OverviewMapArea = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData}
+        sitePolygonData={sitePolygonDataV2 as any}
         pdView={true}
       />
     </>

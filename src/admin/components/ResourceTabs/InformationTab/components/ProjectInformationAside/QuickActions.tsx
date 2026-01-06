@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { AddManagerDialog } from "@/admin/components/Dialogs/AddManagerDialog";
 import { InviteMonitoringPartnerDialog } from "@/admin/components/Dialogs/InviteMonitoringPartnerDialog";
 import modules from "@/admin/modules";
+import { downloadProjectPolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
@@ -17,30 +18,28 @@ const QuickActions: FC = () => {
   const [addManagerDialogOpen, setAddManagerDialogOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleExport = (
+  const handleExport = async (
     entity: "project-reports" | "sites" | "nurseries" | "shapefiles" | "site-reports" | "nursery-reports"
   ) => {
     if (!record) return;
 
-    fetchGetV2ProjectsUUIDENTITYExport({
-      pathParams: {
-        uuid: record.uuid,
-        entity
+    if (entity === "shapefiles") {
+      try {
+        await downloadProjectPolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
+      } catch (error) {
+        console.error("Failed to download project polygons:", error);
       }
-    }).then((response: any) => {
-      if (entity === "shapefiles") {
-        const exportName = `${record.name}_polygons.geojson`;
-        if (response instanceof Blob) {
-          downloadFileBlob(response, exportName);
-        } else {
-          const jsonString = JSON.stringify(response, null, 2);
-          const fileBlob = new Blob([jsonString], { type: "application/geo+json" });
-          downloadFileBlob(fileBlob, exportName);
+    } else {
+      // Use V2 API for other exports (CSV reports)
+      fetchGetV2ProjectsUUIDENTITYExport({
+        pathParams: {
+          uuid: record.uuid,
+          entity
         }
-      } else {
+      }).then((response: any) => {
         downloadFileBlob(response, `${record.name} ${entity.replace("-reports", "")} reports.csv`);
-      }
-    });
+      });
+    }
   };
 
   const handleNavigate = (view: keyof typeof modules, params?: object) => {

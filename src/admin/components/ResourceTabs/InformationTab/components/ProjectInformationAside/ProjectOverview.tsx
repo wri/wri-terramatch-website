@@ -5,6 +5,7 @@ import { Labeled, TextField, useShowContext } from "react-admin";
 
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
+import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 
 const ProjectOverview: FC = () => {
@@ -40,6 +41,12 @@ const ProjectOverview: FC = () => {
           <Grid xs={4} item>
             <Labeled label="Change Request Status">
               <ReadableStatusField prop="updateRequestStatus" />
+            </Labeled>
+          </Grid>
+
+          <Grid xs={4} item>
+            <Labeled label="Planting Status">
+              <ReadablePlantingStatusField prop="plantingStatus" />
             </Labeled>
           </Grid>
         </Grid>

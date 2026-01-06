@@ -16,7 +16,8 @@ import {
   useLightNurseryReportList,
   useLightProjectReport,
   useLightSiteReport,
-  useLightSiteReportList
+  useLightSiteReportList,
+  useLightSRPReport
 } from "@/connections/Entity";
 import { useTask } from "@/connections/Task";
 import { APPROVED } from "@/constants/statuses";
@@ -25,7 +26,8 @@ import { useNotificationContext } from "@/context/notification.provider";
 import {
   NurseryReportLightDto,
   ProjectReportLightDto,
-  SiteReportLightDto
+  SiteReportLightDto,
+  SrpReportLightDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useDate } from "@/hooks/useDate";
@@ -41,7 +43,7 @@ const ReadableStatus: { [index: string]: string } = {
 };
 
 type ReportRowProps = {
-  report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto;
+  report: ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto;
   typeLabel: string;
   parentName: string;
   resource: string;
@@ -105,6 +107,12 @@ const NurseryReportRow: FC<{ uuid: string }> = ({ uuid }) => {
   return (
     <ReportRow report={data} typeLabel="Nursery Report" parentName={data.nurseryName ?? ""} resource="nurseryReport" />
   );
+};
+
+const SrpReportRow: FC<{ uuid: string }> = ({ uuid }) => {
+  const [, { data }] = useLightSRPReport({ id: uuid });
+  if (data == null) return null;
+  return <ReportRow report={data} typeLabel="SRP Report" parentName={data.projectName ?? ""} resource="srpReport" />;
 };
 
 type SelectedItem = {
@@ -299,6 +307,9 @@ function ShowReports() {
             ))}
             {task.nurseryReportUuids?.map((uuid: string) => (
               <NurseryReportRow key={uuid} uuid={uuid} />
+            ))}
+            {task.srpReportUuids?.map((uuid: string) => (
+              <SrpReportRow key={uuid} uuid={uuid} />
             ))}
           </TableBody>
         </Table>

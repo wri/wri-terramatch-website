@@ -77,7 +77,8 @@ export const EntityEdit = () => {
       uuid: organisation?.uuid,
       currency: entityName === "financial-reports" ? entityValue?.data?.currency : organisation?.currency,
       startMonth:
-        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month
+        entityName === "financial-reports" ? entityValue?.data?.fin_start_month : organisation?.fin_start_month,
+      type: entityName === "financial-reports" ? entityValue?.data?.organisation?.type : organisation?.type
     }),
     [
       entityName,
@@ -85,7 +86,9 @@ export const EntityEdit = () => {
       entityValue?.data?.fin_start_month,
       organisation?.currency,
       organisation?.fin_start_month,
-      organisation?.uuid
+      organisation?.uuid,
+      organisation?.type,
+      entityValue?.data?.organisation?.type
     ]
   );
 

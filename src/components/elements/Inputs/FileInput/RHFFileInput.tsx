@@ -7,7 +7,6 @@ import { deleteMedia } from "@/connections/Media";
 import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { FormModelType } from "@/connections/util/Form";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
-import { usePutV2FilesUUID } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
 import { useFiles } from "@/hooks/useFiles";
@@ -72,8 +71,6 @@ const RHFFileInput = ({
     Log.error("Missing a model UUID for this file input", { model, collection });
   }
   const uploadFile = useUploadFile({ pathParams: { entity, collection, uuid: uuid ?? "" } });
-
-  const { mutate: update } = usePutV2FilesUUID();
 
   const onSelectFile = useCallback(
     async (file: File) => {
@@ -145,25 +142,8 @@ const RHFFileInput = ({
     ]
   );
 
-  const handleFileUpdate = useCallback(
-    (file: Partial<UploadedFile>, isPrivate: boolean) => {
-      if (file.uuid == null) return;
-
-      update({
-        pathParams: {
-          uuid: file.uuid
-        },
-        body: {
-          title: file.fileName ?? "",
-          is_public: !isPrivate
-        }
-      });
-    },
-    [update]
-  );
-
   const onDeleteFile = useCallback(
-    (file: Partial<UploadedFile>) => {
+    async (file: Partial<UploadedFile>) => {
       if (file.uuid) {
         addFile({
           ...file,
@@ -173,12 +153,14 @@ const RHFFileInput = ({
             isDeleting: true
           }
         });
-        deleteMedia(file.uuid);
+        await deleteMedia(file.uuid);
+        removeFile(file);
+        onChangeCapture?.();
       } else if (file.fileName != null) {
         removeFile(file);
       }
     },
-    [addFile, removeFile]
+    [addFile, removeFile, onChangeCapture]
   );
 
   useEffect(() => {
@@ -203,7 +185,6 @@ const RHFFileInput = ({
       })}
       onDelete={onDeleteFile}
       onChange={_onChange}
-      onPrivateChange={handleFileUpdate}
       showPrivateCheckbox={showPrivateCheckbox}
       formHook={formHook}
       updateFile={updateFile}

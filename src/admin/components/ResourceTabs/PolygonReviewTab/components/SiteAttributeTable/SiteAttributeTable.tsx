@@ -16,9 +16,9 @@ interface TableItemMenuProps {
   ellipse: boolean;
   "planting-start-date": string | null;
   "polygon-name": string;
-  "restoration-practice": string;
+  "restoration-practice": string[];
   "target-land-use-system": string | null;
-  "tree-distribution": string | null;
+  "tree-distribution": string[] | null;
   uuid: string;
 }
 
@@ -111,7 +111,7 @@ export default function SiteAttributeTable({
   ];
 
   return (
-    <div className="mb-6 w-[inherit]">
+    <div className="mb-6 w-[inherit]" style={{ width: containerRef.current?.clientWidth }}>
       <div className="mb-4">
         <Text variant="text-16-bold" className="mb-2 text-darkCustom">
           Site Attribute Table

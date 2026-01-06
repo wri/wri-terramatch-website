@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import { Fragment } from "react";
 
+import LongTextField from "@/components/elements/Field/LongTextField";
 import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
 import useCollectionsTotal from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
@@ -31,7 +32,6 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
       </PageCard>
     );
   }
-
   return (
     <PageBody>
       <PageRow>
@@ -45,6 +45,20 @@ const ReportDataTab = ({ report }: SocioEconomicReportDataTabProps) => {
                   type="restorationPartners"
                   collection={collection}
                 />
+                {collection == "indirect-productivity" && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("Other Impacts Description")}>
+                      {report.restorationPartnersDescription}
+                    </LongTextField>
+                  </div>
+                )}
+                {collection == "indirect-other" && (
+                  <div className="flex w-full items-center justify-between p-4">
+                    <LongTextField title={t("Total Unique Restoration Partners")}>
+                      {report.totalUniqueRestorationPartners}
+                    </LongTextField>
+                  </div>
+                )}
               </Fragment>
             ))}
           </PageCard>

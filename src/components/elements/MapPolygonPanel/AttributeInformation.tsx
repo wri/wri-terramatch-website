@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
+import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import {
   dropdownOptionsRestoration,
   dropdownOptionsTarget,
@@ -11,8 +12,9 @@ import {
 } from "@/constants/polygonDropdownOptions";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useGetV2TerrafundPolygonUuid, usePutV2TerrafundSitePolygonUuid } from "@/generated/apiComponents";
 import { SitePolygon } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
@@ -20,8 +22,8 @@ import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
 const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const t = useT();
-  const { editPolygon, setShouldRefetchPolygonData } = useMapAreaContext();
-  const [polygonData, setPolygonData] = useState<SitePolygon>();
+  const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
+  const [polygonData, setPolygonData] = useState<SitePolygon | SitePolygonLightDto>();
   const [polygonName, setPolygonName] = useState<string>();
   const [plantStartDate, setPlantStartDate] = useState<string>();
   const [restorationPractice, setRestorationPractice] = useState<string[]>([]);
@@ -30,56 +32,66 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   const [treesPlanted, setTreesPlanted] = useState<number>(0);
   const [calculatedArea, setCalculatedArea] = useState<number>(0);
   const [formattedArea, setFormattedArea] = useState<string>();
-  const { data: sitePolygonData } = useGetV2TerrafundPolygonUuid<{
-    site_polygon: SitePolygon;
-  }>(
-    {
-      pathParams: {
-        uuid: editPolygon.uuid ?? ""
-      }
-    },
-    {
-      enabled: !!editPolygon.uuid
-    }
-  );
+
   const translatedRestorationOptions = useTranslatedOptions(dropdownOptionsRestoration);
   const translatedTargetOptions = useTranslatedOptions(dropdownOptionsTarget);
   const translatedTreeOptions = useTranslatedOptions(dropdownOptionsTree);
-  const { mutate: sendSiteData } = usePutV2TerrafundSitePolygonUuid();
   const { openNotification } = useNotificationContext();
 
   useEffect(() => {
-    if (sitePolygonData) {
-      setPolygonData(sitePolygonData?.site_polygon);
+    if (polygonDataContext && editPolygon.uuid) {
+      const activePolygon = polygonDataContext.find(p => p.polygonUuid === editPolygon.uuid);
+
+      if (activePolygon) {
+        setPolygonData(activePolygon);
+      }
     }
-  }, [sitePolygonData]);
+  }, [polygonDataContext, editPolygon.uuid]);
 
   useEffect(() => {
     if (polygonData) {
-      setPolygonName(polygonData.poly_name);
-      setPlantStartDate(polygonData.plantstart);
-      setTreesPlanted(polygonData.num_trees ?? 0);
-      setCalculatedArea(polygonData.calc_area ?? 0);
-      const restorationPracticeArray = polygonData?.practice
-        ? polygonData?.practice.split(",").map(function (item) {
-            return item.trim();
-          })
-        : [];
-      setRestorationPractice(restorationPracticeArray);
+      const isV3 = "polygonUuid" in polygonData;
 
-      const targetLandUseSystemArray = polygonData?.target_sys
-        ? polygonData?.target_sys.split(",").map(function (item) {
-            return item.trim();
-          })
-        : [];
-      setTargetLandUseSystem(targetLandUseSystemArray);
+      if (isV3) {
+        const v3Data = polygonData as SitePolygonLightDto;
+        setPolygonName(v3Data.name ?? "");
+        setPlantStartDate(v3Data.plantStart ?? "");
+        setTreesPlanted(v3Data.numTrees ?? 0);
+        setCalculatedArea(v3Data.calcArea ?? 0);
 
-      const treeDistributionArray = polygonData?.distr
-        ? polygonData?.distr.split(",").map(function (item) {
-            return item.trim();
-          })
-        : [];
-      setTreeDistribution(treeDistributionArray);
+        setRestorationPractice(v3Data.practice ?? []);
+        setTreeDistribution(v3Data.distr ?? []);
+
+        const targetSysArray = v3Data.targetSys ? v3Data.targetSys.split(",").map(item => item.trim()) : [];
+        setTargetLandUseSystem(targetSysArray);
+      } else {
+        const v2Data = polygonData as SitePolygon;
+        setPolygonName(v2Data.poly_name);
+        setPlantStartDate(v2Data.plantstart);
+        setTreesPlanted(v2Data.num_trees ?? 0);
+        setCalculatedArea(v2Data.calc_area ?? 0);
+
+        const restorationPracticeArray = v2Data?.practice
+          ? (v2Data.practice as unknown as string[]).map(function (item: string) {
+              return item.trim();
+            })
+          : [];
+        setRestorationPractice(restorationPracticeArray);
+
+        const targetLandUseSystemArray = v2Data?.target_sys
+          ? v2Data.target_sys.split(",").map(function (item: string) {
+              return item.trim();
+            })
+          : [];
+        setTargetLandUseSystem(targetLandUseSystemArray);
+
+        const treeDistributionArray = v2Data?.distr
+          ? (v2Data.distr as unknown as string[]).map(function (item: string) {
+              return item.trim();
+            })
+          : [];
+        setTreeDistribution(treeDistributionArray);
+      }
     }
   }, [polygonData]);
 
@@ -90,37 +102,35 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
   }, [calculatedArea]);
 
   const savePolygonData = async () => {
-    if (polygonData?.uuid) {
-      const restorationPracticeToSend = restorationPractice.join(", ");
-      const landUseSystemToSend = targetLandUseSystem.join(", ");
-      const treeDistributionToSend = treeDistribution.join(", ");
-      const updatedPolygonData = {
-        poly_name: polygonName,
-        plantstart: plantStartDate,
-        practice: restorationPracticeToSend,
-        target_sys: landUseSystemToSend,
-        distr: treeDistributionToSend,
-        num_trees: treesPlanted
-      };
-      try {
-        sendSiteData(
-          {
-            body: updatedPolygonData,
-            pathParams: { uuid: polygonData.uuid }
-          },
-          {
-            onSuccess: async () => {
-              setShouldRefetchPolygonData(true);
-              openNotification("success", t("Success!"), t("Polygon data updated successfully"));
-            },
-            onError: error => {
-              openNotification("error", t("Error!"), t("Error updating polygon data"));
-            }
-          }
-        );
-      } catch (error) {
-        Log.error("Error updating polygon data:", error);
-      }
+    const isV3 = polygonData && "polygonUuid" in polygonData;
+    const primaryUuid = isV3
+      ? (polygonData as SitePolygonLightDto).primaryUuid
+      : (polygonData as SitePolygon)?.primary_uuid;
+
+    if (!primaryUuid) {
+      openNotification("error", t("Error!"), t("Missing polygon information"));
+      return;
+    }
+
+    try {
+      await createVersionWithAttributes(primaryUuid, "Updated polygon attributes", {
+        polyName: polygonName,
+        plantStart: plantStartDate,
+        practice: restorationPractice,
+        targetSys: targetLandUseSystem.join(", "),
+        distr: treeDistribution,
+        numTrees: treesPlanted
+      });
+
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
+      setShouldRefetchPolygonData(true);
+
+      openNotification("success", t("Success!"), t("Polygon version created successfully"));
+    } catch (error) {
+      Log.error("Error creating polygon version:", error);
+      openNotification("error", t("Error!"), t("Error creating polygon version"));
     }
   };
 
