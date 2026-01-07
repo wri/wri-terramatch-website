@@ -184,8 +184,31 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
+          {(() => {
+            const isEmpty = isEmptyChartData(chartType ?? "", treesPlantedByYear);
+            const dataProcessed = dataForChart != null;
+            const isBlur = (isUserAllowed == null || isUserAllowed) && (dataProcessed || !isLoading) && isEmpty;
+            console.log("[SecDashboard - multiLineChart Debug]", {
+              title,
+              treesPlantedByYear: JSON.stringify(treesPlantedByYear),
+              isEmpty,
+              isBlur,
+              isUserAllowed,
+              isLoading,
+              dataProcessed,
+              dataForChartExists: dataForChart != null,
+              chartType,
+              expectedChartType: CHART_TYPES.multiLineChart,
+              chartTypeMatch: chartType === CHART_TYPES.multiLineChart
+            });
+            return null;
+          })()}
           <BlurContainer
-            isBlur={(isUserAllowed ?? false) && !isLoading && isEmptyChartData(chartType ?? "", treesPlantedByYear)}
+            isBlur={
+              (isUserAllowed == null || isUserAllowed) &&
+              (dataForChart != null || !isLoading) &&
+              isEmptyChartData(chartType ?? "", treesPlantedByYear)
+            }
             textType={TEXT_TYPES.NO_DATA}
             className="ml-[20px] lg:ml-[15px]"
           >
@@ -202,7 +225,9 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.groupedBarChart}>
           <BlurContainer
             isBlur={
-              (isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
+              (isUserAllowed == null || isUserAllowed) &&
+              !isLoading &&
+              isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
             }
             textType={TEXT_TYPES.NO_DATA}
           >
@@ -217,7 +242,11 @@ const SecDashboard = ({
         </When>
         <When condition={chartType === CHART_TYPES.doughnutChart}>
           <BlurContainer
-            isBlur={(isUserAllowed ?? false) && !isLoading && isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)}
+            isBlur={
+              (isUserAllowed == null || isUserAllowed) &&
+              !isLoading &&
+              isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)
+            }
             textType={TEXT_TYPES.NO_DATA}
           >
             <DoughnutChart
@@ -232,7 +261,7 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.simpleBarChart}>
           <BlurContainer
             isBlur={
-              (isUserAllowed ?? false) &&
+              (isUserAllowed == null || isUserAllowed) &&
               !isLoading &&
               isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart?.restorationStrategiesRepresented)
             }
@@ -301,7 +330,7 @@ const SecDashboard = ({
         <When condition={chartType === CHART_TYPES.barChart}>
           <BlurContainer
             isBlur={
-              (isUserAllowed ?? false) &&
+              (isUserAllowed == null || isUserAllowed) &&
               !isLoading &&
               (data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0)
             }
