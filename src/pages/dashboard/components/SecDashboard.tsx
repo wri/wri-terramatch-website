@@ -184,25 +184,6 @@ const SecDashboard = ({
           </div>
         </When>
         <When condition={chartType === CHART_TYPES.multiLineChart}>
-          {(() => {
-            const isEmpty = isEmptyChartData(chartType ?? "", treesPlantedByYear);
-            const dataProcessed = dataForChart != null;
-            const isBlur = (isUserAllowed == null || isUserAllowed) && (dataProcessed || !isLoading) && isEmpty;
-            console.log("[SecDashboard - multiLineChart Debug]", {
-              title,
-              treesPlantedByYear: JSON.stringify(treesPlantedByYear),
-              isEmpty,
-              isBlur,
-              isUserAllowed,
-              isLoading,
-              dataProcessed,
-              dataForChartExists: dataForChart != null,
-              chartType,
-              expectedChartType: CHART_TYPES.multiLineChart,
-              chartTypeMatch: chartType === CHART_TYPES.multiLineChart
-            });
-            return null;
-          })()}
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
@@ -226,7 +207,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
-              !isLoading &&
+              (dataForChart != null || !isLoading) &&
               isEmptyChartData(CHART_TYPES.groupedBarChart, dataForChart)
             }
             textType={TEXT_TYPES.NO_DATA}
@@ -244,7 +225,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
-              !isLoading &&
+              (dataForChart != null || !isLoading) &&
               isEmptyChartData(CHART_TYPES.doughnutChart, dataForChart)
             }
             textType={TEXT_TYPES.NO_DATA}
@@ -262,7 +243,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
-              !isLoading &&
+              (dataForChart != null || !isLoading) &&
               isEmptyChartData(CHART_TYPES.simpleBarChart, dataForChart?.restorationStrategiesRepresented)
             }
             textType={TEXT_TYPES.NO_DATA}
@@ -331,7 +312,7 @@ const SecDashboard = ({
           <BlurContainer
             isBlur={
               (isUserAllowed == null || isUserAllowed) &&
-              !isLoading &&
+              (data != null || !isLoading) &&
               (data?.graphicTargetLandUseTypes === undefined || data?.graphicTargetLandUseTypes.length === 0)
             }
             textType={TEXT_TYPES.NO_DATA}
