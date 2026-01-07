@@ -44,7 +44,7 @@ const RHFMap = ({
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
-    field: { onChange, value }
+    field: { value }
   } = useController(inputWrapperProps);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
@@ -66,10 +66,12 @@ const RHFMap = ({
     }
   };
 
+  const enabled = entityName != null && entityUUID != null;
   const {
     data: projectPolygon,
     refetch: reloadProjectPolygonData,
-    isRefetching
+    isRefetching,
+    isFetching
   } = useGetV2TerrafundProjectPolygon(
     {
       queryParams: {
@@ -77,11 +79,7 @@ const RHFMap = ({
         uuid: entityUUID ?? ""
       }
     },
-    {
-      enabled: entityName != null && entityUUID != null,
-      staleTime: 0,
-      cacheTime: 0
-    }
+    { enabled, staleTime: 0, cacheTime: 0 }
   );
 
   const bbox = useBoundingBox(
@@ -115,20 +113,21 @@ const RHFMap = ({
       let shouldUpdate = false;
       if (value == null) {
         shouldUpdate = true;
-      } else if (typeof value === "object" && (value as any)?.poly_uuid !== apiPolyUuid) {
+      } else if (typeof value === "object" && (value as any).polyUuid !== apiPolyUuid) {
         shouldUpdate = true;
       }
 
       if (shouldUpdate) {
-        formHook.setValue(fieldName, { poly_uuid: apiPolyUuid }, { shouldValidate: true, shouldDirty: true });
+        formHook.setValue(fieldName, { polyUuid: apiPolyUuid }, { shouldValidate: true, shouldDirty: true });
+        onChangeCapture?.();
       }
     } else {
-      if (value != null) {
+      if (enabled && !isFetching && value != null) {
         formHook.setValue(fieldName, null, { shouldValidate: true, shouldDirty: true });
+        onChangeCapture?.();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectPolygon?.project_polygon?.poly_uuid]);
+  }, [enabled, formHook, inputWrapperProps.name, isFetching, onChangeCapture, projectPolygon, value]);
 
   useEffect(() => {
     if (entityName != null && entityUUID != null) {
@@ -136,11 +135,6 @@ const RHFMap = ({
       setSiteData(entity);
     }
   }, [entityName, entityUUID, setSiteData]);
-
-  const _onChange = (value: any) => {
-    onChange(value);
-    onChangeCapture?.();
-  };
 
   const onError = (hasError: boolean) => {
     if (hasError) {
@@ -152,6 +146,7 @@ const RHFMap = ({
       formHook.clearErrors();
     }
   };
+
   return (
     <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
@@ -160,7 +155,6 @@ const RHFMap = ({
           bbox={validBbox}
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
-          onGeojsonChange={_onChange}
           editable
           onError={onError}
           captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}

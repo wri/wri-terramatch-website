@@ -9,9 +9,7 @@ import Log from "@/utils/log";
 import { addValidationWith, objectValidator } from "@/utils/yup";
 
 export const MapInputField: FormFieldFactory = {
-  addValidation: addValidationWith(field =>
-    field.linkedFieldKey === "pro-pit-proj-boundary" ? undefined : objectValidator()
-  ),
+  addValidation: addValidationWith(objectValidator),
 
   renderInput: ({ name, model }, sharedProps) => (
     <MapAreaProvider>
@@ -42,12 +40,13 @@ export const MapInputField: FormFieldFactory = {
 
   defaultValue: ({ name }, formValues) => {
     const value = formValues[name];
-    let defaultValue: object | undefined = undefined;
+    let defaultValue: object | undefined = value;
     if (isString(value)) {
       try {
         defaultValue = JSON.parse(value);
       } catch (e) {
         Log.warn("Unable to parse map value", { e, value });
+        defaultValue = undefined;
       }
     }
     return { ...formValues, [name]: defaultValue };
