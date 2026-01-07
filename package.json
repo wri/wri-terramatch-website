@@ -26,6 +26,9 @@
     "tx:pull": "eval $(grep '^NEXT_PUBLIC_TRANSIFEX_TOKEN' .env) && eval $(grep '^TRANSIFEX_SECRET' .env) && txjs-cli pull --token=$NEXT_PUBLIC_TRANSIFEX_TOKEN  --secret=$TRANSIFEX_SECRET"
   },
   "dependencies": {
+    "@chakra-ui/react": "^3.30.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@faker-js/faker": "^8.0.2",
     "@headlessui/react": "^1.7.8",
     "@headlessui/tailwindcss": "^0.1.2",
@@ -38,6 +41,7 @@
     "@mui/x-data-grid": "^6.16.1",
     "@reduxjs/toolkit": "^2.2.7",
     "@sentry/nextjs": "^7.109.0",
+    "@swc/helpers": "^0.5.18",
     "@tailwindcss/forms": "^0.5.3",
     "@tanstack/react-query": "^4.23.0",
     "@tanstack/react-query-devtools": "^4.24.10",
@@ -47,6 +51,7 @@
     "@transifex/native": "^5.0.6",
     "@transifex/react": "^5.0.6",
     "@turf/bbox": "^6.5.0",
+    "@worldresources/wri-design-systems": "^2.176.0",
     "canvg": "^4.0.3",
     "case": "^1.6.3",
     "circle-to-polygon": "^2.2.0",
@@ -63,7 +68,7 @@
     "lottie-react": "^2.4.0",
     "mapbox-gl": "^2.15.0",
     "mapbox-gl-draw-circle": "^1.1.2",
-    "next": "13.1.5",
+    "next": "13.5.6",
     "nookies": "^2.5.2",
     "pluralize": "^8.0.0",
     "prettier-plugin-tailwindcss": "^0.2.2",
@@ -71,10 +76,10 @@
     "query-string": "^7.1.1",
     "quill": "2.0.3",
     "ra-input-rich-text": "^4.12.2",
-    "react": "18.2.0",
+    "react": "18.3.1",
     "react-admin": "^4.7.4",
     "react-cookie": "^4.1.1",
-    "react-dom": "18.2.0",
+    "react-dom": "18.3.1",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.42.1",
     "react-if": "^4.1.4",
@@ -168,5 +173,8 @@
   "engines": {
     "npm": "please-use-yarn",
     "yarn": ">= 1.19.1"
+  },
+  "resolutions": {
+    "@swc/helpers": "0.5.18"
   }
 }
