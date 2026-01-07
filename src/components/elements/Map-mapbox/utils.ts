@@ -1358,6 +1358,11 @@ export async function downloadMultiplePolygonsGeoJson(
 ): Promise<void> {
   try {
     const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, includeExtendedData);
+
+    if (!combinedGeojson.features || combinedGeojson.features.length === 0) {
+      throw new Error("No polygons found to download");
+    }
+
     const safeFilename = formatFileName(filename);
     downloadGeoJsonFile(combinedGeojson, safeFilename);
   } catch (error) {
@@ -1384,6 +1389,10 @@ export async function downloadProjectPolygonsGeoJson(
     const geojson = extractGeoJsonFromResponse(result.data);
     if (!geojson) {
       throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    if (!geojson.features || geojson.features.length === 0) {
+      throw new Error("No polygons found to download");
     }
 
     const safeFilename = formatFileName(projectName);
