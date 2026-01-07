@@ -121,13 +121,54 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
       setSaveFlags(false);
-      closeModal(ModalId.ADD_POLYGONS);
+      if (!polygonLoaded) {
+        closeModal(ModalId.ADD_POLYGONS);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const uploadFiles = async () => {
     const siteUuid = site.uuid;
+
+    if (submitPolygonLoaded) {
+      const uploadPromises = files.map(
+        file =>
+          new Promise((resolve, reject) => {
+            const fileToUpload = file.rawFile as File;
+            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+            uploadGeometryWithVersions(attributes, {
+              onSuccess: (response: any) => resolve(response),
+              onError: (error: any) => reject(error)
+            });
+          })
+      );
+
+      try {
+        await Promise.all(uploadPromises);
+        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        setShouldRefetchPolygonData(true);
+        refetchV3();
+      } catch (error) {
+        if (error && typeof error === "object" && "message" in error) {
+          let errorMessage = (error as { message: string }).message;
+          const parsedMessage = JSON.parse(errorMessage);
+          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+            errorMessage = parsedMessage.message;
+          }
+          openNotification("error", t("Error uploading file"), errorMessage);
+        } else {
+          const errorMessage = getErrorMessageFromPayload(error);
+          openNotification("error", t("Error uploading file"), t(errorMessage));
+        }
+      } finally {
+        setPolygonLoaded(false);
+        setSubmitPolygonLoaded(false);
+        hideLoader();
+      }
+      return;
+    }
 
     if (!polygonLoaded) {
       const uploadPromises = files.map(
@@ -198,24 +239,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             openNotification("error", t("Error uploading file"), errorMessage);
           }
         });
-      } else if (submitPolygonLoaded) {
-        const uploadPromises = files.map(
-          file =>
-            new Promise((resolve, reject) => {
-              const fileToUpload = file.rawFile as File;
-              const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-              uploadGeometryWithVersions(attributes, {
-                onSuccess: (response: any) => resolve(response),
-                onError: (error: any) => reject(error)
-              });
-            })
-        );
-
-        await Promise.all(uploadPromises);
-        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
-        setShouldRefetchPolygonData(true);
-        refetchV3();
       }
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
