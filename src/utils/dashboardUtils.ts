@@ -616,12 +616,6 @@ export const isEmptyChartData = (chartType: string, data: any): boolean => {
         const lastValue = item.values[item.values.length - 1]?.value;
         return lastValue === 0 || lastValue == null;
       });
-      console.log("[isEmptyChartData - multiLineChart]", {
-        chartType,
-        dataLength: Array.isArray(data) ? data.length : "not array",
-        data: JSON.stringify(data),
-        isEmpty
-      });
       return isEmpty;
     }
     case CHART_TYPES.groupedBarChart:
