@@ -15,7 +15,7 @@ import { frameworkAdminPrimaryRoleChoices, localeChoices } from "@/admin/modules
 import { validateForm } from "@/admin/utils/forms";
 import { useGadmChoices } from "@/connections/Gadm";
 
-const ORG_TYPES = ["for-profit-organization", "non-profit-organization"];
+const ORG_TYPES = ["for-profit-organization", "non-profit-organization", "government-agency"];
 const ORG_TYPE_CHOICES = ORG_TYPES.map(type => ({ id: type, name: type }));
 
 const VALIDATION = {

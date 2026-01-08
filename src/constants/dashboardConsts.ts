@@ -20,7 +20,8 @@ export const COLORS: Record<string, string> = {
 
 export const ORGANIZATIONS_TYPES = {
   "non-profit-organization": "Non-Profit",
-  "for-profit-organization": "Enterprise"
+  "for-profit-organization": "Enterprise",
+  "government-agency": "Government Agency"
 };
 
 export const TERRAFUND_MONITORING_LINK = "https://www.wri.org/update/land-degradation-project-recipe-for-restoration";

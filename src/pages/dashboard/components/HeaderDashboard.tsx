@@ -106,6 +106,10 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     {
       title: t("Enterprise Organization"),
       value: "for-profit-organization"
+    },
+    {
+      title: t("Government agency"),
+      value: "government-agency"
     }
   ];
 

@@ -25,9 +25,10 @@ export const JOBS_CREATED_TOOLTIP =
   "Number of people newly employed directly by the project. Terrafund defines a job as any individual or person, aged 18 years or older, that is directly compensated by a project at any time to support their restoration activities.";
 
 const DEFAULT_COHORT: string[] = ["terrafund", "terrafund-landscapes", "terrafund-enterprises-rolling"];
-const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization")[] = [
+const DEFAULT_ORGANIZATION_TYPES: ("for-profit-organization" | "non-profit-organization" | "government-agency")[] = [
   "non-profit-organization",
-  "for-profit-organization"
+  "for-profit-organization",
+  "government-agency"
 ];
 const DEFAULT_PROGRAMME_TYPES: ("terrafund" | "terrafund-landscapes" | "enterprises")[] = [
   "terrafund",
