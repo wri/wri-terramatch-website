@@ -6,7 +6,8 @@ import { When } from "react-if";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { usePolygonValidation } from "@/connections/Validation";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { SitePolygon, SitePolygonsDataResponse, V2TerrafundCriteriaData } from "@/generated/apiSchemas";
+import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import ApiSlice from "@/store/apiSlice";
@@ -20,7 +21,7 @@ import VersionInformation from "./VersionInformation";
 export interface MapEditPolygonPanelProps {
   tabEditPolygon: string;
   setTabEditPolygon: Dispatch<SetStateAction<string>>;
-  polygonVersionData?: SitePolygonsDataResponse;
+  polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
   mapFunctions?: any;
   polygonData?: Record<string, string[]>;
@@ -157,7 +158,7 @@ const MapEditPolygonPanel = ({
         </When>
         <When condition={tabEditPolygon === "Version"}>
           <VersionInformation
-            polygonVersionData={polygonVersionData as SitePolygon[]}
+            polygonVersionData={polygonVersionData}
             refetchPolygonVersions={refetchPolygonVersions}
             recallEntityData={recallEntityData}
           />

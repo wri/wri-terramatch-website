@@ -574,6 +574,107 @@ export const getSitePolygonsGeoJson = new V3ApiEndpoint<
   {}
 >("/research/v3/sitePolygons/geojson", "GET");
 
+export type UpdateSitePolygonStatusPathParams = {
+  status: string;
+};
+
+export type UpdateSitePolygonStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateSitePolygonStatusResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  }[];
+};
+
+export type UpdateSitePolygonStatusVariables = {
+  body: Schemas.SitePolygonStatusBulkUpdateBodyDto;
+  pathParams: UpdateSitePolygonStatusPathParams;
+};
+
+/**
+ * Update the status of a site polygon
+ */
+export const updateSitePolygonStatus = new V3ApiEndpoint<
+  UpdateSitePolygonStatusResponse,
+  UpdateSitePolygonStatusError,
+  UpdateSitePolygonStatusVariables,
+  {}
+>("/research/v3/sitePolygons/status/{status}", "PATCH");
+
 export type ListSitePolygonVersionsPathParams = {
   primaryUuid: string;
 };
@@ -1143,6 +1244,88 @@ export const uploadGeometryFileWithVersions = new V3ApiEndpoint<
   UploadGeometryFileWithVersionsVariables,
   {}
 >("/research/v3/sitePolygons/upload/versions", "POST");
+
+export type UploadVersionForSitePolygonPathParams = {
+  uuid: string;
+};
+
+export type UploadVersionForSitePolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadVersionForSitePolygonResponse = {
+  meta?: {
+    /**
+     * @example sitePolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example sitePolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.SitePolygonLightDto;
+  };
+};
+
+export type UploadVersionForSitePolygonVariables = {
+  body: Schemas.GeometryUploadRequestDto;
+  pathParams: UploadVersionForSitePolygonPathParams;
+};
+
+/**
+ * Uploads a geometry file and creates a new version of the specified site polygon.
+ *       Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ */
+export const uploadVersionForSitePolygon = new V3ApiEndpoint<
+  UploadVersionForSitePolygonResponse,
+  UploadVersionForSitePolygonError,
+  UploadVersionForSitePolygonVariables,
+  {}
+>("/research/v3/sitePolygons/{uuid}/upload/versions", "POST");
 
 export type BoundingBoxGetQueryParams = {
   /**
@@ -1855,6 +2038,389 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   {}
 >("/research/v3/indicators/{slug}", "POST");
 
+export type GetProjectPolygonGeoJsonQueryParams = {
+  /**
+   * UUID of a project pitch to get its polygon
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  projectPitchUuid: string;
+};
+
+export type GetProjectPolygonGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetProjectPolygonGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetProjectPolygonGeoJsonVariables = {
+  queryParams: GetProjectPolygonGeoJsonQueryParams;
+};
+
+/**
+ * Export a project polygon as GeoJSON FeatureCollection for a specific project pitch.
+ */
+export const getProjectPolygonGeoJson = new V3ApiEndpoint<
+  GetProjectPolygonGeoJsonResponse,
+  GetProjectPolygonGeoJsonError,
+  GetProjectPolygonGeoJsonVariables,
+  {}
+>("/research/v3/projectPolygons/geojson", "GET");
+
+export type GetProjectPolygonQueryParams = {
+  /**
+   * UUID of the project pitch to get the polygon for
+   *
+   * @example 550e8400-e29b-41d4-a716-446655440000
+   */
+  projectPitchUuid?: string;
+};
+
+export type GetProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type GetProjectPolygonVariables = {
+  queryParams?: GetProjectPolygonQueryParams;
+};
+
+/**
+ * Get the project polygon for a specific project pitch. Only one polygon per project pitch is supported.
+ */
+export const getProjectPolygon = new V3ApiEndpoint<
+  GetProjectPolygonResponse,
+  GetProjectPolygonError,
+  GetProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons", "GET");
+
+export type CreateProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type CreateProjectPolygonVariables = {
+  body: Schemas.CreateProjectPolygonJsonApiRequestDto;
+};
+
+/**
+ * Create a project polygon for a project pitch from GeoJSON.
+ *
+ *     Each feature must have `projectPitchUuid` in properties.
+ *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, the request will fail.
+ */
+export const createProjectPolygon = new V3ApiEndpoint<
+  CreateProjectPolygonResponse,
+  CreateProjectPolygonError,
+  CreateProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons", "POST");
+
+export type UploadProjectPolygonFileError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UploadProjectPolygonFileResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type UploadProjectPolygonFileVariables = {
+  body: Schemas.ProjectPolygonUploadRequestDto;
+};
+
+/**
+ * Upload a geometry file (KML, Shapefile, or GeoJSON) to create a project polygon.
+ *
+ *     Supported formats: KML (.kml), Shapefile (.zip with .shp/.shx/.dbf), GeoJSON (.geojson)
+ *
+ *     Geometry transformation rules:
+ *     - Single point: Creates a circular polygon using est_area
+ *     - Two or more points: Uses Voronoi transformation, then convex hull to merge
+ *     - Multiple features (mixed geometries): Creates a convex hull encompassing all features
+ *     - Single polygon/line: Uses the geometry as-is
+ *
+ *
+ *     If a project polygon already exists for the project pitch, it will be replaced.
+ */
+export const uploadProjectPolygonFile = new V3ApiEndpoint<
+  UploadProjectPolygonFileResponse,
+  UploadProjectPolygonFileError,
+  UploadProjectPolygonFileVariables,
+  {}
+>("/research/v3/projectPolygons/upload", "POST");
+
+export type DeleteProjectPolygonPathParams = {
+  uuid: string;
+};
+
+export type DeleteProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteProjectPolygonVariables = {
+  pathParams: DeleteProjectPolygonPathParams;
+};
+
+/**
+ * Soft deletes a project polygon and its associated polygon geometry record.
+ */
+export const deleteProjectPolygon = new V3ApiEndpoint<
+  DeleteProjectPolygonResponse,
+  DeleteProjectPolygonError,
+  DeleteProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons/{uuid}", "DELETE");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -1862,13 +2428,15 @@ export const operationsByTag = {
     bulkUpdateSitePolygons,
     bulkDeleteSitePolygons,
     getSitePolygonsGeoJson,
+    updateSitePolygonStatus,
     listSitePolygonVersions,
     updateSitePolygonVersion,
     deleteSitePolygonVersion,
     deleteSitePolygon,
     compareGeometryFile,
     uploadGeometryFile,
-    uploadGeometryFileWithVersions
+    uploadGeometryFileWithVersions,
+    uploadVersionForSitePolygon
   },
   boundingBoxes: { boundingBoxGet },
   validations: {
@@ -1879,5 +2447,12 @@ export const operationsByTag = {
     validateGeometries
   },
   polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
-  indicators: { startIndicatorCalculation }
+  indicators: { startIndicatorCalculation },
+  projectPolygons: {
+    getProjectPolygonGeoJson,
+    getProjectPolygon,
+    createProjectPolygon,
+    uploadProjectPolygonFile,
+    deleteProjectPolygon
+  }
 };

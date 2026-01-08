@@ -3512,6 +3512,166 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
+export type FormPushTranslationPathParams = {
+  uuid: string;
+};
+
+export type FormPushTranslationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormPushTranslationResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
+export type FormPushTranslationVariables = {
+  pathParams: FormPushTranslationPathParams;
+};
+
+/**
+ * Push translations to Transifex for a form
+ */
+export const formPushTranslation = new V3ApiEndpoint<
+  FormPushTranslationResponse,
+  FormPushTranslationError,
+  FormPushTranslationVariables,
+  {}
+>("/forms/v3/forms/{uuid}/translations", "POST");
+
+export type FormPullTranslationsPathParams = {
+  uuid: string;
+};
+
+export type FormPullTranslationsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormPullTranslationsResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
+export type FormPullTranslationsVariables = {
+  pathParams: FormPullTranslationsPathParams;
+};
+
+/**
+ * Pull translations from Transifex for a form
+ */
+export const formPullTranslations = new V3ApiEndpoint<
+  FormPullTranslationsResponse,
+  FormPullTranslationsError,
+  FormPullTranslationsVariables,
+  {}
+>("/forms/v3/forms/{uuid}/translations", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: { impactStoryIndex, impactStoryGet },
@@ -3524,5 +3684,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate }
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formPushTranslation, formPullTranslations }
 };

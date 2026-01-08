@@ -265,6 +265,10 @@ export type SitePolygonLightDto = {
    * Whether the site polygon is active
    */
   isActive: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string | null;
 };
 
 export type CreateSitePolygonRequestDto = {
@@ -518,6 +522,10 @@ export type SitePolygonFullDto = {
    * Whether the site polygon is active
    */
   isActive: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string | null;
   geometry: Record<string, any> | null;
   /**
    * The tree species associated with the establishment of the site that this polygon relates to.
@@ -527,6 +535,20 @@ export type SitePolygonFullDto = {
    * Access to reported trees planted for each approved report on this site.
    */
   reportingPeriods: ReportingPeriodDto[];
+};
+
+export type SitePolygonStatusBulkUpdateBodyDto = {
+  /**
+   * Array of site polygons to update
+   *
+   * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: any[][];
+  /**
+   * Comment for the status update
+   */
+  comment?: string;
 };
 
 export type SitePolygonBulkUpdateBodyDto = {
@@ -845,4 +867,115 @@ export type IndicatorsRequestData = {
 
 export type IndicatorsBodyDto = {
   data: IndicatorsRequestData;
+};
+
+export type ProjectPolygonDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  /**
+   * UUID of the project polygon
+   */
+  uuid: string;
+  /**
+   * UUID of the associated polygon geometry
+   */
+  polygonUuid: string | null;
+  /**
+   * UUID of the associated project pitch
+   */
+  projectPitchUuid: string | null;
+  /**
+   * Entity type (currently only supports ProjectPitch)
+   */
+  entityType: string;
+  /**
+   * Entity ID (project pitch ID)
+   */
+  entityId: number;
+  /**
+   * User ID who created the project polygon
+   */
+  createdBy: number | null;
+  /**
+   * User ID who last modified the project polygon
+   */
+  lastModifiedBy: number | null;
+  /**
+   * Creation timestamp
+   *
+   * @format date-time
+   */
+  createdAt: string | null;
+  /**
+   * Last update timestamp
+   *
+   * @format date-time
+   */
+  updatedAt: string | null;
+};
+
+export type CreateProjectPolygonRequestDto = {
+  /**
+   * Feature collection type (always 'FeatureCollection')
+   *
+   * @example FeatureCollection
+   */
+  type: string;
+  /**
+   * Array of features to create. Each feature must have `projectPitchUuid` in properties.
+   *     Only one polygon per project pitch is supported.
+   *
+   * @example {"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"projectPitchUuid":"550e8400-e29b-41d4-a716-446655440000"}}
+   */
+  features: any[][];
+};
+
+export type CreateProjectPolygonAttributesDto = {
+  /**
+   * Array of feature collections containing geometries to create.
+   *
+   *     Each feature must have `projectPitchUuid` in properties.
+   *     Only one polygon per project pitch is supported.
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{"projectPitchUuid":"550e8400-e29b-41d4-a716-446655440000"}}]}
+   */
+  geometries: CreateProjectPolygonRequestDto[];
+};
+
+export type CreateProjectPolygonDataDto = {
+  /**
+   * Resource type
+   *
+   * @example projectPolygons
+   */
+  type: string;
+  /**
+   * Attributes containing the geometries to create
+   */
+  attributes: CreateProjectPolygonAttributesDto;
+};
+
+export type CreateProjectPolygonJsonApiRequestDto = {
+  /**
+   * JSON:API data object
+   */
+  data: CreateProjectPolygonDataDto;
+};
+
+export type ProjectPolygonUploadAttributesDto = {
+  /**
+   * UUID of the project pitch to create the polygon for
+   */
+  projectPitchUuid: string;
+};
+
+export type ProjectPolygonUploadData = {
+  type: "projectPolygons";
+  attributes: ProjectPolygonUploadAttributesDto;
+};
+
+export type ProjectPolygonUploadRequestDto = {
+  data: ProjectPolygonUploadData;
 };
