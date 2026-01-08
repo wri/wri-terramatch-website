@@ -112,7 +112,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         return {
           title: t("Status: Awaiting Approval"),
           subtitle: t(
-            "Your application has been submitted. The vetting team will review your application and will either accept your application without further edits; reopen the application for updates; or close the application and let you know about any additional resources or future opportunities that may be relevant. If you have any questions, please reach out to TerraMatch Support at info@terramatch.org."
+            "Your application has been submitted. The vetting team will review your application and will either accept your application without further edits; reopen the application for updates; or close the application and let you know about any additional resources or future opportunities that may be relevant. If you have any questions, please reach out to TerraMatch Support at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
           ),
           color: "primary",
           icon: IconNames.CLOCK
@@ -136,7 +136,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         return {
           title: t("Status: Not Selected"),
           subtitle: t(
-            "The vetting team has reviewed your application. Your proposal will not be moving forward in this cycle. The team will reach out with any resources that may be helpful, and we will keep your organization in mind for any future opportunities. If you have any questions, please reach out to TerraMatch Support at info@terramatch.org."
+            "The vetting team has reviewed your application. Your proposal will not be moving forward in this cycle. The team will reach out with any resources that may be helpful, and we will keep your organization in mind for any future opportunities. If you have any questions, please reach out to TerraMatch Support at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
           ),
           color: "error",
           icon: IconNames.CROSS_CIRCLE
@@ -210,7 +210,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         <div className="flex flex-1 flex-col gap-4">
           <Text variant="text-heading-600">{statusProps.title}</Text>
           <When condition={!!statusProps.subtitle}>
-            <Text variant="text-heading-100">{statusProps.subtitle}</Text>
+            <Text variant="text-heading-100" containHtml>
+              {statusProps.subtitle}
+            </Text>
           </When>
         </div>
         <div className="flex flex-col">
