@@ -1,9 +1,9 @@
 import { useT } from "@transifex/react";
-import React, { useEffect } from "react";
+import { useMemo } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { useGetV2TerrafundPolygonUuid } from "@/generated/apiComponents";
-import { SitePolygon } from "@/generated/apiSchemas";
+import { useSitePolygons } from "@/connections/SitePolygons";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import type { TooltipType } from "../Map-mapbox/Map.d";
 import { formatPlannedStartDate } from "../Map-mapbox/utils";
@@ -25,28 +25,42 @@ const topBorderColorPopup: any = {
 const TooltipMap = (props: TooltipMapProps) => {
   const { setTooltipOpen, setEditPolygon, polygon, type } = props;
   const t = useT();
-  const [polygonData, setPolygonData] = React.useState<SitePolygon>();
-  const { data: sitePolygonData } = useGetV2TerrafundPolygonUuid<{
-    site_polygon: SitePolygon;
-  }>({
-    pathParams: {
-      uuid: polygon
-    }
-  });
-  useEffect(() => {
-    setPolygonData(sitePolygonData?.site_polygon);
-  }, [sitePolygonData]);
 
-  const formatDate = (date: string | undefined) => {
-    const plantStartDate = date ? new Date(date) : null;
-    const formattedPlantStartDate = formatPlannedStartDate(plantStartDate);
-    return formattedPlantStartDate;
+  const [, connectionData] = useSitePolygons({
+    filter: {
+      "polygonUuid[]": polygon != null ? [polygon] : []
+    },
+    enabled: polygon != null,
+    pageSize: 1,
+    pageNumber: 1
+  });
+
+  const polygonData = useMemo<SitePolygonLightDto | undefined>(() => {
+    return connectionData.data?.[0];
+  }, [connectionData.data]);
+
+  const formatArrayField = (arr: string[] | null | undefined): string => {
+    if (arr == null || arr.length === 0) {
+      return t("Unknown");
+    }
+    return arr.join(", ");
   };
 
-  const polygonDataStatus = polygonData?.status ? polygonData.status : "draft";
+  const formatDate = (date: string | null | undefined): string => {
+    if (date == null) {
+      return "";
+    }
+    const plantStartDate = new Date(date);
+    return formatPlannedStartDate(plantStartDate);
+  };
 
-  const goToRelatedSiteProfile = () => {
-    const siteUrl = `/site/${polygonData?.site_id}`;
+  const polygonDataStatus = polygonData?.status ?? "draft";
+
+  const goToRelatedSiteProfile = (): void => {
+    if (polygonData?.siteId == null) {
+      return;
+    }
+    const siteUrl = `/site/${polygonData.siteId}`;
     window.open(siteUrl, "_blank");
   };
 
@@ -61,11 +75,11 @@ const TooltipMap = (props: TooltipMapProps) => {
       <div className="text-10 flex items-center justify-center gap-1">
         <Text variant="text-10" className="mb-1 px-3 text-center uppercase leading-[normal]">
           {t("SITE : ")}
-          {polygonData?.site_name}
+          {polygonData?.siteName ?? ""}
         </Text>
       </div>
       <Text variant="text-10-bold" className="text-center leading-[normal] text-black">
-        {polygonData?.poly_name ? polygonData?.poly_name : t("Unnamed Polygon")}
+        {polygonData?.name != null ? polygonData.name : t("Unnamed Polygon")}
       </Text>
       <hr className="my-2 border border-grey-750" />
       <div className="grid grid-cols-2 gap-4">
@@ -74,7 +88,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             {t("Restoration Practice")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygonData?.practice ? polygonData?.practice : t("Unknown")}
+            {formatArrayField(polygonData?.practice)}
           </Text>
         </div>
         <div>
@@ -82,7 +96,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             {t("Target Land Use System")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {polygonData?.target_sys ? polygonData?.target_sys : t("Unknown")}
+            {polygonData?.targetSys != null ? polygonData.targetSys : t("Unknown")}
           </Text>
         </div>
         <div>
@@ -90,7 +104,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             {t("Tree Distribution")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black">
-            {polygonData?.distr ? polygonData?.distr : t("Unknown")}
+            {formatArrayField(polygonData?.distr)}
           </Text>
         </div>
         <div>
@@ -98,7 +112,7 @@ const TooltipMap = (props: TooltipMapProps) => {
             {t("Planting Start Date")}
           </Text>
           <Text variant="text-10-bold" className="leading-[normal] text-black ">
-            {formatDate(polygonData?.plantstart)}
+            {formatDate(polygonData?.plantStart)}
           </Text>
         </div>
       </div>
@@ -108,7 +122,11 @@ const TooltipMap = (props: TooltipMapProps) => {
         <div className="flex w-full items-center justify-center">
           <button
             className="flex items-center justify-center gap-1"
-            onClick={() => setEditPolygon(sitePolygonData?.site_polygon?.primary_uuid as string)}
+            onClick={() => {
+              if (polygonData?.primaryUuid != null) {
+                setEditPolygon(polygonData.primaryUuid);
+              }
+            }}
           >
             <Icon name={IconNames.CLICK} className="h-4 w-4" />
             <Text variant="text-10-light" className="italic text-black">
