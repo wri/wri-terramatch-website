@@ -3512,11 +3512,11 @@ export const formUpdate = new V3ApiEndpoint<FormUpdateResponse, FormUpdateError,
   "PUT"
 );
 
-export type FormTranslatePathParams = {
+export type FormPushTranslationPathParams = {
   uuid: string;
 };
 
-export type FormTranslateError = Fetcher.ErrorWrapper<
+export type FormPushTranslationError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -3558,17 +3558,39 @@ export type FormTranslateError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type FormTranslateVariables = {
-  pathParams: FormTranslatePathParams;
+export type FormPushTranslationResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
+export type FormPushTranslationVariables = {
+  pathParams: FormPushTranslationPathParams;
 };
 
 /**
- * Translate a form
+ * Push translations to Transifex for a form
  */
-export const formTranslate = new V3ApiEndpoint<undefined, FormTranslateError, FormTranslateVariables, {}>(
-  "/forms/v3/forms/{uuid}/translate",
-  "POST"
-);
+export const formPushTranslation = new V3ApiEndpoint<
+  FormPushTranslationResponse,
+  FormPushTranslationError,
+  FormPushTranslationVariables,
+  {}
+>("/forms/v3/forms/{uuid}/translations", "POST");
 
 export type FormPullTranslationsPathParams = {
   uuid: string;
@@ -3616,19 +3638,39 @@ export type FormPullTranslationsError = Fetcher.ErrorWrapper<
     }
 >;
 
+export type FormPullTranslationsResponse = {
+  meta?: {
+    /**
+     * @example formTranslations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example formTranslations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.FormTranslationDto;
+  };
+};
+
 export type FormPullTranslationsVariables = {
   pathParams: FormPullTranslationsPathParams;
 };
 
 /**
- * Pull translations for a form
+ * Pull translations from Transifex for a form
  */
 export const formPullTranslations = new V3ApiEndpoint<
-  undefined,
+  FormPullTranslationsResponse,
   FormPullTranslationsError,
   FormPullTranslationsVariables,
   {}
->("/forms/v3/forms/{uuid}/translate", "GET");
+>("/forms/v3/forms/{uuid}/translations", "GET");
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
@@ -3642,5 +3684,5 @@ export const operationsByTag = {
   entityAssociations: { entityAssociationIndex },
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formTranslate, formPullTranslations }
+  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formPushTranslation, formPullTranslations }
 };
