@@ -88,6 +88,22 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
       return plantsTotal;
     }
 
+    // For projectReports and siteReports with tree-planted collection, combine plants and reportCounts
+    // The table shows both entityPlants (from plants) and reportPlants (from reportCounts not in plants)
+    if (entity.endsWith("Reports") && collection === "tree-planted") {
+      const plantsTotal = sumBy(plants ?? [], "amount");
+      const reportCountsEntries = Object.entries(reportCounts ?? {});
+      if (reportCountsEntries.length > 0) {
+        const reportPlantsTotal = reportCountsEntries
+          .filter(
+            ([reportName]) => !(plants ?? []).some(({ name }) => name?.toLowerCase() === reportName?.toLowerCase())
+          )
+          .reduce((sum, [, { amount }]) => sum + (amount ?? 0), 0);
+        return plantsTotal + reportPlantsTotal;
+      }
+      return plantsTotal;
+    }
+
     const usesReportCounts =
       !entity.endsWith("Reports") ||
       // Special case: for projectReports with "replanting" collection, data comes within reportCounts
