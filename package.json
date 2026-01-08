@@ -99,19 +99,19 @@
   },
   "devDependencies": {
     "@3sidedcube/prettier-config": "^1.0.0",
-    "@babel/core": "^7.20.12",
+    "@babel/core": "^7.23.0",
     "@faker-js/faker": "^8.0.2",
     "@openapi-codegen/cli": "^2.0.0",
     "@openapi-codegen/typescript": "^6.1.0",
-    "@storybook/addon-actions": "^7.0.2",
-    "@storybook/addon-essentials": "^7.0.2",
-    "@storybook/addon-interactions": "^7.0.2",
-    "@storybook/addon-links": "^7.0.2",
-    "@storybook/addon-mdx-gfm": "^7.0.2",
-    "@storybook/addon-storyshots": "^7.0.2",
+    "@storybook/addon-actions": "^7.6.21",
+    "@storybook/addon-essentials": "^7.6.21",
+    "@storybook/addon-interactions": "^7.6.21",
+    "@storybook/addon-links": "^7.6.21",
+    "@storybook/addon-mdx-gfm": "^7.6.21",
+    "@storybook/addon-storyshots": "^7.6.21",
     "@storybook/addon-styling": "^0.3.2",
-    "@storybook/nextjs": "^7.0.2",
-    "@storybook/react": "^7.0.2",
+    "@storybook/nextjs": "^7.6.21",
+    "@storybook/react": "^7.6.21",
     "@storybook/testing-library": "^0.1.0",
     "@svgr/webpack": "^6.5.1",
     "@tailwindcss/line-clamp": "^0.4.0",
@@ -175,6 +175,8 @@
     "yarn": ">= 1.19.1"
   },
   "resolutions": {
-    "@swc/helpers": "0.5.18"
+    "@swc/helpers": "0.5.18",
+    "@babel/core": "^7.23.0",
+    "@babel/traverse": "^7.23.0"
   }
 }
