@@ -10,13 +10,15 @@ import {
   createSitePolygons,
   deleteSitePolygon as deleteSitePolygonEndpoint,
   sitePolygonsIndex,
-  SitePolygonsIndexQueryParams
+  SitePolygonsIndexQueryParams,
+  updateSitePolygonStatus
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
   AttributeChangesDto,
   CreateSitePolygonAttributesDto,
   SitePolygonBulkDeleteBodyDto,
-  SitePolygonLightDto
+  SitePolygonLightDto,
+  SitePolygonStatusBulkUpdateBodyDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -67,6 +69,26 @@ const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SiteP
   return {
     data: resources as never
   };
+};
+
+export const bulkUpdateSitePolygonStatus = async (
+  uuids: string[],
+  status: PolygonStatus,
+  comment: string
+): Promise<void> => {
+  const updateResources: SitePolygonResourceIdentifier[] = uuids.map(uuid => ({
+    type: "sitePolygons",
+    id: uuid
+  }));
+
+  const body: SitePolygonStatusBulkUpdateBodyDto = {
+    comment,
+    data: updateResources.map(resource => ({
+      type: "sitePolygons",
+      id: resource.id
+    })) as unknown as never[][]
+  };
+  return updateSitePolygonStatus.fetch({ body, pathParams: { status } });
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {

@@ -7,14 +7,11 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
+import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import {
-  fetchGetV2TypeEntity,
-  fetchPostV2TerrafundPolygon, // will be deprecated in the future, currently used for project creation
-  fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType
-} from "@/generated/apiComponents";
+import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
@@ -1361,6 +1358,11 @@ export async function downloadMultiplePolygonsGeoJson(
 ): Promise<void> {
   try {
     const combinedGeojson = await fetchMultiplePolygonsGeoJson(polygonUuids, includeExtendedData);
+
+    if (!combinedGeojson.features || combinedGeojson.features.length === 0) {
+      throw new Error("No polygons found to download");
+    }
+
     const safeFilename = formatFileName(filename);
     downloadGeoJsonFile(combinedGeojson, safeFilename);
   } catch (error) {
@@ -1374,19 +1376,23 @@ export async function downloadSiteGeoJsonPolygons(siteUuid: string, siteName: st
 }
 
 export async function downloadProjectPolygonsGeoJson(
-  projectUuid: string,
+  projectPitchUuid: string,
   projectName: string,
   options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "siteUuid" | "projectUuid">
 ): Promise<void> {
   try {
     const result = await loadProjectPolygonsGeoJson({
-      projectUuid,
+      projectPitchUuid,
       ...options
     });
 
     const geojson = extractGeoJsonFromResponse(result.data);
     if (!geojson) {
       throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    if (!geojson.features || geojson.features.length === 0) {
+      throw new Error("No polygons found to download");
     }
 
     const safeFilename = formatFileName(projectName);
@@ -1439,23 +1445,31 @@ export async function storePolygon(
 
 export async function storePolygonProject(
   geojson: any,
-  entity_uuid: string,
-  entity_type: string,
+  entityUuid: string,
+  entityType: string,
   refetch: any,
   setPolygonFromMap: any
 ) {
   if (geojson?.length) {
-    const response = await fetchPostV2TerrafundPolygon({
-      body: { geometry: JSON.stringify(geojson[0].geometry) }
-    });
-    const polygonUUID = response.uuid;
-    if (polygonUUID) {
-      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({
-        pathParams: { uuid: polygonUUID, entityUuid: entity_uuid, entityType: entity_type }
-      }).then(res => {
-        refetch?.();
-        setPolygonFromMap?.({ uuid: polygonUUID, isOpen: true });
-      });
+    const geometries = [
+      {
+        type: "FeatureCollection",
+        features: geojson.map((feature: any) => ({
+          type: "Feature",
+          geometry: feature.geometry,
+          properties: {
+            projectPitchUuid: entityUuid
+          }
+        }))
+      }
+    ];
+
+    const response = await createProjectPolygonWithReplace({ geometries }, entityUuid);
+
+    const polygonUuid = response.polygonUuid;
+    if (polygonUuid) {
+      refetch?.();
+      setPolygonFromMap?.({ uuid: polygonUuid, isOpen: true });
     }
   }
 }

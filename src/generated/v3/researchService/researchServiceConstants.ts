@@ -8,7 +8,8 @@ import {
   DelayedJobDto,
   BoundingBoxDto,
   ValidationSummaryDto,
-  ClippedVersionDto
+  ClippedVersionDto,
+  ProjectPolygonDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
@@ -19,7 +20,8 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "delayedJobs",
   "boundingBoxes",
   "validationSummaries",
-  "clippedVersions"
+  "clippedVersions",
+  "projectPolygons"
 ] as const;
 
 export type ResearchServiceApiResources = {
@@ -31,4 +33,5 @@ export type ResearchServiceApiResources = {
   boundingBoxes: StoreResourceMap<BoundingBoxDto>;
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
+  projectPolygons: StoreResourceMap<ProjectPolygonDto>;
 };

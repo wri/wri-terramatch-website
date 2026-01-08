@@ -9,6 +9,8 @@ import {
   formGet,
   formIndex,
   FormIndexQueryParams,
+  formPullTranslations,
+  formPushTranslation,
   formUpdate,
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
@@ -18,6 +20,7 @@ import {
 import {
   FormFullDto,
   FormLightDto,
+  FormTranslationDto,
   LinkedFieldDto,
   OptionLabelDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -87,3 +90,16 @@ export const updateForm = resourceUpdater(formConnection);
 const createFormConnection = v3Resource("forms", formCreate).create<FormFullDto>().buildConnection();
 export const createForm = resourceCreator(createFormConnection);
 export const useFormCreate = connectionHook(createFormConnection);
+
+export const pushFormTranslation = async (formUuid: string) => {
+  const result = await formPushTranslation.fetchParallel({
+    pathParams: { uuid: formUuid }
+  });
+  return result;
+};
+
+const formPullTranslationConnection = v3Resource("formTranslations", formPullTranslations)
+  .singleResource<FormTranslationDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .buildConnection();
+
+export const loadFormTranslation = connectionLoader(formPullTranslationConnection);
