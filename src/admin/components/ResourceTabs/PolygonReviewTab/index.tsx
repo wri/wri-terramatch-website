@@ -198,7 +198,9 @@ const PolygonReviewTab: FC<IProps> = props => {
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const bbox = useBoundingBox({ polygonUuid: currentPolygonUuid ?? undefined, siteUuid: record?.uuid });
+  const bbox = useBoundingBox(
+    currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : { siteUuid: record?.uuid }
+  );
   const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
     Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
   const activeBbox = isValidBbox(bbox) ? bbox : undefined;
