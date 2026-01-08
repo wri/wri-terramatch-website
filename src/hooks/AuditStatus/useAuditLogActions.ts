@@ -1,10 +1,10 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import {
-  fetchGetV2SitesSiteCheckApprove,
   fetchPostV2TerrafundValidationPolygon,
   GetV2AuditStatusENTITYUUIDResponse,
   useGetV2AuditStatusENTITYUUID
@@ -68,7 +68,6 @@ const useAuditLogActions = ({
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
-  const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
   const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entity: record,
@@ -77,6 +76,22 @@ const useAuditLogActions = ({
     entityLevel,
     isProjectReport
   });
+
+  const siteUuid =
+    entityType === "Site" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
+
+  const { data: sitePolygons } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: siteUuid,
+    enabled: !!siteUuid && entityType === "Site" && isSite
+  });
+
+  const checkPolygons = useMemo<boolean | undefined>(() => {
+    if (!siteUuid || !sitePolygons || sitePolygons.length === 0) {
+      return undefined;
+    }
+    return sitePolygons.some(polygon => polygon.isActive && polygon.status !== "approved");
+  }, [siteUuid, sitePolygons]);
 
   const verifyEntity = [
     "project-reports",
@@ -88,15 +103,6 @@ const useAuditLogActions = ({
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   useEffect(() => {
-    const fetchCheckPolygons = async () => {
-      if (entityType === "Site" && record?.uuid && isSite) {
-        const result = await fetchGetV2SitesSiteCheckApprove({
-          pathParams: { site: isSiteProject ? selected?.uuid : record.uuid }
-        });
-        setCheckPolygons(result.data?.can_approve);
-      }
-    };
-
     const fetchCriteriaValidation = async () => {
       if (selected?.poly_id && isPolygon) {
         const criteriaData = await fetchPostV2TerrafundValidationPolygon({
@@ -109,9 +115,8 @@ const useAuditLogActions = ({
     };
     if (!verifyEntity) {
       fetchCriteriaValidation();
-      fetchCheckPolygons();
     }
-  }, [entityType, isPolygon, isSite, isSiteProject, record?.uuid, selected, verifyEntity]);
+  }, [isPolygon, selected, verifyEntity]);
 
   const isValidCriteriaData = (criteriaData: any) => {
     if (!criteriaData?.criteria_list?.length) {

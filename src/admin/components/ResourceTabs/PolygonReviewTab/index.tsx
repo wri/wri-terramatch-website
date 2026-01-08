@@ -34,13 +34,12 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { deleteSitePolygon } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, deleteSitePolygon } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import {
   CompareGeometryFileResponse,
@@ -563,14 +562,11 @@ const PolygonReviewTab: FC<IProps> = props => {
         onConfirm={async data => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
           try {
-            await fetchPutV2SitePolygonStatusBulk({
-              body: {
-                comment: data,
-                updatePolygons: polygonsForApprovals.map(polygon => {
-                  return { uuid: polygon.uuid, status: "approved" };
-                })
-              }
-            });
+            await bulkUpdateSitePolygonStatus(
+              polygonsForApprovals.map(polygon => polygon.uuid) as string[],
+              "approved",
+              data
+            );
             openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
           } catch (error) {
