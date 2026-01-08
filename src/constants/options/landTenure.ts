@@ -5,28 +5,28 @@ import { Option } from "@/types/common";
 
 export const getLandTenureOptions = (t: typeof useT = (t: string) => t): Option[] => [
   {
-    value: "public",
+    value: "public-land",
     title: t("Public"),
     meta: {
       image_url: `${apiBaseUrl}/images/V2/land-tenures/public.png`
     }
   },
   {
-    value: "private",
+    value: "private-land",
     title: t("Private"),
     meta: {
       image_url: `${apiBaseUrl}/images/V2/land-tenures/private.png`
     }
   },
   {
-    value: "indigenous",
+    value: "indigenous-land",
     title: t("Indigenous"),
     meta: {
       image_url: `${apiBaseUrl}/images/V2/land-tenures/indigenous.png`
     }
   },
   {
-    value: "communal",
+    value: "communal-land",
     title: t("Communal"),
     meta: {
       image_url: `${apiBaseUrl}/images/V2/land-tenures/communal.png`
@@ -40,7 +40,7 @@ export const getLandTenureOptions = (t: typeof useT = (t: string) => t): Option[
     }
   },
   {
-    value: "other",
+    value: "other-land",
     title: t("Other"),
     meta: {
       image_url: `${apiBaseUrl}/images/V2/land-tenures/other.png`
