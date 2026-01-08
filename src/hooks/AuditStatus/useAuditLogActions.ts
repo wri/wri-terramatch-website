@@ -66,6 +66,7 @@ const useAuditLogActions = ({
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
   const [checkPolygons, setCheckPolygons] = useState<boolean | undefined>(undefined);
@@ -168,7 +169,7 @@ const useAuditLogActions = ({
       };
     } else {
       return {
-        selectedEntityItem: isProject ? record.project : isSite ? record : selected,
+        selectedEntityItem: isProject ? record.project : isSite || isNursery ? record : selected,
         loadToEntity: !isProject && !isSite ? loadEntityList : () => {},
         ListItemToEntity: !isProject && !isSite ? entityListItem : [],
         setSelectedToEntity: !isProject && !isSite ? setSelected : null,
