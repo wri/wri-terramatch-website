@@ -119,12 +119,19 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         };
 
       case "awaiting-approval":
-        return { title: t("Status: Awaiting Approval"), color: "primary", icon: IconNames.CLOCK };
+        return {
+          title: t("Status: Awaiting Approval"),
+          subtitle: t(
+            "Your application has been submitted. The vetting team will review your application and will either accept your application without further edits; reopen the application for updates; or close the application and let you know about any additional resources or future opportunities that may be relevant. If you have any questions, please reach out to TerraMatch Support at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
+          ),
+          color: "primary",
+          icon: IconNames.CLOCK
+        };
 
       case "requires-more-information":
         return {
           title: t("Status: More Information Requested"),
-          subtitle: currentSubmission.feedback ?? undefined,
+          subtitle: t("The vetting team has reviewed your application and offered the following feedback:"),
           color: "tertiary",
           icon: IconNames.WARNING,
           primaryAction: {
@@ -137,7 +144,9 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
       case "rejected":
         return {
           title: t("Status: Not Selected"),
-          subtitle: currentSubmission.feedback ?? undefined,
+          subtitle: t(
+            "The vetting team has reviewed your application. Your proposal will not be moving forward in this cycle. The team will reach out with any resources that may be helpful, and we will keep your organization in mind for any future opportunities. If you have any questions, please reach out to TerraMatch Support at <a href='mailto:info@terramatch.org' class='underline !text-primary'>info@terramatch.org</a>."
+          ),
           color: "error",
           icon: IconNames.CROSS_CIRCLE
         };
@@ -166,32 +175,21 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           };
         } else {
           //All stages of the application are approved
+          const projectUuid = application?.projectUuid;
           return {
             title: t("Status: Approved"),
             subtitle: t(
-              reportingFramework.slug == null
-                ? "Congratulations! Your application has been reviewed and approved. Please check back soon to set up your project. For additional guidance, feel free to contact your project manager for further instructions or email info@terramatch.org"
-                : "Congratulations! Your application has been reviewed and approved by WRI. To start your monitoring activities, simply set up your monitoring project by clicking the button below. For additional guidance, feel free to contact WRI for further instructions or explore more information in the options provided below."
+              "Congratulations! Your application has been approved. Now, your application has transitioned into a project. On your project page, you can review the details from your finalized application, and make updates as needed."
             ),
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
-            primaryAction:
-              reportingFramework.slug == null
-                ? undefined
-                : {
-                    children: t("Set up monitoring project"),
-                    as: Link,
-                    href: `/entity/projects/create/${reportingFramework.slug}?parent_name=application&parent_uuid=${application?.uuid}`
-                  },
-            secondaryAction:
-              fundingProgramme?.readMoreUrl == null
-                ? undefined
-                : {
-                    children: t("Learn More"),
-                    iconProps: { name: IconNames.LINK, width: 14 },
-                    as: Link,
-                    href: fundingProgramme.readMoreUrl ?? undefined
-                  }
+            primaryAction: projectUuid
+              ? {
+                  children: t("View Project"),
+                  as: Link,
+                  href: `/project/${projectUuid}`
+                }
+              : undefined
           };
         }
     }
@@ -221,13 +219,25 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
       <div className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col gap-4">
           <Text variant="text-heading-600">{statusProps.title}</Text>
-          {statusProps.subtitle != null ? <Text variant="text-heading-100">{statusProps.subtitle}</Text> : null}
+          {statusProps.subtitle != null ? (
+            <Text variant="text-heading-100" containHtml>
+              {statusProps.subtitle}
+            </Text>
+          ) : null}
         </div>
         <div className="flex flex-col">
-          {currentSubmission?.translatedFeedbackFields != null ? (
+          {currentSubmission?.status === "requires-more-information" &&
+          currentSubmission?.feedback != null &&
+          typeof currentSubmission?.feedback === "string" ? (
             <div className="mt-6 flex flex-col gap-2">
-              <Text variant="text-body-900">{t("Provide more information for the following fields:")}</Text>
-              <Text variant="text-heading-100">{currentSubmission.translatedFeedbackFields.join(", ")}</Text>
+              <Text variant="text-heading-100">{currentSubmission.feedback}</Text>
+            </div>
+          ) : null}
+          {currentSubmission?.status === "requires-more-information" &&
+          currentSubmission?.translatedFeedbackFields != null ? (
+            <div className="mt-6 flex flex-col gap-2">
+              <Text variant="text-body-900">{t("Please provide more information on the following fields:")}</Text>
+              <Text variant="text-heading-100">{currentSubmission?.translatedFeedbackFields?.join(", ")}</Text>
             </div>
           ) : null}
           {statusProps.secondaryAction != null || statusProps.primaryAction != null ? (

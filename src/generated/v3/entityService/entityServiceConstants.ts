@@ -40,6 +40,7 @@ import {
   SubmissionDto,
   FormLightDto,
   FormFullDto,
+  FormTranslationDto,
   ApplicationDto,
   ApplicationHistoryDto,
   FundingProgrammeDto
@@ -74,6 +75,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "linkedFields",
   "submissions",
   "forms",
+  "formTranslations",
   "applications",
   "applicationHistories",
   "fundingProgrammes"
@@ -108,6 +110,7 @@ export type EntityServiceApiResources = {
   linkedFields: StoreResourceMap<LinkedFieldDto>;
   submissions: StoreResourceMap<SubmissionDto>;
   forms: StoreResourceMap<FormLightDto | FormFullDto>;
+  formTranslations: StoreResourceMap<FormTranslationDto>;
   applications: StoreResourceMap<ApplicationDto>;
   applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
   fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;

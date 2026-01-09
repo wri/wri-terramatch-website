@@ -7,12 +7,12 @@ import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/In
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { FormModelType } from "@/connections/Form";
+import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
-import { useGetV2TerrafundProjectPolygon } from "@/generated/apiComponents";
 import { singularEntityName } from "@/helpers/entity";
 import ApiSlice from "@/store/apiSlice";
 import { Entity, EntityName } from "@/types/common";
@@ -52,35 +52,25 @@ const RHFMap = ({
   const { setSelectPolygonFromMap } = useMonitoredDataContext();
 
   const refetchData = () => {
-    reloadProjectPolygonData();
     mapFunctions?.onCancel(polygonDataMap);
     if (entityName === "project-pitch" && entityUUID != null) {
       ApiSlice.pruneCache("boundingBoxes", [entityUUID]);
+      ApiSlice.pruneCache("projectPolygons", [entityUUID]);
     }
   };
 
   const reloadSiteDataWithBoundingBox = () => {
-    reloadProjectPolygonData();
     if (entityName === "project-pitch" && entityUUID != null) {
       ApiSlice.pruneCache("boundingBoxes", [entityUUID]);
+      ApiSlice.pruneCache("projectPolygons", [entityUUID]);
     }
   };
 
   const enabled = entityName != null && entityUUID != null;
-  const {
-    data: projectPolygon,
-    refetch: reloadProjectPolygonData,
-    isRefetching,
-    isFetching
-  } = useGetV2TerrafundProjectPolygon(
-    {
-      queryParams: {
-        entityType: entityName ?? "",
-        uuid: entityUUID ?? ""
-      }
-    },
-    { enabled, staleTime: 0, cacheTime: 0 }
-  );
+  const [, { data: projectPolygon, isLoading: isFetching }] = useProjectPolygonByPitch({
+    filter: { projectPitchUuid: entityUUID },
+    enabled
+  });
 
   const bbox = useBoundingBox(
     entityName == "project-pitch" ? { projectPitchUuid: entityUUID } : { polygonUuid: polygonFromMap?.uuid }
@@ -92,33 +82,33 @@ const RHFMap = ({
 
   useEffect(() => {
     const getDataProjectPolygon = async () => {
-      if (!projectPolygon?.project_polygon) {
+      if (!projectPolygon?.polygonUuid) {
         setPolygonDataMap({ [FORM_POLYGONS]: [] });
         setPolygonFromMap({ isOpen: false, uuid: "" });
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
-        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon?.project_polygon?.poly_uuid] });
-        setPolygonFromMap({ isOpen: true, uuid: projectPolygon?.project_polygon?.poly_uuid });
+        setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon.polygonUuid] });
+        setPolygonFromMap({ isOpen: true, uuid: projectPolygon.polygonUuid });
       }
     };
 
     getDataProjectPolygon();
-  }, [projectPolygon, isRefetching, setSelectPolygonFromMap]);
+  }, [projectPolygon, isFetching, setSelectPolygonFromMap]);
 
   useEffect(() => {
-    const apiPolyUuid = projectPolygon?.project_polygon?.poly_uuid;
+    const apiPolygonUuid = projectPolygon?.polygonUuid;
     const fieldName = inputWrapperProps.name;
 
-    if (apiPolyUuid != null) {
+    if (apiPolygonUuid != null) {
       let shouldUpdate = false;
       if (value == null) {
         shouldUpdate = true;
-      } else if (typeof value === "object" && (value as any).polyUuid !== apiPolyUuid) {
+      } else if (typeof value === "object" && (value as any)?.polygonUuid !== apiPolygonUuid) {
         shouldUpdate = true;
       }
 
       if (shouldUpdate) {
-        formHook.setValue(fieldName, { polyUuid: apiPolyUuid }, { shouldValidate: true, shouldDirty: true });
+        formHook.setValue(fieldName, { polygonUuid: apiPolygonUuid }, { shouldValidate: true, shouldDirty: true });
         onChangeCapture?.();
       }
     } else {

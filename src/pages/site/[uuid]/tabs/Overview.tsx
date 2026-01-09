@@ -26,13 +26,12 @@ import {
   useUploadGeometry,
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { bulkUpdateSitePolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { fetchPutV2SitePolygonStatusBulk } from "@/generated/apiComponents";
 import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
@@ -122,13 +121,54 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     if (files && files.length > 0 && saveFlags) {
       uploadFiles();
       setSaveFlags(false);
-      closeModal(ModalId.ADD_POLYGONS);
+      if (!polygonLoaded) {
+        closeModal(ModalId.ADD_POLYGONS);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files, saveFlags]);
 
   const uploadFiles = async () => {
     const siteUuid = site.uuid;
+
+    if (submitPolygonLoaded) {
+      const uploadPromises = files.map(
+        file =>
+          new Promise((resolve, reject) => {
+            const fileToUpload = file.rawFile as File;
+            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
+
+            uploadGeometryWithVersions(attributes, {
+              onSuccess: (response: any) => resolve(response),
+              onError: (error: any) => reject(error)
+            });
+          })
+      );
+
+      try {
+        await Promise.all(uploadPromises);
+        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
+        setShouldRefetchPolygonData(true);
+        refetchV3();
+      } catch (error) {
+        if (error && typeof error === "object" && "message" in error) {
+          let errorMessage = (error as { message: string }).message;
+          const parsedMessage = JSON.parse(errorMessage);
+          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
+            errorMessage = parsedMessage.message;
+          }
+          openNotification("error", t("Error uploading file"), errorMessage);
+        } else {
+          const errorMessage = getErrorMessageFromPayload(error);
+          openNotification("error", t("Error uploading file"), t(errorMessage));
+        }
+      } finally {
+        setPolygonLoaded(false);
+        setSubmitPolygonLoaded(false);
+        hideLoader();
+      }
+      return;
+    }
 
     if (!polygonLoaded) {
       const uploadPromises = files.map(
@@ -199,24 +239,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
             openNotification("error", t("Error uploading file"), errorMessage);
           }
         });
-      } else if (submitPolygonLoaded) {
-        const uploadPromises = files.map(
-          file =>
-            new Promise((resolve, reject) => {
-              const fileToUpload = file.rawFile as File;
-              const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-              uploadGeometryWithVersions(attributes, {
-                onSuccess: (response: any) => resolve(response),
-                onError: (error: any) => reject(error)
-              });
-            })
-        );
-
-        await Promise.all(uploadPromises);
-        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
-        setShouldRefetchPolygonData(true);
-        refetchV3();
       }
     } catch (error) {
       if (error && typeof error === "object" && "message" in error) {
@@ -402,14 +424,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         onConfirm={async data => {
           closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
           try {
-            await fetchPutV2SitePolygonStatusBulk({
-              body: {
-                comment: data,
-                updatePolygons: (polygons as SitePolygonsDataResponse).map(polygon => {
-                  return { uuid: polygon.uuid, status: "submitted" };
-                })
-              }
-            });
+            await bulkUpdateSitePolygonStatus(
+              (polygons as SitePolygonsDataResponse).map(polygon => polygon.uuid) as string[],
+              "submitted",
+              data
+            );
             setShouldRefetchPolygonData(true);
             openNotification("success", t("Success! Your polygons were submitted."));
           } catch (error) {

@@ -609,8 +609,15 @@ export const formatCohortDisplay = (cohort: string[] | null | undefined): string
 export const isEmptyChartData = (chartType: string, data: any): boolean => {
   if (!data) return false;
   switch (chartType) {
-    case CHART_TYPES.multiLineChart:
-      return data?.every((item: any) => Array.isArray(item.values) && item.values.length === 0);
+    case CHART_TYPES.multiLineChart: {
+      if (Array.isArray(data) && data.length === 0) return true;
+      const isEmpty = data?.every((item: any) => {
+        if (!Array.isArray(item.values) || item.values.length === 0) return true;
+        const lastValue = item.values[item.values.length - 1]?.value;
+        return lastValue === 0 || lastValue == null;
+      });
+      return isEmpty;
+    }
     case CHART_TYPES.groupedBarChart:
       if (data.chartData && data.type === "gender") {
         return data?.chartData.every((item: any) => item.Women === 0 && item.Men === 0);

@@ -2988,6 +2988,17 @@ export type UpdateFormBody = {
   data: UpdateFormData;
 };
 
+export type FormTranslationDto = {
+  /**
+   * Number of translation keys
+   */
+  translationKeysNumber: number;
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+};
+
 export type EmbeddedSubmissionDto = {
   uuid: string;
   /**
@@ -3019,6 +3030,7 @@ export type ApplicationDto = {
   submissions: EmbeddedSubmissionDto[];
   organisationName: string | null;
   organisationUuid: string | null;
+  projectUuid: string | null;
   fundingProgrammeName: string | null;
   fundingProgrammeUuid: string | null;
 };
