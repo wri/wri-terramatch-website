@@ -7,13 +7,14 @@ import { useCallback, useMemo } from "react";
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
+import { EntityFullDto, pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
 import { toFramework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
   DisturbanceReportFullDto,
+  FinancialReportFullDto,
   SiteReportFullDto,
   SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -25,6 +26,7 @@ import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -32,6 +34,13 @@ interface EditEntityFormProps {
   entityName: EntityName;
   entityUUID: string;
 }
+
+type TaskReport = Exclude<ReportFullDto, DisturbanceReportFullDto | FinancialReportFullDto>;
+const isTaskReport = (formEntityName: FormEntity, entity: EntityFullDto): entity is TaskReport => {
+  if (!formEntityName.includes("Report")) return false;
+  if (formEntityName === "disturbanceReports" || formEntityName === "financialReports") return false;
+  return true;
+};
 
 const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
@@ -51,7 +60,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
   // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
-  useOnUnmount(() => pruneEntityCache(model.model, entityUUID));
+  useOnUnmount(() => {
+    pruneEntityCache(model.model, entityUUID);
+    if (entity != null && isTaskReport(model.model, entity) && entity.taskUuid != null) {
+      ApiSlice.pruneCache("tasks", [entity.taskUuid]);
+    }
+  });
 
   const framework = toFramework(formData?.frameworkKey);
 
