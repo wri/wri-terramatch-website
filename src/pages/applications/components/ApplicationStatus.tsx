@@ -53,10 +53,10 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
       // Note: it's odd that we're using the framework key as access code. They have been made consistent
       // in the database, and when implementing this pattern in v3, the framework should be fetched
       // by framework key instead.
-      pathParams: { accessCode: fundingProgramme?.framework ?? "" }
+      pathParams: { accessCode: fundingProgramme?.frameworkKey ?? "" }
     },
     {
-      enabled: fundingProgramme?.framework != null,
+      enabled: fundingProgramme?.frameworkKey != null,
       onError() {
         // override error toast
       }
@@ -174,8 +174,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             }
           };
         } else {
-          //All stages of the application are approved
-          const projectUuid = application?.projectUuid;
+          // All stages of the application are approved
           return {
             title: t("Status: Approved"),
             subtitle: t(
@@ -183,13 +182,14 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             ),
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
-            primaryAction: projectUuid
-              ? {
-                  children: t("View Project"),
-                  as: Link,
-                  href: `/project/${projectUuid}`
-                }
-              : undefined
+            primaryAction:
+              reportingFramework.slug == null
+                ? undefined
+                : {
+                    children: t("Set up monitoring project"),
+                    as: Link,
+                    href: `/entity/projects/create/${reportingFramework.slug}?parent_name=application&parent_uuid=${application?.uuid}`
+                  }
           };
         }
     }
