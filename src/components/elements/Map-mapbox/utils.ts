@@ -156,7 +156,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle mobile/dashboard popups
   if (setMobilePopupData && isDashboard) {
     const popupData = {
       feature,
@@ -174,7 +173,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle regular popups for non-dashboard/non-mobile views
   removePopups("POLYGON");
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
   const popupOptions: mapboxgl.PopupOptions = {
@@ -416,56 +414,148 @@ export const addPolygonCentroidsLayer = (
   zoomFilterValue?: number
 ) => {
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
-  if (!map || !map.isStyleLoaded()) {
+
+  if (!map) {
     return;
   }
 
-  try {
-    if (map.getLayer(`${layerName}`)) {
-      map.removeLayer(`${layerName}`);
-    }
-    if (map.getSource(layerName)) {
-      map.removeSource(layerName);
-    }
-  } catch (error) {
-    Log.warn("Error removing polygon centroids layer:", error);
+  if (!centroids || centroids.length === 0) {
+    return;
   }
 
-  if (map.hasImage("pulsing-dot-centroids")) {
-    map.removeImage("pulsing-dot-centroids");
+  const validCentroids = centroids.filter(c => {
+    return (
+      c != null &&
+      typeof c.lat === "number" &&
+      !isNaN(c.lat) &&
+      typeof c.long === "number" &&
+      !isNaN(c.long) &&
+      typeof c.uuid === "string" &&
+      c.uuid.length > 0
+    );
+  });
+
+  if (validCentroids.length === 0) {
+    return;
   }
 
-  const features: GeoJSON.Feature[] = centroids.map(centroid => ({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [centroid.long, centroid.lat]
-    },
-    properties: {
-      uuid: centroid.uuid
-    }
-  }));
-  const pulsingDot = getPulsingDot(map, 120, "#72D961");
-  map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+  let rafId: number | null = null;
+  let isActive = true;
+  let styleLoadHandler: (() => void) | null = null;
 
-  map.addSource(layerName, {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: features
-    }
-  });
+  const addLayerToMap = (): boolean => {
+    if (!isActive || !map) return false;
 
-  map.addLayer({
-    id: layerName,
-    type: "symbol",
-    source: layerName,
-    layout: {
-      "icon-image": "pulsing-dot-centroids"
-    },
-    paint: {},
-    filter: zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
-  });
+    if (!map.isStyleLoaded()) {
+      return false;
+    }
+
+    try {
+      if (map.getLayer(`${layerName}`)) {
+        map.removeLayer(`${layerName}`);
+      }
+      if (map.getSource(layerName)) {
+        map.removeSource(layerName);
+      }
+
+      if (map.hasImage("pulsing-dot-centroids")) {
+        map.removeImage("pulsing-dot-centroids");
+      }
+
+      const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [centroid.long, centroid.lat]
+        },
+        properties: {
+          uuid: centroid.uuid
+        }
+      }));
+
+      const pulsingDot = getPulsingDot(map, 120, "#72D961");
+      map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+
+      map.addSource(layerName, {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: features
+        }
+      });
+
+      const filter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+      map.addLayer({
+        id: layerName,
+        type: "symbol",
+        source: layerName,
+        layout: {
+          "icon-image": "pulsing-dot-centroids"
+        },
+        paint: {},
+        filter: filter
+      });
+
+      return true;
+    } catch (error) {
+      Log.error("Error adding polygon centroids layer:", error);
+      return false;
+    }
+  };
+
+  const pollForStyleLoad = (attemptsLeft = 180) => {
+    if (!isActive) return;
+    if (!map) return;
+
+    const layerAdded = addLayerToMap();
+
+    if (layerAdded) {
+      if (rafId != null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      if (styleLoadHandler && map) {
+        map.off("style.load", styleLoadHandler);
+        styleLoadHandler = null;
+      }
+      return;
+    }
+
+    if (attemptsLeft > 0) {
+      rafId = requestAnimationFrame(() => pollForStyleLoad(attemptsLeft - 1));
+    } else {
+      Log.error("Failed to add polygon centroids layer after 180 requestAnimationFrame attempts");
+      if (styleLoadHandler && map) {
+        map.off("style.load", styleLoadHandler);
+        styleLoadHandler = null;
+      }
+    }
+  };
+
+  const layerAdded = addLayerToMap();
+  if (layerAdded) {
+    return;
+  }
+
+  pollForStyleLoad();
+
+  styleLoadHandler = () => {
+    if (isActive && map) {
+      const added = addLayerToMap();
+      if (added) {
+        if (rafId != null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        if (styleLoadHandler && map) {
+          map.off("style.load", styleLoadHandler);
+          styleLoadHandler = null;
+        }
+      }
+    }
+  };
+
+  map.on("style.load", styleLoadHandler);
 };
 export const addPopupsToMap = (
   map: mapboxgl.Map,
@@ -638,7 +728,6 @@ export const addGeojsonSourceToLayer = (
       }
     }));
 
-    // Add new source
     map.addSource(name, {
       type: "geojson",
       data: {
@@ -647,7 +736,6 @@ export const addGeojsonSourceToLayer = (
       }
     });
 
-    // Add layers with styles
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
@@ -680,10 +768,6 @@ export const addSourceToLayer = (
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
-      // commented for future possible use
-      // if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      //   addHoverEvent(layer, map);
-      // }
     }
   } catch (e) {
     console.warn(e);
@@ -925,7 +1009,7 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
           hiddenCount++;
         }
       } catch (e) {
-        // Ignore
+        Log.warn("Error setting layer visibility:", e);
       }
     });
 
@@ -1092,7 +1176,6 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-// New utility functions for SitePolygonLightDto
 export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
     if (data.status != null && data.polygonUuid != null) {
