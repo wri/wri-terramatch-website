@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import Accordion from "./Accordion";
 
 const meta: Meta<typeof Accordion> = {
-  title: "Redesign Terramatch/Accordion",
+  title: "Redesign Components/Containers/Accordion",
   component: Accordion,
   parameters: {
     docs: {
@@ -35,6 +35,13 @@ const header = (
 );
 
 export const Default: Story = {
+  args: {
+    header: "Header Title",
+    children: "This is the accordion content. You can put any content here."
+  }
+};
+
+export const CustomHeader: Story = {
   args: {
     header: header,
     children: "This is the accordion content. You can put any content here."
