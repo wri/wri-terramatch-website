@@ -16564,12 +16564,12 @@ export type GetV2DashboardRestorationStrategyResponse = {
     ["woodlot-or-plantation"]?: number;
   };
   landTenures?: {
-    communal?: number;
-    indigenous?: number;
-    national_protected_area?: number;
-    other?: number;
-    private?: number;
-    public?: number;
+    ["communal-land"]?: number;
+    ["indigenous-land"]?: number;
+    ["national-protected-area"]?: number;
+    ["other-land"]?: number;
+    ["private-land"]?: number;
+    ["public-land"]?: number;
   };
 };
 

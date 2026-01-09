@@ -7,6 +7,8 @@ import { CloneForm } from "@/admin/modules/form/components/CloneForm";
 import { CopyFormToOtherEnv } from "@/admin/modules/form/components/CopyFormToOtherEnv";
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 
+import { TranslateButton } from "./TranslateButton";
+
 export const FormToolbar = (props: { isEdit?: boolean }) => {
   const { record } = useEditContext();
   const { getValues } = useFormContext<FormBuilderData>();
@@ -30,6 +32,7 @@ export const FormToolbar = (props: { isEdit?: boolean }) => {
         <SaveButton />
 
         <div>
+          <TranslateButton />
           <CloneForm />
           <CopyFormToOtherEnv />
           {props.isEdit ? (
