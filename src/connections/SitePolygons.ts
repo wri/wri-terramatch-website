@@ -45,6 +45,8 @@ export const sitePolygonsConnection = v3Resource("sitePolygons", sitePolygonsInd
   })
   .buildConnection();
 
+export const useSitePolygons = connectionHook(sitePolygonsConnection);
+
 const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygons)
   .create<SitePolygonLightDto, CreateSitePolygonAttributesDto>()
   .refetch(() => {
