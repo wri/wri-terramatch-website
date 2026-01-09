@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
+import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
 import { LAYERS_NAMES } from "@/constants/layers";
-import {
-  fetchGetV2DashboardPolygonDataUuid,
-  fetchGetV2DashboardTotalSectionHeaderCountry
-} from "@/generated/apiComponents";
-import { createQueryParams } from "@/utils/dashboardUtils";
+import { fetchGetV2DashboardPolygonDataUuid } from "@/generated/apiComponents";
 import Log from "@/utils/log";
 
 type Item = {
@@ -28,6 +25,13 @@ export function usePopupData(event: any) {
 
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
     id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
+  });
+
+  // Fetch country data using v3 connection
+  const [countryDataLoaded, { data: countryData }] = useTotalSectionHeader({
+    filter: {
+      country: isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES ? isoCountry : undefined
+    }
   });
 
   const createProjectDataFromEntity = (projectFullDto: any) => {
@@ -56,54 +60,40 @@ export function usePopupData(event: any) {
     return { data };
   };
 
+  // Process country data from v3 connection
   useEffect(() => {
-    async function fetchCountryData() {
-      setIsLoading(true);
-      try {
-        const parsedFilters = {
-          programmes: [],
-          country: isoCountry,
-          "organisations.type": [],
-          landscapes: [],
-          uuid: ""
-        };
-        const queryParams: any = createQueryParams(parsedFilters);
-        const response: any = await fetchGetV2DashboardTotalSectionHeaderCountry({ queryParams });
-        if (response) {
-          const parsedItems = [
-            {
-              id: "1",
-              title: "No. of Projects",
-              value: ((response.total_enterprise_count ?? 0) + (response.total_non_profit_count ?? 0)).toLocaleString()
-            },
-            {
-              id: "2",
-              title: "Trees Planted",
-              value: (response.total_trees_restored ?? 0).toLocaleString()
-            },
-            {
-              id: "3",
-              title: "Restoration Hectares",
-              value: (response.total_hectares_restored ?? 0).toLocaleString()
-            },
-            {
-              id: "4",
-              title: "Jobs Created",
-              value: (response.total_entries ?? 0).toLocaleString()
-            }
-          ];
-          setItems(parsedItems);
-          setPopupType("country");
-        } else {
-          Log.error("No data returned from the API");
+    if (countryDataLoaded && countryData != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
+      setIsLoading(false);
+      const parsedItems = [
+        {
+          id: "1",
+          title: "No. of Projects",
+          value: ((countryData.totalEnterpriseCount ?? 0) + (countryData.totalNonProfitCount ?? 0)).toLocaleString()
+        },
+        {
+          id: "2",
+          title: "Trees Planted",
+          value: (countryData.totalTreesRestored ?? 0).toLocaleString()
+        },
+        {
+          id: "3",
+          title: "Restoration Hectares",
+          value: (countryData.totalHectaresRestored ?? 0).toLocaleString()
+        },
+        {
+          id: "4",
+          title: "Jobs Created",
+          value: (countryData.totalEntries ?? 0).toLocaleString()
         }
-      } catch (error) {
-        Log.error("Error fetching country data", error);
-      } finally {
-        setIsLoading(false);
-      }
+      ];
+      setItems(parsedItems);
+      setPopupType("country");
+    } else if (isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES && !countryDataLoaded) {
+      setIsLoading(true);
     }
+  }, [countryDataLoaded, countryData, isoCountry, layerName]);
 
+  useEffect(() => {
     async function fetchProjectData() {
       setIsLoading(true);
       try {
@@ -167,15 +157,14 @@ export function usePopupData(event: any) {
         setIsLoading(false);
       }
     }
+
     setItems([]);
-    if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
-      fetchCountryData();
-    } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
       fetchProjectData();
     } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
       fetchPolygonData();
     }
-  }, [isoCountry, layerName, itemUuid, projectFullDto, projectLoaded]);
+  }, [layerName, itemUuid, projectFullDto, projectLoaded]);
 
   return {
     popupType,
