@@ -156,7 +156,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle mobile/dashboard popups
   if (setMobilePopupData && isDashboard) {
     const popupData = {
       feature,
@@ -174,7 +173,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle regular popups for non-dashboard/non-mobile views
   removePopups("POLYGON");
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
   const popupOptions: mapboxgl.PopupOptions = {
@@ -421,12 +419,10 @@ export const addPolygonCentroidsLayer = (
     return;
   }
 
-  // Early return if no centroids
   if (!centroids || centroids.length === 0) {
     return;
   }
 
-  // Validate centroids structure
   const validCentroids = centroids.filter(c => {
     return (
       c != null &&
@@ -443,7 +439,6 @@ export const addPolygonCentroidsLayer = (
     return;
   }
 
-  // Use requestAnimationFrame polling pattern (like useGoogleSatellite)
   let rafId: number | null = null;
   let isActive = true;
   let styleLoadHandler: (() => void) | null = null;
@@ -456,7 +451,6 @@ export const addPolygonCentroidsLayer = (
     }
 
     try {
-      // Remove existing layer/source if present
       if (map.getLayer(`${layerName}`)) {
         map.removeLayer(`${layerName}`);
       }
@@ -509,7 +503,6 @@ export const addPolygonCentroidsLayer = (
     }
   };
 
-  // Polling function using requestAnimationFrame (like useGoogleSatellite pattern)
   const pollForStyleLoad = (attemptsLeft = 180) => {
     if (!isActive) return;
     if (!map) return;
@@ -517,7 +510,6 @@ export const addPolygonCentroidsLayer = (
     const layerAdded = addLayerToMap();
 
     if (layerAdded) {
-      // Successfully added, clean up
       if (rafId != null) {
         cancelAnimationFrame(rafId);
         rafId = null;
@@ -529,12 +521,10 @@ export const addPolygonCentroidsLayer = (
       return;
     }
 
-    // If not added and still have attempts, continue polling
     if (attemptsLeft > 0) {
       rafId = requestAnimationFrame(() => pollForStyleLoad(attemptsLeft - 1));
     } else {
       Log.error("Failed to add polygon centroids layer after 180 requestAnimationFrame attempts");
-      // Clean up on failure
       if (styleLoadHandler && map) {
         map.off("style.load", styleLoadHandler);
         styleLoadHandler = null;
@@ -542,16 +532,13 @@ export const addPolygonCentroidsLayer = (
     }
   };
 
-  // Try immediately first
   const layerAdded = addLayerToMap();
   if (layerAdded) {
     return;
   }
 
-  // If not added, start polling
   pollForStyleLoad();
 
-  // Also listen to style.load as backup (in case style loads after polling starts)
   styleLoadHandler = () => {
     if (isActive && map) {
       const added = addLayerToMap();
@@ -741,7 +728,6 @@ export const addGeojsonSourceToLayer = (
       }
     }));
 
-    // Add new source
     map.addSource(name, {
       type: "geojson",
       data: {
@@ -750,7 +736,6 @@ export const addGeojsonSourceToLayer = (
       }
     });
 
-    // Add layers with styles
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
@@ -783,10 +768,6 @@ export const addSourceToLayer = (
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
-      // commented for future possible use
-      // if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      //   addHoverEvent(layer, map);
-      // }
     }
   } catch (e) {
     console.warn(e);
@@ -1028,7 +1009,7 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
           hiddenCount++;
         }
       } catch (e) {
-        // Ignore
+        Log.warn("Error setting layer visibility:", e);
       }
     });
 
@@ -1195,7 +1176,6 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-// New utility functions for SitePolygonLightDto
 export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
     if (data.status != null && data.polygonUuid != null) {
