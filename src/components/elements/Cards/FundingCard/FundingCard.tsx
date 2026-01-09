@@ -40,7 +40,6 @@ const FundingCard = (props: FundingCardProps) => {
     }
   };
   const statusProps = StatusPropsMap[status];
-  console.log("status", { status, statusProps, title, primaryLink });
 
   return (
     <div
