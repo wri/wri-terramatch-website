@@ -63,7 +63,7 @@ const RHFDemographicsTable = ({
           )
       );
 
-      onChange([{ ...value[0], collection, entries: updatedEntries }]);
+      onChange([{ ...value?.[0], collection, entries: updatedEntries }]);
       props.formHook?.trigger();
     },
     [onChange, value, collection, props.formHook]
