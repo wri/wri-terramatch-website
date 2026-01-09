@@ -979,3 +979,29 @@ export type ProjectPolygonUploadData = {
 export type ProjectPolygonUploadRequestDto = {
   data: ProjectPolygonUploadData;
 };
+
+export type UpdateProjectPolygonAttributesDto = {
+  /**
+   * Array of feature collections containing the new geometry to update.
+   *
+   *     - Must provide a single feature collection with the new geometry
+   *     - The projectPitchUuid in feature properties will be ignored (the existing association is maintained)
+   *     - The polygon geometry will be replaced with the new geometry
+   *
+   * @example {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]},"properties":{}}]}
+   */
+  geometries: CreateProjectPolygonRequestDto[];
+};
+
+export type UpdateProjectPolygonDataDto = {
+  type: "projectPolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateProjectPolygonAttributesDto;
+};
+
+export type UpdateProjectPolygonRequestDto = {
+  data: UpdateProjectPolygonDataDto;
+};
