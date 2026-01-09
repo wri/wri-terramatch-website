@@ -3,7 +3,9 @@ const path = require("path");
 
 /** @type {import('@storybook/nextjs').StorybookConfig} */
 module.exports = {
-  stories: ["../src/**/*.stories.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
+  stories: [
+    "../src/**/*.stories.@(mdx|js|jsx|ts|tsx)"
+  ],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
@@ -11,6 +13,9 @@ module.exports = {
     "@storybook/addon-styling",
     "@storybook/addon-mdx-gfm"
   ],
+  refs: () => {
+    return {};
+  },
   staticDirs: ["../public"],
   framework: {
     name: "@storybook/nextjs",
