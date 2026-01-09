@@ -3082,7 +3082,7 @@ export type FundingProgrammeDto = {
    * @format date-time
    */
   updatedAt: string;
-  framework?:
+  frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
     | "enterprises"
@@ -3112,7 +3112,7 @@ export type StoreStageAttributes = {
 };
 
 export type StoreFundingProgrammeAttributes = {
-  framework?:
+  frameworkKey?:
     | "terrafund"
     | "terrafund-landscapes"
     | "enterprises"

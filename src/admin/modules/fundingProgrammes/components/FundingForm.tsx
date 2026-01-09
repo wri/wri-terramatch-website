@@ -45,7 +45,7 @@ const FundingForm = () => {
         <> </>
       ) : (
         <SelectInput
-          source="framework"
+          source="frameworkKey"
           label="Reporting Framework"
           choices={frameworkChoices}
           fullWidth
@@ -53,7 +53,7 @@ const FundingForm = () => {
         />
       )}
       <SelectArrayInput
-        source="organisation_types"
+        source="organisationTypes"
         label="Organization type"
         choices={optionToChoices(getOrganisationTypeOptions())}
         fullWidth
