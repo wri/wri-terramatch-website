@@ -53,7 +53,7 @@ function loadThemeColors() {
     const colors = system?._config?.theme?.tokens?.colors;
 
     if (!colors) {
-      console.warn("⚠️  Theme loaded, but no colors were found in tokens");
+      console.warn("  Theme loaded, but no colors were found in tokens");
       return {};
     }
 
