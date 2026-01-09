@@ -1,5 +1,5 @@
 import { isFunction } from "lodash";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * A simple hook to run an effect only once when the component mounts.
@@ -18,8 +18,14 @@ export function useOnMount(callback: () => unknown) {
 }
 
 export function useOnUnmount(callback: () => void) {
+  // This is a little tricky - because we pass an empty array to `useEffect`, it's capturing
+  // the callback that was sent into this function the first time it was called if we simply
+  // reference callback in `useEffect`. We'd rather use the callback that was sent in the
+  // _last_ time this was called, so we need to stuff it in a ref instead.
+  const destructorRef = useRef<() => void>();
+  destructorRef.current = callback;
   useEffect(
-    () => callback,
+    () => () => destructorRef.current?.(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );

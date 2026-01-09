@@ -1,7 +1,7 @@
 import { Dictionary } from "lodash";
 import { notFound } from "next/navigation";
 import { useCallback, useMemo } from "react";
-import { useCreatePath, useEditContext, useResourceContext } from "react-admin";
+import { Edit, useCreatePath, useEditContext, useResourceContext } from "react-admin";
 import { useNavigate, useParams } from "react-router-dom";
 
 import modules from "@/admin/modules";
@@ -21,7 +21,7 @@ import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 import { EntityName } from "@/types/common";
 import Log from "@/utils/log";
 
-export const EntityEdit = () => {
+const EntityEditDisplay = () => {
   const { id } = useParams<"id">();
   const resource = useResourceContext();
   const { refetch } = useEditContext();
@@ -67,9 +67,9 @@ export const EntityEdit = () => {
 
   const bannerTitle = useMemo(() => {
     if (entityName === "site-reports") {
-      return `${(entity as SiteReportFullDto).siteName} ${formData?.formTitle}`;
+      return `${(entity as SiteReportFullDto)?.siteName} ${formData?.formTitle}`;
     } else if (entityName === "nursery-reports") {
-      return `${(entity as NurseryReportFullDto).nurseryName} ${formData?.formTitle}`;
+      return `${(entity as NurseryReportFullDto)?.nurseryName} ${formData?.formTitle}`;
     }
     return form?.title;
   }, [entityName, form?.title, entity, formData?.formTitle]);
@@ -85,32 +85,36 @@ export const EntityEdit = () => {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl">
-      <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
-        <WizardForm
-          models={model}
-          fieldsProvider={fieldsProvider}
-          framework={framework}
-          onBackFirstStep={() => navigate("..")}
-          onChange={onChange}
-          formStatus={entityAnswersUpdating ? "saving" : "saved"}
-          onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
-          defaultValues={defaultValues}
-          title={bannerTitle}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
-          summaryOptions={{
-            title: "Review Details",
-            downloadButtonText: "Download"
-          }}
-          roundedCorners
-          hideSaveAndCloseButton
-          orgDetails={orgDetails}
-          projectDetails={projectDetails}
-        />
-      </LoadingContainer>
-    </div>
+    <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
+      <WizardForm
+        models={model}
+        fieldsProvider={fieldsProvider}
+        framework={framework}
+        onBackFirstStep={() => navigate("..")}
+        onChange={onChange}
+        formStatus={entityAnswersUpdating ? "saving" : "saved"}
+        onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
+        defaultValues={defaultValues}
+        title={bannerTitle}
+        tabOptions={{
+          markDone: true,
+          disableFutureTabs: true
+        }}
+        summaryOptions={{
+          title: "Review Details",
+          downloadButtonText: "Download"
+        }}
+        roundedCorners
+        hideSaveAndCloseButton
+        orgDetails={orgDetails}
+        projectDetails={projectDetails}
+      />
+    </LoadingContainer>
   );
 };
+
+export const EntityEdit = () => (
+  <Edit>
+    <EntityEditDisplay />
+  </Edit>
+);
