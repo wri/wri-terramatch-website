@@ -1,11 +1,8 @@
-import { isString } from "lodash";
-
 import RHFMap from "@/components/elements/Inputs/Map/RHFMap";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import Log from "@/utils/log";
 import { addValidationWith, objectValidator } from "@/utils/yup";
 
 export const MapInputField: FormFieldFactory = {
@@ -47,32 +44,6 @@ export const MapInputField: FormFieldFactory = {
       />
     );
   }),
-
-  defaultValue: ({ name }, formValues) => {
-    const value = formValues[name];
-    let defaultValue: object | undefined = value;
-    if (isString(value)) {
-      try {
-        defaultValue = JSON.parse(value);
-      } catch (e) {
-        Log.warn("Unable to parse map value", { e, value });
-        defaultValue = undefined;
-      }
-    }
-    return { ...formValues, [name]: defaultValue };
-  },
-
-  normalizeValue: ({ name }, formValues) => {
-    const value = formValues[name];
-    if (typeof value === "object") {
-      try {
-        formValues[name] = JSON.stringify(value);
-      } catch (e) {
-        formValues[name] = "";
-      }
-    }
-    return formValues;
-  },
 
   formBuilderDefaults: ({ formModelType }) => ({ model: formModelType })
 };
