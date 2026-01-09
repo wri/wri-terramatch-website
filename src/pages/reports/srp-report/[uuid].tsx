@@ -11,7 +11,6 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSRPReport } from "@/connections/Entity";
 import { toFramework } from "@/context/framework.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
-import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
@@ -51,7 +50,7 @@ const SocioEconomicReportDetailPage = () => {
               { title: taskTitle, path: `/project/${srpReport.projectUuid}/reporting-task/${srpReport.taskUuid}` }
             ]}
           />
-          <SocioEconomicReportHeader socioEconomicReport={srpReport as SrpReportFullDto} />
+          <SocioEconomicReportHeader socioEconomicReport={srpReport} />
           <EntityStatusBar entityName="srpReports" entity={srpReport} />
           <PageBody className="pt-0">
             <SecondaryTabs
@@ -59,12 +58,12 @@ const SocioEconomicReportDetailPage = () => {
                 {
                   key: "report-data",
                   title: t("Report Data"),
-                  body: <ReportDataTab report={srpReport as SrpReportFullDto} />
+                  body: <ReportDataTab report={srpReport} />
                 },
                 {
                   key: "audit-log",
                   title: t("Audit Log"),
-                  body: <AuditLog srpReport={srpReport as SrpReportFullDto} />
+                  body: <AuditLog srpReport={srpReport} />
                 }
               ]}
               containerClassName="max-w-[82vw] px-10 xl:px-0 w-full overflow-y-hidden"

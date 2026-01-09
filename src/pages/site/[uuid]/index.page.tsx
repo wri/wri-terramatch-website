@@ -24,12 +24,6 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 
-const ButtonStates = {
-  PROJECTS: 0,
-  SITE: 1,
-  POLYGON: 2
-};
-
 const SiteDetailPage = () => {
   const t = useT();
   const router = useRouter();
@@ -96,7 +90,7 @@ const SiteDetailPage = () => {
                   {
                     key: "audit-log",
                     title: t("Audit Log"),
-                    body: <AuditLog site={site} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
+                    body: <AuditLog site={site} refresh={refetch} />
                   }
                 ]}
                 containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

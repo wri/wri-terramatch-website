@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { FC, useState } from "react";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
@@ -14,23 +14,16 @@ import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject } from "@/connections/Entity";
+import { DisturbanceReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-interface ReportingTasksProps {
-  disturbanceReport: any;
-  label?: string;
+type AuditLogProps = {
+  disturbanceReport: DisturbanceReportFullDto;
   refresh?: () => void;
-  enableChangeStatus?: number;
-}
+};
 
-const AuditLog = ({
-  label,
-  disturbanceReport,
-  refresh: refreshDisturbanceReport,
-  enableChangeStatus,
-  ...rest
-}: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDisturbanceReport }) => {
   const t = useT();
   const ButtonStates = {
     PROJECTS: 0,
@@ -77,7 +70,7 @@ const AuditLog = ({
                   <AuditLogSiteTabSelection
                     buttonToggle={buttonToggle}
                     setButtonToggle={setButtonToggle}
-                    framework={disturbanceReport?.frameworkKey}
+                    framework={disturbanceReport?.frameworkKey ?? undefined}
                     entityLevel={AuditLogButtonStates.DISTURBANCE_REPORT}
                   />
                   {buttonToggle === ButtonStates.PROJECTS && (

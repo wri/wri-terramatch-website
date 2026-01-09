@@ -25,12 +25,6 @@ import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
 
-const ButtonStates = {
-  PROJECTS: 0,
-  SITE: 1,
-  POLYGON: 2
-};
-
 type ProjectContentProps = {
   project: ProjectFullDto;
   refetch: () => void;
@@ -80,7 +74,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           {
             key: "audit-log",
             title: t("Audit Log"),
-            body: <AuditLog project={project} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
+            body: <AuditLog project={project} refresh={refetch} />
           }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
