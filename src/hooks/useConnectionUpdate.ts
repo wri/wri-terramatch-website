@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { useCallback, useEffect, useRef } from "react";
 
-import { useToastContext } from "@/context/toast.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import { PendingError } from "@/store/apiSlice";
 import Log from "@/utils/log";
 
@@ -38,7 +38,7 @@ export const useRequestSuccess = (
         onSuccess();
       } else if (failureMessage != null) {
         Log.error(`Request failed: ${failureMessage}`, fetchFailure);
-        openToast(t(failureMessage));
+        openToast(t(failureMessage), ToastType.ERROR);
       }
     }, [failureMessage, fetchFailure, onSuccess, openToast, t])
   );
