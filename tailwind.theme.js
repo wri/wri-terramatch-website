@@ -56,12 +56,8 @@ function loadThemeColors() {
       console.warn("  Theme loaded, but no colors were found in tokens");
       return {};
     }
-
-    console.log("Chakra UI theme colors loaded successfully");
     return transformTokens(colors);
   } catch (error) {
-    console.error(" Failed to load Chakra UI theme colors");
-    console.error("   Reason:", error.message);
     console.error("   Check that @chakra-ui/react and @worldresources/wri-design-systems are installed");
     return {};
   }
