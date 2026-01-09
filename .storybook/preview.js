@@ -3,6 +3,7 @@ import * as NextImage from "next/image";
 import { ChakraProvider } from "@chakra-ui/react";
 import { StoreProvider } from "../src/utils/testStore";
 import { system } from "../src/lib/theme";
+import { BLUR_DATA_URL } from "./constants";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -25,7 +26,7 @@ if (!descriptor || descriptor.configurable) {
       <OriginalNextImage
         {...props}
         unoptimized
-        blurDataURL="data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAADAAQDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAbEAADAAMBAQAAAAAAAAAAAAABAgMABAURUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAFxEAAwEAAAAAAAAAAAAAAAAAAAECEf/aAAwDAQACEQMRAD8Anz9voy1dCI2mectSE5ioFCqia+KCwJ8HzGMZPqJb1oPEf//Z"
+        blurDataURL={BLUR_DATA_URL}
       />
     )
   });

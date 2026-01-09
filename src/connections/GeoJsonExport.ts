@@ -1,6 +1,8 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import {
+  getProjectPolygonGeoJson,
+  GetProjectPolygonGeoJsonQueryParams,
   getSitePolygonsGeoJson,
   GetSitePolygonsGeoJsonQueryParams
 } from "@/generated/v3/researchService/researchServiceComponents";
@@ -21,9 +23,7 @@ type SitePolygonsGeoJsonProps = {
 };
 
 type ProjectPolygonsGeoJsonProps = {
-  projectUuid?: string;
-  includeExtendedData?: boolean;
-  geometryOnly?: boolean;
+  projectPitchUuid?: string;
   enabled?: boolean;
 };
 
@@ -61,19 +61,17 @@ const sitePolygonsGeoJsonConnection = v3Resource("geojsonExports", getSitePolygo
   .enabledProp()
   .buildConnection();
 
-const projectPolygonsGeoJsonConnection = v3Resource("geojsonExports", getSitePolygonsGeoJson)
+const projectPolygonsGeoJsonConnection = v3Resource("geojsonExports", getProjectPolygonGeoJson)
   .singleByCustomId<GeoJsonExportDto, ProjectPolygonsGeoJsonProps>(
-    ({ projectUuid, includeExtendedData, geometryOnly }) => {
-      if (!projectUuid) return undefined;
+    ({ projectPitchUuid }) => {
+      if (!projectPitchUuid) return undefined;
       return {
         queryParams: {
-          projectUuid,
-          ...(includeExtendedData !== undefined && { includeExtendedData }),
-          ...(geometryOnly !== undefined && { geometryOnly })
-        } as GetSitePolygonsGeoJsonQueryParams
+          projectPitchUuid
+        } as GetProjectPolygonGeoJsonQueryParams
       };
     },
-    ({ projectUuid }) => projectUuid ?? ""
+    ({ projectPitchUuid }) => projectPitchUuid ?? ""
   )
   .enabledProp()
   .buildConnection();

@@ -2709,3 +2709,14 @@ export type UpdateFormData = {
 export type UpdateFormBody = {
   data: UpdateFormData;
 };
+
+export type FormTranslationDto = {
+  /**
+   * Number of translation keys
+   */
+  translationKeysNumber: number;
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+};

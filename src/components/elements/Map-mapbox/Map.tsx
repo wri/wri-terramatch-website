@@ -69,6 +69,7 @@ import {
   addPopupsToMap,
   addSourcesToLayers,
   downloadMultiplePolygonsGeoJson,
+  downloadProjectPolygonsGeoJson,
   drawTemporaryPolygon,
   fetchPolygonGeometry,
   getCurrentMapStyle,
@@ -776,29 +777,45 @@ export const MapContainer = ({
   const downloadGeoJsonPolygon = async () => {
     setIsDownloadingPolygons(true);
     try {
-      let polygonsToDownload: string[] = [];
-      if (polygonsData) {
-        const allPolygons: string[] = [];
-        Object.values(polygonsData).forEach(statusPolygons => {
-          if (Array.isArray(statusPolygons)) {
-            allPolygons.push(...statusPolygons);
-          }
-        });
-        polygonsToDownload = allPolygons;
-      }
+      const isProjectContext = entityData?.entityName == "project-pitches";
+      const projectPitchUuid = entityData?.entityUUID;
 
-      if (polygonsToDownload.length === 0) {
-        openNotification("error", t("Error"), t("No polygons found to download."));
-        return;
-      }
+      if (isProjectContext && projectPitchUuid != null) {
+        const projectName = record?.organisation?.name ?? "project";
+        const filename = `${_.replace(projectName, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
+        await downloadProjectPolygonsGeoJson(projectPitchUuid, filename);
+        openNotification("success", t("Success"), t("Successfully downloaded project polygons."));
+      } else {
+        let polygonsToDownload: string[] = [];
+        if (polygonsData) {
+          const allPolygons: string[] = [];
+          Object.values(polygonsData).forEach(statusPolygons => {
+            if (Array.isArray(statusPolygons)) {
+              allPolygons.push(...statusPolygons);
+            }
+          });
+          polygonsToDownload = allPolygons;
+        }
 
-      const nameFile = record?.organisation?.name || "polygons";
-      const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
-      await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
-      openNotification("success", t("Success"), t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`));
-    } catch (error) {
+        if (polygonsToDownload.length === 0) {
+          openNotification("error", t("Error"), t("No polygons found to download."));
+          return;
+        }
+
+        const nameFile = record?.organisation?.name ?? "polygons";
+        const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
+        await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
+        openNotification(
+          "success",
+          t("Success"),
+          t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`)
+        );
+      }
+    } catch (error: any) {
       Log.error("Download error:", error);
-      openNotification("error", t("Error"), t("Failed to download polygons. Please try again."));
+      // Show more specific error message
+      const errorMessage = error?.message ?? t("Failed to download polygons. Please try again.");
+      openNotification("error", t("Error"), errorMessage);
     } finally {
       setIsDownloadingPolygons(false);
     }
