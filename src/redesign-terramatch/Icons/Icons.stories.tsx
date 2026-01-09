@@ -1,55 +1,57 @@
 import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Applications } from "./Applications";
-import { AreaHectares } from "./AreaHectares";
-import { Check } from "./Check";
-import { CheckApproved } from "./CheckApproved";
-import { ChevronDown } from "./ChevronDown";
-import { ChevronRight } from "./ChevronRight";
-import { ChevronUp } from "./ChevronUp";
-import { CloseFullscreen } from "./CloseFullscreen";
-import { Correct } from "./Correct";
-import { Dashboard } from "./Dashboard";
-import { Delete } from "./Delete";
-import { Draft } from "./Draft";
-import { Drag } from "./Drag";
-import { Due } from "./Due";
-import { Edit } from "./Edit";
-import { Expand } from "./Expand";
-import { Incorrect } from "./Incorrect";
-import { Indeterminate } from "./Indeterminate";
-import { Info } from "./Info";
-import { InformationRequired } from "./InformationRequired";
-import { Jobs } from "./Jobs";
-import { Landscape } from "./Landscape";
-import { Language } from "./Language";
-import { Messages } from "./Messages";
-import { MoreVert } from "./MoreVert";
-import { NewTab } from "./NewTab";
-import { NothingReported } from "./NothingReported";
-import { Notification } from "./Notification";
-import { Nursery } from "./Nursery";
-import { Opportunities } from "./Opportunities";
-import { Organisation } from "./Organisation";
-import { Pending } from "./Pending";
-import { PhotoAdd } from "./PhotoAdd";
-import { PlaceholderIcon } from "./PlaceholderIcon";
-import { Programme } from "./Programme";
-import { Project } from "./Project";
-import { Regeneration } from "./Regeneration";
-import { Rejected } from "./Rejected";
-import { Reports } from "./Reports";
-import { Search } from "./Search";
-import { Seeds } from "./Seeds";
-import { Site } from "./Site";
-import { Species } from "./Species";
-import { SpeciesNative } from "./SpeciesNative";
-import { SurvivalRate } from "./SurvivalRate";
-import { Tree } from "./Tree";
-import { UserAdd } from "./UserAdd";
-import { Visibility } from "./Visibility";
-import { VisibilityOff } from "./VisibilityOff";
+import {
+  Applications,
+  AreaHectares,
+  Check,
+  CheckApproved,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  CloseFullscreen,
+  Correct,
+  Dashboard,
+  Delete,
+  Draft,
+  Drag,
+  Due,
+  Edit,
+  Expand,
+  Incorrect,
+  Indeterminate,
+  Info,
+  InformationRequired,
+  Jobs,
+  Landscape,
+  Language,
+  Messages,
+  MoreVert,
+  NewTab,
+  NothingReported,
+  Notification,
+  Nursery,
+  Opportunities,
+  Organisation,
+  Pending,
+  PhotoAdd,
+  PlaceholderIcon,
+  Programme,
+  Project,
+  Regeneration,
+  Rejected,
+  Reports,
+  Search,
+  Seeds,
+  Site,
+  Species,
+  SpeciesNative,
+  SurvivalRate,
+  Tree,
+  UserAdd,
+  Visibility,
+  VisibilityOff
+} from ".";
 
 const meta: Meta = {
   title: "Components/Icons",
