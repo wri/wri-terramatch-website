@@ -16521,105 +16521,6 @@ export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProj
   );
 };
 
-export type GetV2DashboardVolunteersSurvivalRateQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * Optional. Filter counts and metrics by UUID.
-   */
-  uuid?: string;
-};
-
-export type GetV2DashboardVolunteersSurvivalRateError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardVolunteersSurvivalRateResponse = {
-  data?: {
-    /**
-     * Total number of volunteers.
-     */
-    total_volunteers?: number;
-    /**
-     * Total number of male volunteers.
-     */
-    men_volunteers?: number;
-    /**
-     * Total number of female volunteers.
-     */
-    women_volunteers?: number;
-    /**
-     * Total number of youth volunteers.
-     */
-    youth_volunteers?: number;
-    /**
-     * Total number of non-youth volunteers.
-     */
-    non_youth_volunteers?: number;
-    /**
-     * number of sites.
-     */
-    number_of_sites?: number;
-  };
-};
-
-export type GetV2DashboardVolunteersSurvivalRateVariables = {
-  queryParams?: GetV2DashboardVolunteersSurvivalRateQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
- */
-export const fetchGetV2DashboardVolunteersSurvivalRate = (
-  variables: GetV2DashboardVolunteersSurvivalRateVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardVolunteersSurvivalRateResponse,
-    GetV2DashboardVolunteersSurvivalRateError,
-    undefined,
-    {},
-    GetV2DashboardVolunteersSurvivalRateQueryParams,
-    {}
-  >({ url: "/v2/dashboard/volunteers-survival-rate", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
- */
-export const useGetV2DashboardVolunteersSurvivalRate = <TData = GetV2DashboardVolunteersSurvivalRateResponse>(
-  variables: GetV2DashboardVolunteersSurvivalRateVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardVolunteersSurvivalRateResponse,
-      GetV2DashboardVolunteersSurvivalRateError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardVolunteersSurvivalRateResponse,
-    GetV2DashboardVolunteersSurvivalRateError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/volunteers-survival-rate",
-      operationId: "getV2DashboardVolunteersSurvivalRate",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardVolunteersSurvivalRate({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardTotalSectionHeaderQueryParams = {
   /**
    * search term to use on the collection
@@ -19823,11 +19724,6 @@ export type QueryOperation =
       path: "/v2/dashboard/active-projects";
       operationId: "getV2DashboardActiveProjects";
       variables: GetV2DashboardActiveProjectsVariables;
-    }
-  | {
-      path: "/v2/dashboard/volunteers-survival-rate";
-      operationId: "getV2DashboardVolunteersSurvivalRate";
-      variables: GetV2DashboardVolunteersSurvivalRateVariables;
     }
   | {
       path: "/v2/dashboard/total-section-header";
