@@ -209,6 +209,7 @@ export type SitePolygonLightDto = {
   polygonUuid: string | null;
   projectId: string | null;
   projectShortName: string | null;
+  projectName: string | null;
   /**
    * @format date-time
    */
@@ -466,6 +467,7 @@ export type SitePolygonFullDto = {
   polygonUuid: string | null;
   projectId: string | null;
   projectShortName: string | null;
+  projectName: string | null;
   /**
    * @format date-time
    */
