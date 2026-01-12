@@ -9521,12 +9521,12 @@ export type DashboardRestorationStrategyResponse = {
     ["woodlot-or-plantation"]?: number;
   };
   landTenures?: {
-    ["communal-land"]?: number;
-    ["indigenous-land"]?: number;
-    ["national-protected-area"]?: number;
-    ["other-land"]?: number;
-    ["private-land"]?: number;
-    ["public-land"]?: number;
+    communal?: number;
+    indigenous?: number;
+    national_protected_area?: number;
+    other?: number;
+    private?: number;
+    public?: number;
   };
 };
 
@@ -9863,10 +9863,6 @@ export type SitePolygonResource = {
    */
   date_created?: string;
   created_by?: string;
-};
-
-export type SiteCheckApproveResponse = {
-  can_approve?: boolean;
 };
 
 export type DashboardProjectViewResponse = {
