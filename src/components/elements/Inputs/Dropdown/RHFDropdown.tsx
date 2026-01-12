@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { difference } from "lodash";
+import { difference, isEqual } from "lodash";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
@@ -54,7 +54,16 @@ const WithGadmOptions: FC<WithOptionsList> = props => {
   const options = useGadmOptions({ level, parentCodes });
 
   useValueChanged(options, () => {
-    if (options != null) setOptionsCache(options);
+    if (options != null) {
+      setOptionsCache(options);
+
+      // When our options settle on a new value, make sure our currently selected values are included
+      // in the new option set.
+      const currentValue = formHook?.getValues()?.[props.name];
+      const filteredValue =
+        currentValue == null ? currentValue : toArray(currentValue).filter(v => options.some(o => o.value === v));
+      if (!isEqual(currentValue, filteredValue)) formHook?.setValue(props.name, filteredValue);
+    }
   });
 
   return optionsCache == null ? (
