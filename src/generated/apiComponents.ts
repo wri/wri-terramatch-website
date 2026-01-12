@@ -16337,87 +16337,6 @@ export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDa
   );
 };
 
-export type GetV2DashboardActiveProjectsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * Optional. per_page to projects.
-   */
-  per_page?: string;
-  /**
-   * Optional. page to projects.
-   */
-  page?: string;
-};
-
-export type GetV2DashboardActiveProjectsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardActiveProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    organisation?: string;
-    trees_under_restoration?: number;
-    jobs_created?: number;
-    volunteers?: number;
-    project_country?: string;
-    country_slug?: string;
-    hectares_under_restoration?: number;
-    programme?: string;
-  }[];
-  current_page?: number;
-  per_page?: number;
-  total?: number;
-  last_page?: number;
-};
-
-export type GetV2DashboardActiveProjectsVariables = {
-  queryParams?: GetV2DashboardActiveProjectsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
- */
-export const fetchGetV2DashboardActiveProjects = (
-  variables: GetV2DashboardActiveProjectsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardActiveProjectsResponse,
-    GetV2DashboardActiveProjectsError,
-    undefined,
-    {},
-    GetV2DashboardActiveProjectsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/active-projects", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
- */
-export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProjectsResponse>(
-  variables: GetV2DashboardActiveProjectsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/active-projects", operationId: "getV2DashboardActiveProjects", variables }),
-    ({ signal }) => fetchGetV2DashboardActiveProjects({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardTotalSectionHeaderQueryParams = {
   /**
    * search term to use on the collection
@@ -19606,11 +19525,6 @@ export type QueryOperation =
       path: "/v2/dashboard/polygon-data/{uuid}";
       operationId: "getV2DashboardPolygonDataUuid";
       variables: GetV2DashboardPolygonDataUuidVariables;
-    }
-  | {
-      path: "/v2/dashboard/active-projects";
-      operationId: "getV2DashboardActiveProjects";
-      variables: GetV2DashboardActiveProjectsVariables;
     }
   | {
       path: "/v2/dashboard/total-section-header";

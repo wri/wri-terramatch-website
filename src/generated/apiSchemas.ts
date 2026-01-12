@@ -9547,25 +9547,6 @@ export type DashboardPolygonData = {
   }[];
 };
 
-export type DashboardActiveProjectsListViewResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    organisation?: string;
-    trees_under_restoration?: number;
-    jobs_created?: number;
-    volunteers?: number;
-    project_country?: string;
-    country_slug?: string;
-    hectares_under_restoration?: number;
-    programme?: string;
-  }[];
-  current_page?: number;
-  per_page?: number;
-  total?: number;
-  last_page?: number;
-};
-
 export type DashboardTotalSectionHeaderResponse = {
   data?: {
     /**
