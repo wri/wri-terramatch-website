@@ -24,6 +24,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-1",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -51,6 +52,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-2",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -78,6 +80,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-3",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -105,6 +108,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-4",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -132,6 +136,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-5",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -159,6 +164,7 @@ const items: SitePolygonLightDto[] = [
     polygonUuid: "poly-6",
     projectId: null,
     projectShortName: null,
+    projectName: null,
     plantStart: "2021-03-12T00:00:00Z",
     calcArea: null,
     lat: null,
@@ -182,6 +188,19 @@ const items: SitePolygonLightDto[] = [
 export const Default: Story = {
   render: args => {
     const [query] = useState<string>();
+    const [checkedValues, setCheckedValues] = useState<string[]>([]);
+    const [sortField, setSortField] = useState<string>("name");
+    const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
+    const [tabEditPolygon, setTabEditPolygon] = useState<string>("");
+    const [stateViewPanel, setStateViewPanel] = useState<boolean>(false);
+
+    const handleCheckboxChange = (value: string, checked: boolean) => {
+      if (checked) {
+        setCheckedValues([...checkedValues, value]);
+      } else {
+        setCheckedValues(checkedValues.filter(val => val !== value));
+      }
+    };
 
     return (
       <div className="bg-back-map bg-cover">
@@ -189,6 +208,19 @@ export const Default: Story = {
           <Component
             {...args}
             items={items.filter(item => (query != null ? (item.name ?? "").includes(query) : true))}
+            checkedValues={checkedValues}
+            onCheckboxChange={handleCheckboxChange}
+            setSortOrder={setSortField}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+            type="sites"
+            onLoadMore={() => {}}
+            tabEditPolygon={tabEditPolygon}
+            setTabEditPolygon={setTabEditPolygon}
+            stateViewPanel={stateViewPanel}
+            setStateViewPanel={setStateViewPanel}
+            mapFunctions={{ map: { current: null } }}
           />
         </div>
       </div>
@@ -203,6 +235,19 @@ export const Default: Story = {
 export const OpenPolygonCheck: Story = {
   render: args => {
     const [query] = useState<string>();
+    const [checkedValues, setCheckedValues] = useState<string[]>([]);
+    const [sortField, setSortField] = useState<string>("name");
+    const [sortDirection, setSortDirection] = useState<"ASC" | "DESC">("ASC");
+    const [tabEditPolygon, setTabEditPolygon] = useState<string>("");
+    const [stateViewPanel, setStateViewPanel] = useState<boolean>(false);
+
+    const handleCheckboxChange = (value: string, checked: boolean) => {
+      if (checked) {
+        setCheckedValues([...checkedValues, value]);
+      } else {
+        setCheckedValues(checkedValues.filter(val => val !== value));
+      }
+    };
 
     return (
       <div className="bg-back-map bg-cover">
@@ -210,6 +255,19 @@ export const OpenPolygonCheck: Story = {
           <Component
             {...args}
             items={items.filter(item => (query != null ? (item.name ?? "").includes(query) : true))}
+            checkedValues={checkedValues}
+            onCheckboxChange={handleCheckboxChange}
+            setSortOrder={setSortField}
+            sortField={sortField}
+            sortDirection={sortDirection}
+            setSortDirection={setSortDirection}
+            type="sites"
+            onLoadMore={() => {}}
+            tabEditPolygon={tabEditPolygon}
+            setTabEditPolygon={setTabEditPolygon}
+            stateViewPanel={stateViewPanel}
+            setStateViewPanel={setStateViewPanel}
+            mapFunctions={{ map: { current: null } }}
           />
         </div>
       </div>
