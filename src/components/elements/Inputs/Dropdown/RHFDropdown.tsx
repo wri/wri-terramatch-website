@@ -60,9 +60,15 @@ const WithGadmOptions: FC<WithOptionsList> = props => {
       // When our options settle on a new value, make sure our currently selected values are included
       // in the new option set.
       const currentValue = formHook?.getValues()?.[props.name];
-      const filteredValue =
-        currentValue == null ? currentValue : toArray(currentValue).filter(v => options.some(o => o.value === v));
-      if (!isEqual(currentValue, filteredValue)) formHook?.setValue(props.name, filteredValue);
+      if (currentValue != null) {
+        const hasOption = (value: OptionValue) => options.some(o => o.value === value);
+        const updatedValue = props.multiSelect
+          ? toArray(currentValue).filter(hasOption)
+          : hasOption(currentValue)
+          ? currentValue
+          : undefined;
+        if (!isEqual(currentValue, updatedValue)) formHook?.setValue(props.name, updatedValue);
+      }
     }
   });
 
