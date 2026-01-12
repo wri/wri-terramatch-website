@@ -270,25 +270,6 @@ export type PutV2GeometryBody = {
   };
 };
 
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
-};
-
 export type PostV2FprojectPipelineBody = {
   /**
    * @format date

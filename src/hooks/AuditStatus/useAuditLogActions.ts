@@ -1,15 +1,12 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
-import {
-  fetchPostV2TerrafundValidationPolygon,
-  GetV2AuditStatusENTITYUUIDResponse,
-  useGetV2AuditStatusENTITYUUID
-} from "@/generated/apiComponents";
-import { ESTIMATED_AREA_CRITERIA_ID } from "@/types/validation";
+import { usePolygonValidation } from "@/connections/Validation";
+import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import { isValidCriteriaData } from "@/helpers/polygonValidation";
 import {
   getValueForStatusDisturbanceReport,
   getValueForStatusEntityReport,
@@ -68,7 +65,6 @@ const useAuditLogActions = ({
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
-  const [criteriaValidation, setCriteriaValidation] = useState<boolean | any>();
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entity: record,
     entityType: entityType as AuditLogEntity,
@@ -102,30 +98,14 @@ const useAuditLogActions = ({
     "financial-reports"
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
-  useEffect(() => {
-    const fetchCriteriaValidation = async () => {
-      if (selected?.poly_id && isPolygon) {
-        const criteriaData = await fetchPostV2TerrafundValidationPolygon({
-          queryParams: {
-            uuid: selected?.poly_id as string
-          }
-        });
-        setCriteriaValidation(criteriaData);
-      }
-    };
-    if (!verifyEntity) {
-      fetchCriteriaValidation();
-    }
-  }, [isPolygon, selected, verifyEntity]);
+  const polygonValidationData = usePolygonValidation({
+    polygonUuid: selected?.poly_id && isPolygon && !verifyEntity ? (selected.poly_id as string) : ""
+  });
 
-  const isValidCriteriaData = (criteriaData: any) => {
-    if (!criteriaData?.criteria_list?.length) {
-      return true;
-    }
-    return criteriaData.criteria_list.some(
-      (criteria: any) => criteria.criteria_id !== ESTIMATED_AREA_CRITERIA_ID && criteria.valid !== 1
-    );
-  };
+  const hasInvalidPolygonCriteria = useMemo(() => {
+    if (polygonValidationData == null) return false;
+    return !isValidCriteriaData(polygonValidationData);
+  }, [polygonValidationData]);
 
   const entityHandlers = (() => {
     if (isLevelSrpReport || isLevelDisturbanceReport) {
@@ -161,7 +141,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject || isProjectReport ? loadEntityList : () => {},
         ListItemToEntity: !isProject || isProjectReport ? entityListItem : [],
         setSelectedToEntity: !isProject || isProjectReport ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? hasInvalidPolygonCriteria : false
       };
     } else if (verifyEntity) {
       return {
@@ -177,7 +157,7 @@ const useAuditLogActions = ({
         loadToEntity: !isProject && !isSite ? loadEntityList : () => {},
         ListItemToEntity: !isProject && !isSite ? entityListItem : [],
         setSelectedToEntity: !isProject && !isSite ? setSelected : null,
-        checkPolygons: isSite ? checkPolygons : isPolygon ? isValidCriteriaData(criteriaValidation) : false
+        checkPolygons: isSite ? checkPolygons : isPolygon ? hasInvalidPolygonCriteria : false
       };
     }
   })();
