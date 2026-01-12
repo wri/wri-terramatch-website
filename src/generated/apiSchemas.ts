@@ -9112,62 +9112,6 @@ export type GeometryPost = {
   };
 }[];
 
-export type DashboardVolunteersSurvivalRateResponse = {
-  data?: {
-    /**
-     * Total number of volunteers.
-     */
-    total_volunteers?: number;
-    /**
-     * Total number of male volunteers.
-     */
-    men_volunteers?: number;
-    /**
-     * Total number of female volunteers.
-     */
-    women_volunteers?: number;
-    /**
-     * Total number of youth volunteers.
-     */
-    youth_volunteers?: number;
-    /**
-     * Total number of non-youth volunteers.
-     */
-    non_youth_volunteers?: number;
-    /**
-     * number of sites.
-     */
-    number_of_sites?: number;
-  };
-};
-
-export type DashboardVolundteersSurvivalRateData = {
-  /**
-   * Total number of volunteers.
-   */
-  total_volunteers?: number;
-  /**
-   * Total number of male volunteers.
-   */
-  men_volunteers?: number;
-  /**
-   * Total number of female volunteers.
-   */
-  women_volunteers?: number;
-  /**
-   * Total number of youth volunteers.
-   */
-  youth_volunteers?: number;
-  /**
-   * Total number of non-youth volunteers.
-   */
-  non_youth_volunteers?: number;
-  /**
-   * number of sites.
-   */
-  number_of_sites?: number;
-};
-
 export type AuditStatusCreateRequest = {
   status?: string;
   comment?: string;
@@ -9297,8 +9241,6 @@ export type V2TerrafundCriteriaSite = {
    */
   nonValidCriteria?: Record<string, any>[];
 }[];
-
-export type DashboardProjectAvailableResponse = any[];
 
 export type SitePolygon = {
   id?: number;
@@ -9465,71 +9407,6 @@ export type DashboardPolygonResponse = {
   uuid?: string;
 };
 
-export type DashboardJobsCreatedResponse = {
-  data?: {
-    totalJobsCreated?: number;
-    total_ft?: number;
-    total_pt?: number;
-    total_men?: number;
-    total_pt_men?: number;
-    total_ft_men?: number;
-    total_women?: number;
-    total_pt_women?: number;
-    total_ft_women?: number;
-    total_youth?: number;
-    total_pt_youth?: number;
-    total_ft_youth?: number;
-    total_non_youth?: number;
-    total_pt_non_youth?: number;
-    total_ft_non_youth?: number;
-  };
-};
-
-export type DashboardJobsCreatedData = {
-  totalJobsCreated?: number;
-  total_ft?: number;
-  total_pt?: number;
-  total_men?: number;
-  total_pt_men?: number;
-  total_ft_men?: number;
-  total_women?: number;
-  total_pt_women?: number;
-  total_ft_women?: number;
-  total_youth?: number;
-  total_pt_youth?: number;
-  total_ft_youth?: number;
-  total_non_youth?: number;
-  total_pt_non_youth?: number;
-  total_ft_non_youth?: number;
-};
-
-export type DashboardRestorationStrategyResponse = {
-  restorationStrategies?: {
-    ["direct-seeding"]?: number;
-    ["tree-planting"]?: number;
-    ["assisted-natural-regeneration"]?: number;
-  };
-  landUseTypes?: {
-    agroforest?: number;
-    ["open-natural-ecosystem"]?: number;
-    mangrove?: number;
-    ["natural-forest"]?: number;
-    peatland?: number;
-    ["riparian-area-or-wetland"]?: number;
-    silvopasture?: number;
-    ["urban-forest"]?: number;
-    ["woodlot-or-plantation"]?: number;
-  };
-  landTenures?: {
-    ["communal-land"]?: number;
-    ["indigenous-land"]?: number;
-    ["national-protected-area"]?: number;
-    ["other-land"]?: number;
-    ["private-land"]?: number;
-    ["public-land"]?: number;
-  };
-};
-
 export type DashboardPolygonData = {
   data?: {
     /**
@@ -9544,93 +9421,6 @@ export type DashboardPolygonData = {
      * Key of the data field
      */
     key?: string;
-  }[];
-};
-
-export type DashboardActiveProjectsListViewResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    organisation?: string;
-    trees_under_restoration?: number;
-    jobs_created?: number;
-    volunteers?: number;
-    project_country?: string;
-    country_slug?: string;
-    hectares_under_restoration?: number;
-    programme?: string;
-  }[];
-  current_page?: number;
-  per_page?: number;
-  total?: number;
-  last_page?: number;
-};
-
-export type DashboardTotalSectionHeaderResponse = {
-  data?: {
-    /**
-     * Total number of non profit projects.
-     */
-    total_non_profit_count?: number;
-    /**
-     * Total number of enterprise projects.
-     */
-    total_enterprise_count?: number;
-    /**
-     * Total number of jobs created.
-     */
-    total_entries?: number;
-    /**
-     * Total number of hectares restored.
-     */
-    total_hectares_restored?: number;
-    /**
-     * Total number of hectares restored goal.
-     */
-    total_hectares_restored_goal?: number;
-    /**
-     * Total number of trees restored.
-     */
-    total_trees_restored?: number;
-    /**
-     * Total number of trees restored goal.
-     */
-    total_trees_restored_goal?: number;
-  };
-};
-
-export type DashboardTotalSectionHeaderCountryResponse = {
-  data?: {
-    /**
-     * Total number of non profit projects.
-     */
-    total_non_profit_count?: number;
-    /**
-     * Total number of enterprise projects.
-     */
-    total_enterprise_count?: number;
-    /**
-     * Total number of jobs created.
-     */
-    total_entries?: number;
-    /**
-     * Total number of hectares restored.
-     */
-    total_hectares_restored?: number;
-    /**
-     * Total number of trees restored.=
-     */
-    total_trees_restored?: number;
-  };
-};
-
-export type DashboardActiveCountriesResponse = {
-  data?: {
-    country_slug?: string;
-    country?: string;
-    number_of_projects?: number;
-    total_trees_planted?: number;
-    total_jobs_created?: number;
   }[];
 };
 
@@ -9863,10 +9653,6 @@ export type SitePolygonResource = {
    */
   date_created?: string;
   created_by?: string;
-};
-
-export type SiteCheckApproveResponse = {
-  can_approve?: boolean;
 };
 
 export type DashboardProjectViewResponse = {
@@ -10181,158 +9967,6 @@ export type FileResource = {
   is_cover?: boolean;
 };
 
-export type DashboardIndicatorHectaresRestorationResponse = {
-  data?: {
-    restoration_strategies_represented?: {
-      /**
-       * Total amount for tree planting projects.
-       */
-      ["tree-planting"]?: number;
-      /**
-       * Total amount for projects involving both tree planting and direct seeding.
-       */
-      ["tree-planting,direct-seeding"]?: number;
-      /**
-       * Total amount for assisted natural regeneration projects.
-       */
-      ["assisted-natural-regeneration"]?: number;
-      /**
-       * Total amount for projects involving both tree planting and assisted natural regeneration.
-       */
-      ["tree-planting,assisted-natural-regeneration"]?: number;
-      /**
-       * Total amount for direct seeding projects.
-       */
-      ["direct-seeding"]?: number;
-      /**
-       * Total amount for control projects.
-       */
-      control?: number;
-      /**
-       * Total amount for projects with no specific restoration category.
-       */
-      ["null"]?: number;
-    };
-    target_land_use_types_represented?: {
-      /**
-       * Total amount for projects without a defined land use type.
-       */
-      ["null"]?: number;
-      /**
-       * Total amount for projects involving natural forest.
-       */
-      ["natural-forest"]?: number;
-      /**
-       * Total amount for agroforest projects.
-       */
-      agroforest?: number;
-      /**
-       * Total amount for silvopasture projects.
-       */
-      silvopasture?: number;
-      /**
-       * Total amount for woodlot or plantation projects.
-       */
-      ["woodlot-or-plantation"]?: number;
-      /**
-       * Total amount for riparian area or wetland projects.
-       */
-      ["riparian-area-or-wetland"]?: number;
-      /**
-       * Total amount for projects involving both agroforest and riparian area or wetland.
-       */
-      ["agroforest,riparian-area-or-wetland"]?: number;
-      /**
-       * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
-       */
-      ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
-      /**
-       * Total amount for projects involving open natural ecosystem or grasslands.
-       */
-      ["Open natural ecosystem or Grasslands"]?: number;
-      /**
-       * Total amount for urban forest projects.
-       */
-      ["urban-forest"]?: number;
-    };
-  };
-};
-
-export type DashboardIndicatorHectaresRestorationData = {
-  restoration_strategies_represented?: {
-    /**
-     * Total amount for tree planting projects.
-     */
-    ["tree-planting"]?: number;
-    /**
-     * Total amount for projects involving both tree planting and direct seeding.
-     */
-    ["tree-planting,direct-seeding"]?: number;
-    /**
-     * Total amount for assisted natural regeneration projects.
-     */
-    ["assisted-natural-regeneration"]?: number;
-    /**
-     * Total amount for projects involving both tree planting and assisted natural regeneration.
-     */
-    ["tree-planting,assisted-natural-regeneration"]?: number;
-    /**
-     * Total amount for direct seeding projects.
-     */
-    ["direct-seeding"]?: number;
-    /**
-     * Total amount for control projects.
-     */
-    control?: number;
-    /**
-     * Total amount for projects with no specific restoration category.
-     */
-    ["null"]?: number;
-  };
-  target_land_use_types_represented?: {
-    /**
-     * Total amount for projects without a defined land use type.
-     */
-    ["null"]?: number;
-    /**
-     * Total amount for projects involving natural forest.
-     */
-    ["natural-forest"]?: number;
-    /**
-     * Total amount for agroforest projects.
-     */
-    agroforest?: number;
-    /**
-     * Total amount for silvopasture projects.
-     */
-    silvopasture?: number;
-    /**
-     * Total amount for woodlot or plantation projects.
-     */
-    ["woodlot-or-plantation"]?: number;
-    /**
-     * Total amount for riparian area or wetland projects.
-     */
-    ["riparian-area-or-wetland"]?: number;
-    /**
-     * Total amount for projects involving both agroforest and riparian area or wetland.
-     */
-    ["agroforest,riparian-area-or-wetland"]?: number;
-    /**
-     * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
-     */
-    ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
-    /**
-     * Total amount for projects involving open natural ecosystem or grasslands.
-     */
-    ["Open natural ecosystem or Grasslands"]?: number;
-    /**
-     * Total amount for urban forest projects.
-     */
-    ["urban-forest"]?: number;
-  };
-};
-
 export type UserCreateComplete = {
   token?: string;
   password?: string;
@@ -10456,10 +10090,6 @@ export type V2ImpactStoryCreate = {
    * @example draft
    */
   status?: "draft" | "published" | "archived";
-};
-
-export type DashboardGetPolygonCentroidResponse = {
-  centroid?: number[];
 };
 
 export type V2FinancialIndicatorsRead = Record<string, any>[];
