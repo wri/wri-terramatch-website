@@ -16276,71 +16276,6 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
   );
 };
 
-export type GetV2DashboardJobsCreatedQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardJobsCreatedResponse = {
-  data?: {
-    totalJobsCreated?: number;
-    total_ft?: number;
-    total_pt?: number;
-    total_men?: number;
-    total_pt_men?: number;
-    total_ft_men?: number;
-    total_women?: number;
-    total_pt_women?: number;
-    total_ft_women?: number;
-    total_youth?: number;
-    total_pt_youth?: number;
-    total_ft_youth?: number;
-    total_non_youth?: number;
-    total_pt_non_youth?: number;
-    total_ft_non_youth?: number;
-  };
-};
-
-export type GetV2DashboardJobsCreatedVariables = {
-  queryParams?: GetV2DashboardJobsCreatedQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardJobsCreated = (variables: GetV2DashboardJobsCreatedVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardJobsCreatedResponse,
-    GetV2DashboardJobsCreatedError,
-    undefined,
-    {},
-    GetV2DashboardJobsCreatedQueryParams,
-    {}
-  >({ url: "/v2/dashboard/jobs-created", method: "get", ...variables, signal });
-
-export const useGetV2DashboardJobsCreated = <TData = GetV2DashboardJobsCreatedResponse>(
-  variables: GetV2DashboardJobsCreatedVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardJobsCreatedResponse, GetV2DashboardJobsCreatedError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardJobsCreatedResponse, GetV2DashboardJobsCreatedError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/jobs-created", operationId: "getV2DashboardJobsCreated", variables }),
-    ({ signal }) => fetchGetV2DashboardJobsCreated({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
@@ -19868,11 +19803,6 @@ export type QueryOperation =
       path: "/v2/terrafund/project-polygon";
       operationId: "getV2TerrafundProjectPolygon";
       variables: GetV2TerrafundProjectPolygonVariables;
-    }
-  | {
-      path: "/v2/dashboard/jobs-created";
-      operationId: "getV2DashboardJobsCreated";
-      variables: GetV2DashboardJobsCreatedVariables;
     }
   | {
       path: "/v2/dashboard/project-list-export";
