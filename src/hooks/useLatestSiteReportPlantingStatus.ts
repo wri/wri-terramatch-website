@@ -3,9 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { loadFullSiteReport, loadSiteReportIndex } from "@/connections/Entity";
 import { SiteReportFullDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export const useLatestSiteReportPlantingStatus = (
+/* eslint-disable no-redeclare */
+export function useLatestSiteReportPlantingStatus(siteUuid: string | null | undefined): string | null;
+export function useLatestSiteReportPlantingStatus(siteUuid: string[]): Record<string, string | null>;
+export function useLatestSiteReportPlantingStatus(
   siteUuid: string | null | undefined | string[]
-): string | null | Record<string, string | null> => {
+): string | null | Record<string, string | null> {
   const isArray = Array.isArray(siteUuid);
   const uuids = useMemo(() => {
     if (isArray) {
@@ -89,4 +92,4 @@ export const useLatestSiteReportPlantingStatus = (
     }
     return plantingStatusMap;
   }, [isArray, uuids, plantingStatusMap]);
-};
+}

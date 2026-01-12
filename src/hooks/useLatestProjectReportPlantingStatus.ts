@@ -3,9 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { loadFullProjectReport, loadProjectReportIndex } from "@/connections/Entity";
 import { ProjectReportFullDto, ProjectReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export const useLatestProjectReportPlantingStatus = (
+/* eslint-disable no-redeclare */
+export function useLatestProjectReportPlantingStatus(projectUuid: string | null | undefined): string | null;
+export function useLatestProjectReportPlantingStatus(projectUuid: string[]): Record<string, string | null>;
+export function useLatestProjectReportPlantingStatus(
   projectUuid: string | null | undefined | string[]
-): string | null | Record<string, string | null> => {
+): string | null | Record<string, string | null> {
   const isArray = Array.isArray(projectUuid);
   const uuids = useMemo(() => {
     if (isArray) {
@@ -89,4 +92,4 @@ export const useLatestProjectReportPlantingStatus = (
     }
     return plantingStatusMap;
   }, [isArray, uuids, plantingStatusMap]);
-};
+}
