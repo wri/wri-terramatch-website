@@ -1,6 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import { FC, useCallback, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -20,6 +20,8 @@ import Table from "../../Table/Table";
 import { VARIANT_TABLE_SITE_POLYGON_REVIEW } from "../../Table/TableVariants";
 import Text from "../../Text/Text";
 import Checkbox from "../Checkbox/Checkbox";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type FilePreviewTableProps = {
   items: Partial<UploadedFile>[];

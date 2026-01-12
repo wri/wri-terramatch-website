@@ -44,9 +44,13 @@ const getProjectPolygonConnection = v3Resource("projectPolygons", getProjectPoly
 export const useProjectPolygonByPitch = connectionHook(getProjectPolygonConnection);
 export const loadProjectPolygonByPitch = connectionLoader(getProjectPolygonConnection);
 
-export const deleteProjectPolygon = deleterAsync("projectPolygons", deleteProjectPolygonEndpoint, (uuid: string) => ({
-  pathParams: { uuid }
-}));
+export const deleteProjectPolygon = deleterAsync(
+  "projectPolygons",
+  deleteProjectPolygonEndpoint,
+  (polyUuid: string) => ({
+    pathParams: { polyUuid }
+  })
+);
 
 export const useUploadProjectPolygonFile = parallelRequestHook("projectPolygons", uploadProjectPolygonFile);
 
@@ -77,8 +81,8 @@ export const createProjectPolygonWithReplace = async (
     enabled: true
   });
 
-  if (existingPolygon.data?.uuid) {
-    await deleteProjectPolygon(existingPolygon.data.uuid);
+  if (existingPolygon.data?.polygonUuid) {
+    await deleteProjectPolygon(existingPolygon.data.polygonUuid);
   }
 
   return createProjectPolygonResource(attributes);

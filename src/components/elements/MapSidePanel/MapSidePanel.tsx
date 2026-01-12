@@ -49,7 +49,7 @@ const MapSidePanel = ({
   onLoadMore,
   emptyText,
   mapFunctions,
-  checkedValues,
+  checkedValues = [],
   onCheckboxChange,
   setSortOrder,
   sortField,
@@ -70,7 +70,7 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
 
   const filteredItems = useMemo(() => {
-    if (checkedValues.length === 0) {
+    if (!checkedValues || checkedValues.length === 0) {
       return items;
     }
     return items.filter(item => checkedValues.includes(item.status));
@@ -254,7 +254,7 @@ const MapSidePanel = ({
                     label={t(status.label)}
                     className="flex w-full flex-row-reverse items-center justify-end gap-3"
                     textClassName="text-10-semibold"
-                    checked={checkedValues.includes(status.value)}
+                    checked={checkedValues?.includes(status.value) ?? false}
                     onChange={e => onCheckboxChange(status.value, e.target.checked)}
                   />
                 ))}
