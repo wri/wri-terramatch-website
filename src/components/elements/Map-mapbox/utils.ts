@@ -1556,6 +1556,29 @@ export async function storePolygonProject(
     }
   }
 }
+
+export async function updatePolygonProjectGeometry(geojson: any, polygonUuid: string, refetch: any) {
+  if (geojson?.length && polygonUuid) {
+    const geometries = [
+      {
+        type: "FeatureCollection",
+        features: geojson.map((feature: any) => ({
+          type: "Feature",
+          geometry: feature.geometry,
+          properties: {}
+        }))
+      }
+    ];
+
+    const { updateProjectPolygonResource } = await import("@/connections/ProjectPolygons");
+    await updateProjectPolygonResource(polygonUuid, { geometries });
+
+    const refetchResult = refetch?.();
+    if (refetchResult && typeof refetchResult.then === "function") {
+      await refetchResult;
+    }
+  }
+}
 export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.Map, polygonVersion?: any) => {
   if (geojson) {
     const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
