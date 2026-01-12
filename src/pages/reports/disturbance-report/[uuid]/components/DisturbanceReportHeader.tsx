@@ -96,7 +96,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
 
         {disturbanceReportStatus === "edit" && (
           <Button as={Link} href={`/entity/disturbance-reports/edit/${disturbanceReport.uuid}`}>
-            {t("Continue Site")}
+            {t("Edit")}
           </Button>
         )}
         {disturbanceReportStatus !== "edit" && (

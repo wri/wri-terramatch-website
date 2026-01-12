@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
+import { useTotalSectionHeader } from "@/connections/DashboardTotalSectionHeaders";
+import { useSitePolygons } from "@/connections/SitePolygons";
 import { LAYERS_NAMES } from "@/constants/layers";
-import {
-  fetchGetV2DashboardPolygonDataUuid,
-  fetchGetV2DashboardTotalSectionHeaderCountry
-} from "@/generated/apiComponents";
-import { createQueryParams } from "@/utils/dashboardUtils";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
 type Item = {
@@ -29,6 +27,25 @@ export function usePopupData(event: any) {
   const [projectLoaded, { data: projectFullDto }] = useDashboardProject({
     id: itemUuid && layerName === LAYERS_NAMES.CENTROIDS ? itemUuid : null
   });
+
+  const [countryDataLoaded, { data: countryData }] = useTotalSectionHeader({
+    filter: {
+      country: isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES ? isoCountry : undefined
+    }
+  });
+
+  const [polygonDataLoaded, { data: polygonDataArray }] = useSitePolygons({
+    filter: {
+      "polygonUuid[]": itemUuid != null && layerName === LAYERS_NAMES.POLYGON_GEOMETRY ? [itemUuid] : []
+    },
+    enabled: itemUuid != null && layerName === LAYERS_NAMES.POLYGON_GEOMETRY,
+    pageSize: 1,
+    pageNumber: 1
+  });
+
+  const polygonData = useMemo<SitePolygonLightDto | undefined>(() => {
+    return polygonDataArray?.[0];
+  }, [polygonDataArray]);
 
   const createProjectDataFromEntity = (projectFullDto: any) => {
     if (!projectFullDto) return null;
@@ -57,53 +74,38 @@ export function usePopupData(event: any) {
   };
 
   useEffect(() => {
-    async function fetchCountryData() {
-      setIsLoading(true);
-      try {
-        const parsedFilters = {
-          programmes: [],
-          country: isoCountry,
-          "organisations.type": [],
-          landscapes: [],
-          uuid: ""
-        };
-        const queryParams: any = createQueryParams(parsedFilters);
-        const response: any = await fetchGetV2DashboardTotalSectionHeaderCountry({ queryParams });
-        if (response) {
-          const parsedItems = [
-            {
-              id: "1",
-              title: "No. of Projects",
-              value: ((response.total_enterprise_count ?? 0) + (response.total_non_profit_count ?? 0)).toLocaleString()
-            },
-            {
-              id: "2",
-              title: "Trees Planted",
-              value: (response.total_trees_restored ?? 0).toLocaleString()
-            },
-            {
-              id: "3",
-              title: "Restoration Hectares",
-              value: (response.total_hectares_restored ?? 0).toLocaleString()
-            },
-            {
-              id: "4",
-              title: "Jobs Created",
-              value: (response.total_entries ?? 0).toLocaleString()
-            }
-          ];
-          setItems(parsedItems);
-          setPopupType("country");
-        } else {
-          Log.error("No data returned from the API");
+    if (countryDataLoaded && countryData != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
+      setIsLoading(false);
+      const parsedItems = [
+        {
+          id: "1",
+          title: "No. of Projects",
+          value: ((countryData.totalEnterpriseCount ?? 0) + (countryData.totalNonProfitCount ?? 0)).toLocaleString()
+        },
+        {
+          id: "2",
+          title: "Trees Planted",
+          value: (countryData.totalTreesRestored ?? 0).toLocaleString()
+        },
+        {
+          id: "3",
+          title: "Restoration Hectares",
+          value: (countryData.totalHectaresRestored ?? 0).toLocaleString()
+        },
+        {
+          id: "4",
+          title: "Jobs Created",
+          value: (countryData.totalEntries ?? 0).toLocaleString()
         }
-      } catch (error) {
-        Log.error("Error fetching country data", error);
-      } finally {
-        setIsLoading(false);
-      }
+      ];
+      setItems(parsedItems);
+      setPopupType("country");
+    } else if (isoCountry != null && layerName === LAYERS_NAMES.WORLD_COUNTRIES && !countryDataLoaded) {
+      setIsLoading(true);
     }
+  }, [countryDataLoaded, countryData, isoCountry, layerName]);
 
+  useEffect(() => {
     async function fetchProjectData() {
       setIsLoading(true);
       try {
@@ -143,39 +145,86 @@ export function usePopupData(event: any) {
       }
     }
 
-    async function fetchPolygonData() {
-      setIsLoading(true);
-      try {
-        const response: any = await fetchGetV2DashboardPolygonDataUuid({ pathParams: { uuid: itemUuid } });
-        if (response) {
-          const filteredItems = response.data
-            .filter((item: any) => item.key !== "poly_name")
-            .map((item: any) => ({
-              id: item.key,
-              title: item.title,
-              value: (item.value ?? "-").toLocaleString()
-            }));
-
-          const projectLabel = response.data.find((item: any) => item.key === "poly_name")?.value;
-          setLabel(projectLabel);
-          setItems(filteredItems);
-          setPopupType("polygon");
+    function transformPolygonDataToItems(polygon: SitePolygonLightDto): { items: Item[]; label: string } {
+      const formatDate = (dateString: string | null | undefined): string => {
+        if (dateString == null) {
+          return "-";
         }
-      } catch (error) {
-        Log.error("Error fetching polygon data", error);
-      } finally {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const items: Item[] = [];
+
+      const projectName = polygon.projectName ?? polygon.projectShortName;
+      if (projectName != null) {
+        items.push({
+          id: "project_name",
+          title: "Project",
+          value: projectName
+        });
+      }
+
+      if (polygon.siteName != null) {
+        items.push({
+          id: "site_name",
+          title: "Site",
+          value: polygon.siteName
+        });
+      }
+
+      if (polygon.numTrees != null) {
+        items.push({
+          id: "num_trees",
+          title: "Number of trees",
+          value: polygon.numTrees.toString()
+        });
+      }
+
+      if (polygon.plantStart != null) {
+        items.push({
+          id: "plantstart",
+          title: "Plant Start Date",
+          value: formatDate(polygon.plantStart)
+        });
+      }
+
+      if (polygon.status != null) {
+        items.push({
+          id: "status",
+          title: "Status",
+          value: polygon.status
+        });
+      }
+
+      return {
+        items,
+        label: polygon.name ?? "Unnamed Polygon"
+      };
+    }
+
+    function processPolygonData() {
+      if (polygonDataLoaded && polygonData != null) {
         setIsLoading(false);
+        const { items: transformedItems, label: polygonLabel } = transformPolygonDataToItems(polygonData);
+        setLabel(polygonLabel);
+        setItems(transformedItems);
+        setPopupType("polygon");
+      } else if (itemUuid != null && layerName === LAYERS_NAMES.POLYGON_GEOMETRY && !polygonDataLoaded) {
+        setIsLoading(true);
       }
     }
+
     setItems([]);
-    if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
-      fetchCountryData();
-    } else if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
+    if (itemUuid && layerName === LAYERS_NAMES.CENTROIDS) {
       fetchProjectData();
     } else if (itemUuid && layerName === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      fetchPolygonData();
+      processPolygonData();
     }
-  }, [isoCountry, layerName, itemUuid, projectFullDto, projectLoaded]);
+  }, [layerName, itemUuid, projectFullDto, projectLoaded, polygonDataLoaded, polygonData]);
 
   return {
     popupType,

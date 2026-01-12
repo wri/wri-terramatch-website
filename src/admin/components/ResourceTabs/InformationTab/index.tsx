@@ -196,7 +196,7 @@ const InformationTab: FC<IProps> = props => {
                       </ContextCondition>
                     ) : null}
                     {(["projects", "project-reports"].includes(props.type) && framework === Framework.PPC) ||
-                    (props.type === "nursery-reports" && ALL_TF.includes(framework)) ? (
+                    (props.type !== "nursery-reports" && ALL_TF.includes(framework)) ? (
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
@@ -213,7 +213,7 @@ const InformationTab: FC<IProps> = props => {
                         />
                       </div>
                     ) : null}
-                    {props.type !== "nursery-reports" ? (
+                    {props.type !== "nursery-reports" && props.type !== "site-reports" ? (
                       <>
                         <ContextCondition frameworksShow={[Framework.PPC]}>
                           <div className="flex flex-col gap-1">

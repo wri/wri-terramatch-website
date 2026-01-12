@@ -31,7 +31,13 @@ const nextConfig = {
 
     return config;
   },
-  transpilePackages: ["mapbox-gl-draw-circle"],
+  transpilePackages: [
+    "mapbox-gl-draw-circle",
+    "@chakra-ui/react",
+    "@ark-ui/react",
+    "@zag-js/date-picker",
+    "@internationalized/date"
+  ],
   eslint: {
     ignoreDuringBuilds: true
   }
