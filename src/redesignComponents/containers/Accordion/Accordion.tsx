@@ -1,8 +1,7 @@
 import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
-import SVG from "react-inlinesvg";
 
-import chevronDownIcon from "@/assets/icons/chevron-down.svg";
 import { getThemedColor } from "@/lib/theme";
+import { ChevronDown } from "@/redesignComponents/foundations/Icons";
 
 import { ExtendableCardProps } from "./types";
 
@@ -21,20 +20,13 @@ const Accordion = ({ children, header }: ExtendableCardProps) => (
           gap={4}
         >
           <AccordionChakra.ItemTrigger>
-            <Flex gap={3} flex="1" overflow="hidden" alignItems="center">
+            <Flex gap={3} flex="1" overflow="hidden" alignItems="center" justifyContent="space-between">
               {header}
+              <AccordionChakra.ItemIndicator>
+                <ChevronDown boxSize={6} color={getThemedColor("neutral", 900)} />
+              </AccordionChakra.ItemIndicator>
             </Flex>
           </AccordionChakra.ItemTrigger>
-          <AccordionChakra.ItemIndicator>
-            <SVG
-              src={chevronDownIcon}
-              width={16}
-              height={16}
-              style={{
-                color: getThemedColor("neutral", 700)
-              }}
-            />
-          </AccordionChakra.ItemIndicator>
         </Flex>
         <AccordionChakra.ItemContent>{children}</AccordionChakra.ItemContent>
       </AccordionChakra.Item>
