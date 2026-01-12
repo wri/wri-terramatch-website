@@ -16276,43 +16276,6 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
   );
 };
 
-export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardProjectListExport = (
-  variables: GetV2DashboardProjectListExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, GetV2DashboardProjectListExportError, undefined, {}, {}, {}>({
-    url: "/v2/dashboard/project-list-export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2DashboardProjectListExport = <TData = undefined>(
-  variables: GetV2DashboardProjectListExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<undefined, GetV2DashboardProjectListExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2DashboardProjectListExportError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/project-list-export",
-      operationId: "getV2DashboardProjectListExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardProjectListExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
   /**
    * The uuid of the polygon
@@ -19704,11 +19667,6 @@ export type QueryOperation =
       path: "/v2/terrafund/project-polygon";
       operationId: "getV2TerrafundProjectPolygon";
       variables: GetV2TerrafundProjectPolygonVariables;
-    }
-  | {
-      path: "/v2/dashboard/project-list-export";
-      operationId: "getV2DashboardProjectListExport";
-      variables: GetV2DashboardProjectListExportVariables;
     }
   | {
       path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
