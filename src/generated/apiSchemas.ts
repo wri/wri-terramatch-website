@@ -10454,10 +10454,6 @@ export type V2ImpactStoryCreate = {
   status?: "draft" | "published" | "archived";
 };
 
-export type DashboardGetPolygonCentroidResponse = {
-  centroid?: number[];
-};
-
 export type V2FinancialIndicatorsRead = Record<string, any>[];
 
 export type V2FinancialIndicatorsUpdate = {

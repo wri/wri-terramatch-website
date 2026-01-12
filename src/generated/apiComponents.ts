@@ -16276,72 +16276,6 @@ export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
   );
 };
 
-export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
-  /**
-   * The uuid of the polygon
-   */
-  polyUuid: string;
-};
-
-export type GetV2DashboardPolygonsPolyUuidCentroidError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardPolygonsPolyUuidCentroidResponse = {
-  centroid?: number[];
-};
-
-export type GetV2DashboardPolygonsPolyUuidCentroidVariables = {
-  pathParams: GetV2DashboardPolygonsPolyUuidCentroidPathParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns the centroid of a polygon.
- */
-export const fetchGetV2DashboardPolygonsPolyUuidCentroid = (
-  variables: GetV2DashboardPolygonsPolyUuidCentroidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardPolygonsPolyUuidCentroidResponse,
-    GetV2DashboardPolygonsPolyUuidCentroidError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardPolygonsPolyUuidCentroidPathParams
-  >({ url: "/v2/dashboard/polygons/{polyUuid}/centroid", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns the centroid of a polygon.
- */
-export const useGetV2DashboardPolygonsPolyUuidCentroid = <TData = GetV2DashboardPolygonsPolyUuidCentroidResponse>(
-  variables: GetV2DashboardPolygonsPolyUuidCentroidVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardPolygonsPolyUuidCentroidResponse,
-      GetV2DashboardPolygonsPolyUuidCentroidError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardPolygonsPolyUuidCentroidResponse,
-    GetV2DashboardPolygonsPolyUuidCentroidError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/polygons/{poly_uuid}/centroid",
-      operationId: "getV2DashboardPolygonsPolyUuidCentroid",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardPolygonsPolyUuidCentroid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardPolygonDataUuidPathParams = {
   /**
    * UUID of the polygon
@@ -19667,11 +19601,6 @@ export type QueryOperation =
       path: "/v2/terrafund/project-polygon";
       operationId: "getV2TerrafundProjectPolygon";
       variables: GetV2TerrafundProjectPolygonVariables;
-    }
-  | {
-      path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
-      operationId: "getV2DashboardPolygonsPolyUuidCentroid";
-      variables: GetV2DashboardPolygonsPolyUuidCentroidVariables;
     }
   | {
       path: "/v2/dashboard/polygon-data/{uuid}";
