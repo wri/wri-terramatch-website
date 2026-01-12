@@ -7,9 +7,9 @@ import ControlDivider from "@/components/elements/Map-mapbox/components/ControlD
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchDeleteV2TerrafundProjectPolygonUuid } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
@@ -36,7 +36,7 @@ const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonM
 
   const handleDelete = async () => {
     if (polygonFromMap?.uuid) {
-      await fetchDeleteV2TerrafundProjectPolygonUuid({ pathParams: { uuid: polygonFromMap.uuid } });
+      await deleteProjectPolygon(polygonFromMap.uuid);
       reloadSiteData?.();
     }
   };
