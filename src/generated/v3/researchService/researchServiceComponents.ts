@@ -666,7 +666,7 @@ export type UpdateSitePolygonStatusVariables = {
 };
 
 /**
- * Update the status of a site polygon
+ * Update the status of the list of site polygons
  */
 export const updateSitePolygonStatus = new V3ApiEndpoint<
   UpdateSitePolygonStatusResponse,
