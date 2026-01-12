@@ -10,11 +10,13 @@ import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlant
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
 import Text from "@/components/elements/Text/Text";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useLatestSiteReportPlantingStatus } from "@/hooks/useLatestSiteReportPlantingStatus";
 
 const SiteOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
   const { record } = useShowContext<SiteFullDto & { id: string }>();
   const isPPC = record?.frameworkKey === "ppc";
+  const latestPlantingStatus = useLatestSiteReportPlantingStatus(record?.id);
 
   return (
     <>
@@ -71,7 +73,7 @@ const SiteOverview: FC = () => {
 
             <Grid xs={6} item>
               <Labeled label="Planting Status" className="label-field-aside">
-                <ReadablePlantingStatusField prop="plantingStatus" />
+                <ReadablePlantingStatusField value={latestPlantingStatus ?? record?.plantingStatus ?? null} />
               </Labeled>
             </Grid>
           </Grid>

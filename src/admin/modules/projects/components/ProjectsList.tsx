@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -12,6 +12,7 @@ import {
   SelectInput,
   ShowButton,
   TextField,
+  useListContext,
   WrapperField
 } from "react-admin";
 
@@ -29,6 +30,7 @@ import { useGadmChoices, useGadmOptions } from "@/connections/Gadm";
 import { getChangeRequestStatusOptions, getPlantingStatusOptions, getStatusOptions } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useLatestProjectReportPlantingStatus } from "@/hooks/useLatestProjectReportPlantingStatus";
 import { formatOptionsList, optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -55,6 +57,10 @@ const tableMenu = [
 const ProjectDataGrid = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
   const countryOptions = useGadmOptions({ level: 0 });
+  const { data } = useListContext();
+  const projectUuids = useMemo(() => (data ?? []).map((project: ProjectLightDto) => project.uuid), [data]);
+  const plantingStatusMap = useLatestProjectReportPlantingStatus(projectUuids) as Record<string, string | null>;
+
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
       <TextField source="name" label="Project Name" />
@@ -81,7 +87,9 @@ const ProjectDataGrid = () => {
         source="plantingStatus"
         label="Planting Status"
         sortable={false}
-        render={({ plantingStatus }: ProjectLightDto) => {
+        render={(record: ProjectLightDto) => {
+          // Use latest planting status from reports, fallback to record plantingStatus
+          const plantingStatus = plantingStatusMap[record.uuid] ?? record.plantingStatus;
           const { title } = getPlantingStatusOptions().find((option: any) => option.value === plantingStatus) ?? {};
           return <CustomChipField label={title} />;
         }}

@@ -7,10 +7,12 @@ import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadablePlantingStatusField from "@/admin/components/Fields/ReadablePlantingStatusField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { useLatestProjectReportPlantingStatus } from "@/hooks/useLatestProjectReportPlantingStatus";
 
 const ProjectOverview: FC = () => {
   const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | undefined>();
   const { record } = useShowContext();
+  const latestPlantingStatus = useLatestProjectReportPlantingStatus(record?.id);
 
   return (
     <>
@@ -46,7 +48,7 @@ const ProjectOverview: FC = () => {
 
           <Grid xs={4} item>
             <Labeled label="Planting Status">
-              <ReadablePlantingStatusField prop="plantingStatus" />
+              <ReadablePlantingStatusField value={latestPlantingStatus ?? record?.plantingStatus ?? null} />
             </Labeled>
           </Grid>
         </Grid>

@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -11,6 +11,7 @@ import {
   SelectInput,
   ShowButton,
   TextField,
+  useListContext,
   WrapperField
 } from "react-admin";
 
@@ -35,6 +36,7 @@ import {
 } from "@/constants/options/status";
 import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useLatestSiteReportPlantingStatus } from "@/hooks/useLatestSiteReportPlantingStatus";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
@@ -70,6 +72,9 @@ const tableMenu = [
 
 const SiteDataGrid: FC = () => {
   const frameworkInputChoices = useUserFrameworkChoices();
+  const { data } = useListContext();
+  const siteUuids = useMemo(() => (data ?? []).map((site: SiteLightDto) => site.uuid), [data]);
+  const plantingStatusMap = useLatestSiteReportPlantingStatus(siteUuids) as Record<string, string | null>;
 
   return (
     <Datagrid bulkActionButtons={<CustomBulkDeleteWithConfirmButton source="name" />} rowClick={"show"}>
@@ -98,9 +103,11 @@ const SiteDataGrid: FC = () => {
         source="plantingStatus"
         label="Planting Status"
         sortable={false}
-        render={(record: any) => {
+        render={(record: SiteLightDto) => {
+          // Use latest planting status from reports, fallback to record plantingStatus
+          const plantingStatus = plantingStatusMap[record.uuid] ?? record.plantingStatus;
           const readablePlantingStatus = getPlantingStatusOptions().find(
-            (option: any) => option.value === record.plantingStatus
+            (option: any) => option.value === plantingStatus
           );
           return <CustomChipField label={readablePlantingStatus?.title} />;
         }}
