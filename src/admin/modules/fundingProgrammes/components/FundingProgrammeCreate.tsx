@@ -8,7 +8,7 @@ export const FundingProgrammeCreate = () => (
     <Typography variant="h5" marginX="1rem" marginTop="1.75rem">
       Create Form
     </Typography>
-    <SimpleForm defaultValues={{ stages: { data: [{}] } }} noValidate paddingY="1.5rem">
+    <SimpleForm defaultValues={{ stages: [] }} noValidate paddingY="1.5rem">
       <FundingForm />
     </SimpleForm>
   </Create>
