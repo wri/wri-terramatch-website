@@ -9112,62 +9112,6 @@ export type GeometryPost = {
   };
 }[];
 
-export type DashboardVolunteersSurvivalRateResponse = {
-  data?: {
-    /**
-     * Total number of volunteers.
-     */
-    total_volunteers?: number;
-    /**
-     * Total number of male volunteers.
-     */
-    men_volunteers?: number;
-    /**
-     * Total number of female volunteers.
-     */
-    women_volunteers?: number;
-    /**
-     * Total number of youth volunteers.
-     */
-    youth_volunteers?: number;
-    /**
-     * Total number of non-youth volunteers.
-     */
-    non_youth_volunteers?: number;
-    /**
-     * number of sites.
-     */
-    number_of_sites?: number;
-  };
-};
-
-export type DashboardVolundteersSurvivalRateData = {
-  /**
-   * Total number of volunteers.
-   */
-  total_volunteers?: number;
-  /**
-   * Total number of male volunteers.
-   */
-  men_volunteers?: number;
-  /**
-   * Total number of female volunteers.
-   */
-  women_volunteers?: number;
-  /**
-   * Total number of youth volunteers.
-   */
-  youth_volunteers?: number;
-  /**
-   * Total number of non-youth volunteers.
-   */
-  non_youth_volunteers?: number;
-  /**
-   * number of sites.
-   */
-  number_of_sites?: number;
-};
-
 export type AuditStatusCreateRequest = {
   status?: string;
   comment?: string;
@@ -9461,71 +9405,6 @@ export type PolygonBboxResponse = {
 
 export type DashboardPolygonResponse = {
   uuid?: string;
-};
-
-export type DashboardJobsCreatedResponse = {
-  data?: {
-    totalJobsCreated?: number;
-    total_ft?: number;
-    total_pt?: number;
-    total_men?: number;
-    total_pt_men?: number;
-    total_ft_men?: number;
-    total_women?: number;
-    total_pt_women?: number;
-    total_ft_women?: number;
-    total_youth?: number;
-    total_pt_youth?: number;
-    total_ft_youth?: number;
-    total_non_youth?: number;
-    total_pt_non_youth?: number;
-    total_ft_non_youth?: number;
-  };
-};
-
-export type DashboardJobsCreatedData = {
-  totalJobsCreated?: number;
-  total_ft?: number;
-  total_pt?: number;
-  total_men?: number;
-  total_pt_men?: number;
-  total_ft_men?: number;
-  total_women?: number;
-  total_pt_women?: number;
-  total_ft_women?: number;
-  total_youth?: number;
-  total_pt_youth?: number;
-  total_ft_youth?: number;
-  total_non_youth?: number;
-  total_pt_non_youth?: number;
-  total_ft_non_youth?: number;
-};
-
-export type DashboardRestorationStrategyResponse = {
-  restorationStrategies?: {
-    ["direct-seeding"]?: number;
-    ["tree-planting"]?: number;
-    ["assisted-natural-regeneration"]?: number;
-  };
-  landUseTypes?: {
-    agroforest?: number;
-    ["open-natural-ecosystem"]?: number;
-    mangrove?: number;
-    ["natural-forest"]?: number;
-    peatland?: number;
-    ["riparian-area-or-wetland"]?: number;
-    silvopasture?: number;
-    ["urban-forest"]?: number;
-    ["woodlot-or-plantation"]?: number;
-  };
-  landTenures?: {
-    communal?: number;
-    indigenous?: number;
-    national_protected_area?: number;
-    other?: number;
-    private?: number;
-    public?: number;
-  };
 };
 
 export type DashboardPolygonData = {
