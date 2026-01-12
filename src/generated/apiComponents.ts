@@ -16337,70 +16337,6 @@ export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDa
   );
 };
 
-export type GetV2DashboardActiveCountriesQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardActiveCountriesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardActiveCountriesResponse = {
-  data?: {
-    country_slug?: string;
-    country?: string;
-    number_of_projects?: number;
-    total_trees_planted?: number;
-    total_jobs_created?: number;
-  }[];
-};
-
-export type GetV2DashboardActiveCountriesVariables = {
-  queryParams?: GetV2DashboardActiveCountriesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
- */
-export const fetchGetV2DashboardActiveCountries = (
-  variables: GetV2DashboardActiveCountriesVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardActiveCountriesResponse,
-    GetV2DashboardActiveCountriesError,
-    undefined,
-    {},
-    GetV2DashboardActiveCountriesQueryParams,
-    {}
-  >({ url: "/v2/dashboard/active-countries", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
- */
-export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCountriesResponse>(
-  variables: GetV2DashboardActiveCountriesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
-    ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardFrameworksQueryParams = {
   /**
    * search term to use on the collection
@@ -19343,11 +19279,6 @@ export type QueryOperation =
       path: "/v2/dashboard/polygon-data/{uuid}";
       operationId: "getV2DashboardPolygonDataUuid";
       variables: GetV2DashboardPolygonDataUuidVariables;
-    }
-  | {
-      path: "/v2/dashboard/active-countries";
-      operationId: "getV2DashboardActiveCountries";
-      variables: GetV2DashboardActiveCountriesVariables;
     }
   | {
       path: "/v2/dashboard/frameworks";

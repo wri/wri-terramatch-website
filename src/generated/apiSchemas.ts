@@ -9547,16 +9547,6 @@ export type DashboardPolygonData = {
   }[];
 };
 
-export type DashboardActiveCountriesResponse = {
-  data?: {
-    country_slug?: string;
-    country?: string;
-    number_of_projects?: number;
-    total_trees_planted?: number;
-    total_jobs_created?: number;
-  }[];
-};
-
 export type DashboardProjectProfileResponse = {
   data?: {
     name?: string;
