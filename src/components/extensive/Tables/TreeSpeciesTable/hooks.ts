@@ -74,7 +74,10 @@ export const usePlantTotalCount = ({ entity, entityUuid, collection }: Aggregate
   return useMemo(() => {
     // For nurseries with nursery-seedling collection, combine plants and reportCounts to match table data
     // The table shows both entityPlants (from plants) and reportPlants (from reportCounts not in plants)
-    if (entity === "nurseries" && collection === "nursery-seedling") {
+    if (
+      (entity === "nurseries" && collection === "nursery-seedling") ||
+      (entity.endsWith("Reports") && collection === "tree-planted")
+    ) {
       const plantsTotal = sumBy(plants ?? [], "amount");
       const reportCountsEntries = Object.entries(reportCounts ?? {});
       if (reportCountsEntries.length > 0) {
