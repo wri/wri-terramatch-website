@@ -7,7 +7,7 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
-import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
+import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -1570,7 +1570,6 @@ export async function updatePolygonProjectGeometry(geojson: any, polygonUuid: st
       }
     ];
 
-    const { updateProjectPolygonResource } = await import("@/connections/ProjectPolygons");
     await updateProjectPolygonResource(polygonUuid, { geometries });
 
     const refetchResult = refetch?.();

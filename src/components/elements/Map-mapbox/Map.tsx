@@ -80,6 +80,7 @@ import {
   setMapStyle,
   startDrawing,
   stopDrawing,
+  updatePolygonProjectGeometry,
   zoomToBbox,
   zoomToCenter
 } from "./utils";
@@ -690,7 +691,6 @@ export const MapContainer = ({
           if (formMap) {
             try {
               showLoader();
-              const { updatePolygonProjectGeometry } = await import("./utils");
               await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
 
               if (draw.current) {
