@@ -23,8 +23,17 @@ export const MapInputField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: addEntryWith((field, formValues, { entityPolygonData, bbox, type, mapFunctions, record }) => {
+  addFormEntries: addEntryWith((field, formValues, { entityPolygonData, bbox, type, mapFunctions, record, entity }) => {
     if (Object.keys(entityPolygonData ?? {}).length === 0) return null;
+
+    const entityData =
+      entity != null
+        ? {
+            entityName: entity.entityName,
+            entityUUID: entity.entityUUID
+          }
+        : undefined;
+
     return (
       <MapContainer
         polygonsData={entityPolygonData}
@@ -36,6 +45,7 @@ export const MapInputField: FormFieldFactory = {
         mapFunctions={mapFunctions}
         showDownloadPolygons={true}
         record={record}
+        entityData={entityData}
       />
     );
   }),

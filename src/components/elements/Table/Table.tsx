@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import { DetailedHTMLProps, PropsWithChildren, TableHTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -25,6 +25,8 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Pagination from "@/components/extensive/Pagination";
 
 import { TableVariant, VARIANT_TABLE_PRIMARY } from "./TableVariants";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends RowData, TValue = unknown> {

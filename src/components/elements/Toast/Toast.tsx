@@ -1,6 +1,6 @@
 import { Transition } from "@headlessui/react";
 import classNames from "classnames";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import { FC, HTMLAttributes } from "react";
 
 import ErrorLottie from "@/assets/animations/error.json";
@@ -8,6 +8,8 @@ import TickLottie from "@/assets/animations/tick.json";
 import Text from "@/components/elements/Text/Text";
 import PageSection from "@/components/extensive/PageElements/Section/PageSection";
 import { ToastType, useToastContext } from "@/context/toast.provider";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 interface IProps extends HTMLAttributes<HTMLDivElement> {}
 
