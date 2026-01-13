@@ -13,19 +13,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
 
-  const getReportsPath = (view: keyof typeof modules) => {
-    if (!record) return;
-    const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.projectUuid }),
-      order: "ASC",
-      page: "1",
-      perPage: "10",
-      sort: "id"
-    }).toString();
-
-    return `/${view}?${queryParams}`;
-  };
+  const taskUuid = record?.taskUuid ?? record?.task_uuid;
 
   return (
     <Card>
@@ -44,7 +32,7 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
               to={createPath({
                 resource: modules.task.ResourceName,
                 type: "show",
-                id: record?.taskUuid! ?? record?.task_uuid!
+                id: taskUuid!
               })}
               fullWidth
               label="View Task"
@@ -79,13 +67,28 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
               label="Back To Nursery"
             />
           )}
-          {type === "project-reports" && (
+          {type === "project-reports" && taskUuid && (
             <>
-              <Button variant="outlined" component={Link} to={getReportsPath("siteReport")} label="View Site Reports" />
               <Button
                 variant="outlined"
                 component={Link}
-                to={getReportsPath("nurseryReport")}
+                to={createPath({
+                  resource: modules.task.ResourceName,
+                  type: "show",
+                  id: taskUuid
+                })}
+                fullWidth
+                label="View Site Reports"
+              />
+              <Button
+                variant="outlined"
+                component={Link}
+                to={createPath({
+                  resource: modules.task.ResourceName,
+                  type: "show",
+                  id: taskUuid
+                })}
+                fullWidth
                 label="View Nursery Reports"
               />
             </>
