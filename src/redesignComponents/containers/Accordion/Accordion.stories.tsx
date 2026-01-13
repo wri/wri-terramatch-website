@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import { getThemedColor } from "@/lib/theme";
+import { InformationRequired } from "@/redesignComponents/foundations/Icons";
+
 import Accordion from "./Accordion";
 
 const meta: Meta<typeof Accordion> = {
@@ -28,8 +31,11 @@ const header = (
         <span className="font-inter flex text-[14px] font-bold leading-[20px] text-[#ffffff]">Label</span>
       </div>
     </div>
-    <div className="rounded border px-2 py-1.5">
-      <span className="font-inter flex text-[12px] font-bold leading-[16px] text-[#3D3B3B]">Label</span>
+    <div className="flex items-center gap-3">
+      <InformationRequired boxSize={4} color={getThemedColor("error", 500)} />
+      <div className="rounded border px-2 py-1.5">
+        <span className="font-inter flex text-[12px] font-bold leading-[16px] text-[#3D3B3B]">Label</span>
+      </div>
     </div>
   </div>
 );

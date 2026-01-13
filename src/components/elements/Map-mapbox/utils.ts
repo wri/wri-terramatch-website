@@ -7,7 +7,7 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
-import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
+import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -1553,6 +1553,28 @@ export async function storePolygonProject(
     if (polygonUuid) {
       refetch?.();
       setPolygonFromMap?.({ uuid: polygonUuid, isOpen: true });
+    }
+  }
+}
+
+export async function updatePolygonProjectGeometry(geojson: any, polygonUuid: string, refetch: any) {
+  if (geojson?.length && polygonUuid) {
+    const geometries = [
+      {
+        type: "FeatureCollection",
+        features: geojson.map((feature: any) => ({
+          type: "Feature",
+          geometry: feature.geometry,
+          properties: {}
+        }))
+      }
+    ];
+
+    await updateProjectPolygonResource(polygonUuid, { geometries });
+
+    const refetchResult = refetch?.();
+    if (refetchResult && typeof refetchResult.then === "function") {
+      await refetchResult;
     }
   }
 }
