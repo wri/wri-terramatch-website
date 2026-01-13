@@ -11,9 +11,7 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useFormSubmission } from "@/hooks/useFormGet";
@@ -55,21 +53,7 @@ const SubmissionPage = () => {
     [fieldsProvider, formData?.answers]
   );
 
-  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
-    { pathParams: { uuid: formData?.organisationUuid ?? "" } },
-    { enabled: formData?.organisationUuid != null }
-  );
-  const orgDetails = useMemo(
-    (): OrgFormDetails | undefined =>
-      orgData == null
-        ? undefined
-        : {
-            uuid: orgData.data.uuid,
-            currency: orgData.data.currency,
-            startMonth: orgData.data.fin_start_month
-          },
-    [orgData]
-  );
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(formData?.organisationUuid ?? undefined);
 
   const { openModal, closeModal } = useModalContext();
   const handleSubmit = useCallback(() => {
@@ -105,7 +89,7 @@ const SubmissionPage = () => {
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isLoading || orgLoading || !providerLoaded}>
+      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded}>
         <WizardForm
           models={formModels}
           framework={framework}

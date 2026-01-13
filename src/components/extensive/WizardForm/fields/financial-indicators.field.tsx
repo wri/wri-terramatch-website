@@ -78,10 +78,10 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
   appendAnswers: () => undefined,
 
-  addFormEntries: (entries, field, formValues, { t, record, type }) => {
+  addFormEntries: (entries, field, formValues, { t, record, type, orgDetails }) => {
     const values = formValues[field.name];
 
-    const currencyCode = type === "financial-reports" ? record?.currency : record?.organisation?.currency;
+    const currencyCode = type === "financial-reports" ? record?.currency : orgDetails?.currency;
     const currencyDisplayName = currencyCode
       ? getCurrencyOptions(t).find(opt => opt.value === currencyCode)?.title
       : undefined;

@@ -18,7 +18,8 @@ import WizardFormProvider, {
   FormModel,
   useApiFieldsProvider,
   useFieldsProvider,
-  useFormEntities
+  useFormEntities,
+  useV2OrgFormDetails
 } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
 
@@ -59,13 +60,17 @@ const ApplicationTab: FC<{ submissionUuid: string }> = ({ submissionUuid }) => {
     () => formDefaultValues(submission?.answers ?? {}, fieldsProvider),
     [fieldsProvider, submission?.answers]
   );
-  const model = useMemo<FormModel>(
-    () => ({ model: "projectPitches", uuid: submission?.projectPitchUuid ?? "" }),
-    [submission?.projectPitchUuid]
+  const models = useMemo<FormModel[]>(
+    () => [
+      { model: "projectPitches", uuid: submission?.projectPitchUuid ?? "" },
+      { model: "organisations", uuid: submission?.organisationUuid ?? "" }
+    ],
+    [submission?.organisationUuid, submission?.projectPitchUuid]
   );
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid ?? undefined);
 
-  return !providerLoaded ? null : (
-    <WizardFormProvider models={model} fieldsProvider={fieldsProvider}>
+  return !providerLoaded || !orgDetailsLoaded ? null : (
+    <WizardFormProvider models={models} fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
       <List
         className="space-y-8"
         items={fieldsProvider.stepIds()}

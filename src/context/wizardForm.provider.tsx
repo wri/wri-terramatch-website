@@ -3,6 +3,8 @@ import { createContext, FC, PropsWithChildren, useContext, useMemo } from "react
 
 import { FieldDefinition, StepDefinition } from "@/components/extensive/WizardForm/types";
 import { FormModelType, useForm } from "@/connections/Form";
+import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
+import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull, toArray } from "@/utils/array";
@@ -153,6 +155,34 @@ export type OrgFormDetails = {
   startMonth?: string | number;
   title?: string;
   type?: string;
+};
+
+export const useV2OrgFormDetails = (orgUuid?: string) => {
+  const enabled = orgUuid != null;
+  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
+    { pathParams: { uuid: orgUuid ?? "" } },
+    { enabled: orgUuid != null }
+  );
+  return useMemo<[boolean, OrgFormDetails]>(() => {
+    if (!enabled) return [true, {}];
+    if (orgLoading) return [false, {}];
+    return [
+      true,
+      {
+        uuid: orgData?.data?.uuid,
+        currency: orgData?.data?.currency,
+        startMonth: orgData?.data?.fin_start_month,
+        type: orgData?.data?.type
+      }
+    ];
+  }, [
+    enabled,
+    orgData?.data?.currency,
+    orgData?.data?.fin_start_month,
+    orgData?.data?.type,
+    orgData?.data?.uuid,
+    orgLoading
+  ]);
 };
 
 export type ProjectFormDetails = {

@@ -8,9 +8,12 @@ import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { loadForm } from "@/connections/Form";
 import { loadSubmission } from "@/connections/FormSubmission";
 import FrameworkProvider from "@/context/framework.provider";
-import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import WizardFormProvider, {
+  FormModel,
+  OrgFormDetails,
+  useApiFieldsProvider,
+  useV2OrgFormDetails
+} from "@/context/wizardForm.provider";
 import { SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 import { useStableProps } from "@/hooks/useStableProps";
@@ -65,12 +68,9 @@ const ApplicationOverview: FC<ApplicationOverviewProps> = props => {
     [submissions]
   );
   const titles = useFormTitles(formUuids);
-  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
-    { pathParams: { uuid: organisationUuid ?? "" } },
-    { enabled: organisationUuid != null }
-  );
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(organisationUuid);
 
-  return titles == null || orgLoading ? null : (
+  return titles == null || !orgDetailsLoaded ? null : (
     <section>
       <Text variant="text-bold-headline-1000">{t("Application Overview")}</Text>
       <Tabs
@@ -82,7 +82,7 @@ const ApplicationOverview: FC<ApplicationOverviewProps> = props => {
         tabItems={(submissionUuids ?? []).map(uuid => {
           const submission = submissions?.[uuid];
           return {
-            renderBody: () => <Item submission={submission} organisation={orgData} />,
+            renderBody: () => <Item submission={submission} orgDetails={orgDetails} />,
             title: titles[submission?.formUuid ?? ""] ?? ""
           };
         })}
@@ -91,7 +91,12 @@ const ApplicationOverview: FC<ApplicationOverviewProps> = props => {
   );
 };
 
-const Item = ({ submission, organisation }: { submission?: SubmissionDto; organisation: any }) => {
+type ItemProps = {
+  submission?: SubmissionDto;
+  orgDetails?: OrgFormDetails;
+};
+
+const Item: FC<ItemProps> = ({ submission, orgDetails }) => {
   const frameworkKey = submission?.frameworkKey;
   const formUuid = submission?.formUuid;
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formUuid);
@@ -102,16 +107,16 @@ const Item = ({ submission, organisation }: { submission?: SubmissionDto; organi
   const models = useMemo<FormModel[]>(
     () => [
       { model: "projectPitches", uuid: submission?.projectPitchUuid ?? "" },
-      { model: "organisations", uuid: organisation?.uuid }
+      { model: "organisations", uuid: orgDetails?.uuid ?? "" }
     ],
-    [organisation?.uuid, submission?.projectPitchUuid]
+    [orgDetails?.uuid, submission?.projectPitchUuid]
   );
 
   return !providerLoaded ? null : (
     <FrameworkProvider frameworkKey={frameworkKey}>
-      <WizardFormProvider models={models} fieldsProvider={fieldsProvider}>
+      <WizardFormProvider models={models} fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         <div className="flex flex-col gap-6 bg-white p-8">
-          {formUuid == null ? null : <FormSummary values={values} organisation={organisation} />}
+          {formUuid == null ? null : <FormSummary values={values} />}
         </div>
       </WizardFormProvider>
     </FrameworkProvider>

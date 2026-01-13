@@ -10,9 +10,7 @@ import { useApplication } from "@/connections/Application";
 import { useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { useFramework } from "@/context/framework.provider";
-import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
 import { FormQuestionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
@@ -69,20 +67,7 @@ const RequestMoreInformationPage = () => {
     [fieldsProvider, submission?.answers]
   );
   const [, { data: form }] = useForm({ id: submission?.formUuid ?? undefined, enabled: submission?.formUuid != null });
-
-  const { data: orgData, isLoading: orgLoading } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
-    { pathParams: { uuid: submission?.organisationUuid ?? "" } },
-    { enabled: submission?.organisationUuid != null }
-  );
-
-  const orgDetails = useMemo(
-    (): OrgFormDetails => ({
-      uuid: orgData?.data.uuid,
-      currency: orgData?.data.currency ?? undefined,
-      startMonth: orgData?.data.fin_start_month ?? undefined
-    }),
-    [orgData?.data.currency, orgData?.data.fin_start_month, orgData?.data.uuid]
-  );
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -97,7 +82,7 @@ const RequestMoreInformationPage = () => {
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={!applicationLoaded || !providerLoaded || orgLoading}>
+      <LoadingContainer loading={!applicationLoaded || !providerLoaded || !orgDetailsLoaded}>
         <WizardForm
           fieldsProvider={fieldsProvider}
           models={formModels}
