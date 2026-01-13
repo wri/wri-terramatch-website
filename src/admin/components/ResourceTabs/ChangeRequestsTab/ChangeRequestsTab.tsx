@@ -32,7 +32,7 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
   const [statusToChangeTo, setStatusToChangeTo] = useState<IStatus>();
 
   const enabled = entity != null && ctx?.record?.uuid != null;
-  const [, { data: updateRequest }] = useUpdateRequest({
+  const [updateRequestLoaded, { data: updateRequest }] = useUpdateRequest({
     entity,
     uuid: ctx?.record?.uuid,
     enabled
@@ -63,7 +63,8 @@ const ChangeRequestsTab: FC<IProps> = ({ label, entity, singularEntity, ...rest 
 
   const icon = updateRequest?.status === "awaiting-approval" ? <PriorityHigh sx={{ color: pink[500] }} /> : undefined;
 
-  if (ctx.isLoading || !providerLoaded) return null;
+  const providerLoading = !updateRequestLoaded || (updateRequest != null && !providerLoaded);
+  if (ctx.isLoading || providerLoading) return null;
 
   return (
     <>
