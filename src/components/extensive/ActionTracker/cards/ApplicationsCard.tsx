@@ -46,7 +46,7 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
     <ActionTrackerCard
       data={applications}
       title={t("Applications")}
-      subtitle={applications.length && t("You have {n} updates", { n: applications.length })}
+      subtitle={applications.length && t("You have {n} Applications", { n: applications.length })}
       icon={IconNames.DOCUMENT_CIRCLE}
       emptyState={{
         title: t("Track your applications"),
