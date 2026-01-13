@@ -14517,6 +14517,245 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
   );
 };
 
+export type PostV2TerrafundValidationPolygonQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundValidationPolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundValidationPolygonResponse = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: Record<string, any>;
+  }[];
+};
+
+export type PostV2TerrafundValidationPolygonVariables = {
+  queryParams: PostV2TerrafundValidationPolygonQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationPolygon = (
+  variables: PostV2TerrafundValidationPolygonVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationPolygonResponse,
+    PostV2TerrafundValidationPolygonError,
+    undefined,
+    {},
+    PostV2TerrafundValidationPolygonQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/polygon", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationPolygon = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationPolygonResponse,
+      PostV2TerrafundValidationPolygonError,
+      PostV2TerrafundValidationPolygonVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationPolygonResponse,
+    PostV2TerrafundValidationPolygonError,
+    PostV2TerrafundValidationPolygonVariables
+  >(
+    (variables: PostV2TerrafundValidationPolygonVariables) =>
+      fetchPostV2TerrafundValidationPolygon({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundValidationCriteriaDataError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example Invalid or missing UUIDs array
+         */
+        error?: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example Criteria data not found for the given polygon IDs
+         */
+        error?: string;
+      };
+    }
+>;
+
+export type PostV2TerrafundValidationCriteriaDataResponse = {
+  [key: string]:
+    | {
+        /**
+         * The ID of the polygon
+         */
+        polygon_id: string;
+        /**
+         * List of validation criteria
+         */
+        criteria_list: {
+          /**
+           * The ID of the criteria
+           */
+          criteria_id?: number;
+          /**
+           * The latest created at timestamp of the criteria
+           *
+           * @format date-time
+           */
+          latest_created_at?: string;
+          /**
+           * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+           */
+          valid?: number;
+          /**
+           * Extra information about the polygon validation
+           */
+          extra_info?: Record<string, any>;
+        }[];
+      }
+    | {
+        /**
+         * Error message if the polygon or criteria data is not found
+         */
+        error: string;
+      };
+};
+
+export type PostV2TerrafundValidationCriteriaDataRequestBody = {
+  /**
+   * A list of UUIDs of the polygons
+   */
+  uuids?: string[];
+};
+
+export type PostV2TerrafundValidationCriteriaDataVariables = {
+  body?: PostV2TerrafundValidationCriteriaDataRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationCriteriaData = (
+  variables: PostV2TerrafundValidationCriteriaDataVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationCriteriaDataResponse,
+    PostV2TerrafundValidationCriteriaDataError,
+    PostV2TerrafundValidationCriteriaDataRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/validation/criteria-data", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationCriteriaData = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationCriteriaDataResponse,
+      PostV2TerrafundValidationCriteriaDataError,
+      PostV2TerrafundValidationCriteriaDataVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationCriteriaDataResponse,
+    PostV2TerrafundValidationCriteriaDataError,
+    PostV2TerrafundValidationCriteriaDataVariables
+  >(
+    (variables: PostV2TerrafundValidationCriteriaDataVariables) =>
+      fetchPostV2TerrafundValidationCriteriaData({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundValidationSitePolygonsQueryParams = {
+  /**
+   * The UUID of the polygon
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundValidationSitePolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundValidationSitePolygonsResponse = {
+  /**
+   * A message indicating the completion of validation for all site polygons.
+   */
+  message?: string;
+};
+
+export type PostV2TerrafundValidationSitePolygonsVariables = {
+  queryParams: PostV2TerrafundValidationSitePolygonsQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationSitePolygons = (
+  variables: PostV2TerrafundValidationSitePolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationSitePolygonsResponse,
+    PostV2TerrafundValidationSitePolygonsError,
+    undefined,
+    {},
+    PostV2TerrafundValidationSitePolygonsQueryParams,
+    {}
+  >({ url: "/v2/terrafund/validation/sitePolygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationSitePolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationSitePolygonsResponse,
+      PostV2TerrafundValidationSitePolygonsError,
+      PostV2TerrafundValidationSitePolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationSitePolygonsResponse,
+    PostV2TerrafundValidationSitePolygonsError,
+    PostV2TerrafundValidationSitePolygonsVariables
+  >(
+    (variables: PostV2TerrafundValidationSitePolygonsVariables) =>
+      fetchPostV2TerrafundValidationSitePolygons({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
 export type PostV2GeometryValidateError = Fetcher.ErrorWrapper<{
   status: 422;
   payload: {
@@ -15065,147 +15304,138 @@ export const useGetV2SitesSitePolygon = <TData = GetV2SitesSitePolygonResponse>(
   );
 };
 
-export type GetV2DashboardJobsCreatedQueryParams = {
+export type PostV2TerrafundSitePolygonUuidSiteUuidPathParams = {
   /**
-   * search term to use on the collection
+   * The UUID of the polygon related
    */
-  search?: string;
+  uuid: string;
   /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   * The UUID of the site
    */
-  filter?: string;
+  siteUuid: string;
 };
 
-export type GetV2DashboardJobsCreatedError = Fetcher.ErrorWrapper<undefined>;
+export type PostV2TerrafundSitePolygonUuidSiteUuidError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2DashboardJobsCreatedResponse = {
-  data?: {
-    totalJobsCreated?: number;
-    total_ft?: number;
-    total_pt?: number;
-    total_men?: number;
-    total_pt_men?: number;
-    total_ft_men?: number;
-    total_women?: number;
-    total_pt_women?: number;
-    total_ft_women?: number;
-    total_youth?: number;
-    total_pt_youth?: number;
-    total_ft_youth?: number;
-    total_non_youth?: number;
-    total_pt_non_youth?: number;
-    total_ft_non_youth?: number;
-  };
+export type PostV2TerrafundSitePolygonUuidSiteUuidResponse = {
+  /**
+   * @example Site polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created site polygon
+   */
+  uuid?: string;
+  /**
+   * Calculated area in hectares
+   *
+   * @format double
+   */
+  area?: number;
 };
 
-export type GetV2DashboardJobsCreatedVariables = {
-  queryParams?: GetV2DashboardJobsCreatedQueryParams;
+export type PostV2TerrafundSitePolygonUuidSiteUuidVariables = {
+  body?: RequestBodies.Body;
+  pathParams: PostV2TerrafundSitePolygonUuidSiteUuidPathParams;
 } & ApiContext["fetcherOptions"];
 
-export const fetchGetV2DashboardJobsCreated = (variables: GetV2DashboardJobsCreatedVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2DashboardJobsCreatedResponse,
-    GetV2DashboardJobsCreatedError,
-    undefined,
-    {},
-    GetV2DashboardJobsCreatedQueryParams,
-    {}
-  >({ url: "/v2/dashboard/jobs-created", method: "get", ...variables, signal });
-
-export const useGetV2DashboardJobsCreated = <TData = GetV2DashboardJobsCreatedResponse>(
-  variables: GetV2DashboardJobsCreatedVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardJobsCreatedResponse, GetV2DashboardJobsCreatedError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardJobsCreatedResponse, GetV2DashboardJobsCreatedError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/jobs-created", operationId: "getV2DashboardJobsCreated", variables }),
-    ({ signal }) => fetchGetV2DashboardJobsCreated({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardRestorationStrategyQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardRestorationStrategyError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardRestorationStrategyResponse = {
-  restorationStrategies?: {
-    ["direct-seeding"]?: number;
-    ["tree-planting"]?: number;
-    ["assisted-natural-regeneration"]?: number;
-  };
-  landUseTypes?: {
-    agroforest?: number;
-    ["open-natural-ecosystem"]?: number;
-    mangrove?: number;
-    ["natural-forest"]?: number;
-    peatland?: number;
-    ["riparian-area-or-wetland"]?: number;
-    silvopasture?: number;
-    ["urban-forest"]?: number;
-    ["woodlot-or-plantation"]?: number;
-  };
-  landTenures?: {
-    communal?: number;
-    indigenous?: number;
-    national_protected_area?: number;
-    other?: number;
-    private?: number;
-    public?: number;
-  };
-};
-
-export type GetV2DashboardRestorationStrategyVariables = {
-  queryParams?: GetV2DashboardRestorationStrategyQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardRestorationStrategy = (
-  variables: GetV2DashboardRestorationStrategyVariables,
+export const fetchPostV2TerrafundSitePolygonUuidSiteUuid = (
+  variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2DashboardRestorationStrategyResponse,
-    GetV2DashboardRestorationStrategyError,
-    undefined,
+    PostV2TerrafundSitePolygonUuidSiteUuidResponse,
+    PostV2TerrafundSitePolygonUuidSiteUuidError,
+    RequestBodies.Body,
     {},
-    GetV2DashboardRestorationStrategyQueryParams,
-    {}
-  >({ url: "/v2/dashboard/restoration-strategy", method: "get", ...variables, signal });
+    {},
+    PostV2TerrafundSitePolygonUuidSiteUuidPathParams
+  >({ url: "/v2/terrafund/site-polygon/{uuid}/{siteUuid}", method: "post", ...variables, signal });
 
-export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardRestorationStrategyResponse>(
-  variables: GetV2DashboardRestorationStrategyVariables,
+export const usePostV2TerrafundSitePolygonUuidSiteUuid = (
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardRestorationStrategyResponse,
-      GetV2DashboardRestorationStrategyError,
-      TData
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundSitePolygonUuidSiteUuidResponse,
+      PostV2TerrafundSitePolygonUuidSiteUuidError,
+      PostV2TerrafundSitePolygonUuidSiteUuidVariables
     >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundSitePolygonUuidSiteUuidResponse,
+    PostV2TerrafundSitePolygonUuidSiteUuidError,
+    PostV2TerrafundSitePolygonUuidSiteUuidVariables
+  >(
+    (variables: PostV2TerrafundSitePolygonUuidSiteUuidVariables) =>
+      fetchPostV2TerrafundSitePolygonUuidSiteUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2TerrafundGeojsonCompleteQueryParams = {
+  /**
+   * UUID of the polygon geometry.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundGeojsonCompleteError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundGeojsonCompleteResponse = {
+  type?: string;
+  features?: {
+    type?: string;
+    geometry?: {
+      type?: string;
+      coordinates?: any[];
+    };
+    properties?: {
+      poly_name?: string;
+      plantstart?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+    };
+  }[];
+};
+
+export type GetV2TerrafundGeojsonCompleteVariables = {
+  queryParams: GetV2TerrafundGeojsonCompleteQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieve polygon geometry and properties as GeoJSON.
+ */
+export const fetchGetV2TerrafundGeojsonComplete = (
+  variables: GetV2TerrafundGeojsonCompleteVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundGeojsonCompleteResponse,
+    GetV2TerrafundGeojsonCompleteError,
+    undefined,
+    {},
+    GetV2TerrafundGeojsonCompleteQueryParams,
+    {}
+  >({ url: "/v2/terrafund/geojson/complete", method: "get", ...variables, signal });
+
+/**
+ * Retrieve polygon geometry and properties as GeoJSON.
+ */
+export const useGetV2TerrafundGeojsonComplete = <TData = GetV2TerrafundGeojsonCompleteResponse>(
+  variables: GetV2TerrafundGeojsonCompleteVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundGeojsonCompleteResponse, GetV2TerrafundGeojsonCompleteError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardRestorationStrategyResponse, GetV2DashboardRestorationStrategyError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/restoration-strategy",
-      operationId: "getV2DashboardRestorationStrategy",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardRestorationStrategy({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2TerrafundGeojsonCompleteResponse, GetV2TerrafundGeojsonCompleteError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/geojson/complete", operationId: "getV2TerrafundGeojsonComplete", variables }),
+    ({ signal }) => fetchGetV2TerrafundGeojsonComplete({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -15213,36 +15443,711 @@ export const useGetV2DashboardRestorationStrategy = <TData = GetV2DashboardResto
   );
 };
 
-export type GetV2DashboardProjectListExportError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2TerrafundPolygonUuidPathParams = {
+  /**
+   * The UUID of the site polygon.
+   */
+  uuid: string;
+};
 
-export type GetV2DashboardProjectListExportVariables = ApiContext["fetcherOptions"];
+export type GetV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example No site polygons found for the given UUID.
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example An error message describing the issue.
+         */
+        message?: string;
+      };
+    }
+>;
 
-export const fetchGetV2DashboardProjectListExport = (
-  variables: GetV2DashboardProjectListExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, GetV2DashboardProjectListExportError, undefined, {}, {}, {}>({
-    url: "/v2/dashboard/project-list-export",
-    method: "get",
+export type GetV2TerrafundPolygonUuidResponse = {
+  site_polygon?: {
+    calc_area?: number;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    created_by?: string | null;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string | null;
+    distr?: string | null;
+    id?: number;
+    last_modified_by?: string | null;
+    num_trees?: number | null;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    point_id?: string | null;
+    poly_id?: string;
+    poly_name?: string;
+    practice?: string | null;
+    site_id?: string | null;
+    site_name?: string;
+    status?: string;
+    target_sys?: string | null;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    uuid?: string;
+    planting_status?: string;
+  };
+};
+
+export type GetV2TerrafundPolygonUuidVariables = {
+  pathParams: GetV2TerrafundPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieve site polygon data for the given UUID.
+ */
+export const fetchGetV2TerrafundPolygonUuid = (variables: GetV2TerrafundPolygonUuidVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2TerrafundPolygonUuidResponse,
+    GetV2TerrafundPolygonUuidError,
+    undefined,
+    {},
+    {},
+    GetV2TerrafundPolygonUuidPathParams
+  >({ url: "/v2/terrafund/polygon/{uuid}", method: "get", ...variables, signal });
+
+/**
+ * Retrieve site polygon data for the given UUID.
+ */
+export const useGetV2TerrafundPolygonUuid = <TData = GetV2TerrafundPolygonUuidResponse>(
+  variables: GetV2TerrafundPolygonUuidVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundPolygonUuidResponse, GetV2TerrafundPolygonUuidError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TerrafundPolygonUuidResponse, GetV2TerrafundPolygonUuidError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/polygon/{uuid}", operationId: "getV2TerrafundPolygonUuid", variables }),
+    ({ signal }) => fetchGetV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PutV2TerrafundPolygonUuidPathParams = {
+  /**
+   * The UUID of the polygon geometry to update
+   */
+  uuid: string;
+};
+
+export type PutV2TerrafundPolygonUuidError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example No polygon geometry found for the given UUID.
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example Internal Server Error
+         */
+        error?: string;
+      };
+    }
+>;
+
+export type PutV2TerrafundPolygonUuidResponse = {
+  /**
+   * @example Geometry updated successfully.
+   */
+  message?: string;
+  /**
+   * The updated geometry data
+   */
+  geometry?: Record<string, any>;
+  uuid?: string;
+};
+
+export type PutV2TerrafundPolygonUuidRequestBody = {
+  geometry?: string;
+};
+
+export type PutV2TerrafundPolygonUuidVariables = {
+  body?: PutV2TerrafundPolygonUuidRequestBody;
+  pathParams: PutV2TerrafundPolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2TerrafundPolygonUuid = (variables: PutV2TerrafundPolygonUuidVariables, signal?: AbortSignal) =>
+  apiFetch<
+    PutV2TerrafundPolygonUuidResponse,
+    PutV2TerrafundPolygonUuidError,
+    PutV2TerrafundPolygonUuidRequestBody,
+    {},
+    {},
+    PutV2TerrafundPolygonUuidPathParams
+  >({ url: "/v2/terrafund/polygon/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2TerrafundPolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2TerrafundPolygonUuidResponse,
+      PutV2TerrafundPolygonUuidError,
+      PutV2TerrafundPolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PutV2TerrafundPolygonUuidResponse,
+    PutV2TerrafundPolygonUuidError,
+    PutV2TerrafundPolygonUuidVariables
+  >(
+    (variables: PutV2TerrafundPolygonUuidVariables) =>
+      fetchPutV2TerrafundPolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2TerrafundGeojsonSiteQueryParams = {
+  /**
+   * UUID of the aite.
+   */
+  uuid: string;
+};
+
+export type GetV2TerrafundGeojsonSiteError = Fetcher.ErrorWrapper<undefined>;
+
+export type GetV2TerrafundGeojsonSiteResponse = {
+  type?: string;
+};
+
+export type GetV2TerrafundGeojsonSiteVariables = {
+  queryParams: GetV2TerrafundGeojsonSiteQueryParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchGetV2TerrafundGeojsonSite = (variables: GetV2TerrafundGeojsonSiteVariables, signal?: AbortSignal) =>
+  apiFetch<
+    GetV2TerrafundGeojsonSiteResponse,
+    GetV2TerrafundGeojsonSiteError,
+    undefined,
+    {},
+    GetV2TerrafundGeojsonSiteQueryParams,
+    {}
+  >({ url: "/v2/terrafund/geojson/site", method: "get", ...variables, signal });
+
+export const useGetV2TerrafundGeojsonSite = <TData = GetV2TerrafundGeojsonSiteResponse>(
+  variables: GetV2TerrafundGeojsonSiteVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundGeojsonSiteResponse, GetV2TerrafundGeojsonSiteError, TData>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
+  return reactQuery.useQuery<GetV2TerrafundGeojsonSiteResponse, GetV2TerrafundGeojsonSiteError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/geojson/site", operationId: "getV2TerrafundGeojsonSite", variables }),
+    ({ signal }) => fetchGetV2TerrafundGeojsonSite({ ...fetcherOptions, ...variables }, signal),
+    {
+      ...options,
+      ...queryOptions
+    }
+  );
+};
+
+export type PostV2TerrafundPolygonError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundPolygonResponse = {
+  uuid?: string;
+};
+
+export type PostV2TerrafundPolygonRequestBody = {
+  geometry?: string;
+};
+
+export type PostV2TerrafundPolygonVariables = {
+  body?: PostV2TerrafundPolygonRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundPolygon = (variables: PostV2TerrafundPolygonVariables, signal?: AbortSignal) =>
+  apiFetch<PostV2TerrafundPolygonResponse, PostV2TerrafundPolygonError, PostV2TerrafundPolygonRequestBody, {}, {}, {}>({
+    url: "/v2/terrafund/polygon",
+    method: "post",
     ...variables,
     signal
   });
 
-export const useGetV2DashboardProjectListExport = <TData = undefined>(
-  variables: GetV2DashboardProjectListExportVariables,
+export const usePostV2TerrafundPolygon = (
   options?: Omit<
-    reactQuery.UseQueryOptions<undefined, GetV2DashboardProjectListExportError, TData>,
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundPolygonResponse,
+      PostV2TerrafundPolygonError,
+      PostV2TerrafundPolygonVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundPolygonResponse,
+    PostV2TerrafundPolygonError,
+    PostV2TerrafundPolygonVariables
+  >(
+    (variables: PostV2TerrafundPolygonVariables) => fetchPostV2TerrafundPolygon({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadGeojsonProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadGeojsonProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadGeojsonProjectRequestBody = {
+  /**
+   * The GeoJSON file to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the GeoJSON file
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the GeoJSON file
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadGeojsonProjectVariables = {
+  body: PostV2TerrafundUploadGeojsonProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadGeojsonProject = (
+  variables: PostV2TerrafundUploadGeojsonProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadGeojsonProjectResponse,
+    PostV2TerrafundUploadGeojsonProjectError,
+    PostV2TerrafundUploadGeojsonProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-geojson-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a GeoJSON file, converts it to GeoJSON, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadGeojsonProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadGeojsonProjectResponse,
+      PostV2TerrafundUploadGeojsonProjectError,
+      PostV2TerrafundUploadGeojsonProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadGeojsonProjectResponse,
+    PostV2TerrafundUploadGeojsonProjectError,
+    PostV2TerrafundUploadGeojsonProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadGeojsonProjectVariables) =>
+      fetchPostV2TerrafundUploadGeojsonProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadShapefileProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadShapefileProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadShapefileProjectRequestBody = {
+  /**
+   * The Shapefile to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the Shapefile
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the Shapefile
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadShapefileProjectVariables = {
+  body: PostV2TerrafundUploadShapefileProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadShapefileProject = (
+  variables: PostV2TerrafundUploadShapefileProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadShapefileProjectResponse,
+    PostV2TerrafundUploadShapefileProjectError,
+    PostV2TerrafundUploadShapefileProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-shapefile-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a Shapefile, converts it to Shapefile, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadShapefileProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadShapefileProjectResponse,
+      PostV2TerrafundUploadShapefileProjectError,
+      PostV2TerrafundUploadShapefileProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadShapefileProjectResponse,
+    PostV2TerrafundUploadShapefileProjectError,
+    PostV2TerrafundUploadShapefileProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadShapefileProjectVariables) =>
+      fetchPostV2TerrafundUploadShapefileProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundUploadKmlProjectError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundUploadKmlProjectResponse = {
+  message?: string;
+  uuid?: string;
+};
+
+export type PostV2TerrafundUploadKmlProjectRequestBody = {
+  /**
+   * The KML file to upload
+   *
+   * @format binary
+   */
+  file: Blob;
+  /**
+   * The UUID of the entity associated with the KML file
+   */
+  entity_uuid: string;
+  /**
+   * The Enity Type of the entity associated with the KML file
+   */
+  entity_type: string;
+};
+
+export type PostV2TerrafundUploadKmlProjectVariables = {
+  body: PostV2TerrafundUploadKmlProjectRequestBody;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Uploads a KML file, converts it to KML, and inserts it into the database.
+ */
+export const fetchPostV2TerrafundUploadKmlProject = (
+  variables: PostV2TerrafundUploadKmlProjectVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundUploadKmlProjectResponse,
+    PostV2TerrafundUploadKmlProjectError,
+    PostV2TerrafundUploadKmlProjectRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/upload-kml-project", method: "post", ...variables, signal });
+
+/**
+ * Uploads a KML file, converts it to KML, and inserts it into the database.
+ */
+export const usePostV2TerrafundUploadKmlProject = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundUploadKmlProjectResponse,
+      PostV2TerrafundUploadKmlProjectError,
+      PostV2TerrafundUploadKmlProjectVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundUploadKmlProjectResponse,
+    PostV2TerrafundUploadKmlProjectError,
+    PostV2TerrafundUploadKmlProjectVariables
+  >(
+    (variables: PostV2TerrafundUploadKmlProjectVariables) =>
+      fetchPostV2TerrafundUploadKmlProject({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PutV2TerrafundSitePolygonUuidPathParams = {
+  /**
+   * The UUID of the site polygon
+   */
+  uuid: string;
+};
+
+export type PutV2TerrafundSitePolygonUuidError = Fetcher.ErrorWrapper<undefined>;
+
+export type PutV2TerrafundSitePolygonUuidResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type PutV2TerrafundSitePolygonUuidVariables = {
+  body?: RequestBodies.Body;
+  pathParams: PutV2TerrafundSitePolygonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPutV2TerrafundSitePolygonUuid = (
+  variables: PutV2TerrafundSitePolygonUuidVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PutV2TerrafundSitePolygonUuidResponse,
+    PutV2TerrafundSitePolygonUuidError,
+    RequestBodies.Body,
+    {},
+    {},
+    PutV2TerrafundSitePolygonUuidPathParams
+  >({ url: "/v2/terrafund/site-polygon/{uuid}", method: "put", ...variables, signal });
+
+export const usePutV2TerrafundSitePolygonUuid = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PutV2TerrafundSitePolygonUuidResponse,
+      PutV2TerrafundSitePolygonUuidError,
+      PutV2TerrafundSitePolygonUuidVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PutV2TerrafundSitePolygonUuidResponse,
+    PutV2TerrafundSitePolygonUuidError,
+    PutV2TerrafundSitePolygonUuidVariables
+  >(
+    (variables: PutV2TerrafundSitePolygonUuidVariables) =>
+      fetchPutV2TerrafundSitePolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionPathParams = {
+  /**
+   * The UUID of the site polygon
+   */
+  uuid: string;
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type PostV2TerrafundNewSitePolygonUuidNewVersionVariables = {
+  body?: RequestBodies.Body;
+  pathParams: PostV2TerrafundNewSitePolygonUuidNewVersionPathParams;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundNewSitePolygonUuidNewVersion = (
+  variables: PostV2TerrafundNewSitePolygonUuidNewVersionVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+    PostV2TerrafundNewSitePolygonUuidNewVersionError,
+    RequestBodies.Body,
+    {},
+    {},
+    PostV2TerrafundNewSitePolygonUuidNewVersionPathParams
+  >({ url: "/v2/terrafund/new-site-polygon/{uuid}/new-version", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundNewSitePolygonUuidNewVersion = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+      PostV2TerrafundNewSitePolygonUuidNewVersionError,
+      PostV2TerrafundNewSitePolygonUuidNewVersionVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundNewSitePolygonUuidNewVersionResponse,
+    PostV2TerrafundNewSitePolygonUuidNewVersionError,
+    PostV2TerrafundNewSitePolygonUuidNewVersionVariables
+  >(
+    (variables: PostV2TerrafundNewSitePolygonUuidNewVersionVariables) =>
+      fetchPostV2TerrafundNewSitePolygonUuidNewVersion({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type GetV2TerrafundProjectPolygonQueryParams = {
+  /**
+   * The UUID of the project polygon.
+   */
+  uuid: string;
+  /**
+   * The entity type of the project polygon.
+   */
+  entityType: string;
+};
+
+export type GetV2TerrafundProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example No site polygons found for the given UUID.
+         */
+        message?: string;
+      };
+    }
+  | {
+      status: 500;
+      payload: {
+        /**
+         * @example An error message describing the issue.
+         */
+        message?: string;
+      };
+    }
+>;
+
+export type GetV2TerrafundProjectPolygonResponse = {
+  project_polygon?: {
+    id?: number;
+    uuid?: string;
+    poly_uuid?: string;
+    entity_type?: string;
+    entity_id?: number;
+    last_modified_by?: string;
+    created_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+  };
+};
+
+export type GetV2TerrafundProjectPolygonVariables = {
+  queryParams: GetV2TerrafundProjectPolygonQueryParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieve project polygon data for the given UUID.
+ */
+export const fetchGetV2TerrafundProjectPolygon = (
+  variables: GetV2TerrafundProjectPolygonVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    GetV2TerrafundProjectPolygonResponse,
+    GetV2TerrafundProjectPolygonError,
+    undefined,
+    {},
+    GetV2TerrafundProjectPolygonQueryParams,
+    {}
+  >({ url: "/v2/terrafund/project-polygon", method: "get", ...variables, signal });
+
+/**
+ * Retrieve project polygon data for the given UUID.
+ */
+export const useGetV2TerrafundProjectPolygon = <TData = GetV2TerrafundProjectPolygonResponse>(
+  variables: GetV2TerrafundProjectPolygonVariables,
+  options?: Omit<
+    reactQuery.UseQueryOptions<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2DashboardProjectListExportError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/project-list-export",
-      operationId: "getV2DashboardProjectListExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardProjectListExport({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2TerrafundProjectPolygonResponse, GetV2TerrafundProjectPolygonError, TData>(
+    queryKeyFn({ path: "/v2/terrafund/project-polygon", operationId: "getV2TerrafundProjectPolygon", variables }),
+    ({ signal }) => fetchGetV2TerrafundProjectPolygon({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -15250,69 +16155,124 @@ export const useGetV2DashboardProjectListExport = <TData = undefined>(
   );
 };
 
-export type GetV2DashboardPolygonsPolyUuidCentroidPathParams = {
+export type DeleteV2TerrafundProjectPolygonUuidPathParams = {
   /**
-   * The uuid of the polygon
+   * The UUID of the polygon geometry to delete
    */
-  polyUuid: string;
+  uuid: string;
 };
 
-export type GetV2DashboardPolygonsPolyUuidCentroidError = Fetcher.ErrorWrapper<undefined>;
+export type DeleteV2TerrafundProjectPolygonUuidError = Fetcher.ErrorWrapper<undefined>;
 
-export type GetV2DashboardPolygonsPolyUuidCentroidResponse = {
-  centroid?: number[];
-};
-
-export type GetV2DashboardPolygonsPolyUuidCentroidVariables = {
-  pathParams: GetV2DashboardPolygonsPolyUuidCentroidPathParams;
+export type DeleteV2TerrafundProjectPolygonUuidVariables = {
+  pathParams: DeleteV2TerrafundProjectPolygonUuidPathParams;
 } & ApiContext["fetcherOptions"];
 
-/**
- * This endpoint returns the centroid of a polygon.
- */
-export const fetchGetV2DashboardPolygonsPolyUuidCentroid = (
-  variables: GetV2DashboardPolygonsPolyUuidCentroidVariables,
+export const fetchDeleteV2TerrafundProjectPolygonUuid = (
+  variables: DeleteV2TerrafundProjectPolygonUuidVariables,
   signal?: AbortSignal
 ) =>
   apiFetch<
-    GetV2DashboardPolygonsPolyUuidCentroidResponse,
-    GetV2DashboardPolygonsPolyUuidCentroidError,
+    undefined,
+    DeleteV2TerrafundProjectPolygonUuidError,
     undefined,
     {},
     {},
-    GetV2DashboardPolygonsPolyUuidCentroidPathParams
-  >({ url: "/v2/dashboard/polygons/{polyUuid}/centroid", method: "get", ...variables, signal });
+    DeleteV2TerrafundProjectPolygonUuidPathParams
+  >({ url: "/v2/terrafund/project-polygon/{uuid}", method: "delete", ...variables, signal });
 
-/**
- * This endpoint returns the centroid of a polygon.
- */
-export const useGetV2DashboardPolygonsPolyUuidCentroid = <TData = GetV2DashboardPolygonsPolyUuidCentroidResponse>(
-  variables: GetV2DashboardPolygonsPolyUuidCentroidVariables,
+export const useDeleteV2TerrafundProjectPolygonUuid = (
   options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardPolygonsPolyUuidCentroidResponse,
-      GetV2DashboardPolygonsPolyUuidCentroidError,
-      TData
+    reactQuery.UseMutationOptions<
+      undefined,
+      DeleteV2TerrafundProjectPolygonUuidError,
+      DeleteV2TerrafundProjectPolygonUuidVariables
     >,
-    "queryKey" | "queryFn"
+    "mutationFn"
   >
 ) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardPolygonsPolyUuidCentroidResponse,
-    GetV2DashboardPolygonsPolyUuidCentroidError,
-    TData
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    undefined,
+    DeleteV2TerrafundProjectPolygonUuidError,
+    DeleteV2TerrafundProjectPolygonUuidVariables
   >(
-    queryKeyFn({
-      path: "/v2/dashboard/polygons/{poly_uuid}/centroid",
-      operationId: "getV2DashboardPolygonsPolyUuidCentroid",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardPolygonsPolyUuidCentroid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
+    (variables: DeleteV2TerrafundProjectPolygonUuidVariables) =>
+      fetchDeleteV2TerrafundProjectPolygonUuid({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams = {
+  /**
+   * The UUID of the polygon related
+   */
+  uuid: string;
+  /**
+   * The UUID of the entity
+   */
+  entityUuid: string;
+  /**
+   * The type of the entity
+   */
+  entityType: string;
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
+
+export type PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables = {
+  pathParams: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+ */
+export const fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
+  variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+    undefined,
+    {},
+    {},
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypePathParams
+  >({ url: "/v2/terrafund/project-polygon/{uuid}/{entityUuid}/{entityType}", method: "post", ...variables, signal });
+
+/**
+ * Receives the uuid of the polygon, the uuid of the entity and the type of the entity and creates a relation between them.
+ */
+export const usePostV2TerrafundProjectPolygonUuidEntityUuidEntityType = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+      PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeResponse,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeError,
+    PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables
+  >(
+    (variables: PostV2TerrafundProjectPolygonUuidEntityUuidEntityTypeVariables) =>
+      fetchPostV2TerrafundProjectPolygonUuidEntityUuidEntityType({ ...fetcherOptions, ...variables }),
+    options
   );
 };
 
@@ -15377,432 +16337,6 @@ export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDa
   );
 };
 
-export type GetV2DashboardActiveProjectsQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * Optional. per_page to projects.
-   */
-  per_page?: string;
-  /**
-   * Optional. page to projects.
-   */
-  page?: string;
-};
-
-export type GetV2DashboardActiveProjectsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardActiveProjectsResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    organisation?: string;
-    trees_under_restoration?: number;
-    jobs_created?: number;
-    volunteers?: number;
-    project_country?: string;
-    country_slug?: string;
-    hectares_under_restoration?: number;
-    programme?: string;
-  }[];
-  current_page?: number;
-  per_page?: number;
-  total?: number;
-  last_page?: number;
-};
-
-export type GetV2DashboardActiveProjectsVariables = {
-  queryParams?: GetV2DashboardActiveProjectsQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
- */
-export const fetchGetV2DashboardActiveProjects = (
-  variables: GetV2DashboardActiveProjectsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardActiveProjectsResponse,
-    GetV2DashboardActiveProjectsError,
-    undefined,
-    {},
-    GetV2DashboardActiveProjectsQueryParams,
-    {}
-  >({ url: "/v2/dashboard/active-projects", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all projects and metrics related to name of project, name of organisation, trees under restoration, jobs created, volunteers, beneficiaries, survival rate, number of sites, number of nurseries, country, number of tree goal, and date added.
- */
-export const useGetV2DashboardActiveProjects = <TData = GetV2DashboardActiveProjectsResponse>(
-  variables: GetV2DashboardActiveProjectsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardActiveProjectsResponse, GetV2DashboardActiveProjectsError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/active-projects", operationId: "getV2DashboardActiveProjects", variables }),
-    ({ signal }) => fetchGetV2DashboardActiveProjects({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardVolunteersSurvivalRateQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-  /**
-   * Optional. Filter counts and metrics by UUID.
-   */
-  uuid?: string;
-};
-
-export type GetV2DashboardVolunteersSurvivalRateError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardVolunteersSurvivalRateResponse = {
-  data?: {
-    /**
-     * Total number of volunteers.
-     */
-    total_volunteers?: number;
-    /**
-     * Total number of male volunteers.
-     */
-    men_volunteers?: number;
-    /**
-     * Total number of female volunteers.
-     */
-    women_volunteers?: number;
-    /**
-     * Total number of youth volunteers.
-     */
-    youth_volunteers?: number;
-    /**
-     * Total number of non-youth volunteers.
-     */
-    non_youth_volunteers?: number;
-    /**
-     * number of sites.
-     */
-    number_of_sites?: number;
-  };
-};
-
-export type GetV2DashboardVolunteersSurvivalRateVariables = {
-  queryParams?: GetV2DashboardVolunteersSurvivalRateQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
- */
-export const fetchGetV2DashboardVolunteersSurvivalRate = (
-  variables: GetV2DashboardVolunteersSurvivalRateVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardVolunteersSurvivalRateResponse,
-    GetV2DashboardVolunteersSurvivalRateError,
-    undefined,
-    {},
-    GetV2DashboardVolunteersSurvivalRateQueryParams,
-    {}
-  >({ url: "/v2/dashboard/volunteers-survival-rate", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns counts and metrics related to non-profit, enterprise, entries, hectares restored, and trees restored.
- */
-export const useGetV2DashboardVolunteersSurvivalRate = <TData = GetV2DashboardVolunteersSurvivalRateResponse>(
-  variables: GetV2DashboardVolunteersSurvivalRateVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardVolunteersSurvivalRateResponse,
-      GetV2DashboardVolunteersSurvivalRateError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardVolunteersSurvivalRateResponse,
-    GetV2DashboardVolunteersSurvivalRateError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/volunteers-survival-rate",
-      operationId: "getV2DashboardVolunteersSurvivalRate",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardVolunteersSurvivalRate({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardTotalSectionHeaderQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTotalSectionHeaderError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTotalSectionHeaderResponse = {
-  data?: {
-    /**
-     * Total number of non profit projects.
-     */
-    total_non_profit_count?: number;
-    /**
-     * Total number of enterprise projects.
-     */
-    total_enterprise_count?: number;
-    /**
-     * Total number of jobs created.
-     */
-    total_entries?: number;
-    /**
-     * Total number of hectares restored.
-     */
-    total_hectares_restored?: number;
-    /**
-     * Total number of hectares restored goal.
-     */
-    total_hectares_restored_goal?: number;
-    /**
-     * Total number of trees restored.
-     */
-    total_trees_restored?: number;
-    /**
-     * Total number of trees restored goal.
-     */
-    total_trees_restored_goal?: number;
-  };
-};
-
-export type GetV2DashboardTotalSectionHeaderVariables = {
-  queryParams?: GetV2DashboardTotalSectionHeaderQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
- */
-export const fetchGetV2DashboardTotalSectionHeader = (
-  variables: GetV2DashboardTotalSectionHeaderVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTotalSectionHeaderResponse,
-    GetV2DashboardTotalSectionHeaderError,
-    undefined,
-    {},
-    GetV2DashboardTotalSectionHeaderQueryParams,
-    {}
-  >({ url: "/v2/dashboard/total-section-header", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
- */
-export const useGetV2DashboardTotalSectionHeader = <TData = GetV2DashboardTotalSectionHeaderResponse>(
-  variables: GetV2DashboardTotalSectionHeaderVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardTotalSectionHeaderResponse, GetV2DashboardTotalSectionHeaderError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardTotalSectionHeaderResponse, GetV2DashboardTotalSectionHeaderError, TData>(
-    queryKeyFn({
-      path: "/v2/dashboard/total-section-header",
-      operationId: "getV2DashboardTotalSectionHeader",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardTotalSectionHeader({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardTotalSectionHeaderCountryQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardTotalSectionHeaderCountryError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardTotalSectionHeaderCountryResponse = {
-  data?: {
-    /**
-     * Total number of non profit projects.
-     */
-    total_non_profit_count?: number;
-    /**
-     * Total number of enterprise projects.
-     */
-    total_enterprise_count?: number;
-    /**
-     * Total number of jobs created.
-     */
-    total_entries?: number;
-    /**
-     * Total number of hectares restored.
-     */
-    total_hectares_restored?: number;
-    /**
-     * Total number of trees restored.=
-     */
-    total_trees_restored?: number;
-  };
-};
-
-export type GetV2DashboardTotalSectionHeaderCountryVariables = {
-  queryParams?: GetV2DashboardTotalSectionHeaderCountryQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
- */
-export const fetchGetV2DashboardTotalSectionHeaderCountry = (
-  variables: GetV2DashboardTotalSectionHeaderCountryVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardTotalSectionHeaderCountryResponse,
-    GetV2DashboardTotalSectionHeaderCountryError,
-    undefined,
-    {},
-    GetV2DashboardTotalSectionHeaderCountryQueryParams,
-    {}
-  >({ url: "/v2/dashboard/total-section-header/country", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns totals and metrics related to non-profit projects, enterprise projects, jobs created, hectares restored, trees restored, and trees restored goal.
- */
-export const useGetV2DashboardTotalSectionHeaderCountry = <TData = GetV2DashboardTotalSectionHeaderCountryResponse>(
-  variables: GetV2DashboardTotalSectionHeaderCountryVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardTotalSectionHeaderCountryResponse,
-      GetV2DashboardTotalSectionHeaderCountryError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardTotalSectionHeaderCountryResponse,
-    GetV2DashboardTotalSectionHeaderCountryError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/total-section-header/country",
-      operationId: "getV2DashboardTotalSectionHeaderCountry",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardTotalSectionHeaderCountry({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardActiveCountriesQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardActiveCountriesError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardActiveCountriesResponse = {
-  data?: {
-    country_slug?: string;
-    country?: string;
-    number_of_projects?: number;
-    total_trees_planted?: number;
-    total_jobs_created?: number;
-  }[];
-};
-
-export type GetV2DashboardActiveCountriesVariables = {
-  queryParams?: GetV2DashboardActiveCountriesQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
- */
-export const fetchGetV2DashboardActiveCountries = (
-  variables: GetV2DashboardActiveCountriesVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardActiveCountriesResponse,
-    GetV2DashboardActiveCountriesError,
-    undefined,
-    {},
-    GetV2DashboardActiveCountriesQueryParams,
-    {}
-  >({ url: "/v2/dashboard/active-countries", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns all countries and metrics related to number of projects, trees planted, jobs created, number of sites, and number of nurseries.
- */
-export const useGetV2DashboardActiveCountries = <TData = GetV2DashboardActiveCountriesResponse>(
-  variables: GetV2DashboardActiveCountriesVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardActiveCountriesResponse, GetV2DashboardActiveCountriesError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/active-countries", operationId: "getV2DashboardActiveCountries", variables }),
-    ({ signal }) => fetchGetV2DashboardActiveCountries({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DashboardFrameworksQueryParams = {
   /**
    * search term to use on the collection
@@ -15852,151 +16386,6 @@ export const useGetV2DashboardFrameworks = <TData = GetV2DashboardFrameworksResp
   return reactQuery.useQuery<GetV2DashboardFrameworksResponse, GetV2DashboardFrameworksError, TData>(
     queryKeyFn({ path: "/v2/dashboard/frameworks", operationId: "getV2DashboardFrameworks", variables }),
     ({ signal }) => fetchGetV2DashboardFrameworks({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
-export type GetV2DashboardIndicatorHectaresRestorationQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-  /**
-   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
-   */
-  filter?: string;
-};
-
-export type GetV2DashboardIndicatorHectaresRestorationError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardIndicatorHectaresRestorationResponse = {
-  data?: {
-    restoration_strategies_represented?: {
-      /**
-       * Total amount for tree planting projects.
-       */
-      ["tree-planting"]?: number;
-      /**
-       * Total amount for projects involving both tree planting and direct seeding.
-       */
-      ["tree-planting,direct-seeding"]?: number;
-      /**
-       * Total amount for assisted natural regeneration projects.
-       */
-      ["assisted-natural-regeneration"]?: number;
-      /**
-       * Total amount for projects involving both tree planting and assisted natural regeneration.
-       */
-      ["tree-planting,assisted-natural-regeneration"]?: number;
-      /**
-       * Total amount for direct seeding projects.
-       */
-      ["direct-seeding"]?: number;
-      /**
-       * Total amount for control projects.
-       */
-      control?: number;
-      /**
-       * Total amount for projects with no specific restoration category.
-       */
-      ["null"]?: number;
-    };
-    target_land_use_types_represented?: {
-      /**
-       * Total amount for projects without a defined land use type.
-       */
-      ["null"]?: number;
-      /**
-       * Total amount for projects involving natural forest.
-       */
-      ["natural-forest"]?: number;
-      /**
-       * Total amount for agroforest projects.
-       */
-      agroforest?: number;
-      /**
-       * Total amount for silvopasture projects.
-       */
-      silvopasture?: number;
-      /**
-       * Total amount for woodlot or plantation projects.
-       */
-      ["woodlot-or-plantation"]?: number;
-      /**
-       * Total amount for riparian area or wetland projects.
-       */
-      ["riparian-area-or-wetland"]?: number;
-      /**
-       * Total amount for projects involving both agroforest and riparian area or wetland.
-       */
-      ["agroforest,riparian-area-or-wetland"]?: number;
-      /**
-       * Total amount for projects involving both riparian area or wetland and woodlot or plantation.
-       */
-      ["riparian-area-or-wetland,woodlot-or-plantation"]?: number;
-      /**
-       * Total amount for projects involving open natural ecosystem or grasslands.
-       */
-      ["Open natural ecosystem or Grasslands"]?: number;
-      /**
-       * Total amount for urban forest projects.
-       */
-      ["urban-forest"]?: number;
-    };
-  };
-};
-
-export type GetV2DashboardIndicatorHectaresRestorationVariables = {
-  queryParams?: GetV2DashboardIndicatorHectaresRestorationQueryParams;
-} & ApiContext["fetcherOptions"];
-
-/**
- * This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
- */
-export const fetchGetV2DashboardIndicatorHectaresRestoration = (
-  variables: GetV2DashboardIndicatorHectaresRestorationVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardIndicatorHectaresRestorationResponse,
-    GetV2DashboardIndicatorHectaresRestorationError,
-    undefined,
-    {},
-    GetV2DashboardIndicatorHectaresRestorationQueryParams,
-    {}
-  >({ url: "/v2/dashboard/indicator/hectares-restoration", method: "get", ...variables, signal });
-
-/**
- * This endpoint returns hectares restored using data from indicators 5 (restoration strategies) and 6 (target land use types).
- */
-export const useGetV2DashboardIndicatorHectaresRestoration = <
-  TData = GetV2DashboardIndicatorHectaresRestorationResponse
->(
-  variables: GetV2DashboardIndicatorHectaresRestorationVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<
-      GetV2DashboardIndicatorHectaresRestorationResponse,
-      GetV2DashboardIndicatorHectaresRestorationError,
-      TData
-    >,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<
-    GetV2DashboardIndicatorHectaresRestorationResponse,
-    GetV2DashboardIndicatorHectaresRestorationError,
-    TData
-  >(
-    queryKeyFn({
-      path: "/v2/dashboard/indicator/hectares-restoration",
-      operationId: "getV2DashboardIndicatorHectaresRestoration",
-      variables
-    }),
-    ({ signal }) => fetchGetV2DashboardIndicatorHectaresRestoration({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -16336,34 +16725,68 @@ export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProje
   );
 };
 
-export type GetV2DashboardViewProjectListError = Fetcher.ErrorWrapper<undefined>;
+export type GetV2TerrafundPolygonGeojsonUuidPathParams = {
+  /**
+   * The UUID of the polygon geometry to retrieve.
+   */
+  uuid: string;
+};
 
-export type GetV2DashboardViewProjectListResponse = any[];
+export type GetV2TerrafundPolygonGeojsonUuidError = Fetcher.ErrorWrapper<{
+  status: 404;
+  payload: {
+    /**
+     * Error message indicating that no polygon geometry was found for the provided UUID.
+     */
+    message?: string;
+  };
+}>;
 
-export type GetV2DashboardViewProjectListVariables = ApiContext["fetcherOptions"];
+export type GetV2TerrafundPolygonGeojsonUuidResponse = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};
 
-export const fetchGetV2DashboardViewProjectList = (
-  variables: GetV2DashboardViewProjectListVariables,
+export type GetV2TerrafundPolygonGeojsonUuidVariables = {
+  pathParams: GetV2TerrafundPolygonGeojsonUuidPathParams;
+} & ApiContext["fetcherOptions"];
+
+/**
+ * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+ */
+export const fetchGetV2TerrafundPolygonGeojsonUuid = (
+  variables: GetV2TerrafundPolygonGeojsonUuidVariables,
   signal?: AbortSignal
 ) =>
-  apiFetch<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, undefined, {}, {}, {}>({
-    url: "/v2/dashboard/view-project-list",
-    method: "get",
-    ...variables,
-    signal
-  });
+  apiFetch<
+    GetV2TerrafundPolygonGeojsonUuidResponse,
+    GetV2TerrafundPolygonGeojsonUuidError,
+    undefined,
+    {},
+    {},
+    GetV2TerrafundPolygonGeojsonUuidPathParams
+  >({ url: "/v2/terrafund/polygon/geojson/{uuid}", method: "get", ...variables, signal });
 
-export const useGetV2DashboardViewProjectList = <TData = GetV2DashboardViewProjectListResponse>(
-  variables: GetV2DashboardViewProjectListVariables,
+/**
+ * Retrieves the GeoJSON representation of a polygon geometry based on the provided UUID.
+ */
+export const useGetV2TerrafundPolygonGeojsonUuid = <TData = GetV2TerrafundPolygonGeojsonUuidResponse>(
+  variables: GetV2TerrafundPolygonGeojsonUuidVariables,
   options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>,
+    reactQuery.UseQueryOptions<GetV2TerrafundPolygonGeojsonUuidResponse, GetV2TerrafundPolygonGeojsonUuidError, TData>,
     "queryKey" | "queryFn"
   >
 ) => {
   const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardViewProjectListResponse, GetV2DashboardViewProjectListError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/view-project-list", operationId: "getV2DashboardViewProjectList", variables }),
-    ({ signal }) => fetchGetV2DashboardViewProjectList({ ...fetcherOptions, ...variables }, signal),
+  return reactQuery.useQuery<GetV2TerrafundPolygonGeojsonUuidResponse, GetV2TerrafundPolygonGeojsonUuidError, TData>(
+    queryKeyFn({
+      path: "/v2/terrafund/polygon/geojson/{uuid}",
+      operationId: "getV2TerrafundPolygonGeojsonUuid",
+      variables
+    }),
+    ({ signal }) => fetchGetV2TerrafundPolygonGeojsonUuid({ ...fetcherOptions, ...variables }, signal),
     {
       ...options,
       ...queryOptions
@@ -17089,6 +17512,60 @@ export const usePutV2SitePolygonUuidMakeActive = (
   >(
     (variables: PutV2SitePolygonUuidMakeActiveVariables) =>
       fetchPutV2SitePolygonUuidMakeActive({ ...fetcherOptions, ...variables }),
+    options
+  );
+};
+
+export type PostV2TerrafundValidationPolygonsError = Fetcher.ErrorWrapper<undefined>;
+
+export type PostV2TerrafundValidationPolygonsResponse = {
+  /**
+   * A message indicating the completion of validation for all site polygons.
+   */
+  message?: string;
+};
+
+export type PostV2TerrafundValidationPolygonsRequestBody = {
+  uuids?: string[];
+  entity_uuid?: string;
+  entity_type?: string;
+};
+
+export type PostV2TerrafundValidationPolygonsVariables = {
+  body?: PostV2TerrafundValidationPolygonsRequestBody;
+} & ApiContext["fetcherOptions"];
+
+export const fetchPostV2TerrafundValidationPolygons = (
+  variables: PostV2TerrafundValidationPolygonsVariables,
+  signal?: AbortSignal
+) =>
+  apiFetch<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsRequestBody,
+    {},
+    {},
+    {}
+  >({ url: "/v2/terrafund/validation/polygons", method: "post", ...variables, signal });
+
+export const usePostV2TerrafundValidationPolygons = (
+  options?: Omit<
+    reactQuery.UseMutationOptions<
+      PostV2TerrafundValidationPolygonsResponse,
+      PostV2TerrafundValidationPolygonsError,
+      PostV2TerrafundValidationPolygonsVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const { fetcherOptions } = useApiContext();
+  return reactQuery.useMutation<
+    PostV2TerrafundValidationPolygonsResponse,
+    PostV2TerrafundValidationPolygonsError,
+    PostV2TerrafundValidationPolygonsVariables
+  >(
+    (variables: PostV2TerrafundValidationPolygonsVariables) =>
+      fetchPostV2TerrafundValidationPolygons({ ...fetcherOptions, ...variables }),
     options
   );
 };
@@ -18599,24 +19076,24 @@ export type QueryOperation =
       variables: GetV2SitesSitePolygonVariables;
     }
   | {
-      path: "/v2/dashboard/jobs-created";
-      operationId: "getV2DashboardJobsCreated";
-      variables: GetV2DashboardJobsCreatedVariables;
+      path: "/v2/terrafund/geojson/complete";
+      operationId: "getV2TerrafundGeojsonComplete";
+      variables: GetV2TerrafundGeojsonCompleteVariables;
     }
   | {
-      path: "/v2/dashboard/restoration-strategy";
-      operationId: "getV2DashboardRestorationStrategy";
-      variables: GetV2DashboardRestorationStrategyVariables;
+      path: "/v2/terrafund/polygon/{uuid}";
+      operationId: "getV2TerrafundPolygonUuid";
+      variables: GetV2TerrafundPolygonUuidVariables;
     }
   | {
-      path: "/v2/dashboard/project-list-export";
-      operationId: "getV2DashboardProjectListExport";
-      variables: GetV2DashboardProjectListExportVariables;
+      path: "/v2/terrafund/geojson/site";
+      operationId: "getV2TerrafundGeojsonSite";
+      variables: GetV2TerrafundGeojsonSiteVariables;
     }
   | {
-      path: "/v2/dashboard/polygons/{poly_uuid}/centroid";
-      operationId: "getV2DashboardPolygonsPolyUuidCentroid";
-      variables: GetV2DashboardPolygonsPolyUuidCentroidVariables;
+      path: "/v2/terrafund/project-polygon";
+      operationId: "getV2TerrafundProjectPolygon";
+      variables: GetV2TerrafundProjectPolygonVariables;
     }
   | {
       path: "/v2/dashboard/polygon-data/{uuid}";
@@ -18624,39 +19101,9 @@ export type QueryOperation =
       variables: GetV2DashboardPolygonDataUuidVariables;
     }
   | {
-      path: "/v2/dashboard/active-projects";
-      operationId: "getV2DashboardActiveProjects";
-      variables: GetV2DashboardActiveProjectsVariables;
-    }
-  | {
-      path: "/v2/dashboard/volunteers-survival-rate";
-      operationId: "getV2DashboardVolunteersSurvivalRate";
-      variables: GetV2DashboardVolunteersSurvivalRateVariables;
-    }
-  | {
-      path: "/v2/dashboard/total-section-header";
-      operationId: "getV2DashboardTotalSectionHeader";
-      variables: GetV2DashboardTotalSectionHeaderVariables;
-    }
-  | {
-      path: "/v2/dashboard/total-section-header/country";
-      operationId: "getV2DashboardTotalSectionHeaderCountry";
-      variables: GetV2DashboardTotalSectionHeaderCountryVariables;
-    }
-  | {
-      path: "/v2/dashboard/active-countries";
-      operationId: "getV2DashboardActiveCountries";
-      variables: GetV2DashboardActiveCountriesVariables;
-    }
-  | {
       path: "/v2/dashboard/frameworks";
       operationId: "getV2DashboardFrameworks";
       variables: GetV2DashboardFrameworksVariables;
-    }
-  | {
-      path: "/v2/dashboard/indicator/hectares-restoration";
-      operationId: "getV2DashboardIndicatorHectaresRestoration";
-      variables: GetV2DashboardIndicatorHectaresRestorationVariables;
     }
   | {
       path: "/v2/project-pipeline";
@@ -18674,9 +19121,9 @@ export type QueryOperation =
       variables: GetV2DashboardViewProjectUuidVariables;
     }
   | {
-      path: "/v2/dashboard/view-project-list";
-      operationId: "getV2DashboardViewProjectList";
-      variables: GetV2DashboardViewProjectListVariables;
+      path: "/v2/terrafund/polygon/geojson/{uuid}";
+      operationId: "getV2TerrafundPolygonGeojsonUuid";
+      variables: GetV2TerrafundPolygonGeojsonUuidVariables;
     }
   | {
       path: "/v2/type-entity";
