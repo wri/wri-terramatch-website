@@ -20,7 +20,7 @@ import { deleteMedia, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { DELETED_POLYGONS } from "@/constants/statuses";
+import { DELETED_POLYGONS, FORM_POLYGONS } from "@/constants/statuses";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -80,6 +80,7 @@ import {
   setMapStyle,
   startDrawing,
   stopDrawing,
+  updatePolygonProjectGeometry,
   zoomToBbox,
   zoomToCenter
 } from "./utils";
@@ -686,6 +687,33 @@ export const MapContainer = ({
         if (polygonFromMap?.uuid) {
           !pdView && onCancelEdit();
           const feature = geojson.features[0];
+
+          if (formMap) {
+            try {
+              showLoader();
+              await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
+
+              if (draw.current) {
+                draw.current.deleteAll();
+              }
+
+              await new Promise(resolve => setTimeout(resolve, 100));
+
+              const updatedGeometry = await fetchPolygonGeometry(polygonFromMap.uuid);
+              if (updatedGeometry && map.current) {
+                const newPolygonData = { [FORM_POLYGONS]: [polygonFromMap.uuid] };
+                addSourcesToLayers(map.current, newPolygonData, centroids);
+              }
+
+              openNotification("success", t("Success"), t("Project polygon updated successfully."));
+            } catch (e: any) {
+              openNotification("error", t("Error"), e?.message || t("Please try again later."));
+            } finally {
+              hideLoader();
+            }
+            return;
+          }
+
           const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
           if (!selectedPolygon?.primary_uuid) {
             openNotification("error", t("Error"), t("Missing polygon information"));

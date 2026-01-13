@@ -5,12 +5,14 @@ import {
   createProjectPolygon,
   deleteProjectPolygon as deleteProjectPolygonEndpoint,
   getProjectPolygon,
+  updateProjectPolygon,
   uploadProjectPolygonFile
 } from "@/generated/v3/researchService/researchServiceComponents";
 import {
   CreateProjectPolygonAttributesDto,
   ProjectPolygonDto,
-  ProjectPolygonUploadAttributesDto
+  ProjectPolygonUploadAttributesDto,
+  UpdateProjectPolygonAttributesDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import { WithFormData } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
@@ -116,4 +118,25 @@ export const uploadProjectPolygonFileResource = async (
   ApiSlice.pruneIndex("projectPolygons", "");
 
   return response.data?.attributes!;
+};
+
+export const updateProjectPolygonResource = async (
+  polyUuid: string,
+  attributes: UpdateProjectPolygonAttributesDto
+): Promise<void> => {
+  await updateProjectPolygon.fetch({
+    pathParams: { polyUuid },
+    body: {
+      data: {
+        type: "projectPolygons",
+        id: polyUuid,
+        attributes
+      }
+    }
+  });
+
+  ApiSlice.pruneCache("projectPolygons");
+  ApiSlice.pruneCache("boundingBoxes");
+  ApiSlice.pruneCache("geojsonExports", [polyUuid]);
+  ApiSlice.pruneIndex("projectPolygons", "");
 };
