@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
@@ -111,6 +111,19 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
     plants
   } = props;
 
+  const totalTitle = useMemo(() => {
+    switch (collection) {
+      case "tree-planted":
+        return "Trees Planted:";
+      case "non-tree":
+        return "non-trees planted";
+      case "replanting":
+        return "trees replanted:";
+      default:
+        return "Seeds Planted:";
+    }
+  }, [collection]);
+
   // If we receive no explicit data, but we have an entity and entityUUID, render the full data fetcher
   // composition
   if (data == null && plants == null && entity != null && entityUuid != null) {
@@ -132,7 +145,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1 py-1">
             <Text variant="text-16-bold" className="capitalize">
-              {entity === "nurseryReports" ? "Saplings Grown in Nurseries:" : "Seeds Planted:"}
+              {entity === "nurseryReports" ? "Saplings Grown in Nurseries:" : totalTitle}
             </Text>
             <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
               {totalCountSeeds.toLocaleString() ?? 0}
