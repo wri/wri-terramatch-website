@@ -12,7 +12,7 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
 }
 
 export function ProfileImage({ alt, isAvailable = true, src, className, ...rest }: ProfileImageProps) {
-  const showNotAvailable = !isAvailable && !src;
+  const showNotAvailable = !isAvailable || !src;
   return (
     <BaseImage
       {...rest}
