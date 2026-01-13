@@ -3068,7 +3068,7 @@ export type StageDto = {
   /**
    * @format date-time
    */
-  deadlineAt?: string | null;
+  deadlineAt: string | null;
   formUuid?: string | null;
 };
 
@@ -3095,7 +3095,7 @@ export type FundingProgrammeDto = {
   description: string;
   location?: string | null;
   readMoreUrl?: string | null;
-  status: "inactive" | "active" | "disabled";
+  status: "inactive" | "active" | "disabled" | "coming-soon";
   organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
   cover: EmbeddedMediaDto;
   stages: StageDto[] | null;
@@ -3103,12 +3103,12 @@ export type FundingProgrammeDto = {
 
 export type StoreStageAttributes = {
   name?: string | null;
+  formUuid?: string | null;
+  uuid?: string;
   /**
    * @format date-time
    */
-  deadlineAt?: string | null;
-  formUuid?: string | null;
-  uuid?: string;
+  deadlineAt?: string;
 };
 
 export type StoreFundingProgrammeAttributes = {
@@ -3125,7 +3125,7 @@ export type StoreFundingProgrammeAttributes = {
   description: string;
   location?: string | null;
   readMoreUrl?: string | null;
-  status: "inactive" | "active" | "disabled";
+  status: "inactive" | "active" | "disabled" | "coming-soon";
   organisationTypes?: ("for-profit-organization" | "non-profit-organization")[];
   stages?: StoreStageAttributes[];
 };
