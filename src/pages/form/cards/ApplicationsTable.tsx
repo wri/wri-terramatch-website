@@ -24,7 +24,9 @@ const ApplicationsTable: FC<DraftApplicationsTableProps> = ({ fundingProgrammeUu
 
   const [applicationsLoaded, applicationsData] = useAllPages(applicationsConnection, {
     filter: { fundingProgrammeUuid },
-    enabled: fundingProgrammeUuid != null
+    enabled: fundingProgrammeUuid != null,
+    sortField: "updatedAt",
+    sortDirection: "DESC"
   });
 
   const applications = useMemo(() => {

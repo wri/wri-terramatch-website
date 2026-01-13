@@ -13,7 +13,10 @@ const PROJECT_TARGETABLE_TYPES = ["Project", "Site", "Nursery"];
 const REPORT_TARGETABLE_TYPES = ["ProjectReport", "SiteReport", "NurseryReport", "FinancialReport"];
 
 const ActionTracker = () => {
-  const [applicationsLoaded, applications] = useAllPages(applicationsConnection, {});
+  const [applicationsLoaded, applications] = useAllPages(applicationsConnection, {
+    sortField: "updatedAt",
+    sortDirection: "DESC"
+  });
 
   const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({}, { retry: false });
 

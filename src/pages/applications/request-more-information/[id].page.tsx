@@ -67,7 +67,7 @@ const RequestMoreInformationPage = () => {
     [fieldsProvider, submission?.answers]
   );
   const [, { data: form }] = useForm({ id: submission?.formUuid ?? undefined, enabled: submission?.formUuid != null });
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid);
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid ?? undefined);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
