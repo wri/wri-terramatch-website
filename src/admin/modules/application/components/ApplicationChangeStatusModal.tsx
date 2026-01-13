@@ -18,7 +18,6 @@ import { validateForm } from "@/admin/utils/forms";
 import { useForm } from "@/connections/Form";
 import { useSubmission } from "@/connections/FormSubmission";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
-import { optionToChoices } from "@/utils/options";
 
 import { status } from "./ApplicationShowAside";
 
@@ -56,11 +55,12 @@ const ApplicationRequestMoreInfoModal = ({
 
   const feedbackFields = useMemo(
     (): Choice[] =>
-      optionToChoices(
-        flatten(form?.sections.map(({ questions }) => questions)).map(({ label }) => ({
-          title: label,
-          value: label
-        })) ?? []
+      flatten(form?.sections.map(({ questions }) => questions)).map(
+        ({ label }) =>
+          ({
+            id: label,
+            name: label
+          } ?? [])
       ),
     [form?.sections]
   );

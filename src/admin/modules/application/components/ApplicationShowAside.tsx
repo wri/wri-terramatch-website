@@ -21,6 +21,8 @@ const ApplicationShowAside = () => {
     setShouldRequestMessageWithStatus(null);
   };
 
+  const currentStatus = application?.currentSubmission?.status;
+
   return (
     <>
       <Aside title="Overview">
@@ -55,14 +57,14 @@ const ApplicationShowAside = () => {
             <Button
               variant="contained"
               onClick={() => setShouldRequestMessageWithStatus("approved")}
-              disabled={application?.currentSubmission?.status === "approved" || isLoading}
+              disabled={isLoading || currentStatus !== "awaiting-approval"}
             >
               Approve
             </Button>
             <Button
               variant="outlined"
               onClick={() => setShouldRequestMessageWithStatus("requires-more-information")}
-              disabled={application?.currentSubmission?.status === "requires-more-information" || isLoading}
+              disabled={isLoading || currentStatus !== "awaiting-approval"}
             >
               Request More Information
             </Button>
@@ -70,7 +72,7 @@ const ApplicationShowAside = () => {
               variant="outlined"
               color="error"
               onClick={() => setShouldRequestMessageWithStatus("rejected")}
-              disabled={application?.currentSubmission?.status === "rejected" || isLoading}
+              disabled={isLoading || currentStatus !== "awaiting-approval"}
             >
               Reject
             </Button>
