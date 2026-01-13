@@ -54,7 +54,7 @@ import {
 } from ".";
 
 const meta: Meta = {
-  title: "Components/Icons",
+  title: "Redesign Components/Foundations/Icons",
   parameters: {
     layout: "padded"
   }
