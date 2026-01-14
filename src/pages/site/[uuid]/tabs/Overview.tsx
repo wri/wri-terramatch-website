@@ -84,8 +84,6 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
   const {
-    isMonitoring,
-    checkIsMonitoringPartner,
     setSiteData,
     setShouldRefetchPolygonData,
     setSelectedPolygonsInCheckbox,
@@ -112,10 +110,7 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
   };
   useEffect(() => {
     setSiteData(site);
-    if (site.projectUuid) {
-      checkIsMonitoringPartner(site.projectUuid);
-    }
-  }, [checkIsMonitoringPartner, setSiteData, site]);
+  }, [setSiteData, site]);
 
   useEffect(() => {
     if (files && files.length > 0 && saveFlags) {
@@ -510,13 +505,11 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                     </a>
                   </Text>
                   <div className="flex w-full gap-3">
-                    {isMonitoring && (
-                      <AddDataButton
-                        openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
-                        openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
-                        openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
-                      />
-                    )}
+                    <AddDataButton
+                      openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
+                      openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                      openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
+                    />
                     <Button
                       variant="white-border"
                       className=""
@@ -528,18 +521,16 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
                       <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
                       &nbsp; {t("Download")}
                     </Button>
-                    {isMonitoring && (
-                      <Button
-                        variant="primary"
-                        className=""
-                        onClick={() => {
-                          openFormModalHandlerSubmitPolygon();
-                          setSelectedPolygonsInCheckbox([]);
-                        }}
-                      >
-                        {t("SUBMIT Polygons")}
-                      </Button>
-                    )}
+                    <Button
+                      variant="primary"
+                      className=""
+                      onClick={() => {
+                        openFormModalHandlerSubmitPolygon();
+                        setSelectedPolygonsInCheckbox([]);
+                      }}
+                    >
+                      {t("SUBMIT Polygons")}
+                    </Button>
                   </div>
                 </div>
                 <div className="w-[46%]">
