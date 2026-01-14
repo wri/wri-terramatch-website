@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 import { When } from "react-if";
 
@@ -7,6 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
+import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import {
   dropdownOptionsRestoration,
@@ -14,8 +15,6 @@ import {
   dropdownOptionsTree
 } from "@/constants/polygonDropdownOptions";
 import { useNotificationContext } from "@/context/notification.provider";
-import { fetchGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -60,6 +59,17 @@ const AttributeInformation = ({
 
   const t = useT();
   const { refetch } = useShowContext();
+
+  const connectionProps = useMemo(
+    () => ({
+      uuid: selectedPolygon?.primaryUuid ?? undefined,
+      enabled: !!selectedPolygon?.primaryUuid
+    }),
+    [selectedPolygon?.primaryUuid]
+  );
+
+  const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
+    useListPolygonVersions(connectionProps);
 
   useEffect(() => {
     setIsLoadingDropdown(true);
@@ -123,29 +133,31 @@ const AttributeInformation = ({
         ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
       }
 
+      ApiSlice.pruneIndex("sitePolygons", "");
+
       if (refetchPolygonVersions) {
         await refetchPolygonVersions();
       }
+      await refetchPolygonVersionsHook();
       await refetch();
 
-      const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-        pathParams: { uuid: selectedPolygon.primaryUuid }
-      })) as SitePolygonsDataResponse;
-      const polygonActive = polygonVersionData?.find(item => item.is_active);
+      const polygonActive = polygonVersionsData?.find(item => item.isActive);
 
       if (selectedPolygon.uuid) {
         sitePolygonRefresh();
       }
 
-      setSelectedPolygonData(polygonActive);
-      setSelectedPolygonToDrawer?.({
-        id: selectedPolygonIndex as string,
-        status: polygonActive?.status as string,
-        label: polygonActive?.poly_name as string,
-        uuid: polygonActive?.poly_id as string
-      });
-      setPolygonFromMap({ isOpen: true, uuid: polygonActive?.poly_id ?? "" });
-      setStatusSelectedPolygon(polygonActive?.status ?? "");
+      if (polygonActive) {
+        setSelectedPolygonData(polygonActive);
+        setSelectedPolygonToDrawer?.({
+          id: selectedPolygonIndex as string,
+          status: polygonActive?.status as string,
+          label: polygonActive?.name as string,
+          uuid: polygonActive?.polygonUuid as string
+        });
+        setPolygonFromMap({ isOpen: true, uuid: polygonActive?.polygonUuid ?? "" });
+        setStatusSelectedPolygon(polygonActive?.status ?? "");
+      }
       setIsLoadingDropdownVersions(false);
       openNotification("success", t("Success!"), t("Polygon version created successfully"));
     } catch (error) {
