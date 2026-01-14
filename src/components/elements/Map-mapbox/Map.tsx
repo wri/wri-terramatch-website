@@ -6,7 +6,6 @@ import _ from "lodash";
 import mapboxgl, { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
-import { When } from "react-if";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
@@ -47,7 +46,6 @@ import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
 import EmptyStateDisplay from "./MapControls/EmptyStateDisplay";
 import { FilterControl } from "./MapControls/FilterControl";
-import ImageCheck from "./MapControls/ImageCheck";
 import ImageControl from "./MapControls/ImageControl";
 import PolygonCheck from "./MapControls/PolygonCheck";
 import { PolygonHandler } from "./MapControls/PolygonHandler";
@@ -56,7 +54,7 @@ import ProcessBulkPolygonsControl from "./MapControls/ProcessBulkPolygonsControl
 import { StyleControl } from "./MapControls/StyleControl";
 import TrashButton from "./MapControls/TrashButton";
 import { MapStyle } from "./MapControls/types";
-import ViewImageCarousel from "./MapControls/ViewImageCarousel";
+import ViewImageGalleryButton from "./MapControls/ViewImageGalleryButton";
 import { ZoomControl } from "./MapControls/ZoomControl";
 import {
   addBorderCountry,
@@ -75,7 +73,6 @@ import {
   getCurrentMapStyle,
   removeBorderCountry,
   removeBorderLandscape,
-  removeMediaLayer,
   removePopups,
   setMapStyle,
   startDrawing,
@@ -110,7 +107,6 @@ export type DashboardGetProjectsData = {
 
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
-  imageLayerGeojson?: any;
   editable?: boolean;
 
   onGeojsonChange?: (featuresCollection?: GeoJSON.FeatureCollection | null) => void;
@@ -151,7 +147,6 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   isDashboard?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
-  showImagesButton?: boolean;
   listViewProjects?: any;
   role?: any;
   selectedCountry?: string | null;
@@ -180,7 +175,6 @@ export const MapContainer = ({
   onError: _onError,
   editable,
   geojson,
-  imageLayerGeojson,
   onGeojsonChange,
   className,
   onDeleteImage,
@@ -208,7 +202,6 @@ export const MapContainer = ({
   imageGalleryRef,
   centroids,
   listViewProjects,
-  showImagesButton,
   setIsLoadingDelayedJob,
   isLoadingDelayedJob,
   setAlertTitle,
@@ -218,7 +211,6 @@ export const MapContainer = ({
   dashboardContext,
   ...props
 }: MapProps) => {
-  const [showMediaPopups, setShowMediaPopups] = useState<boolean>(true);
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
   const [viewImages, setViewImages] = useState(false);
   const {
@@ -455,14 +447,12 @@ export const MapContainer = ({
   useEffect(() => {
     if (!map.current || !styleLoaded) return;
 
-    if (mapStyleProp !== undefined) {
-      if (mapStyleProp !== currentStyle) {
-        const actualStyle = getCurrentMapStyle(map.current);
-        if (actualStyle !== mapStyleProp) {
-          setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
-        } else {
-          setCurrentStyle(mapStyleProp);
-        }
+    if (mapStyleProp != null && mapStyleProp !== currentStyle) {
+      const actualStyle = getCurrentMapStyle(map.current);
+      if (actualStyle !== mapStyleProp) {
+        setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
+      } else {
+        setCurrentStyle(mapStyleProp);
       }
     }
   }, [mapStyleProp, map, currentStyle, styleLoaded]);
@@ -613,25 +603,20 @@ export const MapContainer = ({
     };
 
     if (map?.current && styleLoaded && props?.modelFilesData) {
-      if (showMediaPopups) {
-        addMediaSourceAndLayer(
-          map.current,
-          props?.modelFilesData,
-          setImageCover,
-          handleDownload,
-          handleDelete,
-          openModalImageDetail,
-          isProjectPath
-        );
-      } else {
-        removePopups("MEDIA");
-        removeMediaLayer(map.current);
-      }
+      addMediaSourceAndLayer(
+        map.current,
+        props?.modelFilesData,
+        setImageCover,
+        handleDownload,
+        handleDelete,
+        openModalImageDetail,
+        isProjectPath
+      );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props?.modelFilesData, showMediaPopups, styleLoaded]);
+  }, [props?.modelFilesData, styleLoaded]);
 
-  useValueChanged(showMediaPopups, () => {
+  useOnMount(() => {
     if (geojson && map.current && draw.current) {
       addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
     }
@@ -905,7 +890,7 @@ export const MapContainer = ({
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
       <div ref={mapContainer} className={twMerge("relative h-[500px] wide:h-[700px]", className)} id="map-container">
-        <When condition={showDownloadPolygons}>
+        {showDownloadPolygons ? (
           <ControlGroup position="top-right">
             <button
               type="button"
@@ -921,159 +906,144 @@ export const MapContainer = ({
               <span>{isDownloadingPolygons ? "Downloading..." : "Download Polygons"}</span>
             </button>
           </ControlGroup>
-        </When>
-        <When condition={hasControls}>
-          <When condition={polygonFromMap?.isOpen && !formMap}>
-            <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
-              <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
+        ) : null}
+        {hasControls ? (
+          <>
+            {polygonFromMap?.isOpen && !formMap ? (
+              <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
+                <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
+              </ControlGroup>
+            ) : null}
+            {selectedPolygonsInCheckbox.length > 0 ? (
+              <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
+                <ProcessBulkPolygonsControl
+                  entityData={record}
+                  setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+                  isLoadingDelayedJob={isLoadingDelayedJob!}
+                  setAlertTitle={setAlertTitle!}
+                />
+              </ControlGroup>
+            ) : null}
+            {isDashboard !== "dashboard" && isMapReady && map.current != null ? (
+              <ControlGroup position="top-right">
+                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+              </ControlGroup>
+            ) : null}
+            <ControlGroup position="top-right" className="top-[4.5rem]">
+              <ZoomControl map={map.current} />
             </ControlGroup>
-          </When>
-          <When condition={selectedPolygonsInCheckbox.length}>
-            <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
-              <ProcessBulkPolygonsControl
-                entityData={record}
-                setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-                isLoadingDelayedJob={isLoadingDelayedJob!}
-                setAlertTitle={setAlertTitle!}
-              />
-            </ControlGroup>
-          </When>
-          <When condition={isDashboard !== "dashboard" && isMapReady && map.current != null}>
-            <ControlGroup position="top-right">
-              <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
-            </ControlGroup>
-          </When>
-          <ControlGroup position="top-right" className="top-[4.5rem]">
-            <ZoomControl map={map.current} />
-          </ControlGroup>
 
-          <When condition={!!record?.uuid && validationType === "bulkValidation"}>
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
-              <CheckPolygonControl
-                siteRecord={record}
-                polygonCheck={!siteData}
-                setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
-                isLoadingDelayedJob={isLoadingDelayedJob!}
-                setAlertTitle={setAlertTitle!}
-              />
-            </ControlGroup>
-          </When>
-          <When condition={formMap}>
-            <ControlGroup position="top-left">
-              <PolygonHandler />
-            </ControlGroup>
-            <ControlGroup position="top-right" className="top-64">
-              <PolygonModifier
-                polygonFromMap={polygonFromMap}
-                onClick={handleEditPolygon}
-                onSave={onSaveEdit}
-                onCancel={onCancelEdit}
-              />
-            </ControlGroup>
-          </When>
-          <When condition={!!status && validationType === "individualValidation"}>
-            <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
-              <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
-            </ControlGroup>
-          </When>
-          <When condition={!!viewImages}>
-            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
-              <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
-            </ControlGroup>
-          </When>
-          <When condition={editPolygon}>
-            <ControlGroup position="top-right" className="top-64">
-              <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
-                <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
-              </button>
-            </ControlGroup>
-          </When>
-          <When condition={!editable && !viewImages}>
-            <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
-          </When>
-          <ControlGroup position="top-right" className="top-[10.5rem]">
-            <button
-              type="button"
-              className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
-              onClick={() => {
-                if (center && zoom !== undefined && map.current) {
-                  zoomToCenter(center, zoom, map.current);
-                } else if (bbox && map.current) {
-                  zoomToBbox(bbox, map.current, hasControls);
-                }
-              }}
-            >
-              <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
-            </button>
-          </ControlGroup>
-          <When condition={!isDashboard}>
-            <ControlGroup position="top-right" className="top-[13.75rem]">
+            {record?.uuid != null && validationType === "bulkValidation" ? (
+              <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
+                <CheckPolygonControl
+                  siteRecord={record}
+                  polygonCheck={!siteData}
+                  setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
+                  isLoadingDelayedJob={isLoadingDelayedJob!}
+                  setAlertTitle={setAlertTitle!}
+                />
+              </ControlGroup>
+            ) : null}
+            {formMap ? (
+              <>
+                <ControlGroup position="top-left">
+                  <PolygonHandler />
+                </ControlGroup>
+                <ControlGroup position="top-right" className="top-64">
+                  <PolygonModifier
+                    polygonFromMap={polygonFromMap}
+                    onClick={handleEditPolygon}
+                    onSave={onSaveEdit}
+                    onCancel={onCancelEdit}
+                  />
+                </ControlGroup>
+              </>
+            ) : null}
+            {status && validationType === "individualValidation" ? (
+              <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
+                <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
+              </ControlGroup>
+            ) : null}
+            {viewImages ? (
+              <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}>
+                <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
+              </ControlGroup>
+            ) : null}
+            {editPolygon ? (
+              <ControlGroup position="top-right" className="top-64">
+                <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
+                  <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
+                </button>
+              </ControlGroup>
+            ) : null}
+            {!editable && !viewImages ? (
+              <ControlGroup position={siteData ? "bottom-left-site" : "bottom-left"}></ControlGroup>
+            ) : null}
+            <ControlGroup position="top-right" className="top-[10.5rem]">
               <button
                 type="button"
                 className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
-                onClick={toggleFullscreen}
-                aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                onClick={() => {
+                  if (center && zoom !== undefined && map.current) {
+                    zoomToCenter(center, zoom, map.current);
+                  } else if (bbox && map.current) {
+                    zoomToBbox(bbox, map.current, hasControls);
+                  }
+                }}
               >
-                <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
+                <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
               </button>
             </ControlGroup>
-          </When>
-          <When condition={isEditing}>
-            <ControlGroup position="top-right" className="top-[272px]">
-              <TrashButton onClick={mapFunctions?.handleTrashDelete} />
-            </ControlGroup>
-          </When>
-          <When condition={!formMap && showViewGallery}>
-            <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-              <When condition={showImagesButton}>
-                <ImageCheck showMediaPopups={showMediaPopups} setShowMediaPopups={setShowMediaPopups} />
-              </When>
-              {isDashboard === "dashboard" && isMapReady && map.current != null && (
-                <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
-              )}
-              {isDashboard !== "dashboard" && isDashboard !== "modal" && (
-                <ViewImageCarousel modelFilesData={props?.modelFilesData ?? []} imageGalleryRef={imageGalleryRef} />
-              )}
-            </ControlGroup>
-          </When>
-        </When>
-        <When condition={isDashboard === "dashboard"}>
-          <ControlGroup position="top-left" className="mt-1 flex flex-row gap-2">
-            <When condition={isDashboard !== "dashboard"}>
-              <ViewImageCarousel
-                className="py-2 lg:pb-[11.5px] lg:pt-[11.5px]"
-                modelFilesData={props?.modelFilesData ?? []}
-                imageGalleryRef={imageGalleryRef}
-              />
-            </When>
-          </ControlGroup>
-        </When>
-        <When condition={showLegend}>
+            {isDashboard == null ? (
+              <ControlGroup position="top-right" className="top-[13.75rem]">
+                <button
+                  type="button"
+                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
+                  onClick={toggleFullscreen}
+                  aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+                >
+                  <Icon name={isFullscreen ? IconNames.IC_SHINK : IconNames.IC_EXPAND} className="h-6 w-6" />
+                </button>
+              </ControlGroup>
+            ) : null}
+            {isEditing ? (
+              <ControlGroup position="top-right" className="top-[272px]">
+                <TrashButton onClick={mapFunctions?.handleTrashDelete} />
+              </ControlGroup>
+            ) : null}
+            {!formMap && showViewGallery ? (
+              <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
+                {isDashboard === "dashboard" && isMapReady && map.current != null && (
+                  <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
+                )}
+                {isDashboard !== "dashboard" && isDashboard !== "modal" && (
+                  <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />
+                )}
+              </ControlGroup>
+            ) : null}
+          </>
+        ) : null}
+        {showLegend ? (
           <ControlGroup
             position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
             isFullscreen={isFullscreen}
           >
             <FilterControl />
           </ControlGroup>
-        </When>
-        <When condition={captureAdditionalPolygonProperties}>
-          <ControlGroup position="bottom-right"></ControlGroup>
-        </When>
-        <When condition={polygonChecks}>
+        ) : null}
+        {polygonChecks ? (
           <ControlGroup position="bottom-left" className="bottom-13">
             <PolygonCheck />
           </ControlGroup>
-        </When>
-        <When condition={!polygonsExists}>
-          <EmptyStateDisplay />
-        </When>
-        <When condition={(isMobile || isDashboard) && mobilePopupData !== null}>
+        ) : null}
+        {!polygonsExists ? <EmptyStateDisplay /> : null}
+        {(isMobile || isDashboard) && mobilePopupData !== null ? (
           <PopupMobile
             event={mobilePopupData}
             onClose={() => setMobilePopupData(null)}
             variant={isMobile ? "mobile" : "desktop"}
           />
-        </When>
+        ) : null}
       </div>
     </MapEditingContext.Provider>
   );

@@ -66,7 +66,6 @@ interface ContentOverviewProps<TData> {
   centroids?: DashboardGetProjectsData[];
   polygonsData?: { data: Record<string, string[]>; centroids: any[] };
   dataHectaresUnderRestoration: HectaresUnderRestorationData;
-  showImagesButton?: boolean;
   bbox?: BBox | undefined;
   isUserAllowed?: boolean;
   isLoadingHectaresUnderRestoration?: boolean;
@@ -88,7 +87,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     centroids,
     polygonsData,
     dataHectaresUnderRestoration,
-    showImagesButton,
     bbox: initialBbox,
     projectCounts,
     isUserAllowed = true,
@@ -376,7 +374,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
               showPopups={true}
               polygonsData={polygonsData?.data as Record<string, string[]>}
               polygonsCentroids={polygonsData?.centroids}
-              showImagesButton={showImagesButton}
               center={dashboardCenter || currentCenter}
               zoom={dashboardZoom !== undefined ? dashboardZoom : currentZoom}
               mapStyle={dashboardStyle !== undefined ? dashboardStyle : currentMapStyle}
@@ -520,7 +517,6 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
             showPopups={true}
             polygonsData={polygonsData?.data as Record<string, string[]>}
             polygonsCentroids={polygonsData?.centroids}
-            showImagesButton={showImagesButton}
             bbox={currentBbox}
             center={currentCenter}
             zoom={currentZoom}
@@ -630,7 +626,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           `The numbers and reports below display data related to Indicator 2: Hectares Under Restoration described in ${TERRAFUND_MRV_LINK}. Please refer to the linked MRV framework for details on how these numbers are sourced and verified.`
         )}
         widthTooltip="w-52 lg:w-64"
-        collapseChildren={isMobile ? true : false}
+        collapseChildren={isMobile}
       >
         <div className="grid w-3/4 auto-cols-max grid-flow-col gap-12 divide-x divide-grey-1000 mobile:divide-x-0">
           <SecDashboard
