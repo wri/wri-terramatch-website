@@ -59,10 +59,10 @@ const EntityMapAndGalleryCard = ({
   const mapFunctions = useMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  let entityUUID = router.query.uuid as string;
-  if (modelTitle === "Site Report" || modelTitle === "Site") {
-    entityUUID = modelUUID;
-  }
+  const queryUuid = router.query.uuid as string;
+  const isSiteReport = modelTitle === "Site Report";
+  const isSiteRelated = isSiteReport || modelTitle === "Site";
+  const entityUUID = isSiteRelated ? modelUUID : queryUuid;
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const queryFilter: HookFilters<typeof useMedias> = {};
@@ -84,8 +84,8 @@ const EntityMapAndGalleryCard = ({
       }
 
       return {
-        entity: modelName as SupportedEntity,
-        uuid: entityUUID,
+        entity: isSiteReport ? "siteReports" : (modelName as SupportedEntity),
+        uuid: isSiteReport ? queryUuid : entityUUID,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
         sortDirection: sortOrder,
@@ -97,9 +97,11 @@ const EntityMapAndGalleryCard = ({
       filters.isPublic,
       filters.modelType,
       isGeotagged,
+      isSiteReport,
       modelName,
       pagination.page,
       pagination.pageSize,
+      queryUuid,
       searchString,
       sortOrder
     ])
@@ -241,11 +243,13 @@ const EntityMapAndGalleryCard = ({
         </PageCard>
       )}
       {indexTotal === 0 ? (
-        <EmptyState
-          title={t("Image Gallery is Empty")}
-          subtitle={emptyStateContent}
-          iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
-        />
+        <div ref={imageGalleryRef}>
+          <EmptyState
+            title={t("Image Gallery is Empty")}
+            subtitle={emptyStateContent}
+            iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
+          />
+        </div>
       ) : (
         <div ref={imageGalleryRef}>
           <PageCard
