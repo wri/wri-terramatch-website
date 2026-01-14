@@ -6,7 +6,7 @@ import FundingForm from "./FundingForm";
 export const FundingProgrammeCreate = () => (
   <Create>
     <Typography variant="h5" marginX="1rem" marginTop="1.75rem">
-      Create Form
+      Create Funding Programme
     </Typography>
     <SimpleForm defaultValues={{ stages: [] }} noValidate paddingY="1.5rem">
       <FundingForm />
