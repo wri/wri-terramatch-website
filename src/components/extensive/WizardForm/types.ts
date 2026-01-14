@@ -21,7 +21,9 @@ export type FieldInputType =
   | "tel"
   // "empty" is a placeholder used in the FormBuilder for a new question that hasn't selected a
   // linked field key yet.
-  | "empty";
+  | "empty"
+  // "newJobs" is used for demographic data representing new jobs created
+  | "newJobs";
 
 export type StepDefinition = {
   id: string;

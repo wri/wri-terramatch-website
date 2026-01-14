@@ -668,7 +668,8 @@ export type DemographicDto = {
     | "all-beneficiaries"
     | "training-beneficiaries"
     | "indirect-beneficiaries"
-    | "associates";
+    | "associates"
+    | "newJobs";
   collection: string;
   entries: DemographicEntryDto[];
 };
@@ -2361,6 +2362,7 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
+    | "newJobs"
     | "workdays";
   optionListKey: string | null;
   multiChoice: boolean | null;

@@ -66,6 +66,7 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   trainingBeneficiaries: DemographicField,
   indirectBeneficiaries: DemographicField,
   associates: DemographicField,
+  newJobs: DemographicField,
 
   empty: EmptyField
 };

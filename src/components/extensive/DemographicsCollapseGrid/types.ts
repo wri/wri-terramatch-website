@@ -95,6 +95,11 @@ export const useDemographicLabels = (type: DemographicType) => {
         sectionLabel: t("Total"),
         rowLabelSingular: t("Associate"),
         rowLabelPlural: t("Associates")
+      },
+      newJobs: {
+        sectionLabel: t("Total"),
+        rowLabelSingular: t("New Job:"),
+        rowLabelPlural: t("New Jobs:")
       }
     }),
     [t]
