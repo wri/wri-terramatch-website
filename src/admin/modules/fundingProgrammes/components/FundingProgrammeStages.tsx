@@ -6,7 +6,7 @@ import { FormLightDto } from "@/generated/v3/entityService/entityServiceSchemas"
 const FundingProgrammeStages = () => (
   <SimpleShowLayout>
     <ArrayField label="Stages" source="stages">
-      <Datagrid>
+      <Datagrid bulkActionButtons={false}>
         <TextField source="name" label="Stage Name" />
         <ReferenceField source="formUuid" label="Form" reference={modules.form.ResourceName}>
           <FunctionField render={(record: FormLightDto) => `${record?.title ?? ""}`} />
