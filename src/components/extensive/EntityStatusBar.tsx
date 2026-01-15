@@ -11,24 +11,23 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EntityFullDto } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
-import { Status } from "@/types/common";
 
 type EntityStatusBarProps = {
   entityName: FormEntity;
   entity: EntityFullDto;
 };
 
-const StatusMapping: { [index: string]: Status } = {
+const StatusMapping = {
   started: "edit",
   due: "edit",
   approved: "success",
   "awaiting-approval": "awaiting",
   "needs-more-information": "warning"
-};
+} as const;
 type StatusBarStatus = keyof typeof StatusMapping;
 
 const hasUpdateRequest = ({ updateRequestStatus }: EntityFullDto) =>
-  updateRequestStatus != null && !["draft", "no-update"].includes(updateRequestStatus);
+  !["draft", "no-update", "approved"].includes(updateRequestStatus ?? "");
 
 type StatusProps = { title: string; icon: IconNames; className: string };
 const getStatusProps = (
