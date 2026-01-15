@@ -15,6 +15,7 @@ import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Log from "@/utils/log";
 
+import AuditLog from "./tabs/AuditLog";
 import CompletedReportsTab from "./tabs/CompletedReports";
 
 const NurseryDetailPage = () => {
@@ -70,6 +71,11 @@ const NurseryDetailPage = () => {
                   key: "completed-tasks",
                   title: t("Completed Reports"),
                   body: <CompletedReportsTab nursery={nursery} />
+                },
+                {
+                  key: "audit-log",
+                  title: t("Audit Log"),
+                  body: <AuditLog nursery={nursery} />
                 }
               ]}
               containerClassName="max-w-[82vw] px-10 xl:px-0 w-full  overflow-y-hidden"

@@ -96,7 +96,8 @@ const useAuditLogActions = ({
     "nursery-reports",
     "disturbance-reports",
     "srp-reports",
-    "financial-reports"
+    "financial-reports",
+    "nursery"
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   const polygonValidationData = usePolygonValidation({
