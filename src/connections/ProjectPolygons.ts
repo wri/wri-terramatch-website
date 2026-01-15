@@ -46,13 +46,15 @@ const getProjectPolygonConnection = v3Resource("projectPolygons", getProjectPoly
 export const useProjectPolygonByPitch = connectionHook(getProjectPolygonConnection);
 export const loadProjectPolygonByPitch = connectionLoader(getProjectPolygonConnection);
 
-export const deleteProjectPolygon = deleterAsync(
-  "projectPolygons",
-  deleteProjectPolygonEndpoint,
-  (polyUuid: string) => ({
-    pathParams: { polyUuid }
-  })
-);
+const deleteProjectPolygonBase = deleterAsync("projectPolygons", deleteProjectPolygonEndpoint, (polyUuid: string) => ({
+  pathParams: { polyUuid }
+}));
+
+export const deleteProjectPolygon = async (polyUuid: string): Promise<void> => {
+  await deleteProjectPolygonBase(polyUuid);
+
+  ApiSlice.pruneCache("projectPolygons");
+};
 
 export const useUploadProjectPolygonFile = parallelRequestHook("projectPolygons", uploadProjectPolygonFile);
 
@@ -84,7 +86,7 @@ export const createProjectPolygonWithReplace = async (
   });
 
   if (existingPolygon.data?.polygonUuid) {
-    await deleteProjectPolygon(existingPolygon.data.polygonUuid);
+    await deleteProjectPolygonBase(existingPolygon.data.polygonUuid);
   }
 
   return createProjectPolygonResource(attributes);
@@ -114,8 +116,9 @@ export const uploadProjectPolygonFileResource = async (
     }
   });
 
-  ApiSlice.pruneCache("projectPolygons");
-  ApiSlice.pruneIndex("projectPolygons", "");
+  await ApiSlice.pruneCache("projectPolygons");
+  await ApiSlice.pruneIndex("projectPolygons", "");
+  await ApiSlice.pruneCache("boundingBoxes");
 
   return response.data?.attributes!;
 };
