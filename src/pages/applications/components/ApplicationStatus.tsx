@@ -1,25 +1,29 @@
 import { useT } from "@transifex/react";
 import cn from "classnames";
+import { last } from "lodash";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
-import { When } from "react-if";
+import { useCallback, useMemo } from "react";
 
 import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useSubmission, useSubmissionCreate } from "@/connections/FormSubmission";
+import { useFundingProgramme } from "@/connections/FundingProgramme";
 import { useModalContext } from "@/context/modal.provider";
 import {
-  useGetV2ReportingFrameworksAccessCodeACCESSCODE,
-  usePostV2FormsSubmissionsUUIDNextStage
+  GetV2ReportingFrameworksAccessCodeACCESSCODEResponse,
+  useGetV2ReportingFrameworksAccessCodeACCESSCODE
 } from "@/generated/apiComponents";
-import { ApplicationRead, StageRead } from "@/generated/apiSchemas";
+import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { Colors } from "@/types/common";
+import Log from "@/utils/log";
 
 interface ApplicationStatusProps {
-  application: ApplicationRead;
+  application?: ApplicationDto;
 }
 
 interface StatusProps {
@@ -32,12 +36,14 @@ interface StatusProps {
 }
 
 const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
-  const currentSubmission = (application?.form_submissions ?? []).find(
-    ({ uuid }) => uuid === application?.current_submission_uuid
-  );
-  //@ts-ignore
-  const stages = application?.funding_programme?.stages?.data as StageRead[];
-  const fundingProgrammeStatus = application?.funding_programme?.status;
+  const { uuid: submissionUuid } = last(application?.submissions) ?? {};
+  const [, { data: currentSubmission }] = useSubmission({ id: submissionUuid, enabled: submissionUuid != null });
+  const [, { data: fundingProgramme }] = useFundingProgramme({
+    id: application?.fundingProgrammeUuid ?? undefined,
+    enabled: application?.fundingProgrammeUuid != null
+  });
+  const stages = fundingProgramme?.stages;
+  const fundingProgrammeStatus = fundingProgramme?.status;
   const t = useT();
   const router = useRouter();
   const uuid = router.query.id as string;
@@ -47,26 +53,30 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
       // Note: it's odd that we're using the framework key as access code. They have been made consistent
       // in the database, and when implementing this pattern in v3, the framework should be fetched
       // by framework key instead.
-      pathParams: { accessCode: currentSubmission?.framework_key ?? "" }
+      pathParams: { accessCode: fundingProgramme?.frameworkKey ?? "" }
     },
     {
-      enabled: currentSubmission?.framework_key != null,
+      enabled: fundingProgramme?.frameworkKey != null,
       onError() {
         // override error toast
       }
     }
   );
-  //@ts-ignore
+  // @ts-ignore
   const reportingFramework = (data?.data ?? {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
-  //@ts-ignore
-  const nextStage = stages?.find(s => s.uuid === currentSubmission?.next_stage_uuid);
+  const stageIndex = stages?.findIndex(({ uuid }) => uuid === currentSubmission?.stageUuid);
+  const nextStage =
+    stageIndex != null && stages != null && stageIndex < stages.length - 1 ? stages[stageIndex + 1] : undefined;
 
-  const { mutate: submitToNextStage, isLoading } = usePostV2FormsSubmissionsUUIDNextStage({
-    onSuccess(data, variables, context) {
-      // @ts-expect-error
-      router.push(`/form/submission/${data?.data?.uuid}/intro`);
-    }
-  });
+  const [, { create, data: submission, isCreating, createFailure }] = useSubmissionCreate({});
+  useRequestSuccess(
+    isCreating,
+    createFailure,
+    useCallback(() => {
+      router.push(`/form/submission/${submission?.uuid}/intro`);
+    }, [router, submission?.uuid]),
+    "Form submission creation failed"
+  );
 
   const statusProps = useMemo((): StatusProps | null => {
     switch (currentSubmission?.status) {
@@ -119,7 +129,6 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         };
 
       case "requires-more-information":
-      case "submitted-requires-more-information":
         return {
           title: t("Status: More Information Requested"),
           subtitle: t("The vetting team has reviewed your application and offered the following feedback:"),
@@ -143,29 +152,29 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
         };
 
       case "approved":
-        if (nextStage) {
-          //There is another staging for user to go through
+        if (nextStage != null) {
           return {
             title: t("Status: Application Approved! You are invited to submit {name}", { name: nextStage.name }),
-            //@ts-ignore
-            subtitle: currentSubmission.feedback,
+            subtitle: currentSubmission.feedback ?? undefined,
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
             primaryAction: {
               children: t("Start {name}", { name: nextStage.name }),
-              onClick: () =>
-                submitToNextStage({
-                  pathParams: {
-                    uuid: currentSubmission.uuid ?? ""
-                  }
-                }),
-              disabled: isLoading
+              onClick: () => {
+                if (fundingProgramme?.uuid == null) {
+                  Log.error("Funding programme UUID is missing");
+                } else {
+                  create({
+                    fundingProgrammeUuid: fundingProgramme.uuid,
+                    nextStageFromSubmissionUuid: currentSubmission.uuid
+                  });
+                }
+              },
+              disabled: isCreating
             }
           };
         } else {
-          //All stages of the application are approved
-          //@ts-ignore - project_uuid is available from backend but not yet in generated types
-          const projectUuid = application?.project_uuid;
+          // All stages of the application are approved
           return {
             title: t("Status: Approved"),
             subtitle: t(
@@ -173,19 +182,20 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             ),
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
-            primaryAction: projectUuid
-              ? {
-                  children: t("View Project"),
-                  as: Link,
-                  href: `/project/${projectUuid}`
-                }
-              : undefined
+            primaryAction:
+              reportingFramework.slug == null
+                ? undefined
+                : {
+                    children: t("Set up monitoring project"),
+                    as: Link,
+                    href: `/entity/projects/create/${reportingFramework.slug}?parent_name=application&parent_uuid=${application?.uuid}`
+                  }
           };
         }
     }
     return null;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSubmission, reportingFramework, t]);
+  }, [currentSubmission, reportingFramework, application, t]);
 
   if (!statusProps) return null;
 
@@ -209,56 +219,35 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
       <div className="flex flex-1 flex-col">
         <div className="flex flex-1 flex-col gap-4">
           <Text variant="text-heading-600">{statusProps.title}</Text>
-          <When condition={!!statusProps.subtitle}>
+          {statusProps.subtitle != null ? (
             <Text variant="text-heading-100" containHtml>
               {statusProps.subtitle}
             </Text>
-          </When>
+          ) : null}
         </div>
         <div className="flex flex-col">
-          <When
-            condition={
-              (currentSubmission?.status === "requires-more-information" ||
-                currentSubmission?.status === "submitted-requires-more-information") &&
-              //@ts-ignore
-              !!currentSubmission?.feedback &&
-              //@ts-ignore
-              typeof currentSubmission?.feedback === "string"
-            }
-          >
+          {currentSubmission?.status === "requires-more-information" &&
+          currentSubmission?.feedback != null &&
+          typeof currentSubmission?.feedback === "string" ? (
             <div className="mt-6 flex flex-col gap-2">
-              <Text variant="text-heading-100">
-                {
-                  //@ts-ignore
-                  currentSubmission.feedback as string
-                }
-              </Text>
+              <Text variant="text-heading-100">{currentSubmission.feedback}</Text>
             </div>
-          </When>
-          <When
-            condition={
-              (currentSubmission?.status === "requires-more-information" ||
-                currentSubmission?.status === "submitted-requires-more-information") &&
-              //@ts-ignore
-              (!!currentSubmission?.translated_feedback_fields || !!currentSubmission?.feedback_fields)
-            }
-          >
+          ) : null}
+          {currentSubmission?.status === "requires-more-information" &&
+          currentSubmission?.translatedFeedbackFields != null ? (
             <div className="mt-6 flex flex-col gap-2">
               <Text variant="text-body-900">{t("Please provide more information on the following fields:")}</Text>
-              <Text variant="text-heading-100">
-                {
-                  //@ts-ignore
-                  (currentSubmission?.translated_feedback_fields || currentSubmission?.feedback_fields)?.join(", ")
-                }
-              </Text>
+              <Text variant="text-heading-100">{currentSubmission?.translatedFeedbackFields?.join(", ")}</Text>
             </div>
-          </When>
-          <When condition={!!statusProps.secondaryAction || !!statusProps.primaryAction}>
+          ) : null}
+          {statusProps.secondaryAction != null || statusProps.primaryAction != null ? (
             <div className="mt-8 flex flex-wrap items-start gap-4">
-              {!!statusProps.secondaryAction && <Button {...statusProps.secondaryAction} variant="secondary" />}
-              {!!statusProps.primaryAction && <Button {...statusProps.primaryAction} />}
+              {statusProps.secondaryAction != null ? (
+                <Button {...statusProps.secondaryAction} variant="secondary" />
+              ) : null}
+              {statusProps.primaryAction != null ? <Button {...statusProps.primaryAction} /> : null}
             </div>
-          </When>
+          ) : null}
         </div>
       </div>
     </section>

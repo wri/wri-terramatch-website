@@ -35,17 +35,14 @@ const Pagination: FC<PaginationProps> = ({
   defaultPageSize,
   invertSelect,
   setPageSize,
+  containerClassName,
   ...props
 }) => {
   const t = useT();
   const pageSizeOptions = getPageSizeOptions(galleryType);
   return (
     <div
-      className={classNames(
-        "flex items-center justify-between",
-        props.containerClassName,
-        props.variant?.containerClassName
-      )}
+      className={classNames("flex items-center justify-between", containerClassName, props.variant?.containerClassName)}
     >
       {hasPageSizeSelector ? (
         <PerPageSelector
@@ -60,11 +57,7 @@ const Pagination: FC<PaginationProps> = ({
       ) : (
         <div />
       )}
-      {hasPageSizeSelector ? (
-        <PageSelector variantText={props.variant?.VariantPageText} {...props} variant={props.variant} />
-      ) : (
-        <div />
-      )}
+      {hasPageSizeSelector ? <PageSelector variantText={props.variant?.VariantPageText} {...props} /> : <div />}
     </div>
   );
 };

@@ -6,8 +6,8 @@ import { useController, UseControllerProps, UseFormReturn } from "react-hook-for
 import InputWrapper, { InputWrapperProps } from "@/components/elements/Inputs/InputElements/InputWrapper";
 import MapContainer from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { FormModelType } from "@/connections/Form";
 import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
-import { FormModelType } from "@/connections/util/Form";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -44,7 +44,7 @@ const RHFMap = ({
   const mapFunctions = useMap(onSave);
   const t = useT();
   const {
-    field: { onChange, value }
+    field: { value }
   } = useController(inputWrapperProps);
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
   const [polygonFromMap, setPolygonFromMap] = useState<any>(null);
@@ -66,9 +66,10 @@ const RHFMap = ({
     }
   };
 
-  const [, { data: projectPolygon, isLoading: isRefetching }] = useProjectPolygonByPitch({
+  const enabled = entityName != null && entityUUID != null;
+  const [, { data: projectPolygon, isLoading: isFetching }] = useProjectPolygonByPitch({
     filter: { projectPitchUuid: entityUUID },
-    enabled: entityName != null && entityUUID != null
+    enabled
   });
 
   const bbox = useBoundingBox(
@@ -92,7 +93,7 @@ const RHFMap = ({
     };
 
     getDataProjectPolygon();
-  }, [projectPolygon, isRefetching, setSelectPolygonFromMap]);
+  }, [projectPolygon, isFetching, setSelectPolygonFromMap]);
 
   useEffect(() => {
     const apiPolygonUuid = projectPolygon?.polygonUuid;
@@ -108,14 +109,15 @@ const RHFMap = ({
 
       if (shouldUpdate) {
         formHook.setValue(fieldName, { polygonUuid: apiPolygonUuid }, { shouldValidate: true, shouldDirty: true });
+        onChangeCapture?.();
       }
     } else {
-      if (value != null) {
+      if (enabled && !isFetching && value != null) {
         formHook.setValue(fieldName, null, { shouldValidate: true, shouldDirty: true });
+        onChangeCapture?.();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectPolygon?.polygonUuid]);
+  }, [enabled, formHook, inputWrapperProps.name, isFetching, onChangeCapture, projectPolygon, value]);
 
   useEffect(() => {
     if (entityName != null && entityUUID != null) {
@@ -123,11 +125,6 @@ const RHFMap = ({
       setSiteData(entity);
     }
   }, [entityName, entityUUID, setSiteData]);
-
-  const _onChange = (value: any) => {
-    onChange(value);
-    onChangeCapture?.();
-  };
 
   const onError = (hasError: boolean) => {
     if (hasError) {
@@ -139,6 +136,7 @@ const RHFMap = ({
       formHook.clearErrors();
     }
   };
+
   return (
     <SitePolygonDataProvider sitePolygonData={undefined} reloadSiteData={reloadSiteDataWithBoundingBox}>
       <InputWrapper {...inputWrapperProps}>
@@ -147,7 +145,6 @@ const RHFMap = ({
           bbox={validBbox}
           polygonFromMap={polygonFromMap}
           setPolygonFromMap={setPolygonFromMap}
-          onGeojsonChange={_onChange}
           editable
           onError={onError}
           captureAdditionalPolygonProperties={entityName != null && entityName !== "project"}

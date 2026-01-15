@@ -29,15 +29,21 @@ import {
   FinancialReportFullDto,
   DisturbanceReportLightDto,
   DisturbanceReportFullDto,
+  FormDataDto,
+  UpdateRequestDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
   StrataDto,
   OptionLabelDto,
   LinkedFieldDto,
+  SubmissionDto,
   FormLightDto,
   FormFullDto,
-  FormTranslationDto
+  FormTranslationDto,
+  ApplicationDto,
+  ApplicationHistoryDto,
+  FundingProgrammeDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -59,14 +65,20 @@ export const ENTITY_SERVICE_RESOURCES = [
   "nurseries",
   "financialReports",
   "disturbanceReports",
+  "formData",
+  "updateRequests",
   "seedings",
   "treeSpecies",
   "invasives",
   "stratas",
   "optionLabels",
   "linkedFields",
+  "submissions",
   "forms",
-  "formTranslations"
+  "formTranslations",
+  "applications",
+  "applicationHistories",
+  "fundingProgrammes"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -88,14 +100,20 @@ export type EntityServiceApiResources = {
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
   financialReports: StoreResourceMap<FinancialReportLightDto | FinancialReportFullDto>;
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
+  formData: StoreResourceMap<FormDataDto>;
+  updateRequests: StoreResourceMap<UpdateRequestDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
   stratas: StoreResourceMap<StrataDto>;
   optionLabels: StoreResourceMap<OptionLabelDto>;
   linkedFields: StoreResourceMap<LinkedFieldDto>;
+  submissions: StoreResourceMap<SubmissionDto>;
   forms: StoreResourceMap<FormLightDto | FormFullDto>;
   formTranslations: StoreResourceMap<FormTranslationDto>;
+  applications: StoreResourceMap<ApplicationDto>;
+  applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
+  fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;
 };
 
 export const TreeEntityTypes = {

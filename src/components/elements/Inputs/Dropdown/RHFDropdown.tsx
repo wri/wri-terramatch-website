@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
-import { difference } from "lodash";
+import { difference, isEqual } from "lodash";
 import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { getHardcodedOptions, toFormOptions, useFilterFieldName } from "@/components/extensive/WizardForm/utils";
 import Loader from "@/components/generic/Loading/Loader";
+import { useOptionLabels } from "@/connections/Form";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useOptionLabels } from "@/connections/util/Form";
 import { FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { Option, OptionValue } from "@/types/common";
@@ -54,7 +54,22 @@ const WithGadmOptions: FC<WithOptionsList> = props => {
   const options = useGadmOptions({ level, parentCodes });
 
   useValueChanged(options, () => {
-    if (options != null) setOptionsCache(options);
+    if (options != null) {
+      setOptionsCache(options);
+
+      // When our options settle on a new value, make sure our currently selected values are included
+      // in the new option set.
+      const currentValue = formHook?.getValues()?.[props.name];
+      if (currentValue != null) {
+        const hasOption = (value: OptionValue) => options.some(o => o.value === value);
+        const updatedValue = props.multiSelect
+          ? toArray(currentValue).filter(hasOption)
+          : hasOption(currentValue)
+          ? currentValue
+          : undefined;
+        if (!isEqual(currentValue, updatedValue)) formHook?.setValue(props.name, updatedValue);
+      }
+    }
   });
 
   return optionsCache == null ? (
