@@ -9,6 +9,7 @@ import {
   updateFundingProgramme
 } from "@/connections/FundingProgramme";
 import { StoreFundingProgrammeAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 import { handleUploads } from "../utils/upload";
@@ -74,6 +75,10 @@ export const fundingProgrammeDataProvider: Partial<DataProvider> = {
 
       const fundingProgramme = await createFundingProgramme(attributes);
       await handleUploads(params, UPLOAD_KEYS, { uuid: fundingProgramme.uuid, entity: "fundingProgrammes" });
+      // clear the cache so it gets refetched with the images in place. This is only needed on create
+      // because in update, the upload can / does happen before the update, so the update
+      // response contains correct asset links.
+      ApiSlice.pruneCache("fundingProgrammes", [fundingProgramme.uuid]);
 
       return { data: { id: fundingProgramme.uuid } } as CreateResult;
     } catch (err) {

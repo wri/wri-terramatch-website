@@ -66,6 +66,10 @@ export const formDataProvider: Partial<DataProvider> = {
 
       await handleOptionFilesUpload(form, body);
       await handleUploads(params, UPLOAD_KEYS, { entity: "forms", uuid: form.uuid });
+      // clear the cache so it gets refetched with the images in place. This is only needed on create
+      // because in update, the upload can / does happen before the update, so the update
+      // response contains correct asset links.
+      ApiSlice.pruneCache("forms", [form.uuid]);
 
       return { data: { id: form.uuid } } as CreateResult;
     } catch (createFailure) {
