@@ -9,7 +9,6 @@ import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalWithLogo from "@/components/extensive/Modal/ModalWithLogo";
 import { usePolygonValidation } from "@/connections/Validation";
-import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
@@ -66,7 +65,6 @@ const MapMenuPanelItem = ({
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
   const { openModal, closeModal } = useModalContext();
-  const { isMonitoring } = useMapAreaContext();
   const [openCollapse, setOpenCollapse] = useState(false);
   const [showWarning, setShowWarning] = useState(validationStatus === "partial");
   const t = useT();
@@ -176,7 +174,7 @@ const MapMenuPanelItem = ({
     }
   ];
 
-  const monitoringItems = [
+  const itemsPrimaryMenu = [
     {
       id: "0",
       render: () => (
@@ -213,23 +211,6 @@ const MapMenuPanelItem = ({
     }
   ];
 
-  const nonMonitoringItems = [
-    ...(type !== "sites"
-      ? [
-          {
-            id: "0",
-            render: () => (
-              <Text variant="text-14-semibold" className="flex items-center" onClick={() => setClickedButton("site")}>
-                <Icon name={IconNames.IC_SITE_VIEW} className="h-4 w-4 lg:h-5 lg:w-5" />
-                &nbsp; {t("View Site")}
-              </Text>
-            )
-          }
-        ]
-      : []),
-    ...commonItems
-  ];
-  const itemsPrimaryMenu = isMonitoring ? monitoringItems : nonMonitoringItems;
   return (
     <div
       {...props}
