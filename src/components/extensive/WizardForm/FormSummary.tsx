@@ -6,7 +6,6 @@ import List from "../List/List";
 export interface FormSummaryProps {
   values: any;
   onEdit?: (stepIndex: number) => void;
-  organisation?: any;
 }
 
 export type FormSummaryOptions = {

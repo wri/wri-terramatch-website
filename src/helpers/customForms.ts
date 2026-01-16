@@ -1,4 +1,4 @@
-import { Dictionary } from "lodash";
+import { cloneDeep, Dictionary } from "lodash";
 
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
@@ -19,6 +19,7 @@ export const SELECT_FILTER_QUESTION: Dictionary<string> = {
 };
 
 export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
+  values = cloneDeep(values);
   for (const stepId of fieldsProvider.stepIds()) {
     for (const field of fieldsProvider.fieldNames(stepId).map(fieldsProvider.fieldByName).filter(isNotNull)) {
       values = normalizedFormFieldData(values, field, fieldsProvider);

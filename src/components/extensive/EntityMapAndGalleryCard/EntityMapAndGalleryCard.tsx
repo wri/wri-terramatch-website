@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useMemo, useRef, useState } from "react";
-import { Else, If, Then } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import EmptyState from "@/components/elements/EmptyState/EmptyState";
@@ -21,7 +20,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygon } from "@/generated/apiSchemas";
 import { getCurrentPathEntity } from "@/helpers/entity";
-import { useGetImagesGeoJSON } from "@/hooks/useImageGeoJSON";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
@@ -61,10 +59,10 @@ const EntityMapAndGalleryCard = ({
   const mapFunctions = useMap();
   const imageGalleryRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  let entityUUID = router.query.uuid as string;
-  if (modelTitle === "Site Report" || modelTitle === "Site") {
-    entityUUID = modelUUID;
-  }
+  const queryUuid = router.query.uuid as string;
+  const isSiteReport = modelTitle === "Site Report";
+  const isSiteRelated = isSiteReport || modelTitle === "Site";
+  const entityUUID = isSiteRelated ? modelUUID : queryUuid;
   const [isLoaded, { data: mediaList, indexTotal, refetch }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       const queryFilter: HookFilters<typeof useMedias> = {};
@@ -86,8 +84,8 @@ const EntityMapAndGalleryCard = ({
       }
 
       return {
-        entity: modelName as SupportedEntity,
-        uuid: entityUUID,
+        entity: isSiteReport ? "siteReports" : (modelName as SupportedEntity),
+        uuid: isSiteReport ? queryUuid : entityUUID,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
         sortDirection: sortOrder,
@@ -99,9 +97,11 @@ const EntityMapAndGalleryCard = ({
       filters.isPublic,
       filters.modelType,
       isGeotagged,
+      isSiteReport,
       modelName,
       pagination.page,
       pagination.pageSize,
+      queryUuid,
       searchString,
       sortOrder
     ])
@@ -147,8 +147,6 @@ const EntityMapAndGalleryCard = ({
 
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
   const polygonDataMap = parsePolygonDataV3(sitePolygonDataV3);
-
-  const imagesGeoJson = useGetImagesGeoJSON(modelName, modelUUID);
 
   const filterOptions = useMemo(() => {
     const mapping: any = {
@@ -226,7 +224,6 @@ const EntityMapAndGalleryCard = ({
             sitePolygonData={sitePolygonData}
             bbox={mapBbox}
             className="rounded-lg"
-            imageLayerGeojson={imagesGeoJson}
             onDeleteImage={async uuid => {
               try {
                 await deleteMedia(uuid);
@@ -245,50 +242,49 @@ const EntityMapAndGalleryCard = ({
           />
         </PageCard>
       )}
-      <If condition={indexTotal === 0}>
-        <Then>
+      {indexTotal === 0 ? (
+        <div ref={imageGalleryRef}>
           <EmptyState
             title={t("Image Gallery is Empty")}
             subtitle={emptyStateContent}
             iconProps={{ name: IconNames.LIGHT_BULB_CIRCLE, className: "fill-success" }}
           />
-        </Then>
-        <Else>
-          <div ref={imageGalleryRef}>
-            <PageCard
-              title={t("All Images")}
-              headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
-            >
-              <ImageGallery
-                data={mediaList ?? []}
-                entity={modelName}
-                entityData={entityData}
-                pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
-                onDeleteConfirm={async uuid => {
-                  try {
-                    await deleteMedia(uuid);
-                    refetch?.();
-                  } catch (error) {
-                    Log.error(error);
-                  }
-                }}
-                onGalleryStateChange={(pagination, filter) => {
-                  setPagination(pagination);
-                  setFilter(filter);
-                }}
-                filterOptions={filterOptions}
-                onChangeSearch={setSearchString}
-                onChangeGeotagged={setIsGeotagged}
-                reloadGalleryImages={refetch}
-                sortOrder={sortOrder}
-                setSortOrder={setSortOrder}
-                setFilters={setFilters}
-                isLoading={!isLoaded}
-              />
-            </PageCard>
-          </div>
-        </Else>
-      </If>
+        </div>
+      ) : (
+        <div ref={imageGalleryRef}>
+          <PageCard
+            title={t("All Images")}
+            headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
+          >
+            <ImageGallery
+              data={mediaList ?? []}
+              entity={modelName}
+              entityData={entityData}
+              pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
+              onDeleteConfirm={async uuid => {
+                try {
+                  await deleteMedia(uuid);
+                  refetch?.();
+                } catch (error) {
+                  Log.error(error);
+                }
+              }}
+              onGalleryStateChange={(pagination, filter) => {
+                setPagination(pagination);
+                setFilter(filter);
+              }}
+              filterOptions={filterOptions}
+              onChangeSearch={setSearchString}
+              onChangeGeotagged={setIsGeotagged}
+              reloadGalleryImages={refetch}
+              sortOrder={sortOrder}
+              setSortOrder={setSortOrder}
+              setFilters={setFilters}
+              isLoading={!isLoaded}
+            />
+          </PageCard>
+        </div>
+      )}
     </>
   );
 };

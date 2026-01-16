@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
@@ -7,22 +9,15 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { FinancialReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
-interface ReportingTasksProps {
-  financialReport: any;
-  label?: string;
+type AuditLogProps = {
+  financialReport: FinancialReportFullDto;
   refresh?: () => void;
-  enableChangeStatus?: number;
-}
+};
 
-const AuditLog = ({
-  label,
-  financialReport,
-  refresh: refreshSite,
-  enableChangeStatus,
-  ...rest
-}: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ financialReport, refresh: refetchReport }) => {
   const {
     mutateEntity,
     valuesForStatus,
@@ -67,7 +62,7 @@ const AuditLog = ({
                     refresh={() => {
                       loadEntityList();
                       refetch();
-                      refreshSite?.();
+                      refetchReport?.();
                     }}
                     record={selected}
                     polygonList={entityListItem}

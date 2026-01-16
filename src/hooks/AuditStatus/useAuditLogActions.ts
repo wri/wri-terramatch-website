@@ -63,6 +63,7 @@ const useAuditLogActions = ({
   const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
+  const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
@@ -95,7 +96,8 @@ const useAuditLogActions = ({
     "nursery-reports",
     "disturbance-reports",
     "srp-reports",
-    "financial-reports"
+    "financial-reports",
+    "nursery"
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   const polygonValidationData = usePolygonValidation({
@@ -153,7 +155,7 @@ const useAuditLogActions = ({
       };
     } else {
       return {
-        selectedEntityItem: isProject ? record.project : isSite ? record : selected,
+        selectedEntityItem: isProject ? record.project : isSite || isNursery ? record : selected,
         loadToEntity: !isProject && !isSite ? loadEntityList : () => {},
         ListItemToEntity: !isProject && !isSite ? entityListItem : [],
         setSelectedToEntity: !isProject && !isSite ? setSelected : null,

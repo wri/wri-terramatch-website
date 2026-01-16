@@ -1,16 +1,15 @@
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Tooltip from "@/components/elements/Tooltip/Tooltip";
 import { useDelayedJobs } from "@/connections/DelayedJob";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
+import { useListPolygonVersions } from "@/connections/PolygonVersion";
 import { createPolygonValidation, usePolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { fetchGetV2SitePolygonUuidVersions } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -46,6 +45,17 @@ const CheckIndividualPolygonControl = ({
   const v3ValidationData = usePolygonValidation({
     polygonUuid: editPolygon?.uuid || ""
   });
+
+  const connectionProps = useMemo(
+    () => ({
+      uuid: editPolygon?.primary_uuid ?? undefined,
+      enabled: !!editPolygon?.primary_uuid
+    }),
+    [editPolygon?.primary_uuid]
+  );
+
+  const [, { data: polygonVersionsData, refetch: refetchPolygonVersionsHook }] =
+    useListPolygonVersions(connectionProps);
 
   const displayNotification = (message: string, type: "success" | "error" | "warning", title: string) => {
     openNotification(type, title, message);
@@ -113,15 +123,16 @@ const CheckIndividualPolygonControl = ({
         setShouldRefetchPolygonVersions(true);
 
         ApiSlice.pruneCache("validations");
+        ApiSlice.pruneIndex("sitePolygons", "");
 
-        const polygonVersionData = (await fetchGetV2SitePolygonUuidVersions({
-          pathParams: { uuid: editPolygon?.primary_uuid as string }
-        })) as SitePolygonsDataResponse;
-        const polygonActive = polygonVersionData?.find(item => item.is_active);
+        await refetchPolygonVersionsHook();
+
+        const polygonActive = polygonVersionsData?.find(item => item.isActive);
+
         setEditPolygon({
           isOpen: true,
-          uuid: polygonActive?.poly_id as string,
-          primary_uuid: polygonActive?.primary_uuid
+          uuid: polygonActive?.polygonUuid as string,
+          primary_uuid: polygonActive?.primaryUuid!
         });
         hideLoader();
       };
@@ -146,7 +157,9 @@ const CheckIndividualPolygonControl = ({
     editPolygon?.uuid,
     editPolygon?.primary_uuid,
     setEditPolygon,
-    hideLoader
+    hideLoader,
+    refetchPolygonVersionsHook,
+    polygonVersionsData
   ]);
 
   useValueChanged(clickedValidation, () => {

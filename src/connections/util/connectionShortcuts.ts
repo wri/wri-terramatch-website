@@ -1,4 +1,8 @@
+import { useCallback } from "react";
+
+import { CreateConnection } from "@/connections/util/apiConnectionFactory";
 import { useConnection } from "@/hooks/useConnection";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
 import { Connection, OptionalProps } from "@/types/connection";
 import { loadConnection } from "@/utils/loadConnection";
@@ -12,6 +16,21 @@ export const connectionHook =
   <TSelected, TProps extends OptionalProps, State>(connection: Connection<TSelected, TProps, State>) =>
   (...args: PropsParamType<TProps>) =>
     useConnection(connection, args[0]);
+
+export const creationHook =
+  <DTO, CreateAttributes, TProps extends OptionalProps, State>(
+    connection: Connection<CreateConnection<DTO, CreateAttributes>, TProps, State>
+  ) =>
+  (props: TProps, onSuccess: (data: DTO) => void, failureMessage?: string) => {
+    const [, connState] = useConnection(connection, props);
+    useRequestSuccess(
+      connState.isCreating,
+      connState.createFailure,
+      useCallback(() => onSuccess(connState.data!), [connState.data, onSuccess]),
+      failureMessage
+    );
+    return connState;
+  };
 
 /**
  * Generates an async loader for this specific connection. Awaiting on the loader will not return

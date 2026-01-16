@@ -10,7 +10,7 @@ import { TreeSpeciesValue } from "@/components/elements/Inputs/TreeSpeciesInput/
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { Framework } from "@/context/framework.provider";
-import { FormFieldsProvider } from "@/context/wizardForm.provider";
+import { FormFieldsProvider, OrgFormDetails } from "@/context/wizardForm.provider";
 import { FormQuestionDto, FormQuestionOptionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Entity, EntityName, Option, UploadedFile } from "@/types/common";
 import { CSVGenerator } from "@/utils/CsvGeneratorClass";
@@ -77,6 +77,7 @@ export type GetEntryValueProps = Omit<GetFormEntriesProps, "values"> & {
   bbox?: BBox;
   mapFunctions?: any;
   record?: any;
+  orgDetails?: OrgFormDetails;
 };
 
 export type FormFieldFactory = {

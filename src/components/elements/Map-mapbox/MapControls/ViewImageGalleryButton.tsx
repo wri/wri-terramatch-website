@@ -1,66 +1,20 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useMemo, useState } from "react";
+import { FC } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalImageGallery, { TabImagesItem } from "@/components/extensive/Modal/ModalImageGallery";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
-const ViewImageCarousel = ({
-  modelFilesData,
-  imageGalleryRef,
-  className
-}: {
-  modelFilesData: MediaDto[];
+type ViewGalleryButtonProps = {
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
   className?: string;
-}) => {
-  const t = useT();
-  const modelFilesTabItems: TabImagesItem[] = useMemo(() => {
-    const modelFilesGeolocalized: MediaDto[] = [];
-    const modelFilesNonGeolocalized: MediaDto[] = [];
-    modelFilesData?.forEach(modelFile => {
-      if (modelFile.lat && modelFile.lng) {
-        modelFilesGeolocalized.push(modelFile);
-      } else {
-        modelFilesNonGeolocalized.push(modelFile);
-      }
-    });
-    return [
-      {
-        id: "1",
-        title: t("Non-Geotagged Images"),
-        images: modelFilesNonGeolocalized
-          .filter(({ url }) => url != null)
-          .map(modelFile => ({
-            id: modelFile.uuid,
-            src: modelFile.url!,
-            title: modelFile.fileName,
-            dateCreated: modelFile.createdAt,
-            geoTag: t("Not Geo-Referenced")
-          }))
-      },
-      {
-        id: "2",
-        title: t("GeoTagged Images"),
-        images: modelFilesGeolocalized
-          .filter(({ url }) => url != null)
-          .map(modelFile => ({
-            id: modelFile.uuid,
-            src: modelFile.url!,
-            title: modelFile.fileName,
-            dateCreated: modelFile.createdAt,
-            geoTag: t("Geo-Referenced")
-          }))
-      }
-    ];
-  }, [modelFilesData, t]);
+};
 
-  const [openModal, setOpenModal] = useState(false);
+const ViewImageGalleryButton: FC<ViewGalleryButtonProps> = ({ imageGalleryRef, className }) => {
+  const t = useT();
 
   const scrollToGalleryElement = () => {
     if (imageGalleryRef?.current) {
@@ -116,14 +70,8 @@ const ViewImageCarousel = ({
         <Icon name={IconNames.IMAGE_ICON} className="h-4 w-4" />
         <Text variant="text-12-bold"> {t("View Gallery")}</Text>
       </Button>
-      <ModalImageGallery
-        onClose={() => setOpenModal(false)}
-        tabItems={modelFilesTabItems}
-        title={""}
-        WrapperClassName={openModal ? "" : "hidden"}
-      />
     </div>
   );
 };
 
-export default ViewImageCarousel;
+export default ViewImageGalleryButton;

@@ -5,6 +5,9 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   formCreate,
+  formDataGet,
+  FormDataGetPathParams,
+  formDataUpdate,
   formDelete,
   formGet,
   formIndex,
@@ -15,18 +18,23 @@ import {
   linkedFieldsIndex,
   LinkedFieldsIndexQueryParams,
   optionLabelsGetList,
-  optionLabelsIndex
+  optionLabelsIndex,
+  updateRequestGet,
+  UpdateRequestGetPathParams,
+  updateRequestUpdate
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
+  FormDataDto,
   FormFullDto,
   FormLightDto,
   FormTranslationDto,
   LinkedFieldDto,
-  OptionLabelDto
+  OptionLabelDto,
+  UpdateRequestDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { Filter } from "@/types/connection";
 
-import { resourceCreator, resourceUpdater } from "./resourceMutator";
+import { resourceCreator, resourceUpdater } from "./util/resourceMutator";
 
 export const useOptionLabels = connectionHook(
   v3Resource("optionLabels", optionLabelsIndex)
@@ -103,3 +111,26 @@ const formPullTranslationConnection = v3Resource("formTranslations", formPullTra
   .buildConnection();
 
 export const loadFormTranslation = connectionLoader(formPullTranslationConnection);
+
+export type FormEntity = FormDataGetPathParams["entity"];
+const idFactory = (props: { entity?: FormEntity; uuid?: string }) => `${props.entity}|${props.uuid}`;
+
+const entityFormDataConnection = v3Resource("formData", formDataGet)
+  .singleByCustomId<FormDataDto, Partial<FormDataGetPathParams>>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    idFactory
+  )
+  .update(formDataUpdate, idFactory)
+  .enabledProp()
+  .buildConnection();
+export const useEntityFormData = connectionHook(entityFormDataConnection);
+
+const updateRequestConnection = v3Resource("updateRequests", updateRequestGet)
+  .singleByCustomId<UpdateRequestDto, Partial<UpdateRequestGetPathParams>>(
+    ({ entity, uuid }) => (entity == null || uuid == null ? undefined : { pathParams: { entity, uuid } }),
+    idFactory
+  )
+  .update(updateRequestUpdate, idFactory)
+  .enabledProp()
+  .buildConnection();
+export const useUpdateRequest = connectionHook(updateRequestConnection);
