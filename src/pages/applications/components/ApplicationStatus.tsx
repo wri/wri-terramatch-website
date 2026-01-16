@@ -175,6 +175,7 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
           };
         } else {
           // All stages of the application are approved
+          const projectUuid = application?.projectUuid;
           return {
             title: t("Status: Approved"),
             subtitle: t(
@@ -182,14 +183,13 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
             ),
             color: "success",
             icon: IconNames.CHECK_CIRCLE,
-            primaryAction:
-              reportingFramework.slug == null
-                ? undefined
-                : {
-                    children: t("Set up monitoring project"),
-                    as: Link,
-                    href: `/entity/projects/create/${reportingFramework.slug}?parent_name=application&parent_uuid=${application?.uuid}`
-                  }
+            primaryAction: projectUuid
+              ? {
+                  children: t("View Project"),
+                  as: Link,
+                  href: `/project/${projectUuid}`
+                }
+              : undefined
           };
         }
     }
