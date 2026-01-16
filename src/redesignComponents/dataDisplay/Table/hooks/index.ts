@@ -1,0 +1,1 @@
+export { useTableStyles } from "./useTableStyles";
