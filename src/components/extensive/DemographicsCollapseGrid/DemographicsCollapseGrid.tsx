@@ -27,11 +27,8 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
   const entryTypes = useEntryTypes(type);
 
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(type);
-  const rowTitle = t(
-    type === "newJobs"
-      ? t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total })
-      : t(`{total} ${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total })
-  );
+  const rowTitle = t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total });
+
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (
@@ -39,9 +36,8 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
       <button
         onClick={() => setOpen(!open)}
         className={classNames(
-          "flex w-full items-center justify-between p-4",
+          "flex w-full items-center justify-between !rounded-none border-b border-black p-4 px-0",
           {
-            "!rounded-none border-b border-black px-0": type === "newJobs",
             [`${variant.open}`]: !open
           },
           variant.header
@@ -57,7 +53,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
               className={classNames(
                 "flex h-fit w-fit items-center justify-center gap-2 rounded-md border px-2 py-1 leading-normal",
                 {
-                  "border-theme-success-300 bg-theme-success-100 text-theme-success-900": status === "complete",
+                  "border-theme-success-300 bg-theme-success-100 text-theme-success-900": status == "complete",
                   "border-theme-neutral-300 text-theme-neutral-700": status === "not-started",
                   "text-tertiary-450 border-theme-error-300 bg-theme-error-100 text-theme-error-900":
                     status === "in-progress"
@@ -70,7 +66,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
                 height={16}
                 className={classNames({
                   "text-theme-neutral-700": status === "not-started",
-                  "text-theme-success-500": status === "complete",
+                  "text-theme-success-500": status == "complete",
                   "text-theme-error-500": status === "in-progress"
                 })}
               />
@@ -93,40 +89,22 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
               <b>Please review your entries.</b>
             </p>
           )}
-          {type === "newJobs" ? (
-            <div className="flex flex-wrap gap-x-16 gap-y-6">
-              {entryTypes.map(entryType => (
-                <div key={entryType} className="flex flex-col">
-                  <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
-                    <DemographicsSection
-                      demographicType={type}
-                      onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
-                      entries={byType[entryType] ?? []}
-                      {...{ entryType, variant }}
-                      status={status}
-                    />
-                  </div>
+
+          <div className="flex flex-wrap gap-x-16 gap-y-6">
+            {entryTypes.map(entryType => (
+              <div key={entryType} className="flex flex-col">
+                <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
+                  <DemographicsSection
+                    demographicType={type}
+                    onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
+                    entries={byType[entryType] ?? []}
+                    {...{ entryType, variant }}
+                    status={status}
+                  />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div
-              className={classNames(
-                "grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
-                variant.gridStyle
-              )}
-            >
-              {entryTypes.map(entryType => (
-                <DemographicsSection
-                  key={entryType}
-                  demographicType={type}
-                  onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
-                  entries={byType[entryType] ?? []}
-                  {...{ entryType, variant }}
-                />
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
         </div>
       ) : null}
     </div>

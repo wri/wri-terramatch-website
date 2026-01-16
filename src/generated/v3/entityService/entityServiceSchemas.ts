@@ -668,8 +668,7 @@ export type DemographicDto = {
     | "all-beneficiaries"
     | "training-beneficiaries"
     | "indirect-beneficiaries"
-    | "associates"
-    | "newJobs";
+    | "associates";
   collection: string;
   entries: DemographicEntryDto[];
 };

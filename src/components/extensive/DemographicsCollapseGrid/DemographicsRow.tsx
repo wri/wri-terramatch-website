@@ -67,14 +67,13 @@ const DemographicsRow = ({
   );
 
   const { rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
-  const isNewJobs = demographicType === "newJobs";
 
   return (
     <>
       <div
         className={classNames(
           "flex items-center justify-between px-4 py-3",
-          isNewJobs ? "col-span-1 border-b border-neutral-200 bg-white" : `${variant.secondCol} bg-white`
+          "col-span-1 border-b border-neutral-200 bg-white"
         )}
       >
         <Text variant="text-14-light" className="flex items-center text-darkCustom">
@@ -99,14 +98,12 @@ const DemographicsRow = ({
       <div
         className={classNames(
           "relative flex items-center justify-center py-3",
-          isNewJobs
-            ? "col-span-1 border-b border-l border-b-neutral-200 border-l-white bg-white"
-            : `${variant.tertiaryCol} bg-white`
+          "col-span-1 border-b border-l border-b-neutral-200 border-l-white bg-white"
         )}
       >
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 text-center text-darkCustom">
-            {t(`{amount} ${amount === 1 ? (isNewJobs ? "" : rowLabelSingular) : isNewJobs ? "" : rowLabelPlural}`, {
+            {t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, {
               amount
             })}
           </Text>
@@ -114,14 +111,7 @@ const DemographicsRow = ({
         <When condition={onChange != null}>
           <input
             ref={inputRef}
-            value={
-              focused
-                ? amount
-                : t(
-                    `{amount} ${amount === 1 ? (isNewJobs ? "" : rowLabelSingular) : isNewJobs ? "" : rowLabelPlural}`,
-                    { amount }
-                  )
-            }
+            value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
             type={focused ? "text" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}

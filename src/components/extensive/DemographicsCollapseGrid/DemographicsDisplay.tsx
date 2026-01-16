@@ -94,9 +94,6 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
       },
       associates: {
         all: t("All Associates")
-      },
-      newJobs: {
-        newJobs: t("New Jobs")
       }
     }),
     [t]

@@ -36,10 +36,7 @@ export const DemographicField: FormFieldFactory = {
       )
       .test(
         "totals-match",
-        () =>
-          framework === Framework.HBF
-            ? t("At least one entry in gender is required")
-            : t("The totals for each demographic type do not match"),
+        () => (framework === Framework.HBF ? t("At least one entry in gender is required") : ""), // Empty message: validation still blocks submission but doesn't show error message
         value => {
           const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
           if (entries == null) return true;
