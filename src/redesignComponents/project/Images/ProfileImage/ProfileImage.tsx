@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import BaseImage from "../Image";
 
@@ -11,8 +11,8 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   isAvailable?: boolean;
 }
 
-export function ProfileImage({ alt, isAvailable = true, src, className, ...rest }: ProfileImageProps) {
-  const showNotAvailable = !isAvailable || !src;
+export const ProfileImage: FC<ProfileImageProps> = ({ alt, isAvailable = true, src, className, ...rest }) => {
+  const showNotAvailable = !isAvailable || src == null;
   return (
     <BaseImage
       {...rest}
@@ -28,4 +28,6 @@ export function ProfileImage({ alt, isAvailable = true, src, className, ...rest 
       )}
     />
   );
-}
+};
+
+export default ProfileImage;

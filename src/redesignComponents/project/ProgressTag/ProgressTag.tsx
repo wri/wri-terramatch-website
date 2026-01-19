@@ -1,4 +1,5 @@
 import { Tag } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
@@ -12,6 +13,7 @@ export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
 }
 
 export function ProgressTag({ state = "not-started", className }: ProgressTagProps) {
+  const t = useT();
   const config = STATE_PROGRESS_TAG[state];
 
   return (
@@ -28,7 +30,7 @@ export function ProgressTag({ state = "not-started", className }: ProgressTagPro
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-theme-neutral-900 text-sm font-bold">{config.label}</span>
+        <span className="text-theme-neutral-900 text-sm font-bold">{t(config.label)}</span>
       </Tag.Label>
     </Tag.Root>
   );

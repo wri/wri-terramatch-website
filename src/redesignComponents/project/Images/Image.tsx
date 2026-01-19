@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
@@ -27,7 +28,8 @@ const BaseImage: FC<BaseImageProps> = ({
   classNamesHover,
   ...rest
 }) => {
-  const showNotAvailable = !isAvailable || !src;
+  const { t } = useT();
+  const showNotAvailable = !isAvailable || src == null;
 
   return (
     <div
@@ -51,7 +53,7 @@ const BaseImage: FC<BaseImageProps> = ({
         >
           <PhotoAdd className="h-6 w-6" />
           <Text variant="text-16-bold" className="text-theme-neutral-900">
-            Upload Image
+            {t("Upload Image")}
           </Text>
         </div>
       ) : (
@@ -68,7 +70,7 @@ const BaseImage: FC<BaseImageProps> = ({
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
               <Edit className="h-4 w-4" />
-              Edit
+              {t("Edit")}
             </Text>
           </div>
         </>
