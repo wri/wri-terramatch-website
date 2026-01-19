@@ -5,10 +5,10 @@ import Search from "./Search";
 const mockOptions = [
   { id: "1", label: "Apple", caption: "Fruit" },
   { id: "2", label: "Banana", caption: "Fruit" },
-  { id: "3", label: "Carrot", caption: "Vegetable" }
-  //   { id: "4", label: "Broccoli", caption: "Vegetable" },
-  //   { id: "5", label: "Orange", caption: "Fruit" },
-  //   { id: "6", label: "Tomato", caption: "Vegetable" }
+  { id: "3", label: "Carrot", caption: "Vegetable" },
+  { id: "4", label: "Broccoli", caption: "Vegetable" },
+  { id: "5", label: "Orange", caption: "Fruit" },
+  { id: "6", label: "Tomato", caption: "Vegetable" }
 ];
 
 const meta: Meta<typeof Search> = {
@@ -39,7 +39,6 @@ const meta: Meta<typeof Search> = {
 export default meta;
 type Story = StoryObj<typeof Search>;
 
-// Default - Shows basic search with text results
 export const Default: Story = {
   args: {
     placeholder: "Search items...",
@@ -51,7 +50,6 @@ export const Default: Story = {
   }
 };
 
-// Results As List - Displays results in list format
 export const ResultsAsList: Story = {
   args: {
     placeholder: "Search items...",
@@ -63,7 +61,6 @@ export const ResultsAsList: Story = {
   }
 };
 
-// Custom Results Rendering
 export const CustomResultsRendering: Story = {
   args: {
     placeholder: "Search with custom rendering...",
@@ -94,7 +91,6 @@ export const CustomResultsRendering: Story = {
   }
 };
 
-// Loading State - Shows loading indicator
 export const LoadingState: Story = {
   args: {
     placeholder: "Search items...",
@@ -103,7 +99,6 @@ export const LoadingState: Story = {
   }
 };
 
-// Small Size - Compact version
 export const SmallSize: Story = {
   args: {
     placeholder: "Search items...",
@@ -116,7 +111,6 @@ export const SmallSize: Story = {
   }
 };
 
-// Disabled - Non-interactive state
 export const Disabled: Story = {
   args: {
     placeholder: "Search disabled...",
@@ -125,7 +119,6 @@ export const Disabled: Story = {
   }
 };
 
-// Max Height Results - Limited results height
 export const MaxHeightResults: Story = {
   args: {
     placeholder: "Search with limited height...",
@@ -144,7 +137,6 @@ export const MaxHeightResults: Story = {
   }
 };
 
-// No Display Results - Input only, no dropdown
 export const NoDisplayResults: Story = {
   args: {
     placeholder: "Type to search (no results shown)...",
