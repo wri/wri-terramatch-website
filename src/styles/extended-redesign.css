@@ -1,0 +1,16 @@
+.chakra-spinner {
+  display: inline-block;
+  width: var(--spinner-size, 1.5rem);
+  height: var(--spinner-size, 1.5rem);
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 9999px;
+  border-color: currentColor currentColor transparent transparent;
+  animation: chakra-spinner-spin 0.5s linear infinite;
+}
+
+@keyframes chakra-spinner-spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
