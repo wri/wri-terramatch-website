@@ -34,6 +34,7 @@ export interface PageCardProps
   widthTooltip?: string;
   isUserAllowed?: boolean;
   collapseChildren?: boolean;
+  projectFrameworkKey?: string | null;
 }
 
 const PageCard = ({
@@ -53,6 +54,7 @@ const PageCard = ({
   widthTooltip,
   isUserAllowed = true,
   collapseChildren = false,
+  projectFrameworkKey,
   ...props
 }: PageCardProps) => {
   const [collapseSubtile, setCollapseSubtile] = useState(true);
@@ -76,6 +78,8 @@ const PageCard = ({
       <BlurContainer
         isBlur={!isUserAllowed}
         textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
+        projectFrameworkKey={projectFrameworkKey}
+        backendHasAccess={isUserAllowed}
       >
         <When condition={!!title || !!headerChildren}>
           <div className="flex flex-wrap justify-between">
