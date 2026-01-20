@@ -450,6 +450,7 @@ const Dashboard = () => {
           isBlur={isUserAllowed !== undefined ? !isUserAllowed?.allowed : false}
           textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
           logout={logout}
+          projectFrameworkKey={singleDashboardProject?.frameworkKey}
         >
           <div
             className={classNames(
@@ -532,6 +533,7 @@ const Dashboard = () => {
           gap={8}
           subtitleMore={true}
           isUserAllowed={isUserAllowed?.allowed}
+          projectFrameworkKey={singleDashboardProject?.frameworkKey}
           title={t("TREES RESTORED")}
           widthTooltip="w-52 lg:w-64"
           iconClassName="h-3.5 w-3.5 text-darkCustom lg:h-5 lg:w-5"
@@ -581,6 +583,7 @@ const Dashboard = () => {
           classNameSubTitle="mt-4"
           gap={8}
           isUserAllowed={isUserAllowed?.allowed}
+          projectFrameworkKey={singleDashboardProject?.frameworkKey}
           title={t("JOBS CREATED")}
           variantSubTitle="text-14-light"
           subtitleMore={true}
@@ -693,6 +696,7 @@ const Dashboard = () => {
         )}
         textTooltipTable={tooltipText}
         isUserAllowed={isUserAllowed?.allowed}
+        projectFrameworkKey={singleDashboardProject?.frameworkKey}
         isLoadingHectaresUnderRestoration={isLoadingHectaresUnderRestoration}
         polygonsData={polygonsData}
         bbox={filters.uuid ? safeBbox(projectBbox) : safeBbox(currentBbox)}
