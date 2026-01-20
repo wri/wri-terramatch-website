@@ -1,9 +1,15 @@
 import "src/styles/globals.css";
 import * as NextImage from "next/image";
 import { ChakraProvider } from "@chakra-ui/react";
+import { tx } from "@transifex/native";
 import { StoreProvider } from "../src/utils/testStore";
 import { system } from "../src/lib/theme";
 import { BLUR_DATA_URL } from "./constants";
+
+// Initialize Transifex (same as in _app.tsx)
+tx.init({
+  token: process.env.NEXT_PUBLIC_TRANSIFEX_TOKEN
+});
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
