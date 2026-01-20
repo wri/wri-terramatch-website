@@ -1,5 +1,3 @@
-import React from "react";
-
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { Jobs, Tree } from "@/redesignComponents/foundations/Icons";
 

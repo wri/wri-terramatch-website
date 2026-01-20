@@ -1,9 +1,9 @@
 import { Checkbox, Table as TableComponent } from "@worldresources/wri-design-systems";
-import React from "react";
+import { useId, useRef } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { useTableStyles } from "./hooks";
+import { useTableSortState, useTableStyles } from "./hooks";
 import { renderCellByType } from "./utils";
 
 export type CellType = "buttons" | "data" | "link" | "miscellaneous" | "profile" | "text";
@@ -26,8 +26,15 @@ export interface ColumnOption {
     linkHref?: (value: any, row: any) => string;
     truncate?: boolean;
     profileImage?: (value: any, row: any) => string | React.ReactNode;
-    placeholder?: string;
+    title?: string;
+    description?: string;
+    widthLinkCell?: string;
   };
+}
+
+export interface SortingState {
+  key: string;
+  order: string;
 }
 
 interface TableProps {
@@ -35,32 +42,56 @@ interface TableProps {
   data: any[];
   selectable?: boolean;
   stickyHeader?: boolean;
+  pagination?: {
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+    showPagination: boolean;
+  };
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  onSortColumn?: (sorting: SortingState) => void;
 }
 
-const Table = ({ columns, data, selectable = false, stickyHeader = false }: TableProps) => {
-  useTableStyles();
+const Table = ({
+  columns,
+  data,
+  selectable = false,
+  stickyHeader = false,
+  pagination,
+  onSortColumn,
+  onPageChange,
+  onPageSizeChange
+}: TableProps) => {
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const tableId = useId();
+
+  const { activeSorts, handleSortColumn } = useTableSortState({
+    columns,
+    selectable,
+    data,
+    tableWrapperRef,
+    onSortColumn
+  });
+
+  useTableStyles(activeSorts, tableWrapperRef);
 
   return (
-    <div className="custom-table-wrapper">
+    <div ref={tableWrapperRef} id={tableId} className="custom-table-wrapper w-full">
       <TableComponent
         columns={columns}
         data={data}
-        onPageChange={() => {}}
-        onPageSizeChange={() => {}}
-        onSortColumn={() => {}}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+        onSortColumn={handleSortColumn}
         selectable={selectable}
         stickyHeader={stickyHeader}
-        pagination={{
-          currentPage: 1,
-          pageSize: 10,
-          showItemCount: true,
-          totalItems: data.length
-        }}
+        pagination={pagination}
         renderRow={(row: any, index: number) => {
           return (
             <tr key={index} className="hover:!bg-theme-primary-100">
               {selectable && (
-                <td key="select" className="px-2">
+                <td key="select" className="pl-3 pr-2">
                   <Checkbox
                     name={row.id}
                     checked={row.selected}

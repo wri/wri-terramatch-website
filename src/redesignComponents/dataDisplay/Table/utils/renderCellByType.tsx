@@ -1,5 +1,3 @@
-import React from "react";
-
 import { ButtonsCell, DataCell, LinkCell, MiscellaneousCell, ProfileCell, TextCell } from "../components";
 import { CellType, ColumnOption } from "../Table";
 
@@ -39,22 +37,23 @@ export const renderCellByType = (
     case "link":
       return (
         <LinkCell
-          value={cellValue || "Label should truncate ..."}
+          value={cellValue || "-"}
           href={options.linkHref ? options.linkHref(cellValue, row) : undefined}
           truncate={options.truncate !== false}
+          widthLinkCell={options.widthLinkCell}
         />
       );
 
     case "profile":
       return (
         <ProfileCell
-          value={cellValue || "Label"}
+          value={cellValue || "-"}
           profileImage={options.profileImage ? options.profileImage(cellValue, row) : undefined}
         />
       );
 
     case "miscellaneous":
-      return <MiscellaneousCell placeholder={options.placeholder} />;
+      return <MiscellaneousCell title={options.title} description={options.description} />;
 
     case "text":
       return <TextCell value={cellValue || "Label"} />;

@@ -131,7 +131,16 @@ export const Default: Story = {
 export const CustomWidth: Story = {
   render: () => (
     <div>
-      <Table columns={columns} data={sampleData} />
+      <Table
+        columns={columns}
+        data={sampleData}
+        pagination={{
+          currentPage: 1,
+          pageSize: 10,
+          totalItems: sampleData.length,
+          showPagination: true
+        }}
+      />
     </div>
   )
 };
@@ -165,7 +174,8 @@ export const AllCellTypes: Story = {
         cellType: "link",
         cellOptions: {
           linkHref: value => `#${value}`,
-          truncate: true
+          truncate: true,
+          widthLinkCell: "!max-w-10 !w-10"
         }
       },
       {
@@ -173,7 +183,8 @@ export const AllCellTypes: Story = {
         label: "Miscellaneous",
         cellType: "miscellaneous",
         cellOptions: {
-          placeholder: "Slot one"
+          title: "Slot one",
+          description: "Add button or input"
         }
       },
       {
@@ -194,7 +205,7 @@ export const AllCellTypes: Story = {
         buttons: "",
         data: "XXXXX",
         header: "Label",
-        link: "Label should truncate ...",
+        link: "Lorem ipsum dolor sit amet consectetur adipiscing elit purus, rutrum odio penatibus tempor dapibus fermentum in, ultricies proin blandit lectus convallis suscipit maecenas. Auctor felis vehicula parturient condimentum posuere nostra, mollis sociis ullamcorper lacinia mattis, litora curabitur metus hac mi. Aliquam mauris semper magna nec arcu ac himenaeos ut sociis, urna iaculis dictum laoreet fusce cum commodo eros, vitae condimentum facilisi convallis class pharetra nunc nisl.",
         miscellaneous: "",
         profile: "Label",
         text: "Label"
@@ -206,7 +217,16 @@ export const AllCellTypes: Story = {
         <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem", fontWeight: "600" }}>
           All Table Cell Types (Hover to see states)
         </h2>
-        <Table columns={allCellTypesColumns} data={allCellTypesData} />
+        <Table
+          columns={allCellTypesColumns}
+          data={allCellTypesData}
+          pagination={{
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: allCellTypesData.length,
+            showPagination: true
+          }}
+        />
       </div>
     );
   }
@@ -218,7 +238,17 @@ export const WithSelectable: Story = {
     return (
       <div style={{ padding: "2rem" }}>
         <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem", fontWeight: "600" }}>Table with Selectable Rows</h2>
-        <Table columns={columns} data={sampleData} selectable={true} />
+        <Table
+          columns={columns}
+          data={sampleData}
+          selectable={true}
+          pagination={{
+            currentPage: 1,
+            pageSize: 10,
+            totalItems: sampleData.length,
+            showPagination: true
+          }}
+        />
       </div>
     );
   }
@@ -233,7 +263,17 @@ export const WithStickyHeader: Story = {
           Table with Sticky Header (Scroll to see effect)
         </h2>
         <div style={{ maxHeight: "400px", overflow: "auto" }}>
-          <Table columns={columns} data={sampleData} stickyHeader={true} />
+          <Table
+            columns={columns}
+            data={sampleData}
+            stickyHeader={true}
+            pagination={{
+              currentPage: 1,
+              pageSize: 10,
+              totalItems: sampleData.length,
+              showPagination: true
+            }}
+          />
         </div>
       </div>
     );
@@ -259,7 +299,18 @@ export const ButtonsCell: Story = {
 
     const data = [{ id: 1, buttons: "" }];
 
-    return <Table columns={columns} data={data} />;
+    return (
+      <Table
+        columns={columns}
+        data={data}
+        pagination={{
+          currentPage: 1,
+          pageSize: 10,
+          totalItems: data.length,
+          showPagination: true
+        }}
+      />
+    );
   }
 };
 
@@ -307,7 +358,12 @@ export const LinkCell: Story = {
       }
     ];
 
-    const data = [{ id: 1, link: "Label should truncate ..." }];
+    const data = [
+      {
+        id: 1,
+        link: "Lorem ipsum dolor sit amet consectetur adipiscing elit purus, rutrum odio penatibus tempor dapibus fermentum in, ultricies proin blandit lectus convallis suscipit maecenas. Auctor felis vehicula parturient condimentum posuere nostra, mollis sociis ullamcorper lacinia mattis, litora curabitur metus hac mi. Aliquam mauris semper magna nec arcu ac himenaeos ut sociis, urna iaculis dictum laoreet fusce cum commodo eros, vitae condimentum facilisi convallis class pharetra nunc nisl."
+      }
+    ];
 
     return <Table columns={columns} data={data} />;
   }
@@ -321,7 +377,8 @@ export const MiscellaneousCell: Story = {
         label: "Miscellaneous",
         cellType: "miscellaneous",
         cellOptions: {
-          placeholder: "Slot one"
+          title: "Slot one",
+          description: "Add button or input"
         }
       }
     ];
