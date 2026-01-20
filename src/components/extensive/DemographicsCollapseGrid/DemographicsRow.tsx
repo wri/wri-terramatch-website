@@ -101,9 +101,7 @@ const DemographicsRow = ({
       >
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 text-center text-darkCustom">
-            {t(`{amount} ${amount}`, {
-              amount: amount
-            })}
+            {amount}
           </Text>
         </When>
         <When condition={onChange != null}>
