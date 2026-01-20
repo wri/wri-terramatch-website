@@ -124,6 +124,379 @@ export type OrganisationCreateBody = {
   data: OrganisationCreateData;
 };
 
+export type ProjectLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * The associated organisation type
+   */
+  organisationType: string | null;
+  /**
+   * Entity status for this project
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Planting status for this project
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
+   * Update request status for this project
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  shortName: string | null;
+  /**
+   * @format date-time
+   */
+  plantingStartDate: string | null;
+  country: string | null;
+  /**
+   * Latitude coordinate
+   */
+  lat: number | null;
+  /**
+   * Longitude coordinate
+   */
+  long: number | null;
+  totalHectaresRestoredSum: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  treesPlantedCount: number | null;
+};
+
+export type SiteLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * Framework key for this project
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this site
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Planting status for this site
+   */
+  plantingStatus:
+    | "no-restoration-expected"
+    | "not-started"
+    | "in-progress"
+    | "replacement-planting"
+    | "completed"
+    | null;
+  /**
+   * Update request status for this site
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  name: string | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  treesPlantedCount: number;
+  hectaresToRestoreGoal: number | null;
+  totalHectaresRestoredSum: number;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type NurseryLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  name: string | null;
+  /**
+   * Framework key for this nursery
+   */
+  frameworkKey: string | null;
+  /**
+   * Entity status for this nursery
+   */
+  status: "started" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * Update request status for this nursery
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  startDate: string | null;
+  /**
+   * @format date-time
+   */
+  endDate: string | null;
+  seedlingsGrownCount: number | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type ProjectReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  frameworkKey: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  projectName: string | null;
+  projectUuid: string | null;
+  /**
+   * Report status for this project report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  completion: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * The associated task uuid
+   */
+  taskUuid: string | null;
+  title: string | null;
+  /**
+   * Update request status for this project report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  pctSurvivalToDate: number | null;
+};
+
+export type SiteReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated site name
+   */
+  siteName: string | null;
+  /**
+   * The associated site uuid
+   */
+  siteUuid: string | null;
+  frameworkKey: string | null;
+  /**
+   * Report status for this site report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this site report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  completion: number | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  nothingToReport: boolean | null;
+};
+
+export type NurseryReportLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
+  uuid: string;
+  /**
+   * The associated nursery name
+   */
+  nurseryName: string | null;
+  /**
+   * The associated nursery uuid
+   */
+  nurseryUuid: string | null;
+  frameworkKey: string | null;
+  /**
+   * Report status for this nursery report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this nursery report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  completion: number | null;
+  /**
+   * The associated project name
+   */
+  projectName: string | null;
+  /**
+   * The associated project uuid
+   */
+  projectUuid: string | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  taskUuid: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  title: string | null;
+  reportTitle: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  nothingToReport: boolean | null;
+};
+
+export type ActionDto = {
+  uuid: string;
+  status: string | null;
+  /**
+   * Simplified targetable type (e.g., 'Project', 'ProjectReport')
+   */
+  targetableType: string;
+  targetableId: number;
+  type: string | null;
+  subtype: string | null;
+  key: string | null;
+  title: string | null;
+  subTitle: string | null;
+  text: string | null;
+  /**
+   * Target entity (LightDto object or EntityType string)
+   */
+  target:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type UserUpdateAttributes = {
   /**
    * New default locale for the given user

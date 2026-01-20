@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { useProjectIndex } from "@/connections/Entity";
-import { GetV2MyActionsResponse, usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
+import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
+import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
@@ -13,7 +14,7 @@ import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCa
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 
 export type ReportsCardProps = {
-  actions?: GetV2MyActionsResponse["data"];
+  actions?: ActionDto[];
 };
 
 const ReportsCard = ({ actions }: ReportsCardProps) => {
@@ -25,60 +26,47 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
   const reportActions = useMemo(() => {
     if (!actions) return [];
-
-    return sortByDate(actions, "target.due_at")
+    return sortByDate(actions, "target.dueAt")
       .filter(action => !!action.target)
       .map(action => {
-        const target = action.target;
-        // Project is either the target itself or, if it has a project object, it is that.
-        const project = action.target?.project ?? action.target;
-        const type = action.targetable_type;
+        const target = action.target as any;
+        const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
         let canClearActionClientSide = status === "approved";
 
-        let dueText = t(
-          type == "FinancialReport" ? "<strong>Submitted:</strong> {date}" : "<strong>Due:</strong> {date}",
-          {
-            date: format(type == "FinancialReport" ? target?.submitted_at : target?.due_at)
-          }
-        );
+        let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.dueAt) });
         let subtitle;
         let ctaText;
         let ctaLink;
 
         switch (type) {
-          case "ProjectReport": {
+          case "projectReports": {
             ctaText = t("View Project Report");
             subtitle = action.text;
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task_uuid}`;
+              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
             } else ctaLink = getEntityDetailPageLink("project-reports", target?.uuid);
             break;
           }
-          case "NurseryReport": {
+          case "nurseryReports": {
             ctaText = t("View Nursery Report");
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task_uuid}`;
+              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
             } else ctaLink = `reports/nursery-report/${target?.uuid}`;
             break;
           }
-          case "SiteReport": {
+          case "siteReports": {
             ctaText = t("View Site Report");
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task_uuid}`;
+              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
             break;
-          }
-          case "FinancialReport": {
-            ctaText = t("View Financial Report");
-            subtitle = t("<strong>Organization:</strong> {name}", { name: target?.name });
-            ctaLink = `reports/financial-report/${target?.uuid}`;
           }
         }
 
@@ -86,8 +74,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ...getActionCardStatusMapper(t)[status!],
           ctaLink,
           ctaText,
-          title: project?.name,
-          subtitle: `${subtitle ? `${subtitle}\n` : ""}${target?.due_at ? dueText : ""}`,
+          title: target?.name ?? target?.projectName,
+          subtitle: `${subtitle ? `${subtitle}\n` : ""}${target?.dueAt ? dueText : ""}`,
           onClick: () => {
             canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
           }

@@ -398,6 +398,89 @@ export const organisationCreation = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations", "POST");
 
+export type IndexMyActionsQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+};
+
+export type IndexMyActionsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type IndexMyActionsResponse = {
+  meta?: {
+    /**
+     * @example actions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example actions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ActionDto;
+  };
+};
+
+export type IndexMyActionsVariables = {
+  queryParams?: IndexMyActionsQueryParams;
+};
+
+/**
+ * Returns pending actions for reports and entities associated with the user's projects
+ */
+export const indexMyActions = new V3ApiEndpoint<
+  IndexMyActionsResponse,
+  IndexMyActionsError,
+  IndexMyActionsVariables,
+  {}
+>("/users/v3/actions", "GET");
+
 export type UsersFindPathParams = {
   /**
    * A valid user UUID or "me"
@@ -679,5 +762,6 @@ export const operationsByTag = {
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
   organisations: { organisationIndex, organisationCreation },
+  actions: { indexMyActions },
   users: { usersFind, userUpdate, userCreation }
 };
