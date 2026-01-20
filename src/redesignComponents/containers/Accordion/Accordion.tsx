@@ -5,7 +5,7 @@ import { ChevronDown } from "@/redesignComponents/foundations/Icons";
 
 import { ExtendableCardProps } from "./types";
 
-const Accordion = ({ children, header }: ExtendableCardProps) => (
+const Accordion = ({ children, header, actions }: ExtendableCardProps) => (
   <Box padding={4}>
     <AccordionChakra.Root multiple>
       <AccordionChakra.Item>
@@ -14,6 +14,7 @@ const Accordion = ({ children, header }: ExtendableCardProps) => (
           borderColor={getThemedColor("primary", 900)}
           paddingBottom={3}
           paddingTop={2}
+          marginBottom={4}
           width="100%"
           alignItems="center"
           justifyContent="space-between"
@@ -22,9 +23,23 @@ const Accordion = ({ children, header }: ExtendableCardProps) => (
           <AccordionChakra.ItemTrigger>
             <Flex gap={3} flex="1" overflow="hidden" alignItems="center" justifyContent="space-between">
               {header}
-              <AccordionChakra.ItemIndicator>
-                <ChevronDown boxSize={6} color={getThemedColor("neutral", 900)} />
-              </AccordionChakra.ItemIndicator>
+              <Flex gap={3} alignItems="center">
+                {actions && (
+                  <Box
+                    onClick={e => {
+                      e.stopPropagation();
+                    }}
+                    display="flex"
+                    gap={3}
+                    alignItems="center"
+                  >
+                    {actions}
+                  </Box>
+                )}
+                <AccordionChakra.ItemIndicator>
+                  <ChevronDown boxSize={4} color={getThemedColor("neutral", 900)} />
+                </AccordionChakra.ItemIndicator>
+              </Flex>
             </Flex>
           </AccordionChakra.ItemTrigger>
         </Flex>
