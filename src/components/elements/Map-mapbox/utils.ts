@@ -993,11 +993,22 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
 
   try {
     const layers = map.getStyle().layers ?? [];
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
     const layersToHide = layers.filter(
       layer =>
-        layer.type === "background" ||
-        layer.type === "fill" ||
-        (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)
+        (layer.type === "background" ||
+          (layer.type === "fill" && !isPolygonLayer(layer.id)) ||
+          (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)) &&
+        !isPolygonLayer(layer.id)
     );
 
     let hiddenCount = 0;
@@ -1064,9 +1075,20 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
     }
 
     const layers = map.getStyle()?.layers ?? [];
-    const layersToRestore = layers.filter(
-      layer => layer.type === "background" || layer.type === "fill" || layer.type === "raster"
-    );
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
+    const layersToRestore = layers.filter(layer => {
+      const isBaseMapLayer = layer.type === "background" || layer.type === "fill" || layer.type === "raster";
+      return isBaseMapLayer && !isPolygonLayer(layer.id);
+    });
 
     let restoredCount = 0;
     layersToRestore.forEach(layer => {
