@@ -28,7 +28,7 @@ const BaseImage: FC<BaseImageProps> = ({
   classNamesHover,
   ...rest
 }) => {
-  const { t } = useT();
+  const t = useT();
   const showNotAvailable = !isAvailable || src == null;
 
   return (
@@ -47,7 +47,7 @@ const BaseImage: FC<BaseImageProps> = ({
       {showNotAvailable ? (
         <div
           className={classNames(
-            "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-2",
+            "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-2 bg-theme-neutral-200",
             borderRadius
           )}
         >
@@ -63,7 +63,7 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
           <div
             className={classNames(
-              "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
           >
