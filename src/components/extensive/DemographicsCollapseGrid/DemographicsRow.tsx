@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicGridVariantProps, DemographicType, useDemographicLabels } from "./types";
+import { DemographicGridVariantProps, DemographicType } from "./types";
 
 export interface DemographicsRowProps {
   demographicType: DemographicType;
@@ -66,8 +66,6 @@ const DemographicsRow = ({
     [onChange, amount]
   );
 
-  const { rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
-
   return (
     <>
       <div
@@ -103,15 +101,15 @@ const DemographicsRow = ({
       >
         <When condition={onChange == null}>
           <Text variant="text-14-light" className="w-full px-4 text-center text-darkCustom">
-            {t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, {
-              amount
+            {t(`{amount} ${amount}`, {
+              amount: amount
             })}
           </Text>
         </When>
         <When condition={onChange != null}>
           <input
             ref={inputRef}
-            value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
+            value={focused ? amount : t(`{amount}`, { amount })}
             type={focused ? "text" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
