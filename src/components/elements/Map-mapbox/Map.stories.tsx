@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -62,56 +61,5 @@ export const PreLoaded2: Story = {
   args: {
     ...Default.args,
     geojson: sample2
-  }
-};
-
-export const PreLoadedWithImages: Story = {
-  args: {
-    ...Default.args,
-    imageLayerGeojson: {
-      type: "FeatureCollection",
-      features: faker.helpers.multiple(
-        () => ({
-          type: "Feature",
-          properties: {
-            id: faker.string.uuid(),
-            image_url: faker.image.url({ width: 512, height: 512 }),
-            thumb_url: faker.image.url({ width: 128, height: 128 })
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [faker.location.longitude(), faker.location.latitude()]
-          }
-        }),
-        { count: 200 }
-      )
-    }
-  }
-};
-
-export const PreLoadedWithImagesAndPolygons: Story = {
-  args: {
-    ...Default.args,
-    geojson: sample2,
-    imageLayerGeojson: {
-      type: "FeatureCollection",
-      features: faker.helpers.multiple(
-        () => ({
-          type: "Feature",
-          properties: {
-            id: faker.string.uuid(),
-            image_url: faker.image.url({ width: 128, height: 128 })
-          },
-          geometry: {
-            type: "Point",
-            coordinates: [
-              faker.location.longitude({ min: 14.5, max: 16 }),
-              faker.location.latitude({ min: 23, max: 24 })
-            ]
-          }
-        }),
-        { count: 200 }
-      )
-    }
   }
 };

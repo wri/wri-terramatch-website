@@ -7,7 +7,7 @@ import Text from "../../Text/Text";
 
 const EmptyStateDisplay = () => {
   const t = useT();
-  const { isMonitoring, setIsUserDrawingEnabled, isUserDrawingEnabled } = useMapAreaContext();
+  const { setIsUserDrawingEnabled, isUserDrawingEnabled } = useMapAreaContext();
   return (
     <>
       {!isUserDrawingEnabled && (
@@ -18,15 +18,13 @@ const EmptyStateDisplay = () => {
               <br />
               {t("created for this site")}
             </Text>
-            {isMonitoring && (
-              <Button
-                variant="primary"
-                className="mt-3 rounded-lg px-11 lg:px-13 wide:px-15"
-                onClick={() => setIsUserDrawingEnabled(true)}
-              >
-                <span className="text-12-bold normal-case">{t("Add Polygons")}</span>
-              </Button>
-            )}
+            <Button
+              variant="primary"
+              className="mt-3 rounded-lg px-11 lg:px-13 wide:px-15"
+              onClick={() => setIsUserDrawingEnabled(true)}
+            >
+              <span className="text-12-bold normal-case">{t("Add Polygons")}</span>
+            </Button>
           </div>
         </div>
       )}

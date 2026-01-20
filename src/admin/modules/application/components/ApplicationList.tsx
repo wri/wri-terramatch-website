@@ -1,5 +1,5 @@
 import { Stack } from "@mui/material";
-import { useState } from "react";
+import { FC, useState } from "react";
 import {
   AutocompleteInput,
   Datagrid,
@@ -44,44 +44,35 @@ const tableMenu = [
   }
 ];
 
-const ApplicationDataGrid = () => {
-  return (
-    <Datagrid rowClick={"show"}>
-      <ReferenceField source="organisation_uuid" reference={modules.organisation.ResourceName} label="Organization">
-        <FunctionField render={(record: V2OrganisationRead) => `${record?.name || ""}`} />
-      </ReferenceField>
-      <ReferenceField
-        source="funding_programme_uuid"
-        reference={modules.fundingProgramme.ResourceName}
-        label="Funding Programme"
-      >
-        <TextField label="Name" source="name" />
-      </ReferenceField>
-      <ReferenceField
-        source="current_submission.stage.uuid"
-        reference={modules.stage.ResourceName}
-        label="Stage"
-        sortable={false}
-      >
-        <TextField label="Stage" source="name" />
-      </ReferenceField>
-      <FunctionField
-        label="Status"
-        source="current_submission.status"
-        render={(record: any) =>
-          statusChoices.find(status => status.id === record?.current_submission?.status)?.name ||
-          record?.current_submission?.status
-        }
-        sortable={false}
-      />
-      <DateField source="created_at" label="Created" showTime locales="en-GB" />
-      <DateField source="updated_at" label="Last Edited" showTime locales="en-GB" />
-      <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
-        <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
-      </Menu>
-    </Datagrid>
-  );
-};
+const ApplicationDataGrid: FC = () => (
+  <Datagrid rowClick={"show"}>
+    <ReferenceField source="organisationUuid" reference={modules.organisation.ResourceName} label="Organization">
+      <FunctionField render={(record: V2OrganisationRead) => `${record?.name || ""}`} />
+    </ReferenceField>
+    <ReferenceField
+      source="fundingProgrammeUuid"
+      reference={modules.fundingProgramme.ResourceName}
+      label="Funding Programme"
+    >
+      <TextField label="Name" source="name" />
+    </ReferenceField>
+    <TextField label="Stage" source="currentSubmission.stageName" />
+    <FunctionField
+      label="Status"
+      source="currentSubmission.status"
+      render={(record: any) =>
+        statusChoices.find(status => status.id === record?.currentSubmission?.status)?.name ||
+        record?.currentSubmission?.status
+      }
+      sortable={false}
+    />
+    <DateField source="createdAt" label="Created" showTime locales="en-GB" />
+    <DateField source="updatedAt" label="Last Edited" showTime locales="en-GB" />
+    <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
+      <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+    </Menu>
+  </Datagrid>
+);
 
 export const ApplicationList = () => {
   const [exportModalOpen, setExportModalOpen] = useState<boolean>(false);
@@ -90,19 +81,16 @@ export const ApplicationList = () => {
     <SearchInput key="s" source="search" alwaysOn className="search-page-admin" />,
     <ReferenceInput
       key="fp"
-      source="funding_programme_uuid"
+      source="fundingProgrammeUuid"
       reference={modules.fundingProgramme.ResourceName}
       label="Funding Programme"
     >
       <AutocompleteInput optionText="name" label="Funding Programme" className="select-page-admin" />
     </ReferenceInput>,
-    <ReferenceInput key="st" source="current_submission.uuid" reference={modules.stage.ResourceName} label="Stage">
-      <AutocompleteInput optionText="name" label="Stage" optionValue="uuid" className="select-page-admin" />
-    </ReferenceInput>,
     <SelectInput
       key="status"
       label="Status"
-      source="current_submission_status"
+      source="currentSubmission.status"
       choices={statusChoices}
       className="select-page-admin"
     />

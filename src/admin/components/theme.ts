@@ -40,7 +40,6 @@ export const theme = _.merge<RaThemeOptions, RaThemeOptions>(defaultTheme, {
     RaEdit: {
       styleOverrides: {
         root: {
-          maxWidth: "1024px",
           margin: "0 auto 24px auto",
           width: "100%"
         }

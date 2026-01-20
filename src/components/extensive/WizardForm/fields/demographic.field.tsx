@@ -21,7 +21,7 @@ export const DemographicField: FormFieldFactory = {
       .of(
         yup.object({
           collection: yup.string().required(),
-          demographics: yup
+          entries: yup
             .array()
             .of(
               yup.object({
@@ -36,16 +36,12 @@ export const DemographicField: FormFieldFactory = {
       )
       .test(
         "totals-match",
-        () =>
-          framework === Framework.HBF
-            ? t("At least one entry in gender is required")
-            : t("The totals for each demographic type do not match"),
+        () => (framework === Framework.HBF ? t("At least one entry in gender is required") : ""),
         value => {
-          const { demographics } =
-            value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
-          if (demographics == null) return true;
+          const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
+          if (entries == null) return true;
 
-          return calculateTotals(demographics as DemographicEntryDto[], framework, type).complete;
+          return calculateTotals(entries as DemographicEntryDto[], framework, type).complete;
         }
       );
   }),
@@ -63,7 +59,7 @@ export const DemographicField: FormFieldFactory = {
   appendAnswers: () => undefined,
 
   addFormEntries: addEntryWith(({ name, inputType }, formValues) => {
-    const entries = ((formValues[name]?.[0] ?? {}).demographics ?? []) as DemographicEntryDto[];
+    const entries = ((formValues[name]?.[0] ?? {}).entries ?? []) as DemographicEntryDto[];
     return (
       <DemographicsCollapseGrid type={inputType as DemographicType} entries={entries} variant={GRID_VARIANT_NARROW} />
     );

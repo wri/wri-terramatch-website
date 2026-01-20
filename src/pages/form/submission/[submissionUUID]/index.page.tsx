@@ -11,9 +11,9 @@ import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { FormModel, OrgFormDetails, useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { usePutV2FormsSubmissionsSubmitUUID } from "@/generated/apiComponents";
+import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useFormSubmission } from "@/hooks/useFormGet";
 import { useSubmissionUpdate } from "@/hooks/useFormUpdate";
 
@@ -23,49 +23,37 @@ const SubmissionPage = () => {
   const submissionUUID = router.query.submissionUUID as string;
 
   const { isLoading, formData, form } = useFormSubmission(submissionUUID);
-  const application_uuid = formData?.data?.application_uuid as string;
-
-  const { updateSubmission, isSuccess, isUpdating, error } = useSubmissionUpdate(submissionUUID);
-
-  const { mutate: submitFormSubmission, isLoading: isSubmitting } = usePutV2FormsSubmissionsSubmitUUID({
-    onSuccess() {
-      if (form?.type === "application") {
-        router.push(`/applications/request-more-information/success/${application_uuid}?isSendRequest=true`);
-      } else {
-        router.push(`/form/submission/${submissionUUID}/confirm`);
+  const { submission, updateSubmission, submissionUpdating, submissionUpdateFailure } =
+    useSubmissionUpdate(submissionUUID);
+  useRequestSuccess(
+    submissionUpdating,
+    submissionUpdateFailure,
+    useCallback(() => {
+      if (submission?.status === "awaiting-approval") {
+        router.push(`/applications/request-more-information/success/${submission?.applicationUuid}?isSendRequest=true`);
       }
-    }
-  });
+    }, [router, submission?.applicationUuid, submission?.status])
+  );
 
-  const framework = useFramework(formData?.data?.framework_key);
+  const framework = useFramework(formData?.frameworkKey);
 
   const formModels = useMemo(() => {
     const models: FormModel[] = [];
-    if (formData?.data?.organisation_uuid != null) {
-      models.push({ model: "organisations", uuid: formData.data.organisation_uuid });
+    if (formData?.organisationUuid != null) {
+      models.push({ model: "organisations", uuid: formData.organisationUuid });
     }
-    if (formData?.data?.project_pitch_uuid != null) {
-      models.push({ model: "projectPitches", uuid: formData.data.project_pitch_uuid });
+    if (formData?.projectPitchUuid != null) {
+      models.push({ model: "projectPitches", uuid: formData.projectPitchUuid });
     }
     return models;
-  }, [formData?.data.organisation_uuid, formData?.data.project_pitch_uuid]);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.data.form_uuid);
+  }, [formData?.organisationUuid, formData?.projectPitchUuid]);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
   const defaultValues = useMemo(
-    () => formDefaultValues(formData?.data?.answers ?? {}, fieldsProvider),
-    [fieldsProvider, formData?.data?.answers]
+    () => formDefaultValues(formData?.answers ?? {}, fieldsProvider),
+    [fieldsProvider, formData?.answers]
   );
 
-  const orgDetails = useMemo(
-    (): OrgFormDetails | undefined =>
-      formData?.data?.organisation_attributes == null
-        ? undefined
-        : {
-            uuid: formData?.data?.organisation_attributes.uuid,
-            currency: formData?.data?.organisation_attributes.currency,
-            startMonth: formData?.data?.organisation_attributes.start_month
-          },
-    [formData?.data?.organisation_attributes]
-  );
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(formData?.organisationUuid ?? undefined);
 
   const { openModal, closeModal } = useModalContext();
   const handleSubmit = useCallback(() => {
@@ -81,11 +69,7 @@ const SubmissionPage = () => {
           children: t("Submit"),
           onClick: () => {
             closeModal(ModalId.MODAL_CONFIRM);
-            submitFormSubmission({
-              pathParams: {
-                uuid: submissionUUID
-              }
-            });
+            updateSubmission({ status: "awaiting-approval" });
           }
         }}
         secondaryButtonProps={{
@@ -94,7 +78,7 @@ const SubmissionPage = () => {
         }}
       />
     );
-  }, [closeModal, openModal, submissionUUID, submitFormSubmission, t]);
+  }, [closeModal, openModal, t, updateSubmission]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
@@ -105,18 +89,17 @@ const SubmissionPage = () => {
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isLoading || !providerLoaded}>
+      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded}>
         <WizardForm
           models={formModels}
           framework={framework}
           fieldsProvider={fieldsProvider}
-          errors={error}
           onBackFirstStep={router.back}
           onCloseForm={() => router.push("/home")}
           onChange={onChange}
-          formStatus={isSuccess ? "saved" : isUpdating ? "saving" : undefined}
+          formStatus={submissionUpdating ? "saving" : "saved"}
           onSubmit={handleSubmit}
-          submitButtonDisable={isSubmitting}
+          submitButtonDisable={submissionUpdating}
           defaultValues={defaultValues}
           title={form?.title}
           tabOptions={{

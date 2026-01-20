@@ -3,8 +3,10 @@ import { TabbedShowLayout, TabProps, useShowContext } from "react-admin";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { FieldInputType } from "@/components/extensive/WizardForm/types";
+import { FormEntity } from "@/connections/Form";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
+import { v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
@@ -24,14 +26,12 @@ const SUPPORTED_INPUT_TYPES: FieldInputType[] = ["financialIndicators", "funding
 
 const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const { isLoading: ctxLoading, record } = useShowContext();
-  // const t = useT();
-  // const { framework } = useFrameworkContext();
   const entityName = entity ?? record?.entity;
   const entityUuid = record?.uuid;
 
-  const { formData: response, isLoading: queryLoading } = useEntityForm(entityName, entityUuid);
+  const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUuid);
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(
-    response?.data.form_uuid,
+    formData?.formUuid,
     undefined,
     // We only display data for the types in SUPPORTED_INPUT_TYPES, so speed up this component by
     // ignoring everything else.
@@ -40,8 +40,8 @@ const HistoryTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const isLoading = ctxLoading || queryLoading || !providerLoaded;
 
   const values = useMemo(
-    () => formDefaultValues(response?.data.answers!, fieldsProvider),
-    [fieldsProvider, response?.data.answers]
+    () => (formData?.answers == null ? {} : formDefaultValues(formData?.answers, fieldsProvider)),
+    [fieldsProvider, formData?.answers]
   );
 
   const fields = useMemo(

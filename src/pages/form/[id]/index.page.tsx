@@ -1,13 +1,16 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
-import { usePostV2FormsSubmissions } from "@/generated/apiComponents";
+import { useForm } from "@/connections/Form";
+import { useSubmissionCreate } from "@/connections/FormSubmission";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import Log from "@/utils/log";
 
 import ApplicationsTable from "../cards/ApplicationsTable";
 
@@ -18,12 +21,15 @@ const FormIntroPage = () => {
 
   const [, { data: form }] = useForm({ id: formUUID, enabled: formUUID != null });
 
-  const { mutate: create, isLoading } = usePostV2FormsSubmissions({
-    onSuccess(data) {
-      // @ts-ignore
-      router.push(`/form/submission/${data.data.uuid}`);
-    }
-  });
+  const [, { create, data: submission, isCreating, createFailure }] = useSubmissionCreate({});
+  useRequestSuccess(
+    isCreating,
+    createFailure,
+    useCallback(() => {
+      router.push(`/form/submission/${submission?.uuid}`);
+    }, [router, submission?.uuid]),
+    "Application creation failed"
+  );
 
   return (
     <BackgroundLayout>
@@ -45,8 +51,14 @@ const FormIntroPage = () => {
                 }}
                 submitButtonProps={{
                   children: t("Start Application"),
-                  onClick: () => create({ body: { form_uuid: formUUID } }),
-                  disabled: isLoading
+                  onClick: () => {
+                    if (form?.fundingProgrammeId == null) {
+                      Log.error("Funding programme ID is missing");
+                    } else {
+                      create({ fundingProgrammeUuid: form.fundingProgrammeId });
+                    }
+                  },
+                  disabled: isCreating
                 }}
                 backButtonProps={{
                   children: t("Cancel"),
