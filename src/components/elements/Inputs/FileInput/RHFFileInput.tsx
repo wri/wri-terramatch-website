@@ -3,9 +3,8 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FileUploadEntity } from "@/components/extensive/Modal/ModalAddImages";
-import { deleteMedia } from "@/connections/Media";
-import { fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { FormModelType } from "@/connections/util/Form";
+import { FormModelType } from "@/connections/Form";
+import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { v3EntityName } from "@/helpers/entity";
@@ -29,22 +28,6 @@ export interface RHFFileInputProps
   model: FormModelType;
 }
 
-// TODO (NJC): TM-2581 will get these values from v3 and this will no longer be needed
-export const normalizeV2UploadedFiles = (value: any): UploadedFile[] =>
-  toArray(value).map(
-    value =>
-      ({
-        ...value,
-        thumbUrl: value.thumbUrl ?? value.thumb_url,
-        fileName: value.fileName ?? value.file_name,
-        mimeType: value.mimeType ?? value.mime_type,
-        createdAt: value.createdAt ?? value.created_at,
-        collectionName: value.collectionName ?? value.collection_name,
-        isPublic: value.isPublic ?? value.is_public,
-        isCover: value.isCover ?? value.is_cover
-      } as UploadedFile)
-  );
-
 /**
  * @param props RHFFileInputProps
  * @returns React Hook Form Ready File Input Component
@@ -62,10 +45,7 @@ const RHFFileInput = ({
   const uuid = useFormModelUuid(model);
   const { field } = useController(fileInputProps);
   const onChange = field.onChange;
-  const { files, addFile, removeFile, updateFile } = useFiles(
-    fileInputProps.allowMultiple ?? false,
-    normalizeV2UploadedFiles(field.value)
-  );
+  const { files, addFile, removeFile, updateFile } = useFiles(fileInputProps.allowMultiple ?? false, field.value);
   const entity = v3EntityName(model as EntityName) as FileUploadEntity;
   if (uuid == null) {
     Log.error("Missing a model UUID for this file input", { model, collection });

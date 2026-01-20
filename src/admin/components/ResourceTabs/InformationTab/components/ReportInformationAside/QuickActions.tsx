@@ -1,6 +1,7 @@
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { FC } from "react";
 import { Button, Link, useCreatePath, useShowContext } from "react-admin";
+import { useNavigate } from "react-router";
 
 import modules from "@/admin/modules";
 import { EntityName } from "@/types/common";
@@ -12,19 +13,23 @@ type QuickActionsProps = {
 const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
   const { record } = useShowContext();
   const createPath = useCreatePath();
+  const navigate = useNavigate();
 
-  const getReportsPath = (view: keyof typeof modules) => {
-    if (!record) return;
+  const taskUuid = record?.taskUuid;
+
+  const getReportsPath = (resource: keyof typeof modules) => {
+    if (!record?.projectUuid) return;
+
     const queryParams = new URLSearchParams({
-      displayedFilters: JSON.stringify({ project_uuid: true }),
-      filter: JSON.stringify({ project_uuid: record.projectUuid }),
+      displayedFilters: JSON.stringify({ projectUuid: true }),
+      filter: JSON.stringify({ projectUuid: record.projectUuid }),
       order: "ASC",
       page: "1",
       perPage: "10",
       sort: "id"
     }).toString();
 
-    return `/${view}?${queryParams}`;
+    return `/${resource}?${queryParams}`;
   };
 
   return (
@@ -37,14 +42,14 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
 
       <Box paddingX={3.75} paddingTop={2} paddingBottom={3}>
         <Stack gap={3}>
-          {type === "disturbance-reports" ? null : (
+          {type !== "disturbance-reports" && taskUuid != null && (
             <Button
               variant="outlined"
               component={Link}
               to={createPath({
                 resource: modules.task.ResourceName,
                 type: "show",
-                id: record?.taskUuid! ?? record?.task_uuid!
+                id: taskUuid
               })}
               fullWidth
               label="View Task"
@@ -81,11 +86,22 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
           )}
           {type === "project-reports" && (
             <>
-              <Button variant="outlined" component={Link} to={getReportsPath("siteReport")} label="View Site Reports" />
               <Button
                 variant="outlined"
-                component={Link}
-                to={getReportsPath("nurseryReport")}
+                onClick={() => {
+                  const path = getReportsPath("siteReport");
+                  if (path) navigate(path);
+                }}
+                fullWidth
+                label="View Site Reports"
+              />
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  const path = getReportsPath("nurseryReport");
+                  if (path) navigate(path);
+                }}
+                fullWidth
                 label="View Nursery Reports"
               />
             </>

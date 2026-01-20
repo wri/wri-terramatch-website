@@ -2,13 +2,14 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
+import { useCallback } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useForm } from "@/connections/util/Form";
-import { usePostV2FormsProjectsUUID } from "@/generated/apiComponents";
+import { useCreateProject } from "@/connections/Entity";
+import { useForm } from "@/connections/Form";
 
 /**
  * Use this route to create a project with a given form_uuid
@@ -19,17 +20,16 @@ const ProjectIntroPage = () => {
   const formUUID = router.query.formUUID as string;
 
   const [, { data: form, loadFailure }] = useForm({ id: formUUID, enabled: formUUID != null });
-
-  const {
-    mutate: createProject,
-    isLoading,
-    isSuccess
-  } = usePostV2FormsProjectsUUID({
-    onSuccess(data) {
-      //@ts-ignore
-      router.replace(`/entity/projects/edit/${data.data.uuid}`);
-    }
-  });
+  const { create, isCreating } = useCreateProject(
+    {},
+    useCallback(
+      ({ uuid }) => {
+        router.replace(`/entity/projects/edit/${uuid}`);
+      },
+      [router]
+    ),
+    "Project creation failed"
+  );
 
   if (loadFailure != null) {
     return notFound();
@@ -53,14 +53,8 @@ const ProjectIntroPage = () => {
               }}
               submitButtonProps={{
                 children: t("Continue"),
-                disabled: isLoading || isSuccess,
-                onClick: () => {
-                  createProject({
-                    pathParams: {
-                      uuid: formUUID
-                    }
-                  });
-                }
+                disabled: isCreating,
+                onClick: () => create({ formUuid: formUUID })
               }}
               backButtonProps={{
                 children: t("Cancel"),

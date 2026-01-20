@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
@@ -13,17 +13,16 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-interface ReportingTasksProps {
-  site: any;
-  label?: string;
+type AuditLogProps = {
+  site: SiteFullDto;
   refresh?: () => void;
-  enableChangeStatus?: number;
-}
+};
 
-const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ site, refresh: refreshSite }) => {
   const t = useT();
   const ButtonStates = {
     PROJECTS: 0,
@@ -67,7 +66,7 @@ const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...re
                   <AuditLogSiteTabSelection
                     buttonToggle={buttonToggle}
                     setButtonToggle={setButtonToggle}
-                    framework={site?.framework_key}
+                    framework={site.frameworkKey ?? undefined}
                   />
                   <When condition={buttonToggle === ButtonStates.PROJECTS}>
                     <Text variant="text-24-bold">Project Status</Text>
@@ -76,7 +75,7 @@ const AuditLog = ({ label, site, refresh: refreshSite, enableChangeStatus, ...re
                     </Text>
                     <Link
                       className="!mb-[25vh] !w-2/5 !rounded-lg !border-2 !border-solid !border-primary-500 !bg-white !px-4 !py-[10.5px] !text-center !text-xs !font-bold !uppercase !leading-[normal] !text-primary-500 hover:!bg-grey-900 disabled:!border-transparent disabled:!bg-grey-750 disabled:!text-grey-730 lg:!mb-[40vh] lg:!text-sm wide:!text-base"
-                      href={`/project/${site?.project?.uuid}?tab=audit-log`}
+                      href={`/project/${site.projectUuid}?tab=audit-log`}
                     >
                       {t("OPEN PROJECT AUDIT LOG")}
                     </Link>

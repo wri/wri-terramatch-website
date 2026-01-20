@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
 import { useCallback } from "react";
 import { Else, If, Then } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
@@ -18,6 +18,8 @@ import { SUBTITLE_MAP_ON_FAILED } from "./constants/subtitleMapOnFailed";
 import { SUBTITLE_MAP_ON_UPLOADED } from "./constants/subtitleMapOnUploaded";
 import { SUBTITLE_MAP_ON_UPLOADING } from "./constants/subtitleMapOnUploading";
 import { FilePreviewCardVariant, VARIANT_FILE_PREVIEW_CARD_DEFAULT } from "./FileInputVariants";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 export interface FilePreviewCardProps {
   file: Partial<UploadedFile>;

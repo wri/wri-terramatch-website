@@ -1,7 +1,5 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import ActionTracker from "@/components/extensive/ActionTracker/ActionTracker";
@@ -14,25 +12,18 @@ import TaskList from "@/components/extensive/TaskList/TaskList";
 import { useGetHomeTourItems } from "@/components/extensive/WelcomeTour/useGetHomeTourItems";
 import WelcomeTour from "@/components/extensive/WelcomeTour/WelcomeTour";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useFundingProgrammes } from "@/connections/FundingProgramme";
 import { useMyOrg } from "@/connections/Organisation";
-import { useGetV2FundingProgramme } from "@/generated/apiComponents";
 import { useAcceptInvitation } from "@/hooks/useInviteToken";
 import { fundingProgrammeToFundingCardProps } from "@/utils/dataTransformation";
 
 const HomePage = () => {
   const t = useT();
   const [, { organisation, organisationId }] = useMyOrg();
-  const route = useRouter();
   const tourSteps = useGetHomeTourItems();
   useAcceptInvitation();
 
-  const { data: fundingProgrammes, isLoading: loadingFundingProgrammes } = useGetV2FundingProgramme({
-    queryParams: {
-      //@ts-ignore
-      lang: route.locale,
-      per_page: 1000
-    }
-  });
+  const [loaded, { data: fundingProgrammes }] = useFundingProgrammes({});
 
   return (
     <PageBody>
@@ -47,14 +38,13 @@ const HomePage = () => {
       <PageSection>
         <ActionTracker />
       </PageSection>
-      <When condition={organisation?.status === "approved"}>
-        <LoadingContainer loading={loadingFundingProgrammes}>
+      {organisation?.status === "approved" ? (
+        <LoadingContainer loading={!loaded}>
           <PageSection hasCarousel>
             <FundingCarouselList
               title={t("Opportunities")}
               items={
-                //@ts-ignore
-                fundingProgrammes?.data
+                fundingProgrammes
                   ?.filter(item => item.status !== "disabled")
                   .map(item => fundingProgrammeToFundingCardProps(item)) || []
               }
@@ -62,8 +52,8 @@ const HomePage = () => {
           </PageSection>
           <WelcomeTour tourId="home" tourSteps={tourSteps} />
         </LoadingContainer>
-      </When>
-      <When condition={organisationId != null}>
+      ) : null}
+      {organisationId != null ? (
         <PageSection className="flex justify-center bg-white pb-10" hasFull>
           <TaskList
             title={t(`Get Ready for <br> Funding Opportunities`)}
@@ -94,7 +84,7 @@ const HomePage = () => {
             ]}
           />
         </PageSection>
-      </When>
+      ) : null}
       <PageFooter />
     </PageBody>
   );

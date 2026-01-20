@@ -3,7 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "Using node version `node -v`"
+        - nvm install `cat .nvmrc`
+        - nvm use
         - yarn install
     build:
       commands:

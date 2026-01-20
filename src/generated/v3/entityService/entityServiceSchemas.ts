@@ -2361,6 +2361,7 @@ export type LinkedFieldDto = {
     | "trainingBeneficiaries"
     | "treeSpecies"
     | "volunteers"
+    | "newJobs"
     | "workdays";
   optionListKey: string | null;
   multiChoice: boolean | null;

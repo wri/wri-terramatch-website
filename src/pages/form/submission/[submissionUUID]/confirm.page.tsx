@@ -32,7 +32,7 @@ const ConfirmPage = () => {
             <div className="mt-15 flex w-full justify-between">
               <div />
 
-              <Button as={Link} href={`/applications/${formData?.data.application_uuid}`}>
+              <Button as={Link} href={`/applications/${formData?.applicationUuid}`}>
                 {t("View My Application")}
               </Button>
             </div>

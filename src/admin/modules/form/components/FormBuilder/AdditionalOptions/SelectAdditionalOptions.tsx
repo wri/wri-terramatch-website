@@ -7,7 +7,7 @@ import { OptionArrayInput } from "@/admin/modules/form/components/FormBuilder/Op
 import { FormQuestionField } from "@/admin/modules/form/components/FormBuilder/QuestionArrayInput";
 import { Choice } from "@/admin/types/common";
 import { noDuplication, noEmptyElement } from "@/admin/utils/forms";
-import { useOptionList } from "@/connections/util/Form";
+import { useOptionList } from "@/connections/Form";
 
 type SelectAdditionalOptionsProps = {
   field: FormQuestionField;

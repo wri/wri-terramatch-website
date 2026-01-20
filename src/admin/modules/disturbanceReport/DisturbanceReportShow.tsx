@@ -12,7 +12,7 @@ const DisturbanceReportShow = () => (
     <RecordFrameworkProvider>
       <TabbedShowLayout>
         <InformationTab type="disturbance-reports" title="Disturbance Report" />
-        <ChangeRequestsTab entity="disturbance-reports" singularEntity="disturbance-report" />
+        <ChangeRequestsTab entity="disturbanceReports" singularEntity="disturbance-report" />
         <AuditLogTab entity={AuditLogButtonStates.DISTURBANCE_REPORT} />
       </TabbedShowLayout>
     </RecordFrameworkProvider>

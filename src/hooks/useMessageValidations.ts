@@ -186,8 +186,7 @@ export const useMessageValidators = () => {
 
         const formatNumber = (value: number | undefined) => (typeof value === "number" ? value.toFixed(2) : value);
 
-        const sumAreaSite = info.sumAreaSiteApproved;
-        const percentageSite = info.percentageSiteApproved;
+        const sumAreaSite = info.sumAreaSiteApproved ?? 0;
         const totalAreaSite = info.totalAreaSite;
         const sumAreaProject = info.sumAreaProjectApproved;
         const percentageProject = info.percentageProjectApproved;
@@ -195,14 +194,22 @@ export const useMessageValidators = () => {
 
         if (totalAreaSite === null || totalAreaSite === undefined) {
           messages.push(t("Site Goal: A goal has not been specified."));
-        } else if (sumAreaSite !== undefined && percentageSite !== undefined) {
+        } else {
+          // Calculate percentage if not provided but totalAreaSite is available
+          const calculatedPercentageSite =
+            info.percentageSiteApproved !== undefined
+              ? info.percentageSiteApproved
+              : totalAreaSite > 0
+              ? (sumAreaSite / totalAreaSite) * 100
+              : 0;
+
           if (info.isPolygonApproved) {
             messages.push(
               t(
                 "Site Goal: The sum of all site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
                 {
                   sumAreaSite: formatNumber(sumAreaSite),
-                  percentageSite: formatNumber(percentageSite),
+                  percentageSite: formatNumber(calculatedPercentageSite),
                   totalAreaSite: formatNumber(totalAreaSite)
                 }
               )
@@ -213,7 +220,7 @@ export const useMessageValidators = () => {
                 "Site Goal: Approved polygons sum to {sumAreaSite} ha ({percentageSite}%). If this polygon ({polygonArea} ha) is approved, the total would be {projectedSum} ha ({projectedPercentage}%) of total hectares to be restored ({totalAreaSite} ha)",
                 {
                   sumAreaSite: formatNumber(sumAreaSite),
-                  percentageSite: formatNumber(percentageSite),
+                  percentageSite: formatNumber(calculatedPercentageSite),
                   polygonArea: formatNumber(info.polygonArea),
                   projectedSum: formatNumber(info.projectedSumAreaSite),
                   projectedPercentage: formatNumber(info.projectedPercentageSite),
@@ -224,10 +231,10 @@ export const useMessageValidators = () => {
           } else {
             messages.push(
               t(
-                "Site Goal: The sum of all approved site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
+                "Site Goal: The sum of all site polygons {sumAreaSite} ha is {percentageSite}% of total hectares to be restored for this site ({totalAreaSite} ha)",
                 {
                   sumAreaSite: formatNumber(sumAreaSite),
-                  percentageSite: formatNumber(percentageSite),
+                  percentageSite: formatNumber(calculatedPercentageSite),
                   totalAreaSite: formatNumber(totalAreaSite)
                 }
               )

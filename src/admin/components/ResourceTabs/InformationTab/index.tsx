@@ -12,7 +12,7 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { FormModelType } from "@/connections/util/Form";
+import { FormEntity, FormModelType } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -76,8 +76,8 @@ const InformationTab: FC<IProps> = props => {
   const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
-  const { formData: response, isLoading: queryLoading } = useEntityForm(props.type, record?.uuid);
-  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(response?.data.form_uuid);
+  const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(props.type) as FormEntity, record?.uuid);
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
 
   const model = useMemo<FormModel>(
     () => ({ model: v3EntityName(props.type) as FormModelType, uuid: record?.uuid ?? "" }),
@@ -85,8 +85,8 @@ const InformationTab: FC<IProps> = props => {
   );
 
   const values = useMemo(
-    () => formDefaultValues(response?.data.answers!, fieldsProvider),
-    [fieldsProvider, response?.data.answers]
+    () => (formData?.answers == null ? {} : formDefaultValues(formData?.answers!, fieldsProvider)),
+    [fieldsProvider, formData?.answers]
   );
 
   const fields = useMemo(
@@ -180,7 +180,7 @@ const InformationTab: FC<IProps> = props => {
               <div className="pl-8">
                 {["projects", "sites", "site-reports", "project-reports", "nursery-reports"].includes(props.type) ? (
                   <div className="flex flex-col gap-10">
-                    {props.type !== "nursery-reports" ? (
+                    {props.type !== "nursery-reports" && props.type !== "site-reports" ? (
                       <ContextCondition frameworksHide={[Framework.PPC]}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">
@@ -196,7 +196,9 @@ const InformationTab: FC<IProps> = props => {
                       </ContextCondition>
                     ) : null}
                     {(["projects", "project-reports"].includes(props.type) && framework === Framework.PPC) ||
-                    (props.type === "nursery-reports" && ALL_TF.includes(framework)) ? (
+                    (props.type !== "nursery-reports" &&
+                      props.type !== "site-reports" &&
+                      ALL_TF.includes(framework)) ? (
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1 py-1">
                           <Text variant="text-16-bold" className="capitalize">
@@ -213,7 +215,7 @@ const InformationTab: FC<IProps> = props => {
                         />
                       </div>
                     ) : null}
-                    {props.type !== "nursery-reports" ? (
+                    {props.type !== "nursery-reports" && props.type !== "site-reports" ? (
                       <>
                         <ContextCondition frameworksShow={[Framework.PPC]}>
                           <div className="flex flex-col gap-1">
@@ -245,7 +247,7 @@ const InformationTab: FC<IProps> = props => {
                         </div>
                       </>
                     ) : null}
-                    {props.type === "site-reports" || props.type === "project-reports" ? (
+                    {props.type === "project-reports" ? (
                       <ContextCondition frameworksShow={ALL_TF}>
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center gap-1 py-1">

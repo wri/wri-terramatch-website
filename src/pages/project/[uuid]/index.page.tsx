@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
+import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
@@ -14,7 +15,6 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
-import StatusBar from "@/pages/project/[uuid]/components/StatusBar";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
@@ -24,12 +24,6 @@ import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
-
-const ButtonStates = {
-  PROJECTS: 0,
-  SITE: 1,
-  POLYGON: 2
-};
 
 type ProjectContentProps = {
   project: ProjectFullDto;
@@ -44,7 +38,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       </Head>
       <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project?.name ?? "" }]} />
       <ProjectHeader {...{ project }} />
-      <StatusBar entityName="projects" entity={project} />
+      <EntityStatusBar entityName="projects" entity={project} />
       <SecondaryTabs
         tabItems={[
           { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
@@ -80,7 +74,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           {
             key: "audit-log",
             title: t("Audit Log"),
-            body: <AuditLog project={project} refresh={refetch} enableChangeStatus={ButtonStates.POLYGON} />
+            body: <AuditLog project={project} refresh={refetch} />
           }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"

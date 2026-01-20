@@ -15,9 +15,6 @@ const AppMenu = () => {
       <div className={classNames({ "Sidebar-active": hash === "organisation" })}>
         <Menu.ResourceItem name={modules.organisation.ResourceName} />
       </div>
-      <div className={classNames({ "Sidebar-active": hash === "pitch" })}>
-        <Menu.ResourceItem name={modules.pitch.ResourceName} />
-      </div>
       <div className={classNames({ "Sidebar-active": hash === "fundingProgramme" })}>
         <Menu.ResourceItem name={modules.fundingProgramme.ResourceName} />
       </div>
@@ -26,9 +23,6 @@ const AppMenu = () => {
       </div>
       <div className={classNames({ "Sidebar-active": hash === "application" })}>
         <Menu.ResourceItem name={modules.application.ResourceName} />
-      </div>
-      <div className={classNames({ "Sidebar-active": hash === "stage" })}>
-        <Menu.ResourceItem name={modules.stage.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "form" })}>
         <Menu.ResourceItem name={modules.form.ResourceName} />
@@ -56,9 +50,6 @@ const AppMenu = () => {
       </div>
       <div className={classNames({ "Sidebar-active": hash === "financialReport" })}>
         <Menu.ResourceItem name={modules.financialReport.ResourceName} />
-      </div>
-      <div className={classNames({ "Sidebar-active": hash === "audit" })}>
-        <Menu.ResourceItem name={modules.audit.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
         <Menu.ResourceItem name={modules.impactStories.ResourceName} />

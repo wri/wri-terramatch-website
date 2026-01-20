@@ -1,12 +1,13 @@
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_TREE_SPECIES } from "@/components/elements/Table/TableVariants";
+import Text from "@/components/elements/Text/Text";
 import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/columnDefinitions";
 import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import Log from "@/utils/log";
 
-import { TreeSpeciesTableRowData, useTableData, useTableType, useTreeTableColumns } from "./hooks";
+import { TreeSpeciesTableRowData, usePlantTotalCount, useTableData, useTableType, useTreeTableColumns } from "./hooks";
 
 export type PlantData = {
   name?: string | null;
@@ -110,6 +111,19 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
     plants
   } = props;
 
+  const totalTitle = useMemo(() => {
+    switch (collection) {
+      case "tree-planted":
+        return "Trees Planted:";
+      case "non-tree":
+        return "non-trees planted:";
+      case "replanting":
+        return "trees replanted:";
+      default:
+        return "Seeds Planted:";
+    }
+  }, [collection]);
+
   // If we receive no explicit data, but we have an entity and entityUUID, render the full data fetcher
   // composition
   if (data == null && plants == null && entity != null && entityUuid != null) {
@@ -124,13 +138,35 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
 
   // If we receive plants but not converted table data, render the goals data fetcher composition
   if (plants != null && data == null && entity != null && entityUuid != null) {
-    return (
-      <GoalsDataFetcher {...{ plants, entity, entityUuid, collection, tableType }}>
-        {(tableType, data) => (
-          <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />
-        )}
-      </GoalsDataFetcher>
-    );
+    const totalCountSeeds = usePlantTotalCount({ entity, entityUuid, collection: collection! });
+    const isReports = entity === "nurseryReports" || entity === "siteReports";
+    if (isReports) {
+      return (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-1 py-1">
+            <Text variant="text-16-bold" className="capitalize">
+              {entity === "nurseryReports" ? "Saplings Grown in Nurseries:" : totalTitle}
+            </Text>
+            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+              {totalCountSeeds.toLocaleString() ?? 0}
+            </Text>
+          </div>
+          <GoalsDataFetcher {...{ plants, entity, entityUuid, collection, tableType }}>
+            {(tableType, data) => (
+              <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />
+            )}
+          </GoalsDataFetcher>
+        </div>
+      );
+    } else {
+      return (
+        <GoalsDataFetcher {...{ plants, entity, entityUuid, collection, tableType }}>
+          {(tableType, data) => (
+            <TreeSpeciesTableView {...{ data, tableType, headerName, visibleRows, galleryType, secondColumnWidth }} />
+          )}
+        </GoalsDataFetcher>
+      );
+    }
   }
 
   // If we have converted table data and a table type, we only need the view.

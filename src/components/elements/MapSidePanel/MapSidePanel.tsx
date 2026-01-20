@@ -49,7 +49,7 @@ const MapSidePanel = ({
   onLoadMore,
   emptyText,
   mapFunctions,
-  checkedValues,
+  checkedValues = [],
   onCheckboxChange,
   setSortOrder,
   sortField,
@@ -70,7 +70,7 @@ const MapSidePanel = ({
   const checkboxRefs = useRef<HTMLInputElement[]>([]);
 
   const filteredItems = useMemo(() => {
-    if (checkedValues.length === 0) {
+    if (!checkedValues || checkedValues.length === 0) {
       return items;
     }
     return items.filter(item => checkedValues.includes(item.status));
@@ -81,7 +81,7 @@ const MapSidePanel = ({
     [checkedValues]
   );
 
-  const { isMonitoring, setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
+  const { setEditPolygon, setIsUserDrawingEnabled } = useMapAreaContext();
   const { map } = mapFunctions;
   const isAdmin = useIsAdmin();
 
@@ -227,18 +227,12 @@ const MapSidePanel = ({
     <div {...props} className={classNames("flex h-[250px] flex-1 flex-col", className)}>
       <div className="absolute top-0 left-0 -z-10 h-full w-full rounded-l-lg backdrop-blur-md" />
       <div className="mb-4 flex items-center justify-between rounded-tl-lg">
-        {isMonitoring ? (
-          <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
-            <Text variant="text-14-bold" className="flex items-center uppercase">
-              <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
-              &nbsp; {t("new Polygon")}
-            </Text>
-          </button>
-        ) : (
-          <Text variant="text-16-bold" className="text-white">
-            {t(title)}
+        <button className="text-white hover:text-primary-300" onClick={() => setIsUserDrawingEnabled(true)}>
+          <Text variant="text-14-bold" className="flex items-center uppercase">
+            <Icon name={IconNames.PLUS_PA} className="h-4 w-4" />
+            &nbsp; {t("new Polygon")}
           </Text>
-        )}
+        </button>
         <div className="flex items-center gap-2">
           <div className="relative" ref={menuCheckboxRef}>
             <div className="rounded bg-white p-1.5" onClick={() => setOpenMenu(!openMenu)}>
@@ -254,7 +248,7 @@ const MapSidePanel = ({
                     label={t(status.label)}
                     className="flex w-full flex-row-reverse items-center justify-end gap-3"
                     textClassName="text-10-semibold"
-                    checked={checkedValues.includes(status.value)}
+                    checked={checkedValues?.includes(status.value) ?? false}
                     onChange={e => onCheckboxChange(status.value, e.target.checked)}
                   />
                 ))}
