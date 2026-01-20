@@ -131,16 +131,7 @@ export const Default: Story = {
 export const CustomWidth: Story = {
   render: () => (
     <div>
-      <Table
-        columns={columns}
-        data={sampleData}
-        pagination={{
-          currentPage: 1,
-          pageSize: 10,
-          totalItems: sampleData.length,
-          showPagination: true
-        }}
-      />
+      <Table columns={columns} data={sampleData} />
     </div>
   )
 };
@@ -217,16 +208,7 @@ export const AllCellTypes: Story = {
         <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem", fontWeight: "600" }}>
           All Table Cell Types (Hover to see states)
         </h2>
-        <Table
-          columns={allCellTypesColumns}
-          data={allCellTypesData}
-          pagination={{
-            currentPage: 1,
-            pageSize: 10,
-            totalItems: allCellTypesData.length,
-            showPagination: true
-          }}
-        />
+        <Table columns={allCellTypesColumns} data={allCellTypesData} />
       </div>
     );
   }
@@ -238,17 +220,7 @@ export const WithSelectable: Story = {
     return (
       <div style={{ padding: "2rem" }}>
         <h2 style={{ marginBottom: "1rem", fontSize: "1.5rem", fontWeight: "600" }}>Table with Selectable Rows</h2>
-        <Table
-          columns={columns}
-          data={sampleData}
-          selectable={true}
-          pagination={{
-            currentPage: 1,
-            pageSize: 10,
-            totalItems: sampleData.length,
-            showPagination: true
-          }}
-        />
+        <Table columns={columns} data={sampleData} selectable={true} />
       </div>
     );
   }
@@ -299,18 +271,7 @@ export const ButtonsCell: Story = {
 
     const data = [{ id: 1, buttons: "" }];
 
-    return (
-      <Table
-        columns={columns}
-        data={data}
-        pagination={{
-          currentPage: 1,
-          pageSize: 10,
-          totalItems: data.length,
-          showPagination: true
-        }}
-      />
-    );
+    return <Table columns={columns} data={data} />;
   }
 };
 
