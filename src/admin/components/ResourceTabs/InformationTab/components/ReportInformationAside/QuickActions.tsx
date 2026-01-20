@@ -16,17 +16,18 @@ const ReportQuickActions: FC<QuickActionsProps> = ({ type }) => {
   const navigate = useNavigate();
 
   const taskUuid = record?.taskUuid;
+  const taskId = record?.taskId;
 
   const getReportsPath = (resource: keyof typeof modules) => {
     if (!record?.projectUuid) return;
 
     const displayedFilters: Record<string, boolean> = { projectUuid: true };
-    const filter: Record<string, string> = { projectUuid: record.projectUuid };
+    const filter: Record<string, string | number> = { projectUuid: record.projectUuid };
 
-    // Add taskUuid filter if available (for filtering reports by task)
-    if (taskUuid != null) {
-      displayedFilters.taskUuid = true;
-      filter.taskUuid = taskUuid;
+    // Add taskId filter if available (for filtering reports by task)
+    if (taskId != null) {
+      displayedFilters.taskId = true;
+      filter.taskId = taskId;
     }
 
     const queryParams = new URLSearchParams({
