@@ -216,7 +216,7 @@ export type ImpactStoryIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   category?: string[];
   title?: string;

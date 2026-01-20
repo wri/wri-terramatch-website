@@ -11,7 +11,6 @@ import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
@@ -1228,55 +1227,6 @@ export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | und
     return acc;
   }, {});
 }
-
-export function getPolygonsData(
-  uuid: string,
-  statusFilter: string | undefined,
-  sortOrder: string,
-  type: string,
-  cb: Function
-) {
-  const queryParams: any = {
-    uuid: uuid,
-    type: type,
-    [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-  };
-  if (statusFilter) {
-    queryParams.status = statusFilter;
-  }
-  fetchGetV2TypeEntity({ queryParams }).then(result => {
-    cb(result);
-  });
-}
-
-export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOverview => {
-  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
-
-  const statusCountMap: Record<string, number> = {};
-
-  sitePolygonData.forEach(item => {
-    let statusKey = item.status?.toLowerCase();
-
-    if (statusKey) {
-      if (statusKey === "needs-more-information") {
-        statusKey = "Needs Info";
-      } else {
-        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
-      }
-
-      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
-    }
-  });
-
-  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
-    status,
-    count
-  }));
-
-  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
-
-  return orderedData;
-};
 
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
