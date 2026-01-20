@@ -949,7 +949,7 @@ export const MapContainer = ({
                 <ControlGroup position="top-left">
                   <PolygonHandler />
                 </ControlGroup>
-                <ControlGroup position="top-right" className="top-64">
+                <ControlGroup position="top-right" className="top-[17rem]">
                   <PolygonModifier
                     polygonFromMap={polygonFromMap}
                     onClick={handleEditPolygon}
