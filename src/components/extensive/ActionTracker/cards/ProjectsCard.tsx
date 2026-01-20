@@ -26,6 +26,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
       .filter(action => !!action.target)
       .map(action => {
         const target = action.target as any;
+        const project = action.target?.project ?? action.target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
@@ -33,7 +34,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
 
         let subtitle = "";
         let ctaText = t("View Project Details");
-        let ctaLink = getEntityDetailPageLink("projects", target?.projectUuid ?? target?.uuid);
+        let ctaLink = getEntityDetailPageLink("projects", project?.uuid);
 
         switch (type) {
           case "nurseries": {
@@ -55,13 +56,13 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           case "started": {
             ctaText = t("Continue Project");
             subtitle = "";
-            ctaLink = `/entity/projects/edit/${target?.projectUuid ?? target?.uuid}`;
+            ctaLink = `/entity/projects/edit/${project?.uuid}`;
             break;
           }
           case "awaiting-approval": {
             ctaText = t("View Project");
             subtitle = "";
-            ctaLink = getEntityDetailPageLink("projects", target?.projectUuid ?? target?.uuid);
+            ctaLink = getEntityDetailPageLink("projects", project?.uuid);
             break;
           }
         }
@@ -70,7 +71,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           ...getActionCardStatusMapper(t)[status!],
           ctaLink,
           ctaText,
-          title: target?.name ?? target?.projectName,
+          title: project?.name,
           subtitle,
           onClick: () => {
             canClearActionClientSide && action.uuid && mutate({ pathParams: { uuid: action.uuid } });

@@ -30,6 +30,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
       .filter(action => !!action.target)
       .map(action => {
         const target = action.target as any;
+        const project = action.target?.project ?? action.target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
@@ -55,7 +56,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
+              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task?.uuid}`;
             } else ctaLink = `reports/nursery-report/${target?.uuid}`;
             break;
           }
@@ -64,7 +65,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
+              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task?.uuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
             break;
           }
@@ -74,7 +75,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ...getActionCardStatusMapper(t)[status!],
           ctaLink,
           ctaText,
-          title: target?.name ?? target?.projectName,
+          title: project?.name,
           subtitle: `${subtitle ? `${subtitle}\n` : ""}${target?.dueAt ? dueText : ""}`,
           onClick: () => {
             canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
