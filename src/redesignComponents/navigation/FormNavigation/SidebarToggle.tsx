@@ -10,7 +10,7 @@ interface SidebarToggleProps {
 export const SidebarToggle = ({ isHidden, onToggle }: SidebarToggleProps) => {
   return (
     <CollapsibleRoot onOpenChange={onToggle}>
-      {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
+      {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
       <CollapsibleTrigger asChild>
         <button type="button" className="flex items-center gap-2">
           <div>{isHidden ? <ChevronRight /> : <ChevronDown />}</div>

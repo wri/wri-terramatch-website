@@ -42,7 +42,7 @@ const FormNavigation = (props: FormNavigationProps) => {
           onValueChange={({ value }: { value: string }) => handleTabClick(value)}
           role="tablist"
         >
-          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
+          {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
           <TabsList className="flex flex-col items-center border-none">
             {tabs.map((tab, index) => {
               const { label, value, disabled, "aria-label": ariaLabel, type = "available" } = tab;
@@ -67,7 +67,7 @@ const FormNavigation = (props: FormNavigationProps) => {
 
       {children && (
         <CollapsibleRoot defaultOpen open={!hideSidebar}>
-          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
+          {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
           <CollapsibleContent height="100%">
             <div role="tabpanel" aria-labelledby={selectedTab}>
               {children}

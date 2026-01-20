@@ -26,7 +26,7 @@ export const NavigationTabItem = ({
   isSelected
 }: NavigationTabItemProps) => {
   return (
-    // @ts-expect-error - Chakra UI v3 type definitions missing children support
+    // @ts-ignore - Chakra UI v3 type definitions missing children support
     <TabsTrigger
       value={value}
       disabled={disabled}
