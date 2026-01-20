@@ -4,6 +4,8 @@ import { Avatar as WriAvatar } from "@worldresources/wri-design-systems";
 
 import { UserAdd } from "@/redesignComponents/foundations/Icons/UserAdd";
 
+import { AVATAR_ICON_SIZE_MAP, AVATAR_SIZE_MAP } from "./constants";
+
 export interface AvatarProps {
   name: string;
   ariaLabel?: string;
@@ -33,28 +35,14 @@ const Avatar = (props: AvatarProps) => {
     variant = "default"
   } = props;
 
-  // Size mapping in rem (16px = 1rem)
-  const sizeMap = {
-    small: "1.5625rem", // 25px
-    medium: "2.375rem", // 38px
-    large: "3rem" // 48px
-  };
-
-  // Icon size mapping for "add" variant
-  const iconSizeMap = {
-    small: 4, // chakra boxSize
-    medium: 6,
-    large: 8
-  };
-
   // Use customSize if provided, otherwise use the mapped size
-  const finalSize = customSize || sizeMap[size];
+  const finalSize = customSize || AVATAR_SIZE_MAP[size];
 
   // Render "add" variant with UserAdd icon
   if (variant === "add") {
     return (
       <div
-        className={`avatar-wrapper avatar-${size} avatar-add`}
+        className={`avatar-wrapper avatar-${size} avatar-add pointer-events-auto flex cursor-pointer items-center justify-center rounded-full bg-theme-neutral-200 opacity-100 disabled:cursor-default disabled:opacity-50`}
         onClick={onClick}
         aria-label={ariaLabel}
         role={onClick ? "button" : undefined}
@@ -62,17 +50,10 @@ const Avatar = (props: AvatarProps) => {
         style={{
           width: finalSize,
           height: finalSize,
-          backgroundColor: customBackgroundColor || "#E5E7EB",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          cursor: onClick ? "pointer" : "default",
-          opacity: disabled ? 0.5 : 1,
-          pointerEvents: disabled ? "none" : "auto"
+          backgroundColor: customBackgroundColor || "#E5E7EB"
         }}
       >
-        <UserAdd boxSize={iconSizeMap[size]} color="#6B7280" />
+        <UserAdd boxSize={AVATAR_ICON_SIZE_MAP[size]} className="text-theme-neutral-700" />
       </div>
     );
   }
