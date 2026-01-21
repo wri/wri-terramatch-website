@@ -7,7 +7,6 @@ import {
   EditButton,
   FunctionField,
   List,
-  NumberInput,
   ReferenceInput,
   SearchInput,
   SelectInput,
@@ -195,9 +194,7 @@ export const SiteReportsList: FC = () => {
       source="nothingToReport"
       choices={optionToChoices(getNothingReportOptions())}
       className="select-page-admin"
-    />,
-    // Hidden filter for taskId - used when navigating from Project Report Quick Actions
-    <NumberInput key="taskId" source="taskId" label="Task ID" style={{ display: "none" }} />
+    />
   ];
 
   const { exporting, onClickExportButton, frameworkDialogProps } = useFrameworkExport(
