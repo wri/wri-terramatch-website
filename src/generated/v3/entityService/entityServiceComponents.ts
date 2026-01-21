@@ -216,7 +216,7 @@ export type ImpactStoryIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   category?: string[];
   title?: string;
@@ -1681,6 +1681,10 @@ export type EntityIndexQueryParams = {
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;
+  /**
+   * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
+   */
+  taskId?: number;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -3071,6 +3075,10 @@ export type EntityAssociationIndexQueryParams = {
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;
+  /**
+   * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
+   */
+  taskId?: number;
   modelType?: string;
   /**
    * @default false

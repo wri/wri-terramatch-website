@@ -387,7 +387,7 @@ export const apiSlice = createSlice({
         }
       }
 
-      if (url.endsWith("users/v3/me") && method === "GET") {
+      if (url.endsWith("users/v3/users/me") && method === "GET") {
         state.meta.meUserId = (response.data as JsonApiResource).id;
       }
     },
