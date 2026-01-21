@@ -88,12 +88,17 @@ const RHFMap = ({
         setSelectPolygonFromMap?.({ uuid: "", isOpen: false });
       } else {
         setPolygonDataMap({ [FORM_POLYGONS]: [projectPolygon.polygonUuid] });
-        setPolygonFromMap({ isOpen: true, uuid: projectPolygon.polygonUuid });
+        setPolygonFromMap({
+          isOpen: true,
+          uuid: projectPolygon.polygonUuid,
+          entityName: "project-pitches",
+          projectPitchUuid: projectPolygon.projectPitchUuid ?? entityUUID ?? undefined
+        });
       }
     };
 
     getDataProjectPolygon();
-  }, [projectPolygon, isFetching, setSelectPolygonFromMap]);
+  }, [projectPolygon, isFetching, setSelectPolygonFromMap, entityUUID]);
 
   useEffect(() => {
     const apiPolygonUuid = projectPolygon?.polygonUuid;

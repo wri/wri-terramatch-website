@@ -1340,23 +1340,37 @@ export async function downloadSitePolygonsGeoJson(
   }
 }
 
-export async function fetchPolygonGeometry(polygonUuid: string, geometryOnly: boolean = true): Promise<any> {
-  if (!polygonUuid) {
-    Log.error("fetchPolygonGeometry called with undefined polygonUuid");
+export async function fetchPolygonGeometry(
+  polygonUuid: string,
+  geometryOnly: boolean = true,
+  projectPitchUuid?: string
+): Promise<any | null> {
+  if (polygonUuid == null || polygonUuid === "") {
+    Log.error("fetchPolygonGeometry called with undefined or empty polygonUuid");
     throw new Error("polygonUuid is required");
   }
 
   try {
-    const result = await loadPolygonGeoJson({
-      uuid: polygonUuid,
-      geometryOnly,
-      includeExtendedData: false,
-      enabled: true
-    });
+    let result;
+
+    if (projectPitchUuid != null) {
+      result = await loadProjectPolygonsGeoJson({
+        projectPitchUuid,
+        enabled: true
+      });
+    } else {
+      result = await loadPolygonGeoJson({
+        uuid: polygonUuid,
+        geometryOnly,
+        includeExtendedData: false,
+        enabled: true
+      });
+    }
 
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson || !geojson.features || geojson.features.length === 0) {
-      throw new Error("No geometry found for polygon");
+    if (geojson == null || geojson.features == null || geojson.features.length === 0) {
+      Log.warn("No geometry found in GeoJSON response for polygon:", polygonUuid);
+      return null;
     }
 
     return geojson.features[0].geometry;
@@ -1524,7 +1538,12 @@ export async function storePolygonProject(
     const polygonUuid = response.polygonUuid;
     if (polygonUuid) {
       refetch?.();
-      setPolygonFromMap?.({ uuid: polygonUuid, isOpen: true });
+      setPolygonFromMap?.({
+        uuid: polygonUuid,
+        isOpen: true,
+        entityName: "project-pitches",
+        projectPitchUuid: entityUuid
+      });
     }
   }
 }

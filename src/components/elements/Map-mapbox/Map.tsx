@@ -129,8 +129,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   zoom?: number;
   mapStyle?: MapStyle;
   onStyleChange?: (style: MapStyle) => void;
-  setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
-  polygonFromMap?: { uuid: string; isOpen: boolean };
+  setPolygonFromMap?: React.Dispatch<
+    React.SetStateAction<{ uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string }>
+  >;
+  polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string };
   record?: any;
   showPopups?: boolean;
   showLegend?: boolean;
@@ -658,9 +660,22 @@ export const MapContainer = ({
     removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap?.uuid as string;
-      const geometry = await fetchPolygonGeometry(polygonuuid);
-      if (map.current && draw.current && geometry) {
-        addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
+      const isProjectPolygon =
+        polygonFromMap?.entityName == "project-pitches" || polygonFromMap?.entityName == "project-pitch";
+      const projectPitchUuid = polygonFromMap?.projectPitchUuid;
+
+      try {
+        const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
+        if (geometry == null) {
+          openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
+          return;
+        }
+        if (map.current && draw.current && geometry) {
+          addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
+        }
+      } catch (error) {
+        Log.error("Error fetching polygon geometry:", error);
+        openNotification("error", t("Error"), t("Failed to load polygon geometry. Please try again."));
       }
     }
   };
@@ -676,6 +691,7 @@ export const MapContainer = ({
           if (formMap) {
             try {
               showLoader();
+              const projectPitchUuid = polygonFromMap?.projectPitchUuid;
               await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
 
               if (draw.current) {
@@ -684,7 +700,13 @@ export const MapContainer = ({
 
               await new Promise(resolve => setTimeout(resolve, 100));
 
-              const updatedGeometry = await fetchPolygonGeometry(polygonFromMap.uuid);
+              const isProjectPolygon = polygonFromMap?.entityName == "project-pitches";
+
+              const updatedGeometry = await fetchPolygonGeometry(
+                polygonFromMap.uuid,
+                true,
+                isProjectPolygon ? projectPitchUuid : undefined
+              );
               if (updatedGeometry && map.current) {
                 const newPolygonData = { [FORM_POLYGONS]: [polygonFromMap.uuid] };
                 addSourcesToLayers(map.current, newPolygonData, centroids);
