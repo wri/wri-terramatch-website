@@ -54,6 +54,8 @@ export const deleteProjectPolygon = async (polyUuid: string): Promise<void> => {
   await deleteProjectPolygonBase(polyUuid);
 
   ApiSlice.pruneCache("projectPolygons");
+  ApiSlice.pruneIndex("projectPolygons", "");
+  ApiSlice.pruneCache("geojsonExports");
 };
 
 export const useUploadProjectPolygonFile = parallelRequestHook("projectPolygons", uploadProjectPolygonFile);
@@ -72,6 +74,7 @@ export const createProjectPolygonResource = async (
 
   ApiSlice.pruneCache("projectPolygons");
   ApiSlice.pruneIndex("projectPolygons", "");
+  ApiSlice.pruneCache("geojsonExports");
 
   return response.data?.attributes!;
 };
@@ -89,7 +92,10 @@ export const createProjectPolygonWithReplace = async (
     await deleteProjectPolygonBase(existingPolygon.data.polygonUuid);
   }
 
-  return createProjectPolygonResource(attributes);
+  const result = await createProjectPolygonResource(attributes);
+  ApiSlice.pruneCache("geojsonExports", [projectPitchUuid]);
+
+  return result;
 };
 
 export const prepareProjectPolygonForUpload = (
@@ -119,6 +125,7 @@ export const uploadProjectPolygonFileResource = async (
   await ApiSlice.pruneCache("projectPolygons");
   await ApiSlice.pruneIndex("projectPolygons", "");
   await ApiSlice.pruneCache("boundingBoxes");
+  await ApiSlice.pruneCache("geojsonExports", [projectPitchUuid]);
 
   return response.data?.attributes!;
 };
@@ -140,6 +147,6 @@ export const updateProjectPolygonResource = async (
 
   ApiSlice.pruneCache("projectPolygons");
   ApiSlice.pruneCache("boundingBoxes");
-  ApiSlice.pruneCache("geojsonExports", [polyUuid]);
   ApiSlice.pruneIndex("projectPolygons", "");
+  ApiSlice.pruneCache("geojsonExports");
 };
