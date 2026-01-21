@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import Button from "@/redesignComponents/Forms/Actions/Button/Button";
+import { Edit } from "@/redesignComponents/foundations/Icons";
+
 import Accordion from "./Accordion";
 import AccordionHeader from "./AccordionHeader";
 
@@ -25,80 +28,51 @@ export const Default: Story = {
   }
 };
 
+const actionsSuccess = (
+  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+    Edit
+  </Button>
+);
+
+const actionsError = (
+  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+    Edit
+  </Button>
+);
+
 export const WithHeaderError: Story = {
   args: {
-    header: (
-      <AccordionHeader
-        label="Label"
-        title="Header Title"
-        badge="Label"
-        status="error"
-        buttonProps={{
-          onClick: () => console.log("Edit clicked"),
-          label: "Edit"
-        }}
-      />
-    ),
+    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="error" />,
+    actions: actionsError,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const WithHeaderSuccess: Story = {
   args: {
-    header: (
-      <AccordionHeader
-        label="Label"
-        title="Header Title"
-        badge="Label"
-        status="success"
-        buttonProps={{
-          onClick: () => console.log("Edit clicked"),
-          label: "Edit"
-        }}
-      />
-    ),
+    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="success" />,
+    actions: actionsSuccess,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const WithHeaderNoBadge: Story = {
   args: {
-    header: (
-      <AccordionHeader
-        label="Label"
-        title="Header Title"
-        status="success"
-        buttonProps={{
-          onClick: () => console.log("Edit clicked"),
-          label: "Edit"
-        }}
-      />
-    ),
+    header: <AccordionHeader label="Label" title="Header Title" status="success" />,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const WithHeaderNoButton: Story = {
   args: {
-    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="error" />,
+    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="success" />,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const LongContent: Story = {
   args: {
-    header: (
-      <AccordionHeader
-        label="Label"
-        title="Header Title with Long Content"
-        badge="Label"
-        status="success"
-        buttonProps={{
-          onClick: () => console.log("Edit clicked"),
-          label: "Edit"
-        }}
-      />
-    ),
+    header: <AccordionHeader label="Label" title="Header Title with Long Content" badge="Label" status="success" />,
     children: (
       <div>
         <p>This is a longer content example.</p>

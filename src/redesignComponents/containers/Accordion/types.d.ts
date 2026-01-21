@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 
-import type { IButtonProps } from "@/redesignComponents/Forms/Actions/Button/Button";
-
 export interface ExtendableCardProps {
   children: ReactNode;
   header: ReactNode;
@@ -23,12 +21,9 @@ declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   }
 }
 
-export type StatusType = "success" | "error" | "default";
-
 export interface AccordionHeaderProps {
   label: string;
   title: string;
   badge?: string;
-  status?: StatusType;
-  buttonProps?: IButtonProps;
+  status?: "success" | "error";
 }
