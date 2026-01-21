@@ -260,6 +260,10 @@ export type ProjectReportLightDto = {
    * The associated task uuid
    */
   taskUuid: string | null;
+  /**
+   * The associated task id
+   */
+  taskId: number | null;
   title: string | null;
   /**
    * Update request status for this project report
@@ -1418,6 +1422,10 @@ export type ProjectReportFullDto = {
    * The associated task uuid
    */
   taskUuid: string | null;
+  /**
+   * The associated task id
+   */
+  taskId: number | null;
   title: string | null;
   /**
    * Update request status for this project report
