@@ -1538,8 +1538,6 @@ export async function storePolygonProject(
     const polygonUuid = response.polygonUuid;
     if (polygonUuid) {
       refetch?.();
-      // Store metadata indicating this is a project polygon with its projectPitchUuid
-      // Use "project-pitches" to match the pattern used in downloadGeoJsonPolygon
       setPolygonFromMap?.({
         uuid: polygonUuid,
         isOpen: true,

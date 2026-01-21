@@ -660,8 +660,6 @@ export const MapContainer = ({
     removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap?.uuid as string;
-
-      // Check if this is a project polygon (consistent with downloadGeoJsonPolygon pattern)
       const isProjectPolygon =
         polygonFromMap?.entityName == "project-pitches" || polygonFromMap?.entityName == "project-pitch";
       const projectPitchUuid = polygonFromMap?.projectPitchUuid;
