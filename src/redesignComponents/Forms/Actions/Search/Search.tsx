@@ -1,13 +1,14 @@
+import { Box } from "@chakra-ui/react";
 import { Search as WriSearch } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
-import { StyledSearchWrapper } from "./Search.styled";
+import { searchStyles } from "./Search.styled";
 
 const Search: FC<React.ComponentProps<typeof WriSearch>> = ({ ...props }) => {
   return (
-    <StyledSearchWrapper>
+    <Box css={searchStyles}>
       <WriSearch {...props} />
-    </StyledSearchWrapper>
+    </Box>
   );
 };
 
