@@ -69,6 +69,10 @@ strong {
   font-size: inherit;
 }
 
+.outline-solid {
+  outline-style: solid !important;
+}
+
 @media (max-width: 1200px) {
   html,
   body {
