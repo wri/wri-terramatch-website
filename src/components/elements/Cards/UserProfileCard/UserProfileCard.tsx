@@ -25,6 +25,15 @@ export interface UserProfileCardProps extends DetailedHTMLProps<HTMLAttributes<H
   refetch: () => void;
 }
 
+const STATUS_MAPPING = {
+  Owner: null,
+  Accepted: null,
+  Pending: {
+    status: "awaiting",
+    text: "Invite Sent"
+  }
+} as const;
+
 const UserProfileCard: FC<UserProfileCardProps> = ({
   imageUrl = AvatarPlaceholder,
   status,
@@ -37,15 +46,8 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
   ...rest
 }) => {
   const t = useT();
-  const statusMapping: any = {
-    Accepted: null,
-    Pending: {
-      status: "awaiting",
-      text: t("Invite Sent")
-    }
-  };
 
-  const statusProps = statusMapping[status];
+  const statusProps = STATUS_MAPPING[status as keyof typeof STATUS_MAPPING];
   const { openModal, closeModal } = useModalContext();
   const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
@@ -89,18 +91,20 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
       <div {...rest} className={classNames("rounded-xl border border-neutral-200 pb-4", className)}>
         <div className="relative flex aspect-square w-full items-center justify-center">
           <Image src={imageUrl} alt={username} fill className="object-contain object-top" />
-          <div className="absolute top-3 right-3">
-            <Menu menu={tableMenu} placement={MENU_PLACEMENT_RIGHT_TOP} classNameContentMenu="p-1">
-              <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
-            </Menu>
-          </div>
+          {status !== "Owner" && (
+            <div className="absolute top-3 right-3">
+              <Menu menu={tableMenu} placement={MENU_PLACEMENT_RIGHT_TOP} classNameContentMenu="p-1">
+                <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
+              </Menu>
+            </div>
+          )}
         </div>
 
         <div className="mt-4 space-y-2 px-3">
           {statusProps && (
             <StatusPill status={statusProps.status} className="my-4 mt-4 w-fit">
               <Text variant="text-12-semibold" className="">
-                {statusProps.text}
+                {t(statusProps.text)}
               </Text>
             </StatusPill>
           )}
