@@ -45,6 +45,10 @@ export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Pa
     statusText: t("Awaiting Approval"),
     status: "awaiting"
   },
+  rejected: {
+    status: "error",
+    statusText: t("Not Selected")
+  },
   ...SubmissionStatusMapping(t)
 });
 
