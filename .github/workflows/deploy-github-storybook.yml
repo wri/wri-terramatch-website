@@ -5,25 +5,41 @@ on:
   push:
     branches:
       - 'staging'
+  workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
-
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          node-version: '20.x'
-
-      - uses: bitovi/github-actions-storybook-to-github-pages@v1.0.3
+          fetch-depth: 0
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          install_command: yarn install
-          build_command: yarn build-storybook
-          path: storybook-static
-          checkout: false
+          node-version: '22'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn
+      - name: Build Storybook
+        run: yarn build-storybook
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'storybook-static'
+      - id: deploy
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ github.token }}

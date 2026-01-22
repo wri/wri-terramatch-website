@@ -1,19 +1,16 @@
+import { useT } from "@transifex/react";
 import { isEqual } from "lodash";
 import { useCallback, useEffect, useReducer } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { pruneEntityCache } from "@/connections/Entity";
-import {
-  PatchV2FormsSubmissionsUUIDRequestBody,
-  PutV2FormsENTITYUUIDRequestBody,
-  usePatchV2FormsSubmissionsUUID,
-  usePutV2FormsENTITYUUID
-} from "@/generated/apiComponents";
-import { v3EntityName } from "@/helpers/entity";
-import { EntityName } from "@/types/common";
+import { FormEntity, useEntityFormData } from "@/connections/Form";
+import { useSubmission } from "@/connections/FormSubmission";
+import { ToastType, useToastContext } from "@/context/toast.provider";
+import { StoreFormDataAttributes, UpdateSubmissionAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import Log from "@/utils/log";
 
-type FormBody = PutV2FormsENTITYUUIDRequestBody | PatchV2FormsSubmissionsUUIDRequestBody;
+type FormBody = StoreFormDataAttributes | UpdateSubmissionAttributes;
 
 type FormUpdateState<T extends FormBody> = {
   id: string;
@@ -71,49 +68,63 @@ const useFormReducer = <T extends FormBody>(update: (body: T) => void, isUpdatin
 /**
  * A hook to make calling the form update endpoint cleaner. Two factors are important that this fixes:
  *  1) The WizardForm calls onChange really aggressively, and sometimes with the same data multiple times in a row.
- *  2) When using usePutV2FormsENTITTYUUID directly in the form edit components, it was easily possible to issue
- *     multiple update requests to the BE in parallel, which has some hard to diagnose downstream effects (like
- *     duplicate Workdays getting created on reports) when the BE processes two identical updates at the same
- *     time from different threads. As such, this hook prevents two update requests from happening at the same time.
+ *  2) Blocks attempts to do two updates at the same time.
  */
-export const useFormUpdate = (entityName: EntityName, entityUUID: string) => {
-  const { mutate, error, isSuccess, isLoading: isUpdating } = usePutV2FormsENTITYUUID({});
+export const useFormUpdate = (entity?: FormEntity, uuid?: string) => {
+  const enabled = entity != null && uuid != null;
+  const [, { update, isUpdating, updateFailure }] = useEntityFormData({ entity, uuid, enabled });
+  const t = useT();
 
-  const updateEntity = useFormReducer(
+  const { openToast } = useToastContext();
+  useValueChanged(updateFailure, () => {
+    if (updateFailure != null) {
+      Log.error("Form data save failed", updateFailure);
+      openToast(t("Form data save failed"), ToastType.ERROR);
+    }
+  });
+
+  const updateEntityAnswers = useFormReducer(
     useCallback(
-      (body: PutV2FormsENTITYUUIDRequestBody) => {
-        mutate({
-          pathParams: { uuid: entityUUID, entity: entityName },
-          body
-        });
-        // When an entity is updated via form, we want to forget the cached copy we might have from v3
-        // so it gets re-fetched when a component needs it.
-        // TODO TM-2581 Remove once we get the real update from v3.
-        pruneEntityCache(v3EntityName(entityName), entityUUID);
+      (body: StoreFormDataAttributes) => {
+        if (enabled) {
+          update(body);
+        } else {
+          Log.error("Asked to update form data, but entity or uuid not provided", { entity, uuid });
+        }
       },
-      [entityName, entityUUID, mutate]
+      [enabled, entity, update, uuid]
     ),
     isUpdating
   );
 
-  return { updateEntity, error, isSuccess, isUpdating };
+  return { updateEntityAnswers, entityAnswersUpdating: isUpdating };
 };
 
-export const useSubmissionUpdate = (submissionUUID: string) => {
-  const { mutate, error, isSuccess, isLoading: isUpdating } = usePatchV2FormsSubmissionsUUID({});
+export const useSubmissionUpdate = (submissionUUID?: string) => {
+  const enabled = submissionUUID != null;
+  const [, { data, update, isUpdating, updateFailure }] = useSubmission({ id: submissionUUID, enabled });
+  const t = useT();
+
+  const { openToast } = useToastContext();
+  useValueChanged(updateFailure, () => {
+    if (updateFailure != null) {
+      Log.error("Form submission save failed", updateFailure);
+      openToast(t("Application save failed"), ToastType.ERROR);
+    }
+  });
 
   const updateSubmission = useFormReducer(
     useCallback(
-      (body: PatchV2FormsSubmissionsUUIDRequestBody) => {
-        mutate({
-          pathParams: { uuid: submissionUUID },
-          body
-        });
+      (body: UpdateSubmissionAttributes) => {
+        if (enabled) update(body);
+        else {
+          Log.error("Asked to update submission data uuid not provided");
+        }
       },
-      [mutate, submissionUUID]
+      [enabled, update]
     ),
     isUpdating
   );
 
-  return { updateSubmission, error, isSuccess, isUpdating };
+  return { submission: data, updateSubmission, submissionUpdating: isUpdating, submissionUpdateFailure: updateFailure };
 };

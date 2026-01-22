@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
@@ -12,14 +12,12 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
+import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
-interface ReportingTasksProps {
-  projectReport: any;
-  label?: string;
-  refresh?: () => void;
-  enableChangeStatus?: number;
-}
+type AuditLogProps = {
+  projectReport: ProjectReportFullDto;
+};
 
 const reportTypesMappging: { [key: number]: string } = {
   4: "project-reports",
@@ -27,13 +25,7 @@ const reportTypesMappging: { [key: number]: string } = {
   6: "nursery-reports"
 };
 
-const AuditLog = ({
-  label,
-  projectReport,
-  refresh: refreshProject,
-  enableChangeStatus,
-  ...rest
-}: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ projectReport }) => {
   const ButtonStates = {
     PROJECT_REPORT: 0,
     SITE_REPORT: 1,
@@ -106,7 +98,7 @@ const AuditLog = ({
                   setButtonToggle={setButtonToggle}
                   isReport={true}
                   framework={projectReport?.frameworkKey as string}
-                  existNurseries={projectReport?.nurseryReportsCount > 0}
+                  existNurseries={(projectReport?.nurseryReportsCount ?? 0) > 0}
                 />
                 <When condition={buttonToggle === ButtonStates.PROJECT_REPORT}>
                   <SiteAuditLogProjectStatus viewPD={true} record={projectReport} auditLogData={auditLogData} />

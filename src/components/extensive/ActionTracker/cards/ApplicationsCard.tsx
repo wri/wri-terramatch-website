@@ -1,46 +1,48 @@
 import { useT } from "@transifex/react";
+import { last } from "lodash";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { ApplicationLiteRead } from "@/generated/apiSchemas";
+import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useDate } from "@/hooks/useDate";
+import { isNotNull } from "@/utils/array";
 
 import { IconNames } from "../../Icon/Icon";
 import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 
 export type ApplicationsCardProps = {
-  applications?: ApplicationLiteRead[];
+  applications: ApplicationDto[];
 };
 
 const ApplicationsCard = (props: ApplicationsCardProps) => {
   const t = useT();
   const { format } = useDate();
 
-  const applications = useMemo(() => {
-    if (!props.applications) return [];
+  const applications = useMemo(
+    () =>
+      props.applications
+        .map(application => {
+          const currentSubmission = last(application.submissions);
+          if (currentSubmission?.status == null) return undefined;
 
-    return props.applications
-      .filter(application => !!application.current_submission?.status)
-      .map(application => {
-        const applicationStatus = application.current_submission?.status;
-
-        return {
-          ...getActionCardStatusMapper(t)[applicationStatus!],
-          ctaLink: `applications/${application.uuid}`,
-          ctaText: t("View Application"),
-          title: application.funding_programme_name ?? t("N/A"),
-          subtitle: t(`<strong>Stage</strong>: {name}`, {
-            name: application.current_submission?.stage?.name || t("N/A")
-          }),
-          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
-            date: format(application.current_submission?.updated_at)
-          }),
-          updatedBy: t(`<strong>Updated By</strong>: {name}`, { name: application.current_submission?.updated_by_name })
-        } as ActionTrackerCardRowProps;
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.applications]);
+          return {
+            ...getActionCardStatusMapper(t)[currentSubmission.status],
+            ctaLink: `applications/${application.uuid}`,
+            ctaText: t("View Application"),
+            title: application.fundingProgrammeName ?? t("N/A"),
+            subtitle: t(`<strong>Stage</strong>: {name}`, {
+              name: currentSubmission.stageName ?? t("N/A")
+            }),
+            updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+              date: format(currentSubmission.updatedAt)
+            }),
+            updatedBy: t(`<strong>Updated By</strong>: {name}`, { name: currentSubmission.updatedByName })
+          } as ActionTrackerCardRowProps;
+        })
+        .filter(isNotNull),
+    [format, props.applications, t]
+  );
 
   return (
     <ActionTrackerCard

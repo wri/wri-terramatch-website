@@ -59,14 +59,14 @@ export type DocumentationData = {
   year: number;
   documentation: UploadedFile[];
   description: string;
-  exchange_rate: number | null;
+  exchangeRate: number | null;
   [key: string]: string | number | null | UploadedFile[];
 };
 
 export const PROFIT_ANALYSIS_COLUMNS = ["year", "revenue", "expenses", "profit"];
 export const NON_PROFILE_ANALYSIS_COLUMNS = ["year", "budget"];
 export const CURRENT_RATIO_COLUMNS = ["year", "currentAssets", "currentLiabilities", "currentRatio"];
-export const DOCUMENTATION_COLUMNS = ["year", "description", "exchange_rate", "documentation"];
+export const DOCUMENTATION_COLUMNS = ["year", "description", "exchangeRate", "documentation"];
 
 export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }: UseDebouncedChangeProps<T>) {
   const debouncedFn = useMemo(() => debounce(onDebouncedChange, delay), [onDebouncedChange, delay]);
@@ -164,7 +164,7 @@ export function formatFinancialData(rawData: any, years: number[] | undefined, c
         year,
         documentation: row.documentation,
         description: row.description ?? "",
-        exchange_rate: row.exchange_rate
+        exchangeRate: row.exchangeRate
       };
     })
   };

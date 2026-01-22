@@ -185,12 +185,15 @@ export const useDashboardData = (filters: any) => {
     const data: { [status: string]: string[] } = {};
 
     dashboardSitePolygonsData.forEach(polygon => {
-      if (polygon.lat != null && polygon.long != null && polygon.polygonUuid != null && polygon.status != null) {
+      const hasValidCentroid =
+        polygon.lat != null && polygon.long != null && polygon.polygonUuid != null && polygon.status != null;
+
+      if (hasValidCentroid) {
         centroids.push({
-          lat: polygon.lat,
-          long: polygon.long,
-          uuid: polygon.polygonUuid,
-          status: polygon.status
+          lat: polygon.lat!,
+          long: polygon.long!,
+          uuid: polygon.polygonUuid!,
+          status: polygon.status!
         });
       }
 

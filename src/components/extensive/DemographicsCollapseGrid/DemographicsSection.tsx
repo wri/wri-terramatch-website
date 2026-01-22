@@ -9,7 +9,13 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { DemographicGridVariantProps, DemographicType, useDemographicLabels, useEntryTypeDefinition } from "./types";
+import {
+  DemographicGridVariantProps,
+  DemographicType,
+  Status,
+  useDemographicLabels,
+  useEntryTypeDefinition
+} from "./types";
 
 export interface DemographicsSectionProps {
   demographicType: DemographicType;
@@ -17,6 +23,7 @@ export interface DemographicsSectionProps {
   entries: DemographicEntryDto[];
   variant: DemographicGridVariantProps;
   onChange?: (demographics: DemographicEntryDto[]) => void;
+  status?: Status;
 }
 
 const DemographicsSection = ({ demographicType, entryType, entries, variant, onChange }: DemographicsSectionProps) => {
@@ -127,6 +134,7 @@ const DemographicsSection = ({ demographicType, entryType, entries, variant, onC
           {...{ demographicType, entryType, label, userLabel, amount, variant }}
         />
       ))}
+
       <When condition={addNameLabel != null && onChange != null}>
         <div className={classNames("flex items-center bg-white", variant.secondCol)}>
           <div className="relative">

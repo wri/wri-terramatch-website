@@ -7,11 +7,10 @@ import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
-import { createProjectPolygonWithReplace } from "@/connections/ProjectPolygons";
+import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
 import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
@@ -156,7 +155,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle mobile/dashboard popups
   if (setMobilePopupData && isDashboard) {
     const popupData = {
       feature,
@@ -174,7 +172,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Handle regular popups for non-dashboard/non-mobile views
   removePopups("POLYGON");
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
   const popupOptions: mapboxgl.PopupOptions = {
@@ -416,56 +413,148 @@ export const addPolygonCentroidsLayer = (
   zoomFilterValue?: number
 ) => {
   const layerName = LAYERS_NAMES.POLYGON_CENTROIDS;
-  if (!map || !map.isStyleLoaded()) {
+
+  if (!map) {
     return;
   }
 
-  try {
-    if (map.getLayer(`${layerName}`)) {
-      map.removeLayer(`${layerName}`);
-    }
-    if (map.getSource(layerName)) {
-      map.removeSource(layerName);
-    }
-  } catch (error) {
-    Log.warn("Error removing polygon centroids layer:", error);
+  if (!centroids || centroids.length === 0) {
+    return;
   }
 
-  if (map.hasImage("pulsing-dot-centroids")) {
-    map.removeImage("pulsing-dot-centroids");
+  const validCentroids = centroids.filter(c => {
+    return (
+      c != null &&
+      typeof c.lat === "number" &&
+      !isNaN(c.lat) &&
+      typeof c.long === "number" &&
+      !isNaN(c.long) &&
+      typeof c.uuid === "string" &&
+      c.uuid.length > 0
+    );
+  });
+
+  if (validCentroids.length === 0) {
+    return;
   }
 
-  const features: GeoJSON.Feature[] = centroids.map(centroid => ({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [centroid.long, centroid.lat]
-    },
-    properties: {
-      uuid: centroid.uuid
-    }
-  }));
-  const pulsingDot = getPulsingDot(map, 120, "#72D961");
-  map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+  let rafId: number | null = null;
+  let isActive = true;
+  let styleLoadHandler: (() => void) | null = null;
 
-  map.addSource(layerName, {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: features
-    }
-  });
+  const addLayerToMap = (): boolean => {
+    if (!isActive || !map) return false;
 
-  map.addLayer({
-    id: layerName,
-    type: "symbol",
-    source: layerName,
-    layout: {
-      "icon-image": "pulsing-dot-centroids"
-    },
-    paint: {},
-    filter: zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
-  });
+    if (!map.isStyleLoaded()) {
+      return false;
+    }
+
+    try {
+      if (map.getLayer(`${layerName}`)) {
+        map.removeLayer(`${layerName}`);
+      }
+      if (map.getSource(layerName)) {
+        map.removeSource(layerName);
+      }
+
+      if (map.hasImage("pulsing-dot-centroids")) {
+        map.removeImage("pulsing-dot-centroids");
+      }
+
+      const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [centroid.long, centroid.lat]
+        },
+        properties: {
+          uuid: centroid.uuid
+        }
+      }));
+
+      const pulsingDot = getPulsingDot(map, 120, "#72D961");
+      map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+
+      map.addSource(layerName, {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: features
+        }
+      });
+
+      const filter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+      map.addLayer({
+        id: layerName,
+        type: "symbol",
+        source: layerName,
+        layout: {
+          "icon-image": "pulsing-dot-centroids"
+        },
+        paint: {},
+        filter: filter
+      });
+
+      return true;
+    } catch (error) {
+      Log.error("Error adding polygon centroids layer:", error);
+      return false;
+    }
+  };
+
+  const pollForStyleLoad = (attemptsLeft = 180) => {
+    if (!isActive) return;
+    if (!map) return;
+
+    const layerAdded = addLayerToMap();
+
+    if (layerAdded) {
+      if (rafId != null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      if (styleLoadHandler && map) {
+        map.off("style.load", styleLoadHandler);
+        styleLoadHandler = null;
+      }
+      return;
+    }
+
+    if (attemptsLeft > 0) {
+      rafId = requestAnimationFrame(() => pollForStyleLoad(attemptsLeft - 1));
+    } else {
+      Log.error("Failed to add polygon centroids layer after 180 requestAnimationFrame attempts");
+      if (styleLoadHandler && map) {
+        map.off("style.load", styleLoadHandler);
+        styleLoadHandler = null;
+      }
+    }
+  };
+
+  const layerAdded = addLayerToMap();
+  if (layerAdded) {
+    return;
+  }
+
+  pollForStyleLoad();
+
+  styleLoadHandler = () => {
+    if (isActive && map) {
+      const added = addLayerToMap();
+      if (added) {
+        if (rafId != null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+        if (styleLoadHandler && map) {
+          map.off("style.load", styleLoadHandler);
+          styleLoadHandler = null;
+        }
+      }
+    }
+  };
+
+  map.on("style.load", styleLoadHandler);
 };
 export const addPopupsToMap = (
   map: mapboxgl.Map,
@@ -638,7 +727,6 @@ export const addGeojsonSourceToLayer = (
       }
     }));
 
-    // Add new source
     map.addSource(name, {
       type: "geojson",
       data: {
@@ -647,7 +735,6 @@ export const addGeojsonSourceToLayer = (
       }
     });
 
-    // Add layers with styles
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerGeojsonStyle(map, name, name, style, index);
     });
@@ -680,10 +767,6 @@ export const addSourceToLayer = (
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }
-      // commented for future possible use
-      // if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-      //   addHoverEvent(layer, map);
-      // }
     }
   } catch (e) {
     console.warn(e);
@@ -909,11 +992,22 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
 
   try {
     const layers = map.getStyle().layers ?? [];
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
     const layersToHide = layers.filter(
       layer =>
-        layer.type === "background" ||
-        layer.type === "fill" ||
-        (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)
+        (layer.type === "background" ||
+          (layer.type === "fill" && !isPolygonLayer(layer.id)) ||
+          (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)) &&
+        !isPolygonLayer(layer.id)
     );
 
     let hiddenCount = 0;
@@ -925,7 +1019,7 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
           hiddenCount++;
         }
       } catch (e) {
-        // Ignore
+        Log.warn("Error setting layer visibility:", e);
       }
     });
 
@@ -980,9 +1074,20 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
     }
 
     const layers = map.getStyle()?.layers ?? [];
-    const layersToRestore = layers.filter(
-      layer => layer.type === "background" || layer.type === "fill" || layer.type === "raster"
-    );
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
+    const layersToRestore = layers.filter(layer => {
+      const isBaseMapLayer = layer.type === "background" || layer.type === "fill" || layer.type === "raster";
+      return isBaseMapLayer && !isPolygonLayer(layer.id);
+    });
 
     let restoredCount = 0;
     layersToRestore.forEach(layer => {
@@ -1092,7 +1197,6 @@ export const formatCommentaryDate = (date: Date | null | undefined): string => {
     : "Unknown";
 };
 
-// New utility functions for SitePolygonLightDto
 export function parsePolygonDataV3(sitePolygonData: SitePolygonLightDto[] | undefined) {
   return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygonLightDto) => {
     if (data.status != null && data.polygonUuid != null) {
@@ -1145,55 +1249,6 @@ export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | und
     return acc;
   }, {});
 }
-
-export function getPolygonsData(
-  uuid: string,
-  statusFilter: string | undefined,
-  sortOrder: string,
-  type: string,
-  cb: Function
-) {
-  const queryParams: any = {
-    uuid: uuid,
-    type: type,
-    [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-  };
-  if (statusFilter) {
-    queryParams.status = statusFilter;
-  }
-  fetchGetV2TypeEntity({ queryParams }).then(result => {
-    cb(result);
-  });
-}
-
-export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOverview => {
-  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
-
-  const statusCountMap: Record<string, number> = {};
-
-  sitePolygonData.forEach(item => {
-    let statusKey = item.status?.toLowerCase();
-
-    if (statusKey) {
-      if (statusKey === "needs-more-information") {
-        statusKey = "Needs Info";
-      } else {
-        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
-      }
-
-      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
-    }
-  });
-
-  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
-    status,
-    count
-  }));
-
-  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
-
-  return orderedData;
-};
 
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
@@ -1285,23 +1340,37 @@ export async function downloadSitePolygonsGeoJson(
   }
 }
 
-export async function fetchPolygonGeometry(polygonUuid: string, geometryOnly: boolean = true): Promise<any> {
-  if (!polygonUuid) {
-    Log.error("fetchPolygonGeometry called with undefined polygonUuid");
+export async function fetchPolygonGeometry(
+  polygonUuid: string,
+  geometryOnly: boolean = true,
+  projectPitchUuid?: string
+): Promise<any | null> {
+  if (polygonUuid == null || polygonUuid === "") {
+    Log.error("fetchPolygonGeometry called with undefined or empty polygonUuid");
     throw new Error("polygonUuid is required");
   }
 
   try {
-    const result = await loadPolygonGeoJson({
-      uuid: polygonUuid,
-      geometryOnly,
-      includeExtendedData: false,
-      enabled: true
-    });
+    let result;
+
+    if (projectPitchUuid != null) {
+      result = await loadProjectPolygonsGeoJson({
+        projectPitchUuid,
+        enabled: true
+      });
+    } else {
+      result = await loadPolygonGeoJson({
+        uuid: polygonUuid,
+        geometryOnly,
+        includeExtendedData: false,
+        enabled: true
+      });
+    }
 
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson || !geojson.features || geojson.features.length === 0) {
-      throw new Error("No geometry found for polygon");
+    if (geojson == null || geojson.features == null || geojson.features.length === 0) {
+      Log.warn("No geometry found in GeoJSON response for polygon:", polygonUuid);
+      return null;
     }
 
     return geojson.features[0].geometry;
@@ -1469,7 +1538,34 @@ export async function storePolygonProject(
     const polygonUuid = response.polygonUuid;
     if (polygonUuid) {
       refetch?.();
-      setPolygonFromMap?.({ uuid: polygonUuid, isOpen: true });
+      setPolygonFromMap?.({
+        uuid: polygonUuid,
+        isOpen: true,
+        entityName: "project-pitches",
+        projectPitchUuid: entityUuid
+      });
+    }
+  }
+}
+
+export async function updatePolygonProjectGeometry(geojson: any, polygonUuid: string, refetch: any) {
+  if (geojson?.length && polygonUuid) {
+    const geometries = [
+      {
+        type: "FeatureCollection",
+        features: geojson.map((feature: any) => ({
+          type: "Feature",
+          geometry: feature.geometry,
+          properties: {}
+        }))
+      }
+    ];
+
+    await updateProjectPolygonResource(polygonUuid, { geometries });
+
+    const refetchResult = refetch?.();
+    if (refetchResult && typeof refetchResult.then === "function") {
+      await refetchResult;
     }
   }
 }

@@ -7,15 +7,16 @@ import ControlDivider from "@/components/elements/Map-mapbox/components/ControlD
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { deleteProjectPolygon } from "@/connections/ProjectPolygons";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchDeleteV2TerrafundProjectPolygonUuid } from "@/generated/apiComponents";
 
 import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
 interface PolygonModifierProps {
-  polygonFromMap: { uuid: string; isOpen: boolean } | undefined;
+  polygonFromMap: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string } | undefined;
   onClick?: () => void;
   onSave?: () => void;
   onCancel?: () => void;
@@ -24,20 +25,33 @@ interface PolygonModifierProps {
 const PolygonModifier = ({ polygonFromMap, onClick, onSave, onCancel }: PolygonModifierProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { openModal, closeModal } = useModalContext();
+  const { openNotification } = useNotificationContext();
   const contextSite = useSitePolygonData();
   const reloadSiteData = contextSite?.reloadSiteData;
   const t = useT();
 
-  const handleSave = () => {
-    onSave?.();
-    setIsEditing(false);
-    reloadSiteData?.();
+  const handleSave = async () => {
+    try {
+      onSave?.();
+      setIsEditing(false);
+      reloadSiteData?.();
+      openNotification("success", t("Polygon updated successfully"), t("The polygon has been updated."));
+    } catch (error) {
+      console.error("Error saving polygon:", error);
+      openNotification("error", t("Error updating polygon"), t("There was an error updating the polygon."));
+    }
   };
 
   const handleDelete = async () => {
-    if (polygonFromMap?.uuid) {
-      await fetchDeleteV2TerrafundProjectPolygonUuid({ pathParams: { uuid: polygonFromMap.uuid } });
-      reloadSiteData?.();
+    try {
+      if (polygonFromMap?.uuid) {
+        await deleteProjectPolygon(polygonFromMap.uuid);
+        reloadSiteData?.();
+        openNotification("success", t("Polygon deleted"), t("The polygon has been deleted successfully."));
+      }
+    } catch (error) {
+      console.error("Error deleting polygon:", error);
+      openNotification("error", t("Error deleting polygon"), t("There was an error deleting the polygon."));
     }
   };
 

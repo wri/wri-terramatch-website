@@ -53,6 +53,351 @@ export const authLogin = new V3ApiEndpoint<AuthLoginResponse, AuthLoginError, Au
   "POST"
 );
 
+export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type RequestPasswordResetResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type RequestPasswordResetVariables = {
+  body: Schemas.ResetPasswordRequest;
+};
+
+/**
+ * Send password reset email with a token
+ */
+export const requestPasswordReset = new V3ApiEndpoint<
+  RequestPasswordResetResponse,
+  RequestPasswordResetError,
+  RequestPasswordResetVariables,
+  {}
+>("/auth/v3/passwordResets", "POST");
+
+export type ResetPasswordPathParams = {
+  token: string;
+};
+
+export type ResetPasswordError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResetPasswordResponse = {
+  meta?: {
+    /**
+     * @example passwordResets
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example passwordResets
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResetPasswordResponseDto;
+  };
+};
+
+export type ResetPasswordVariables = {
+  body?: Schemas.ResetPasswordDto;
+  pathParams: ResetPasswordPathParams;
+};
+
+/**
+ * Reset password using the provided token
+ */
+export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPasswordError, ResetPasswordVariables, {}>(
+  "/auth/v3/passwordResets/{token}",
+  "PUT"
+);
+
+export type VerifyUserError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type VerifyUserResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.VerificationUserResponseDto;
+  };
+};
+
+export type VerifyUserVariables = {
+  body: Schemas.VerificationUserRequest;
+};
+
+/**
+ * Receive a token to verify a user and return the verification status
+ */
+export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError, VerifyUserVariables, {}>(
+  "/auth/v3/verifications",
+  "POST"
+);
+
+export type OrganisationIndexQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  fundingProgrammeUuid?: string;
+};
+
+export type OrganisationIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationIndexResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  }[];
+};
+
+export type OrganisationIndexVariables = {
+  queryParams?: OrganisationIndexQueryParams;
+};
+
+export const organisationIndex = new V3ApiEndpoint<
+  OrganisationIndexResponse,
+  OrganisationIndexError,
+  OrganisationIndexVariables,
+  {}
+>("/organisations/v3/organisations", "GET");
+
+export type OrganisationCreationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationCreationResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationDto;
+  };
+  included?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  }[];
+};
+
+export type OrganisationCreationVariables = {
+  body: Schemas.OrganisationCreateBody;
+};
+
+/**
+ * Create a new organisation, and the first user for it.
+ */
+export const organisationCreation = new V3ApiEndpoint<
+  OrganisationCreationResponse,
+  OrganisationCreationError,
+  OrganisationCreationVariables,
+  {}
+>("/organisations/v3/organisations", "POST");
+
 export type UsersFindPathParams = {
   /**
    * A valid user UUID or "me"
@@ -329,244 +674,10 @@ export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreation
   "POST"
 );
 
-export type RequestPasswordResetError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
-
-export type RequestPasswordResetResponse = {
-  meta?: {
-    /**
-     * @example passwordResets
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example passwordResets
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ResetPasswordResponseDto;
-  };
-};
-
-export type RequestPasswordResetVariables = {
-  body: Schemas.ResetPasswordRequest;
-};
-
-/**
- * Send password reset email with a token
- */
-export const requestPasswordReset = new V3ApiEndpoint<
-  RequestPasswordResetResponse,
-  RequestPasswordResetError,
-  RequestPasswordResetVariables,
-  {}
->("/auth/v3/passwordResets", "POST");
-
-export type ResetPasswordPathParams = {
-  token: string;
-};
-
-export type ResetPasswordError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
-
-export type ResetPasswordResponse = {
-  meta?: {
-    /**
-     * @example passwordResets
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example passwordResets
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.ResetPasswordResponseDto;
-  };
-};
-
-export type ResetPasswordVariables = {
-  body?: Schemas.ResetPasswordDto;
-  pathParams: ResetPasswordPathParams;
-};
-
-/**
- * Reset password using the provided token
- */
-export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPasswordError, ResetPasswordVariables, {}>(
-  "/auth/v3/passwordResets/{token}",
-  "PUT"
-);
-
-export type VerifyUserError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
-
-export type VerifyUserResponse = {
-  meta?: {
-    /**
-     * @example verifications
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example verifications
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.VerificationUserResponseDto;
-  };
-};
-
-export type VerifyUserVariables = {
-  body: Schemas.VerificationUserRequest;
-};
-
-/**
- * Receive a token to verify a user and return the verification status
- */
-export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError, VerifyUserVariables, {}>(
-  "/auth/v3/verifications",
-  "POST"
-);
-
-export type OrganisationCreationError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
->;
-
-export type OrganisationCreationResponse = {
-  meta?: {
-    /**
-     * @example organisations
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  };
-  included?: {
-    /**
-     * @example users
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserDto;
-    relationships?: {
-      org?: {
-        /**
-         * @example organisations
-         */
-        type?: string;
-        /**
-         * @format uuid
-         */
-        id?: string;
-        meta?: {
-          userStatus?: "approved" | "requested" | "rejected" | "na";
-        };
-      };
-    };
-  }[];
-};
-
-export type OrganisationCreationVariables = {
-  body: Schemas.OrganisationCreateBody;
-};
-
-/**
- * Create a new organisation, and the first user for it.
- */
-export const organisationCreation = new V3ApiEndpoint<
-  OrganisationCreationResponse,
-  OrganisationCreationError,
-  OrganisationCreationVariables,
-  {}
->("/organisations/v3/organisations", "POST");
-
 export const operationsByTag = {
   login: { authLogin },
-  users: { usersFind, userUpdate, userCreation },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: { organisationCreation }
+  organisations: { organisationIndex, organisationCreation },
+  users: { usersFind, userUpdate, userCreation }
 };

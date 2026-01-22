@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
+const { themeColors } = require("./tailwind.theme");
+
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -67,6 +69,7 @@ module.exports = {
       black: "#000000",
       white: "#FFFFFF",
       background: "#F5F7FA",
+      theme: themeColors,
       primary: {
         DEFAULT: "#27A9E0",
         500: "#27A9E0",
@@ -325,6 +328,14 @@ module.exports = {
     },
     {
       pattern: /text-(xs|sm|base|md|lg)/
+    },
+    // Chakra UI Design System theme colors
+    {
+      pattern:
+        /(bg|text|border)-theme-(neutral|primary|secondary|success|warning|error)-(100|200|300|400|500|600|700|800|900)/
+    },
+    {
+      pattern: /text-theme-accessible-.+/
     }
   ]
 };

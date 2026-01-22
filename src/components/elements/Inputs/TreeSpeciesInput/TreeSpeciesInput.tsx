@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, remove } from "lodash";
 import { FC, Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
-import { FieldError, FieldErrors } from "react-hook-form";
+import { FieldError } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 import NonScientificConfirmationModal from "@/components/elements/Inputs/TreeSpeciesInput/NonScientificConfirmationModal";
@@ -12,7 +12,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EstablishmentEntity, useEstablishmentTrees } from "@/connections/EstablishmentTrees";
-import { FormModelType } from "@/connections/util/Form";
+import { FormModelType } from "@/connections/Form";
 import { useModalContext } from "@/context/modal.provider";
 import { useFormModelUuid } from "@/context/wizardForm.provider";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -42,14 +42,14 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   model: FormModelType;
 
   onError?: () => void;
-  error?: FieldErrors[];
+  error?: FieldError;
 }
 
 export type TreeSpeciesValue = {
   uuid?: string;
   name?: string;
   collection?: string;
-  taxon_id?: string;
+  taxonId?: string;
   amount?: number;
 };
 
@@ -117,7 +117,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
       const values = (establishmentTrees ?? []).map(({ name, taxonId }) => ({
         uuid: uuidv4(),
         name,
-        taxon_id: taxonId,
+        taxonId,
         amount: 0,
         collection: props.collection
       }));
@@ -126,7 +126,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
           values.push({
             uuid: uuidv4(),
             name,
-            taxon_id: taxonId,
+            taxonId,
             amount: 0,
             collection: props.collection
           });
@@ -178,7 +178,6 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
 
   const addValue = (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (props.error) return;
 
     const taxonId = findTaxonId(valueAutoComplete);
 
@@ -186,7 +185,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
       handleCreate?.({
         uuid: uuidv4(),
         name: valueAutoComplete,
-        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined,
+        taxonId: props.useTaxonomicBackbone ? taxonId : undefined,
         amount: props.withNumbers ? 0 : undefined,
         collection
       });
@@ -216,7 +215,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
       handleUpdate({
         ...editValue,
         name: valueAutoComplete,
-        taxon_id: props.useTaxonomicBackbone ? taxonId : undefined
+        taxonId: props.useTaxonomicBackbone ? taxonId : undefined
       });
 
       setValueAutoComplete("");
@@ -410,7 +409,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
                 }
               >
                 <div className="flex items-center gap-1">
-                  {props.useTaxonomicBackbone && value.taxon_id == null && (
+                  {props.useTaxonomicBackbone && value.taxonId == null && (
                     <div title={t("Non-Scientific Name")}>
                       <Icon name={IconNames.NON_SCIENTIFIC_NAME} className="min-h-8 min-w-8 h-8 w-8" />
                     </div>
@@ -446,7 +445,6 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
                     variant="treePlanted"
                     defaultValue={value.amount}
                     placeholder={"0"}
-                    error={props.error?.[index]?.amount ? ({} as FieldError) : undefined}
                     onChange={e => handleUpdate({ ...value, amount: +e.target.value })}
                     onKeyDownCapture={onKeyDownCapture}
                     containerClassName=""
@@ -485,7 +483,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
           )}
         />
         {props.error != null && (
-          <ErrorMessage error={{ message: t("One or more values are missing"), type: "required" }} className="mt-5" />
+          <ErrorMessage error={{ message: props.error.message, type: "required" }} className="mt-5" />
         )}
       </div>
     </InputWrapper>

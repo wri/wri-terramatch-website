@@ -265,6 +265,16 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -315,6 +325,16 @@ export const sitePolygonsIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -646,6 +666,16 @@ export type UpdateSitePolygonStatusResponse = {
        */
       total?: number;
     }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
   };
   data?: {
     /**
@@ -666,7 +696,7 @@ export type UpdateSitePolygonStatusVariables = {
 };
 
 /**
- * Update the status of a site polygon
+ * Update the status of the list of site polygons
  */
 export const updateSitePolygonStatus = new V3ApiEndpoint<
   UpdateSitePolygonStatusResponse,
@@ -733,6 +763,16 @@ export type ListSitePolygonVersionsResponse = {
        * @example 42
        */
       total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
     }[];
   };
   data?: {
@@ -2361,8 +2401,93 @@ export const uploadProjectPolygonFile = new V3ApiEndpoint<
   {}
 >("/research/v3/projectPolygons/upload", "POST");
 
+export type UpdateProjectPolygonPathParams = {
+  polyUuid: string;
+};
+
+export type UpdateProjectPolygonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateProjectPolygonResponse = {
+  meta?: {
+    /**
+     * @example projectPolygons
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example projectPolygons
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ProjectPolygonDto;
+  };
+};
+
+export type UpdateProjectPolygonVariables = {
+  body: Schemas.UpdateProjectPolygonRequestDto;
+  pathParams: UpdateProjectPolygonPathParams;
+};
+
+/**
+ * Update the geometry of an existing project polygon using the polygon geometry UUID (polyUuid).
+ *
+ *     The polygon geometry will be updated in place with the new geometry provided in the request.
+ *     The polyUuid remains the same - only the geometry data is updated.
+ *     The project pitch association remains unchanged.
+ */
+export const updateProjectPolygon = new V3ApiEndpoint<
+  UpdateProjectPolygonResponse,
+  UpdateProjectPolygonError,
+  UpdateProjectPolygonVariables,
+  {}
+>("/research/v3/projectPolygons/{polyUuid}", "PATCH");
+
 export type DeleteProjectPolygonPathParams = {
-  uuid: string;
+  polyUuid: string;
 };
 
 export type DeleteProjectPolygonError = Fetcher.ErrorWrapper<
@@ -2412,14 +2537,14 @@ export type DeleteProjectPolygonVariables = {
 };
 
 /**
- * Soft deletes a project polygon and its associated polygon geometry record.
+ * Soft deletes a project polygon and its associated polygon geometry record using the polygon geometry UUID (polyUuid).
  */
 export const deleteProjectPolygon = new V3ApiEndpoint<
   DeleteProjectPolygonResponse,
   DeleteProjectPolygonError,
   DeleteProjectPolygonVariables,
   {}
->("/research/v3/projectPolygons/{uuid}", "DELETE");
+>("/research/v3/projectPolygons/{polyUuid}", "DELETE");
 
 export const operationsByTag = {
   sitePolygons: {
@@ -2453,6 +2578,7 @@ export const operationsByTag = {
     getProjectPolygon,
     createProjectPolygon,
     uploadProjectPolygonFile,
+    updateProjectPolygon,
     deleteProjectPolygon
   }
 };

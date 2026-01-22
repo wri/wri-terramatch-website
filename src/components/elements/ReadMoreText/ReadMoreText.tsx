@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useEffect, useRef, useState } from "react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Text, { TextProps } from "@/components/elements/Text/Text";
@@ -42,11 +41,11 @@ const ReadMoreText: FC<IProps> = ({ defaultVisibleLinesNumber = 1, className, ..
       >
         <Text className="whitespace-pre-line" {...rest} />
       </div>
-      <When condition={isClamped}>
+      {isClamped ? (
         <Button variant="text" onClick={() => setExpanded(prev => !prev)} className="text-primary-500 underline">
           {t(isExpanded ? "Read Less" : "Read More")}
         </Button>
-      </When>
+      ) : null}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
 import classNames from "classnames";
+import { camelCase } from "lodash";
 import { FC } from "react";
 import { LabeledClasses } from "react-admin";
 
@@ -17,7 +18,7 @@ type InformationTabRowProps = Omit<FormSummaryRowProps, "index" | "type">;
 
 const InformationTabRow: FC<InformationTabRowProps> = props => {
   const entity = useFormEntities()[0];
-  const entityName = (entity?.entityName as SupportedEntity) ?? "projects";
+  const entityName = camelCase(entity?.entityName ?? "projects") as SupportedEntity;
   const entityUuid = entity?.entityUUID ?? "";
   const entries = useGetFormEntries({ ...props, entity });
   // usePlantTotalCount already combines plants and reportCounts, filtering duplicates for nurseries
