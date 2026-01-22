@@ -85,7 +85,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
     <ActionTrackerCard
       data={projectActions}
       title={t("Projects")}
-      subtitle={projectActions.length && t("You have {n} outstanding tasks", { n: projectActions.length })}
+      subtitle={projectActions.length && t("You have {n} updates", { n: projectActions.length })}
       icon={IconNames.LAPTOP_CIRCLE}
       limit={10}
       emptyState={{
