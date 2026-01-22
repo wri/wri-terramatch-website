@@ -2,7 +2,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, remove } from "lodash";
 import { FC, Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
-import { FieldError, FieldErrors } from "react-hook-form";
+import { FieldError } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
 import NonScientificConfirmationModal from "@/components/elements/Inputs/TreeSpeciesInput/NonScientificConfirmationModal";
@@ -42,7 +42,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   model: FormModelType;
 
   onError?: () => void;
-  error?: FieldErrors[];
+  error?: FieldError;
 }
 
 export type TreeSpeciesValue = {
@@ -178,7 +178,6 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
 
   const addValue = (e: React.MouseEvent<HTMLElement> | KeyboardEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (props.error) return;
 
     const taxonId = findTaxonId(valueAutoComplete);
 
@@ -446,7 +445,6 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
                     variant="treePlanted"
                     defaultValue={value.amount}
                     placeholder={"0"}
-                    error={props.error?.[index]?.amount ? ({} as FieldError) : undefined}
                     onChange={e => handleUpdate({ ...value, amount: +e.target.value })}
                     onKeyDownCapture={onKeyDownCapture}
                     containerClassName=""
@@ -485,7 +483,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
           )}
         />
         {props.error != null && (
-          <ErrorMessage error={{ message: t("One or more values are missing"), type: "required" }} className="mt-5" />
+          <ErrorMessage error={{ message: props.error.message, type: "required" }} className="mt-5" />
         )}
       </div>
     </InputWrapper>
