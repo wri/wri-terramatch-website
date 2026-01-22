@@ -76,6 +76,7 @@ interface ContentOverviewProps<TData> {
   transformedStories: any;
   isLoading: boolean;
   hasAccess?: boolean;
+  projectFrameworkKey?: string | null;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -93,7 +94,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     isLoadingHectaresUnderRestoration = false,
     transformedStories,
     isLoading,
-    hasAccess
+    hasAccess,
+    projectFrameworkKey
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -618,6 +620,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         classNameSubTitle="mt-4"
         gap={8}
         isUserAllowed={isUserAllowed}
+        projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
         title={t("HECTARES UNDER RESTORATION")}
         variantSubTitle="text-14-light"
@@ -670,6 +673,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           classNameSubTitle="mt-4"
           gap={6}
           isUserAllowed={isUserAllowed}
+          projectFrameworkKey={projectFrameworkKey}
           subtitleMore={true}
           title={t(titleTable)}
           tooltip={textTooltipTable}
@@ -729,6 +733,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         classNameSubTitle="mt-4"
         gap={6}
         isUserAllowed={props.isUserAllowed}
+        projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
         title={t("IMPACT STORIES")}
         tooltip={t(IMPACT_STORIES_TOOLTIP)}

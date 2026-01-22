@@ -9,7 +9,13 @@ import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceS
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { DemographicGridVariantProps, DemographicType, Status, useEntryTypeDefinition } from "./types";
+import {
+  DemographicGridVariantProps,
+  DemographicType,
+  Status,
+  useDemographicLabels,
+  useEntryTypeDefinition
+} from "./types";
 
 export interface DemographicsSectionProps {
   demographicType: DemographicType;
@@ -20,17 +26,10 @@ export interface DemographicsSectionProps {
   status?: Status;
 }
 
-const DemographicsSection = ({
-  demographicType,
-  entryType,
-  entries,
-  variant,
-  onChange,
-  status
-}: DemographicsSectionProps) => {
+const DemographicsSection = ({ demographicType, entryType, entries, variant, onChange }: DemographicsSectionProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
-  const { title, rows, total } = useSectionData(demographicType, entryType, entries);
+  const { title, rows, total, position } = useSectionData(demographicType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(demographicType, entryType);
 
   const onRowChange = useCallback(
@@ -81,27 +80,47 @@ const DemographicsSection = ({
     [entries, onChange]
   );
 
+  // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
+  const rowSpanCount = addNameLabel == null || onChange == null ? rows.length + 1 : rows.length + 2;
+  const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(demographicType);
+
   return (
     <>
-      <>
-        <div className="col-span-2 border-b border-neutral-300 bg-neutral-700 px-4 py-3">
-          <Text variant="text-14-semibold" className="mb-1 text-white">
-            {t("By: " + title)}
-          </Text>
-        </div>
-        {/* Column headers */}
-        <div className="col-span-1 border-b border-neutral-300 bg-neutral-200 px-4 py-2">
-          <Text variant="text-12-semibold" className="text-darkCustom">
-            {t(`${title} Definition`)}
-          </Text>
-        </div>
-        <div className="col-span-1 border-b border-l border-b-neutral-300 border-l-white bg-neutral-200 px-4 py-2 text-center">
-          <Text variant="text-12-semibold" className="text-darkCustom">
-            {t(`Number of Jobs`)}
-          </Text>
-        </div>
-      </>
+      <div
+        className={classNames("flex items-center justify-center bg-white", variant.firstCol, {
+          [variant.roundedTl]: position === "first",
+          [variant.roundedBl]: position === "last",
+          [`!row-span-${rows.length > 6 ? "full" : rows.length + 2}`]: addNameLabel != null
+        })}
+        style={{ gridRow: firstColGridRow }}
+      >
+        <Text variant="text-14-light">{t(title)}</Text>
+      </div>
 
+      <div className={classNames("bg-white", variant.secondCol)}>
+        <Text variant="text-14-semibold" className={classNames("text-customBlue-50 px-4 py-2", variant.columTitle)}>
+          {t(`${sectionLabel} ${rowLabelPlural}`)}
+        </Text>
+      </div>
+      <div
+        className={classNames("bg-white", variant.tertiaryCol, {
+          [`${variant.roundedTr}`]: position === "first",
+          "rounded-none": position !== "first"
+        })}
+      >
+        <Text
+          as="span"
+          variant="text-14-semibold"
+          className={classNames(
+            "text-customBlue-50 flex items-start justify-center gap-2 px-4 py-2 leading-normal",
+            variant.columTitle,
+            { [`${variant.roundedTr}`]: position === "first" }
+          )}
+        >
+          {t(`{total} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total })}
+        </Text>
+      </div>
       {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
         <DemographicsRow
           key={index}
@@ -115,43 +134,12 @@ const DemographicsSection = ({
           {...{ demographicType, entryType, label, userLabel, amount, variant }}
         />
       ))}
-      <>
-        <div
-          className={classNames(
-            "flex items-center justify-between px-4 py-3",
-            "col-span-1 border-b border-neutral-200 bg-white"
-          )}
-        >
-          <Text variant="text-14-semibold" className="text-darkCustom">
-            {t(`Total Created:`)}
-          </Text>
-        </div>
-        <div
-          className={classNames(
-            "flex items-center justify-center px-4 py-3",
-            "col-span-1 border-b border-neutral-200 bg-white",
-            { "!bg-theme-error-100": status === "in-progress" }
-          )}
-        >
-          <Text
-            variant="text-14-semibold"
-            className={classNames("text-center text-darkCustom", {
-              "text-theme-error-900": status === "in-progress"
-            })}
-          >
-            {t(`{total}`, { total })}
-          </Text>
-        </div>
-      </>
 
       <When condition={addNameLabel != null && onChange != null}>
-        <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
+        <div className={classNames("flex items-center bg-white", variant.secondCol)}>
           <div className="relative">
             <button
-              className={classNames(
-                "text-14-semibold flex items-baseline gap-1 px-4 py-1 hover:text-primary",
-                "text-primary"
-              )}
+              className={"text-14-semibold text-customBlue-100 flex items-baseline gap-1 px-4 py-2 hover:text-primary"}
               onClick={() => setOpenMenu(!openMenu)}
             >
               {addNameLabel && t(addNameLabel)}
@@ -163,7 +151,7 @@ const DemographicsSection = ({
               />
             </button>
             <When condition={openMenu}>
-              <div className="shadow-lg absolute z-10 -my-1 rounded-lg border border-b-neutral-200  bg-white p-2">
+              <div className="absolute z-10 -my-1 rounded-lg border border-neutral-200 bg-white p-2">
                 {addNameLabel == null
                   ? null
                   : Object.keys(typeMap).map(subtype => (
@@ -179,13 +167,7 @@ const DemographicsSection = ({
             </When>
           </div>
         </div>
-        <div
-          className={classNames(
-            "py-3",
-            variant.roundedBr,
-            "col-span-2 border-b border-l border-b-neutral-200 border-l-white bg-white"
-          )}
-        />
+        <div className={classNames("bg-white", variant.roundedBr, variant.tertiaryCol)} />
       </When>
     </>
   );

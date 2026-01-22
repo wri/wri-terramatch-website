@@ -16,7 +16,7 @@ import Button from "../../Button/Button";
 import Text from "../../Text/Text";
 
 interface PolygonModifierProps {
-  polygonFromMap: { uuid: string; isOpen: boolean } | undefined;
+  polygonFromMap: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string } | undefined;
   onClick?: () => void;
   onSave?: () => void;
   onCancel?: () => void;

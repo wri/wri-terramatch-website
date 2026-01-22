@@ -10,7 +10,6 @@ import List from "../List/List";
 import { SubmissionStatusMapping } from "../Tables/ReportingTasksTable";
 import ActionTrackerCardEmptyState, { ActionTrackerCardEmptyStateProps } from "./ActionTrackerCardEmptyState";
 import ActionTrackerCardRow, { ActionTrackerCardRowProps } from "./ActionTrackerCardRow";
-import ActionTrackerCardRowReports from "./ActionTrackerCardRowReports";
 
 export const getActionCardStatusMapper = (t: typeof useT): { [index: string]: Partial<ActionTrackerCardRowProps> } => ({
   started: {
@@ -56,7 +55,6 @@ export type ActionTrackerCardProps = {
   cta?: IButtonProps;
   data: ActionTrackerCardRowProps[];
   limit?: number;
-  reportsCard?: boolean;
 };
 
 const ActionTrackerCard = (props: ActionTrackerCardProps) => {
@@ -89,9 +87,7 @@ const ActionTrackerCard = (props: ActionTrackerCardProps) => {
           <List
             className="scroll-indicator-hide mt-4 flex h-full w-full flex-1 flex-col gap-3 overflow-y-auto rounded-lg border border-neutral border-opacity-30 p-4 wide:p-6"
             items={items}
-            render={row =>
-              props.reportsCard ? <ActionTrackerCardRowReports {...row} /> : <ActionTrackerCardRow {...row} />
-            }
+            render={row => <ActionTrackerCardRow {...row} />}
           />
           <When condition={!!props.cta}>
             <Button {...props.cta} className="mt-4" />
