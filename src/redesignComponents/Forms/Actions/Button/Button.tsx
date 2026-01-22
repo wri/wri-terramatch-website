@@ -1,4 +1,3 @@
-// @ts-nocheck - Suppress React type incompatibility issues with strict mode
 import { ButtonProps } from "@chakra-ui/react";
 import { Button as WriButton } from "@worldresources/wri-design-systems";
 import classNames from "classnames";

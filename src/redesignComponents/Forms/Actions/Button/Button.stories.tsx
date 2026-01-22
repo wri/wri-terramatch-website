@@ -1,4 +1,3 @@
-// @ts-nocheck - Suppress React type incompatibility issues with strict mode
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Edit } from "@/redesignComponents/foundations/Icons";
