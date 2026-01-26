@@ -133,8 +133,7 @@ export const WithSearchOnly: Story = {
       placeholder: "Search projects, sites, organizations...",
       label: "Search",
       options: searchOptions,
-      displayResults: "list",
-      size: "default"
+      displayResults: "list"
     },
     filters: [],
     button: defaultButton
@@ -150,8 +149,7 @@ export const Complete: Story = {
       placeholder: "Search projects, sites, organizations...",
       label: "Search",
       options: searchOptions,
-      displayResults: "list",
-      size: "default"
+      displayResults: "list"
     },
     filters: [statusFilter, typeFilter],
     button: defaultButton
@@ -212,8 +210,7 @@ export const SmallSearchWithMultipleFilters: Story = {
       placeholder: "Search...",
       label: "Search",
       options: searchOptions,
-      displayResults: "list",
-      size: "small"
+      displayResults: "list"
     },
     filters: [statusFilter, typeFilter, regionFilter],
     button: defaultButton
@@ -349,8 +346,7 @@ export const Interactive: Story = {
           placeholder: "Search projects, sites, organizations...",
           label: "Search",
           options: searchOptions,
-          displayResults: "list",
-          size: "default"
+          displayResults: "list"
         }}
         filters={[
           {
