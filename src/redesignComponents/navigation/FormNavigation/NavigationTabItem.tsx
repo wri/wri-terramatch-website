@@ -17,6 +17,16 @@ interface NavigationTabItemProps {
   isSelected: boolean;
 }
 
+interface TabsTriggerPropsWithChildren {
+  value: string;
+  disabled?: boolean;
+  "aria-label"?: string;
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const TabsTriggerTyped = TabsTrigger as React.ComponentType<TabsTriggerPropsWithChildren>;
+
 export const NavigationTabItem: FC<NavigationTabItemProps> = ({
   value,
   label,
@@ -27,8 +37,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
   isSelected
 }) => {
   return (
-    // @ts-expect-error - Chakra UI v3 type definitions missing children support
-    <TabsTrigger
+    <TabsTriggerTyped
       value={value}
       disabled={disabled}
       aria-label={ariaLabel ?? label}
@@ -42,6 +51,6 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
         </span>
         <ChevronRight />
       </Box>
-    </TabsTrigger>
+    </TabsTriggerTyped>
   );
 };
