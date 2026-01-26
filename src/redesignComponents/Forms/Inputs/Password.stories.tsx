@@ -1,60 +1,65 @@
-import { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
+import React from "react";
+const fn = () => () => {};
 
 import Password from "./Password";
 
-const meta: Meta<typeof Password> = {
+const meta = {
   title: "Redesign Components/Forms/Input/Password",
   component: Password,
+  parameters: {
+    layout: "centered"
+  },
   tags: ["autodocs"],
-  argTypes: {
-    required: {
-      control: "boolean",
-      description: "Whether the password input is required"
-    },
-    minLength: {
-      control: "number",
-      description: "Minimum character length for the password"
-    }
-  }
-};
+  args: { onChange: fn() },
+  decorators: [
+    (Story: any) => (
+      <div style={{ width: "480px" }}>
+        <Story />
+      </div>
+    )
+  ]
+} satisfies Meta<typeof Password>;
 
 export default meta;
-type Story = StoryObj<typeof Password>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    label: "Password"
+    label: "Label",
+    caption: "Caption",
+    required: true
   }
 };
 
 export const RulesDisabled: Story = {
   args: {
-    label: "Password",
+    label: "Label",
+    caption: "Caption",
     disabledRules: {
-      uppercase: false,
-      lowercase: false,
-      numbers: false,
-      specialCharacters: false
-    }
+      uppercase: true,
+      lowercase: true,
+      numbers: true,
+      specialCharacters: true
+    },
+    required: true
   }
 };
 
 export const CustomMinCharacters: Story = {
   args: {
-    label: "Password",
-    minLength: 8
+    label: "Label",
+    caption: "Caption",
+    minLength: 10,
+    required: true
   }
 };
 
 export const NoValidations: Story = {
   args: {
-    label: "Password",
-    disabledRules: {
-      uppercase: false,
-      lowercase: false,
-      numbers: false,
-      specialCharacters: false
-    },
-    minLength: 0
+    label: "Label",
+    caption: "Caption",
+    hideValidations: true,
+    required: true
   }
 };

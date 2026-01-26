@@ -17,7 +17,7 @@ const IconButton: FC<IconButtonProps> = ({ icon, disabled, ...props }) => {
       {...props}
       className={classNames(
         focusOutlineClass,
-        "hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 !h-6 !w-6 rounded-sm"
+        "!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40"
       )}
       css={{
         width: "24px !important",
