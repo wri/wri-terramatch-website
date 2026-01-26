@@ -14,10 +14,10 @@ export const NAVIGATION_CLASSES = {
   },
   badge: {
     base: "text-18-bold mr-2 flex h-8 w-8 items-center justify-center rounded-full border shadow-monitored",
-    complete: "border-theme-primary-400 text-theme-primary-800 group-hover:bg-theme-primary-400",
-    available: "border-theme-neutral-500 text-theme-neutral-700 group-hover:bg-theme-neutral-300",
-    disabled: "border-theme-neutral-500 text-theme-neutral-700 group-hover:bg-theme-neutral-300",
-    error: "border-theme-error-300 bg-theme-error-500"
+    complete: "border-theme-primary-400 text-theme-primary-800 group-hover:bg-theme-primary-400 bg-theme-primary-100",
+    available: "border-theme-neutral-500 text-theme-neutral-700 group-hover:bg-theme-neutral-300 bg-theme-neutral-200",
+    disabled: "border-theme-neutral-500 text-theme-neutral-700 group-hover:bg-theme-neutral-300 bg-theme-neutral-200",
+    error: "!border-theme-error-300 !bg-theme-error-500"
   },
   label: {
     default: "text-16-light text-theme-neutral-700",

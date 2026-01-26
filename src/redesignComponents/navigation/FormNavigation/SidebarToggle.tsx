@@ -7,11 +7,15 @@ interface SidebarToggleProps {
   onToggle: (state: { open: boolean }) => void;
 }
 
+const CollapsibleTriggerAsChild = CollapsibleTrigger as React.ComponentType<{
+  asChild?: boolean;
+  children?: React.ReactNode;
+}>;
+
 export const SidebarToggle = ({ isHidden, onToggle }: SidebarToggleProps) => {
   return (
     <CollapsibleRoot onOpenChange={onToggle}>
-      {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
-      <CollapsibleTrigger asChild>
+      <CollapsibleTriggerAsChild asChild>
         <button type="button" className="flex items-center gap-2">
           <div>{isHidden ? <ChevronRight /> : <ChevronDown />}</div>
           <div className="ds-tab-label">
@@ -19,7 +23,7 @@ export const SidebarToggle = ({ isHidden, onToggle }: SidebarToggleProps) => {
             <p>Sidebar</p>
           </div>
         </button>
-      </CollapsibleTrigger>
+      </CollapsibleTriggerAsChild>
     </CollapsibleRoot>
   );
 };

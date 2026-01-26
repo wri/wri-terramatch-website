@@ -1,6 +1,8 @@
 ﻿import styled from "@emotion/styled";
 import { Breadcrumb as WriBreadcrumb } from "@worldresources/wri-design-systems";
 
+import { getThemedColor } from "@/lib/theme";
+
 export interface BreadcrumbProps {
   links: { label: string; link: string; icon?: React.ReactNode }[];
   separator?: React.ReactNode;
@@ -11,7 +13,10 @@ export interface BreadcrumbProps {
 
 const StyledBreadcrumbWrapper = styled.div`
   p {
-    color: #032230;
+    color: ${getThemedColor("primary", 900)} !important;
+    svg {
+      color: ${getThemedColor("primary", 900)} !important;
+    }
   }
 `;
 

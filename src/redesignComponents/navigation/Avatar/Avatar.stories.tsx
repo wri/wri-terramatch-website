@@ -126,28 +126,6 @@ export const Medium: Story = {
 };
 
 /**
- * Large size variant
- */
-export const Large: Story = {
-  args: {
-    name: "Nathan Smith",
-    size: "large",
-    ariaLabel: "Large avatar"
-  }
-};
-
-/**
- * Avatar with custom size (5rem = 80px)
- */
-export const CustomSize: Story = {
-  args: {
-    name: "Nathan Smith",
-    customSize: "5rem",
-    ariaLabel: "Custom size avatar"
-  }
-};
-
-/**
  * Avatar with notification badge
  */
 export const WithNotification: Story = {
@@ -156,40 +134,6 @@ export const WithNotification: Story = {
     src: "https://i.pravatar.cc/150?img=5",
     notificationCount: 3,
     ariaLabel: "Avatar with 3 notifications"
-  }
-};
-
-/**
- * Disabled avatar
- */
-export const Disabled: Story = {
-  args: {
-    name: "Nathan Smith",
-    disabled: true,
-    ariaLabel: "Disabled avatar"
-  }
-};
-
-/**
- * Avatar with custom background color
- */
-export const CustomBackground: Story = {
-  args: {
-    name: "Nathan Smith",
-    customBackgroundColor: "#10B981",
-    ariaLabel: "Avatar with custom background"
-  }
-};
-
-/**
- * Clickable avatar
- */
-export const Clickable: Story = {
-  args: {
-    name: "Nathan Smith",
-    src: "https://i.pravatar.cc/150?img=8",
-    onClick: () => console.log("Avatar clicked"),
-    ariaLabel: "Clickable avatar"
   }
 };
 
@@ -209,10 +153,6 @@ export const SizeComparison: Story = {
       <div style={{ textAlign: "center" }}>
         <Avatar name="Nathan Smith" size="medium" />
         <p style={{ fontSize: "12px", marginTop: "8px" }}>Medium (2.375rem)</p>
-      </div>
-      <div style={{ textAlign: "center" }}>
-        <Avatar name="Nathan Smith" size="large" />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Large (3rem)</p>
       </div>
     </div>
   )
@@ -264,10 +204,6 @@ export const AddSizes: Story = {
       <div style={{ textAlign: "center" }}>
         <Avatar name="Add User" size="medium" variant="add" onClick={() => console.log("Medium add clicked")} />
         <p style={{ fontSize: "12px", marginTop: "8px" }}>Medium</p>
-      </div>
-      <div style={{ textAlign: "center" }}>
-        <Avatar name="Add User" size="large" variant="add" onClick={() => console.log("Large add clicked")} />
-        <p style={{ fontSize: "12px", marginTop: "8px" }}>Large</p>
       </div>
     </div>
   )
