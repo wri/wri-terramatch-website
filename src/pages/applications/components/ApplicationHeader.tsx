@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import PageHeader from "@/components/extensive/PageElements/Header/PageHeader";
@@ -32,11 +31,9 @@ const ApplicationHeader = ({ name, status, uuid }: ApplicationHeaderProps) => {
 
   return (
     <PageHeader className="min-h-[203px]" title={name}>
-      <When condition={status && status !== "started"}>
-        <Button className="mt-[5.5px]" onClick={handleExport}>
-          {t("Download application")}
-        </Button>
-      </When>
+      <Button className="mt-[5.5px]" onClick={handleExport}>
+        {t("Download application")}
+      </Button>
     </PageHeader>
   );
 };

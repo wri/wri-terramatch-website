@@ -24,7 +24,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -96,7 +96,7 @@ export type GetTreeRestorationGoalQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -151,7 +151,7 @@ export type GetTotalJobsCreatedQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -223,7 +223,7 @@ export type GetHectaresRestorationQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -285,7 +285,7 @@ export type DashboardEntityIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -726,7 +726,7 @@ export type GetDashboardProjectsQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
