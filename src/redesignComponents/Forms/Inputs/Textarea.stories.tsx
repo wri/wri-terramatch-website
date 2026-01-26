@@ -1,136 +1,84 @@
-import { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 
 import Textarea from "./Textarea";
 
-const meta: Meta<typeof Textarea> = {
-  title: "Redesign Components/Forms/Input/Textarea",
+const meta = {
+  title: "Redesign Components/Forms/Input/Text Area",
   component: Textarea,
-  tags: ["autodocs"],
-  argTypes: {
-    required: {
-      control: "boolean",
-      description: "Whether the textarea is required"
-    },
-    size: {
-      control: "select",
-      options: ["small", "default"],
-      description: "Size of the textarea"
-    },
-    disabled: {
-      control: "boolean",
-      description: "Whether the textarea is disabled"
-    },
-    defaultValue: {
-      control: "text",
-      description: "Default value for the textarea"
-    }
-  }
-};
+  parameters: {
+    layout: "centered"
+  },
+  tags: ["autodocs"]
+} satisfies Meta<typeof Textarea>;
 
 export default meta;
-type Story = StoryObj<typeof Textarea>;
+type Story = StoryObj<typeof meta>;
 
 export const RequiredTextarea: Story = {
   args: {
-    label: "Description",
-    placeholder: "Enter a description",
-    required: true,
-    name: "description"
+    label: "Label",
+    caption: "Caption",
+    required: true
   }
 };
 
 export const OptionalTextarea: Story = {
   args: {
-    label: "Comments",
-    placeholder: "Enter your comments (optional)",
-    required: false,
-    name: "comments"
+    label: "Label",
+    caption: "Caption"
   }
 };
 
 export const SmallTextarea: Story = {
   args: {
-    label: "Notes",
-    placeholder: "Enter notes",
+    label: "Label",
+    caption: "Caption",
     size: "small",
-    name: "notes"
+    required: true
   }
 };
 
 export const DefaultValue: Story = {
   args: {
-    label: "Message",
-    placeholder: "Enter your message",
-    defaultValue: "This is a default message that can be edited.",
-    name: "message"
+    label: "Label",
+    caption: "Caption",
+    defaultValue: "Default Value",
+    required: true
   }
 };
 
 export const ErrorMessage: Story = {
   args: {
-    label: "Feedback",
-    placeholder: "Enter your feedback",
-    caption: "Please provide at least 10 characters",
-    name: "feedback",
-    errorMessage: "Please provide at least 10 characters"
+    label: "Label",
+    caption: "Caption",
+    errorMessage: "Error Message",
+    required: true
   }
 };
 
 export const MaxLength: Story = {
   args: {
-    label: "Description",
-    placeholder: "Enter description (max 100 characters)",
-    maxLength: 100,
-    name: "description"
+    label: "Label",
+    caption: "Caption",
+    maxLength: 200,
+    required: true
   }
 };
 
 export const MinLength: Story = {
   args: {
-    label: "Feedback",
-    placeholder: "Enter feedback (min 10 characters)",
-    minLength: 10,
-    name: "feedback"
+    label: "Label",
+    caption: "Caption",
+    minLength: 5,
+    required: true
   }
 };
 
 export const Disabled: Story = {
   args: {
-    label: "Read Only Content",
-    placeholder: "This is disabled",
-    disabled: true,
-    defaultValue: "This textarea is disabled and cannot be edited.",
-    name: "readOnly"
+    label: "Label",
+    caption: "Caption",
+    required: true,
+    disabled: true
   }
-};
-
-export const AllVariants: Story = {
-  render: () => (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "400px" }}>
-      <Textarea label="Required Textarea" placeholder="This field is required" required name="required" />
-      <Textarea label="Optional Textarea" placeholder="This field is optional" name="optional" />
-      <Textarea label="Small Textarea" placeholder="Small size textarea" size="small" name="small" />
-      <Textarea
-        label="Textarea with Default Value"
-        placeholder="Has default value"
-        defaultValue="This is a default value that can be edited by the user."
-        name="default"
-      />
-      <Textarea
-        label="Textarea with Error"
-        placeholder="This has an error"
-        caption="This field has an error message"
-        name="error"
-      />
-      <Textarea label="Textarea with Max Length" placeholder="Max 100 characters" maxLength={100} name="maxLength" />
-      <Textarea label="Textarea with Min Length" placeholder="Min 10 characters" minLength={10} name="minLength" />
-      <Textarea
-        label="Disabled Textarea"
-        placeholder="This is disabled"
-        disabled
-        defaultValue="This textarea is disabled and cannot be edited."
-        name="disabled"
-      />
-    </div>
-  )
 };
