@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 interface UseFormNavigationProps {
   defaultValue?: string;
@@ -11,17 +11,23 @@ export const useFormNavigation = (props: UseFormNavigationProps) => {
   const { defaultValue, defaultTabValue, onTabClick, onOpenChange } = props;
 
   const [hideSidebar, setHideSidebar] = useState(false);
-  const [selectedTab, setSelectedTab] = useState(defaultValue || defaultTabValue || "");
+  const [selectedTab, setSelectedTab] = useState(defaultValue ?? defaultTabValue ?? "");
 
-  const handleTabClick = (selectedValue: string) => {
-    setSelectedTab(selectedValue);
-    onTabClick?.(selectedValue);
-  };
+  const handleTabClick = useCallback(
+    (selectedValue: string) => {
+      setSelectedTab(selectedValue);
+      onTabClick?.(selectedValue);
+    },
+    [onTabClick]
+  );
 
-  const handleSidebarToggle = ({ open }: { open: boolean }) => {
-    setHideSidebar(open);
-    onOpenChange?.(!open);
-  };
+  const handleSidebarToggle = useCallback(
+    ({ open }: { open: boolean }) => {
+      setHideSidebar(open);
+      onOpenChange?.(!open);
+    },
+    [onOpenChange]
+  );
 
   return {
     hideSidebar,

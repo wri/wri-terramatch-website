@@ -1,5 +1,6 @@
 ﻿import styled from "@emotion/styled";
 import { Breadcrumb as WriBreadcrumb } from "@worldresources/wri-design-systems";
+import { FC } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -20,7 +21,7 @@ const StyledBreadcrumbWrapper = styled.div`
   }
 `;
 
-const Breadcrumb = (props: BreadcrumbProps) => {
+const Breadcrumb: FC<BreadcrumbProps> = props => {
   const { links = [], separator, maxItems, linkRouter, size } = props;
 
   return (

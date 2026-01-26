@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import { Check, InformationRequired } from "@/redesignComponents/foundations/Icons";
 
 import { TabType } from "./formNavigation.constants";
@@ -9,11 +11,11 @@ interface NavigationTabBadgeProps {
   index: number;
 }
 
-export const NavigationTabBadge = ({ type, isSelected, index }: NavigationTabBadgeProps) => {
+export const NavigationTabBadge: FC<NavigationTabBadgeProps> = ({ type, isSelected, index }) => {
   return (
     <div className={getBadgeClasses(type, isSelected)}>
       {type === "error" ? (
-        <InformationRequired className="h-[calc(2rem-2px)] w-[calc(2rem-2px)] text-theme-error-100" />
+        <InformationRequired className="text-theme-error-100 h-[calc(2rem-2px)] w-[calc(2rem-2px)]" />
       ) : (
         <>
           {type === "complete" && <Check className="max-w-4 w-4" />}

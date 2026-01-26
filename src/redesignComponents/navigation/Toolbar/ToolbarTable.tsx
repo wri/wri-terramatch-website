@@ -1,5 +1,6 @@
+import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
-import { ReactElement } from "react";
+import { FC, ReactElement } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/Forms/Actions/Button/Button";
 import MultiActionButton, {
@@ -34,20 +35,17 @@ interface SearchProps {
   label?: string;
 }
 
-const ToolbarTable = ({
-  search,
-  filters,
-  button
-}: {
+const ToolbarTable: FC<{
   search: SearchProps;
   filters: IMultiActionButtonProps[];
   button: IButtonProps;
-}) => {
+}> = ({ search, filters, button }) => {
+  const t = useT();
   return (
     <Toolbar
       contentLeft={
         <div className="flex flex-wrap items-center gap-2">
-          {search && (
+          {search != null && (
             <div className="flex flex-wrap items-center gap-2">
               <div className="mt-2.5">
                 <Search
@@ -67,9 +65,9 @@ const ToolbarTable = ({
               </span>
             </div>
           )}
-          {search && filters && <span className="text-theme-neutral-500">&#124;</span>}
+          {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
-            Filter by:
+            {t("Filter by:")}
             {filters.map((filter, index) => (
               <MultiActionButton key={index} {...filter} size="small" />
             ))}

@@ -1,4 +1,5 @@
 import { Avatar as WriAvatar } from "@worldresources/wri-design-systems";
+import { FC } from "react";
 
 import AvatarAdd from "./components/AvatarAdd";
 import { AVATAR_SIZE_MAP } from "./constants";
@@ -18,7 +19,7 @@ export interface AvatarProps {
   variant?: "default" | "add";
 }
 
-const Avatar = (props: AvatarProps) => {
+const Avatar: FC<AvatarProps> = props => {
   const {
     name,
     ariaLabel,
@@ -33,7 +34,7 @@ const Avatar = (props: AvatarProps) => {
     variant = "default"
   } = props;
 
-  const finalSize = customSize || AVATAR_SIZE_MAP[size];
+  const finalSize = customSize ?? AVATAR_SIZE_MAP[size];
 
   if (variant === "add") {
     return (

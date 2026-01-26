@@ -1,3 +1,5 @@
+import { FC } from "react";
+
 import Button, { IButtonProps } from "@/redesignComponents/Forms/Actions/Button/Button";
 
 import Toolbar from "./Toolbar";
@@ -9,7 +11,7 @@ interface ToolbarFormProps {
   ButtonTertiary: IButtonProps;
 }
 
-const ToolbarForm = ({ label, ButtonPrimary, ButtonSecondary, ButtonTertiary }: ToolbarFormProps) => {
+const ToolbarForm: FC<ToolbarFormProps> = ({ label, ButtonPrimary, ButtonSecondary, ButtonTertiary }) => {
   return (
     <Toolbar
       contentLeft={

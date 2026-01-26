@@ -1,4 +1,5 @@
 import { Box, TabsTrigger } from "@chakra-ui/react";
+import { FC } from "react";
 
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 
@@ -16,7 +17,7 @@ interface NavigationTabItemProps {
   isSelected: boolean;
 }
 
-export const NavigationTabItem = ({
+export const NavigationTabItem: FC<NavigationTabItemProps> = ({
   value,
   label,
   index,
@@ -24,20 +25,20 @@ export const NavigationTabItem = ({
   disabled,
   ariaLabel,
   isSelected
-}: NavigationTabItemProps) => {
+}) => {
   return (
-    // @ts-ignore - Chakra UI v3 type definitions missing children support
+    // @ts-expect-error - Chakra UI v3 type definitions missing children support
     <TabsTrigger
       value={value}
       disabled={disabled}
-      aria-label={ariaLabel || label}
+      aria-label={ariaLabel ?? label}
       className={getTabClasses(isSelected)}
     >
       <Box display="flex" alignItems="center" flexDirection="row" gap="5px" className="w-full justify-between">
-        <span className="flex items-center text-left text-theme-primary-900">
+        <span className="text-theme-primary-900 flex items-center text-left">
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 
-          {label && <p className={getLabelClasses(isSelected)}>{label}</p>}
+          {label != null && <p className={getLabelClasses(isSelected)}>{label}</p>}
         </span>
         <ChevronRight />
       </Box>

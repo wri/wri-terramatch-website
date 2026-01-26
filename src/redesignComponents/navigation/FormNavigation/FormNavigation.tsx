@@ -1,4 +1,5 @@
 import { CollapsibleContent, CollapsibleRoot, Tabs, TabsList, TabsRoot } from "@chakra-ui/react";
+import { FC, useCallback } from "react";
 
 import { TabType } from "./formNavigation.constants";
 import { NavigationTabItem } from "./NavigationTabItem";
@@ -22,7 +23,7 @@ export interface FormNavigationProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const FormNavigation = (props: FormNavigationProps) => {
+const FormNavigation: FC<FormNavigationProps> = props => {
   const { tabs, defaultValue, onTabClick, children, onOpenChange } = props;
 
   const { hideSidebar, selectedTab, handleTabClick, handleSidebarToggle } = useFormNavigation({
@@ -32,17 +33,24 @@ const FormNavigation = (props: FormNavigationProps) => {
     onOpenChange
   });
 
+  const handleValueChange = useCallback(
+    ({ value }: { value: string }) => {
+      handleTabClick(value);
+    },
+    [handleTabClick]
+  );
+
   return (
     <div className="">
       <div className="">
         <TabsRoot
-          defaultValue={defaultValue || tabs?.[0]?.value}
+          defaultValue={defaultValue ?? tabs?.[0]?.value}
           orientation="horizontal"
           width="full"
-          onValueChange={({ value }: { value: string }) => handleTabClick(value)}
+          onValueChange={handleValueChange}
           role="tablist"
         >
-          {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
+          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
           <TabsList className="flex flex-col items-center border-none">
             {tabs.map((tab, index) => {
               const { label, value, disabled, "aria-label": ariaLabel, type = "available" } = tab;
@@ -62,12 +70,12 @@ const FormNavigation = (props: FormNavigationProps) => {
           </TabsList>
         </TabsRoot>
 
-        {children && <SidebarToggle isHidden={hideSidebar} onToggle={handleSidebarToggle} />}
+        {children != null && <SidebarToggle isHidden={hideSidebar} onToggle={handleSidebarToggle} />}
       </div>
 
-      {children && (
+      {children != null && (
         <CollapsibleRoot defaultOpen open={!hideSidebar}>
-          {/* @ts-ignore - Chakra UI v3 type definitions missing children support */}
+          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
           <CollapsibleContent height="100%">
             <div role="tabpanel" aria-labelledby={selectedTab}>
               {children}
