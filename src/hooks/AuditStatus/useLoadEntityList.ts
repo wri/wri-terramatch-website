@@ -9,9 +9,9 @@ import {
   loadNurseryIndex,
   loadSiteIndex
 } from "@/connections/Entity";
+import { loadAllSitePolygons } from "@/connections/SitePolygons";
 import { loadTask } from "@/connections/Task";
 import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
-import { fetchGetV2ProjectsUUIDSitePolygonsAll, fetchGetV2SitesSitePolygon } from "@/generated/apiComponents";
 
 export interface SelectedItem {
   title?: string | undefined;
@@ -19,7 +19,7 @@ export interface SelectedItem {
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
-  poly_id?: string | undefined;
+  polygonUuid?: string | undefined;
 }
 
 interface UseLoadEntityListParams {
@@ -31,13 +31,12 @@ interface UseLoadEntityListParams {
 }
 
 export interface EntityListItem {
-  poly_name?: string | undefined;
   name?: string | undefined;
   uuid?: string | undefined;
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
-  poly_id?: string | undefined;
+  polygonUuid?: string | undefined;
   type?: string | undefined;
   parent_name?: string | undefined;
   report_title?: string | undefined;
@@ -97,14 +96,7 @@ const useLoadEntityList = ({
   const isFirstLoad = useRef(true);
 
   const getNameProperty = (entityType: string): keyof EntityListItem => {
-    switch (entityType) {
-      case POLYGON:
-        return "poly_name";
-      case SITE:
-        return "name";
-      default:
-        return "name";
-    }
+    return "name";
   };
 
   const unnamedTitleAndSort = (
@@ -132,29 +124,43 @@ const useLoadEntityList = ({
 
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
-    const fetchToProject =
-      entityType == SITE
-        ? loadSiteIndex
-        : entityType == POLYGON
-        ? fetchGetV2ProjectsUUIDSitePolygonsAll
-        : loadNurseryIndex;
-    const fetchAction = isSiteProjectLevel
-      ? fetchToProject
-      : isProjectReport
-      ? loadReportsForTask
-      : fetchGetV2SitesSitePolygon;
-    const params = isSiteProjectLevel
-      ? entityType == SITE
-        ? { projectUuid: entity.uuid }
-        : { uuid: entity.uuid }
-      : isProjectReport
-      ? { uuid: entity.taskUuid ?? entity.task_uuid }
-      : { site: entity.uuid };
-    const res = await fetchAction({
-      // @ts-ignore
-      pathParams: params
-    });
-    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+
+    let _entityList: EntityListItem[] = [];
+
+    if (entityType == POLYGON) {
+      // Use v3 loadAllSitePolygons for polygons with proper pagination
+      const entityName = isSiteProjectLevel ? "projects" : "sites";
+      const polygons = await loadAllSitePolygons({
+        entityName,
+        entityUuid: entity.uuid,
+        enabled: true
+      });
+
+      // Transform v3 SitePolygonLightDto[] to EntityListItem[]
+      _entityList = polygons.map(polygon => ({
+        name: polygon.name ?? undefined,
+        uuid: polygon.uuid,
+        status: polygon.status,
+        polygonUuid: polygon.polygonUuid ?? undefined
+      }));
+    } else if (isProjectReport) {
+      const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid ?? entity.task_uuid } });
+      _entityList = res.data;
+    } else {
+      // Handle other entity types (SITE, NURSERY)
+      const fetchToProject = entityType == SITE ? loadSiteIndex : loadNurseryIndex;
+      const fetchAction = isSiteProjectLevel ? fetchToProject : fetchToProject;
+      const params = isSiteProjectLevel
+        ? entityType == SITE
+          ? { projectUuid: entity.uuid }
+          : { uuid: entity.uuid }
+        : { projectUuid: entity.uuid };
+      const res = await fetchAction({
+        // @ts-ignore
+        pathParams: params
+      });
+      _entityList = ((res as any)?.data ?? []) as EntityListItem[];
+    }
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
         entityType: PROJECT_REPORT,
@@ -166,7 +172,7 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       },
       [AuditLogButtonStates.SITE_REPORT as number]: {
@@ -179,7 +185,7 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       },
       [AuditLogButtonStates.NURSERY_REPORT as number]: {
@@ -192,7 +198,7 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       }
     };
@@ -204,7 +210,7 @@ const useLoadEntityList = ({
         value: item?.uuid,
         meta: item?.status,
         status: item?.status,
-        poly_id: item?.poly_id
+        polygonUuid: item?.polygonUuid
       };
     };
     const _list = unnamedTitleAndSort(
