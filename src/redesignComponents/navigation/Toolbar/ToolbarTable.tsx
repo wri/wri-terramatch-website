@@ -27,7 +27,6 @@ interface ListItemProps {
 interface SearchProps {
   placeholder?: string;
   disabled?: boolean;
-  size?: "small" | "default";
   options: ListItemProps[];
   resultsMaxHeight?: string;
   isLoading?: boolean;
@@ -51,7 +50,7 @@ const ToolbarTable = ({
           {search && (
             <div className="flex flex-wrap items-center gap-2">
               <div className="mt-2.5">
-                <Search {...search} />
+                <Search {...search} size="default" />
               </div>
               <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
                 XX {search.label}
