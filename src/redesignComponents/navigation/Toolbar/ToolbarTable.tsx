@@ -50,7 +50,17 @@ const ToolbarTable = ({
           {search && (
             <div className="flex flex-wrap items-center gap-2">
               <div className="mt-2.5">
-                <Search {...search} size="default" />
+                <Search
+                  {...({
+                    placeholder: search.placeholder,
+                    disabled: search.disabled,
+                    options: search.options,
+                    resultsMaxHeight: search.resultsMaxHeight,
+                    isLoading: search.isLoading,
+                    displayResults: search.displayResults,
+                    size: "default"
+                  } as SearchProps)}
+                />
               </div>
               <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
                 XX {search.label}
