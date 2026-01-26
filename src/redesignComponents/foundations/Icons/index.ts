@@ -32,7 +32,7 @@ export { Opportunities } from "./Opportunities";
 export { Organisation } from "./Organisation";
 export { Pending } from "./Pending";
 export { PhotoAdd } from "./PhotoAdd";
-export { PlaceholderIcon } from "./PlaceholderIcon";
+export { Placeholder } from "./Placeholder";
 export { Programme } from "./Programme";
 export { Project } from "./Project";
 export { Regeneration } from "./Regeneration";
