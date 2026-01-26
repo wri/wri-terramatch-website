@@ -29,7 +29,6 @@ const meta: Meta<typeof Textarea> = {
 export default meta;
 type Story = StoryObj<typeof Textarea>;
 
-// Required Textarea
 export const RequiredTextarea: Story = {
   args: {
     label: "Description",
@@ -39,7 +38,6 @@ export const RequiredTextarea: Story = {
   }
 };
 
-// Optional Textarea
 export const OptionalTextarea: Story = {
   args: {
     label: "Comments",
@@ -49,7 +47,6 @@ export const OptionalTextarea: Story = {
   }
 };
 
-// Small Textarea
 export const SmallTextarea: Story = {
   args: {
     label: "Notes",
@@ -59,7 +56,6 @@ export const SmallTextarea: Story = {
   }
 };
 
-// Default Value
 export const DefaultValue: Story = {
   args: {
     label: "Message",
@@ -69,7 +65,6 @@ export const DefaultValue: Story = {
   }
 };
 
-// Error Message
 export const ErrorMessage: Story = {
   args: {
     label: "Feedback",
@@ -80,7 +75,6 @@ export const ErrorMessage: Story = {
   }
 };
 
-// Max Length
 export const MaxLength: Story = {
   args: {
     label: "Description",
@@ -90,7 +84,6 @@ export const MaxLength: Story = {
   }
 };
 
-// Min Length
 export const MinLength: Story = {
   args: {
     label: "Feedback",
@@ -100,7 +93,6 @@ export const MinLength: Story = {
   }
 };
 
-// Disabled
 export const Disabled: Story = {
   args: {
     label: "Read Only Content",
@@ -111,7 +103,6 @@ export const Disabled: Story = {
   }
 };
 
-// All Variants Showcase
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "400px" }}>

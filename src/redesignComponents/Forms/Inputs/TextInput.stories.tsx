@@ -29,7 +29,6 @@ const meta: Meta<typeof TextInput> = {
 export default meta;
 type Story = StoryObj<typeof TextInput>;
 
-// Required Input
 export const RequiredInput: Story = {
   args: {
     label: "Full Name",
@@ -39,7 +38,6 @@ export const RequiredInput: Story = {
   }
 };
 
-// Optional Input
 export const OptionalInput: Story = {
   args: {
     label: "Company Name",
@@ -49,7 +47,6 @@ export const OptionalInput: Story = {
   }
 };
 
-// Small Input
 export const SmallInput: Story = {
   args: {
     label: "Username",
@@ -59,7 +56,6 @@ export const SmallInput: Story = {
   }
 };
 
-// Default Value
 export const DefaultValue: Story = {
   args: {
     label: "Email Address",
@@ -69,7 +65,6 @@ export const DefaultValue: Story = {
   }
 };
 
-// With Error
 export const WithError: Story = {
   args: {
     label: "Password",
@@ -81,7 +76,6 @@ export const WithError: Story = {
   }
 };
 
-// Disabled
 export const Disabled: Story = {
   args: {
     label: "Account Number",
@@ -92,7 +86,6 @@ export const Disabled: Story = {
   }
 };
 
-// All Variants Showcase
 export const AllVariants: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "400px" }}>
