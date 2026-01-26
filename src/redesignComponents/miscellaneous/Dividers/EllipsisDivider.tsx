@@ -1,7 +1,7 @@
 import { Box, BoxProps } from "@chakra-ui/react";
-import React from "react";
+import React, { FC } from "react";
 
-const EllipsisDivider = (props: BoxProps = {}) => {
+const EllipsisDivider: FC<BoxProps> = (props = {}) => {
   const {
     color = "neutral.900",
     width = "4px",
