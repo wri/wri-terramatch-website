@@ -13,6 +13,13 @@ interface TabsListPropsWithChildren {
 
 const TabsListTyped = TabsList as React.ComponentType<TabsListPropsWithChildren>;
 
+interface CollapsibleContentPropsWithChildren {
+  height?: string;
+  children?: React.ReactNode;
+}
+
+const CollapsibleContentTyped = CollapsibleContent as React.ComponentType<CollapsibleContentPropsWithChildren>;
+
 export interface NavigationRailTabProps extends Omit<Tabs.TriggerProps, "asChild"> {
   label: string;
   value: string;
@@ -81,12 +88,11 @@ const FormNavigation: FC<FormNavigationProps> = props => {
 
       {children != null && (
         <CollapsibleRoot defaultOpen open={!hideSidebar}>
-          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
-          <CollapsibleContent height="100%">
+          <CollapsibleContentTyped height="100%">
             <div role="tabpanel" aria-labelledby={selectedTab}>
               {children}
             </div>
-          </CollapsibleContent>
+          </CollapsibleContentTyped>
         </CollapsibleRoot>
       )}
     </div>
