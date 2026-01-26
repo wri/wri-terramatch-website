@@ -60,6 +60,9 @@ export const useAllPages = <D, S extends IndexConnection<D>, P extends Paginated
     }
   });
 
-  const allPagesLoaded = indexTotal == null ? false : dataStable && pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
+  if (indexTotal == null || !dataStable) return [false, data];
+  if (pageNumber === 1 && indexTotal === 0) return [true, data];
+
+  const allPagesLoaded = pageNumber === Math.ceil(indexTotal / PAGE_SIZE);
   return [allPagesLoaded, data];
 };
