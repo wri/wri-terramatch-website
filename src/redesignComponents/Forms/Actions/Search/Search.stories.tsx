@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from "@storybook/react";
-
-import Search from "./Search";
+import { Search } from "@worldresources/wri-design-systems";
 
 const mockOptions = [
   { id: "1", label: "Apple", caption: "Fruit" },
