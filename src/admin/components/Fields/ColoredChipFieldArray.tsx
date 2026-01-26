@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { ArrayField, ArrayFieldProps, ChipField, FunctionField, SingleFieldList, useRecordContext } from "react-admin";
 
 import { Choice } from "@/admin/types/common";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 
 interface ColoredChipFieldArrayProps extends Omit<ArrayFieldProps, "children"> {
   choices: Choice[];
@@ -35,8 +35,10 @@ function groupPolygonsByStatus(polygons: any[]) {
 
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
-  const { data: getPolygonsToSite } = useGetV2SitesSitePolygon({
-    pathParams: { site: recordContext.uuid }
+  const { data: getPolygonsToSite } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: recordContext.uuid,
+    enabled: !!recordContext.uuid
   });
 
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
@@ -53,7 +55,8 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>
       <SingleFieldList linkType={false}>
         <FunctionField
-          render={(record: { status: string; count: number }) => {
+          render={(record?: { status: string; count: number }) => {
+            if (!record) return null;
             const status = record?.status;
             const choice = props.choices.find(i => i.id === status);
             const PolygonStatusLabel = record?.count + " " + choice?.name!;
