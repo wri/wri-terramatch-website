@@ -6,6 +6,13 @@ import { NavigationTabItem } from "./NavigationTabItem";
 import { SidebarToggle } from "./SidebarToggle";
 import { useFormNavigation } from "./useFormNavigation";
 
+interface TabsListPropsWithChildren {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+const TabsListTyped = TabsList as React.ComponentType<TabsListPropsWithChildren>;
+
 export interface NavigationRailTabProps extends Omit<Tabs.TriggerProps, "asChild"> {
   label: string;
   value: string;
@@ -50,8 +57,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
           onValueChange={handleValueChange}
           role="tablist"
         >
-          {/* @ts-expect-error - Chakra UI v3 type definitions missing children support */}
-          <TabsList className="flex flex-col items-center border-none">
+          <TabsListTyped className="flex flex-col items-center border-none">
             {tabs.map((tab, index) => {
               const { label, value, disabled, "aria-label": ariaLabel, type = "available" } = tab;
               return (
@@ -67,7 +73,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
                 />
               );
             })}
-          </TabsList>
+          </TabsListTyped>
         </TabsRoot>
 
         {children != null && <SidebarToggle isHidden={hideSidebar} onToggle={handleSidebarToggle} />}
