@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Textarea } from "@worldresources/wri-design-systems";
+
+import Textarea from "./Textarea";
 
 const meta: Meta<typeof Textarea> = {
   title: "Redesign Components/Forms/Input/Textarea",

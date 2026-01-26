@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { TextInput } from "@worldresources/wri-design-systems";
+
+import TextInput from "./TextInput";
 
 const meta: Meta<typeof TextInput> = {
   title: "Redesign Components/Forms/Input/TextInput",

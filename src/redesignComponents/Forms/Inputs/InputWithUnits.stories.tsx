@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { InputWithUnits } from "@worldresources/wri-design-systems";
+
+import InputWithUnits from "./InputWithUnits";
 
 const meta = {
   title: "Redesign Components/Forms/Input/InputWithUnits",

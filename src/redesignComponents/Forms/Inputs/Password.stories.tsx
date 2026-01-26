@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { Password } from "@worldresources/wri-design-systems";
+
+import Password from "./Password";
 
 const meta: Meta<typeof Password> = {
   title: "Redesign Components/Forms/Input/Password",
