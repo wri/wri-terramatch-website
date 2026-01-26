@@ -490,7 +490,7 @@ export type UsersFindVariables = {
  * Fetch a user by UUID, or with the 'me' identifier
  */
 export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
-  "/users/v3/{uuid}",
+  "/users/v3/users/{uuid}",
   "GET"
 );
 
@@ -598,7 +598,7 @@ export type UserUpdateVariables = {
  * Update a user by UUID
  */
 export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
-  "/users/v3/{uuid}",
+  "/users/v3/users/{uuid}",
   "PATCH"
 );
 
@@ -670,7 +670,7 @@ export type UserCreationVariables = {
  * Create a new user
  */
 export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
-  "/users/v3",
+  "/users/v3/users",
   "POST"
 );
 
