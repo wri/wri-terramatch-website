@@ -40,6 +40,22 @@ type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
 
 export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
 
+export const DEMOGRAPHIC_TYPES = [
+  "workdays",
+  "restorationPartners",
+  "jobs",
+  "employees",
+  "volunteers",
+  "allBeneficiaries",
+  "trainingBeneficiaries",
+  "indirectBeneficiaries",
+  "associates"
+] as const;
+
+export const isDemographicType = (value: unknown): value is DemographicType => {
+  return typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
+};
+
 type DemographicLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
