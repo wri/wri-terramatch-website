@@ -2,10 +2,10 @@ import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import { FC, ReactElement } from "react";
 
-import Button, { IButtonProps } from "@/redesignComponents/Forms/Actions/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton, {
   IMultiActionButtonProps
-} from "@/redesignComponents/Forms/Actions/MultiActionButton/MultiActionButton";
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import Toolbar from "./Toolbar";
 

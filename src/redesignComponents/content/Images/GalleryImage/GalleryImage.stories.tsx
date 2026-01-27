@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { ProfileImage as Component } from "./ProfileImage";
+import Component from "./GalleryImage";
 
 const meta: Meta<typeof Component> = {
-  title: "Redesign Components/Project/Images/Profile Image",
+  title: "Redesign Components/Content/Images/Gallery Image",
   component: Component
 };
 
@@ -13,7 +13,7 @@ type Story = StoryObj<typeof Component>;
 export const Default: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
-    alt: "John Doe",
+    alt: "Gallery Image",
     size: 164
   }
 };
@@ -21,7 +21,7 @@ export const Default: Story = {
 export const Small: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
-    alt: "John Doe",
+    alt: "Gallery Image",
     size: 96
   }
 };
@@ -29,7 +29,7 @@ export const Small: Story = {
 export const Large: Story = {
   args: {
     src: "https://i.pravatar.cc/300?img=4",
-    alt: "John Doe",
+    alt: "Gallery Image",
     size: 384
   }
 };

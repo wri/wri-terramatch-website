@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import CloseButton from "./CloseButton";
 
 const meta: Meta<typeof CloseButton> = {
-  title: "Redesign Components/Forms/Actions/CloseButton",
+  title: "Redesign Components/Actions/Buttons/CloseButton",
   component: CloseButton,
   tags: ["autodocs"],
   argTypes: {
