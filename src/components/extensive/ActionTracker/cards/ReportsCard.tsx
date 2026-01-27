@@ -37,6 +37,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
         let canClearActionClientSide = status === "approved";
 
+        const statusMapping = status ? getActionCardStatusMapper(t)[status] ?? {} : {};
+
         let dueText = t(
           type == "FinancialReport" ? "<strong>Submitted:</strong> {date}" : "<strong>Due:</strong> {date}",
           {
@@ -83,7 +85,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         }
 
         return {
-          ...getActionCardStatusMapper(t)[status!],
+          ...statusMapping,
           ctaLink,
           ctaText,
           title: project?.name,

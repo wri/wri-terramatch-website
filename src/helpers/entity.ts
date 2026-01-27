@@ -40,12 +40,19 @@ export const isEntityReport = (entityName: EntityName) => {
 /**
  * Get entity status with respect to update request status.
  * @param entity Entity full resource
- * @returns combinedStatus
+ * @returns combinedStatus or null if status is not available
  */
-export const getEntityCombinedStatus = (entity: any): string => {
-  return !!entity.update_request_status && entity.update_request_status !== "no-update"
-    ? entity.update_request_status
-    : entity.status;
+export const getEntityCombinedStatus = (entity: any): string | null => {
+  if (!entity) return null;
+
+  const updateRequestStatus = entity.update_request_status ?? entity.updateRequestStatus;
+  const status = entity.status;
+
+  if (updateRequestStatus && updateRequestStatus !== "no-update") {
+    return updateRequestStatus;
+  }
+
+  return status ?? null;
 };
 
 export const getCurrentPathEntity = () => {
