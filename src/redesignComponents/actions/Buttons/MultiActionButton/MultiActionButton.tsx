@@ -4,7 +4,7 @@ import { FC } from "react";
 
 import { secondaryTextColorClass } from "./MultiActionButton.styles";
 
-interface IMultiActionButtonProps {
+export interface IMultiActionButtonProps {
   variant?: "primary" | "secondary";
   size?: "default" | "small";
   mainActionLabel: string;

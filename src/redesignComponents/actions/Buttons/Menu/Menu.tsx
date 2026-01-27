@@ -1,7 +1,7 @@
 import { Menu as WriMenu } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
-interface MenuItemProps {
+export interface MenuItemProps {
   label?: string;
   caption?: string;
   startIcon?: React.ReactNode;

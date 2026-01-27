@@ -6,7 +6,7 @@ import React from "react";
 
 import { secondaryTextColorClass } from "./Button.styles";
 
-interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPalette" | "children"> {
+export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPalette" | "children"> {
   className?: string;
   variant?: "primary" | "secondary" | "borderless" | "outline";
   size?: "default" | "small";
