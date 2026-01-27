@@ -27,7 +27,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
   const reportActions = useMemo(() => {
     if (!actions) return [];
     return sortByDate(actions, "target.dueAt")
-      .filter(action => !!action.target)
+      .filter(action => action.target != null)
       .map(action => {
         const target = action.target as any;
         const project = action.target?.project ?? action.target;
@@ -76,7 +76,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ctaLink,
           ctaText,
           title: project?.name,
-          subtitle: `${subtitle ? `${subtitle}\n` : ""}${target?.dueAt ? dueText : ""}`,
+          subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
           onClick: () => {
             canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
           }

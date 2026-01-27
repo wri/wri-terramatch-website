@@ -398,27 +398,7 @@ export const organisationCreation = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations", "POST");
 
-export type IndexMyActionsQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
-};
-
-export type IndexMyActionsError = Fetcher.ErrorWrapper<
+export type ActionsIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -447,7 +427,7 @@ export type IndexMyActionsError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type IndexMyActionsResponse = {
+export type ActionsIndexResponse = {
   meta?: {
     /**
      * @example actions
@@ -467,19 +447,13 @@ export type IndexMyActionsResponse = {
   };
 };
 
-export type IndexMyActionsVariables = {
-  queryParams?: IndexMyActionsQueryParams;
-};
-
 /**
  * Returns pending actions for reports and entities associated with the user's projects
  */
-export const indexMyActions = new V3ApiEndpoint<
-  IndexMyActionsResponse,
-  IndexMyActionsError,
-  IndexMyActionsVariables,
-  {}
->("/users/v3/actions", "GET");
+export const actionsIndex = new V3ApiEndpoint<ActionsIndexResponse, ActionsIndexError, {}, {}>(
+  "/users/v3/actions",
+  "GET"
+);
 
 export type UsersFindPathParams = {
   /**
@@ -762,6 +736,6 @@ export const operationsByTag = {
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
   organisations: { organisationIndex, organisationCreation },
-  actions: { indexMyActions },
+  actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation }
 };

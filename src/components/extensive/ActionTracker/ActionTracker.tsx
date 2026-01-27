@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useMyActions } from "@/connections/Action";
+import { useActions } from "@/connections/Action";
 import { applicationsConnection } from "@/connections/Application";
 import { useAllPages } from "@/hooks/useConnection";
 
@@ -18,7 +18,7 @@ const ActionTracker = () => {
     sortDirection: "DESC"
   });
 
-  const [, { data: actions, isLoading: isLoadingActions }] = useMyActions({});
+  const [, { data: actions, isLoading: isLoadingActions }] = useActions({});
 
   const reportActions = useMemo(
     () =>

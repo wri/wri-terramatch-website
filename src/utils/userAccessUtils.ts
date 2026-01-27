@@ -14,26 +14,24 @@ export const checkUserAccess = (
   projectFrameworkKey: string | null | undefined,
   backendHasAccess?: boolean
 ): boolean => {
-  if (!user) {
+  if (user == null) {
     return false;
   }
 
   const role = user.primaryRole;
 
-  if (role === "admin-super" || role === "admin-ppc" || role === "admin-terrafund" || role === "admin") {
-    return true;
-  }
+  if (role != null && role.startsWith("admin")) return true;
 
   if (role === "government") {
     return false;
   }
 
   if (role === "funder") {
-    if (!projectFrameworkKey) {
+    if (projectFrameworkKey == null) {
       return false;
     }
 
-    const userFrameworkSlugs = user.frameworks?.map(f => f.slug) || [];
+    const userFrameworkSlugs = user.frameworks?.map(f => f.slug) ?? [];
     return userFrameworkSlugs.includes(projectFrameworkKey);
   }
 
