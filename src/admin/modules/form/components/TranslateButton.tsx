@@ -4,7 +4,7 @@ import { useRecordContext } from "react-admin";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { loadFormTranslation, pushFormTranslation } from "@/connections/util/Form";
+import { loadFormTranslation, pushFormTranslation } from "@/connections/Form";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormBuilderData } from "./FormBuilder/types";

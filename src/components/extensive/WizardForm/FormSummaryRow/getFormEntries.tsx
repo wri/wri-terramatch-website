@@ -11,7 +11,12 @@ import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/exte
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
-import { FormFieldsProvider, useFieldsProvider } from "@/context/wizardForm.provider";
+import {
+  FormFieldsProvider,
+  OrgFormDetails,
+  useFieldsProvider,
+  useOrgFormDetails
+} from "@/context/wizardForm.provider";
 import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
@@ -21,8 +26,8 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   let { record } = useShowContext();
   const { type, entity } = props;
   const fieldsProvider = useFieldsProvider();
+  const orgDetails = useOrgFormDetails();
 
-  record = { organisation: props.organisation, ...record };
   const uuid = entity?.entityUUID ?? record?.uuid;
   const entityType = entity?.entityName ?? (type as EntityName);
 
@@ -67,7 +72,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   return useMemo(
     () =>
       externalSourcesLoaded
-        ? getFormEntries(fieldsProvider, props, t, undefined, entityPolygonData, bbox, mapFunctions, record)
+        ? getFormEntries(fieldsProvider, props, t, undefined, entityPolygonData, bbox, mapFunctions, record, orgDetails)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
@@ -82,7 +87,8 @@ export const getFormEntries = (
   entityPolygonData?: any,
   bbox?: any,
   mapFunctions?: any,
-  record?: any
+  record?: any,
+  orgDetails?: OrgFormDetails
 ) => {
   const entries: FormEntry[] = [];
 
@@ -96,7 +102,8 @@ export const getFormEntries = (
     mapFunctions,
     record,
     stepId,
-    nullText
+    nullText,
+    orgDetails
   };
   for (const field of fieldIds.map(fieldsProvider.fieldByName).filter(isNotNull)) {
     const { addFormEntries } = FormFieldFactories[field.inputType];

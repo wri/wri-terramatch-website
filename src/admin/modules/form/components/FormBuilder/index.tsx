@@ -22,7 +22,7 @@ import {
 import { FormBuilderData } from "@/admin/modules/form/components/FormBuilder/types";
 import { maxFileSize } from "@/admin/utils/forms";
 import { StepDefinition } from "@/components/extensive/WizardForm/types";
-import { FormModelType, useLinkedFields } from "@/connections/util/Form";
+import { FormModelType, useLinkedFields } from "@/connections/Form";
 import { LocalStep } from "@/context/wizardForm.provider";
 import { Forms } from "@/generated/v3/entityService/entityServiceConstants";
 

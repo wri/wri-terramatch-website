@@ -24,7 +24,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -96,7 +96,7 @@ export type GetTreeRestorationGoalQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -151,7 +151,7 @@ export type GetTotalJobsCreatedQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -223,7 +223,7 @@ export type GetHectaresRestorationQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -285,7 +285,7 @@ export type DashboardEntityIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };
@@ -327,6 +327,16 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -371,6 +381,16 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -413,6 +433,16 @@ export const dashboardEntityIndex = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -492,6 +522,16 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -534,6 +574,16 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            * @example 42
            */
           total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
         }[];
       };
       data?: {
@@ -578,6 +628,16 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -621,6 +681,16 @@ export const dashboardEntityGet = new V3ApiEndpoint<
            */
           total?: number;
         }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
       };
       data?: {
         /**
@@ -656,7 +726,7 @@ export type GetDashboardProjectsQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   polygonStatus?: string[];
 };

@@ -1,25 +1,4 @@
-import { QueryClient } from "@tanstack/react-query";
-import { GetServerSidePropsContext } from "next";
-import nookies from "nookies";
-
 import Log from "@/utils/log";
-
-/**
- * Prefetch queries in ServerSideProps
- * @param queryClient Tanstack QueryClient
- * @param ctx GetServerSideProps ctx
- * @param queryKey key of the query (found in apiComponents.ts)
- * @param queryFn query function (found in apiComponents.ts)
- */
-export const prefetch = async (
-  queryClient: QueryClient,
-  ctx: GetServerSidePropsContext,
-  queryKey: string,
-  queryFn: (args: any) => void
-): Promise<void> => {
-  const { accessToken } = nookies.get(ctx);
-  await queryClient.prefetchQuery([queryKey], () => queryFn({ headers: { Authorization: `Bearer ${accessToken}` } }));
-};
 
 /**
  * Downloads a file from remote url

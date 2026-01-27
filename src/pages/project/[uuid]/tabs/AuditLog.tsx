@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
@@ -15,14 +15,12 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-interface ReportingTasksProps {
+type AuditLogProps = {
   project: ProjectFullDto;
-  label?: string;
   refresh?: () => void;
-  enableChangeStatus?: number;
-}
+};
 
-const AuditLog = ({ label, project, refresh: refreshProject, enableChangeStatus, ...rest }: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
   const ButtonStates = {
     PROJECTS: 0,
     SITE: 1,

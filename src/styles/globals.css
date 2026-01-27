@@ -69,6 +69,10 @@ strong {
   font-size: inherit;
 }
 
+.outline-solid {
+  outline-style: solid !important;
+}
+
 @media (max-width: 1200px) {
   html,
   body {
@@ -83,3 +87,4 @@ strong {
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");
 @import url("./custom-admin-page-styles.css");
+@import url("./extended-redesign.css");

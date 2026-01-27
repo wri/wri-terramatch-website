@@ -165,24 +165,6 @@ export const MenuWithEndIcons: Story = {
   }
 };
 
-export const MenuWithCustomTrigger: Story = {
-  args: {
-    label: "Custom Trigger",
-    customTrigger: (
-      <button
-        style={{ padding: "8px 16px", background: "#4CAF50", color: "white", border: "none", borderRadius: "4px" }}
-      >
-        Custom Button
-      </button>
-    ),
-    items: [
-      { label: "Option 1", value: "1" },
-      { label: "Option 2", value: "2" },
-      { label: "Option 3", value: "3" }
-    ]
-  }
-};
-
 // Complex Example
 export const ComplexMenu: Story = {
   args: {

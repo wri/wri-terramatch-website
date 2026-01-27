@@ -116,7 +116,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
       case "tree-planted":
         return "Trees Planted:";
       case "non-tree":
-        return "non-trees planted";
+        return "non-trees planted:";
       case "replanting":
         return "trees replanted:";
       default:

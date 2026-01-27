@@ -24,12 +24,23 @@ interface MobilePopupProps {
 
 export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
-  const { items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
+  const { items, label, isoCountry, itemUuid, layerName, projectFullDto, popupType } = usePopupData(event);
   const { setFilters, dashboardCountries, isDashboard } = event;
   const countryChoices = useGadmChoices({ level: 0 });
   const router = useRouter();
   const { closeModal } = useModalContext();
   if (!items?.length) return null;
+
+  const getLabelTitle = () => {
+    if (popupType === "polygon") {
+      return t("Polygon");
+    } else if (popupType === "project") {
+      return t("Project");
+    } else if (popupType === "country") {
+      return t("Country");
+    }
+    return t("Project");
+  };
 
   const handleLearnMore = () => {
     if (layerName === LAYERS_NAMES.WORLD_COUNTRIES && isoCountry) {
@@ -96,7 +107,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
       <div className="flex flex-col gap-2">
         <div className="flex flex-col gap-0.5">
           <Text variant="text-12-light" className="leading-[normal] text-darkCustom">
-            {t("Project")}
+            {getLabelTitle()}
           </Text>
           <Text variant="text-12-bold" className="max-w-[95%] overflow-hidden leading-[normal]">
             {t(label)}

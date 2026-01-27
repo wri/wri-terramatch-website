@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { useState } from "react";
+import { FC, useState } from "react";
 import { When } from "react-if";
 
 import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogSiteTabSelection";
@@ -14,17 +14,16 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { SrpReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
-interface ReportingTasksProps {
-  srpReport: any;
-  label?: string;
+type AuditLogProps = {
+  srpReport: SrpReportFullDto;
   refresh?: () => void;
-  enableChangeStatus?: number;
-}
+};
 
-const AuditLog = ({ label, srpReport, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
+const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
   const t = useT();
   const ButtonStates = {
     PROJECTS: 0
@@ -104,7 +103,7 @@ const AuditLog = ({ label, srpReport, refresh: refreshSite, enableChangeStatus, 
                     refresh={() => {
                       loadEntityList();
                       refetch();
-                      refreshSite?.();
+                      refreshReport?.();
                     }}
                     record={selected}
                     polygonList={entityListItem}
