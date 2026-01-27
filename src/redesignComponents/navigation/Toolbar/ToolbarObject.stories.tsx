@@ -34,9 +34,6 @@ const meta: Meta<typeof ToolbarObject> = {
 export default meta;
 type Story = StoryObj<typeof ToolbarObject>;
 
-/**
- * Default ToolbarObject with breadcrumbs and slots
- */
 export const Default: Story = {
   args: {
     breadcrumbs: {
@@ -54,9 +51,6 @@ export const Default: Story = {
   }
 };
 
-/**
- * ToolbarObject with multiple slots
- */
 export const MultipleSlots: Story = {
   args: {
     breadcrumbs: {
@@ -76,9 +70,6 @@ export const MultipleSlots: Story = {
   }
 };
 
-/**
- * ToolbarObject with breadcrumb icons
- */
 export const WithBreadcrumbIcons: Story = {
   args: {
     breadcrumbs: {

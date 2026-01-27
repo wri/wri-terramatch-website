@@ -41,9 +41,6 @@ const meta: Meta<typeof BulkActionToolbar> = {
 export default meta;
 type Story = StoryObj<typeof BulkActionToolbar>;
 
-/**
- * Default BulkActionToolbar with standard button labels
- */
 export const Default: Story = {
   args: {
     ButtonCancel: {
@@ -85,9 +82,6 @@ export const Default: Story = {
   }
 };
 
-/**
- * BulkActionToolbar with different actions
- */
 export const MultipleActions: Story = {
   args: {
     ButtonCancel: {
@@ -134,9 +128,6 @@ export const MultipleActions: Story = {
   }
 };
 
-/**
- * BulkActionToolbar with loading state
- */
 export const WithLoading: Story = {
   args: {
     ButtonCancel: {

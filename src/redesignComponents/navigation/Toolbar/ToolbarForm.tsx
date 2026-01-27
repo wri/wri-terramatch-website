@@ -1,15 +1,9 @@
 import { FC } from "react";
 
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 
 import Toolbar from "./Toolbar";
-
-interface ToolbarFormProps {
-  label: string;
-  ButtonPrimary: IButtonProps;
-  ButtonSecondary: IButtonProps;
-  ButtonTertiary: IButtonProps;
-}
+import { ToolbarFormProps } from "./ToolBar.type";
 
 const ToolbarForm: FC<ToolbarFormProps> = ({ label, ButtonPrimary, ButtonSecondary, ButtonTertiary }) => {
   return (

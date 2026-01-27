@@ -1,11 +1,8 @@
 import { FC } from "react";
 
-import TabBar, { TabBarWriProps } from "../TabBar/TabBar";
+import TabBar from "../TabBar/TabBar";
 import Toolbar from "./Toolbar";
-
-interface ViewToolbarProps {
-  tabBar: TabBarWriProps;
-}
+import { ViewToolbarProps } from "./ToolBar.type";
 
 const ViewToolbar: FC<ViewToolbarProps> = ({ tabBar }: ViewToolbarProps) => {
   return <Toolbar contentLeft={<TabBar {...tabBar} variant="transparent" />} />;

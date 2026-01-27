@@ -36,9 +36,6 @@ const meta: Meta<typeof ToolbarForm> = {
 export default meta;
 type Story = StoryObj<typeof ToolbarForm>;
 
-/**
- * Default ToolbarForm with standard button labels
- */
 export const Default: Story = {
   args: {
     label: "Form Title",

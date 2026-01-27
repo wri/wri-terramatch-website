@@ -1,45 +1,14 @@
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
-import { FC, ReactElement } from "react";
+import { FC } from "react";
 
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
-import MultiActionButton, {
-  IMultiActionButtonProps
-} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import Toolbar from "./Toolbar";
+import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
 
-type ListItemVariant = "data" | "navigation" | "select";
-
-interface ListItemProps {
-  id?: string;
-  label: string;
-  caption?: string;
-  icon?: ReactElement;
-  value?: string;
-  variant?: ListItemVariant;
-  isExpanded?: boolean;
-  onItemClick?: () => void;
-  ariaLabel?: string;
-  disabled?: boolean;
-  isHighlighted?: boolean;
-}
-
-interface SearchProps {
-  placeholder?: string;
-  disabled?: boolean;
-  options: ListItemProps[];
-  resultsMaxHeight?: string;
-  isLoading?: boolean;
-  displayResults?: "none" | "text" | "list" | "custom";
-  label?: string;
-}
-
-const ToolbarTable: FC<{
-  search: SearchProps;
-  filters: IMultiActionButtonProps[];
-  button: IButtonProps;
-}> = ({ search, filters, button }) => {
+const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
   const t = useT();
   return (
     <Toolbar

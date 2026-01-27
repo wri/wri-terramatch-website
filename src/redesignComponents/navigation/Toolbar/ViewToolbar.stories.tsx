@@ -34,9 +34,6 @@ const defaultTabs = [
   { label: "Settings", value: "settings", icon: <PlaceholderIcon boxSize={4} /> }
 ];
 
-/**
- * Default ViewToolbar with panel variant tabs
- */
 export const Default: Story = {
   args: {
     tabBar: {

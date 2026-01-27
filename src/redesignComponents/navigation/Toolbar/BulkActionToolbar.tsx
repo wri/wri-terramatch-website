@@ -1,20 +1,10 @@
 import { FC } from "react";
 
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
-import MultiActionButton, {
-  IMultiActionButtonProps
-} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import Toolbar from "./Toolbar";
-
-interface BulkActionToolbarProps {
-  ButtonPrimary: IButtonProps;
-  ButtonSecondary: IButtonProps;
-  ButtonTertiary: IButtonProps;
-  ButtonCancel: IButtonProps;
-  ButtonDelete: IButtonProps;
-  ButtonMenu: IMultiActionButtonProps;
-}
+import { BulkActionToolbarProps } from "./ToolBar.type";
 
 const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
   ButtonPrimary,

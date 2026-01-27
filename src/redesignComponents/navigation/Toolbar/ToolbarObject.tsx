@@ -1,17 +1,8 @@
 import { FC } from "react";
 
-import Breadcrumb, { BreadcrumbProps } from "../Breadcrumbs/Breadcrumb";
+import Breadcrumb from "../Breadcrumbs/Breadcrumb";
 import Toolbar from "./Toolbar";
-
-export interface ToolbarSlot {
-  title: string;
-  description: string;
-}
-
-interface ToolbarObjectProps {
-  breadcrumbs: BreadcrumbProps;
-  slots: ToolbarSlot[];
-}
+import { ToolbarObjectProps } from "./ToolBar.type";
 
 const ToolbarObject: FC<ToolbarObjectProps> = ({ breadcrumbs, slots }) => {
   return (
