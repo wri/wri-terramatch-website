@@ -35,13 +35,13 @@ function groupPolygonsByStatus(polygons: any[]) {
 
 const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const recordContext = useRecordContext();
-  const { data: getPolygonsToSite } = useAllSitePolygons({
+  const { data: sitePolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: recordContext.uuid,
     enabled: recordContext.uuid != null
   });
 
-  if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
+  if (!sitePolygons?.length || !Array.isArray(sitePolygons)) {
     return (
       <div className="text-14 w-fit-content whitespace-nowrap rounded-[3px] bg-grey-200 px-2 text-grey-500">
         {props.emptyText ?? "Not Provided"}
@@ -49,7 +49,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
     );
   }
 
-  const groupedPolygons = groupPolygonsByStatus(getPolygonsToSite);
+  const groupedPolygons = groupPolygonsByStatus(sitePolygons);
 
   return (
     <ArrayField {...props} record={{ [props.source!]: groupedPolygons }}>

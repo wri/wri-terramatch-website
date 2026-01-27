@@ -171,7 +171,10 @@ const useAuditLogActions = ({
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
       entity: ReverseButtonStates2[buttonToggle!],
-      uuid: entityHandlers.selectedEntityItem?.uuid
+      uuid:
+        buttonToggle == AuditLogButtonStates.PROJECT
+          ? record?.projectUuid ?? record.uuid
+          : entityHandlers.selectedEntityItem?.uuid
     }
   });
 

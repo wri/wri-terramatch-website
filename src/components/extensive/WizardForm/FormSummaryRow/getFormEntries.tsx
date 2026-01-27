@@ -18,6 +18,7 @@ import {
   useFieldsProvider,
   useOrgFormDetails
 } from "@/context/wizardForm.provider";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -121,7 +122,7 @@ const getEntityPolygonData = (
   record: any,
   type?: EntityName,
   entity?: Entity,
-  sitePolygonData?: any,
+  sitePolygonData?: SitePolygonLightDto[],
   projectPolygonData?: any
 ) => {
   if (!record && !entity) {

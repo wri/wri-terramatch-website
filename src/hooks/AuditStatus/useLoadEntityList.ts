@@ -86,6 +86,30 @@ async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string }
   return { data: listItems };
 }
 
+const unnamedTitleAndSort = (
+  list: EntityListItem[],
+  nameProperty: keyof EntityListItem,
+  entityType: AuditLogEntity,
+  buttonToggle: number
+) => {
+  const unnamedItems = list?.map((item: EntityListItem) => {
+    if (!item[nameProperty] && AuditLogButtonStates.PROJECT_REPORT != buttonToggle) {
+      return {
+        ...item,
+        [nameProperty]:
+          entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
+      };
+    }
+    return item;
+  });
+
+  return unnamedItems?.sort((a, b) => {
+    const nameA = a[nameProperty];
+    const nameB = b[nameProperty];
+    return nameA && nameB ? nameA.localeCompare(nameB) : 0;
+  });
+};
+
 const useLoadEntityList = ({
   entity,
   entityType,
@@ -96,29 +120,6 @@ const useLoadEntityList = ({
   const [selected, setSelected] = useState<SelectedItem | null>(null);
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
-
-  const unnamedTitleAndSort = (
-    list: EntityListItem[],
-    nameProperty: keyof EntityListItem,
-    entityType: AuditLogEntity
-  ) => {
-    const unnamedItems = list?.map((item: EntityListItem) => {
-      if (!item[nameProperty] && AuditLogButtonStates.PROJECT_REPORT != buttonToggle) {
-        return {
-          ...item,
-          [nameProperty]:
-            entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
-        };
-      }
-      return item;
-    });
-
-    return unnamedItems?.sort((a, b) => {
-      const nameA = a[nameProperty];
-      const nameB = b[nameProperty];
-      return nameA && nameB ? nameA.localeCompare(nameB) : 0;
-    });
-  };
 
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
@@ -217,7 +218,8 @@ const useLoadEntityList = ({
     const _list = unnamedTitleAndSort(
       isProjectReport ? statusActionsMap[buttonToggle!]?.list : _entityList,
       isProjectReport ? "title" : nameProperty,
-      entityType
+      entityType,
+      buttonToggle as number
     );
     setEntityListItem(isProjectReport ? _list : _list?.map((item: EntityListItem) => transformEntityListItem(item)));
     if (_list?.length > 0) {
