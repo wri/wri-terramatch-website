@@ -4,9 +4,9 @@ import classNames from "classnames";
 import clsx from "clsx";
 import React from "react";
 
-import { focusOutlineClass, secondaryTextColorClass } from "./Button.styles";
+import { secondaryTextColorClass } from "./Button.styles";
 
-interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPalette" | "children"> {
+export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPalette" | "children"> {
   className?: string;
   variant?: "primary" | "secondary" | "borderless" | "outline";
   size?: "default" | "small";
@@ -17,10 +17,10 @@ interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPale
 }
 
 const Button = ({ children, className, variant = "primary", ...props }: IButtonProps) => {
-  const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass, focusOutlineClass);
+  const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass);
 
   return (
-    <WriButton variant={variant} {...props} className={classNames("outline-solid shadow-monitored", buttonClassName)}>
+    <WriButton variant={variant} {...props} className={classNames("shadow-monitored", buttonClassName)}>
       {children}
     </WriButton>
   );
