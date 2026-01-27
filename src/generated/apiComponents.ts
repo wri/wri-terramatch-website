@@ -10147,92 +10147,6 @@ export const usePostV2AuditStatusENTITYUUID = (
   );
 };
 
-export type GetV2SitesSitePolygonPathParams = {
-  /**
-   * The ID of the site
-   */
-  site: string;
-};
-
-export type GetV2SitesSitePolygonError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2SitesSitePolygonResponse = {
-  id?: number;
-  uuid?: string;
-  primary_uuid?: string;
-  project_id?: string;
-  proj_name?: string;
-  org_name?: string;
-  poly_id?: string;
-  poly_name?: string;
-  site_id?: string;
-  site_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  created_by?: string;
-  last_modified_by?: string;
-  /**
-   * @format date-time
-   */
-  deleted_at?: string;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  status?: string;
-  source?: string;
-  country?: string;
-  is_active?: boolean;
-  version_name?: string;
-  validation_status?: boolean;
-}[];
-
-export type GetV2SitesSitePolygonVariables = {
-  pathParams: GetV2SitesSitePolygonPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2SitesSitePolygon = (variables: GetV2SitesSitePolygonVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2SitesSitePolygonResponse,
-    GetV2SitesSitePolygonError,
-    undefined,
-    {},
-    {},
-    GetV2SitesSitePolygonPathParams
-  >({ url: "/v2/sites/{site}/polygon", method: "get", ...variables, signal });
-
-export const useGetV2SitesSitePolygon = <TData = GetV2SitesSitePolygonResponse>(
-  variables: GetV2SitesSitePolygonVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2SitesSitePolygonResponse, GetV2SitesSitePolygonError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2SitesSitePolygonResponse, GetV2SitesSitePolygonError, TData>(
-    queryKeyFn({ path: "/v2/sites/{site}/polygon", operationId: "getV2SitesSitePolygon", variables }),
-    ({ signal }) => fetchGetV2SitesSitePolygon({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2TerrafundSitePolygonUuidSiteUuidPathParams = {
   /**
    * The UUID of the polygon related
@@ -12977,11 +12891,6 @@ export type QueryOperation =
       path: "/v2/audit-status/{ENTITY}/{UUID}";
       operationId: "getV2AuditStatusENTITYUUID";
       variables: GetV2AuditStatusENTITYUUIDVariables;
-    }
-  | {
-      path: "/v2/sites/{site}/polygon";
-      operationId: "getV2SitesSitePolygon";
-      variables: GetV2SitesSitePolygonVariables;
     }
   | {
       path: "/v2/terrafund/geojson/complete";
