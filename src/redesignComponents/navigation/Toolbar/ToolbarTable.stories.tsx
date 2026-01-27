@@ -6,7 +6,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ToolbarTable from "./ToolbarTable";
 
 const meta: Meta<typeof ToolbarTable> = {
-  title: "Redesign Components/Navigation/ToolbarTable",
+  title: "Redesign Components/Navigation/Toolbar/Toolbar Table",
   component: ToolbarTable,
   tags: ["autodocs"],
   parameters: {

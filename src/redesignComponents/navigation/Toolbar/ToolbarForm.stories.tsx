@@ -3,12 +3,19 @@ import { Meta, StoryObj } from "@storybook/react";
 import ToolbarForm from "./ToolbarForm";
 
 const meta: Meta<typeof ToolbarForm> = {
-  title: "Redesign Components/Navigation/ToolbarForm",
+  title: "Redesign Components/Navigation/Toolbar/Toolbar Form",
   component: ToolbarForm,
   tags: ["autodocs"],
   parameters: {
     layout: "padded"
   },
+  decorators: [
+    Story => (
+      <div style={{ backgroundColor: "#F5F5F5", padding: "20px", borderRadius: "8px" }}>
+        <Story />
+      </div>
+    )
+  ],
   argTypes: {
     label: {
       control: "text",

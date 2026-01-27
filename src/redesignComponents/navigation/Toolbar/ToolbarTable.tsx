@@ -66,12 +66,29 @@ const ToolbarTable: FC<{
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
-          <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
-            {t("Filter by:")}
-            {filters.map((filter, index) => (
-              <MultiActionButton key={index} {...filter} size="small" />
-            ))}
-          </div>
+          {filters != null && filters.length > 0 ? (
+            <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
+              {t("Filter by:")}
+              {filters.map((filter, index) => (
+                <MultiActionButton key={index} {...filter} size="small" />
+              ))}
+            </div>
+          ) : (
+            <Button
+              variant="secondary"
+              size="small"
+              leftIcon={
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M2.5 8.32914V7.21803H7.5V8.32914H2.5ZM1.25 5.55136V4.44025H8.75V5.55136H1.25ZM0 2.77359V1.66248H10V2.77359H0Z"
+                    fill="#5C5959"
+                  />
+                </svg>
+              }
+            >
+              {t("Add Filter")}
+            </Button>
+          )}
         </div>
       }
       contentRight={<Button {...button} size="small" />}
