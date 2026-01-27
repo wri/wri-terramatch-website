@@ -10,7 +10,7 @@ const meta: Meta<typeof ProgressBar> = {
     layout: "padded"
   },
   argTypes: {
-    value: {
+    progress: {
       control: { type: "range", min: 0, max: 100, step: 1 },
       description: "Progress value between 0 and 100"
     },
@@ -30,7 +30,7 @@ type Story = StoryObj<typeof ProgressBar>;
 
 export const Default: Story = {
   args: {
-    value: 50,
+    progress: 50,
     width: "100%",
     height: 8
   }
@@ -38,7 +38,7 @@ export const Default: Story = {
 
 export const Empty: Story = {
   args: {
-    value: 0,
+    progress: 0,
     width: "100%",
     height: 8
   }
@@ -46,7 +46,7 @@ export const Empty: Story = {
 
 export const TwentyPercent: Story = {
   args: {
-    value: 20,
+    progress: 20,
     width: "100%",
     height: 8
   }
@@ -54,7 +54,7 @@ export const TwentyPercent: Story = {
 
 export const FortyPercent: Story = {
   args: {
-    value: 40,
+    progress: 40,
     width: "100%",
     height: 8
   }
@@ -62,7 +62,7 @@ export const FortyPercent: Story = {
 
 export const SixtyPercent: Story = {
   args: {
-    value: 60,
+    progress: 60,
     width: "100%",
     height: 8
   }
@@ -70,7 +70,7 @@ export const SixtyPercent: Story = {
 
 export const EightyPercent: Story = {
   args: {
-    value: 80,
+    progress: 80,
     width: "100%",
     height: 8
   }
@@ -78,7 +78,7 @@ export const EightyPercent: Story = {
 
 export const Full: Story = {
   args: {
-    value: 100,
+    progress: 100,
     width: "100%",
     height: 8
   }
@@ -87,11 +87,11 @@ export const Full: Story = {
 export const AllProgressLevels: Story = {
   render: () => (
     <VStack gap={4} width="100%" maxWidth="400px">
-      <ProgressBar value={20} />
-      <ProgressBar value={40} />
-      <ProgressBar value={60} />
-      <ProgressBar value={80} />
-      <ProgressBar value={100} />
+      <ProgressBar progress={20} />
+      <ProgressBar progress={40} />
+      <ProgressBar progress={60} />
+      <ProgressBar progress={80} />
+      <ProgressBar progress={100} />
     </VStack>
   )
 };
@@ -99,10 +99,10 @@ export const AllProgressLevels: Story = {
 export const DifferentHeights: Story = {
   render: () => (
     <VStack gap={4} width="100%" maxWidth="400px">
-      <ProgressBar value={60} height={4} />
-      <ProgressBar value={60} height={8} />
-      <ProgressBar value={60} height={12} />
-      <ProgressBar value={60} height={16} />
+      <ProgressBar progress={60} height={4} />
+      <ProgressBar progress={60} height={8} />
+      <ProgressBar progress={60} height={12} />
+      <ProgressBar progress={60} height={16} />
     </VStack>
   )
 };
@@ -110,10 +110,10 @@ export const DifferentHeights: Story = {
 export const DifferentWidths: Story = {
   render: () => (
     <VStack gap={4} width="100%">
-      <ProgressBar value={60} width="200px" />
-      <ProgressBar value={60} width="300px" />
-      <ProgressBar value={60} width="400px" />
-      <ProgressBar value={60} width="100%" />
+      <ProgressBar progress={60} width="200px" />
+      <ProgressBar progress={60} width="300px" />
+      <ProgressBar progress={60} width="400px" />
+      <ProgressBar progress={60} width="100%" />
     </VStack>
   )
 };
@@ -121,10 +121,10 @@ export const DifferentWidths: Story = {
 export const CustomColors: Story = {
   render: () => (
     <VStack gap={4} width="100%" maxWidth="400px">
-      <ProgressBar value={60} color="#50B6E2" />
-      <ProgressBar value={60} color="#8ECA3F" />
-      <ProgressBar value={60} color="#009E77" />
-      <ProgressBar value={60} color="#A88100" />
+      <ProgressBar progress={60} color="#50B6E2" />
+      <ProgressBar progress={60} color="#8ECA3F" />
+      <ProgressBar progress={60} color="#009E77" />
+      <ProgressBar progress={60} color="#A88100" />
     </VStack>
   )
 };

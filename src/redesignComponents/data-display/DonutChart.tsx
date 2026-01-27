@@ -6,7 +6,7 @@ import { getThemedColor } from "@/lib/theme";
 import { DonutChartProps } from "./types";
 
 const DonutChart: FC<DonutChartProps> = ({
-  value,
+  progress,
   size = 90,
   color,
   backgroundColor,
@@ -14,27 +14,27 @@ const DonutChart: FC<DonutChartProps> = ({
   children,
   ...rest
 }) => {
-  const progress = Math.max(0, Math.min(100, value));
+  const progressValue = Math.max(0, Math.min(100, progress));
 
   const center = size / 2;
   const radius = size / 2;
 
-  const angle = (-90 + (progress / 100) * 360) * (Math.PI / 180);
+  const angle = (-90 + (progressValue / 100) * 360) * (Math.PI / 180);
 
   const endX = center + radius * Math.cos(angle);
   const endY = center + radius * Math.sin(angle);
 
-  const largeArcFlag = progress > 50 ? 1 : 0;
+  const largeArcFlag = progressValue > 50 ? 1 : 0;
 
   const pathData =
-    progress === 0
+    progressValue === 0
       ? ""
-      : progress === 100
+      : progressValue === 100
       ? null
       : `M ${center} ${center} L ${center} 0 A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY} Z`;
 
-  const progressColor = color || getThemedColor("primary", 600);
-  const bgColor = backgroundColor || getThemedColor("neutral", 300);
+  const progressColor = color ?? getThemedColor("primary", 600);
+  const bgColor = backgroundColor ?? getThemedColor("neutral", 300);
 
   return (
     <Box
@@ -45,6 +45,7 @@ const DonutChart: FC<DonutChartProps> = ({
       width={`${size}px`}
       height={`${size}px`}
       position="relative"
+      color={progressColor}
       {...rest}
     >
       <Box
@@ -63,11 +64,11 @@ const DonutChart: FC<DonutChartProps> = ({
         {children}
       </Box>
       <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {progress < 100 && <circle cx={center} cy={center} r={radius} fill={bgColor} />}
-        {progress === 100 ? (
-          <circle cx={center} cy={center} r={radius} fill={progressColor} />
+        {progressValue < 100 && <circle cx={center} cy={center} r={radius} fill={bgColor} />}
+        {progressValue === 100 ? (
+          <circle cx={center} cy={center} r={radius} fill="currentColor" />
         ) : (
-          pathData && <path d={pathData} fill={progressColor} />
+          pathData && <path d={pathData} fill="currentColor" />
         )}
       </svg>
     </Box>

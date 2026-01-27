@@ -11,7 +11,7 @@ const meta: Meta<typeof DonutChart> = {
     layout: "padded"
   },
   argTypes: {
-    value: {
+    progress: {
       control: { type: "range", min: 0, max: 100, step: 1 },
       description: "Progress value between 0 and 100"
     },
@@ -27,48 +27,48 @@ type Story = StoryObj<typeof DonutChart>;
 
 export const Default: Story = {
   args: {
-    value: 50
+    progress: 50
   }
 };
 
 export const Empty: Story = {
   args: {
-    value: 0
+    progress: 0
   }
 };
 
 export const Quarter: Story = {
   args: {
-    value: 25
+    progress: 25
   }
 };
 
 export const Half: Story = {
   args: {
-    value: 50
+    progress: 50
   }
 };
 
 export const ThreeQuarters: Story = {
   args: {
-    value: 75
+    progress: 75
   }
 };
 
 export const Full: Story = {
   args: {
-    value: 100
+    progress: 100
   }
 };
 
 export const AllProgressLevels: Story = {
   render: () => (
     <Flex gap={6} alignItems="center" flexWrap="wrap">
-      <DonutChart value={0} />
-      <DonutChart value={25} />
-      <DonutChart value={50} />
-      <DonutChart value={75} />
-      <DonutChart value={100} />
+      <DonutChart progress={0} />
+      <DonutChart progress={25} />
+      <DonutChart progress={50} />
+      <DonutChart progress={75} />
+      <DonutChart progress={100} />
     </Flex>
   )
 };
@@ -76,16 +76,16 @@ export const AllProgressLevels: Story = {
 export const DifferentSizes: Story = {
   render: () => (
     <Flex gap={6} alignItems="center" flexWrap="wrap">
-      <DonutChart value={60} size={60} />
-      <DonutChart value={60} size={80} />
-      <DonutChart value={60} size={100} />
-      <DonutChart value={60} size={120} />
+      <DonutChart progress={60} size={60} />
+      <DonutChart progress={60} size={80} />
+      <DonutChart progress={60} size={100} />
+      <DonutChart progress={60} size={120} />
     </Flex>
   )
 };
 export const WithChildren: Story = {
   args: {
-    value: 100,
+    progress: 100,
     children: <Placeholder boxSize={6} color="primary.600" />
   }
 };

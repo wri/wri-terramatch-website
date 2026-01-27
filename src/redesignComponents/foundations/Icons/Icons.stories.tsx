@@ -35,7 +35,7 @@ import {
   Organisation,
   Pending,
   PhotoAdd,
-  PlaceholderIcon,
+  Placeholder,
   Programme,
   Project,
   Regeneration,
@@ -167,7 +167,7 @@ export const AllIcons: Story = {
             <NewTab boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Placeholder">
-            <PlaceholderIcon boxSize={8} />
+            <Placeholder boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Photo Add">
             <PhotoAdd boxSize={8} />
@@ -347,7 +347,7 @@ export const Function: Story = {
           <NewTab boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Placeholder">
-          <PlaceholderIcon boxSize={8} />
+          <Placeholder boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Photo Add">
           <PhotoAdd boxSize={8} />

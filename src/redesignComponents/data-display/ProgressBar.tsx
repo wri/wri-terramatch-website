@@ -1,12 +1,10 @@
 import { Box } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { getThemedColor } from "@/lib/theme";
-
 import { ProgressBarProps } from "./types";
 
 const ProgressBar: FC<ProgressBarProps> = ({
-  value,
+  progress,
   width = "100%",
   height = 8,
   color,
@@ -14,10 +12,10 @@ const ProgressBar: FC<ProgressBarProps> = ({
   className,
   ...rest
 }) => {
-  const progress = Math.max(0, Math.min(100, value));
+  const progressValue = Math.max(0, Math.min(100, progress));
 
-  const progressColor = color ?? getThemedColor("primary", 600);
-  const bgColor = backgroundColor ?? getThemedColor("neutral", 300);
+  const progressColor = color ?? "primary.600";
+  const bgColor = backgroundColor ?? "neutral.300";
 
   return (
     <Box
@@ -31,7 +29,7 @@ const ProgressBar: FC<ProgressBarProps> = ({
       {...rest}
     >
       <Box
-        width={`${progress}%`}
+        width={`${progressValue}%`}
         height="100%"
         backgroundColor={progressColor}
         borderRadius="full"
