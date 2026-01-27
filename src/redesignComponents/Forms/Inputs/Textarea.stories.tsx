@@ -5,9 +5,6 @@ import Textarea from "./Textarea";
 const meta = {
   title: "Redesign Components/Forms/Input/Text Area",
   component: Textarea,
-  parameters: {
-    layout: "centered"
-  },
   tags: ["autodocs"]
 } satisfies Meta<typeof Textarea>;
 
