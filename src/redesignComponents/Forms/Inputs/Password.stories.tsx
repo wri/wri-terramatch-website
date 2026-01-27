@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import React from "react";
 const fn = () => () => {};
 
 import Password from "./Password";
@@ -11,14 +10,7 @@ const meta = {
     layout: "centered"
   },
   tags: ["autodocs"],
-  args: { onChange: fn() },
-  decorators: [
-    (Story: any) => (
-      <div style={{ width: "480px" }}>
-        <Story />
-      </div>
-    )
-  ]
+  args: { onChange: fn() }
 } satisfies Meta<typeof Password>;
 
 export default meta;
