@@ -1,0 +1,82 @@
+import { useT } from "@transifex/react";
+import { Search } from "@worldresources/wri-design-systems";
+import { FC, ReactElement } from "react";
+
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton, {
+  IMultiActionButtonProps
+} from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+
+import Toolbar from "./Toolbar";
+
+type ListItemVariant = "data" | "navigation" | "select";
+
+interface ListItemProps {
+  id?: string;
+  label: string;
+  caption?: string;
+  icon?: ReactElement;
+  value?: string;
+  variant?: ListItemVariant;
+  isExpanded?: boolean;
+  onItemClick?: () => void;
+  ariaLabel?: string;
+  disabled?: boolean;
+  isHighlighted?: boolean;
+}
+
+interface SearchProps {
+  placeholder?: string;
+  disabled?: boolean;
+  options: ListItemProps[];
+  resultsMaxHeight?: string;
+  isLoading?: boolean;
+  displayResults?: "none" | "text" | "list" | "custom";
+  label?: string;
+}
+
+const ToolbarTable: FC<{
+  search: SearchProps;
+  filters: IMultiActionButtonProps[];
+  button: IButtonProps;
+}> = ({ search, filters, button }) => {
+  const t = useT();
+  return (
+    <Toolbar
+      contentLeft={
+        <div className="flex flex-wrap items-center gap-2">
+          {search != null && (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="mt-2.5">
+                <Search
+                  {...({
+                    placeholder: search.placeholder,
+                    disabled: search.disabled,
+                    options: search.options,
+                    resultsMaxHeight: search.resultsMaxHeight,
+                    isLoading: search.isLoading,
+                    displayResults: search.displayResults,
+                    size: "default"
+                  } as SearchProps)}
+                />
+              </div>
+              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
+                XX {search.label}
+              </span>
+            </div>
+          )}
+          {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
+          <div className="text-14 flex flex-wrap items-center gap-2 text-theme-neutral-900">
+            {t("Filter by:")}
+            {filters.map((filter, index) => (
+              <MultiActionButton key={index} {...filter} size="small" />
+            ))}
+          </div>
+        </div>
+      }
+      contentRight={<Button {...button} size="small" />}
+    />
+  );
+};
+
+export default ToolbarTable;

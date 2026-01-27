@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -9,6 +10,7 @@ import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummary
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import { EntityName } from "@/types/common";
 
+import { isDemographicType } from "../../DemographicsCollapseGrid/types";
 import List from "../../List/List";
 
 export interface FormSummaryRowProps extends FormSummaryProps {
@@ -40,18 +42,36 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         className="flex flex-col gap-4"
         items={entries}
         render={entry => (
-          <div className="flex items-start gap-12 transition-all delay-300 duration-300">
-            <Text variant="text-body-500" className="flex-1">
+          <div
+            className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
+              "w-full flex-col": isDemographicType(entry.value.props?.type)
+            })}
+          >
+            <Text variant="text-body-500" className=" flex-1">
               {entry.title}
             </Text>
-            <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-              <Then>
-                <Text variant="text-body-300" className="flex-1" containHtml>
-                  {formatEntryValue(entry.value)}
-                </Text>
-              </Then>
-              <Else>{formatEntryValue(entry.value)}</Else>
-            </If>
+            <div
+              className={classNames("flex-1", {
+                "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+              })}
+            >
+              <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
+                <Then>
+                  <Text variant="text-body-300" className="flex-1" containHtml>
+                    {formatEntryValue(entry.value)}
+                  </Text>
+                </Then>
+                <Else>
+                  <div
+                    className={classNames("", {
+                      "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+                    })}
+                  >
+                    {formatEntryValue(entry.value)}
+                  </div>
+                </Else>
+              </If>
+            </div>
           </div>
         )}
       />
