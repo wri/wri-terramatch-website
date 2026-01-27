@@ -101,7 +101,7 @@ const useAuditLogActions = ({
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   const polygonValidationData = usePolygonValidation({
-    polygonUuid: selected?.poly_id && isPolygon && !verifyEntity ? (selected.poly_id as string) : ""
+    polygonUuid: selected?.polygonUuid && isPolygon && !verifyEntity ? selected.polygonUuid : ""
   });
 
   const hasInvalidPolygonCriteria = useMemo(() => {
@@ -171,7 +171,10 @@ const useAuditLogActions = ({
   } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
     pathParams: {
       entity: ReverseButtonStates2[buttonToggle!],
-      uuid: entityHandlers.selectedEntityItem?.uuid
+      uuid:
+        buttonToggle == AuditLogButtonStates.PROJECT
+          ? record?.projectUuid ?? record.uuid
+          : entityHandlers.selectedEntityItem?.uuid
     }
   });
 
