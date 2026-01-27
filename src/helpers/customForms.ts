@@ -15,7 +15,9 @@ export const SELECT_FILTER_QUESTION: Dictionary<string> = {
   "pro-pit-states": "pro-pit-country",
   "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
   "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
-  "pro-states": "pro-country"
+  "pro-states": "pro-country",
+  "pro-level-1-project": "pro-country",
+  "pro-level-2-project": "pro-level-1-project"
 };
 
 export function normalizedFormData(values: Dictionary<any>, fieldsProvider: FormFieldsProvider): Dictionary<any> {
