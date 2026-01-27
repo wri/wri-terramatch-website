@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import Button from "@/redesignComponents/Forms/Actions/Button/Button";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Edit } from "@/redesignComponents/foundations/Icons";
 
 import Accordion from "./Accordion";
