@@ -11,7 +11,9 @@ import {
 } from "@/connections/Entity";
 import { loadAllSitePolygons } from "@/connections/SitePolygons";
 import { loadTask } from "@/connections/Task";
-import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
+import { IndexConnection } from "@/connections/util/apiConnectionFactory";
+import { NURSERY, NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
+import { NurseryLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export interface SelectedItem {
   title?: string | undefined;
@@ -124,14 +126,12 @@ const useLoadEntityList = ({
     let _entityList: EntityListItem[] = [];
 
     if (entityType == POLYGON) {
-      // Use v3 loadAllSitePolygons for polygons with proper pagination
       const entityName = isSiteProjectLevel ? "projects" : "sites";
       const polygons = await loadAllSitePolygons({
         entityName,
         entityUuid: entity.uuid
       });
 
-      // Transform v3 SitePolygonLightDto[] to EntityListItem[]
       _entityList = polygons.map(polygon => ({
         name: polygon.name ?? undefined,
         uuid: polygon.uuid,
@@ -141,19 +141,26 @@ const useLoadEntityList = ({
     } else if (isProjectReport) {
       const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid } });
       _entityList = res.data;
-    } else {
-      // Handle other entity types (SITE, NURSERY)
-      const fetchToProject = entityType == SITE ? loadSiteIndex : loadNurseryIndex;
-      const params = isSiteProjectLevel
-        ? entityType == SITE
-          ? { projectUuid: entity.uuid }
-          : { uuid: entity.uuid }
-        : { projectUuid: entity.uuid };
-      const res = await fetchToProject({
-        // @ts-ignore
-        pathParams: params
+    } else if (entityType === SITE) {
+      const res: IndexConnection<SiteLightDto> = await loadSiteIndex({
+        filter: { projectUuid: entity.uuid }
       });
-      _entityList = ((res as any)?.data ?? []) as EntityListItem[];
+      _entityList = (res.data ?? []).map(site => ({
+        name: site.name ?? undefined,
+        uuid: site.uuid,
+        status: site.status ?? undefined,
+        polygonUuid: undefined
+      }));
+    } else if (entityType === NURSERY) {
+      const res: IndexConnection<NurseryLightDto> = await loadNurseryIndex({
+        filter: { projectUuid: entity.uuid }
+      });
+      _entityList = (res.data ?? []).map(nursery => ({
+        name: nursery.name ?? undefined,
+        uuid: nursery.uuid,
+        status: nursery.status ?? undefined,
+        polygonUuid: undefined
+      }));
     }
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
