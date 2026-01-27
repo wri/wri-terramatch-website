@@ -101,7 +101,6 @@ const DemographicsSection = ({
           </Text>
         </div>
       </>
-
       {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
         <DemographicsRow
           key={index}
@@ -115,6 +114,7 @@ const DemographicsSection = ({
           {...{ demographicType, entryType, label, userLabel, amount, variant }}
         />
       ))}
+
       <>
         <div
           className={classNames(

@@ -40,7 +40,6 @@ type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
 
 export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
 
-// Array para validación en runtime
 export const DEMOGRAPHIC_TYPES = [
   "workdays",
   "restorationPartners",
@@ -53,7 +52,6 @@ export const DEMOGRAPHIC_TYPES = [
   "associates"
 ] as const;
 
-// Type guard para verificar si un valor es DemographicType
 export const isDemographicType = (value: unknown): value is DemographicType => {
   return typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
 };

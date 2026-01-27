@@ -14,7 +14,7 @@ import {
   ProjectPolygonUploadAttributesDto,
   UpdateProjectPolygonAttributesDto
 } from "@/generated/v3/researchService/researchServiceSchemas";
-import { WithFormData } from "@/generated/v3/utils";
+import { resolveUrl, WithFormData } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
 import { parallelRequestHook } from "@/utils/parallelRequestHook";
 
@@ -50,12 +50,27 @@ const deleteProjectPolygonBase = deleterAsync("projectPolygons", deleteProjectPo
   pathParams: { polyUuid }
 }));
 
-export const deleteProjectPolygon = async (polyUuid: string): Promise<void> => {
-  await deleteProjectPolygonBase(polyUuid);
+const clearProjectPolygonGetPending = (projectPitchUuid: string | null | undefined): void => {
+  if (projectPitchUuid == null) return;
 
+  const getUrl = resolveUrl(getProjectPolygon.url, {
+    queryParams: { projectPitchUuid }
+  });
+  ApiSlice.clearPending(getUrl, "GET");
+};
+
+const pruneProjectPolygonCaches = (options?: { projectPitchUuid?: string; includeBoundingBoxes?: boolean }): void => {
   ApiSlice.pruneCache("projectPolygons");
   ApiSlice.pruneIndex("projectPolygons", "");
-  ApiSlice.pruneCache("geojsonExports");
+  ApiSlice.pruneCache("geojsonExports", options?.projectPitchUuid != null ? [options.projectPitchUuid] : undefined);
+  if (options?.includeBoundingBoxes) {
+    ApiSlice.pruneCache("boundingBoxes");
+  }
+};
+
+export const deleteProjectPolygon = async (polyUuid: string): Promise<void> => {
+  await deleteProjectPolygonBase(polyUuid);
+  pruneProjectPolygonCaches();
 };
 
 export const useUploadProjectPolygonFile = parallelRequestHook("projectPolygons", uploadProjectPolygonFile);
@@ -72,11 +87,12 @@ export const createProjectPolygonResource = async (
     }
   });
 
-  ApiSlice.pruneCache("projectPolygons");
-  ApiSlice.pruneIndex("projectPolygons", "");
-  ApiSlice.pruneCache("geojsonExports");
+  const result = response.data?.attributes!;
 
-  return response.data?.attributes!;
+  pruneProjectPolygonCaches();
+  clearProjectPolygonGetPending(result.projectPitchUuid);
+
+  return result;
 };
 
 export const createProjectPolygonWithReplace = async (
@@ -122,10 +138,9 @@ export const uploadProjectPolygonFileResource = async (
     }
   });
 
-  await ApiSlice.pruneCache("projectPolygons");
-  await ApiSlice.pruneIndex("projectPolygons", "");
-  await ApiSlice.pruneCache("boundingBoxes");
-  await ApiSlice.pruneCache("geojsonExports", [projectPitchUuid]);
+  pruneProjectPolygonCaches({ projectPitchUuid, includeBoundingBoxes: true });
+
+  clearProjectPolygonGetPending(projectPitchUuid);
 
   return response.data?.attributes!;
 };
@@ -145,8 +160,5 @@ export const updateProjectPolygonResource = async (
     }
   });
 
-  ApiSlice.pruneCache("projectPolygons");
-  ApiSlice.pruneCache("boundingBoxes");
-  ApiSlice.pruneIndex("projectPolygons", "");
-  ApiSlice.pruneCache("geojsonExports");
+  pruneProjectPolygonCaches({ includeBoundingBoxes: true });
 };

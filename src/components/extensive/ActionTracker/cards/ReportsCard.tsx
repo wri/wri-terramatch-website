@@ -88,7 +88,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
     <ActionTrackerCard
       data={reportActions}
       title={t("Reports")}
-      subtitle={reportActions.length && t("You have {n} reports to complete", { n: reportActions.length })}
+      subtitle={reportActions.length && t("You have {n} updates", { n: reportActions.length })}
       icon={IconNames.ARROW_SPIN_CIRCLE}
       limit={10}
       emptyState={{
@@ -111,7 +111,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             }
           : undefined
       }
-      reportsCard
     />
   );
 };
