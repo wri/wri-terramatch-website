@@ -5,7 +5,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Menu from "./Menu";
 
 const meta: Meta<typeof Menu> = {
-  title: "Redesign Components/Forms/Actions/Menu",
+  title: "Redesign Components/Actions/Menu",
   component: Menu,
   tags: ["autodocs"],
   argTypes: {

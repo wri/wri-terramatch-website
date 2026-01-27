@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ProgressTag as Component } from "./ProgressTag";
 
 const meta: Meta<typeof Component> = {
-  title: "Redesign Components/Project/Progress Tag",
+  title: "Redesign Components/Actions/Tags/Progress Tag",
   component: Component
 };
 
