@@ -204,10 +204,9 @@ const useLoadEntityList = ({
           }))
       }
     };
-    const nameProperty: keyof EntityListItem = "name";
     const transformEntityListItem = (item: EntityListItem) => {
       return {
-        title: item?.[nameProperty],
+        title: item?.name,
         uuid: item?.uuid,
         value: item?.uuid,
         meta: item?.status,
@@ -217,7 +216,7 @@ const useLoadEntityList = ({
     };
     const _list = unnamedTitleAndSort(
       isProjectReport ? statusActionsMap[buttonToggle!]?.list : _entityList,
-      isProjectReport ? "title" : nameProperty,
+      isProjectReport ? "title" : "name",
       entityType,
       buttonToggle as number
     );
