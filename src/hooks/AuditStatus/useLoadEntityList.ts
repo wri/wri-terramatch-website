@@ -9,9 +9,11 @@ import {
   loadNurseryIndex,
   loadSiteIndex
 } from "@/connections/Entity";
+import { loadAllSitePolygons } from "@/connections/SitePolygons";
 import { loadTask } from "@/connections/Task";
-import { NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
-import { fetchGetV2ProjectsUUIDSitePolygonsAll, fetchGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { IndexConnection } from "@/connections/util/apiConnectionFactory";
+import { NURSERY, NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
+import { NurseryLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export interface SelectedItem {
   title?: string | undefined;
@@ -19,7 +21,7 @@ export interface SelectedItem {
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
-  poly_id?: string | undefined;
+  polygonUuid?: string | undefined;
 }
 
 interface UseLoadEntityListParams {
@@ -31,13 +33,12 @@ interface UseLoadEntityListParams {
 }
 
 export interface EntityListItem {
-  poly_name?: string | undefined;
   name?: string | undefined;
   uuid?: string | undefined;
   value?: string | undefined;
   meta?: string | undefined;
   status?: string | undefined;
-  poly_id?: string | undefined;
+  polygonUuid?: string | undefined;
   type?: string | undefined;
   parent_name?: string | undefined;
   report_title?: string | undefined;
@@ -85,6 +86,30 @@ async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string }
   return { data: listItems };
 }
 
+const unnamedTitleAndSort = (
+  list: EntityListItem[],
+  nameProperty: keyof EntityListItem,
+  entityType: AuditLogEntity,
+  buttonToggle: number
+) => {
+  const unnamedItems = list?.map((item: EntityListItem) => {
+    if (!item[nameProperty] && AuditLogButtonStates.PROJECT_REPORT != buttonToggle) {
+      return {
+        ...item,
+        [nameProperty]:
+          entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
+      };
+    }
+    return item;
+  });
+
+  return unnamedItems?.sort((a, b) => {
+    const nameA = a[nameProperty];
+    const nameB = b[nameProperty];
+    return nameA && nameB ? nameA.localeCompare(nameB) : 0;
+  });
+};
+
 const useLoadEntityList = ({
   entity,
   entityType,
@@ -96,65 +121,48 @@ const useLoadEntityList = ({
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
 
-  const getNameProperty = (entityType: string): keyof EntityListItem => {
-    switch (entityType) {
-      case POLYGON:
-        return "poly_name";
-      case SITE:
-        return "name";
-      default:
-        return "name";
-    }
-  };
-
-  const unnamedTitleAndSort = (
-    list: EntityListItem[],
-    nameProperty: keyof EntityListItem,
-    entityType: AuditLogEntity
-  ) => {
-    const unnamedItems = list?.map((item: EntityListItem) => {
-      if (!item[nameProperty] && AuditLogButtonStates.PROJECT_REPORT != buttonToggle) {
-        return {
-          ...item,
-          [nameProperty]:
-            entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
-        };
-      }
-      return item;
-    });
-
-    return unnamedItems?.sort((a, b) => {
-      const nameA = a[nameProperty];
-      const nameB = b[nameProperty];
-      return nameA && nameB ? nameA.localeCompare(nameB) : 0;
-    });
-  };
-
   const loadEntityList = async () => {
     const isSiteProjectLevel = entityLevel === AuditLogButtonStates.PROJECT;
-    const fetchToProject =
-      entityType == SITE
-        ? loadSiteIndex
-        : entityType == POLYGON
-        ? fetchGetV2ProjectsUUIDSitePolygonsAll
-        : loadNurseryIndex;
-    const fetchAction = isSiteProjectLevel
-      ? fetchToProject
-      : isProjectReport
-      ? loadReportsForTask
-      : fetchGetV2SitesSitePolygon;
-    const params = isSiteProjectLevel
-      ? entityType == SITE
-        ? { projectUuid: entity.uuid }
-        : { uuid: entity.uuid }
-      : isProjectReport
-      ? { uuid: entity.taskUuid ?? entity.task_uuid }
-      : { site: entity.uuid };
-    const res = await fetchAction({
-      // @ts-ignore
-      pathParams: params
-    });
-    const _entityList = (res as { data: EntityListItem[] })?.data ?? (res as EntityListItem[]);
+
+    let _entityList: EntityListItem[] = [];
+
+    if (entityType == POLYGON) {
+      const entityName = isSiteProjectLevel ? "projects" : "sites";
+      const polygons = await loadAllSitePolygons({
+        entityName,
+        entityUuid: entity.uuid
+      });
+
+      _entityList = polygons.map(polygon => ({
+        name: polygon.name ?? undefined,
+        uuid: polygon.uuid,
+        status: polygon.status,
+        polygonUuid: polygon.polygonUuid ?? undefined
+      }));
+    } else if (isProjectReport) {
+      const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid } });
+      _entityList = res.data;
+    } else if (entityType === SITE) {
+      const res: IndexConnection<SiteLightDto> = await loadSiteIndex({
+        filter: { projectUuid: entity.uuid }
+      });
+      _entityList = (res.data ?? []).map(site => ({
+        name: site.name ?? undefined,
+        uuid: site.uuid,
+        status: site.status ?? undefined,
+        polygonUuid: undefined
+      }));
+    } else if (entityType === NURSERY) {
+      const res: IndexConnection<NurseryLightDto> = await loadNurseryIndex({
+        filter: { projectUuid: entity.uuid }
+      });
+      _entityList = (res.data ?? []).map(nursery => ({
+        name: nursery.name ?? undefined,
+        uuid: nursery.uuid,
+        status: nursery.status ?? undefined,
+        polygonUuid: undefined
+      }));
+    }
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
         entityType: PROJECT_REPORT,
@@ -166,7 +174,7 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       },
       [AuditLogButtonStates.SITE_REPORT as number]: {
@@ -179,7 +187,7 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       },
       [AuditLogButtonStates.NURSERY_REPORT as number]: {
@@ -192,25 +200,25 @@ const useLoadEntityList = ({
             status: report.status,
             value: report.uuid,
             meta: report.status,
-            poly_id: undefined
+            polygonUuid: undefined
           }))
       }
     };
-    const nameProperty = getNameProperty(entityType);
     const transformEntityListItem = (item: EntityListItem) => {
       return {
-        title: item?.[nameProperty],
+        title: item?.name,
         uuid: item?.uuid,
         value: item?.uuid,
         meta: item?.status,
         status: item?.status,
-        poly_id: item?.poly_id
+        polygonUuid: item?.polygonUuid
       };
     };
     const _list = unnamedTitleAndSort(
       isProjectReport ? statusActionsMap[buttonToggle!]?.list : _entityList,
-      isProjectReport ? "title" : nameProperty,
-      entityType
+      isProjectReport ? "title" : "name",
+      entityType,
+      buttonToggle as number
     );
     setEntityListItem(isProjectReport ? _list : _list?.map((item: EntityListItem) => transformEntityListItem(item)));
     if (_list?.length > 0) {

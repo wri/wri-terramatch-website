@@ -3,13 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useShowContext } from "react-admin";
 
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
-import { parsePolygonData } from "@/components/elements/Map-mapbox/utils";
+import { parsePolygonDataV3 } from "@/components/elements/Map-mapbox/utils";
 import { FormFieldFactories } from "@/components/extensive/WizardForm/fields";
 import { FormEntry, GetFormEntriesProps } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { GetEntryValueProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer, loadExternalAnswerSources } from "@/components/extensive/WizardForm/utils";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { useProjectPolygonByPitch } from "@/connections/ProjectPolygons";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { FORM_POLYGONS } from "@/constants/statuses";
 import {
   FormFieldsProvider,
@@ -17,7 +18,7 @@ import {
   useFieldsProvider,
   useOrgFormDetails
 } from "@/context/wizardForm.provider";
-import { useGetV2SitesSitePolygon } from "@/generated/apiComponents";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 
@@ -31,16 +32,11 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const uuid = entity?.entityUUID ?? record?.uuid;
   const entityType = entity?.entityName ?? (type as EntityName);
 
-  const { data: sitePolygonData } = useGetV2SitesSitePolygon(
-    {
-      pathParams: {
-        site: uuid
-      }
-    },
-    {
-      enabled: entityType === "sites" && !!uuid
-    }
-  );
+  const { data: sitePolygonData } = useAllSitePolygons({
+    entityName: "sites",
+    entityUuid: uuid,
+    enabled: entityType === "sites" && uuid != null
+  });
 
   const [, { data: projectPolygonData }] = useProjectPolygonByPitch({
     filter: { projectPitchUuid: uuid },
@@ -126,7 +122,7 @@ const getEntityPolygonData = (
   record: any,
   type?: EntityName,
   entity?: Entity,
-  sitePolygonData?: any,
+  sitePolygonData?: SitePolygonLightDto[],
   projectPolygonData?: any
 ) => {
   if (!record && !entity) {
@@ -136,7 +132,7 @@ const getEntityPolygonData = (
   const entityType = entity?.entityName || (type as EntityName);
 
   if (entityType === "sites") {
-    return sitePolygonData ? parsePolygonData(sitePolygonData) : null;
+    return sitePolygonData ? parsePolygonDataV3(sitePolygonData) : null;
   } else if (entityType === "projects" || entityType === "project-pitches") {
     const polygonUuid = projectPolygonData?.polygonUuid;
     return projectPolygonData ? { [FORM_POLYGONS]: [polygonUuid] } : null;
