@@ -84,9 +84,9 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
     <ActionTrackerCard
       data={projectActions}
       title={t("Projects")}
-      subtitle={projectActions.length && t("You have {n} updates", { n: projectActions.length })}
+      subtitle={projectActions.length && t("You have {n} outstanding tasks", { n: projectActions.length })}
       icon={IconNames.LAPTOP_CIRCLE}
-      limit={10}
+      limit={5}
       emptyState={{
         title: t("Track your project updates"),
         subtitle: t("You will find the updates to your projects here. To view your projects, click the button below."),
@@ -96,9 +96,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           children: t("View my projects")
         }
       }}
-      cta={
-        projectActions.length > 10 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined
-      }
+      cta={projectActions.length > 5 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined}
     />
   );
 };

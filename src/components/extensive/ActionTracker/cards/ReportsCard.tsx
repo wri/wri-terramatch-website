@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { useProjectIndex } from "@/connections/Entity";
 import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
@@ -21,7 +20,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
   const t = useT();
 
   const { mutate: clearAction } = usePutV2MyActionsUUIDComplete();
-  const [, { data: projects }] = useProjectIndex({});
   const { format } = useDate();
 
   const reportActions = useMemo(() => {
@@ -88,9 +86,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
     <ActionTrackerCard
       data={reportActions}
       title={t("Reports")}
-      subtitle={reportActions.length && t("You have {n} updates", { n: reportActions.length })}
+      subtitle={reportActions.length && t("You have {n} reports to complete", { n: reportActions.length })}
       icon={IconNames.ARROW_SPIN_CIRCLE}
-      limit={10}
+      limit={5}
       emptyState={{
         title: t("Track your reporting tasks"),
         subtitle: t(
@@ -102,15 +100,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           children: t("View my reports")
         }
       }}
-      cta={
-        reportActions.length > 10
-          ? {
-              as: Link,
-              href: (projects?.length ?? 0) > 1 ? "/my-projects" : `project/${projects?.[0]?.uuid}?tab=reporting-tasks`,
-              children: t("Reports")
-            }
-          : undefined
-      }
     />
   );
 };
