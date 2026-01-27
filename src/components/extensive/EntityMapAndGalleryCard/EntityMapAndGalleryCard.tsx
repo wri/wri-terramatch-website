@@ -18,7 +18,6 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { getEntitiesOptions } from "@/constants/options/entities";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
-import { SitePolygon } from "@/generated/apiSchemas";
 import { getCurrentPathEntity } from "@/helpers/entity";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
@@ -108,45 +107,14 @@ const EntityMapAndGalleryCard = ({
   );
 
   // Fetch site polygons using V3 endpoint
-  const { data: sitePolygonDataV3 } = useAllSitePolygons({
+  const { data: sitePolygonData } = useAllSitePolygons({
     entityName: modelName as "projects" | "sites",
     entityUuid: entityUUID,
     enabled: !!entityUUID && (modelName === "projects" || modelName === "sites")
   });
 
-  // Transform V3 data to V2 format for MapContainer compatibility
-  const sitePolygonData: SitePolygon[] | undefined = useMemo(
-    () =>
-      sitePolygonDataV3?.map(
-        v3Polygon =>
-          ({
-            id: undefined,
-            uuid: v3Polygon.uuid,
-            poly_id: v3Polygon.polygonUuid,
-            poly_name: v3Polygon.name,
-            primary_uuid: v3Polygon.primaryUuid,
-            status: v3Polygon.status,
-            site_id: v3Polygon.siteId,
-            site_name: v3Polygon.siteName,
-            project_id: v3Polygon.projectId,
-            proj_name: v3Polygon.projectShortName,
-            practice: Array.isArray(v3Polygon.practice) ? v3Polygon.practice.join(",") : v3Polygon.practice,
-            target_sys: v3Polygon.targetSys,
-            distr: Array.isArray(v3Polygon.distr) ? v3Polygon.distr.join(",") : v3Polygon.distr,
-            num_trees: v3Polygon.numTrees,
-            calc_area: v3Polygon.calcArea,
-            plantstart: v3Polygon.plantStart,
-            source: v3Polygon.source,
-            is_active: v3Polygon.isActive,
-            version_name: v3Polygon.versionName,
-            validation_status: v3Polygon.validationStatus != null
-          } as SitePolygon)
-      ),
-    [sitePolygonDataV3]
-  );
-
   const mapBbox = useBoundingBox(modelName === "sites" ? { siteUuid: entityUUID } : { projectUuid: entityUUID });
-  const polygonDataMap = parsePolygonDataV3(sitePolygonDataV3);
+  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
 
   const filterOptions = useMemo(() => {
     const mapping: any = {

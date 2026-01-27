@@ -11712,63 +11712,6 @@ export const useDeleteV2ENTITYUUIDIDDelete = (
   );
 };
 
-export type GetV2ProjectsUUIDSitePolygonsAllPathParams = {
-  uuid: string;
-};
-
-export type GetV2ProjectsUUIDSitePolygonsAllError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2ProjectsUUIDSitePolygonsAllResponse = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  status?: string;
-  /**
-   * @format date-time
-   */
-  date_created?: string;
-  created_by?: string;
-}[];
-
-export type GetV2ProjectsUUIDSitePolygonsAllVariables = {
-  pathParams: GetV2ProjectsUUIDSitePolygonsAllPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2ProjectsUUIDSitePolygonsAll = (
-  variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2ProjectsUUIDSitePolygonsAllResponse,
-    GetV2ProjectsUUIDSitePolygonsAllError,
-    undefined,
-    {},
-    {},
-    GetV2ProjectsUUIDSitePolygonsAllPathParams
-  >({ url: "/v2/projects/{uuid}/site-polygons/all", method: "get", ...variables, signal });
-
-export const useGetV2ProjectsUUIDSitePolygonsAll = <TData = GetV2ProjectsUUIDSitePolygonsAllResponse>(
-  variables: GetV2ProjectsUUIDSitePolygonsAllVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2ProjectsUUIDSitePolygonsAllResponse, GetV2ProjectsUUIDSitePolygonsAllError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2ProjectsUUIDSitePolygonsAllResponse, GetV2ProjectsUUIDSitePolygonsAllError, TData>(
-    queryKeyFn({
-      path: "/v2/projects/{UUID}/site-polygons/all",
-      operationId: "getV2ProjectsUUIDSitePolygonsAll",
-      variables
-    }),
-    ({ signal }) => fetchGetV2ProjectsUUIDSitePolygonsAll({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2IndicatorsEntityUuidSlugExportPathParams = {
   /**
    * Filter counts and metrics by entity.
@@ -12941,11 +12884,6 @@ export type QueryOperation =
       path: "/v2/terrafund/polygon/geojson/{uuid}";
       operationId: "getV2TerrafundPolygonGeojsonUuid";
       variables: GetV2TerrafundPolygonGeojsonUuidVariables;
-    }
-  | {
-      path: "/v2/projects/{UUID}/site-polygons/all";
-      operationId: "getV2ProjectsUUIDSitePolygonsAll";
-      variables: GetV2ProjectsUUIDSitePolygonsAllVariables;
     }
   | {
       path: "/v2/indicators/{entity}/{uuid}/{slug}/export";

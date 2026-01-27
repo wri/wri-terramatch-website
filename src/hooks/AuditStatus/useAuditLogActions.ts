@@ -101,7 +101,7 @@ const useAuditLogActions = ({
   ].some(word => ReverseButtonStates2[entityLevel!].includes(word));
 
   const polygonValidationData = usePolygonValidation({
-    polygonUuid: selected?.polygonUuid && isPolygon && !verifyEntity ? selected.polygonUuid : ""
+    polygonUuid: selected?.polygonUuid != null && isPolygon && !verifyEntity ? (selected.polygonUuid as string) : ""
   });
 
   const hasInvalidPolygonCriteria = useMemo(() => {

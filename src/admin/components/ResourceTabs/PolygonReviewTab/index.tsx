@@ -40,7 +40,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import {
   CompareGeometryFileResponse,
   uploadGeometryFile,
@@ -137,7 +136,7 @@ const ContentForApproval = ({
   polygonsForApprovals,
   recordName
 }: {
-  polygonsForApprovals: SitePolygonsDataResponse;
+  polygonsForApprovals: SitePolygonLightDto[];
   recordName: string;
 }) => (
   <>
@@ -147,9 +146,9 @@ const ContentForApproval = ({
       </Text>
       <ul style={{ listStyleType: "circle" }}>
         {polygonsForApprovals?.map(polygon => (
-          <li key={polygon.id}>
+          <li key={polygon.uuid}>
             <Text variant="text-12-light" as="p">
-              {polygon?.poly_name ?? "Unnamed Polygon"}
+              {polygon?.name ?? "Unnamed Polygon"}
             </Text>
           </li>
         ))}
@@ -236,39 +235,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   useValueChanged(validFilter, () => {
     refetch();
   });
-
-  // Simple transformation for MapContainer compatibility
-  const transformForMapContainer = (data: SitePolygonLightDto[]) => {
-    return data.map(polygon => ({
-      id: undefined,
-      uuid: polygon.polygonUuid ?? undefined,
-      primary_uuid: polygon.primaryUuid ?? undefined,
-      project_id: polygon.projectId ?? undefined,
-      proj_name: polygon.projectShortName ?? undefined,
-      org_name: undefined,
-      poly_id: polygon.polygonUuid ?? undefined,
-      poly_name: polygon.name ?? undefined,
-      site_id: polygon.siteId ?? undefined,
-      site_name: polygon.siteName ?? undefined,
-      plantstart: polygon.plantStart ?? undefined,
-      practice: polygon.practice?.join(",") ?? undefined,
-      target_sys: polygon.targetSys ?? undefined,
-      distr: polygon.distr?.join(",") ?? undefined,
-      num_trees: polygon.numTrees ?? undefined,
-      calc_area: polygon.calcArea ?? undefined,
-      created_by: undefined,
-      last_modified_by: undefined,
-      deleted_at: undefined,
-      created_at: undefined,
-      updated_at: undefined,
-      status: polygon.status,
-      source: polygon.source ?? undefined,
-      country: undefined,
-      is_active: undefined,
-      version_name: polygon.versionName ?? undefined,
-      validation_status: polygon.validationStatus != null
-    }));
-  };
 
   const sitePolygonDataTable: SitePolygonRow[] = useMemo(
     () =>
@@ -553,7 +519,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       />
     );
   };
-  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonsDataResponse, recordName: string) => {
+  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonLightDto[], recordName: string) => {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
@@ -565,7 +531,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
           try {
             await bulkUpdateSitePolygonStatus(
-              polygonsForApprovals.map(polygon => polygon.uuid) as string[],
+              polygonsForApprovals.map(polygon => polygon.uuid),
               "approved",
               data
             );
@@ -666,7 +632,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: (polygons: unknown) => {
             closeModal(ModalId.APPROVE_POLYGONS);
-            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record?.name ?? "");
+            openFormModalHandlerConfirm(polygons as SitePolygonLightDto[], record?.name ?? "");
           }
         }}
         secondaryButtonText="Cancel"
@@ -841,7 +807,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showLegend
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
-                sitePolygonData={transformForMapContainer(sitePolygonData)}
+                sitePolygonData={sitePolygonData}
                 modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}

@@ -11,7 +11,6 @@ import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -137,7 +136,7 @@ const handleLayerClick = (
   PopupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -560,7 +559,7 @@ export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -601,7 +600,7 @@ export const addPopupToLayer = (
   popupComponent: any,
   layer: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -1237,18 +1236,6 @@ export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPol
 
   return orderedData;
 };
-
-export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
-  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
-    if (data.status && data.poly_id !== undefined) {
-      if (!acc[data.status]) {
-        acc[data.status] = [];
-      }
-      acc[data.status].push(data.poly_id);
-    }
-    return acc;
-  }, {});
-}
 
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");

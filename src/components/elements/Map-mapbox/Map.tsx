@@ -27,7 +27,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { usePostV2ExportImage } from "@/generated/apiComponents";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -139,7 +138,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showDownloadPolygons?: boolean;
   mapFunctions?: any;
   tooltipType?: TooltipType;
-  sitePolygonData?: SitePolygonsDataResponse;
+  sitePolygonData?: SitePolygonLightDto[];
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
   modelFilesData?: MediaDto[];
@@ -721,8 +720,8 @@ export const MapContainer = ({
             return;
           }
 
-          const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
-          if (!selectedPolygon?.primary_uuid) {
+          const selectedPolygon = sitePolygonData?.find(item => item.polygonUuid === polygonFromMap?.uuid);
+          if (selectedPolygon?.primaryUuid == null) {
             openNotification("error", t("Error"), t("Missing polygon information"));
             return;
           }
@@ -730,13 +729,13 @@ export const MapContainer = ({
           try {
             showLoader();
 
-            const siteId = selectedPolygon?.site_id;
+            const siteId = selectedPolygon?.siteId;
             if (!siteId) {
-              throw new Error("Missing site_id for polygon");
+              throw new Error("Missing siteId for polygon");
             }
 
             await createVersionWithGeometry(
-              selectedPolygon.primary_uuid,
+              selectedPolygon.primaryUuid,
               pdView ? "Updated geometry" : "Updated geometry from admin panel",
               {
                 type: "Feature",
@@ -747,12 +746,12 @@ export const MapContainer = ({
               }
             );
 
-            if (selectedPolygon.poly_id) {
-              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.poly_id]);
+            if (selectedPolygon.polygonUuid != null) {
+              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
             }
 
             const polygonVersionResponse = await loadListPolygonVersions({
-              uuid: selectedPolygon.primary_uuid
+              uuid: selectedPolygon.primaryUuid
             });
 
             const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);

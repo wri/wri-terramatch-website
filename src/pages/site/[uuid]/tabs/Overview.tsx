@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
@@ -32,9 +32,9 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
 import { FileType, UploadedFile } from "@/types/common";
@@ -49,7 +49,7 @@ interface SiteOverviewTabProps {
   refetch?: () => void;
 }
 
-const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonsDataResponse }) => {
+const ContentForSubmission: FC<{ siteName: string; polygons: SitePolygonLightDto[] }> = ({ siteName, polygons }) => {
   const t = useT();
   return (
     <>
@@ -65,10 +65,10 @@ const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygo
       />
       <div className="ml-6">
         <ul style={{ listStyleType: "circle" }}>
-          {(polygons as SitePolygonsDataResponse)?.map(polygon => (
-            <li key={polygon.id}>
+          {polygons?.map(polygon => (
+            <li key={polygon.uuid}>
               <Text variant="text-12-light" as="p">
-                {polygon?.poly_name ?? t("Unnamed Polygon")}
+                {polygon?.name ?? t("Unnamed Polygon")}
               </Text>
             </li>
           ))}
@@ -414,13 +414,13 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
         commentArea
         className="max-w-xs"
         title={t("Confirm Polygon Submission")}
-        content={<ContentForSubmission polygons={polygons as SitePolygonsDataResponse} siteName={site.name ?? ""} />}
+        content={<ContentForSubmission polygons={polygons as SitePolygonLightDto[]} siteName={site.name ?? ""} />}
         onClose={() => closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION)}
         onConfirm={async data => {
           closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
           try {
             await bulkUpdateSitePolygonStatus(
-              (polygons as SitePolygonsDataResponse).map(polygon => polygon.uuid) as string[],
+              (polygons as SitePolygonLightDto[]).map(polygon => polygon.uuid),
               "submitted",
               data
             );
