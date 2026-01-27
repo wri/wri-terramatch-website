@@ -5,7 +5,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Button from "./Button";
 
 const meta: Meta<typeof Button> = {
-  title: "Redesign Components/Actions/Button",
+  title: "Redesign Components/Actions/Buttons/Button",
   component: Button,
   tags: ["autodocs"],
   argTypes: {
