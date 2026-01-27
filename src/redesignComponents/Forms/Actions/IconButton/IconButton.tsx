@@ -2,8 +2,6 @@ import { IconButton as WriIconButton } from "@worldresources/wri-design-systems"
 import classNames from "classnames";
 import { FC } from "react";
 
-import { focusOutlineClass } from "../Button/Button.styles";
-
 interface IconButtonProps {
   icon: React.ReactNode;
   disabled?: boolean;
@@ -15,10 +13,7 @@ const IconButton: FC<IconButtonProps> = ({ icon, disabled, ...props }) => {
       icon={icon}
       disabled={disabled}
       {...props}
-      className={classNames(
-        focusOutlineClass,
-        "!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40"
-      )}
+      className={classNames("hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 !h-6 !w-6 rounded-sm")}
       css={{
         width: "24px !important",
         height: "24px !important",
