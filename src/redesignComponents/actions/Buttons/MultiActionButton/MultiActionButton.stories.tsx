@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import MultiActionButton from "./MultiActionButton";
 
 const meta: Meta<typeof MultiActionButton> = {
-  title: "Redesign Components/Forms/Actions/MultiActionButton",
+  title: "Redesign Components/Actions/Buttons/MultiActionButton",
   component: MultiActionButton,
   tags: ["autodocs"],
   argTypes: {
