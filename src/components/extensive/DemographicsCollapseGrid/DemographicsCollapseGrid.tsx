@@ -83,7 +83,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
       {open ? (
         <div className={classNames("", variant.bodyCollapse)}>
           {status === "in-progress" && (
-            <p className="text-14-light text-theme-error-900 mb-4">
+            <p className="text-14-light mb-4 text-theme-error-900">
               The total number of jobs must be the same for each demographic category.{" "}
               <b>Please review your entries.</b>
             </p>
