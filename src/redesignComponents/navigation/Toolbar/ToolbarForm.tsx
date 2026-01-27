@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import Button, { IButtonProps } from "@/redesignComponents/Forms/Actions/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 
 import Toolbar from "./Toolbar";
 
