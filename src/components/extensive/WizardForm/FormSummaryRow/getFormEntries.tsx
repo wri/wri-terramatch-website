@@ -34,7 +34,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   const { data: sitePolygonData } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: uuid,
-    enabled: entityType === "sites" && !!uuid
+    enabled: entityType === "sites" && uuid != null
   });
 
   const [, { data: projectPolygonData }] = useProjectPolygonByPitch({

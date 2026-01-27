@@ -721,7 +721,7 @@ export const MapContainer = ({
           }
 
           const selectedPolygon = sitePolygonData?.find(item => item.polygonUuid === polygonFromMap?.uuid);
-          if (!selectedPolygon?.primaryUuid) {
+          if (selectedPolygon?.primaryUuid == null) {
             openNotification("error", t("Error"), t("Missing polygon information"));
             return;
           }
@@ -746,7 +746,7 @@ export const MapContainer = ({
               }
             );
 
-            if (selectedPolygon.polygonUuid) {
+            if (selectedPolygon.polygonUuid != null) {
               await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
             }
 

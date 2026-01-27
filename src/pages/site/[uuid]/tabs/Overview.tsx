@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
@@ -49,7 +49,7 @@ interface SiteOverviewTabProps {
   refetch?: () => void;
 }
 
-const ContentForSubmission = ({ siteName, polygons }: { siteName: string; polygons: SitePolygonLightDto[] }) => {
+const ContentForSubmission: FC<{ siteName: string; polygons: SitePolygonLightDto[] }> = ({ siteName, polygons }) => {
   const t = useT();
   return (
     <>

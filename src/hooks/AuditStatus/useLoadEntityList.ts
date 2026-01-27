@@ -95,10 +95,6 @@ const useLoadEntityList = ({
   const [entityListItem, setEntityListItem] = useState<EntityListItem[]>([]);
   const isFirstLoad = useRef(true);
 
-  const getNameProperty = (entityType: string): keyof EntityListItem => {
-    return "name";
-  };
-
   const unnamedTitleAndSort = (
     list: EntityListItem[],
     nameProperty: keyof EntityListItem,
@@ -132,8 +128,7 @@ const useLoadEntityList = ({
       const entityName = isSiteProjectLevel ? "projects" : "sites";
       const polygons = await loadAllSitePolygons({
         entityName,
-        entityUuid: entity.uuid,
-        enabled: true
+        entityUuid: entity.uuid
       });
 
       // Transform v3 SitePolygonLightDto[] to EntityListItem[]
@@ -144,18 +139,17 @@ const useLoadEntityList = ({
         polygonUuid: polygon.polygonUuid ?? undefined
       }));
     } else if (isProjectReport) {
-      const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid ?? entity.task_uuid } });
+      const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid } });
       _entityList = res.data;
     } else {
       // Handle other entity types (SITE, NURSERY)
       const fetchToProject = entityType == SITE ? loadSiteIndex : loadNurseryIndex;
-      const fetchAction = isSiteProjectLevel ? fetchToProject : fetchToProject;
       const params = isSiteProjectLevel
         ? entityType == SITE
           ? { projectUuid: entity.uuid }
           : { uuid: entity.uuid }
         : { projectUuid: entity.uuid };
-      const res = await fetchAction({
+      const res = await fetchToProject({
         // @ts-ignore
         pathParams: params
       });
@@ -202,7 +196,7 @@ const useLoadEntityList = ({
           }))
       }
     };
-    const nameProperty = getNameProperty(entityType);
+    const nameProperty: keyof EntityListItem = "name";
     const transformEntityListItem = (item: EntityListItem) => {
       return {
         title: item?.[nameProperty],

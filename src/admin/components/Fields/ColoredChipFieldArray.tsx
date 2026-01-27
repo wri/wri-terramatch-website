@@ -38,7 +38,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
   const { data: getPolygonsToSite } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: recordContext.uuid,
-    enabled: !!recordContext.uuid
+    enabled: recordContext.uuid != null
   });
 
   if (!getPolygonsToSite?.length || !Array.isArray(getPolygonsToSite)) {
@@ -56,7 +56,7 @@ const ColoredChipFieldArray = (props: ColoredChipFieldArrayProps) => {
       <SingleFieldList linkType={false}>
         <FunctionField
           render={(record?: { status: string; count: number }) => {
-            if (!record) return null;
+            if (record == null) return null;
             const status = record?.status;
             const choice = props.choices.find(i => i.id === status);
             const PolygonStatusLabel = record?.count + " " + choice?.name!;
