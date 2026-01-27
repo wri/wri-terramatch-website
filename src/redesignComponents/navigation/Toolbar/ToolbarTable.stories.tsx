@@ -6,7 +6,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import ToolbarTable from "./ToolbarTable";
 
 const meta: Meta<typeof ToolbarTable> = {
-  title: "Redesign Components/Navigation/ToolbarTable",
+  title: "Redesign Components/Navigation/Toolbar/Toolbar Table",
   component: ToolbarTable,
   tags: ["autodocs"],
   parameters: {
@@ -114,9 +114,6 @@ const defaultButton = {
   onClick: () => console.log("Button clicked")
 };
 
-/**
- * Basic ToolbarTable with filters only
- */
 export const WithFiltersOnly: Story = {
   args: {
     filters: [statusFilter, typeFilter],
@@ -124,9 +121,6 @@ export const WithFiltersOnly: Story = {
   }
 };
 
-/**
- * ToolbarTable with search only
- */
 export const WithSearchOnly: Story = {
   args: {
     search: {
@@ -140,9 +134,6 @@ export const WithSearchOnly: Story = {
   }
 };
 
-/**
- * Complete ToolbarTable with search and filters
- */
 export const Complete: Story = {
   args: {
     search: {
@@ -156,9 +147,6 @@ export const Complete: Story = {
   }
 };
 
-/**
- * ToolbarTable with primary variant filters
- */
 export const WithPrimaryFilters: Story = {
   args: {
     filters: [
@@ -201,9 +189,6 @@ export const WithPrimaryFilters: Story = {
   }
 };
 
-/**
- * ToolbarTable with small search and multiple filters
- */
 export const SmallSearchWithMultipleFilters: Story = {
   args: {
     search: {
@@ -217,9 +202,6 @@ export const SmallSearchWithMultipleFilters: Story = {
   }
 };
 
-/**
- * ToolbarTable with disabled search
- */
 export const WithDisabledSearch: Story = {
   args: {
     search: {
@@ -234,9 +216,6 @@ export const WithDisabledSearch: Story = {
   }
 };
 
-/**
- * ToolbarTable with loading search
- */
 export const WithLoadingSearch: Story = {
   args: {
     search: {
@@ -251,9 +230,6 @@ export const WithLoadingSearch: Story = {
   }
 };
 
-/**
- * ToolbarTable with different button variants
- */
 export const WithSecondaryButton: Story = {
   args: {
     filters: [statusFilter, typeFilter],
@@ -288,9 +264,6 @@ export const WithButtonIcon: Story = {
   }
 };
 
-/**
- * ToolbarTable with small size filters
- */
 export const WithSmallFilters: Story = {
   args: {
     filters: [
@@ -310,9 +283,6 @@ export const WithSmallFilters: Story = {
   }
 };
 
-/**
- * ToolbarTable with disabled filters
- */
 export const WithDisabledFilters: Story = {
   args: {
     filters: [
@@ -332,9 +302,6 @@ export const WithDisabledFilters: Story = {
   }
 };
 
-/**
- * Interactive example with state management
- */
 export const Interactive: Story = {
   render: () => {
     const [statusLabel, setStatusLabel] = useState("All Statuses");
@@ -404,9 +371,6 @@ export const Interactive: Story = {
   }
 };
 
-/**
- * Minimal ToolbarTable with single filter
- */
 export const Minimal: Story = {
   args: {
     filters: [
