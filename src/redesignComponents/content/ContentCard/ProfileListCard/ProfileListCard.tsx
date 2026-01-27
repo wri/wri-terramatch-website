@@ -68,7 +68,6 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
           </>
         ) : (
           <>
-            {/* {profileIndex > 0 && <Box height="1px" backgroundColor="neutral.200" />} */}
             <Flex alignItems="center" gap={2} tabIndex={0}>
               <Avatar variant="add" ariaLabel="No profiles found" name="No profiles found" />
               <Button
