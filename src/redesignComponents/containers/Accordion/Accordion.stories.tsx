@@ -50,29 +50,22 @@ export const WithHeaderError: Story = {
 
 export const WithHeaderSuccess: Story = {
   args: {
-    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="success" />,
-    actions: actionsSuccess,
-    children: "This is the accordion content. You can put any content here."
-  }
-};
-
-export const WithHeaderNoBadge: Story = {
-  args: {
     header: <AccordionHeader label="Label" title="Header Title" status="success" />,
+    actions: actionsSuccess,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const WithHeaderNoButton: Story = {
   args: {
-    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="success" />,
+    header: <AccordionHeader label="Label" title="Header Title" status="success" />,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const LongContent: Story = {
   args: {
-    header: <AccordionHeader label="Label" title="Header Title with Long Content" badge="Label" status="success" />,
+    header: <AccordionHeader label="Label" title="Header Title with Long Content" status="success" />,
     children: (
       <div>
         <p>This is a longer content example.</p>

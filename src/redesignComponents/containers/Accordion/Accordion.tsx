@@ -24,7 +24,7 @@ const Accordion = ({ children, header, actions }: ExtendableCardProps) => {
             justifyContent="space-between"
             gap={4}
           >
-            <AccordionChakra.ItemTrigger>
+            <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex gap={5} flex="1" alignItems="center" justifyContent="space-between" width="100%">
                 <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">
                   <Box flex="1" fontSize="20px" lineHeight="28px" color="primary.900">

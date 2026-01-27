@@ -12,6 +12,7 @@ declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   }
   export interface AccordionItemTriggerProps {
     children?: ReactNode;
+    css?: Record<string, unknown>;
   }
   export interface AccordionItemIndicatorProps {
     children?: ReactNode;
