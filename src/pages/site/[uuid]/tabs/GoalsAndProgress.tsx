@@ -23,8 +23,12 @@ import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
+type SiteWithLastReportedSurvivalRate = SiteFullDto & {
+  lastReportedSurvivalRate?: number | null;
+};
+
 interface GoalsAndProgressTabProps {
-  site: SiteFullDto;
+  site: SiteWithLastReportedSurvivalRate;
 }
 
 export const LABEL_LEGEND = [
@@ -61,8 +65,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     ...aggregateProps,
     collection: "non-tree"
   });
-  const treePlantedSpeciesCount = usePlantTotalCount({ ...aggregateProps, collection: "tree-planted" });
-  const { speciesCount: treePlantedSpeciesGoal } = usePlantSpeciesCount({
+  const { speciesCount: treePlantedSpeciesCount, speciesGoal: treePlantedSpeciesGoal } = usePlantSpeciesCount({
     ...aggregateProps,
     collection: "tree-planted"
   });
@@ -109,7 +112,10 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value: site.survivalRatePlanted ? `${site.survivalRatePlanted}%` : "-"
+                          value:
+                            (site.lastReportedSurvivalRate ?? site.survivalRatePlanted) != null
+                              ? `${site.lastReportedSurvivalRate ?? site.survivalRatePlanted}%`
+                              : "-"
                         }
                       ]
                     : []),

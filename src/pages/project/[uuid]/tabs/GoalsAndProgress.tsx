@@ -24,8 +24,12 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
+type ProjectWithLastReportedSurvivalRate = ProjectFullDto & {
+  lastReportedSurvivalRate?: number | null;
+};
+
 interface GoalsAndProgressProps {
-  project: ProjectFullDto;
+  project: ProjectWithLastReportedSurvivalRate;
 }
 
 const isEmptyArray = (obj: any) => {
@@ -128,7 +132,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value: project.survivalRate ? `${project.survivalRate}%` : "N/A"
+                      value:
+                        (project.lastReportedSurvivalRate ?? project.survivalRate) != null
+                          ? `${project.lastReportedSurvivalRate ?? project.survivalRate}%`
+                          : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,
