@@ -2,7 +2,8 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { GetV2MyActionsResponse, usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
+import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
+import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { sortByDate } from "@/utils/sort";
 
@@ -11,7 +12,7 @@ import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCa
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
 
 export type ProjectsCardProps = {
-  actions?: GetV2MyActionsResponse["data"];
+  actions?: ActionDto[];
 };
 
 const ProjectsCard = ({ actions }: ProjectsCardProps) => {
@@ -21,14 +22,13 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
 
   const projectActions = useMemo(() => {
     if (!actions) return [];
-
-    return sortByDate(actions, "updated_at")
+    return sortByDate(actions, "updatedAt")
       .filter(action => !!action.target)
+      .slice(0, 5)
       .map(action => {
-        const target = action.target;
-        // Project is either the target itself or, if it has a project object, it is that.
-        const project = action.target?.project ?? action.target;
-        const type = action.targetable_type;
+        const target = action.target as any;
+        const project = target?.project ?? target;
+        const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
         let canClearActionClientSide = status === "approved";
@@ -38,13 +38,13 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
         let ctaLink = getEntityDetailPageLink("projects", project?.uuid);
 
         switch (type) {
-          case "Nursery": {
+          case "nurseries": {
             ctaText = t("View Nursery Details");
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
             ctaLink = getEntityDetailPageLink("nurseries", target?.uuid);
             break;
           }
-          case "Site": {
+          case "sites": {
             ctaText = t("View Site Details");
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
             ctaLink = getEntityDetailPageLink("sites", target?.uuid);
@@ -85,9 +85,9 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
     <ActionTrackerCard
       data={projectActions}
       title={t("Projects")}
-      subtitle={projectActions.length && t("You have {n} updates", { n: projectActions.length })}
+      subtitle={projectActions.length && t("You have {n} outstanding tasks", { n: projectActions.length })}
       icon={IconNames.LAPTOP_CIRCLE}
-      limit={10}
+      limit={5}
       emptyState={{
         title: t("Track your project updates"),
         subtitle: t("You will find the updates to your projects here. To view your projects, click the button below."),
@@ -97,9 +97,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           children: t("View my projects")
         }
       }}
-      cta={
-        projectActions.length > 10 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined
-      }
+      cta={projectActions.length > 5 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined}
     />
   );
 };

@@ -124,6 +124,43 @@ export type OrganisationCreateBody = {
   data: OrganisationCreateData;
 };
 
+export type ActionDto = {
+  uuid: string;
+  status: string | null;
+  /**
+   * Simplified targetable type (e.g., 'Project', 'ProjectReport')
+   */
+  targetableType: string;
+  targetableId: number;
+  type: string | null;
+  subtype: string | null;
+  key: string | null;
+  title: string | null;
+  subTitle: string | null;
+  text: string | null;
+  /**
+   * Target entity (LightDto object or EntityType string)
+   */
+  target:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports";
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
 export type UserUpdateAttributes = {
   /**
    * New default locale for the given user
