@@ -67,22 +67,26 @@ const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
 
   const dataByPage = fullData.slice(startRange, endRange) as RowData[];
 
-  const renderRow = (rowData: RowData) => {
-    if (rowData.title != null) {
-      return (
-        <TableRow>
-          <ChakraTableCell>
-            <TitleCell {...rowData.title} />
-          </ChakraTableCell>
-          <ChakraTableCell>{rowData.email}</ChakraTableCell>
-          <ChakraTableCell>{rowData.age}</ChakraTableCell>
-        </TableRow>
-      );
-    }
-
+  const hasCustomCellContent = (rowData: RowData) => {
     return (
-      <TableRow>
-        <ChakraTableCell>
+      rowData.avatars != null ||
+      rowData.primaryText != null ||
+      rowData.secondaryText != null ||
+      rowData.progressTag != null ||
+      rowData.trees != null ||
+      rowData.jobs != null ||
+      rowData.multiActionButton != null
+    );
+  };
+
+  const renderDataCell = (rowData: RowData, columnKey: string) => {
+    if (columnKey === "name") {
+      if (rowData.title != null) {
+        return <TitleCell {...rowData.title} />;
+      }
+
+      if (hasCustomCellContent(rowData)) {
+        return (
           <CustomTableCell
             avatars={rowData.avatars}
             primaryText={rowData.primaryText}
@@ -92,41 +96,26 @@ const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
             jobs={rowData.jobs}
             multiActionButton={rowData.multiActionButton}
           />
-        </ChakraTableCell>
-        <ChakraTableCell>{rowData.email}</ChakraTableCell>
-        <ChakraTableCell>{rowData.age}</ChakraTableCell>
+        );
+      }
+
+      return rowData.name;
+    }
+
+    return (rowData as any)[columnKey];
+  };
+
+  const renderRow = (rowData: RowData) => {
+    return (
+      <TableRow>
+        {columns.map(column => (
+          <ChakraTableCell key={`${rowData.id}-${column.key}`}>{renderDataCell(rowData, column.key)}</ChakraTableCell>
+        ))}
       </TableRow>
     );
   };
 
   const selectableRenderRow = (rowData: RowData) => {
-    if (rowData.title != null) {
-      return (
-        <TableRow aria-selected={selectedRows?.some(item => item.id === rowData.id)}>
-          <ChakraTableCell>
-            <Checkbox
-              name={`checkbox-${rowData.id}`}
-              onCheckedChange={({ checked }: any) => {
-                setSelectedRows((current = [] as RowData[]) => {
-                  if (checked) {
-                    return [...current, rowData];
-                  }
-
-                  return current.filter(item => item.id !== rowData.id);
-                });
-              }}
-              checked={selectedRows?.some(item => item.id === rowData.id)}
-            />
-          </ChakraTableCell>
-          <ChakraTableCell>
-            <TitleCell {...rowData.title} />
-          </ChakraTableCell>
-          <ChakraTableCell>{rowData.email}</ChakraTableCell>
-          <ChakraTableCell>{rowData.age}</ChakraTableCell>
-        </TableRow>
-      );
-    }
-
     const handleOnRowSelected = ({ checked }: any) => {
       setSelectedRows((current = [] as RowData[]) => {
         if (checked) {
@@ -146,20 +135,9 @@ const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
             checked={selectedRows?.some(item => item.id === rowData.id)}
           />
         </ChakraTableCell>
-        <ChakraTableCell>
-          <CustomTableCell
-            label={rowData.name}
-            avatars={rowData.avatars}
-            primaryText={rowData.primaryText}
-            secondaryText={rowData.secondaryText}
-            progressTag={rowData.progressTag}
-            trees={rowData.trees}
-            jobs={rowData.jobs}
-            multiActionButton={rowData.multiActionButton}
-          />
-        </ChakraTableCell>
-        <ChakraTableCell>{rowData.email}</ChakraTableCell>
-        <ChakraTableCell>{rowData.age}</ChakraTableCell>
+        {columns.map(column => (
+          <ChakraTableCell key={`${rowData.id}-${column.key}`}>{renderDataCell(rowData, column.key)}</ChakraTableCell>
+        ))}
       </TableRow>
     );
   };
