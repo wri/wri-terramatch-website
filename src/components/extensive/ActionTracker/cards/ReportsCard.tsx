@@ -39,7 +39,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         let subtitle;
         let ctaText;
         let ctaLink;
-        console.log("target", target);
+
         switch (type) {
           case "projectReports": {
             ctaText = t("View Project Report");
