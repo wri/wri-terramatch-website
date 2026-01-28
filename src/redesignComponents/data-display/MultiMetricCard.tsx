@@ -26,7 +26,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
         {title}
       </Text>
       {metrics.map(metric => {
-        const progressValue = metric.goal ? (metric.progress / metric.goal) * 100 : 0;
+        const progressValue = metric.goal > 0 ? (metric.progress / metric.goal) * 100 : 0;
         const iconWithColor = getIconWithProgressColor16(metric.icon, metric.progress, metric.color);
 
         return (
@@ -43,13 +43,13 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
                   <InformationRequired color="neutral.800" boxSize="12px" />
                 </Tooltip>
               </Flex>
-              {metric.goal ? (
+              {metric.goal > 0 ? (
                 <Flex gap={1} alignItems="center">
                   <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
                     {metric.progress.toLocaleString()}
                   </Text>
                   <Text fontSize="14px" color="neutral.800" lineHeight="20px">
-                    of
+                    {t("of")}
                   </Text>
                   <Text fontSize="14px" color="neutral.800" lineHeight="20px">
                     {metric.goal.toLocaleString()}
@@ -57,7 +57,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
                 </Flex>
               ) : (
                 <Text fontSize="14px" fontWeight="bold" color="neutral.600" lineHeight="20px">
-                  N/A
+                  {t("N/A")}
                 </Text>
               )}
             </Flex>

@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import type { DetailedHTMLProps, HTMLAttributes, ReactNode } from "react";
 
 import { ProgressState } from "../actions/Tags/ProgressTag/ProgressTag";
 
@@ -29,6 +29,23 @@ export interface MetricCardProps {
   icon?: ReactNode;
   color?: string;
 }
+
+export interface MetricCardCommonVariantProps
+  extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color"> {
+  iconWithColor: ReactNode;
+}
+
+export type SimpleMetricCardContentProps = Pick<
+  MetricCardCommonVariantProps,
+  "title" | "progress" | "color" | "iconWithColor"
+>;
+
+export type ProgressBarMetricCardContentProps = Pick<
+  MetricCardCommonVariantProps,
+  "title" | "progress" | "goal" | "color" | "iconWithColor"
+>;
+
+export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;
 
 export interface MultiMetricCardProps {
   title: string;
