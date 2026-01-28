@@ -6,6 +6,7 @@ import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -23,16 +24,14 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
 
   const projectActions = useMemo(() => {
     if (!actions) return [];
-    return sortByDate(actions, "updatedAt")
-      .filter(action => !!action.target)
+    return sortByDate(actions, "target.updatedAt")
+      .filter(action => action.target != null)
       .slice(0, 5)
       .map(action => {
         const target = action.target as any;
         const project = target?.project ?? target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
-        // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
-        let canClearActionClientSide = status === "approved";
 
         let subtitle = "";
         let ctaText = t("View Project Details");
@@ -79,7 +78,8 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
             date: format(target.updatedAt)
           }),
           onClick: () => {
-            canClearActionClientSide && action.uuid && mutate({ pathParams: { uuid: action.uuid } });
+            action.uuid && mutate({ pathParams: { uuid: action.uuid } });
+            ApiSlice.pruneCache("actions", [action.uuid]);
           }
         } as ActionTrackerCardRowProps;
       });
