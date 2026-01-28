@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { AddManagerDialog } from "@/admin/components/Dialogs/AddManagerDialog";
 import { InviteMonitoringPartnerDialog } from "@/admin/components/Dialogs/InviteMonitoringPartnerDialog";
 import modules from "@/admin/modules";
-import { downloadProjectPolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
@@ -22,10 +22,10 @@ const QuickActions: FC = () => {
     entity: "project-reports" | "sites" | "nurseries" | "shapefiles" | "site-reports" | "nursery-reports"
   ) => {
     if (!record) return;
-
+    console.log("entity", entity);
     if (entity === "shapefiles") {
       try {
-        await downloadProjectPolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
+        await downloadProjectSitePolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
       } catch (error) {
         console.error("Failed to download project polygons:", error);
       }
