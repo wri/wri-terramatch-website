@@ -53,6 +53,7 @@ const themeConfig = {
       },
       error: {
         100: { value: "#FFEFED" },
+        150: { value: "#FFE3DF" },
         200: { value: "#EDA1A9" },
         300: { value: "#F6C5C1" },
         500: { value: "#C11101" },

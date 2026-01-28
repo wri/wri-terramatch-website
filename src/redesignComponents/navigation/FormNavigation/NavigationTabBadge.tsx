@@ -15,7 +15,7 @@ export const NavigationTabBadge: FC<NavigationTabBadgeProps> = ({ type, isSelect
   return (
     <div className={getBadgeClasses(type, isSelected)}>
       {type === "error" ? (
-        <InformationRequired className="text-theme-error-100 group-active:!text-theme-error-300 h-[calc(2rem-2px)] w-[calc(2rem-2px)] group-hover:text-[#FFE3DF]" />
+        <InformationRequired className="group-hover:text-theme-error-150 text-theme-error-100 group-active:!text-theme-error-300 h-[calc(2rem-2px)] w-[calc(2rem-2px)]" />
       ) : (
         <>
           {type === "complete" && <Check className="max-w-4 w-4" />}

@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Dashboard } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import TabBar from "./TabBar";
+import TabBar, { TabBarWriProps } from "./TabBar";
 
 const meta: Meta<typeof TabBar> = {
   title: "Redesign Components/Navigation/TabBar",
@@ -60,9 +60,6 @@ const defaultTabsTransparent = [
   }
 ];
 
-/**
- * Default TabBar with panel variant
- */
 export const Default: Story = {
   args: {
     tabs: defaultTabs,
@@ -70,9 +67,6 @@ export const Default: Story = {
   }
 };
 
-/**
- * TabBar with panel variant (default style)
- */
 export const PanelVariant: Story = {
   args: {
     tabs: defaultTabs,
@@ -81,9 +75,6 @@ export const PanelVariant: Story = {
   }
 };
 
-/**
- * TabBar with view variant
- */
 export const ViewVariant: Story = {
   args: {
     tabs: defaultTabs,
@@ -92,20 +83,14 @@ export const ViewVariant: Story = {
   }
 };
 
-/**
- * TabBar with transparent variant
- */
 export const TransparentVariant: Story = {
   args: {
-    tabs: defaultTabsTransparent,
+    tabs: defaultTabsTransparent as unknown as TabBarWriProps["tabs"],
     variant: "transparent",
     defaultValue: "one"
   }
 };
 
-/**
- * Comparison of all variants
- */
 export const VariantComparison: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "40px", padding: "20px" }}>
