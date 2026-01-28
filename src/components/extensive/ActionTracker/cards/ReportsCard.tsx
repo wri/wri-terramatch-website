@@ -64,7 +64,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task?.uuid}`;
+              ctaLink = `/project/${target?.project?.uuid}/reporting-task/${target?.task?.uuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
             break;
           }
