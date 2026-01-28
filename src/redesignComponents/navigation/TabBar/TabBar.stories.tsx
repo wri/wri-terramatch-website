@@ -85,7 +85,7 @@ export const ViewVariant: Story = {
 
 export const TransparentVariant: Story = {
   args: {
-    tabs: defaultTabsTransparent as unknown as TabBarWriProps["tabs"],
+    tabs: defaultTabsTransparent as TabBarWriProps["tabs"],
     variant: "transparent",
     defaultValue: "one"
   }
