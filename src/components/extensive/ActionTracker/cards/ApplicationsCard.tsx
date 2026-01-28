@@ -22,6 +22,11 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
   const applications = useMemo(
     () =>
       props.applications
+        .filter(
+          application =>
+            last(application.submissions)?.status == "started" ||
+            last(application.submissions)?.status == "requires-more-information"
+        )
         .map(application => {
           const currentSubmission = last(application.submissions);
           if (currentSubmission?.status == null) return undefined;

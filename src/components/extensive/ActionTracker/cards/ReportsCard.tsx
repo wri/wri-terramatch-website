@@ -6,6 +6,7 @@ import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -24,7 +25,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
   const reportActions = useMemo(() => {
     if (!actions) return [];
-    return sortByDate(actions, "target.dueAt")
+    return sortByDate(actions, "target.updatedAt")
       .filter(action => action.target != null)
       .slice(0, 5)
       .map(action => {
@@ -32,8 +33,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         const project = target?.project ?? target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
-        // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
-        let canClearActionClientSide = status === "approved";
 
         let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.dueAt) });
         let subtitle;
@@ -86,7 +85,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             date: format(target.updatedAt)
           }),
           onClick: () => {
-            canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
+            action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
+            ApiSlice.pruneCache("actions", [action.uuid]);
           }
         } as ActionTrackerCardRowProps;
       });
