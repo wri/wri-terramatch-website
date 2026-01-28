@@ -6,7 +6,12 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
-import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
+import {
+  loadPolygonGeoJson,
+  loadProjectPolygonsGeoJson,
+  loadProjectSitePolygonsGeoJson,
+  loadSitePolygonsGeoJson
+} from "@/connections/GeoJsonExport";
 import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
@@ -1299,6 +1304,30 @@ export async function downloadPolygonGeoJson(
     downloadGeoJsonFile(geojson, safeFilename);
   } catch (error) {
     Log.error("Failed to download polygon GeoJSON:", error);
+    throw error;
+  }
+}
+
+export async function downloadProjectSitePolygonsGeoJson(
+  projectUuid: string,
+  projectName: string,
+  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "projectUuid">
+): Promise<void> {
+  try {
+    const result = await loadProjectSitePolygonsGeoJson({
+      projectUuid,
+      ...options
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson) {
+      throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    const safeFilename = formatFileName(projectName);
+    downloadGeoJsonFile(geojson, safeFilename);
+  } catch (error) {
+    Log.error("Failed to download project site polygons GeoJSON:", error);
     throw error;
   }
 }

@@ -97,7 +97,11 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           children: t("View my projects")
         }
       }}
-      cta={projectActions.length > 5 ? { as: Link, href: "/my-projects", children: t("View all projects") } : undefined}
+      cta={
+        actions?.length && actions.length > 5
+          ? { as: Link, href: "/my-projects", children: t("View all projects") }
+          : undefined
+      }
     />
   );
 };
