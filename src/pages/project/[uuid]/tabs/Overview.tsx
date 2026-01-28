@@ -5,7 +5,8 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRight, Edit } from "@/redesignComponents/foundations/Icons";
+import MetricCard from "@/redesignComponents/data-display/MetricCard";
+import { AreaHectares, ChevronRight, Edit, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 interface ProjectOverviewTabProps {
@@ -111,10 +112,10 @@ const exampleSteps: StepProps[] = [
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   return (
     <PageBody>
-      <Flex direction="column" gap={5}>
+      <Flex direction="column" gap={5} paddingX={6}>
         <Flex gap={7}>
           <OverviewItem
-            title="Map"
+            title="Project Map"
             flexProps={{ flex: 3 }}
             buttonProps={{
               variant: "secondary",
@@ -138,12 +139,33 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             <ProgressSteps steps={exampleSteps} />
           </OverviewItem>
         </Flex>
-        <OverviewItem title="Key Indicators & Insights">
-          <Flex gap={2} flex={1}>
-            <Box>Box 1</Box>
-            <Box>Box 2</Box>
-            <Box>Box 3</Box>
-            <Box>Box 4</Box>
+        <OverviewItem title="Key Indicators & Insights" flexProps={{ paddingY: 2 }}>
+          <Flex gap={2} flex={1} justify="space-between">
+            <MetricCard
+              title="Trees Planted"
+              progress={50}
+              goal={100}
+              variant="donutChart"
+              icon={<Tree />}
+              color="secondary.600"
+            />
+            <MetricCard
+              title="Seedlings Grown"
+              progress={50}
+              goal={150}
+              variant="donutChart"
+              icon={<Seeds />}
+              color="secondary.600"
+            />
+            <MetricCard
+              title="Hectares Restored"
+              progress={50}
+              goal={200}
+              variant="donutChart"
+              icon={<AreaHectares />}
+              color="secondary.700"
+            />
+            <MetricCard title="Jobs Created" progress={50} goal={300} variant="donutChart" icon={<Jobs />} />
           </Flex>
         </OverviewItem>
         <Flex gap={7}>
