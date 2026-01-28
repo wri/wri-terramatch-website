@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import ToolbarForm from "./ToolbarForm";
 
 const meta: Meta<typeof ToolbarForm> = {
-  title: "Redesign Components/Navigation/Toolbar/Toolbar Form",
+  title: "Redesign Components/Navigation/Toolbar/Form Action Toolbar",
   component: ToolbarForm,
   tags: ["autodocs"],
   parameters: {
@@ -17,9 +17,8 @@ const meta: Meta<typeof ToolbarForm> = {
     )
   ],
   argTypes: {
-    label: {
-      control: "text",
-      description: "Label text displayed on the left side of the toolbar"
+    ButtonLeft: {
+      description: "Configuration for the left button (rendered with variant='borderless')"
     },
     ButtonPrimary: {
       description: "Configuration for the primary button (rendered with variant='primary')"
@@ -38,17 +37,20 @@ type Story = StoryObj<typeof ToolbarForm>;
 
 export const Default: Story = {
   args: {
-    label: "Form Title",
+    ButtonLeft: {
+      children: "Label",
+      onClick: () => console.log("Back clicked")
+    },
     ButtonPrimary: {
-      children: "Save",
+      children: "Label",
       onClick: () => console.log("Save clicked")
     },
     ButtonSecondary: {
-      children: "Cancel",
+      children: "Label",
       onClick: () => console.log("Cancel clicked")
     },
     ButtonTertiary: {
-      children: "Delete",
+      children: "Label",
       onClick: () => console.log("Delete clicked")
     }
   }

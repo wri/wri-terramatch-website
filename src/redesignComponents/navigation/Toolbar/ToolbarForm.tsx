@@ -5,13 +5,13 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Toolbar from "./Toolbar";
 import { ToolbarFormProps } from "./ToolBar.type";
 
-const ToolbarForm: FC<ToolbarFormProps> = ({ label, ButtonPrimary, ButtonSecondary, ButtonTertiary }) => {
+const ToolbarForm: FC<ToolbarFormProps> = ({ ButtonLeft, ButtonPrimary, ButtonSecondary, ButtonTertiary }) => {
   return (
     <Toolbar
       className="px-6 py-3"
       contentLeft={
         <div>
-          <span className="text-14-bold text-theme-neutral-900">{label}</span>
+          <Button {...ButtonLeft} variant="borderless" />
         </div>
       }
       contentRight={

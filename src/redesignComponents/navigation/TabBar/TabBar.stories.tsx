@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Dashboard } from "@/redesignComponents/foundations/Icons";
+import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import TabBar from "./TabBar";
 
@@ -40,9 +41,23 @@ export default meta;
 type Story = StoryObj<typeof TabBar>;
 
 const defaultTabs = [
-  { label: "One", value: "one", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> },
-  { label: "Two", value: "two", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> },
-  { label: "Three", value: "three", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> }
+  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
+  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
+  { label: "Three", value: "three", icon: <Dashboard boxSize={4} /> }
+];
+
+const defaultTabsTransparent = [
+  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
+  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
+  {
+    label: (
+      <div className="flex items-center gap-2">
+        Three <TextBadge variant="primary">20</TextBadge>{" "}
+      </div>
+    ),
+    value: "three",
+    icon: <Dashboard boxSize={4} />
+  }
 ];
 
 /**
@@ -73,6 +88,17 @@ export const ViewVariant: Story = {
   args: {
     tabs: defaultTabs,
     variant: "view",
+    defaultValue: "one"
+  }
+};
+
+/**
+ * TabBar with transparent variant
+ */
+export const TransparentVariant: Story = {
+  args: {
+    tabs: defaultTabsTransparent,
+    variant: "transparent",
     defaultValue: "one"
   }
 };

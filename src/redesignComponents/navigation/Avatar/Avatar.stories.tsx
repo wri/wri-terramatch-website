@@ -92,7 +92,7 @@ export const Add: Story = {
     name: "Add User",
     ariaLabel: "Add new user",
     onClick: () => console.log("Add user clicked"),
-    customBackgroundColor: "#E5E7EB",
+    customBackgroundColor: "#F6F6F6",
     variant: "add"
   },
   render: args => (
