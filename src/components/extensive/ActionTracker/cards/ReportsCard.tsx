@@ -82,6 +82,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ctaText,
           title: project?.name,
           subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+            date: format(target.updatedAt)
+          }),
           onClick: () => {
             canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
           }
@@ -93,7 +96,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
     <ActionTrackerCard
       data={reportActions}
       title={t("Reports")}
-      subtitle={reportActions.length && t("You have {n} reports to complete", { n: reportActions.length })}
+      subtitle={reportActions.length && t("You have {n} report(s) to complete", { n: reportActions.length })}
       icon={IconNames.ARROW_SPIN_CIRCLE}
       limit={5}
       emptyState={{
