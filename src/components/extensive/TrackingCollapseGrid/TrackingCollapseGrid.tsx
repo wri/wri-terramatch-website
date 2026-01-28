@@ -4,21 +4,21 @@ import { groupBy, startCase } from "lodash";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
-import DemographicsSection from "./DemographicsSection";
 import { useTableStatus } from "./hooks";
-import { DemographicsCollapseGridProps, useDemographicLabels, useEntryTypes } from "./types";
+import TrackingSection from "./TrackingSection";
+import { TrackingCollapseGridProps, useEntryTypes, useTrackingLabels } from "./types";
 
-const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
+const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
   const [open, setOpen] = useState(false);
   const t = useT();
   const { total, status } = useTableStatus(type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(
-    (type: string, sectionEntries: DemographicEntryDto[]) => {
+    (type: string, sectionEntries: TrackingEntryDto[]) => {
       onChange?.([...entries.filter(({ type: entryType }) => entryType !== type), ...sectionEntries]);
     },
     [onChange, entries]
@@ -26,7 +26,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
 
   const entryTypes = useEntryTypes(type);
 
-  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useDemographicLabels(type);
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowTitle = t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
@@ -69,7 +69,7 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
                   "text-theme-error-500": status === "in-progress"
                 })}
               />
-              {t(status === "in-progress" ? "Totals don’t match across demographic categories" : startCase(status))}
+              {t(status === "in-progress" ? "Totals don’t match across categories" : startCase(status))}
             </Text>
           ) : null}
           <Icon
@@ -84,8 +84,8 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
         <div className={classNames("", variant.bodyCollapse)}>
           {status === "in-progress" && (
             <p className="text-14-light mb-4 text-theme-error-900">
-              The total number of jobs must be the same for each demographic category.{" "}
-              <b>Please review your entries.</b>
+              {t("The total number of jobs must be the same for each category.")}{" "}
+              <b>{t("Please review your entries.")}</b>
             </p>
           )}
 
@@ -93,8 +93,8 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
             {entryTypes.map(entryType => (
               <div key={entryType} className="flex flex-col">
                 <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
-                  <DemographicsSection
-                    demographicType={type}
+                  <TrackingSection
+                    trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
                     entries={byType[entryType] ?? []}
                     {...{ entryType, variant }}
@@ -110,4 +110,4 @@ const DemographicsCollapseGrid: FC<DemographicsCollapseGridProps> = ({ title, ty
   );
 };
 
-export default DemographicsCollapseGrid;
+export default TrackingCollapseGrid;

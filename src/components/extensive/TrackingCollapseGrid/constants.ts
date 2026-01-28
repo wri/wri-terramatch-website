@@ -2,17 +2,17 @@ import { Dictionary } from "lodash";
 
 import {
   AllBeneficiariesCollection,
-  DemographicType,
   JobsCollection,
   RestorationPartnerCollection,
+  TrackingType,
   TrainingBeneficiariesCollection,
   VolunteersCollection,
   WorkdayCollection
 } from "./types";
 
-// Type ensures that if a new collection or demographic type is added, there will be a compile time
+// Type ensures that if a new collection or tracking type is added, there will be a compile time
 // error if a title mapping is not added as well.
-export type CollectionTitleSet = Record<DemographicType, Dictionary<string>> & {
+export type CollectionTitleSet = Record<TrackingType, Dictionary<string>> & {
   workdays: Record<WorkdayCollection, string>;
   restorationPartners: Record<RestorationPartnerCollection, string>;
   jobs: Record<JobsCollection, string>;

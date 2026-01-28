@@ -1370,7 +1370,7 @@ export const treeReportCountsFind = new V3ApiEndpoint<
   {}
 >("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
 
-export type DemographicsIndexQueryParams = {
+export type TrackingsIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
    * @default ASC
@@ -1402,7 +1402,7 @@ export type DemographicsIndexQueryParams = {
   siteReportUuid?: string[];
 };
 
-export type DemographicsIndexError = Fetcher.ErrorWrapper<
+export type TrackingsIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
       payload: {
@@ -1431,10 +1431,10 @@ export type DemographicsIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type DemographicsIndexResponse = {
+export type TrackingsIndexResponse = {
   meta?: {
     /**
-     * @example demographics
+     * @example trackings
      */
     resourceType?: string;
     indices?: {
@@ -1474,27 +1474,27 @@ export type DemographicsIndexResponse = {
   };
   data?: {
     /**
-     * @example demographics
+     * @example trackings
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.DemographicDto;
+    attributes?: Schemas.TrackingDto;
   }[];
 };
 
-export type DemographicsIndexVariables = {
-  queryParams?: DemographicsIndexQueryParams;
+export type TrackingsIndexVariables = {
+  queryParams?: TrackingsIndexQueryParams;
 };
 
-export const demographicsIndex = new V3ApiEndpoint<
-  DemographicsIndexResponse,
-  DemographicsIndexError,
-  DemographicsIndexVariables,
+export const trackingsIndex = new V3ApiEndpoint<
+  TrackingsIndexResponse,
+  TrackingsIndexError,
+  TrackingsIndexVariables,
   {}
->("/entities/v3/demographics", "GET");
+>("/entities/v3/trackings", "GET");
 
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -3021,7 +3021,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
+  association: "trackings" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexQueryParams = {
@@ -3137,7 +3137,7 @@ export const entityAssociationIndex = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         resourceType?: string;
         indices?: {
@@ -3173,14 +3173,14 @@ export const entityAssociationIndex = new V3ApiEndpoint<
       };
       data?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         type?: string;
         /**
          * @format uuid
          */
         id?: string;
-        attributes?: Schemas.DemographicDto;
+        attributes?: Schemas.TrackingDto;
       }[];
     }
   | {
@@ -5196,7 +5196,7 @@ export const operationsByTag = {
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
-  demographics: { demographicsIndex },
+  trackings: { trackingsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },

@@ -652,14 +652,14 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
-export type DemographicEntryDto = {
+export type TrackingEntryDto = {
   type: string;
   subtype?: string | null;
   name?: string | null;
   amount: number;
 };
 
-export type DemographicDto = {
+export type TrackingDto = {
   /**
    * The entity type this resource is associated with.
    */
@@ -687,6 +687,7 @@ export type DemographicDto = {
    */
   entityUuid: string;
   uuid: string;
+  domain: "demographics";
   type:
     | "workdays"
     | "restoration-partners"
@@ -698,7 +699,7 @@ export type DemographicDto = {
     | "indirect-beneficiaries"
     | "associates";
   collection: string;
-  entries: DemographicEntryDto[];
+  entries: TrackingEntryDto[];
 };
 
 export type DisturbanceDto = {
@@ -769,7 +770,7 @@ export type EntitySideload = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports"
-    | "demographics"
+    | "trackings"
     | "seedings"
     | "treeSpecies"
     | "media"
@@ -1215,8 +1216,8 @@ export type ProjectFullDto = {
   photos: MediaDto[];
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
-  detailedProjectBudget: MediaDto;
   proofOfLandTenureMou: MediaDto[];
+  detailedProjectBudget: MediaDto;
 };
 
 export type SiteFullDto = {

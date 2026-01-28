@@ -3,15 +3,20 @@ import { PropsWithChildren, useCallback, useMemo } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
-import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
-import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
-import { DemographicsCollapseGridProps, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
-import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import TrackingCollapseGrid from "@/components/extensive/TrackingCollapseGrid/TrackingCollapseGrid";
+import { GRID_VARIANT_GREEN } from "@/components/extensive/TrackingCollapseGrid/TrackingVariant";
+import {
+  TrackingCollapseGridProps,
+  TrackingDomain,
+  TrackingType
+} from "@/components/extensive/TrackingCollapseGrid/types";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export interface RHFDemographicsTableProps
-  extends Omit<DemographicsCollapseGridProps, "onChange" | "variant" | "type" | "entries">,
+export interface RHFTrackingTableProps
+  extends Omit<TrackingCollapseGridProps, "onChange" | "variant" | "type" | "entries">,
     UseControllerProps {
-  demographicType: DemographicType;
+  domain: TrackingDomain;
+  trackingType: TrackingType;
   onChangeCapture?: () => void;
   formHook?: UseFormReturn;
   collection: string;
@@ -21,33 +26,34 @@ export interface RHFDemographicsTableProps
 // updates from update requests afterward honor that change.
 const SUBTYPE_SWAP_TYPES = ["gender", "age", "caste"];
 
-const ensureCorrectSubtypes = (demographics: DemographicEntryDto[]) => {
+const ensureCorrectSubtypes = (entries: TrackingEntryDto[]) => {
   // In TM-1681 we moved several "name" values to "subtype". This check helps make sure that
   // updates from update requests afterward honor that change.
-  for (let ii = 0; ii < demographics.length; ii++) {
-    const { type, subtype, name } = demographics[ii];
+  for (let ii = 0; ii < entries.length; ii++) {
+    const { type, subtype, name } = entries[ii];
     if (SUBTYPE_SWAP_TYPES.includes(type) && subtype == null && name != null) {
-      demographics[ii] = { ...demographics[ii], subtype: name, name: null };
+      entries[ii] = { ...entries[ii], subtype: name, name: null };
     }
   }
 
-  return demographics;
+  return entries;
 };
 
-const RHFDemographicsTable = ({
-  demographicType,
+const RHFTrackingTable = ({
+  domain,
+  trackingType,
   onChangeCapture,
   collection,
   ...props
-}: PropsWithChildren<RHFDemographicsTableProps>) => {
+}: PropsWithChildren<RHFTrackingTableProps>) => {
   const {
     field: { value, onChange }
   } = useController(props);
 
-  const entries = useMemo(() => ensureCorrectSubtypes((value?.[0]?.entries ?? []) as DemographicEntryDto[]), [value]);
+  const entries = useMemo(() => ensureCorrectSubtypes(value?.[0]?.entries ?? []), [value]);
 
-  const updateDemographics = useCallback(
-    (updatedEntries: DemographicEntryDto[]) => {
+  const updateEntries = useCallback(
+    (updatedEntries: TrackingEntryDto[]) => {
       // Clean up the data before calling onChange. While waiting for changes to propagate through
       // the form, it's possible for this function get called multiple times, adding the same type / subtype / name
       // set to the collection multiple times. Here, we take the last value for each combo, and discard
@@ -71,14 +77,15 @@ const RHFDemographicsTable = ({
 
   return (
     <InputWrapper {...props}>
-      <DemographicsCollapseGrid
-        type={demographicType}
+      <TrackingCollapseGrid
+        domain={domain}
+        type={trackingType}
         entries={entries}
         variant={GRID_VARIANT_GREEN}
-        onChange={updateDemographics}
+        onChange={updateEntries}
       />
     </InputWrapper>
   );
 };
 
-export default RHFDemographicsTable;
+export default RHFTrackingTable;
