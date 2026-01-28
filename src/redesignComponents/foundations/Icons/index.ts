@@ -48,3 +48,4 @@ export { Tree } from "./Tree";
 export { UserAdd } from "./UserAdd";
 export { Visibility } from "./Visibility";
 export { VisibilityOff } from "./VisibilityOff";
+export { InformationRequiredSimple } from "./InformationRequiredSimple";
