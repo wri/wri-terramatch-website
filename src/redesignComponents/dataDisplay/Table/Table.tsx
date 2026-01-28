@@ -2,13 +2,13 @@ import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import { FC, useState } from "react";
 
-import { getThemedColor } from "@/lib/theme";
 import type { IMultiActionButtonProps } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import type { ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import CustomTableCell from "./components/TableCell";
 import TitleCell, { TitleCellProps } from "./components/TitleCell";
+import { tableWrapperStyles } from "./tableStyles";
 
 interface TableProps {
   data: any[];
@@ -151,20 +151,7 @@ const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
   };
 
   return (
-    <Box
-      css={{
-        "& table tbody tr": {
-          backgroundColor: "transparent",
-          borderBottom: `1px solid ${getThemedColor("neutral", 300)}`,
-          transition: "background-color 0.15s ease-in-out"
-        },
-
-        "& table tbody tr:hover": {
-          backgroundColor: getThemedColor("primary", 100),
-          borderBottom: `1px solid ${getThemedColor("primary", 700)}`
-        }
-      }}
-    >
+    <Box css={tableWrapperStyles}>
       <WriTable
         columns={columns}
         data={dataByPage}
