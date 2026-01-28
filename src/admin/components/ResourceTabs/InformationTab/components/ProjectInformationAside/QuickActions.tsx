@@ -22,7 +22,7 @@ const QuickActions: FC = () => {
     entity: "project-reports" | "sites" | "nurseries" | "shapefiles" | "site-reports" | "nursery-reports"
   ) => {
     if (!record) return;
-    console.log("entity", entity);
+
     if (entity === "shapefiles") {
       try {
         await downloadProjectSitePolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
