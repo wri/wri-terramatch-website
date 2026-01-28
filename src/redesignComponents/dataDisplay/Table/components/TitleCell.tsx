@@ -18,7 +18,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
   return (
     <Box
       className={classNames("flex items-baseline gap-2", {
-        "!items-center": image || icon
+        "!items-center": image != null || icon != null
       })}
     >
       <ChevronDownAlt />
