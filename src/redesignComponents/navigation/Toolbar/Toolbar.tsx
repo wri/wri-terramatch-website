@@ -1,11 +1,11 @@
+import classNames from "classnames";
 import { FC } from "react";
 
-const Toolbar: FC<{ contentLeft: React.ReactNode; contentRight: React.ReactNode }> = ({
-  contentLeft,
-  contentRight
-}) => {
+import { ToolbarProps } from "./ToolBar.type";
+
+const Toolbar: FC<ToolbarProps> = ({ contentLeft, contentRight, className }) => {
   return (
-    <div className="flex items-center justify-between">
+    <div className={classNames("flex items-center justify-between bg-white px-4", className)}>
       <div>{contentLeft}</div>
       <div>{contentRight}</div>
     </div>

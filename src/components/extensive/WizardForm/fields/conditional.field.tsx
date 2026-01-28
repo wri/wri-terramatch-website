@@ -1,4 +1,4 @@
-import { isBoolean } from "lodash";
+import { Dictionary, isBoolean } from "lodash";
 import * as yup from "yup";
 
 import ConditionalAdditionalOptions from "@/admin/modules/form/components/FormBuilder/AdditionalOptions/ConditionalAdditionalOptions";
@@ -45,15 +45,26 @@ export const ConditionalField: FormFieldFactory = {
       });
   },
 
-  defaultValue: ({ name }, formValues, fieldsProvider) =>
-    fieldsProvider
-      .childNames(name)
-      .map(fieldsProvider.fieldByName)
-      .filter(isNotNull)
-      .reduce((values, child) => applyFieldDefault(child, values, fieldsProvider), {
-        ...formValues,
-        [name]: isBoolean(formValues[name]) ? formValues[name] : true
-      }),
+  defaultValue: ({ name }, formValues, fieldsProvider) => {
+    const children = fieldsProvider.childNames(name).map(fieldsProvider.fieldByName).filter(isNotNull);
+    const childValues: Dictionary<any> = children.reduce(
+      (values, child) => applyFieldDefault(child, values, fieldsProvider),
+      {}
+    );
+
+    // if we have an explicit value set, leave it be.
+    if (isBoolean(formValues[name])) return { ...childValues, ...formValues };
+
+    // otherwise, default to false unless we have a child with a value set.
+    for (const child of children) {
+      const childHasValue =
+        (Array.isArray(childValues[child.name]) && childValues[child.name].length > 0) ||
+        childValues[child.name] != null;
+      if (childHasValue) return { ...childValues, ...formValues, [name]: true };
+    }
+
+    return { ...childValues, ...formValues, [name]: false };
+  },
 
   normalizeValue: ({ name }, formValues, fieldsProvider) =>
     fieldsProvider
