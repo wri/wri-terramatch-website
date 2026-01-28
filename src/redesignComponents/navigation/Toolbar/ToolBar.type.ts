@@ -22,7 +22,7 @@ export interface BulkActionToolbarProps {
 }
 
 export interface ToolbarFormProps {
-  label: string;
+  ButtonLeft: IButtonProps;
   ButtonPrimary: IButtonProps;
   ButtonSecondary: IButtonProps;
   ButtonTertiary: IButtonProps;

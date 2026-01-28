@@ -73,7 +73,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
                   value={value}
                   label={label}
                   index={index}
-                  type={type}
+                  type={disabled ? "disabled" : type}
                   disabled={disabled}
                   ariaLabel={ariaLabel}
                   isSelected={value === selectedTab}

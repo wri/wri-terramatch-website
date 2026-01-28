@@ -8,7 +8,9 @@ import { NAVIGATION_CLASSES, TabType } from "./formNavigation.constants";
 export const getBadgeClasses = (type: TabType, isSelected: boolean): string => {
   return classNames(NAVIGATION_CLASSES.badge.base, {
     [NAVIGATION_CLASSES.badge.complete]: type === "complete" || isSelected,
-    [NAVIGATION_CLASSES.badge.available]: type === "available" || type === "disabled",
+    [NAVIGATION_CLASSES.badge.available]: type === "available",
+    [NAVIGATION_CLASSES.badge.disabled]: type === "disabled",
+
     [NAVIGATION_CLASSES.badge.error]: type === "error"
   });
 };
@@ -37,9 +39,7 @@ export const getNumberClasses = (type: TabType, isSelected: boolean): string => 
  * Get tab trigger classes based on selection state
  */
 export const getTabClasses = (isSelected: boolean): string => {
-  return classNames(NAVIGATION_CLASSES.tab.base, {
-    [NAVIGATION_CLASSES.tab.selected]: isSelected
-  });
+  return classNames(NAVIGATION_CLASSES.tab.base);
 };
 
 /**

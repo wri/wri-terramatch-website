@@ -63,9 +63,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/**
- * Default avatar displaying user initials
- */
 export const Initials: Story = {
   args: {
     name: "Nathan Smith",
@@ -73,9 +70,6 @@ export const Initials: Story = {
   }
 };
 
-/**
- * Avatar with a profile image
- */
 export const Image: Story = {
   args: {
     name: "Jane Doe",
@@ -84,15 +78,11 @@ export const Image: Story = {
   }
 };
 
-/**
- * Interactive avatar for adding users or inviting members
- */
 export const Add: Story = {
   args: {
     name: "Add User",
     ariaLabel: "Add new user",
     onClick: () => console.log("Add user clicked"),
-    customBackgroundColor: "#E5E7EB",
     variant: "add"
   },
   render: args => (
@@ -103,9 +93,6 @@ export const Add: Story = {
   )
 };
 
-/**
- * Small size variant
- */
 export const Small: Story = {
   args: {
     name: "Nathan Smith",
@@ -114,9 +101,6 @@ export const Small: Story = {
   }
 };
 
-/**
- * Medium size variant (default)
- */
 export const Medium: Story = {
   args: {
     name: "Nathan Smith",
@@ -125,9 +109,6 @@ export const Medium: Story = {
   }
 };
 
-/**
- * Avatar with notification badge
- */
 export const WithNotification: Story = {
   args: {
     name: "Nathan Smith",
@@ -137,9 +118,6 @@ export const WithNotification: Story = {
   }
 };
 
-/**
- * Comparison of all sizes (in rem units)
- */
 export const SizeComparison: Story = {
   args: {
     name: "Nathan Smith"
@@ -158,9 +136,6 @@ export const SizeComparison: Story = {
   )
 };
 
-/**
- * Comparison: Initials vs Image vs Add
- */
 export const VariantComparison: Story = {
   args: {
     name: "Nathan Smith"
@@ -188,9 +163,6 @@ export const VariantComparison: Story = {
   )
 };
 
-/**
- * Add variant in different sizes
- */
 export const AddSizes: Story = {
   args: {
     name: "Add User"
