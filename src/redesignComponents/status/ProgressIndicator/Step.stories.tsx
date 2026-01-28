@@ -140,6 +140,11 @@ export const AllStatesAndInteractions: Story = {
 };
 
 export const AllStates: Story = {
+  args: {
+    index: 1,
+    status: "active",
+    label: "Label"
+  },
   render: () => (
     <Box display="flex" gap={6} flexWrap="wrap" alignItems="center" p={4}>
       <Box textAlign="center">
@@ -177,6 +182,11 @@ export const AllStates: Story = {
 };
 
 export const DifferentStepNumbers: Story = {
+  args: {
+    index: 1,
+    status: "active",
+    label: "Label"
+  },
   render: () => (
     <Box display="flex" gap={6} flexWrap="wrap" alignItems="center" p={4}>
       <Box textAlign="center">
