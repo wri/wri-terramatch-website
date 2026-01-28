@@ -81,6 +81,11 @@ const InteractionCell = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const AllStatesAndInteractions: Story = {
+  args: {
+    index: 1,
+    status: "active",
+    label: "Label"
+  },
   render: () => {
     const componentStates: Array<{
       status: "completed" | "active" | "available" | "disabled" | "error";
