@@ -69,7 +69,6 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   title,
   progress,
   goal,
-  tooltipContent,
   color,
   iconWithColor
 }) => {
