@@ -27,7 +27,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       </Text>
       {metrics.map(metric => {
         const progressValue = metric.goal > 0 ? (metric.progress / metric.goal) * 100 : 0;
-        const iconWithColor = getIconWithProgressColor16(metric.icon, metric.progress, metric.color);
+        const iconWithColor = getIconWithProgressColor16(metric.icon, metric.progress, metric.goal, metric.color);
 
         return (
           <Flex key={metric.title} gap={3} alignItems="center">

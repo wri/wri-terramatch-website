@@ -115,7 +115,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
 
 const MetricCard: FC<MetricCardProps> = props => {
   const { title, progress, goal, tooltipContent, variant = "simple", icon, color = "primary.600" } = props;
-  const iconWithColor = getIconWithProgressColor24(icon, progress, color);
+  const iconWithColor = getIconWithProgressColor24(icon, progress, goal, color);
 
   let content: ReactNode;
 
