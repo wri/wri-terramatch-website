@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
+import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -17,7 +18,7 @@ export type ProjectsCardProps = {
 
 const ProjectsCard = ({ actions }: ProjectsCardProps) => {
   const t = useT();
-
+  const { format } = useDate();
   const { mutate } = usePutV2MyActionsUUIDComplete();
 
   const projectActions = useMemo(() => {
@@ -74,18 +75,21 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           ctaText,
           title: project?.name,
           subtitle,
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+            date: format(target.updatedAt)
+          }),
           onClick: () => {
             canClearActionClientSide && action.uuid && mutate({ pathParams: { uuid: action.uuid } });
           }
         } as ActionTrackerCardRowProps;
       });
-  }, [actions, mutate, t]);
+  }, [format, actions, mutate, t]);
 
   return (
     <ActionTrackerCard
       data={projectActions}
       title={t("Projects")}
-      subtitle={projectActions.length && t("You have {n} outstanding tasks", { n: projectActions.length })}
+      subtitle={projectActions.length && t("You have {n} outstanding task(s)", { n: projectActions.length })}
       icon={IconNames.LAPTOP_CIRCLE}
       limit={5}
       emptyState={{
@@ -97,11 +101,7 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           children: t("View my projects")
         }
       }}
-      cta={
-        actions?.length && actions.length > 5
-          ? { as: Link, href: "/my-projects", children: t("View all projects") }
-          : undefined
-      }
+      cta={{ as: Link, href: "/my-projects", children: t("View all projects") }}
     />
   );
 };
