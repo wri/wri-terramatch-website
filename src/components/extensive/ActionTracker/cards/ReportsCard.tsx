@@ -26,9 +26,10 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
     if (!actions) return [];
     return sortByDate(actions, "target.dueAt")
       .filter(action => action.target != null)
+      .slice(0, 5)
       .map(action => {
         const target = action.target as any;
-        const project = action.target?.project ?? action.target;
+        const project = target?.project ?? target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
         // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.

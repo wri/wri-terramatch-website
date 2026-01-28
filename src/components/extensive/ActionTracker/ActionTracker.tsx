@@ -18,7 +18,7 @@ const ActionTracker = () => {
     sortDirection: "DESC"
   });
 
-  const [, { data: actions, isLoading: isLoadingActions }] = useActions({});
+  const [, { data: actions, isLoading: isLoadingActions }] = useActions();
 
   const reportActions = useMemo(
     () =>
