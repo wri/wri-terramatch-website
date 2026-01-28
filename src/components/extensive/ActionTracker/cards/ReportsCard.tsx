@@ -39,7 +39,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         let subtitle;
         let ctaText;
         let ctaLink;
-
+        console.log("target", target);
         switch (type) {
           case "projectReports": {
             ctaText = t("View Project Report");
@@ -68,9 +68,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
-                target?.task?.uuid ?? target?.taskUuid
-              }`;
+              ctaLink = `/project/${
+                target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid
+              }/reporting-task/${target?.task?.uuid ?? target?.taskUuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
             break;
           }
