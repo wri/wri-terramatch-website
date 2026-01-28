@@ -2,13 +2,13 @@ import { Box, Grid, GridItem } from "@chakra-ui/react";
 import { FC } from "react";
 
 import GalleryImage from "../../Images/GalleryImage/GalleryImage";
+import { MIN_ITEMS } from "./constants";
 
 interface IImageGalleryCardProps {
   images: string[] | undefined;
 }
 
 const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
-  const MIN_ITEMS = 4;
   const imageCount = images?.length ?? 0;
   const itemsToShow = Math.max(MIN_ITEMS, imageCount);
   const placeholderCount = itemsToShow - imageCount;

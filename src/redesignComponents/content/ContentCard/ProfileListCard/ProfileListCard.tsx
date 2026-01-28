@@ -1,11 +1,13 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRight, Messages } from "@/redesignComponents/foundations/Icons";
+import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+
+import ProfileItem from "./ProfileItem";
 
 export interface IProfile {
   id: string;
@@ -26,13 +28,6 @@ interface ProfileListCardComponentProps {
 const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick }) => {
   const t = useT();
 
-  const handleProfileClick = useCallback(
-    (profile: IProfile) => {
-      onProfileClick(profile);
-    },
-    [onProfileClick]
-  );
-
   return (
     <Box>
       {/* Title Section */}
@@ -46,30 +41,18 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
 
       {/* Profiles List */}
       <Flex direction="column" gap={1} marginTop={3}>
-        {profiles && profiles.length > 0 ? (
+        {profiles != null && profiles.length > 0 ? (
           <>
             {profiles.map(profile => (
               <Flex key={profile.id} alignItems="center" gap={2} tabIndex={0}>
-                <Avatar name={profile.name} src={profile.image} ariaLabel={profile.name} />
-                <Text flex={1} fontSize="16px" lineHeight="24px" color="neutral.900" fontWeight="regular">
-                  {profile.name}
-                </Text>
-                <Button
-                  variant="borderless"
-                  size="small"
-                  onClick={() => handleProfileClick(profile)}
-                  className="!px-0 hover:!px-2.5"
-                  leftIcon={<Messages boxSize={3} color="neutral.800" />}
-                >
-                  {t("Message")}
-                </Button>
+                <ProfileItem profile={profile} onProfileClick={onProfileClick} />
               </Flex>
             ))}
           </>
         ) : (
           <>
             <Flex alignItems="center" gap={2} tabIndex={0}>
-              <Avatar variant="add" ariaLabel="No profiles found" name="No profiles found" />
+              <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Button
                 variant="borderless"
                 size="small"
