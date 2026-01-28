@@ -34,7 +34,7 @@
     "@headlessui/tailwindcss": "^0.1.2",
     "@hookform/resolvers": "^2.9.10",
     "@mapbox/geojson-normalize": "^0.0.1",
-    "@mapbox/mapbox-gl-draw": "1.4.2",
+    "@mapbox/mapbox-gl-draw": "^1.4.2",
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.7",
@@ -179,7 +179,6 @@
     "@babel/core": "^7.23.0",
     "@babel/traverse": "^7.23.0",
     "@types/react": "18.3.12",
-    "@types/react-dom": "18.3.1",
-    "@mapbox/mapbox-gl-draw": "1.4.2"
+    "@types/react-dom": "18.3.1"
   }
 }
