@@ -5,6 +5,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Edit } from "@/redesignComponents/foundations/Icons";
 
 import { ProgressSteps } from "./ProgressSteps";
+import type { StepProps } from "./types";
 
 const meta = {
   title: "Redesign Components/Status/Progress Indicator/ProgressSteps",
@@ -18,7 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const exampleSteps = [
+const exampleSteps: StepProps[] = [
   {
     index: 1,
     status: "completed",
@@ -99,9 +100,9 @@ export const Default: Story = {
 
 export const LongList: Story = {
   render: () => {
-    const steps = Array.from({ length: 10 }, (_, i) => ({
+    const steps: StepProps[] = Array.from({ length: 10 }, (_, i) => ({
       index: i + 1,
-      status: i < 4 ? "completed" : i === 4 ? "active" : "disabled",
+      status: (i < 4 ? "completed" : i === 4 ? "active" : "disabled") as StepProps["status"],
       label: `Step ${i + 1}`
     }));
 
