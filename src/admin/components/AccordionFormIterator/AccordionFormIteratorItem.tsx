@@ -63,25 +63,23 @@ export const AccordionFormIteratorItem = React.forwardRef((props: AccordionFormI
     <SimpleFormIteratorItemContext.Provider value={context}>
       <Accordion className="w-full" expanded={expandAccordion}>
         <AccordionSummary expandIcon={<ExpandMore onClick={() => setExpandAccordion(e => !e)} />}>
-          <>
-            <button
-              className="flex-1 line-clamp-1"
-              title={props.summaryTitle}
-              type="button"
-              onClick={() => setExpandAccordion(e => !e)}
-            >
-              {props.summaryTitle}
-            </button>
-            {summaryChildren}
-            {reOrderButtons &&
-              !disableReordering &&
-              cloneElement(reOrderButtons, {
-                index,
-                max: total,
-                reOrder,
-                className: clsx("button-reorder", `button-reorder-${source}-${index}`)
-              })}
-          </>
+          <button
+            className="flex-1 line-clamp-1"
+            title={props.summaryTitle}
+            type="button"
+            onClick={() => setExpandAccordion(e => !e)}
+          >
+            {props.summaryTitle}
+          </button>
+          {summaryChildren}
+          {reOrderButtons &&
+            !disableReordering &&
+            cloneElement(reOrderButtons, {
+              index,
+              max: total,
+              reOrder,
+              className: clsx("button-reorder", `button-reorder-${source}-${index}`)
+            })}
         </AccordionSummary>
         <AccordionDetails>
           {expandAccordion ? (

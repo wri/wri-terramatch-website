@@ -4,7 +4,6 @@ import { FC, ReactNode } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import Tooltip from "../actions/Tooltip/Tooltip";
 import { InformationRequired } from "../foundations/Icons";
 import DonutChart from "./DonutChart";
 import ProgressBar from "./ProgressBar";
@@ -87,9 +86,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
           <Text fontSize="16px" color="neutral.900" lineHeight="24px">
             {title}
           </Text>
-          <Tooltip content={<Text>{tooltipContent}</Text>}>
-            <InformationRequired color="neutral.800" boxSize="14px" />
-          </Tooltip>
+          <InformationRequired color="neutral.800" boxSize="14px" />
         </Flex>
         {goal > 0 ? (
           <Flex gap={1} alignItems="center">
