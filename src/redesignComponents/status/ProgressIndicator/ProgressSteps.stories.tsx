@@ -99,6 +99,9 @@ export const Default: Story = {
 };
 
 export const LongList: Story = {
+  args: {
+    steps: exampleSteps
+  },
   render: () => {
     const steps: StepProps[] = Array.from({ length: 10 }, (_, i) => ({
       index: i + 1,
