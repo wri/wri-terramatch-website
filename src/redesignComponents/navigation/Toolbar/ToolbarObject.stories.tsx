@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { BrowserRouter, Link } from "react-router-dom";
 
-import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
+import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import ToolbarObject from "./ToolbarObject";
 
@@ -38,7 +38,7 @@ export const Default: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Home", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Home", link: "#", icon: <Placeholder /> },
         { label: "Projects", link: "#" },
         { label: "Project Details", link: "#" }
       ],
@@ -55,7 +55,7 @@ export const MultipleSlots: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Dashboard", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Dashboard", link: "#", icon: <Placeholder /> },
         { label: "Settings", link: "#" },
         { label: "User", link: "#" }
       ],
@@ -74,7 +74,7 @@ export const WithBreadcrumbIcons: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Home", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Home", link: "#", icon: <Placeholder /> },
         { label: "Documents", link: "#" },
         { label: "Document", link: "#" }
       ],
