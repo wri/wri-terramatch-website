@@ -4,10 +4,18 @@ import {
   ResetPasswordResponseDto,
   VerificationUserResponseDto,
   OrganisationDto,
-  UserDto
+  UserDto,
+  ActionDto
 } from "./userServiceSchemas";
 
-export const USER_SERVICE_RESOURCES = ["logins", "passwordResets", "verifications", "organisations", "users"] as const;
+export const USER_SERVICE_RESOURCES = [
+  "logins",
+  "passwordResets",
+  "verifications",
+  "organisations",
+  "users",
+  "actions"
+] as const;
 
 export type UserServiceApiResources = {
   logins: StoreResourceMap<LoginDto>;
@@ -15,4 +23,5 @@ export type UserServiceApiResources = {
   verifications: StoreResourceMap<VerificationUserResponseDto>;
   organisations: StoreResourceMap<OrganisationDto>;
   users: StoreResourceMap<UserDto>;
+  actions: StoreResourceMap<ActionDto>;
 };
