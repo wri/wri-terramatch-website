@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PlaceholderIcon as Placeholder } from "@/redesignComponents/foundations/Icons";
+import { Organisation } from "@/redesignComponents/foundations/Icons";
 
 import Table from "./Table";
 
@@ -93,7 +93,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="text-theme-neutral-800 h-6 w-6" />
+          icon: <Organisation className="text-theme-neutral-800 h-6 w-6" />
         }
       },
       ...generateSampleData(3),
