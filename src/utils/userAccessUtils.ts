@@ -47,7 +47,7 @@ export const getBlurTextType = (user: User | undefined, isAllowed: boolean) => {
     return null;
   }
 
-  if (user !== undefined) {
+  if (user !== null) {
     return "textForLoggedUser";
   }
 
