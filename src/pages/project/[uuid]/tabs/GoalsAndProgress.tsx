@@ -24,12 +24,8 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
-type ProjectWithLastReportedSurvivalRate = ProjectFullDto & {
-  lastReportedSurvivalRate?: number | null;
-};
-
 interface GoalsAndProgressProps {
-  project: ProjectWithLastReportedSurvivalRate;
+  project: ProjectFullDto;
 }
 
 const isEmptyArray = (obj: any) => {
