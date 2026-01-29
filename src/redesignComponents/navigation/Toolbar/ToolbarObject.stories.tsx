@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { BrowserRouter, Link } from "react-router-dom";
 
-import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
+import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import ToolbarObject from "./ToolbarObject";
 
@@ -38,7 +38,7 @@ export const Default: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
         { label: "Page level 2", link: "#" },
         { label: "Page level 3", link: "#" }
       ],
@@ -55,7 +55,7 @@ export const MultipleSlots: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
         { label: "Page level 2", link: "#" }
       ],
       linkRouter: Link
@@ -73,7 +73,7 @@ export const WithBreadcrumbIcons: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
         { label: "Page level 2", link: "#" },
         { label: "Page level 3", link: "#" }
       ],
@@ -89,7 +89,7 @@ export const WithBreadcrumbIcons: Story = {
 export const PageTitle: Story = {
   args: {
     breadcrumbs: {
-      links: [{ label: "Title", link: "#", icon: <PlaceholderIcon /> }],
+      links: [{ label: "Title", link: "#", icon: <Placeholder /> }],
       linkRouter: Link
     },
     slots: [

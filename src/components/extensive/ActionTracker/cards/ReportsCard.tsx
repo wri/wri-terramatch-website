@@ -6,6 +6,7 @@ import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -24,7 +25,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
   const reportActions = useMemo(() => {
     if (!actions) return [];
-    return sortByDate(actions, "target.dueAt")
+    return sortByDate(actions, "target.updatedAt")
       .filter(action => action.target != null)
       .slice(0, 5)
       .map(action => {
@@ -32,8 +33,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         const project = target?.project ?? target;
         const type = action.targetableType;
         const status = getEntityCombinedStatus(target);
-        // When true, the action is cleared on the client side when the user clicks it, otherwise this is handled BED side.
-        let canClearActionClientSide = status === "approved";
 
         let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.dueAt) });
         let subtitle;
@@ -46,7 +45,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = action.text;
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.projectUuid}/reporting-task/${target?.taskUuid}`;
+              ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
+                target?.task?.uuid ?? target?.taskUuid
+              }`;
             } else ctaLink = getEntityDetailPageLink("project-reports", target?.uuid);
             break;
           }
@@ -55,7 +56,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task?.uuid}`;
+              ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
+                target?.task?.uuid ?? target?.taskUuid
+              }`;
             } else ctaLink = `reports/nursery-report/${target?.uuid}`;
             break;
           }
@@ -64,7 +67,9 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project.uuid}/reporting-task/${target?.task?.uuid}`;
+              ctaLink = `/project/${
+                target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid
+              }/reporting-task/${target?.task?.uuid ?? target?.taskUuid}`;
             } else ctaLink = `reports/site-report/${target?.uuid}`;
             break;
           }
@@ -76,8 +81,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ctaText,
           title: project?.name,
           subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+            date: format(target.updatedAt)
+          }),
           onClick: () => {
-            canClearActionClientSide && action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
+            action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
+            ApiSlice.pruneCache("actions", [action.uuid]);
           }
         } as ActionTrackerCardRowProps;
       });
@@ -87,7 +96,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
     <ActionTrackerCard
       data={reportActions}
       title={t("Reports")}
-      subtitle={reportActions.length && t("You have {n} reports to complete", { n: reportActions.length })}
+      subtitle={reportActions.length && t("You have {n} report(s) to complete", { n: reportActions.length })}
       icon={IconNames.ARROW_SPIN_CIRCLE}
       limit={5}
       emptyState={{
