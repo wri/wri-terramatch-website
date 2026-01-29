@@ -5,6 +5,8 @@ import { getThemedColor } from "../../../lib/theme";
 export const StyledAvatarWrapper = styled.div`
   display: inline-block;
   border-radius: 50%;
+  width: fit-content;
+  height: fit-content;
   border: 1px solid ${getThemedColor("primary", 800)};
 
   & div:has(> div > p[aria-label*="unread"]) {
