@@ -15,7 +15,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
   const isEmpty = imageCount === 0;
 
   return (
-    <Box className="w-[403px]" padding={5} backgroundColor="white" borderRadius="md">
+    <Box padding={5} backgroundColor="white" borderRadius="md">
       <Grid templateColumns="repeat(2, 1fr)" gapY={5} gapX={5}>
         {images?.map((image, index) => (
           <GridItem key={`image-${index}-${image}`}>
@@ -31,7 +31,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
               {showContent ? (
                 <GalleryImage alt="No images available" isAvailable={false} />
               ) : (
-                <div className="bg-theme-neutral-200 rounded-md" style={{ width: 164, height: 164 }} />
+                <div className="rounded-md bg-theme-neutral-200" style={{ width: 164, height: 164 }} />
               )}
             </GridItem>
           );
