@@ -23,8 +23,11 @@ import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
+/** Extended so component compiles when API/OpenAPI schema does not yet expose lastReportedSurvivalRate on SiteFullDto (e.g. before yarn generate:entityService). */
+type SiteWithLastReportedSurvivalRate = SiteFullDto & { lastReportedSurvivalRate?: number | null };
+
 interface GoalsAndProgressTabProps {
-  site: SiteFullDto;
+  site: SiteWithLastReportedSurvivalRate;
 }
 
 export const LABEL_LEGEND = [
