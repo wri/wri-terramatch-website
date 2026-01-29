@@ -4,6 +4,7 @@ import Image from "next/image";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Edit, PhotoAdd } from "@/redesignComponents/foundations/Icons";
 
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -47,14 +48,14 @@ const BaseImage: FC<BaseImageProps> = ({
       {showNotAvailable ? (
         <div
           className={classNames(
-            "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-2",
+            "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
             borderRadius
           )}
         >
           <PhotoAdd className="h-6 w-6" />
-          <Text variant="text-16-bold" className="text-theme-neutral-900">
-            {t("Upload Image")}
-          </Text>
+          <Button variant="borderless" size="small">
+            {t("Add Image")}
+          </Button>
         </div>
       ) : (
         <>

@@ -30,7 +30,6 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
         variant="borderless"
         size="small"
         onClick={handleClick}
-        className="!px-0 hover:!px-2.5"
         leftIcon={<Messages boxSize={3} color="neutral.800" />}
       >
         {t("Message")}

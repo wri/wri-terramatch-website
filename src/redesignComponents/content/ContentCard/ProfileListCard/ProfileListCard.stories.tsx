@@ -5,7 +5,7 @@ import { FC } from "react";
 import ProfileListCard, { IProfile } from "./ProfileListCard";
 
 const meta: Meta<typeof ProfileListCard> = {
-  title: "Redesign Components/Content/ContentCard/ProfileListCard",
+  title: "Redesign Components/Content/Content Card/Profile List Card",
   component: ProfileListCard,
   tags: ["autodocs"],
   argTypes: {
@@ -22,22 +22,22 @@ type Story = StoryObj<typeof ProfileListCard>;
 const sampleProfiles: IProfile[] = [
   {
     id: "1",
-    name: "John Doe",
+    name: "Name Surname",
     image: "https://i.pravatar.cc/300?img=1"
   },
   {
     id: "2",
-    name: "Jane Smith",
+    name: "Name Surname",
     image: "https://i.pravatar.cc/300?img=2"
   },
   {
     id: "3",
-    name: "Michael Johnson",
+    name: "Name Surname",
     image: "https://i.pravatar.cc/300?img=3"
   },
   {
     id: "4",
-    name: "Sarah Williams",
+    name: "Name Surname",
     image: "https://i.pravatar.cc/300?img=4"
   }
 ];
@@ -64,7 +64,7 @@ export const Default: Story = {
       <ProfileListCard
         items={[
           {
-            title: "Profiles",
+            title: "Header Label",
             profiles: sampleProfiles,
             onProfileClick: profile => {
               console.log("Profile clicked:", profile);
@@ -85,11 +85,11 @@ export const SingleProfile: Story = {
       <ProfileListCard
         items={[
           {
-            title: "Team Lead",
+            title: "Header Label",
             profiles: [
               {
                 id: "1",
-                name: "John Doe",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=1"
               }
             ],
@@ -112,41 +112,41 @@ export const ManyProfiles: Story = {
       <ProfileListCard
         items={[
           {
-            title: "Team Members",
+            title: "Header Label",
             profiles: [
               {
                 id: "1",
-                name: "John Doe",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=1"
               },
               {
                 id: "2",
-                name: "Jane Smith",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=2"
               },
               {
                 id: "3",
-                name: "Michael Johnson",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=3"
               },
               {
                 id: "4",
-                name: "Sarah Williams",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=4"
               },
               {
                 id: "5",
-                name: "David Brown",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=5"
               },
               {
                 id: "6",
-                name: "Emily Davis",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=6"
               },
               {
                 id: "7",
-                name: "Robert Wilson",
+                name: "Name Surname",
                 image: "https://i.pravatar.cc/300?img=7"
               }
             ],
@@ -169,7 +169,7 @@ export const ProfilesWithoutImages: Story = {
       <ProfileListCard
         items={[
           {
-            title: "Contributors",
+            title: "Header Label",
             profiles: [
               {
                 id: "1",
@@ -206,7 +206,7 @@ export const NoData: Story = {
       <ProfileListCard
         items={[
           {
-            title: "Team Members",
+            title: "Header Label",
             profiles: [],
             onProfileClick: profile => {
               console.log("Profile clicked:", profile);
