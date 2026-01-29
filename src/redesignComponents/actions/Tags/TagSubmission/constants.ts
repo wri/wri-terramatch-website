@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import { CheckApproved, Draft, Due, Info, NothingReported, Pending } from "@/redesignComponents/foundations/Icons";
 
-import type { TagSubmissionState } from "./TagSubmission";
+import type { TagSubmissionState } from "./TagSubmission.type";
 
 export const TAG_LABELS: Record<TagSubmissionState, string> = {
   draft: "Draft",
