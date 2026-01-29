@@ -1,27 +1,21 @@
 import { cloneElement, isValidElement, ReactElement, ReactNode } from "react";
 
-export const getIconWithProgressColor16 = (
-  iconElement: ReactNode,
-  progress: number,
-  goal: number,
-  color?: string
-): ReactNode => {
-  if (!isValidElement(iconElement)) {
-    return iconElement;
-  }
-  const iconColor = progress === 0 || goal === 0 ? "neutral.400" : color ?? "primary.600";
-  return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize: "16px" });
-};
+import { MetricCardVariant } from "../types";
 
-export const getIconWithProgressColor24 = (
+export function getIconWithProgressColor(
   iconElement: ReactNode,
   progress: number,
   goal: number,
-  color?: string
-): ReactNode => {
+  boxSize: string,
+  color?: string,
+  variant?: MetricCardVariant
+): ReactNode {
   if (!isValidElement(iconElement)) {
     return iconElement;
   }
-  const iconColor = progress === 0 || goal === 0 ? "neutral.400" : color ?? "primary.600";
-  return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize: "24px" });
-};
+  const iconColor =
+    progress === 0 || (goal === 0 && (variant === "progressBar" || variant === "donutChart"))
+      ? "neutral.400"
+      : color ?? "primary.600";
+  return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize });
+}
