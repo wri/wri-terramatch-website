@@ -81,7 +81,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         {iconWithColor}
       </DonutChart>
       <Flex direction="column" gap={2}>
-        <Flex gap={1}>
+        <Flex gap={1} alignItems="center">
           <Text fontSize="16px" color="neutral.900" lineHeight="24px">
             {title}
           </Text>
