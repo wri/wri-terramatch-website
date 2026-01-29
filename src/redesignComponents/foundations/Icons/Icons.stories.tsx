@@ -22,6 +22,7 @@ import {
   Indeterminate,
   Info,
   InformationRequired,
+  InformationRequiredSimple,
   Jobs,
   Landscape,
   Language,
@@ -183,6 +184,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Visibility Off">
             <VisibilityOff boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Information Required Simple">
+            <InformationRequiredSimple boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -363,6 +367,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Visibility Off">
           <VisibilityOff boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Information Required Simple">
+          <InformationRequiredSimple boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
