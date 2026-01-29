@@ -27,6 +27,7 @@ import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDelayedJobs } from "@/connections/DelayedJob";
 import { useMedias } from "@/connections/EntityAssociation";
 import {
   prepareGeometryForUpload,
@@ -40,6 +41,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   CompareGeometryFileResponse,
   uploadGeometryFile,
@@ -162,6 +164,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { selectPolygonFromMap, setSelectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+
+  useDelayedJobs();
 
   const polygonFromMap = selectPolygonFromMap ?? { isOpen: false, uuid: "" };
   const setPolygonFromMap = useCallback(
@@ -537,6 +541,7 @@ const PolygonReviewTab: FC<IProps> = props => {
             );
             openNotification("success", "Success, Your Polygons were approved!", "");
             refetch();
+            listDelayedJobs.fetch({});
           } catch (error) {
             Log.error("Polygon approval error", error);
           }
