@@ -3,7 +3,6 @@ import { FieldInputType, FormFieldFactory } from "@/components/extensive/WizardF
 import { BooleanField } from "./boolean.field";
 import { ConditionalField } from "./conditional.field";
 import { DateField } from "./date.field";
-import { DemographicField } from "./demographic.field";
 import { DisturbanceReportEntriesField } from "./disturbance-report-entries.field";
 import { DisturbancesField } from "./disturbances.field";
 import { EmptyField } from "./empty.field";
@@ -26,6 +25,7 @@ import { StrategyAreaField } from "./strategy-area.field";
 import { TableInputField } from "./table-input.field";
 import { TelephoneField } from "./telephone.field";
 import { TextField } from "./text.field";
+import { TrackingField } from "./tracking.field";
 import { TreeSpeciesField } from "./tree-species.field";
 import { UrlField } from "./url.field";
 
@@ -57,15 +57,15 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   "strategy-area": StrategyAreaField,
   financialIndicators: FinancialIndicatorsField,
 
-  workdays: DemographicField,
-  restorationPartners: DemographicField,
-  jobs: DemographicField,
-  employees: DemographicField,
-  volunteers: DemographicField,
-  allBeneficiaries: DemographicField,
-  trainingBeneficiaries: DemographicField,
-  indirectBeneficiaries: DemographicField,
-  associates: DemographicField,
+  workdays: TrackingField,
+  restorationPartners: TrackingField,
+  jobs: TrackingField,
+  employees: TrackingField,
+  volunteers: TrackingField,
+  allBeneficiaries: TrackingField,
+  trainingBeneficiaries: TrackingField,
+  indirectBeneficiaries: TrackingField,
+  associates: TrackingField,
 
   empty: EmptyField
 };

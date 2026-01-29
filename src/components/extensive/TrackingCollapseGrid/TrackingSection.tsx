@@ -1,37 +1,30 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useCallback, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import DemographicsRow from "@/components/extensive/DemographicsCollapseGrid/DemographicsRow";
-import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
-import { DemographicGridVariantProps, DemographicType, Status, useEntryTypeDefinition } from "./types";
+import { Status, TrackingGridVariantProps, TrackingType, useEntryTypeDefinition } from "./types";
 
-export interface DemographicsSectionProps {
-  demographicType: DemographicType;
+export interface TrackingSectionProps {
+  trackingType: TrackingType;
   entryType: string;
-  entries: DemographicEntryDto[];
-  variant: DemographicGridVariantProps;
-  onChange?: (demographics: DemographicEntryDto[]) => void;
+  entries: TrackingEntryDto[];
+  variant: TrackingGridVariantProps;
+  onChange?: (entries: TrackingEntryDto[]) => void;
   status?: Status;
 }
 
-const DemographicsSection = ({
-  demographicType,
-  entryType,
-  entries,
-  variant,
-  onChange,
-  status
-}: DemographicsSectionProps) => {
+const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
-  const { title, rows, total } = useSectionData(demographicType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryTypeDefinition(demographicType, entryType);
+  const { title, rows, total } = useSectionData(trackingType, entryType, entries);
+  const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
@@ -39,21 +32,21 @@ const DemographicsSection = ({
 
       // avoid mutation of existing data from our parent
       const updatedEntries = [...entries];
-      const demographic: DemographicEntryDto =
+      const entry: TrackingEntryDto =
         index >= 0
           ? { ...updatedEntries[index] }
           : // We can ignore name here because when a type uses names, we never have a row
-            // that doesn't exist in the demographics array, so the index can never be < 0
+            // that doesn't exist in the entries array, so the index can never be < 0
             { type: entryType, subtype, amount };
 
       if (userLabel != null) {
-        demographic.name = userLabel;
+        entry.name = userLabel;
       }
-      demographic.amount = amount;
+      entry.amount = amount;
       if (index < 0) {
-        updatedEntries.push(demographic);
+        updatedEntries.push(entry);
       } else {
-        updatedEntries[index] = demographic;
+        updatedEntries[index] = entry;
       }
 
       onChange(updatedEntries);
@@ -74,9 +67,9 @@ const DemographicsSection = ({
       if (onChange == null) return;
 
       // avoid mutation of existing data from our parent
-      const updatedDemographics = [...entries];
-      updatedDemographics.splice(index, 1);
-      onChange(updatedDemographics);
+      const updatedEntries = [...entries];
+      updatedEntries.splice(index, 1);
+      onChange(updatedEntries);
     },
     [entries, onChange]
   );
@@ -101,17 +94,15 @@ const DemographicsSection = ({
           </Text>
         </div>
       </>
-      {rows.map(({ demographicIndex, typeName, label, userLabel, amount }, index) => (
-        <DemographicsRow
+      {rows.map(({ entryIndex, typeName, label, userLabel, amount }, index) => (
+        <TrackingRow
           key={index}
           onChange={
-            onChange == null
-              ? undefined
-              : (amount, userLabel) => onRowChange(demographicIndex, typeName, amount, userLabel)
+            onChange == null ? undefined : (amount, userLabel) => onRowChange(entryIndex, typeName, amount, userLabel)
           }
-          onDelete={onChange == null ? undefined : () => removeRow(demographicIndex)}
+          onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
           usesName={addNameLabel != null}
-          {...{ demographicType, entryType, label, userLabel, amount, variant }}
+          {...{ entryType, label, userLabel, amount }}
         />
       ))}
 
@@ -191,4 +182,4 @@ const DemographicsSection = ({
   );
 };
 
-export default DemographicsSection;
+export default TrackingSection;
