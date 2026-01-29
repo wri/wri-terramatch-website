@@ -124,14 +124,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     },
                     {
                       iconName: IconNames.SURVIVAL_RATE,
-                      label: t("Estimated Survival Rate:"),
+                      label: t("Last Reported Survival Rate:"),
                       variantLabel: "text-14",
                       classNameLabel: " text-neutral-650 uppercase !w-auto",
                       classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                      value:
-                        (project.lastReportedSurvivalRate ?? project.survivalRate) != null
-                          ? `${project.lastReportedSurvivalRate ?? project.survivalRate}%`
-                          : "N/A"
+                      value: project.lastReportedSurvivalRate != null ? `${project.lastReportedSurvivalRate}%` : "N/A"
                     },
                     {
                       iconName: IconNames.LEAF_PLANTED_CIRCLE,

@@ -23,12 +23,8 @@ import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
-type SiteWithLastReportedSurvivalRate = SiteFullDto & {
-  lastReportedSurvivalRate?: number | null;
-};
-
 interface GoalsAndProgressTabProps {
-  site: SiteWithLastReportedSurvivalRate;
+  site: SiteFullDto;
 }
 
 export const LABEL_LEGEND = [
@@ -112,10 +108,7 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                           variantLabel: "text-14" as TextVariants,
                           classNameLabel: " text-neutral-650 uppercase !w-auto",
                           classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                          value:
-                            (site.lastReportedSurvivalRate ?? site.survivalRatePlanted) != null
-                              ? `${site.lastReportedSurvivalRate ?? site.survivalRatePlanted}%`
-                              : "-"
+                          value: site.lastReportedSurvivalRate != null ? `${site.lastReportedSurvivalRate}%` : "-"
                         }
                       ]
                     : []),
