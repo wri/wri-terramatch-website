@@ -14,21 +14,7 @@ import {
   WARNING_STATES,
   WARNING_TEXT_STATES
 } from "./constants";
-
-export type TagSubmissionState =
-  | "draft"
-  | "nothing-reported"
-  | "pending-approval-neutral"
-  | "pending-approval"
-  | "information-required"
-  | "approved"
-  | "due";
-
-export interface TagSubmissionProps {
-  state: TagSubmissionState;
-  className?: string;
-  size?: "small" | "default";
-}
+import { type TagSubmissionProps } from "./TagSubmission.type";
 
 const TagSubmission: FC<TagSubmissionProps> = ({ state, className, size = DEFAULT_SIZE }) => {
   const t = useT();
