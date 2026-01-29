@@ -16,7 +16,7 @@ import {
   ImpactStoryBulkDeleteBodyDto,
   ImpactStoryFullDto,
   ImpactStoryLightDto,
-  UpdateImpactStoryAttributes
+  StoreImpactStoryAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
@@ -24,7 +24,7 @@ import { Filter } from "@/types/connection";
 
 const impactStoryConnection = v3Resource("impactStories", impactStoryGet)
   .singleFullResource<ImpactStoryFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
-  .update<UpdateImpactStoryAttributes, ImpactStoryUpdateVariables>(impactStoryUpdate)
+  .update<StoreImpactStoryAttributes, ImpactStoryUpdateVariables>(impactStoryUpdate)
   .buildConnection();
 
 const impactStoriesConnection = v3Resource("impactStories", impactStoryIndex)

@@ -10,7 +10,7 @@ import {
 } from "@/connections/ImpactStory";
 import {
   CreateImpactStoryAttributes,
-  UpdateImpactStoryAttributes
+  StoreImpactStoryAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { v3ErrorForRA } from "../utils/error";
@@ -81,7 +81,7 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
       throw v3ErrorForRA("Impact story update failed", new Error("Impact story UUID is required"));
     }
 
-    const attributes: UpdateImpactStoryAttributes = {
+    const attributes: StoreImpactStoryAttributes = {
       status: params.data.status ?? "draft",
       ...(params.data.title != null && { title: params.data.title }),
       ...(params.data.organizationUuid != null && { organizationUuid: params.data.organizationUuid }),

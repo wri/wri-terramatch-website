@@ -195,15 +195,15 @@ export type CreateImpactStoryAttributes = {
    *
    * @maxLength 70
    */
-  title: string;
+  title?: string;
   /**
-   * Impact story status
+   * Impact story status (required)
    */
   status: "draft" | "published";
   /**
    * Organization UUID (must exist in the database)
    */
-  organizationUuid: string;
+  organizationUuid?: string;
   /**
    * Impact story date
    *
@@ -233,7 +233,7 @@ export type CreateImpactStoryBody = {
   data: CreateImpactStoryDataDto;
 };
 
-export type UpdateImpactStoryAttributes = {
+export type StoreImpactStoryAttributes = {
   /**
    * Impact story title (max 70 characters)
    *
@@ -274,7 +274,7 @@ export type UpdateImpactStoryDataDto = {
    * @format uuid
    */
   id: string;
-  attributes: UpdateImpactStoryAttributes;
+  attributes: StoreImpactStoryAttributes;
 };
 
 export type UpdateImpactStoryBody = {
