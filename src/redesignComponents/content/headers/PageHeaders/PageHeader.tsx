@@ -1,7 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
-import TagSubmission, { TagSubmissionProps } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { type TagSubmissionProps } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 
 export interface PageHeaderProps {
   title: string;
