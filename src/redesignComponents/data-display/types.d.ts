@@ -20,12 +20,13 @@ export interface ProgressBarProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
   className?: string;
 }
 
+export type MetricCardVariant = "medium" | "large" | "progressBar" | "donutChart";
 export interface MetricCardProps {
   title: string;
   progress: number;
   goal: number;
   tooltipContent?: ReactNode;
-  variant?: "simple" | "progressBar" | "donutChart";
+  variant?: MetricCardVariant;
   icon?: ReactNode;
   color?: string;
 }
@@ -35,7 +36,7 @@ export interface MetricCardCommonVariantProps
   iconWithColor: ReactNode;
 }
 
-export type SimpleMetricCardContentProps = Pick<
+export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
   "title" | "progress" | "color" | "iconWithColor"
 >;
@@ -51,4 +52,5 @@ export interface MultiMetricCardProps {
   title: string;
   status?: ProgressState;
   metrics: MetricCardProps[];
+  labelStatus: string;
 }
