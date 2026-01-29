@@ -1126,6 +1126,7 @@ export type ProjectFullDto = {
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
   survivalRate: number | null;
+  lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
   incomeGeneratingActivities: string[] | null;
@@ -1241,6 +1242,7 @@ export type SiteFullDto = {
   aNatRegenerationTreesPerHectare: number | null;
   aNatRegeneration: number | null;
   landscapeCommunityContribution: string | null;
+  lastReportedSurvivalRate: number | null;
   technicalNarrative: string | null;
   plantingPattern: string | null;
   soilCondition: string | null;
