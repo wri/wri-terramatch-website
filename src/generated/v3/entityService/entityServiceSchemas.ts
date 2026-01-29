@@ -189,6 +189,108 @@ export type ImpactStoryFullDto = {
   content: string | null;
 };
 
+export type CreateImpactStoryAttributes = {
+  /**
+   * Impact story title (max 70 characters)
+   *
+   * @maxLength 70
+   */
+  title: string;
+  /**
+   * Impact story status
+   */
+  status: "draft" | "published";
+  /**
+   * Organization UUID (must exist in the database)
+   */
+  organizationUuid: string;
+  /**
+   * Impact story date
+   *
+   * @format date
+   */
+  date?: string;
+  /**
+   * Array of category strings
+   */
+  category?: string[];
+  /**
+   * Impact story content (JSON string or text)
+   */
+  content?: string;
+  /**
+   * Legacy thumbnail field
+   */
+  thumbnail?: string;
+};
+
+export type CreateImpactStoryDataDto = {
+  type: "impactStories";
+  attributes: CreateImpactStoryAttributes;
+};
+
+export type CreateImpactStoryBody = {
+  data: CreateImpactStoryDataDto;
+};
+
+export type UpdateImpactStoryAttributes = {
+  /**
+   * Impact story title (max 70 characters)
+   *
+   * @maxLength 70
+   */
+  title?: string;
+  /**
+   * Impact story status (required)
+   */
+  status: "draft" | "published";
+  /**
+   * Organization UUID (must exist in the database)
+   */
+  organizationUuid?: string;
+  /**
+   * Impact story date
+   *
+   * @format date
+   */
+  date?: string;
+  /**
+   * Array of category strings
+   */
+  category?: string[];
+  /**
+   * Impact story content (JSON string or text)
+   */
+  content?: string;
+  /**
+   * Legacy thumbnail field
+   */
+  thumbnail?: string;
+};
+
+export type UpdateImpactStoryDataDto = {
+  type: "impactStories";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateImpactStoryAttributes;
+};
+
+export type UpdateImpactStoryBody = {
+  data: UpdateImpactStoryDataDto;
+};
+
+export type ImpactStoryBulkDeleteBodyDto = {
+  /**
+   * Array of impact story resource identifiers to delete
+   *
+   * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: any[][];
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -1215,8 +1317,8 @@ export type ProjectFullDto = {
   photos: MediaDto[];
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
-  detailedProjectBudget: MediaDto;
   proofOfLandTenureMou: MediaDto[];
+  detailedProjectBudget: MediaDto;
 };
 
 export type SiteFullDto = {

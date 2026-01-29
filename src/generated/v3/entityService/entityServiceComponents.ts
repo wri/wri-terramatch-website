@@ -308,6 +308,69 @@ export const impactStoryIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories", "GET");
 
+export type ImpactStoryCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryCreateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryCreateVariables = {
+  body: Schemas.CreateImpactStoryBody;
+};
+
+/**
+ * Create a new impact story for an organization. Requires authentication and appropriate permissions.
+ */
+export const impactStoryCreate = new V3ApiEndpoint<
+  ImpactStoryCreateResponse,
+  ImpactStoryCreateError,
+  ImpactStoryCreateVariables,
+  {}
+>("/entities/v3/impactStories", "POST");
+
 export type ImpactStoryGetPathParams = {
   /**
    * Impact Story UUID
@@ -374,6 +437,224 @@ export const impactStoryGet = new V3ApiEndpoint<
   ImpactStoryGetVariables,
   {}
 >("/entities/v3/impactStories/{uuid}", "GET");
+
+export type ImpactStoryUpdatePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryUpdateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryUpdateVariables = {
+  body: Schemas.UpdateImpactStoryBody;
+  pathParams: ImpactStoryUpdatePathParams;
+};
+
+/**
+ * Update an impact story by UUID. Requires authentication and appropriate permissions.
+ *
+ *     All fields except status are optional. Status is required.
+ */
+export const impactStoryUpdate = new V3ApiEndpoint<
+  ImpactStoryUpdateResponse,
+  ImpactStoryUpdateError,
+  ImpactStoryUpdateVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "PATCH");
+
+export type ImpactStoryDeletePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryDeleteVariables = {
+  pathParams: ImpactStoryDeletePathParams;
+};
+
+/**
+ * Soft deletes an impact story by UUID. Requires authentication and appropriate permissions.
+ */
+export const impactStoryDelete = new V3ApiEndpoint<
+  ImpactStoryDeleteResponse,
+  ImpactStoryDeleteError,
+  ImpactStoryDeleteVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "DELETE");
+
+export type ImpactStoryBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryBulkDeleteVariables = {
+  body: Schemas.ImpactStoryBulkDeleteBodyDto;
+};
+
+/**
+ * Bulk delete multiple impact stories by UUIDs. Requires admin permissions.
+ */
+export const impactStoryBulkDelete = new V3ApiEndpoint<
+  ImpactStoryBulkDeleteResponse,
+  ImpactStoryBulkDeleteError,
+  ImpactStoryBulkDeleteVariables,
+  {}
+>("/entities/v3/impactStories/bulkDelete", "DELETE");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -5192,7 +5473,14 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
-  impactStories: { impactStoryIndex, impactStoryGet },
+  impactStories: {
+    impactStoryIndex,
+    impactStoryCreate,
+    impactStoryGet,
+    impactStoryUpdate,
+    impactStoryDelete,
+    impactStoryBulkDelete
+  },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
