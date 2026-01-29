@@ -3,6 +3,7 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
+  impactStoryBulkDelete as impactStoryBulkDeleteEndpoint,
   impactStoryCreate,
   impactStoryDelete,
   impactStoryGet,
@@ -12,10 +13,13 @@ import {
   ImpactStoryUpdateVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
+  ImpactStoryBulkDeleteBodyDto,
   ImpactStoryFullDto,
   ImpactStoryLightDto,
   UpdateImpactStoryAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
+import { resolveUrl } from "@/generated/v3/utils";
+import ApiSlice from "@/store/apiSlice";
 import { Filter } from "@/types/connection";
 
 const impactStoryConnection = v3Resource("impactStories", impactStoryGet)
@@ -44,3 +48,50 @@ export const updateImpactStory = resourceUpdater(impactStoryConnection);
 export const deleteImpactStory = deleterAsync("impactStories", impactStoryDelete, uuid => ({
   pathParams: { uuid }
 }));
+
+type ImpactStoryResourceIdentifier = {
+  type: "impactStories";
+  id: string;
+};
+
+const createBulkDeleteBody = (resources: ImpactStoryResourceIdentifier[]): ImpactStoryBulkDeleteBodyDto => {
+  return {
+    data: resources as unknown as ImpactStoryBulkDeleteBodyDto["data"]
+  };
+};
+
+export const bulkDeleteImpactStories = async (uuids: string[]): Promise<void> => {
+  const deleteResources: ImpactStoryResourceIdentifier[] = uuids.map(uuid => ({
+    type: "impactStories",
+    id: uuid
+  }));
+
+  const failureSelector = impactStoryBulkDeleteEndpoint.fetchFailedSelector({});
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(resolveUrl(impactStoryBulkDeleteEndpoint.url, {}), impactStoryBulkDeleteEndpoint.method);
+  }
+
+  const body = createBulkDeleteBody(deleteResources);
+  impactStoryBulkDeleteEndpoint.fetch({ body });
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const deleted = currentState.meta.deleted.impactStories ?? [];
+      const allDeleted = uuids.every(uuid => deleted.includes(uuid));
+      const failure = failureSelector(currentState);
+
+      if (allDeleted) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
+
+  ApiSlice.pruneCache("impactStories");
+  ApiSlice.pruneIndex("impactStories", "");
+};

@@ -1,18 +1,19 @@
 import { DataProvider } from "react-admin";
 
-import { createImpactStory, loadImpactStories, loadImpactStory, updateImpactStory } from "@/connections/ImpactStory";
 import {
-  DeleteV2AdminImpactStoriesIdError,
-  fetchDeleteV2AdminImpactStoriesId,
-  fetchPostV2AdminImpactStoriesBulkDelete,
-  PostV2AdminImpactStoriesBulkDeleteError
-} from "@/generated/apiComponents";
+  bulkDeleteImpactStories,
+  createImpactStory,
+  deleteImpactStory,
+  loadImpactStories,
+  loadImpactStory,
+  updateImpactStory
+} from "@/connections/ImpactStory";
 import {
   CreateImpactStoryAttributes,
   UpdateImpactStoryAttributes
 } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
@@ -106,24 +107,30 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
 
   //@ts-ignore
   async delete(__, params) {
+    const uuid = params.id as string;
+
+    if (uuid == null) {
+      throw v3ErrorForRA("Impact story delete failed", new Error("Impact story UUID is required"));
+    }
+
     try {
-      await fetchDeleteV2AdminImpactStoriesId({
-        pathParams: { id: params.id as string }
-      });
+      await deleteImpactStory(uuid);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminImpactStoriesIdError);
+      throw v3ErrorForRA("Impact story delete failed", err);
     }
   },
   // @ts-ignore
   async deleteMany(_, params) {
+    if (params.ids == null || params.ids.length === 0) {
+      return { data: [] };
+    }
+
     try {
-      await fetchPostV2AdminImpactStoriesBulkDelete({
-        body: { uuids: params.ids.map(String) }
-      });
+      await bulkDeleteImpactStories(params.ids.map(String));
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminImpactStoriesBulkDeleteError);
+      throw v3ErrorForRA("Impact stories bulk delete failed", err);
     }
   }
 };
