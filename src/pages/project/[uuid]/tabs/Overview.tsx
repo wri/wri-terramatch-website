@@ -246,7 +246,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem title="Project Onboarding">
             <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1}>
               <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                <Text fontWeight="bold">Monitoring, Reporting, and Verification</Text>
+                <Text fontWeight="bold" color="neutral.900" fontSize="14px" lineHeight="20px" as="span">
+                  Monitoring, Reporting, and Verification&nbsp;
+                </Text>
                 process overview. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum in
                 lorem in rutrum. Vestibulum in dictum turpis, id congue augue. Nam pretium viverra ante, vel posuere
                 arcu porttitor quis. Pellentesque a porttitor purus, a molestie orci.
