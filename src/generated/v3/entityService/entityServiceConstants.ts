@@ -17,7 +17,6 @@ import {
   ScientificNameDto,
   EstablishmentsTreesDto,
   TreeReportCountsDto,
-  TrackingDto,
   DisturbanceDto,
   ProjectLightDto,
   ProjectFullDto,
@@ -31,6 +30,7 @@ import {
   DisturbanceReportFullDto,
   FormDataDto,
   UpdateRequestDto,
+  TrackingDto,
   SeedingDto,
   TreeSpeciesDto,
   InvasiveDto,
@@ -58,7 +58,6 @@ export const ENTITY_SERVICE_RESOURCES = [
   "treeSpeciesScientificNames",
   "establishmentTrees",
   "treeReportCounts",
-  "trackings",
   "disturbances",
   "projects",
   "sites",
@@ -67,6 +66,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "disturbanceReports",
   "formData",
   "updateRequests",
+  "trackings",
   "seedings",
   "treeSpecies",
   "invasives",
@@ -93,7 +93,6 @@ export type EntityServiceApiResources = {
   treeSpeciesScientificNames: StoreResourceMap<ScientificNameDto>;
   establishmentTrees: StoreResourceMap<EstablishmentsTreesDto>;
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
-  trackings: StoreResourceMap<TrackingDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
@@ -102,6 +101,7 @@ export type EntityServiceApiResources = {
   disturbanceReports: StoreResourceMap<DisturbanceReportLightDto | DisturbanceReportFullDto>;
   formData: StoreResourceMap<FormDataDto>;
   updateRequests: StoreResourceMap<UpdateRequestDto>;
+  trackings: StoreResourceMap<TrackingDto>;
   seedings: StoreResourceMap<SeedingDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   invasives: StoreResourceMap<InvasiveDto>;
