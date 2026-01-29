@@ -65,6 +65,11 @@ const themeConfig = {
         "controls-on-neutral-lights": { value: "#477010" },
         "controls-on-neutral-darks": { value: "#284206" }
       }
+    },
+    shadows: {
+      200: {
+        value: "0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10)"
+      }
     }
   }
 };
