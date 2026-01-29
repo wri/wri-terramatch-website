@@ -68,6 +68,9 @@ export const Default: Story = {
             profiles: sampleProfiles,
             onProfileClick: profile => {
               console.log("Profile clicked:", profile);
+            },
+            onInviteClick: () => {
+              console.log("Invite clicked");
             }
           }
         ]}

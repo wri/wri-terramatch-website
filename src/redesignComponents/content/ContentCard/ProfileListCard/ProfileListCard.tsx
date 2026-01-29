@@ -18,7 +18,7 @@ export interface IProfileListCardProps {
   title: string;
   profiles?: IProfile[];
   onProfileClick: (profile: IProfile) => void;
-  onInviteClick: () => void;
+  onInviteClick?: () => void;
 }
 
 interface ProfileListCardComponentProps {
