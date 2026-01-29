@@ -1,16 +1,16 @@
-import { omit } from "lodash";
 import { DataProvider } from "react-admin";
 
-import { createImpactStory, loadImpactStories, loadImpactStory } from "@/connections/ImpactStory";
+import { createImpactStory, loadImpactStories, loadImpactStory, updateImpactStory } from "@/connections/ImpactStory";
 import {
   DeleteV2AdminImpactStoriesIdError,
   fetchDeleteV2AdminImpactStoriesId,
   fetchPostV2AdminImpactStoriesBulkDelete,
-  fetchPutV2AdminImpactStoriesId,
-  PostV2AdminImpactStoriesBulkDeleteError,
-  PutV2AdminImpactStoriesIdError
+  PostV2AdminImpactStoriesBulkDeleteError
 } from "@/generated/apiComponents";
-import { CreateImpactStoryAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import {
+  CreateImpactStoryAttributes,
+  UpdateImpactStoryAttributes
+} from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
 import { raConnectionProps } from "../utils/listing";
@@ -75,20 +75,32 @@ export const impactStoriesDataProvider: Partial<DataProvider> = {
   async update(__, params) {
     const uuid = params.id as string;
     const uploadKeys = ["thumbnail"];
-    const body = omit(params.data, uploadKeys);
+
+    if (uuid == null) {
+      throw v3ErrorForRA("Impact story update failed", new Error("Impact story UUID is required"));
+    }
+
+    const attributes: UpdateImpactStoryAttributes = {
+      status: params.data.status ?? "draft",
+      ...(params.data.title != null && { title: params.data.title }),
+      ...(params.data.organizationUuid != null && { organizationUuid: params.data.organizationUuid }),
+      ...(params.data.date != null && { date: params.data.date }),
+      ...(params.data.category != null && { category: params.data.category }),
+      ...(params.data.content != null && { content: params.data.content })
+    };
 
     try {
       await handleUploads(params, uploadKeys, { uuid, entity: "impactStories" });
 
-      const response = await fetchPutV2AdminImpactStoriesId({
-        body,
-        pathParams: { id: uuid }
-      });
+      const impactStory = await updateImpactStory(attributes, { id: uuid });
 
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.data.uuid } };
+      if (impactStory.uuid == null) {
+        throw v3ErrorForRA("Impact story update failed", new Error("Updated impact story missing UUID"));
+      }
+
+      return { data: { ...impactStory, id: impactStory.uuid } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminImpactStoriesIdError);
+      throw v3ErrorForRA("Impact story update failed", err);
     }
   },
 
