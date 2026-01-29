@@ -22,6 +22,11 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
   const applications = useMemo(
     () =>
       props.applications
+        .filter(
+          application =>
+            last(application.submissions)?.status == "started" ||
+            last(application.submissions)?.status == "requires-more-information"
+        )
         .map(application => {
           const currentSubmission = last(application.submissions);
           if (currentSubmission?.status == null) return undefined;
@@ -48,7 +53,7 @@ const ApplicationsCard = (props: ApplicationsCardProps) => {
     <ActionTrackerCard
       data={applications}
       title={t("Applications")}
-      subtitle={applications.length && t("You have {n} updates", { n: applications.length })}
+      subtitle={applications.length && t("You have {n} application(s)", { n: applications.length })}
       icon={IconNames.DOCUMENT_CIRCLE}
       emptyState={{
         title: t("Track your applications"),

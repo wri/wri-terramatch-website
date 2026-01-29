@@ -398,6 +398,63 @@ export const organisationCreation = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations", "POST");
 
+export type ActionsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ActionsIndexResponse = {
+  meta?: {
+    /**
+     * @example actions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example actions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ActionDto;
+  };
+};
+
+/**
+ * Returns pending actions for reports and entities associated with the user's projects
+ */
+export const actionsIndex = new V3ApiEndpoint<ActionsIndexResponse, ActionsIndexError, {}, {}>(
+  "/users/v3/actions",
+  "GET"
+);
+
 export type UsersFindPathParams = {
   /**
    * A valid user UUID or "me"
@@ -679,5 +736,6 @@ export const operationsByTag = {
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
   organisations: { organisationIndex, organisationCreation },
+  actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation }
 };

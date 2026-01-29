@@ -2305,7 +2305,7 @@ export type CreateProjectPolygonVariables = {
  * Create a project polygon for a project pitch from GeoJSON.
  *
  *     Each feature must have `projectPitchUuid` in properties.
- *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, the request will fail.
+ *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, it will be deleted and replaced with the new polygon.
  */
 export const createProjectPolygon = new V3ApiEndpoint<
   CreateProjectPolygonResponse,

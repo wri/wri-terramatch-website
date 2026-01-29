@@ -22,6 +22,13 @@ type SitePolygonsGeoJsonProps = {
   enabled?: boolean;
 };
 
+type ProjectSitePolygonsGeoJsonProps = {
+  projectUuid?: string;
+  includeExtendedData?: boolean;
+  geometryOnly?: boolean;
+  enabled?: boolean;
+};
+
 type ProjectPolygonsGeoJsonProps = {
   projectPitchUuid?: string;
   enabled?: boolean;
@@ -61,6 +68,23 @@ const sitePolygonsGeoJsonConnection = v3Resource("geojsonExports", getSitePolygo
   .enabledProp()
   .buildConnection();
 
+const projectSitePolygonsGeoJsonConnection = v3Resource("geojsonExports", getSitePolygonsGeoJson)
+  .singleByCustomId<GeoJsonExportDto, ProjectSitePolygonsGeoJsonProps>(
+    ({ projectUuid, includeExtendedData, geometryOnly }) => {
+      if (!projectUuid) return undefined;
+      return {
+        queryParams: {
+          projectUuid,
+          ...(includeExtendedData !== undefined && { includeExtendedData }),
+          ...(geometryOnly !== undefined && { geometryOnly })
+        } as GetSitePolygonsGeoJsonQueryParams
+      };
+    },
+    ({ projectUuid }) => projectUuid ?? ""
+  )
+  .enabledProp()
+  .buildConnection();
+
 const projectPolygonsGeoJsonConnection = v3Resource("geojsonExports", getProjectPolygonGeoJson)
   .singleByCustomId<GeoJsonExportDto, ProjectPolygonsGeoJsonProps>(
     ({ projectPitchUuid }) => {
@@ -80,5 +104,7 @@ export const usePolygonGeoJson = connectionHook(singlePolygonGeoJsonConnection);
 export const loadPolygonGeoJson = connectionLoader(singlePolygonGeoJsonConnection);
 export const useSitePolygonsGeoJson = connectionHook(sitePolygonsGeoJsonConnection);
 export const loadSitePolygonsGeoJson = connectionLoader(sitePolygonsGeoJsonConnection);
+export const useProjectSitePolygonsGeoJson = connectionHook(projectSitePolygonsGeoJsonConnection);
+export const loadProjectSitePolygonsGeoJson = connectionLoader(projectSitePolygonsGeoJsonConnection);
 export const useProjectPolygonsGeoJson = connectionHook(projectPolygonsGeoJsonConnection);
 export const loadProjectPolygonsGeoJson = connectionLoader(projectPolygonsGeoJsonConnection);

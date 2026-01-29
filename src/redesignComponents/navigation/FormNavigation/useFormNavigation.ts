@@ -4,13 +4,11 @@ interface UseFormNavigationProps {
   defaultValue?: string;
   defaultTabValue?: string;
   onTabClick?: (selectedValue: string) => void;
-  onOpenChange?: (open: boolean) => void;
 }
 
 export const useFormNavigation = (props: UseFormNavigationProps) => {
-  const { defaultValue, defaultTabValue, onTabClick, onOpenChange } = props;
+  const { defaultValue, defaultTabValue, onTabClick } = props;
 
-  const [hideSidebar, setHideSidebar] = useState(false);
   const [selectedTab, setSelectedTab] = useState(defaultValue ?? defaultTabValue ?? "");
 
   const handleTabClick = useCallback(
@@ -21,18 +19,8 @@ export const useFormNavigation = (props: UseFormNavigationProps) => {
     [onTabClick]
   );
 
-  const handleSidebarToggle = useCallback(
-    ({ open }: { open: boolean }) => {
-      setHideSidebar(open);
-      onOpenChange?.(!open);
-    },
-    [onOpenChange]
-  );
-
   return {
-    hideSidebar,
     selectedTab,
-    handleTabClick,
-    handleSidebarToggle
+    handleTabClick
   };
 };

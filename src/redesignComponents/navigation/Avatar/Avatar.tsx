@@ -41,13 +41,15 @@ const Avatar: FC<AvatarProps> = props => {
 
   if (variant === "add") {
     return (
-      <AvatarAdd
-        size={size}
-        finalSize={finalSize}
-        onClick={onClick}
-        ariaLabel={ariaLabel}
-        customBackgroundColor={customBackgroundColor}
-      />
+      <StyledAvatarWrapper className={`avatar-wrapper avatar-${size} avatar-add`}>
+        <AvatarAdd
+          size={size}
+          finalSize={finalSize}
+          onClick={onClick}
+          ariaLabel={ariaLabel}
+          customBackgroundColor={customBackgroundColor}
+        />
+      </StyledAvatarWrapper>
     );
   }
 

@@ -11,8 +11,7 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    onTabClick: { action: "tab clicked" },
-    onOpenChange: { action: "open changed" }
+    onTabClick: { action: "tab clicked" }
   }
 } satisfies Meta<typeof FormNavigation>;
 
@@ -155,86 +154,6 @@ export const MultiStepForm: StoryObj = {
           <h3>Current Step: {activeTab}</h3>
           <p>Content for {activeTab} goes here...</p>
         </div>
-      </div>
-    );
-  }
-};
-
-// With children content
-export const WithChildren: StoryObj = {
-  render: () => {
-    const [activeTab, setActiveTab] = useState("tab-1");
-
-    return (
-      <FormNavigation
-        defaultValue={activeTab}
-        onTabClick={setActiveTab}
-        tabs={[
-          {
-            label: "Tab 1",
-            value: "tab-1",
-            type: "available"
-          },
-          {
-            label: "Tab 2",
-            value: "tab-2",
-            type: "available"
-          },
-          {
-            label: "Tab 3",
-            value: "tab-3",
-            type: "available"
-          }
-        ]}
-      >
-        <div style={{ padding: "1rem", border: "1px solid #ccc", marginTop: "1rem" }}>
-          <h3>Content for: {activeTab}</h3>
-          <p>This is the content area passed as children to FormNavigation.</p>
-        </div>
-      </FormNavigation>
-    );
-  }
-};
-
-// With onOpenChange callback
-export const WithOpenChange: StoryObj = {
-  render: () => {
-    const [activeTab, setActiveTab] = useState("tab-1");
-    const [isOpen, setIsOpen] = useState(true);
-
-    return (
-      <div>
-        <div style={{ marginBottom: "1rem" }}>
-          <p>Navigation is: {isOpen ? "Open" : "Closed"}</p>
-        </div>
-        <FormNavigation
-          defaultValue={activeTab}
-          onTabClick={value => {
-            console.log("Tab clicked:", value);
-            setActiveTab(value);
-          }}
-          onOpenChange={open => {
-            console.log("Open state changed:", open);
-            setIsOpen(open);
-          }}
-          tabs={[
-            {
-              label: "First",
-              value: "tab-1",
-              type: "available"
-            },
-            {
-              label: "Second",
-              value: "tab-2",
-              type: "available"
-            },
-            {
-              label: "Third",
-              value: "tab-3",
-              type: "available"
-            }
-          ]}
-        />
       </div>
     );
   }

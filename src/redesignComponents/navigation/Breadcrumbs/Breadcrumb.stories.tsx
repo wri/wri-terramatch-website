@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { BrowserRouter, Link } from "react-router-dom";
 
-import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
+import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import Breadcrumb from "./Breadcrumb";
 
@@ -63,10 +63,10 @@ export const MaxItems: Story = {
 export const WithIcons: Story = {
   args: {
     links: [
-      { label: "Settings", link: "#", icon: <PlaceholderIcon /> },
-      { label: "One", link: "#", icon: <PlaceholderIcon /> },
-      { label: "Two", link: "#", icon: <PlaceholderIcon /> },
-      { label: "Three", link: "#", icon: <PlaceholderIcon /> }
+      { label: "Settings", link: "#", icon: <Placeholder /> },
+      { label: "One", link: "#", icon: <Placeholder /> },
+      { label: "Two", link: "#", icon: <Placeholder /> },
+      { label: "Three", link: "#", icon: <Placeholder /> }
     ],
     linkRouter: Link
   }
@@ -75,10 +75,10 @@ export const WithIcons: Story = {
 export const SmallSize: Story = {
   args: {
     links: [
-      { label: "Settings", link: "#", icon: <PlaceholderIcon /> },
-      { label: "One", link: "#", icon: <PlaceholderIcon /> },
-      { label: "Two", link: "#", icon: <PlaceholderIcon /> },
-      { label: "Three", link: "#", icon: <PlaceholderIcon /> }
+      { label: "Settings", link: "#", icon: <Placeholder /> },
+      { label: "One", link: "#", icon: <Placeholder /> },
+      { label: "Two", link: "#", icon: <Placeholder /> },
+      { label: "Three", link: "#", icon: <Placeholder /> }
     ],
     linkRouter: Link,
     size: "small"

@@ -1,9 +1,8 @@
-import { CollapsibleContent, CollapsibleRoot, Tabs, TabsList, TabsRoot } from "@chakra-ui/react";
+import { Tabs, TabsList, TabsRoot } from "@chakra-ui/react";
 import { FC, useCallback } from "react";
 
 import { TabType } from "./formNavigation.constants";
 import { NavigationTabItem } from "./NavigationTabItem";
-import { SidebarToggle } from "./SidebarToggle";
 import { useFormNavigation } from "./useFormNavigation";
 
 interface TabsListPropsWithChildren {
@@ -12,13 +11,6 @@ interface TabsListPropsWithChildren {
 }
 
 const TabsListTyped = TabsList as React.ComponentType<TabsListPropsWithChildren>;
-
-interface CollapsibleContentPropsWithChildren {
-  height?: string;
-  children?: React.ReactNode;
-}
-
-const CollapsibleContentTyped = CollapsibleContent as React.ComponentType<CollapsibleContentPropsWithChildren>;
 
 export interface NavigationRailTabProps extends Omit<Tabs.TriggerProps, "asChild"> {
   label: string;
@@ -33,18 +25,15 @@ export interface FormNavigationProps {
   tabs: NavigationRailTabProps[];
   defaultValue?: string;
   onTabClick?: (selectedValue: string) => void;
-  children?: React.ReactNode;
-  onOpenChange?: (open: boolean) => void;
 }
 
 const FormNavigation: FC<FormNavigationProps> = props => {
-  const { tabs, defaultValue, onTabClick, children, onOpenChange } = props;
+  const { tabs, defaultValue, onTabClick } = props;
 
-  const { hideSidebar, selectedTab, handleTabClick, handleSidebarToggle } = useFormNavigation({
+  const { selectedTab, handleTabClick } = useFormNavigation({
     defaultValue,
     defaultTabValue: tabs?.[0]?.value,
-    onTabClick,
-    onOpenChange
+    onTabClick
   });
 
   const handleValueChange = useCallback(
@@ -73,7 +62,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
                   value={value}
                   label={label}
                   index={index}
-                  type={type}
+                  type={disabled ? "disabled" : type}
                   disabled={disabled}
                   ariaLabel={ariaLabel}
                   isSelected={value === selectedTab}
@@ -82,19 +71,7 @@ const FormNavigation: FC<FormNavigationProps> = props => {
             })}
           </TabsListTyped>
         </TabsRoot>
-
-        {children != null && <SidebarToggle isHidden={hideSidebar} onToggle={handleSidebarToggle} />}
       </div>
-
-      {children != null && (
-        <CollapsibleRoot defaultOpen open={!hideSidebar}>
-          <CollapsibleContentTyped height="100%">
-            <div role="tabpanel" aria-labelledby={selectedTab}>
-              {children}
-            </div>
-          </CollapsibleContentTyped>
-        </CollapsibleRoot>
-      )}
     </div>
   );
 };

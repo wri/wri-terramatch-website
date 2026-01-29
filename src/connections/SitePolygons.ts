@@ -129,6 +129,53 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
   ApiSlice.pruneIndex("sitePolygons", "");
 };
 
+export const loadAllSitePolygons = async (
+  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
+    sortField?: string;
+    sortDirection?: "ASC" | "DESC";
+  }
+): Promise<SitePolygonLightDto[]> => {
+  const firstPageResponse = await loadConnection(sitePolygonsConnection, {
+    ...props,
+    pageSize: ALL_POLYGONS_PAGE_SIZE,
+    pageNumber: 1,
+    sortField: props.sortField,
+    sortDirection: props.sortDirection ?? "ASC"
+  });
+
+  if (firstPageResponse.loadFailure) {
+    throw firstPageResponse.loadFailure;
+  }
+
+  const polygons = firstPageResponse.data ?? [];
+  const totalCount = firstPageResponse.indexTotal ?? 0;
+
+  if (totalCount === 0 || totalCount <= ALL_POLYGONS_PAGE_SIZE) {
+    return polygons;
+  }
+
+  const totalPages = Math.ceil(totalCount / ALL_POLYGONS_PAGE_SIZE);
+  let allPolygons = [...polygons];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    const pageResponse = await loadConnection(sitePolygonsConnection, {
+      ...props,
+      pageSize: ALL_POLYGONS_PAGE_SIZE,
+      pageNumber,
+      sortField: props.sortField,
+      sortDirection: props.sortDirection ?? "ASC"
+    });
+
+    if (pageResponse.loadFailure) {
+      throw pageResponse.loadFailure;
+    }
+
+    allPolygons.push(...(pageResponse.data ?? []));
+  }
+
+  return allPolygons;
+};
+
 export const useAllSitePolygons = (
   props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
     sortField?: string;

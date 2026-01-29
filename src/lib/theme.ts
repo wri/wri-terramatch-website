@@ -53,6 +53,7 @@ const themeConfig = {
       },
       error: {
         100: { value: "#FFEFED" },
+        150: { value: "#FFE3DF" },
         200: { value: "#EDA1A9" },
         300: { value: "#F6C5C1" },
         500: { value: "#C11101" },
@@ -63,6 +64,11 @@ const themeConfig = {
         "text-on-secondary-mids": { value: "#F7FBFD" },
         "controls-on-neutral-lights": { value: "#477010" },
         "controls-on-neutral-darks": { value: "#284206" }
+      }
+    },
+    shadows: {
+      200: {
+        value: "0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10)"
       }
     }
   }
