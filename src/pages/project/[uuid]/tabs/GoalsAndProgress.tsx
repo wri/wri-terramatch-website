@@ -24,8 +24,11 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
 import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
 
+/** Extended so component compiles when API/OpenAPI schema does not yet expose lastReportedSurvivalRate on ProjectFullDto (e.g. before yarn generate:entityService). */
+type ProjectWithLastReportedSurvivalRate = ProjectFullDto & { lastReportedSurvivalRate?: number | null };
+
 interface GoalsAndProgressProps {
-  project: ProjectFullDto;
+  project: ProjectWithLastReportedSurvivalRate;
 }
 
 const isEmptyArray = (obj: any) => {
