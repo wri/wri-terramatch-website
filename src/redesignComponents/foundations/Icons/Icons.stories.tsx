@@ -53,6 +53,7 @@ import {
   Visibility,
   VisibilityOff
 } from ".";
+import { Calendar } from "./Calendar";
 
 const meta: Meta = {
   title: "Redesign Components/Foundations/Icons",
@@ -187,6 +188,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Information Required Simple">
             <InformationRequiredSimple boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Calendar">
+            <Calendar boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -370,6 +374,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Information Required Simple">
           <InformationRequiredSimple boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Calendar">
+          <Calendar boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
