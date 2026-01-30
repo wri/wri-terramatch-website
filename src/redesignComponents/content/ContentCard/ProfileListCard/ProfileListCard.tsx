@@ -85,7 +85,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
 const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
   return (
     <Box
-      className="w-[403px]"
+      className="max-h-[388px] w-[403px] overflow-y-auto"
       paddingX={5}
       paddingY={4}
       backgroundColor="white"

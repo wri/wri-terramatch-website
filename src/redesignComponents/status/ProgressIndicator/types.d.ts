@@ -4,10 +4,11 @@ export interface StepProps {
   index: number;
   status: BadgeStatus;
   label: string;
-  actions?: React.ReactNode;
+  actions?: any;
   onClick?: () => void;
 }
 
 export interface ProgressStepsProps {
-  steps: StepProps[];
+  entityUUID: string;
+  entityName: EntityName | SingularEntityName;
 }
