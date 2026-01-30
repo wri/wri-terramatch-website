@@ -1,8 +1,8 @@
-import { DemographicDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TrackingDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import { BeneficiaryData, EmploymentDemographicData } from "../types";
 
-export const processDemographicData = (demographics: DemographicDto[]): EmploymentDemographicData => {
+export const processDemographicData = (demographics: TrackingDto[]): EmploymentDemographicData => {
   const result: EmploymentDemographicData = {
     fullTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
     partTimeJobs: { total: 0, male: 0, female: 0, youth: 0, nonYouth: 0 },
@@ -44,7 +44,7 @@ export const processDemographicData = (demographics: DemographicDto[]): Employme
   return result;
 };
 
-export const processBeneficiaryData = (demographics: DemographicDto[]): BeneficiaryData => {
+export const processBeneficiaryData = (demographics: TrackingDto[]): BeneficiaryData => {
   const result: BeneficiaryData = {
     beneficiaries: 0,
     farmers: 0

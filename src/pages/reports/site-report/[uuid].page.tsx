@@ -11,8 +11,6 @@ import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
 import Paper from "@/components/elements/Paper/Paper";
 import Text from "@/components/elements/Text/Text";
-import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
-import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
 import EntityMapAndGalleryCard from "@/components/extensive/EntityMapAndGalleryCard/EntityMapAndGalleryCard";
 import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -24,6 +22,8 @@ import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import DisturbancesTablePD from "@/components/extensive/Tables/DisturbancesTablePD";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
+import TrackingDisplay from "@/components/extensive/TrackingCollapseGrid/TrackingDisplay";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullSite, useFullSiteReport } from "@/connections/Entity";
@@ -69,7 +69,8 @@ const SiteReportDetailPage = () => {
   const totalProps: Omit<CollectionsTotalProps, "collections"> = {
     entity: "siteReports",
     uuid: siteReportUUID,
-    demographicType: "workdays"
+    domain: "demographics",
+    trackingType: "workdays"
   };
   const workdaysTotal = useCollectionsTotal({ ...totalProps, collections: DemographicCollections.WORKDAYS_SITE });
   const workdaysPaid = useCollectionsTotal({
@@ -462,9 +463,10 @@ const SiteReportDetailPage = () => {
                                     value={siteReport.paidOtherActivityDescription!}
                                   />
                                 )}
-                                <DemographicsDisplay
+                                <TrackingDisplay
                                   entity="siteReports"
                                   uuid={siteReportUUID}
+                                  domain="demographics"
                                   type="workdays"
                                   collection={collection}
                                 />

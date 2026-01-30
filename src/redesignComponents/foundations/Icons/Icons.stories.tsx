@@ -22,6 +22,7 @@ import {
   Indeterminate,
   Info,
   InformationRequired,
+  InformationRequiredSimple,
   Jobs,
   Landscape,
   Language,
@@ -35,7 +36,7 @@ import {
   Organisation,
   Pending,
   PhotoAdd,
-  PlaceholderIcon,
+  Placeholder,
   Programme,
   Project,
   Regeneration,
@@ -52,6 +53,7 @@ import {
   Visibility,
   VisibilityOff
 } from ".";
+import { Calendar } from "./Calendar";
 
 const meta: Meta = {
   title: "Redesign Components/Foundations/Icons",
@@ -167,7 +169,7 @@ export const AllIcons: Story = {
             <NewTab boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Placeholder">
-            <PlaceholderIcon boxSize={8} />
+            <Placeholder boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Photo Add">
             <PhotoAdd boxSize={8} />
@@ -183,6 +185,12 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Visibility Off">
             <VisibilityOff boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Information Required Simple">
+            <InformationRequiredSimple boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Calendar">
+            <Calendar boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -347,7 +355,7 @@ export const Function: Story = {
           <NewTab boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Placeholder">
-          <PlaceholderIcon boxSize={8} />
+          <Placeholder boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Photo Add">
           <PhotoAdd boxSize={8} />
@@ -363,6 +371,12 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Visibility Off">
           <VisibilityOff boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Information Required Simple">
+          <InformationRequiredSimple boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Calendar">
+          <Calendar boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>

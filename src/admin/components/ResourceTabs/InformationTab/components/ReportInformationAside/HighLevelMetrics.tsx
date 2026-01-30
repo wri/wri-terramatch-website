@@ -3,8 +3,8 @@ import { ComponentType, FC } from "react";
 import { FunctionField, Labeled, NumberField, useShowContext } from "react-admin";
 import { When } from "react-if";
 
-import useCollectionsTotal from "@/components/extensive/DemographicsCollapseGrid/hooks";
-import { DemographicEntity, DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
+import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
+import { TrackingEntity, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -12,7 +12,7 @@ import { DemographicCollections } from "@/generated/v3/entityService/entityServi
 type TotalsType = "workdays" | "workdaysPaid" | "workdaysVolunteer" | "jobs" | "restorationPartners";
 type DemographicResource = "projectReport" | "siteReport";
 type CollectionValue = Record<DemographicResource, readonly string[] | undefined> & {
-  demographicType: DemographicType;
+  demographicType: TrackingType;
 };
 const COLLECTIONS: Record<TotalsType, CollectionValue> = {
   workdays: {
@@ -46,8 +46,8 @@ type TotalShowProps = {
   totalsType: TotalsType;
 };
 type CollectionsProps = {
-  demographicType: DemographicType;
-  entity: DemographicEntity;
+  demographicType: TrackingType;
+  entity: TrackingEntity;
   collections: readonly string[];
 };
 // An HOC to make sure the wrapped component is only added to the component tree if there is a valid
@@ -59,7 +59,7 @@ function withTotalsShow<T extends CollectionsProps>(WrappedComponent: ComponentT
     const { totalsType, ...rest } = props;
     const { resource } = useShowContext();
     const collections = COLLECTIONS[totalsType]?.[resource as DemographicResource];
-    const entity: DemographicEntity = resource === "projectReport" ? "projectReports" : "siteReports";
+    const entity: TrackingEntity = resource === "projectReport" ? "projectReports" : "siteReports";
     const demographicType = COLLECTIONS[totalsType]?.demographicType;
 
     return collections == null || entity == null ? null : (
@@ -83,7 +83,8 @@ const DemographicsTotalField: FC<Omit<DemographicsTotalFieldProps, keyof Collect
     const {
       record: { uuid }
     } = useShowContext();
-    const total = useCollectionsTotal({ entity, uuid, demographicType, collections }) ?? 0;
+    const total =
+      useCollectionsTotal({ entity, uuid, domain: "demographics", trackingType: demographicType, collections }) ?? 0;
 
     return (
       <Labeled {...{ label, sx }}>

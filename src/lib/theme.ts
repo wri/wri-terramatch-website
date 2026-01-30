@@ -35,7 +35,8 @@ const themeConfig = {
         600: { value: "#8ECA3F" },
         700: { value: "#477010" },
         800: { value: "#284206" },
-        900: { value: "#162602" }
+        900: { value: "#162602" },
+        neutral: { value: "#E9F1ED" }
       },
       success: {
         100: { value: "#EBF5F2" },
@@ -64,6 +65,11 @@ const themeConfig = {
         "text-on-secondary-mids": { value: "#F7FBFD" },
         "controls-on-neutral-lights": { value: "#477010" },
         "controls-on-neutral-darks": { value: "#284206" }
+      }
+    },
+    shadows: {
+      200: {
+        value: "0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10)"
       }
     }
   }

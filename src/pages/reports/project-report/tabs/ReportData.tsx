@@ -5,13 +5,13 @@ import Button from "@/components/elements/Button/Button";
 import GenericField from "@/components/elements/Field/GenericField";
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
-import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/DemographicsCollapseGrid/hooks";
-import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
+import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -24,9 +24,9 @@ interface ReportOverviewTabProps {
   dueAt?: string;
 }
 
-type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid">;
+type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid" | "domain">;
 const WORKDAYS_TOTAL: UseTotalProps = {
-  demographicType: "workdays" as DemographicType,
+  trackingType: "workdays" as TrackingType,
   collections: DemographicCollections.WORKDAYS_PROJECT
 };
 const WORKDAYS_PAID: UseTotalProps = {
@@ -46,7 +46,7 @@ const WORKDAYS_CONVERGENCE: UseTotalProps = {
   collections: ["convergence"]
 };
 const RP_DIRECT: UseTotalProps = {
-  demographicType: "restorationPartners" as DemographicType,
+  trackingType: "restorationPartners" as TrackingType,
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("direct-"))
 };
 const RP_INDIRECT: UseTotalProps = {
@@ -54,20 +54,20 @@ const RP_INDIRECT: UseTotalProps = {
   collections: DemographicCollections.RESTORATION_PARTNERS_PROJECT.filter(c => c.startsWith("indirect-"))
 };
 const JOBS: UseTotalProps = {
-  demographicType: "jobs" as DemographicType,
+  trackingType: "jobs" as TrackingType,
   collections: DemographicCollections.JOBS_PROJECT
 };
 const VOLUNTEERS: UseTotalProps = {
-  demographicType: "volunteers" as DemographicType,
+  trackingType: "volunteers" as TrackingType,
   collections: DemographicCollections.VOLUNTEERS_PROJECT
 };
 const ALL_BENEFICIARIES: UseTotalProps = {
-  demographicType: "allBeneficiaries" as DemographicType,
+  trackingType: "allBeneficiaries" as TrackingType,
   collections: DemographicCollections.BENEFICIARIES_PROJECT_ALL
 };
 
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
-  String(useCollectionsTotal({ ...props, entity: "projectReports", uuid }) ?? "N/A");
+  String(useCollectionsTotal({ ...props, domain: "demographics", entity: "projectReports", uuid }) ?? "N/A");
 
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
