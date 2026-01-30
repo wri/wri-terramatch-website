@@ -5,15 +5,17 @@ import { FC } from "react";
 interface IconButtonProps {
   icon: React.ReactNode;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
-const IconButton: FC<IconButtonProps> = ({ icon, disabled, ...props }) => {
+const IconButton: FC<IconButtonProps> = ({ icon, disabled, onClick, ...props }) => {
   return (
     <WriIconButton
       icon={icon}
       disabled={disabled}
+      onClick={onClick}
       {...props}
-      className={classNames("!h-6 !w-6 rounded-sm hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40")}
+      className={classNames("hover:bg-theme-primary-500/20 active:bg-theme-primary-500/40 !h-6 !w-6 rounded-sm")}
       css={{
         width: "24px !important",
         height: "24px !important",
