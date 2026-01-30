@@ -4,9 +4,9 @@ import { useMemo } from "react";
 
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { DemographicDto, DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TrackingDto, TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-export type DemographicEntity = "projectReports" | "siteReports" | "srpReports";
+export type TrackingEntity = "projectReports" | "siteReports" | "srpReports";
 
 export type Status = "complete" | "not-started" | "in-progress";
 
@@ -19,7 +19,7 @@ export type VolunteersCollection = (typeof DemographicCollections.VOLUNTEERS_PRO
 export type AllBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_ALL)[number];
 export type TrainingBeneficiariesCollection = (typeof DemographicCollections.BENEFICIARIES_PROJECT_TRAINING)[number];
 
-export interface DemographicGridVariantProps {
+export interface TrackingGridVariantProps {
   header: string;
   open?: string;
   bodyCollapse: string;
@@ -38,7 +38,8 @@ type KebabToCamelCase<S extends string> = S extends `${infer T}-${infer U}`
   ? `${T}${Capitalize<KebabToCamelCase<U>>}`
   : S;
 
-export type DemographicType = KebabToCamelCase<DemographicDto["type"]>;
+export type TrackingDomain = KebabToCamelCase<TrackingDto["domain"]>;
+export type TrackingType = KebabToCamelCase<TrackingDto["type"]>;
 
 export const DEMOGRAPHIC_TYPES = [
   "workdays",
@@ -52,91 +53,94 @@ export const DEMOGRAPHIC_TYPES = [
   "associates"
 ] as const;
 
-export const isDemographicType = (value: unknown): value is DemographicType => {
-  return typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
+export const isDemographicType = (value: unknown): value is TrackingType => {
+  return typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as TrackingType);
 };
 
-type DemographicLabelProperties = {
+type TrackingLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
   rowLabelPlural: string;
 };
 
-export const useDemographicLabels = (type: DemographicType) => {
-  const t = useT();
+const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
+  workdays: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Workday",
+    rowLabelPlural: "Workdays"
+  },
+  restorationPartners: {
+    sectionLabel: "Total Restoration",
+    rowLabelSingular: "Partner",
+    rowLabelPlural: "Partners"
+  },
+  jobs: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Job",
+    rowLabelPlural: "Jobs"
+  },
+  employees: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Employee",
+    rowLabelPlural: "Employees"
+  },
+  volunteers: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Volunteer",
+    rowLabelPlural: "Volunteers"
+  },
+  allBeneficiaries: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  trainingBeneficiaries: {
+    sectionLabel: "Total Training",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  indirectBeneficiaries: {
+    sectionLabel: "Total Indirect",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  associates: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Associate",
+    rowLabelPlural: "Associates"
+  }
+};
 
-  const DEMOGRAPHIC_LABELS: { [k in DemographicType]: DemographicLabelProperties } = useMemo(
-    () => ({
-      workdays: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Workday"),
-        rowLabelPlural: t("Workdays")
-      },
-      restorationPartners: {
-        sectionLabel: t("Total Restoration"),
-        rowLabelSingular: t("Partner"),
-        rowLabelPlural: t("Partners")
-      },
-      jobs: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Job"),
-        rowLabelPlural: t("Jobs")
-      },
-      employees: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Employee"),
-        rowLabelPlural: t("Employees")
-      },
-      volunteers: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Volunteer"),
-        rowLabelPlural: t("Volunteers")
-      },
-      allBeneficiaries: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Beneficiary"),
-        rowLabelPlural: t("Beneficiaries")
-      },
-      trainingBeneficiaries: {
-        sectionLabel: t("Total Training"),
-        rowLabelSingular: t("Beneficiary"),
-        rowLabelPlural: t("Beneficiaries")
-      },
-      indirectBeneficiaries: {
-        sectionLabel: t("Total Indirect"),
-        rowLabelSingular: t("Beneficiary"),
-        rowLabelPlural: t("Beneficiaries")
-      },
-      associates: {
-        sectionLabel: t("Total"),
-        rowLabelSingular: t("Associate"),
-        rowLabelPlural: t("Associates")
-      }
-    }),
-    [t]
-  );
+export const useTrackingLabels = (type: TrackingType) => {
+  const t = useT();
 
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const props = DEMOGRAPHIC_LABELS[type];
+    const { sectionLabel, rowLabelSingular, rowLabelPlural } = TRACKING_LABELS[type];
+    const props = {
+      sectionLabel: t(sectionLabel),
+      rowLabelSingular: t(rowLabelSingular),
+      rowLabelPlural: t(rowLabelPlural)
+    };
     if (type.endsWith("Beneficiaries") && framework === Framework.HBF) {
       return {
         ...props,
         rowLabelSingular: t("Partner"),
         rowLabelPlural: t("Partners")
-      } as DemographicLabelProperties;
+      } as TrackingLabelProperties;
     }
 
     return props;
-  }, [framework, type, DEMOGRAPHIC_LABELS, t]);
+  }, [framework, type, t]);
 };
 
-export interface DemographicsCollapseGridProps {
+export interface TrackingCollapseGridProps {
   title?: string;
-  type: DemographicType;
-  entries: DemographicEntryDto[];
-  variant: DemographicGridVariantProps;
-  onChange?: (demographics: DemographicEntryDto[]) => void;
+  domain: TrackingDomain;
+  type: TrackingType;
+  entries: TrackingEntryDto[];
+  variant: TrackingGridVariantProps;
+  onChange?: (entries: TrackingEntryDto[]) => void;
 }
 
 const GENDERS: Dictionary<string> = {
@@ -201,7 +205,7 @@ const TRADITIONAL_COMMUNITIES: Dictionary<string> = {
 type TypeMapValue = {
   title: string;
   typeMap: Dictionary<string>;
-  // If true, this field is required to balance with other "balanced" fields for a demographic
+  // If true, this field is required to balance with other "balanced" fields for a tracking
   // input to be considered complete.
   balanced: boolean;
   addNameLabel?: string;
@@ -351,7 +355,7 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-export const getTypeMap = (type: DemographicType, framework: Framework) => {
+export const getTypeMap = (type: TrackingType, framework: Framework) => {
   if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
     switch (framework) {
       case Framework.HBF:
@@ -391,17 +395,17 @@ export const getTypeMap = (type: DemographicType, framework: Framework) => {
   }
 };
 
-export const useEntryTypeMap = (type: DemographicType) => {
+export const useEntryTypeMap = (type: TrackingType) => {
   const { framework } = useFrameworkContext();
   return useMemo(() => getTypeMap(type, framework), [type, framework]);
 };
 
-export const useEntryTypes = (type: DemographicType) => {
+export const useEntryTypes = (type: TrackingType) => {
   const { framework } = useFrameworkContext();
   return useMemo(() => Object.keys(getTypeMap(type, framework)), [framework, type]);
 };
 
-export const useEntryTypeDefinition = (type: DemographicType, entryType: string) => {
+export const useEntryTypeDefinition = (type: TrackingType, entryType: string) => {
   const { framework } = useFrameworkContext();
   return useMemo(() => getTypeMap(type, framework)[entryType], [entryType, framework, type]);
 };

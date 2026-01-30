@@ -2,11 +2,9 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -20,7 +18,6 @@ export type ReportsCardProps = {
 const ReportsCard = ({ actions }: ReportsCardProps) => {
   const t = useT();
 
-  const { mutate: clearAction } = usePutV2MyActionsUUIDComplete();
   const { format } = useDate();
 
   const reportActions = useMemo(() => {
@@ -83,14 +80,10 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
           updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
             date: format(target.updatedAt)
-          }),
-          onClick: () => {
-            action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
-            ApiSlice.pruneCache("actions", [action.uuid]);
-          }
+          })
         } as ActionTrackerCardRowProps;
       });
-  }, [actions, format, clearAction, t]);
+  }, [actions, format, t]);
 
   return (
     <ActionTrackerCard

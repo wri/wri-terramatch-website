@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   Applications,
   AreaHectares,
+  Calendar,
   Check,
   CheckApproved,
   ChevronDown,
@@ -188,6 +189,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Information Required Simple">
             <InformationRequiredSimple boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Calendar">
+            <Calendar boxSize={8} />
+          </IconWrapper>
         </VStack>
       </Box>
 
@@ -370,6 +374,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Information Required Simple">
           <InformationRequiredSimple boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Calendar">
+          <Calendar boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>

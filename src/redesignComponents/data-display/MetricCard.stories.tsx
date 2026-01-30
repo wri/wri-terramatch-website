@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { Landscape, Tree } from "../foundations/Icons";
+import { Placeholder } from "../foundations/Icons";
 import MetricCard from "./MetricCard";
 
 const meta: Meta<typeof MetricCard> = {
@@ -13,7 +13,7 @@ const meta: Meta<typeof MetricCard> = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["simple", "progressBar", "donutChart"],
+      options: ["medium", "large", "progressBar", "donutChart"],
       description: "Card variant type"
     }
   }
@@ -22,66 +22,65 @@ const meta: Meta<typeof MetricCard> = {
 export default meta;
 type Story = StoryObj<typeof MetricCard>;
 
-export const Simple: Story = {
+export const Medium: Story = {
   args: {
-    title: "Total Projects",
+    title: "Stat label",
     progress: 1234,
     goal: 10000,
-    tooltipContent: "Total number of active projects",
-    variant: "simple",
-    icon: <Landscape />
+    variant: "medium",
+    icon: <Placeholder />
+  }
+};
+
+export const Large: Story = {
+  args: {
+    title: "Stat label",
+    progress: 1234,
+    goal: 10000,
+    variant: "large",
+    icon: <Placeholder />
   }
 };
 
 export const ProgressBar: Story = {
   args: {
-    title: "Completed Tasks",
+    title: "Stat label",
     progress: 750,
     goal: 1000,
-    tooltipContent: "Tasks completed out of total",
     variant: "progressBar",
-    icon: <Tree />
+    icon: <Placeholder />
   }
 };
 
 export const DonutChart: Story = {
   args: {
-    title: "Area Coverage",
+    title: "Stat label",
     progress: 5000,
     goal: 10000,
-    tooltipContent: "Total area covered in hectares",
     variant: "donutChart",
-    icon: <Landscape />
+    icon: <Placeholder />
   }
 };
 
 export const AllVariants: Story = {
   render: () => (
     <SimpleGrid columns={3} gap={4} width="100%">
+      <MetricCard title="Stat label" progress={1234} goal={10000} variant="medium" icon={<Placeholder />} />
+      <MetricCard title="Stat label" progress={1234} goal={10000} variant="large" icon={<Placeholder />} />
       <MetricCard
-        title="Simple Stat"
-        progress={1234}
-        goal={10000}
-        tooltipContent="Simple metric card"
-        variant="simple"
-        icon={<Landscape />}
-      />
-      <MetricCard
-        title="Progress Bar"
+        title="Stat label"
         progress={750}
         goal={1000}
-        tooltipContent="Progress bar variant"
         variant="progressBar"
-        icon={<Tree />}
+        icon={<Placeholder />}
         color="secondary.600"
       />
       <MetricCard
-        title="Donut Chart"
+        title="Stat label"
         progress={5000}
         goal={10000}
-        tooltipContent="Donut chart variant"
         variant="donutChart"
-        icon={<Landscape />}
+        icon={<Placeholder />}
         color={getThemedColor("secondary", 700)}
       />
     </SimpleGrid>
@@ -90,33 +89,30 @@ export const AllVariants: Story = {
 
 export const HighProgress: Story = {
   args: {
-    title: "Almost Complete",
+    title: "Stat label",
     progress: 9500,
     goal: 10000,
-    tooltipContent: "Nearly completed metric",
     variant: "donutChart",
-    icon: <Tree />
+    icon: <Placeholder />
   }
 };
 
 export const LowProgress: Story = {
   args: {
-    title: "Just Started",
+    title: "Stat label",
     progress: 250,
     goal: 10000,
-    tooltipContent: "Low progress metric",
     variant: "progressBar",
-    icon: <Landscape />
+    icon: <Placeholder />
   }
 };
 
 export const ZeroProgress: Story = {
   args: {
-    title: "No Progress",
+    title: "Stat label",
     progress: 0,
     goal: 10000,
-    tooltipContent: "No progress made yet",
     variant: "donutChart",
-    icon: <Landscape />
+    icon: <Placeholder />
   }
 };

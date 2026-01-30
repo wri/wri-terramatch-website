@@ -4,7 +4,7 @@ import ImpactStoryForm from "./ImpactStoryForm";
 
 const transformData = (data: any) => {
   const transformedData = {
-    organization_id: data.organization?.uuid,
+    organizationUuid: data.organization?.uuid,
     title: data.title,
     date: data.date,
     category: data.category,

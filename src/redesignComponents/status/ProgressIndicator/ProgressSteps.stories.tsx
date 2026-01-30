@@ -1,8 +1,4 @@
-import { Box } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
-
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Edit } from "@/redesignComponents/foundations/Icons";
 
 import { ProgressSteps } from "./ProgressSteps";
 import type { StepProps } from "./types";
@@ -23,96 +19,42 @@ const exampleSteps: StepProps[] = [
   {
     index: 1,
     status: "completed",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    label: "Label"
   },
   {
     index: 2,
     status: "completed",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    label: "Label"
   },
   {
     index: 3,
     status: "completed",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    label: "Label"
   },
   {
     index: 4,
     status: "error",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    label: "Label"
   },
   {
     index: 5,
     status: "active",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    label: "Label"
   },
   {
     index: 6,
-    status: "disabled",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    status: "available",
+    label: "Label"
   },
   {
     index: 7,
-    status: "disabled",
-    label: "Label",
-    actions: (
-      <Button variant="borderless" size="small" leftIcon={<Edit boxSize={3} />}>
-        Edit
-      </Button>
-    )
+    status: "available",
+    label: "Label"
   }
 ];
 
 export const Default: Story = {
   args: {
     steps: exampleSteps
-  }
-};
-
-export const LongList: Story = {
-  args: {
-    steps: exampleSteps
-  },
-  render: () => {
-    const steps: StepProps[] = Array.from({ length: 10 }, (_, i) => ({
-      index: i + 1,
-      status: (i < 4 ? "completed" : i === 4 ? "active" : "disabled") as StepProps["status"],
-      label: `Step ${i + 1}`
-    }));
-
-    return (
-      <Box maxW="200px">
-        <ProgressSteps steps={steps} />
-      </Box>
-    );
   }
 };

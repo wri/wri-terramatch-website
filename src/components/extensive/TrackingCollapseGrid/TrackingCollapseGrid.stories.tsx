@@ -1,34 +1,34 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
 
-import { DemographicsCollapseGridProps } from "@/components/extensive/DemographicsCollapseGrid/types";
-import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TrackingCollapseGridProps } from "@/components/extensive/TrackingCollapseGrid/types";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import DemographicsCollapseGrid from "./DemographicsCollapseGrid";
-import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./DemographicVariant";
+import TrackingCollapseGrid from "./TrackingCollapseGrid";
+import { GRID_VARIANT_DEFAULT, GRID_VARIANT_GREEN, GRID_VARIANT_NARROW } from "./TrackingVariant";
 
-const meta: Meta<typeof DemographicsCollapseGrid> = {
+const meta: Meta<typeof TrackingCollapseGrid> = {
   title: "Components/Extensive/DemographicsCollapse",
-  component: DemographicsCollapseGrid
+  component: TrackingCollapseGrid
 };
 
-type Story = StoryObj<typeof DemographicsCollapseGrid>;
+type Story = StoryObj<typeof TrackingCollapseGrid>;
 
 export default meta;
 
-const ControlWrapper = (args: DemographicsCollapseGridProps) => {
+const ControlWrapper = (args: TrackingCollapseGridProps) => {
   const [demographics, setDemographics] = useState(args.entries);
-  const onChange = (updatedDemographics: DemographicEntryDto[]) => {
+  const onChange = (updatedDemographics: TrackingEntryDto[]) => {
     setDemographics(updatedDemographics);
   };
-  return <DemographicsCollapseGrid {...{ ...args, demographics, onChange }} />;
+  return <TrackingCollapseGrid {...{ ...args, demographics, onChange }} />;
 };
 
 export const Default: Story = {
-  render: (args: DemographicsCollapseGridProps) => {
+  render: (args: TrackingCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
-        <DemographicsCollapseGrid {...args} />
+        <TrackingCollapseGrid {...args} />
       </div>
     );
   },
@@ -46,15 +46,16 @@ export const Default: Story = {
       { type: "ethnicity", subtype: "unknown", amount: 50 }
     ],
     variant: GRID_VARIANT_DEFAULT,
+    domain: "demographics",
     type: "workdays"
   }
 };
 
 export const VariantNarrow: Story = {
-  render: (args: DemographicsCollapseGridProps) => {
+  render: (args: TrackingCollapseGridProps) => {
     return (
       <div className="w-1/2 rounded-2xl">
-        <DemographicsCollapseGrid {...args} />
+        <TrackingCollapseGrid {...args} />
       </div>
     );
   },
@@ -73,12 +74,13 @@ export const VariantNarrow: Story = {
       { type: "ethnicity", subtype: "indigenous", name: "ABC", amount: 30 }
     ],
     variant: GRID_VARIANT_NARROW,
+    domain: "demographics",
     type: "workdays"
   }
 };
 
 export const CompleteGreen: Story = {
-  render: (args: DemographicsCollapseGridProps) => {
+  render: (args: TrackingCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
         <ControlWrapper {...args} />
@@ -100,12 +102,13 @@ export const CompleteGreen: Story = {
       { type: "ethnicity", subtype: "unknown", amount: 15 }
     ],
     variant: GRID_VARIANT_GREEN,
+    domain: "demographics",
     type: "workdays"
   }
 };
 
 export const NotStartedGreen: Story = {
-  render: (args: DemographicsCollapseGridProps) => {
+  render: (args: TrackingCollapseGridProps) => {
     return (
       <div className=" rounded-2xl">
         <ControlWrapper {...args} />
@@ -116,12 +119,13 @@ export const NotStartedGreen: Story = {
     title: "A. Site Establishment Paid",
     entries: [],
     variant: GRID_VARIANT_GREEN,
+    domain: "demographics",
     type: "workdays"
   }
 };
 
 export const InProgressGreen: Story = {
-  render: (args: DemographicsCollapseGridProps) => {
+  render: (args: TrackingCollapseGridProps) => {
     return (
       <div className="rounded-2xl">
         <ControlWrapper {...args} />
@@ -135,6 +139,7 @@ export const InProgressGreen: Story = {
       { type: "age", subtype: "adult", amount: 75 }
     ],
     variant: GRID_VARIANT_GREEN,
+    domain: "demographics",
     type: "workdays"
   }
 };

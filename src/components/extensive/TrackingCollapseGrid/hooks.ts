@@ -1,23 +1,23 @@
 import { Dictionary, findLastIndex, kebabCase, uniq } from "lodash";
 import { useMemo } from "react";
 
-import { useDemographics } from "@/connections/EntityAssociation";
+import { useTrackings } from "@/connections/EntityAssociation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
-import { DemographicEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { DemographicEntity, DemographicType, getTypeMap, Status, useEntryTypeMap } from "./types";
+import { getTypeMap, Status, TrackingDomain, TrackingEntity, TrackingType, useEntryTypeMap } from "./types";
 
 type Position = "first" | "last" | undefined;
 
 export type SectionRow = {
-  demographicIndex: number;
+  entryIndex: number;
   typeName: string;
   label: string;
   userLabel?: string;
   amount: number;
 };
 
-const getInitialCounts = <T extends Framework>(framework: T, type: DemographicType): Dictionary<number> =>
+const getInitialCounts = <T extends Framework>(framework: T, type: TrackingType): Dictionary<number> =>
   Object.keys(getTypeMap(type, framework)).reduce(
     (counts, type) => ({
       ...counts,
@@ -26,10 +26,10 @@ const getInitialCounts = <T extends Framework>(framework: T, type: DemographicTy
     {}
   );
 
-const addToCounts = (counts: Dictionary<number>, { type, amount }: DemographicEntryDto) =>
+const addToCounts = (counts: Dictionary<number>, { type, amount }: TrackingEntryDto) =>
   Object.keys(counts).includes(type) ? { ...counts, [type]: counts[type] + amount } : counts;
 
-export function calculateTotals(entries: DemographicEntryDto[], framework: Framework, type: DemographicType) {
+export function calculateTotals(entries: TrackingEntryDto[], framework: Framework, type: TrackingType) {
   const counts = entries.reduce(addToCounts, getInitialCounts(framework, type));
   const typeMap = getTypeMap(type, framework);
   const balancedCounts = Object.entries(counts)
@@ -41,10 +41,7 @@ export function calculateTotals(entries: DemographicEntryDto[], framework: Frame
   return { counts, total, complete };
 }
 
-export function useTableStatus(
-  type: DemographicType,
-  entries: DemographicEntryDto[]
-): { total: number; status: Status } {
+export function useTableStatus(type: TrackingType, entries: TrackingEntryDto[]): { total: number; status: Status } {
   const { framework } = useFrameworkContext();
   return useMemo(() => {
     const { total, complete } = calculateTotals(entries, framework, type);
@@ -55,11 +52,11 @@ export function useTableStatus(
   }, [entries, framework, type]);
 }
 
-function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: DemographicEntryDto[]) {
+function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: TrackingEntryDto[]) {
   if (usesName) {
     return entries.map(
       ({ subtype, name, amount }, index): SectionRow => ({
-        demographicIndex: index,
+        entryIndex: index,
         typeName: name ?? "unknown",
         label: typeMap[subtype!],
         userLabel: name ?? undefined,
@@ -71,48 +68,58 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: Demogr
   return Object.keys(typeMap).map((typeName): SectionRow => {
     // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
     // data in update requests that is still affected. TM-1098
-    const demographicIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
+    const entryIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
     return {
-      demographicIndex,
+      entryIndex,
       typeName,
       label: typeMap[typeName],
-      amount: demographicIndex >= 0 ? entries[demographicIndex].amount : 0
+      amount: entryIndex >= 0 ? entries[entryIndex].amount : 0
     };
   });
 }
 
-export function useSectionData(type: DemographicType, entryType: string, entries: DemographicEntryDto[]) {
-  const demographicTypes = useEntryTypeMap(type);
+export function useSectionData(type: TrackingType, entryType: string, entries: TrackingEntryDto[]) {
+  const trackingEntryTypes = useEntryTypeMap(type);
 
   return useMemo(
     function () {
-      const { title, addNameLabel, typeMap } = demographicTypes[entryType];
+      const { title, addNameLabel, typeMap } = trackingEntryTypes[entryType];
       const rows = mapRows(addNameLabel != null, typeMap, entries);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
-      const entryTypes = Object.keys(demographicTypes);
+      const entryTypes = Object.keys(trackingEntryTypes);
       const index = entryTypes.indexOf(entryType);
       const position: Position = index == 0 ? "first" : index == entryTypes.length - 1 ? "last" : undefined;
       return { title, rows, total, position };
     },
-    [entries, entryType, demographicTypes]
+    [entries, entryType, trackingEntryTypes]
   );
 }
 
 export type CollectionsTotalProps = {
-  entity: DemographicEntity;
+  entity: TrackingEntity;
   uuid: string;
-  demographicType: DemographicType;
+  domain: TrackingDomain;
+  trackingType: TrackingType;
   collections: readonly string[];
 };
-export default function useCollectionsTotal({ entity, uuid, demographicType, collections }: CollectionsTotalProps) {
-  const [, { data: demographics }] = useDemographics({ entity, uuid });
+export default function useCollectionsTotal({
+  entity,
+  uuid,
+  domain: trackingDomain,
+  trackingType,
+  collections
+}: CollectionsTotalProps) {
+  const [, { data: trackings }] = useTrackings({ entity, uuid });
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const apiType = kebabCase(demographicType);
-    return demographics == null
+    const apiType = kebabCase(trackingType);
+    return trackings == null
       ? undefined
-      : demographics
-          .filter(demographic => demographic.type === apiType && collections.includes(demographic.collection))
-          .reduce((total, { entries }) => total + calculateTotals(entries, framework, demographicType).total, 0);
-  }, [collections, demographics, framework, demographicType]);
+      : trackings
+          .filter(
+            ({ domain, type, collection }) =>
+              domain === trackingDomain && type === apiType && collections.includes(collection)
+          )
+          .reduce((total, { entries }) => total + calculateTotals(entries, framework, trackingType).total, 0);
+  }, [trackingType, trackings, trackingDomain, collections, framework]);
 }
