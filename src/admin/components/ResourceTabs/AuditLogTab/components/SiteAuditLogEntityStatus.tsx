@@ -5,7 +5,7 @@ import { When } from "react-if";
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import CommentarySection from "../../PolygonReviewTab/components/CommentarySection/CommentarySection";
 import { AuditLogButtonStates } from "../constants/enum";
@@ -15,7 +15,7 @@ import AuditLogTable from "./AuditLogTable";
 export interface SiteAuditLogEntityStatusProps {
   entityType: AuditLogEntity;
   record: SelectedItem | null;
-  auditLogData?: { data: AuditStatusResponse[] };
+  auditLogData?: { data: AuditStatusDto[] };
   refresh: () => void;
   buttonToggle: number;
   verifyEntity?: boolean;

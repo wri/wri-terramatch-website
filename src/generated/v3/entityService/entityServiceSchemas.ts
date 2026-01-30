@@ -288,7 +288,7 @@ export type ImpactStoryBulkDeleteBodyDto = {
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: void[][];
 };
 
 export type TaskLightDto = {
@@ -593,6 +593,29 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaBulkErrorDto = {
+  /**
+   * The index of the media
+   */
+  index: number;
+  /**
+   * The error message
+   */
+  error: string;
+};
+
+export type Object = {};
+
+export type MediaRequestBulkBody = {
+  /**
+   * Array of media to create
+   *
+   * @example {"type":"media","attributes":{"isPublic":true,"downloadUrl":"https://example.com/image.jpg"}}
+   * @example {"type":"media","attributes":{"isPublic":false,"downloadUrl":"https://example.com/image.jpg"}}
+   */
+  data: void[][];
+};
+
 export type MediaRequestAttributes = {
   /**
    * Whether the media is public
@@ -792,6 +815,38 @@ export type DisturbanceDto = {
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
+};
+
+export type AuditStatusDto = {
+  id: number;
+  uuid: string;
+  status: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  comment: string | null;
+  type: string | null;
+  /**
+   * @format date-time
+   */
+  dateCreated: string | null;
+  attachments: MediaDto[];
+};
+
+export type CreateAuditStatusAttributes = {
+  type?: string | null;
+  comment?: string | null;
+  status?: string | null;
+  isActive?: boolean | null;
+  requestRemoved?: boolean | null;
+};
+
+export type CreateAuditStatusData = {
+  type: "auditStatuses";
+  attributes: CreateAuditStatusAttributes;
+};
+
+export type CreateAuditStatusBody = {
+  data: CreateAuditStatusData;
 };
 
 export type ANRDto = {
@@ -1136,8 +1191,6 @@ export type DisturbanceReportLightDto = {
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
 };
-
-export type Object = {};
 
 export type ProjectFullDto = {
   /**

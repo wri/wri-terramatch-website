@@ -546,7 +546,7 @@ export type SitePolygonStatusBulkUpdateBodyDto = {
    * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: void[][];
   /**
    * Comment for the status update
    */
@@ -557,7 +557,7 @@ export type SitePolygonBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
    */
-  data: any[][];
+  data: void[][];
 };
 
 export type SitePolygonBulkDeleteBodyDto = {
@@ -567,7 +567,7 @@ export type SitePolygonBulkDeleteBodyDto = {
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: void[][];
 };
 
 export type VersionUpdateAttributes = {

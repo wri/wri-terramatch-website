@@ -6,7 +6,6 @@ import { twMerge } from "tailwind-merge";
 import AuditLogTable from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogTable";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import Button from "@/components/elements/Button/Button";
 import Commentary from "@/components/elements/Commentary/Commentary";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
@@ -14,9 +13,11 @@ import { formatCommentaryDate } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
+import { getV3AuditStatusEntity, useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
-import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
+import ApiSlice from "@/store/apiSlice";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -49,27 +50,35 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   const [buttonToogle, setButtonToogle] = useState(true);
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.POLYGON);
 
-  const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
-    pathParams: {
-      entity: getRequestPathParam(AuditLogEntityEnum.Polygon),
-      uuid
-    }
+  const [, { data: auditStatusesData }] = useAuditStatuses({
+    entity: getV3AuditStatusEntity(AuditLogEntityEnum.Polygon),
+    uuid: uuid ?? ""
   });
+
+  const refetch = () => {
+    ApiSlice.pruneIndex("auditStatuses", "");
+  };
 
   const [, { user }] = useMyUser();
 
   const [commentsAuditLogData, restAuditLogData] = useMemo(() => {
-    const commentsAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];
-    const restAuditLog: GetV2AuditStatusENTITYUUIDResponse = [];
-    auditLogData?.data?.forEach(auditLog => {
+    if (auditStatusesData == null) {
+      return [[], []];
+    }
+
+    const commentsAuditLog: AuditStatusDto[] = [];
+    const restAuditLog: AuditStatusDto[] = [];
+
+    auditStatusesData.forEach((auditLog: AuditStatusDto) => {
       if (auditLog.type === "comment") {
         commentsAuditLog.push(auditLog);
       } else {
         restAuditLog.push(auditLog);
       }
     });
+
     return [commentsAuditLog, restAuditLog];
-  }, [auditLogData]);
+  }, [auditStatusesData]);
 
   return (
     <ModalBaseWithLogo {...rest}>
@@ -129,11 +138,15 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
               {commentsAuditLogData.map(item => (
                 <Commentary
                   key={item.id}
-                  name={item.first_name!}
-                  lastName={item.last_name!}
-                  date={formatCommentaryDate(new Date(item.date_created!))}
-                  commentary={item.comment!}
-                  files={item.attachments}
+                  name={item.firstName ?? ""}
+                  lastName={item.lastName ?? ""}
+                  date={item.dateCreated != null ? formatCommentaryDate(new Date(item.dateCreated)) : ""}
+                  commentary={item.comment ?? ""}
+                  files={item.attachments?.map(att => ({
+                    uuid: att.uuid,
+                    url: att.url,
+                    fileName: att.fileName
+                  }))}
                   status={item.status}
                 />
               ))}
