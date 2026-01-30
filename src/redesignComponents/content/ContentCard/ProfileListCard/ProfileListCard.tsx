@@ -58,6 +58,11 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
               className="group cursor-pointer"
               role="button"
               onClick={onInviteClick}
+              css={{
+                "&:hover .avatar-add": {
+                  opacity: "0.8"
+                }
+              }}
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
@@ -69,7 +74,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
                 backgroundColor={"transparent"}
                 color={"secondary.900"}
                 width={"auto"}
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Invite Team Member")}
                 <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />

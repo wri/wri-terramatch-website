@@ -31,7 +31,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
               {showContent ? (
                 <GalleryImage alt="No images available" isAvailable={false} />
               ) : (
-                <div className="rounded-md bg-theme-neutral-200" style={{ width: 164, height: 164 }} />
+                <div className="bg-theme-neutral-200 rounded-md" style={{ width: 164, height: 164 }} />
               )}
             </GridItem>
           );
