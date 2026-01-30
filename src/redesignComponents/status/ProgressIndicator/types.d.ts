@@ -1,8 +1,11 @@
+import { BadgeStatus } from "@/redesignComponents/navigation/FormNavigation/formNavigation.constants";
+
 export interface StepProps {
   index: number;
-  status: "completed" | "active" | "available" | "disabled" | "error";
+  status: BadgeStatus;
   label: string;
   actions?: React.ReactNode;
+  onClick?: () => void;
 }
 
 export interface ProgressStepsProps {

@@ -31,7 +31,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
             <Text
               fontSize="16px"
               fontWeight="bold"
-              className="text-theme-neutral-800 decoration-theme-primary-900 underline decoration-dotted underline-offset-4"
+              className="text-theme-neutral-800 underline decoration-theme-primary-900 decoration-dotted underline-offset-4"
             >
               {label}
             </Text>
