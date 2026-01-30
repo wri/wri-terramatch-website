@@ -1,6 +1,6 @@
-// Icon exports for easy importing
 export { Applications } from "./Applications";
 export { AreaHectares } from "./AreaHectares";
+export { Calendar } from "./Calendar";
 export { Check } from "./Check";
 export { CheckApproved } from "./CheckApproved";
 export { ChevronDown } from "./ChevronDown";
@@ -19,6 +19,7 @@ export { Incorrect } from "./Incorrect";
 export { Indeterminate } from "./Indeterminate";
 export { Info } from "./Info";
 export { InformationRequired } from "./InformationRequired";
+export { InformationRequiredSimple } from "./InformationRequiredSimple";
 export { Jobs } from "./Jobs";
 export { Landscape } from "./Landscape";
 export { Language } from "./Language";
@@ -48,4 +49,3 @@ export { Tree } from "./Tree";
 export { UserAdd } from "./UserAdd";
 export { Visibility } from "./Visibility";
 export { VisibilityOff } from "./VisibilityOff";
-export { InformationRequiredSimple } from "./InformationRequiredSimple";
