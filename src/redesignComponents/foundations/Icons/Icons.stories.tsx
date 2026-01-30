@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   Applications,
   AreaHectares,
+  Calendar,
   Check,
   CheckApproved,
   ChevronDown,
@@ -53,7 +54,6 @@ import {
   Visibility,
   VisibilityOff
 } from ".";
-import { Calendar } from "./Calendar";
 
 const meta: Meta = {
   title: "Redesign Components/Foundations/Icons",

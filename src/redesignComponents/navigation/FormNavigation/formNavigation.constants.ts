@@ -7,6 +7,11 @@ export const TAB_TYPE = {
 
 export type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
+export type BadgeStatus = "completed" | "active" | "available" | "disabled" | "error";
+
+export const BADGE_FOCUS_RING_CLASSES =
+  "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-primary-700";
+
 export const NAVIGATION_CLASSES = {
   tab: {
     base: "group h-13 w-72 gap-0 rounded-sm border-b border-theme-neutral-300 px-2 text-theme-primary-900 before:!h-0 hover:bg-theme-primary-100 focus-visible:outline focus-visible:outline-theme-primary-900"
