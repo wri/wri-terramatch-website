@@ -10,8 +10,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import Log from "@/utils/log";
 
-import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
-
 const menuPolygonOptions = [
   {
     title: "Draft",
@@ -216,6 +214,27 @@ const StatusDisplay = ({
   const legacyEntityType = v3EntityToAuditLogEntity(titleStatus);
   const removeUnderscore = (title: string) => title.replace("_", " ");
 
+  const getV2PathParam = (entityType: AuditStatusEntityType): string => {
+    // TODO: Remove this function when V2 status update endpoint is migrated to V3
+    const legacyType = v3EntityToAuditLogEntity(entityType);
+    if (legacyType === "Polygon") {
+      return "site-polygon";
+    } else if (legacyType === "Nursery_Report") {
+      return "nursery-reports";
+    } else if (legacyType === "Site_Report") {
+      return "site-reports";
+    } else if (legacyType === "Project_Report") {
+      return "project-reports";
+    } else if (legacyType === "Disturbance_Report") {
+      return "disturbance-reports";
+    } else if (legacyType === "Srp_Report") {
+      return "srp-reports";
+    } else if (legacyType === "Financial_Report") {
+      return "financial-reports";
+    }
+    return legacyType.toLowerCase();
+  };
+
   const contentStatus = (
     <div className="text-center">
       <Text variant="text-12-light" as="span" className="text-center">
@@ -264,7 +283,7 @@ const StatusDisplay = ({
             await mutate({
               pathParams: {
                 uuid: record?.uuid,
-                entity: getRequestPathParam(titleStatus)
+                entity: getV2PathParam(titleStatus)
               },
               body: {
                 status: option?.status,
@@ -300,7 +319,7 @@ const StatusDisplay = ({
         onConfirm={async (text: any) => {
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid, entity: getRequestPathParam(titleStatus) },
+              pathParams: { uuid: record?.uuid, entity: getV2PathParam(titleStatus) },
               body: {
                 status: "",
                 comment: text,
