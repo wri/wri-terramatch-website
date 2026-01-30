@@ -21,7 +21,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
@@ -58,7 +57,7 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const t = useT();
   const router = useRouter();
   const { showLoader, hideLoader } = useLoading();
-  const { filters, setFilters, setSearchTerm, searchTerm, setFrameworks, lastUpdatedAt } = useDashboardContext();
+  const { filters, setFilters, setSearchTerm, searchTerm, lastUpdatedAt } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
@@ -108,16 +107,6 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
       value: "for-profit-organization"
     }
   ];
-
-  const { data: frameworks } = useGetV2DashboardFrameworks({
-    queryParams: {}
-  });
-
-  useEffect(() => {
-    if (frameworks) {
-      setFrameworks(frameworks);
-    }
-  }, [frameworks, setFrameworks]);
 
   const resetValues = () => {
     setFilters({
