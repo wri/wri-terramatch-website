@@ -30,8 +30,7 @@ export const useTableSelection = (initialSelectable: boolean = false, sortedData
 
   const onAllItemsSelected = useCallback((checked: boolean, dataByPage: RowData[]) => {
     if (checked) {
-      const newSet = new Set(dataByPage.map(row => row.id));
-      setSelectedRowIds(newSet);
+      setSelectedRowIds(new Set(dataByPage.map(row => row.id)));
     } else {
       setSelectedRowIds(new Set());
     }
