@@ -1,6 +1,5 @@
 import { useT } from "@transifex/react";
 import { FC, useEffect, useMemo, useState } from "react";
-import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -254,26 +253,24 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps && (
           <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={tw("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+            {...iconProps}
+            width={iconProps.width ?? 40}
+            className={tw("mb-8", iconProps.className)}
+            style={{ minHeight: iconProps.height ?? iconProps.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
-        <When condition={areaStats !== null}>
-          {areaStats !== null && <InlineMessage type={areaStats.type} message={areaStats.message} />}
-        </When>
+        {areaStats && <InlineMessage type={areaStats.type} message={areaStats.message} />}
         <div className="mb-2 flex items-center">
-          <When condition={!!content}>
+          {content && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
               {content}
             </Text>
-          </When>
+          )}
           <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">
             <Checkbox
               className="flex h-min items-center"
@@ -312,13 +309,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+        {secondaryButtonProps && (
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button
           {...primaryButtonProps}
           onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
