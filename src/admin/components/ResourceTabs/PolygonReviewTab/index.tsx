@@ -645,10 +645,13 @@ const PolygonReviewTab: FC<IProps> = props => {
               }
             }
 
-            refetch();
-            setShouldRefetchValidation(true);
+            const refetchResult = refetch() as unknown;
+            if (refetchResult && typeof refetchResult === "object" && "then" in refetchResult) {
+              await (refetchResult as Promise<void>);
+            }
+
             setPendingValidationRefresh(true);
-            listDelayedJobs.fetch({});
+            await listDelayedJobs.fetch({});
           } catch (error) {
             Log.error("Polygon approval error", error);
             setPendingValidationRefresh(false);
