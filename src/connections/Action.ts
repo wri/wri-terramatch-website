@@ -20,9 +20,11 @@ const actionsConnectionSelector = createSelector(
   [actionsSelector, actionsIndex.isFetchingSelector({} as never), actionsIndex.fetchFailedSelector({} as never)],
   (resources, isLoading, loadFailure): ActionsConnection => ({
     data:
-      resources != null && Object.keys(resources).length > 0
+      resources == null
+        ? undefined
+        : Object.keys(resources).length > 0
         ? Object.values(resources).map(r => r.attributes as ActionDto)
-        : undefined,
+        : [],
     isLoading: isLoading ?? false,
     loadFailure
   })
