@@ -108,7 +108,6 @@ const ModalApprove: FC<ModalApproveProps> = ({
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
 
-  // Get project UUID from site (only available on SiteFullDto)
   const projectUuid = site !== null && "projectUuid" in site ? site.projectUuid : null;
 
   const [isProjectLoaded, { data: project }] = useFullProject({
