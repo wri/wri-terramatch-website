@@ -2,11 +2,9 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -20,7 +18,6 @@ export type ProjectsCardProps = {
 const ProjectsCard = ({ actions }: ProjectsCardProps) => {
   const t = useT();
   const { format } = useDate();
-  const { mutate } = usePutV2MyActionsUUIDComplete();
 
   const projectActions = useMemo(() => {
     if (!actions) return [];
@@ -76,14 +73,10 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
           subtitle,
           updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
             date: format(target.updatedAt)
-          }),
-          onClick: () => {
-            action.uuid && mutate({ pathParams: { uuid: action.uuid } });
-            ApiSlice.pruneCache("actions", [action.uuid]);
-          }
+          })
         } as ActionTrackerCardRowProps;
       });
-  }, [format, actions, mutate, t]);
+  }, [format, actions, t]);
 
   return (
     <ActionTrackerCard
