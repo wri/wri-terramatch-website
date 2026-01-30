@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { kebabCase } from "lodash";
 import { FC, useMemo } from "react";
 
 import { CollectionTitleSet } from "@/components/extensive/TrackingCollapseGrid/constants";
@@ -115,8 +116,8 @@ const TrackingDisplay: FC<TrackingDisplayProps> = ({
   const [loaded, { data: tracking }] = useTracking({
     entity,
     uuid,
-    domain,
-    type,
+    domain: kebabCase(domain),
+    type: kebabCase(type),
     collection
   });
   const title = useGetTrackingTitle(type, collection);
