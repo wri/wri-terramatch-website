@@ -27,6 +27,8 @@ import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { pruneEntityCache } from "@/connections/Entity";
 import { useMedias } from "@/connections/EntityAssociation";
 import {
   prepareGeometryForUpload,
@@ -40,6 +42,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   CompareGeometryFileResponse,
   uploadGeometryFile,
@@ -48,6 +51,7 @@ import {
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -162,6 +166,10 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { selectPolygonFromMap, setSelectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const [pendingValidationRefresh, setPendingValidationRefresh] = useState<boolean>(false);
+  const [pendingJobUuids, setPendingJobUuids] = useState<Set<string>>(new Set());
+
+  const [, { delayedJobs }] = useDelayedJobs();
 
   const polygonFromMap = selectPolygonFromMap ?? { isOpen: false, uuid: "" };
   const setPolygonFromMap = useCallback(
@@ -363,6 +371,80 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
 
+  useEffect(() => {
+    if (pendingValidationRefresh && delayedJobs && delayedJobs.length > 0) {
+      const pendingUuids = new Set(delayedJobs.filter(job => job.status === "pending").map(job => job.uuid));
+      if (pendingUuids.size > 0) {
+        setPendingJobUuids(pendingUuids);
+      }
+    }
+  }, [pendingValidationRefresh, delayedJobs]);
+
+  useEffect(() => {
+    if (!pendingValidationRefresh || !delayedJobs || delayedJobs.length === 0 || !record) {
+      return;
+    }
+
+    const siteUuid = record.uuid;
+    const projectUuid = "projectUuid" in record ? record.projectUuid : null;
+
+    const completedJobs = delayedJobs.filter(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      if (!isCompleted) return false;
+
+      const wasTracked = pendingJobUuids.has(job.uuid);
+
+      const matchesEntity = job.entityName === "sites" || (projectUuid && job.entityName === "projects");
+      const matchesSite = job.payload?.data?.attributes?.siteUuid === siteUuid;
+      const matchesProject = projectUuid && job.payload?.data?.attributes?.projectUuid === projectUuid;
+      const isValidationRelated =
+        job.name?.toLowerCase().includes("validation") ||
+        job.name?.toLowerCase().includes("area") ||
+        job.name?.toLowerCase().includes("polygon");
+
+      return wasTracked || matchesEntity || matchesSite || matchesProject || isValidationRelated;
+    });
+
+    if (completedJobs.length > 0) {
+      if (projectUuid) {
+        pruneEntityCache("projects", projectUuid);
+        ApiSlice.pruneIndex("projects", "");
+      }
+
+      pruneEntityCache("sites", siteUuid);
+      ApiSlice.pruneIndex("sites", "");
+
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
+      ApiSlice.pruneCache("validations");
+      ApiSlice.pruneIndex("validations", "");
+
+      if (sitePolygonData && Array.isArray(sitePolygonData)) {
+        const polygonUuids = sitePolygonData
+          .map(polygon => polygon.polygonUuid)
+          .filter((uuid): uuid is string => Boolean(uuid));
+        if (polygonUuids.length > 0) {
+          ApiSlice.pruneCache("validations", polygonUuids);
+        }
+      }
+
+      refetch();
+      setShouldRefetchValidation(true);
+
+      setPendingValidationRefresh(false);
+      setPendingJobUuids(new Set());
+    }
+  }, [
+    delayedJobs,
+    pendingValidationRefresh,
+    pendingJobUuids,
+    record,
+    refetch,
+    sitePolygonData,
+    setShouldRefetchValidation
+  ]);
+
   const extractErrorMessage = (error: unknown): string => {
     if (error && typeof error === "object" && "error" in error) {
       const nestedError = error.error;
@@ -536,9 +618,40 @@ const PolygonReviewTab: FC<IProps> = props => {
               data
             );
             openNotification("success", "Success, Your Polygons were approved!", "");
+
+            const siteUuid = record?.uuid;
+            const projectUuid =
+              "projectUuid" in (record ?? {}) ? (record as { projectUuid?: string | null }).projectUuid : null;
+
+            if (projectUuid) {
+              pruneEntityCache("projects", projectUuid);
+              ApiSlice.pruneIndex("projects", "");
+            }
+            if (siteUuid) {
+              pruneEntityCache("sites", siteUuid);
+              ApiSlice.pruneIndex("sites", "");
+            }
+            ApiSlice.pruneCache("sitePolygons");
+            ApiSlice.pruneIndex("sitePolygons", "");
+            ApiSlice.pruneCache("validations");
+            ApiSlice.pruneIndex("validations", "");
+
+            if (sitePolygonData && Array.isArray(sitePolygonData)) {
+              const polygonUuids = sitePolygonData
+                .map(polygon => polygon.polygonUuid)
+                .filter((uuid): uuid is string => Boolean(uuid));
+              if (polygonUuids.length > 0) {
+                ApiSlice.pruneCache("validations", polygonUuids);
+              }
+            }
+
             refetch();
+            setShouldRefetchValidation(true);
+            setPendingValidationRefresh(true);
+            listDelayedJobs.fetch({});
           } catch (error) {
             Log.error("Polygon approval error", error);
+            setPendingValidationRefresh(false);
           }
         }}
       />

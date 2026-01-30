@@ -705,11 +705,11 @@ export type ValidationRequestBody = {
 
 export type ValidationSummaryDto = {
   /**
-   * The UUID of the site that was validated
+   * The UUID of the site that was validated (null for project-level validation)
    *
    * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
    */
-  siteUuid: string;
+  siteUuid: Record<string, any> | null;
   /**
    * Total number of polygons in the site
    */
