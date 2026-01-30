@@ -12,6 +12,8 @@ type ActionsConnection = {
   loadFailure: PendingError | undefined;
 };
 
+export type UseActionsProps = { enabled?: boolean };
+
 const actionsSelector = (store: ApiDataStore) => store.actions;
 
 const actionsConnectionSelector = createSelector(
@@ -26,10 +28,11 @@ const actionsConnectionSelector = createSelector(
   })
 );
 
-const actionsConnection: Connection<ActionsConnection> = {
-  selector: actionsConnectionSelector,
-  isLoaded: ({ data, loadFailure }) => data != null || loadFailure != null,
-  load: selected => {
+const actionsConnection: Connection<ActionsConnection, UseActionsProps> = {
+  selector: (state, _props) => actionsConnectionSelector(state),
+  isLoaded: (selected, props) => props?.enabled === false || selected.data != null || selected.loadFailure != null,
+  load: (selected, props) => {
+    if (props?.enabled === false) return;
     if (!selected.isLoading && selected.loadFailure == null && selected.data == null) {
       actionsIndex.fetch({});
     }
