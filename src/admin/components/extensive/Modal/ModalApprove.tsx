@@ -8,7 +8,7 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
-import { useFullProject } from "@/connections/Entity";
+import { pruneEntityCache, useFullProject } from "@/connections/Entity";
 import { SiteFullDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
@@ -114,6 +114,12 @@ const ModalApprove: FC<ModalApproveProps> = ({
   const [isProjectLoaded, { data: project }] = useFullProject({
     id: projectUuid ?? ""
   });
+
+  useEffect(() => {
+    if (projectUuid) {
+      pruneEntityCache("projects", projectUuid);
+    }
+  }, [projectUuid]);
 
   useEffect(() => {
     if (!polygonList) {
