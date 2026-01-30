@@ -58,6 +58,11 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
               className="group cursor-pointer"
               role="button"
               onClick={onInviteClick}
+              css={{
+                "&:hover .avatar-add": {
+                  opacity: "0.8"
+                }
+              }}
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
