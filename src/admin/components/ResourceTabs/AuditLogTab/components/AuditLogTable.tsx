@@ -107,7 +107,6 @@ const AuditLogTable: FC<{
       }
     });
   };
-  console.log(auditLogData?.data);
   return (
     <>
       <div className={`grid ${gridColumnSize}`}>
