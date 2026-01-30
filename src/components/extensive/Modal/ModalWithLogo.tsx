@@ -5,7 +5,6 @@ import { twMerge } from "tailwind-merge";
 
 import AuditLogTable from "@/admin/components/ResourceTabs/AuditLogTab/components/AuditLogTable";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import Button from "@/components/elements/Button/Button";
 import Commentary from "@/components/elements/Commentary/Commentary";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
@@ -13,7 +12,7 @@ import { formatCommentaryDate } from "@/components/elements/Map-mapbox/utils";
 import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
-import { getV3AuditStatusEntity, useAuditStatuses } from "@/connections/AuditStatus";
+import { useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
@@ -51,7 +50,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.POLYGON);
 
   const [, { data: auditStatusesData }] = useAuditStatuses({
-    entity: getV3AuditStatusEntity(AuditLogEntityEnum.Polygon),
+    entity: "sitePolygons",
     uuid: uuid ?? ""
   });
 
@@ -131,7 +130,7 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
               <CommentaryBox
                 name={user?.firstName!}
                 lastName={user?.lastName!}
-                entity={AuditLogEntityEnum.Polygon}
+                entity="sitePolygons"
                 record={{ uuid, status }}
                 refresh={refetch}
               />

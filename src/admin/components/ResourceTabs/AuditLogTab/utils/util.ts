@@ -1,20 +1,22 @@
-import { AuditLogEntity } from "../constants/types";
+import { AuditStatusEntityType, v3EntityToAuditLogEntity } from "@/connections/AuditStatus";
 
-export const getRequestPathParam = (entityType: AuditLogEntity) => {
-  if (entityType === "Polygon") {
+export const getRequestPathParam = (entityType: AuditStatusEntityType): string => {
+  const legacyType = v3EntityToAuditLogEntity(entityType);
+
+  if (legacyType === "Polygon") {
     return "site-polygon";
-  } else if (entityType === "Nursery_Report") {
+  } else if (legacyType === "Nursery_Report") {
     return "nursery-reports";
-  } else if (entityType === "Site_Report") {
+  } else if (legacyType === "Site_Report") {
     return "site-reports";
-  } else if (entityType === "Project_Report") {
+  } else if (legacyType === "Project_Report") {
     return "project-reports";
-  } else if (entityType === "Disturbance_Report") {
+  } else if (legacyType === "Disturbance_Report") {
     return "disturbance-reports";
-  } else if (entityType === "Srp_Report") {
+  } else if (legacyType === "Srp_Report") {
     return "srp-reports";
-  } else if (entityType === "Financial_Report") {
+  } else if (legacyType === "Financial_Report") {
     return "financial-reports";
   }
-  return entityType.toLocaleLowerCase();
+  return legacyType.toLowerCase();
 };

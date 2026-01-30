@@ -9,7 +9,7 @@ import Button from "@/components/elements/Button/Button";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
-import { getV3AuditStatusEntity, useAuditStatuses } from "@/connections/AuditStatus";
+import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
@@ -162,7 +162,7 @@ const PolygonDrawer = ({
   };
 
   const [, { data: auditStatusesData }] = useAuditStatuses({
-    entity: getV3AuditStatusEntity("Polygon"),
+    entity: "sitePolygons",
     uuid: selectedPolygon?.uuid ?? ""
   });
 
@@ -209,7 +209,7 @@ const PolygonDrawer = ({
               </When>
             </div>
             <StatusDisplay
-              titleStatus="Polygon"
+              titleStatus="sitePolygons"
               name={selectedPolygon?.name}
               refresh={refresh}
               record={selectedPolygon}
@@ -220,7 +220,7 @@ const PolygonDrawer = ({
             <CommentarySection
               variantText="text-14-semibold"
               record={selectedPolygon}
-              entity={"Polygon"}
+              entity="sitePolygons"
               refresh={refetchAuditLog}
             ></CommentarySection>
             {auditLogData != null && (

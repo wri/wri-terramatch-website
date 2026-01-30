@@ -2,12 +2,11 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 import { When } from "react-if";
 
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { getV3AuditStatusEntity, useCreateAuditStatus } from "@/connections/AuditStatus";
+import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
 import { useNotificationContext } from "@/context/notification.provider";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
@@ -22,7 +21,7 @@ export interface CommentaryBoxProps {
   mutate?: any;
   refresh?: () => void;
   record?: any;
-  entity?: AuditLogEntity;
+  entity?: AuditStatusEntityType;
 }
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
@@ -58,7 +57,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
 
   const { create: sendCommentary, isCreating } = useCreateAuditStatus(
     {
-      entity: props.entity != null ? getV3AuditStatusEntity(props.entity) : "projects",
+      entity: props.entity ?? "projects",
       uuid: props.record?.uuid ?? ""
     },
     onSuccess,

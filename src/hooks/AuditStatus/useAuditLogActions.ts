@@ -2,8 +2,7 @@ import { useT } from "@transifex/react";
 import { useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { getV3AuditStatusEntity, useAuditStatuses } from "@/connections/AuditStatus";
+import { AuditStatusEntityType, useAuditStatuses } from "@/connections/AuditStatus";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -35,7 +34,7 @@ interface AuditLogActionsResponse {
   mutateEntity: any;
   valuesForStatus: any;
   statusLabels: any;
-  entityType: AuditLogEntity;
+  entityType: AuditStatusEntityType;
   loadEntityList: () => void;
   entityListItem: any;
   selected: any;
@@ -62,27 +61,49 @@ const useAuditLogActions = ({
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
   const isLevelSrpReport = entityLevel === AuditLogButtonStates.SRP_REPORT;
   const isLevelFinancialReport = entityLevel === AuditLogButtonStates.FINANCIAL_REPORT;
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
+  const { mutateEntity, valuesForStatus, statusLabels } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
+
+  const getV3EntityTypeFromButtonToggle = (toggle: number): AuditStatusEntityType => {
+    const mapping: Record<number, AuditStatusEntityType> = {
+      [AuditLogButtonStates.PROJECT]: "projects",
+      [AuditLogButtonStates.SITE]: "sites",
+      [AuditLogButtonStates.POLYGON]: "sitePolygons",
+      [AuditLogButtonStates.NURSERY]: "nurseries",
+      [AuditLogButtonStates.PROJECT_REPORT]: "projectReports",
+      [AuditLogButtonStates.SITE_REPORT]: "siteReports",
+      [AuditLogButtonStates.NURSERY_REPORT]: "nurseryReports",
+      [AuditLogButtonStates.DISTURBANCE_REPORT]: "disturbanceReports",
+      [AuditLogButtonStates.SRP_REPORT]: "srpReports",
+      [AuditLogButtonStates.FINANCIAL_REPORT]: "financialReports"
+    };
+    const mapped = mapping[toggle];
+    if (mapped == null) {
+      throw new Error(`Unsupported button toggle: ${toggle}. Cannot map to V3 entity.`);
+    }
+    return mapped;
+  };
+
+  const v3EntityType = getV3EntityTypeFromButtonToggle(buttonToggle!);
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entity: record,
-    entityType: entityType as AuditLogEntity,
+    entityType: v3EntityType,
     buttonToggle,
     entityLevel,
     isProjectReport
   });
 
   const siteUuid =
-    entityType === "Site" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
+    v3EntityType === "sites" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
 
   const { data: sitePolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: !!siteUuid && entityType === "Site" && isSite
+    enabled: !!siteUuid && v3EntityType === "sites" && isSite
   });
 
   const checkPolygons = useMemo<boolean | undefined>(() => {
@@ -166,30 +187,13 @@ const useAuditLogActions = ({
     }
   })();
 
-  const getEntityTypeFromButtonToggle = (toggle: number): AuditLogEntity => {
-    const mapping: Record<number, AuditLogEntity> = {
-      [AuditLogButtonStates.PROJECT]: "Project",
-      [AuditLogButtonStates.SITE]: "Site",
-      [AuditLogButtonStates.POLYGON]: "Polygon",
-      [AuditLogButtonStates.NURSERY]: "Nursery",
-      [AuditLogButtonStates.PROJECT_REPORT]: "Project_Report",
-      [AuditLogButtonStates.SITE_REPORT]: "Site_Report",
-      [AuditLogButtonStates.NURSERY_REPORT]: "Nursery_Report",
-      [AuditLogButtonStates.DISTURBANCE_REPORT]: "Disturbance_Report",
-      [AuditLogButtonStates.SRP_REPORT]: "Srp_Report",
-      [AuditLogButtonStates.FINANCIAL_REPORT]: "Financial_Report"
-    };
-    return mapping[toggle] ?? "Project";
-  };
-
   const targetUuid =
     buttonToggle == AuditLogButtonStates.PROJECT
       ? record?.projectUuid ?? record.uuid
       : entityHandlers.selectedEntityItem?.uuid;
 
-  const v3EntityType = getEntityTypeFromButtonToggle(buttonToggle!);
   const [isAuditLogLoaded, { data: auditStatusesData }] = useAuditStatuses({
-    entity: getV3AuditStatusEntity(v3EntityType),
+    entity: v3EntityType,
     uuid: targetUuid ?? ""
   });
 
@@ -254,7 +258,7 @@ const useAuditLogActions = ({
     mutateEntity,
     valuesForStatus: getValuesStatusEntity.getValueForStatus,
     statusLabels: getValuesStatusEntity.statusLabels,
-    entityType: entityType as AuditLogEntity,
+    entityType: v3EntityType,
     loadEntityList: entityHandlers.loadToEntity,
     entityListItem: entityHandlers.ListItemToEntity,
     selected: entityHandlers.selectedEntityItem,

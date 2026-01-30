@@ -1,4 +1,3 @@
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
 import {
@@ -10,6 +9,8 @@ import {
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
+export type AuditStatusEntityType = GetAuditStatusesPathParams["entity"];
+
 const auditStatusIndexConnection = v3Resource("auditStatuses", getAuditStatuses)
   .index<AuditStatusDto, GetAuditStatusesPathParams>(({ entity, uuid }) => ({
     pathParams: { entity, uuid }
@@ -20,27 +21,6 @@ const auditStatusIndexConnection = v3Resource("auditStatuses", getAuditStatuses)
 export const useAuditStatuses = connectionHook(auditStatusIndexConnection);
 export const loadAuditStatuses = connectionLoader(auditStatusIndexConnection);
 
-export const getV3AuditStatusEntity = (entityType: AuditLogEntity): GetAuditStatusesPathParams["entity"] => {
-  const mapping: Record<string, GetAuditStatusesPathParams["entity"]> = {
-    Polygon: "sitePolygons",
-    Project_Report: "projectReports",
-    Site_Report: "siteReports",
-    Nursery_Report: "nurseryReports",
-    Disturbance_Report: "disturbanceReports",
-    Srp_Report: "srpReports",
-    Financial_Report: "financialReports",
-    Project: "projects",
-    Site: "sites",
-    Nursery: "nurseries"
-  };
-
-  const mapped = mapping[entityType];
-  if (mapped == null) {
-    throw new Error(`Unsupported audit log entity type: ${entityType}. Cannot map to V3 entity.`);
-  }
-  return mapped;
-};
-
 const auditStatusCreateConnection = v3Resource("auditStatuses", createAuditStatus)
   .create<AuditStatusDto, CreateAuditStatusPathParams>(({ entity, uuid }) => ({
     pathParams: { entity, uuid }
@@ -48,3 +28,34 @@ const auditStatusCreateConnection = v3Resource("auditStatuses", createAuditStatu
   .buildConnection();
 
 export const useCreateAuditStatus = creationHook(auditStatusCreateConnection);
+
+export const formatAuditStatusEntityForDisplay = (entityType: AuditStatusEntityType): string => {
+  if (entityType === "sitePolygons") {
+    return "Polygon";
+  }
+
+  const words = entityType
+    .replace(/([A-Z])/g, " $1")
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .filter(word => word.length > 0);
+
+  return words.join(" ");
+};
+
+export const v3EntityToAuditLogEntity = (entityType: AuditStatusEntityType): string => {
+  const mapping: Record<AuditStatusEntityType, string> = {
+    projects: "Project",
+    sites: "Site",
+    sitePolygons: "Polygon",
+    nurseries: "Nursery",
+    projectReports: "Project_Report",
+    siteReports: "Site_Report",
+    nurseryReports: "Nursery_Report",
+    disturbanceReports: "Disturbance_Report",
+    srpReports: "Srp_Report",
+    financialReports: "Financial_Report"
+  };
+
+  return mapping[entityType] ?? "Project";
+};

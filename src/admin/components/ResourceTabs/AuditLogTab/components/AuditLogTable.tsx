@@ -15,10 +15,7 @@ const formattedTextStatus = (text: string) => {
   return text?.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
 };
 
-const getTextForActionTable = (
-  item: { type: string; status: string; request_removed: boolean },
-  entity?: string
-): string => {
+const getTextForActionTable = (item: { type: string; status: string }, entity?: string): string => {
   if (item.type === "comment" && entity == "site-polygon") {
     return "New Comment";
   } else if (item.type === "status" && entity == "site-polygon") {
@@ -29,8 +26,6 @@ const getTextForActionTable = (
     return text;
   } else if (item.type === "change-request-updated") {
     return "Change Request Updated";
-  } else if (item.request_removed && entity == "site-polygon") {
-    return "Change Request Removed";
   } else if (item.type === "reminder-sent") {
     return "Reminder Sent";
   } else if (item.type === "change-request") {
@@ -141,8 +136,7 @@ const AuditLogTable: FC<{
                 {getTextForActionTable(
                   {
                     type: item.type ?? "",
-                    status: item.status ?? "",
-                    request_removed: false // V3 AuditStatusDto doesn't include requestRemoved field
+                    status: item.status ?? ""
                   },
                   auditData?.entity
                 )}
