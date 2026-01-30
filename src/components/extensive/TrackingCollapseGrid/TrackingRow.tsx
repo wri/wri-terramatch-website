@@ -1,16 +1,13 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { startCase } from "lodash";
-import { FormEvent, useCallback, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
-import { DemographicGridVariantProps, DemographicType } from "./types";
-
-export interface DemographicsRowProps {
-  demographicType: DemographicType;
+export interface TrackingRowProps {
   entryType: string;
   usesName: boolean;
   label: string;
@@ -18,20 +15,9 @@ export interface DemographicsRowProps {
   amount: number;
   onChange?: (amount: number, userLabel?: string) => void;
   onDelete?: () => void;
-  variant: DemographicGridVariantProps;
 }
 
-const DemographicsRow = ({
-  demographicType,
-  entryType,
-  usesName,
-  label,
-  userLabel,
-  amount,
-  onChange,
-  onDelete,
-  variant
-}: DemographicsRowProps) => {
+const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLabel, amount, onChange, onDelete }) => {
   const [focused, setFocused] = useState(false);
   const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -126,4 +112,4 @@ const DemographicsRow = ({
   );
 };
 
-export default DemographicsRow;
+export default TrackingRow;

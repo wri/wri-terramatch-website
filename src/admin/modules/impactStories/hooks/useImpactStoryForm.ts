@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { useNotify, useRecordContext, useRedirect } from "react-admin";
+import { useDelete, useNotify, useRecordContext, useRedirect, useResourceContext } from "react-admin";
 import { useFormContext } from "react-hook-form";
 
 export const useImpactStoryForm = (mode: "create" | "edit") => {
@@ -8,6 +8,8 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   const record = useRecordContext();
   const notify = useNotify();
   const redirect = useRedirect();
+  const resource = useResourceContext();
+  const [deleteOne] = useDelete();
 
   const currentData = mode === "edit" && record?.data ? record.data : record;
 
@@ -86,13 +88,19 @@ export const useImpactStoryForm = (mode: "create" | "edit") => {
   }, [notify]);
 
   const handleDelete = useCallback(async () => {
+    if (record?.id == null) {
+      notify("Error deleting story: Missing record ID", { type: "error" });
+      return;
+    }
+
     try {
-      notify("Story deleted successfully");
-      redirect("list", "impactStories");
+      await deleteOne(resource ?? "impactStories", { id: record.id });
+      notify("Story deleted successfully", { type: "success" });
+      redirect("list", resource ?? "impactStories");
     } catch (error) {
       notify("Error deleting story", { type: "error" });
     }
-  }, [notify, redirect]);
+  }, [deleteOne, notify, redirect, record?.id, resource]);
 
   return {
     initialValues,

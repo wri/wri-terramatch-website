@@ -189,6 +189,108 @@ export type ImpactStoryFullDto = {
   content: string | null;
 };
 
+export type CreateImpactStoryAttributes = {
+  /**
+   * Impact story title (max 70 characters)
+   *
+   * @maxLength 70
+   */
+  title?: string;
+  /**
+   * Impact story status (required)
+   */
+  status: "draft" | "published";
+  /**
+   * Organization UUID (must exist in the database)
+   */
+  organizationUuid?: string;
+  /**
+   * Impact story date
+   *
+   * @format date
+   */
+  date?: string;
+  /**
+   * Array of category strings
+   */
+  category?: string[];
+  /**
+   * Impact story content (JSON string or text)
+   */
+  content?: string;
+  /**
+   * Legacy thumbnail field
+   */
+  thumbnail?: string;
+};
+
+export type CreateImpactStoryDataDto = {
+  type: "impactStories";
+  attributes: CreateImpactStoryAttributes;
+};
+
+export type CreateImpactStoryBody = {
+  data: CreateImpactStoryDataDto;
+};
+
+export type StoreImpactStoryAttributes = {
+  /**
+   * Impact story title (max 70 characters)
+   *
+   * @maxLength 70
+   */
+  title?: string;
+  /**
+   * Impact story status (required)
+   */
+  status: "draft" | "published";
+  /**
+   * Organization UUID (must exist in the database)
+   */
+  organizationUuid?: string;
+  /**
+   * Impact story date
+   *
+   * @format date
+   */
+  date?: string;
+  /**
+   * Array of category strings
+   */
+  category?: string[];
+  /**
+   * Impact story content (JSON string or text)
+   */
+  content?: string;
+  /**
+   * Legacy thumbnail field
+   */
+  thumbnail?: string;
+};
+
+export type UpdateImpactStoryDataDto = {
+  type: "impactStories";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: StoreImpactStoryAttributes;
+};
+
+export type UpdateImpactStoryBody = {
+  data: UpdateImpactStoryDataDto;
+};
+
+export type ImpactStoryBulkDeleteBodyDto = {
+  /**
+   * Array of impact story resource identifiers to delete
+   *
+   * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
+   * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
+   */
+  data: any[][];
+};
+
 export type TaskLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -652,55 +754,6 @@ export type TreeReportCountsDto = {
   } | null;
 };
 
-export type DemographicEntryDto = {
-  type: string;
-  subtype?: string | null;
-  name?: string | null;
-  amount: number;
-};
-
-export type DemographicDto = {
-  /**
-   * The entity type this resource is associated with.
-   */
-  entityType:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "siteReports"
-    | "nurseryReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | "organisations"
-    | "auditStatuses"
-    | "forms"
-    | "formQuestionOptions"
-    | "fundingProgrammes"
-    | "impactStories"
-    | "financialIndicators"
-    | "projectPitches"
-    | any;
-  /**
-   * The entity UUID this resource is associated with.
-   */
-  entityUuid: string;
-  uuid: string;
-  type:
-    | "workdays"
-    | "restoration-partners"
-    | "jobs"
-    | "employees"
-    | "volunteers"
-    | "all-beneficiaries"
-    | "training-beneficiaries"
-    | "indirect-beneficiaries"
-    | "associates";
-  collection: string;
-  entries: DemographicEntryDto[];
-};
-
 export type DisturbanceDto = {
   /**
    * The entity type this resource is associated with.
@@ -769,7 +822,7 @@ export type EntitySideload = {
     | "financialReports"
     | "disturbanceReports"
     | "srpReports"
-    | "demographics"
+    | "trackings"
     | "seedings"
     | "treeSpecies"
     | "media"
@@ -1175,6 +1228,7 @@ export type ProjectFullDto = {
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
   survivalRate: number | null;
+  lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
   restorationStrategy: string[] | null;
   incomeGeneratingActivities: string[] | null;
@@ -1215,8 +1269,8 @@ export type ProjectFullDto = {
   photos: MediaDto[];
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
-  detailedProjectBudget: MediaDto;
   proofOfLandTenureMou: MediaDto[];
+  detailedProjectBudget: MediaDto;
 };
 
 export type SiteFullDto = {
@@ -1290,6 +1344,7 @@ export type SiteFullDto = {
   aNatRegenerationTreesPerHectare: number | null;
   aNatRegeneration: number | null;
   landscapeCommunityContribution: string | null;
+  lastReportedSurvivalRate: number | null;
   technicalNarrative: string | null;
   plantingPattern: string | null;
   soilCondition: string | null;
@@ -2277,6 +2332,13 @@ export type UpdateRequestUpdateBody = {
   data: UpdateRequestData;
 };
 
+export type TrackingEntryDto = {
+  type: string;
+  subtype?: string | null;
+  name?: string | null;
+  amount: number;
+};
+
 /**
  * CONSTANTS
  */
@@ -2369,6 +2431,49 @@ export type DemographicCollections = {
    * @example training
    */
   BENEFICIARIES_PROJECT_TRAINING: string[];
+};
+
+export type TrackingDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  domain: "demographics";
+  type:
+    | "workdays"
+    | "restoration-partners"
+    | "jobs"
+    | "employees"
+    | "volunteers"
+    | "all-beneficiaries"
+    | "training-beneficiaries"
+    | "indirect-beneficiaries"
+    | "associates";
+  collection: string;
+  entries: TrackingEntryDto[];
 };
 
 export type SeedingDto = {

@@ -1,26 +1,27 @@
 import { useT } from "@transifex/react";
-import { kebabCase } from "lodash";
 import { FC, useMemo } from "react";
 
-import { CollectionTitleSet } from "@/components/extensive/DemographicsCollapseGrid/constants";
-import DemographicsCollapseGrid from "@/components/extensive/DemographicsCollapseGrid/DemographicsCollapseGrid";
-import { GRID_VARIANT_DEFAULT } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
+import { CollectionTitleSet } from "@/components/extensive/TrackingCollapseGrid/constants";
+import TrackingCollapseGrid from "@/components/extensive/TrackingCollapseGrid/TrackingCollapseGrid";
+import { GRID_VARIANT_DEFAULT } from "@/components/extensive/TrackingCollapseGrid/TrackingVariant";
 import {
-  DemographicEntity,
-  DemographicGridVariantProps,
-  DemographicType
-} from "@/components/extensive/DemographicsCollapseGrid/types";
-import { useDemographic } from "@/connections/EntityAssociation";
+  TrackingDomain,
+  TrackingEntity,
+  TrackingGridVariantProps,
+  TrackingType
+} from "@/components/extensive/TrackingCollapseGrid/types";
+import { useTracking } from "@/connections/EntityAssociation";
 
-type DemographicsDisplayProps = {
-  entity: DemographicEntity;
+type TrackingDisplayProps = {
+  entity: TrackingEntity;
   uuid: string;
-  type: DemographicType;
+  domain: TrackingDomain;
+  type: TrackingType;
   collection: string;
-  variant?: DemographicGridVariantProps;
+  variant?: TrackingGridVariantProps;
 };
 
-const useGetDemographicTitle = (type: DemographicType, collection: string) => {
+const useGetTrackingTitle = (type: TrackingType, collection: string) => {
   const t = useT();
 
   const COLLECTION_TITLES: CollectionTitleSet = useMemo(
@@ -103,19 +104,26 @@ const useGetDemographicTitle = (type: DemographicType, collection: string) => {
   return collectionTitles?.[collection as keyof typeof collectionTitles] ?? t("Unknown");
 };
 
-const DemographicsDisplay: FC<DemographicsDisplayProps> = ({
+const TrackingDisplay: FC<TrackingDisplayProps> = ({
   entity,
   uuid,
+  domain,
   type,
   collection,
   variant = GRID_VARIANT_DEFAULT
 }) => {
-  const [loaded, { data: demographic }] = useDemographic({ entity, uuid, type: kebabCase(type), collection });
-  const title = useGetDemographicTitle(type, collection);
+  const [loaded, { data: tracking }] = useTracking({
+    entity,
+    uuid,
+    domain,
+    type,
+    collection
+  });
+  const title = useGetTrackingTitle(type, collection);
 
   return !loaded ? null : (
-    <DemographicsCollapseGrid {...{ variant, type, title }} entries={demographic?.entries ?? []} />
+    <TrackingCollapseGrid {...{ variant, domain, type, title }} entries={tracking?.entries ?? []} />
   );
 };
 
-export default DemographicsDisplay;
+export default TrackingDisplay;

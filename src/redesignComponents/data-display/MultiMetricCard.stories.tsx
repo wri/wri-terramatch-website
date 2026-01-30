@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { Jobs, Seeds, Tree } from "../foundations/Icons";
+import { Placeholder } from "../foundations/Icons";
 import MultiMetricCard from "./MultiMetricCard";
 
 const meta: Meta<typeof MultiMetricCard> = {
@@ -22,66 +22,70 @@ type Story = StoryObj<typeof MultiMetricCard>;
 
 export const Default: Story = {
   args: {
-    title: "Restoration Progress",
+    title: "Label",
     status: "in-progress",
     metrics: [
       {
-        title: "Forest Restoration",
+        title: "Stat label",
         progress: 8500,
         goal: 10000,
-        tooltipContent: "Hectares of forest restored",
-        icon: <Tree />,
+        icon: <Placeholder />,
         color: getThemedColor("primary", 600)
       },
       {
-        title: "Carbon Sequestration",
+        title: "Stat label",
         progress: 3200,
         goal: 5000,
-        tooltipContent: "Tons of CO2 sequestered",
-        icon: <Seeds />,
+        icon: <Placeholder />,
         color: getThemedColor("secondary", 600)
       },
       {
-        title: "Biodiversity Impact",
+        title: "Stat label",
         progress: 1800,
         goal: 3000,
-        tooltipContent: "Species protected",
-        icon: <Jobs />,
+        icon: <Placeholder />,
         color: getThemedColor("secondary", 700)
       }
     ]
-  }
+  },
+  render: args => (
+    <Flex direction="column" gap={3} backgroundColor="neutral.200" width="300px" padding={5}>
+      <MultiMetricCard {...args} />
+    </Flex>
+  )
 };
 
 export const NotStarted: Story = {
   args: {
-    title: "Restoration Progress",
+    title: "Label",
     status: "not-started",
     metrics: [
       {
-        title: "Forest Restoration",
+        title: "Stat label",
         progress: 0,
         goal: 0,
-        tooltipContent: "Hectares of forest restored",
-        icon: <Tree />,
+        icon: <Placeholder />,
         color: getThemedColor("primary", 600)
       },
       {
-        title: "Carbon Sequestration",
+        title: "Stat label",
         progress: 0,
         goal: 0,
-        tooltipContent: "Tons of CO2 sequestered",
-        icon: <Seeds />,
+        icon: <Placeholder />,
         color: getThemedColor("secondary", 600)
       },
       {
-        title: "Biodiversity Impact",
+        title: "Stat label",
         progress: 0,
         goal: 0,
-        tooltipContent: "Species protected",
-        icon: <Jobs />,
+        icon: <Placeholder />,
         color: getThemedColor("secondary", 700)
       }
     ]
-  }
+  },
+  render: args => (
+    <Flex direction="column" gap={3} backgroundColor="neutral.200" padding={5} width="300px">
+      <MultiMetricCard {...args} />
+    </Flex>
+  )
 };

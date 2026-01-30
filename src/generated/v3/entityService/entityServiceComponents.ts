@@ -308,6 +308,69 @@ export const impactStoryIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories", "GET");
 
+export type ImpactStoryCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryCreateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryCreateVariables = {
+  body: Schemas.CreateImpactStoryBody;
+};
+
+/**
+ * Create a new impact story for an organization. Requires authentication and appropriate permissions.
+ */
+export const impactStoryCreate = new V3ApiEndpoint<
+  ImpactStoryCreateResponse,
+  ImpactStoryCreateError,
+  ImpactStoryCreateVariables,
+  {}
+>("/entities/v3/impactStories", "POST");
+
 export type ImpactStoryGetPathParams = {
   /**
    * Impact Story UUID
@@ -374,6 +437,224 @@ export const impactStoryGet = new V3ApiEndpoint<
   ImpactStoryGetVariables,
   {}
 >("/entities/v3/impactStories/{uuid}", "GET");
+
+export type ImpactStoryUpdatePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryUpdateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryUpdateVariables = {
+  body: Schemas.UpdateImpactStoryBody;
+  pathParams: ImpactStoryUpdatePathParams;
+};
+
+/**
+ * Update an impact story by UUID. Requires authentication and appropriate permissions.
+ *
+ *     All fields except status are optional. Status is required.
+ */
+export const impactStoryUpdate = new V3ApiEndpoint<
+  ImpactStoryUpdateResponse,
+  ImpactStoryUpdateError,
+  ImpactStoryUpdateVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "PATCH");
+
+export type ImpactStoryDeletePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryDeleteVariables = {
+  pathParams: ImpactStoryDeletePathParams;
+};
+
+/**
+ * Soft deletes an impact story by UUID. Requires authentication and appropriate permissions.
+ */
+export const impactStoryDelete = new V3ApiEndpoint<
+  ImpactStoryDeleteResponse,
+  ImpactStoryDeleteError,
+  ImpactStoryDeleteVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "DELETE");
+
+export type ImpactStoryBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryBulkDeleteVariables = {
+  body: Schemas.ImpactStoryBulkDeleteBodyDto;
+};
+
+/**
+ * Bulk delete multiple impact stories by UUIDs. Requires admin permissions.
+ */
+export const impactStoryBulkDelete = new V3ApiEndpoint<
+  ImpactStoryBulkDeleteResponse,
+  ImpactStoryBulkDeleteError,
+  ImpactStoryBulkDeleteVariables,
+  {}
+>("/entities/v3/impactStories/bulkDelete", "DELETE");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -1369,132 +1650,6 @@ export const treeReportCountsFind = new V3ApiEndpoint<
   TreeReportCountsFindVariables,
   {}
 >("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
-
-export type DemographicsIndexQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
-  /**
-   * project uuid array
-   */
-  projectUuid?: string[];
-  /**
-   * projectReport uuid array
-   */
-  projectReportUuid?: string[];
-  /**
-   * siteReport uuid array
-   */
-  siteReportUuid?: string[];
-};
-
-export type DemographicsIndexError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type DemographicsIndexResponse = {
-  meta?: {
-    /**
-     * @example demographics
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The current page number.
-       */
-      pageNumber?: number;
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DemographicDto;
-  }[];
-};
-
-export type DemographicsIndexVariables = {
-  queryParams?: DemographicsIndexQueryParams;
-};
-
-export const demographicsIndex = new V3ApiEndpoint<
-  DemographicsIndexResponse,
-  DemographicsIndexError,
-  DemographicsIndexVariables,
-  {}
->("/entities/v3/demographics", "GET");
 
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -3021,7 +3176,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
+  association: "trackings" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexQueryParams = {
@@ -3137,7 +3292,7 @@ export const entityAssociationIndex = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         resourceType?: string;
         indices?: {
@@ -3173,14 +3328,14 @@ export const entityAssociationIndex = new V3ApiEndpoint<
       };
       data?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         type?: string;
         /**
          * @format uuid
          */
         id?: string;
-        attributes?: Schemas.DemographicDto;
+        attributes?: Schemas.TrackingDto;
       }[];
     }
   | {
@@ -5192,11 +5347,17 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
-  impactStories: { impactStoryIndex, impactStoryGet },
+  impactStories: {
+    impactStoryIndex,
+    impactStoryCreate,
+    impactStoryGet,
+    impactStoryUpdate,
+    impactStoryDelete,
+    impactStoryBulkDelete
+  },
   tasks: { taskIndex, taskGet, taskUpdate },
   files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
-  demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },

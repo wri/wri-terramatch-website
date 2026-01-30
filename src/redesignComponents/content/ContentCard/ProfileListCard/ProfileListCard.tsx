@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -19,13 +18,14 @@ export interface IProfileListCardProps {
   title: string;
   profiles?: IProfile[];
   onProfileClick: (profile: IProfile) => void;
+  onInviteClick?: () => void;
 }
 
 interface ProfileListCardComponentProps {
   items: IProfileListCardProps[];
 }
 
-const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick }) => {
+const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick, onInviteClick }) => {
   const t = useT();
 
   return (
@@ -51,16 +51,29 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
           </>
         ) : (
           <>
-            <Flex alignItems="center" gap={2} tabIndex={0}>
+            <Flex
+              alignItems="center"
+              gap={2}
+              tabIndex={0}
+              className="group cursor-pointer"
+              role="button"
+              onClick={onInviteClick}
+            >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
-              <Button
-                variant="borderless"
-                size="small"
-                className="!px-0 hover:!px-2.5"
-                rightIcon={<ChevronRight boxSize={3} color="neutral.800" />}
+              <Text
+                fontSize={"12px"}
+                lineHeight={"16px"}
+                fontWeight={"700"}
+                padding={"6px 8px"}
+                borderRadius={"4px"}
+                backgroundColor={"transparent"}
+                color={"secondary.900"}
+                width={"auto"}
+                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
               >
                 {t("Invite Team Member")}
-              </Button>
+                <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
+              </Text>
             </Flex>
           </>
         )}

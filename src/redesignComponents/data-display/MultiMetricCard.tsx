@@ -7,10 +7,10 @@ import { InformationRequired } from "../foundations/Icons";
 import SimpleDivider from "../miscellaneous/Dividers/SimpleDivider";
 import DonutChart from "./DonutChart";
 import { MultiMetricCardProps } from "./types";
-import { getIconWithProgressColor16 } from "./utils/getIconWithProgressColor";
+import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
 const MultiMetricCard: FC<MultiMetricCardProps> = props => {
-  const { title, status = "not-started", metrics } = props;
+  const { title, status = "not-started", metrics, labelStatus = "Label Status" } = props;
   const t = useT();
   return (
     <Flex
@@ -26,7 +26,14 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       </Text>
       {metrics.map(metric => {
         const progressValue = metric.goal > 0 ? (metric.progress / metric.goal) * 100 : 0;
-        const iconWithColor = getIconWithProgressColor16(metric.icon, metric.progress, metric.goal, metric.color);
+        const iconWithColor = getIconWithProgressColor(
+          metric.icon,
+          metric.progress,
+          metric.goal,
+          "16px",
+          metric.color,
+          "donutChart"
+        );
 
         return (
           <Flex key={metric.title} gap={3} alignItems="center">
@@ -34,8 +41,8 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
               {iconWithColor}
             </DonutChart>
             <Flex direction="column" gap={1}>
-              <Flex gap={1}>
-                <Text fontSize="14px" color="neutral.900" lineHeight="20px">
+              <Flex gap={1} alignItems="center">
+                <Text fontSize="14px" color="neutral.800" lineHeight="20px">
                   {metric.title}
                 </Text>
                 <InformationRequired color="neutral.800" boxSize="12px" />
@@ -64,7 +71,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       <SimpleDivider />
       <Flex gap={2} alignItems="center">
         <Text fontSize="14px" color="neutral.800" lineHeight="20px">
-          {t("Restoration Status")}:
+          {labelStatus}:
         </Text>
         <ProgressTag state={status} />
       </Flex>
