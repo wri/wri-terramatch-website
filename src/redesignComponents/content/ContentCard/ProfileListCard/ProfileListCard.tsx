@@ -29,8 +29,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
   const t = useT();
 
   return (
-    <Box>
-      {/* Title Section */}
+    <Flex direction="column" minHeight={0}>
       <Box>
         <Text fontSize="18px" lineHeight="28px" color="neutral.900" fontWeight="semibold">
           {t(title)}
@@ -39,8 +38,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
 
       <SimpleDivider marginY={2} />
 
-      {/* Profiles List */}
-      <Flex direction="column" gap={1} marginTop={3}>
+      <Flex direction="column" gap={1} marginTop={3} minHeight={0} overflowY="auto">
         {profiles != null && profiles.length > 0 ? (
           <>
             {profiles.map(profile => (
@@ -78,14 +76,13 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
           </>
         )}
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
 const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
   return (
     <Box
-      className="max-h-[388px] w-[403px] overflow-y-auto"
       paddingX={5}
       paddingY={4}
       backgroundColor="white"
@@ -93,6 +90,7 @@ const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
       gap={6}
       display="flex"
       flexDirection="column"
+      minHeight={0}
     >
       {items.map((item, itemIndex) => (
         <ProfileSection key={itemIndex} {...item} />

@@ -143,7 +143,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
 
   return (
     <PageBody>
-      <Flex direction="column" gap={5} paddingX={6}>
+      <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
           <OverviewItem
             title="Project Map"
@@ -189,8 +189,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             <KeyIndicatorsInsightsEntityTab entity={project} project />
           </Flex>
         </OverviewItem>
-        <Flex gap={7}>
+        <Flex gap={7} height="445px" paddingY={2}>
           <OverviewItem
+            flexProps={{ flex: 1 }}
             title="Team Members"
             buttonProps={{
               variant: "secondary",
@@ -214,6 +215,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           </OverviewItem>
           <OverviewItem
             title="Latest Images"
+            flexProps={{ flex: 1 }}
             buttonProps={{
               variant: "secondary",
               size: "small",
@@ -244,8 +246,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               </Flex>
             </Flex>
           </OverviewItem> */}
-          <OverviewItem title="Project Onboarding">
-            <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1}>
+          <OverviewItem title="Project Onboarding" flexProps={{ flex: 1 }}>
+            <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1} height="100%">
               <Text color="neutral.900" fontSize="14px" lineHeight="20px">
                 <Text fontWeight="bold" color="neutral.900" fontSize="14px" lineHeight="20px" as="span">
                   Monitoring, Reporting, and Verification&nbsp;
