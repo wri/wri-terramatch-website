@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useEffect, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -22,6 +23,7 @@ interface EntityAreaProps {
   refetch?: () => void;
   polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
+  className?: string;
 }
 
 const OverviewMapArea = ({
@@ -29,7 +31,8 @@ const OverviewMapArea = ({
   type,
   refetch: refreshEntity,
   polygonVersionData,
-  refetchPolygonVersions
+  refetchPolygonVersions,
+  className
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -198,7 +201,7 @@ const OverviewMapArea = ({
         status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
         validationType={type === "sites" ? (editPolygon.isOpen ? "individualValidation" : "bulkValidation") : ""}
         record={entityModel}
-        className="h-[650px] flex-1 rounded-r-lg wide:h-[1225px]"
+        className={classNames("h-[650px] flex-1 rounded-r-lg wide:h-[1225px]", className)}
         polygonsExists={polygonsData.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}

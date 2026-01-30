@@ -157,7 +157,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             }}
           >
             <Box className="relative h-auto">
-              <OverviewMapArea entityModel={project} type="projects" />
+              <OverviewMapArea entityModel={project} type="projects" className="max-h-[432px]" />
             </Box>
           </OverviewItem>
           <OverviewItem
