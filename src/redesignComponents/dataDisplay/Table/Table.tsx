@@ -2,9 +2,10 @@ import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback } from "react";
 
+import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
-import { tableWrapperStyles } from "./tableStyles";
+import { getTableWrapperStyles } from "./tableStyles";
 import { type RowData, DEFAULT_TOTAL_ITEMS, hasCustomCellContent } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
@@ -14,6 +15,9 @@ interface TableProps {
   data: any[];
   columns: any[];
   selectable?: boolean;
+  isScrollable?: boolean;
+  scrollableWidth?: string;
+  scrollableHeight?: string;
 }
 
 interface SelectableRowProps {
@@ -46,15 +50,26 @@ const SelectableRow: FC<SelectableRowProps> = ({ rowData, columns, renderDataCel
   );
 };
 
-const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
+const Table: FC<TableProps> = ({
+  data,
+  columns,
+  selectable = false,
+  isScrollable = false,
+  scrollableWidth = 0,
+  scrollableHeight = 0
+}) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
-  const { setSortColumn, sortedData } = useTableSorting(data);
-  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable);
+  const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
+  const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
 
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
   const renderDataCell = useCallback((rowData: RowData, columnKey: string) => {
+    if (columnKey === "actions" && rowData.actionCell != null) {
+      return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
+    }
+
     if (columnKey === "name") {
       if (rowData.title != null) {
         return <TitleCell {...rowData.title} />;
@@ -116,7 +131,7 @@ const Table: FC<TableProps> = ({ data, columns, selectable = false }) => {
   );
 
   return (
-    <Box css={tableWrapperStyles}>
+    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
       <WriTable
         columns={columns}
         data={dataByPage}
