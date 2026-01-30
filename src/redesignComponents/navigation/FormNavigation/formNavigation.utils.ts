@@ -5,9 +5,6 @@ import { Check, InformationRequired } from "@/redesignComponents/foundations/Ico
 
 import { BadgeStatus, NAVIGATION_CLASSES, TabType } from "./formNavigation.constants";
 
-/**
- * Get badge classes based on tab type and selection state
- */
 export const getBadgeClasses = (type: TabType, isSelected: boolean): string => {
   return classNames(NAVIGATION_CLASSES.badge.base, {
     [NAVIGATION_CLASSES.badge.complete]: type === "complete" || isSelected,
@@ -18,9 +15,6 @@ export const getBadgeClasses = (type: TabType, isSelected: boolean): string => {
   });
 };
 
-/**
- * Get label classes based on selection state
- */
 export const getLabelClasses = (isSelected: boolean): string => {
   return classNames({
     [NAVIGATION_CLASSES.label.default]: !isSelected,
@@ -28,9 +22,6 @@ export const getLabelClasses = (isSelected: boolean): string => {
   });
 };
 
-/**
- * Get number classes based on type and selection state
- */
 export const getNumberClasses = (type: TabType, isSelected: boolean): string => {
   return classNames(NAVIGATION_CLASSES.number.base, {
     [NAVIGATION_CLASSES.number.selected]: isSelected,
@@ -38,23 +29,14 @@ export const getNumberClasses = (type: TabType, isSelected: boolean): string => 
   });
 };
 
-/**
- * Get tab trigger classes based on selection state
- */
 export const getTabClasses = (isSelected: boolean): string => {
   return classNames(NAVIGATION_CLASSES.tab.base);
 };
 
-/**
- * Check if badge should show number
- */
 export const shouldShowNumber = (type: TabType, isSelected: boolean): boolean => {
   return (isSelected || type === "available" || type === "disabled") && type !== "complete";
 };
 
-/**
- * Map BadgeStatus to TabType
- */
 const mapStatusToTabType = (status: BadgeStatus): TabType => {
   const typeMap: Record<BadgeStatus, TabType> = {
     completed: "complete",
@@ -66,10 +48,6 @@ const mapStatusToTabType = (status: BadgeStatus): TabType => {
   return typeMap[status];
 };
 
-/**
- * Get badge classes for Step component based on status
- * Maps Step status to TabType and returns badge classes without selection state
- */
 export const getStepBadgeClasses = (status: BadgeStatus): string => {
   const type = mapStatusToTabType(status);
   return classNames(NAVIGATION_CLASSES.badge.base, {
@@ -108,10 +86,6 @@ export const getBadgeContent = (
   return null;
 };
 
-/**
- * Get badge content for Step component based on status
- * Maps Step status to TabType and uses shared badge content logic
- */
 export const getStepBadgeContent = (status: BadgeStatus, index: number): ReactNode => {
   const type = mapStatusToTabType(status);
   const showNumberForActive = status === "active";
@@ -120,9 +94,6 @@ export const getStepBadgeContent = (status: BadgeStatus, index: number): ReactNo
   return getBadgeContent(type, index, isSelected, showNumberForActive);
 };
 
-/**
- * Get label style props for Step component based on status
- */
 export const getStepLabelStyle = (status: BadgeStatus): { color: string; fontWeight?: string } => {
   switch (status) {
     case "completed":
