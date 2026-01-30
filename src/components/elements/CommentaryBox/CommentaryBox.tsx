@@ -46,7 +46,7 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       setComment("");
       setError("");
       setFiles([]);
-      ApiSlice.pruneIndex("auditStatuses", "");
+      ApiSlice.pruneCache("auditStatuses");
       props.refresh?.();
     } catch (error) {
       openNotification("error", "Error!", "Failed to upload files. Your comment was added but files may be missing.");
