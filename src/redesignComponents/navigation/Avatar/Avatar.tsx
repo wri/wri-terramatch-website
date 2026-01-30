@@ -1,4 +1,5 @@
 import { Avatar as WriAvatar } from "@worldresources/wri-design-systems";
+import classNames from "classnames";
 import { FC } from "react";
 
 import AvatarAdd from "./components/AvatarAdd";
@@ -17,6 +18,7 @@ export interface AvatarProps {
   disabled?: boolean;
   customBackgroundColor?: string;
   variant?: "default" | "add";
+  className?: string;
 }
 
 const Avatar: FC<AvatarProps> = props => {
@@ -31,25 +33,28 @@ const Avatar: FC<AvatarProps> = props => {
     notificationCount,
     disabled,
     customBackgroundColor,
-    variant = "default"
+    variant = "default",
+    className
   } = props;
 
   const finalSize = customSize ?? AVATAR_SIZE_MAP[size];
 
   if (variant === "add") {
     return (
-      <AvatarAdd
-        size={size}
-        finalSize={finalSize}
-        onClick={onClick}
-        ariaLabel={ariaLabel}
-        customBackgroundColor={customBackgroundColor}
-      />
+      <StyledAvatarWrapper className={`avatar-wrapper avatar-${size} avatar-add`}>
+        <AvatarAdd
+          size={size}
+          finalSize={finalSize}
+          onClick={onClick}
+          ariaLabel={ariaLabel}
+          customBackgroundColor={customBackgroundColor}
+        />
+      </StyledAvatarWrapper>
     );
   }
 
   return (
-    <StyledAvatarWrapper className={`avatar-wrapper avatar-${size}`}>
+    <StyledAvatarWrapper className={classNames(className, "avatar-wrapper avatar-${size}")}>
       <WriAvatar
         name={name}
         ariaLabel={ariaLabel}

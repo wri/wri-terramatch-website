@@ -35,7 +35,8 @@ const themeConfig = {
         600: { value: "#8ECA3F" },
         700: { value: "#477010" },
         800: { value: "#284206" },
-        900: { value: "#162602" }
+        900: { value: "#162602" },
+        neutral: { value: "#E9F1ED" }
       },
       success: {
         100: { value: "#EBF5F2" },
@@ -53,6 +54,7 @@ const themeConfig = {
       },
       error: {
         100: { value: "#FFEFED" },
+        150: { value: "#FFE3DF" },
         200: { value: "#EDA1A9" },
         300: { value: "#F6C5C1" },
         500: { value: "#C11101" },

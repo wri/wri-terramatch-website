@@ -5,12 +5,12 @@ import { Else, If, Then } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
+import { isDemographicType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import { EntityName } from "@/types/common";
 
-import { isDemographicType } from "../../DemographicsCollapseGrid/types";
 import List from "../../List/List";
 
 export interface FormSummaryRowProps extends FormSummaryProps {

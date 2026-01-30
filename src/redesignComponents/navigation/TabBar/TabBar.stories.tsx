@@ -1,8 +1,9 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Dashboard } from "@/redesignComponents/foundations/Icons";
+import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import TabBar from "./TabBar";
+import TabBar, { TabBarWriProps } from "./TabBar";
 
 const meta: Meta<typeof TabBar> = {
   title: "Redesign Components/Navigation/TabBar",
@@ -40,14 +41,25 @@ export default meta;
 type Story = StoryObj<typeof TabBar>;
 
 const defaultTabs = [
-  { label: "One", value: "one", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> },
-  { label: "Two", value: "two", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> },
-  { label: "Three", value: "three", icon: <Dashboard boxSize={4} className="text-theme-neutral-900" /> }
+  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
+  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
+  { label: "Three", value: "three", icon: <Dashboard boxSize={4} /> }
 ];
 
-/**
- * Default TabBar with panel variant
- */
+const defaultTabsTransparent = [
+  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
+  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
+  {
+    label: (
+      <div className="flex items-center gap-2">
+        Three <TextBadge variant="primary">20</TextBadge>{" "}
+      </div>
+    ),
+    value: "three",
+    icon: <Dashboard boxSize={4} />
+  }
+];
+
 export const Default: Story = {
   args: {
     tabs: defaultTabs,
@@ -55,9 +67,6 @@ export const Default: Story = {
   }
 };
 
-/**
- * TabBar with panel variant (default style)
- */
 export const PanelVariant: Story = {
   args: {
     tabs: defaultTabs,
@@ -66,9 +75,6 @@ export const PanelVariant: Story = {
   }
 };
 
-/**
- * TabBar with view variant
- */
 export const ViewVariant: Story = {
   args: {
     tabs: defaultTabs,
@@ -77,9 +83,14 @@ export const ViewVariant: Story = {
   }
 };
 
-/**
- * Comparison of all variants
- */
+export const TransparentVariant: Story = {
+  args: {
+    tabs: defaultTabsTransparent as TabBarWriProps["tabs"],
+    variant: "transparent",
+    defaultValue: "one"
+  }
+};
+
 export const VariantComparison: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "40px", padding: "20px" }}>
