@@ -21,13 +21,13 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { CountriesProps } from "@/components/generic/Layout/DashboardLayout";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
-import { useGetV2DashboardFrameworks } from "@/generated/apiComponents";
 import { DashboardProjectsLightDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 import { OptionValue } from "@/types/common";
 import { convertCodesToNames, convertNamesToCodes, LANDSCAPE_OPTIONS } from "@/utils/landscapeUtils";
 
 import { useDashboardData } from "../hooks/useDashboardData";
+import { useDashboardFrameworks } from "../hooks/useDashboardFrameworks";
 import BlurContainer from "./BlurContainer";
 import ResponsiveDropdownContainer from "./ResponsiveDropdownContainer";
 
@@ -109,15 +109,11 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
     }
   ];
 
-  const { data: frameworks } = useGetV2DashboardFrameworks({
-    queryParams: {}
-  });
+  const { data: frameworksData } = useDashboardFrameworks();
 
   useEffect(() => {
-    if (frameworks) {
-      setFrameworks(frameworks);
-    }
-  }, [frameworks, setFrameworks]);
+    setFrameworks(frameworksData ?? []);
+  }, [frameworksData, setFrameworks]);
 
   const resetValues = () => {
     setFilters({

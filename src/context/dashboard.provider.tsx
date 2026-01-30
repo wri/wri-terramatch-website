@@ -8,6 +8,10 @@ export interface CountriesProps {
   id: number;
   country_slug: string;
 }
+
+/** Shape used for framework list in dashboard (filters, programme label). Compatible with v2 and v3 user frameworks. */
+export type DashboardFramework = { framework_slug?: string; name?: string };
+
 type DashboardType = {
   filters: {
     programmes: string[];
@@ -29,8 +33,8 @@ type DashboardType = {
   >;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  frameworks: { framework_slug?: string; name?: string }[];
-  setFrameworks: React.Dispatch<React.SetStateAction<{ framework_slug?: string; name?: string }[]>>;
+  frameworks: DashboardFramework[];
+  setFrameworks: React.Dispatch<React.SetStateAction<DashboardFramework[]>>;
   dashboardCountries: CountriesProps[];
   setDashboardCountries: React.Dispatch<React.SetStateAction<CountriesProps[]>>;
   lastUpdatedAt?: string;
@@ -67,7 +71,7 @@ const DashboardContext = createContext<DashboardType>(defaultValues);
 export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [filters, setFilters] = React.useState<DashboardType["filters"]>(defaultValues.filters);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [frameworks, setFrameworks] = React.useState<{ framework_slug?: string; name?: string }[]>([]);
+  const [frameworks, setFrameworks] = React.useState<DashboardFramework[]>([]);
   const [dashboardCountries, setDashboardCountries] = React.useState<CountriesProps[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = React.useState<string>("");
   const contextValue: DashboardType = {

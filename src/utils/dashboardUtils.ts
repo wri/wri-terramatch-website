@@ -583,7 +583,10 @@ export const parseDataToObjetive = (projectData?: {
   };
 };
 
-export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
+export const getFrameworkName = (
+  frameworks: { framework_slug?: string; name?: string }[],
+  frameworkKey: string
+): string | undefined => {
   const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
   return framework ? framework.name : undefined;
 };
