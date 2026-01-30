@@ -38,7 +38,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         switch (type) {
           case "projectReports": {
-            ctaText = t("View Project Report");
+            ctaText = t("View Report(s)");
             subtitle = action.text;
 
             if (status?.includes("due")) {
@@ -49,7 +49,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "nurseryReports": {
-            ctaText = t("View Nursery Report");
+            ctaText = t("View Report(s)");
             subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
@@ -60,7 +60,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "siteReports": {
-            ctaText = t("View Site Report");
+            ctaText = t("View Report(s)");
             subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
 
             if (status?.includes("due")) {
