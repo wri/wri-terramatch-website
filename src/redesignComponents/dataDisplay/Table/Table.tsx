@@ -55,8 +55,8 @@ const Table: FC<TableProps> = ({
   columns,
   selectable = false,
   isScrollable = false,
-  scrollableWidth = 0,
-  scrollableHeight = 0
+  scrollableWidth = "100%",
+  scrollableHeight = "100%"
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
