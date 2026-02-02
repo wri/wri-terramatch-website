@@ -8,10 +8,11 @@ import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionB
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
 
-const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
+const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, className }) => {
   const t = useT();
   return (
     <Toolbar
+      className={className}
       contentLeft={
         <div className="flex flex-wrap items-center gap-2">
           {search != null && (

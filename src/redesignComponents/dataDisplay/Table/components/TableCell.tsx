@@ -47,7 +47,7 @@ const TableCell: React.FC<TableCellProps> = ({
           </Flex>
 
           {isSingleAvatar && visibleAvatars[0]?.name != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text fontSize="16px" fontWeight="bold" className="text-theme-neutral-800 ml-2">
               {visibleAvatars[0].name}
             </Text>
           )}

@@ -68,6 +68,7 @@ export interface ToolbarTableProps {
   search: SearchProps;
   filters: IMultiActionButtonProps[];
   button: IButtonProps;
+  className?: string;
 }
 
 export interface ViewToolbarProps {
