@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { startCase } from "lodash";
 import { FC, useCallback, useState } from "react";
 import { When } from "react-if";
 
@@ -20,25 +21,13 @@ export interface TrackingSectionProps {
   status?: Status;
 }
 
-export function camelCaseToTitleCase(str: string): string {
-  if (str == null) return str;
-  if (str.includes("Beneficiaries")) {
-    return "Beneficiaries";
-  }
-  return str
-    .replace(/([A-Z])/g, " $1")
-    .replace(/^\w/, c => c.toUpperCase())
-    .trim();
-}
-
 const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
-  const displayTrackingType = /[a-z][A-Z]/.test(trackingType)
-    ? camelCaseToTitleCase(trackingType)
-    : trackingType?.replace(/^\w/, c => c.toUpperCase());
+  const displayTrackingType =
+    trackingType?.includes("Beneficiaries") === true ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
