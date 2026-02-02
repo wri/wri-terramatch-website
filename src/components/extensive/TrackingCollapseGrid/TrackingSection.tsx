@@ -20,11 +20,25 @@ export interface TrackingSectionProps {
   status?: Status;
 }
 
+export function camelCaseToTitleCase(str: string): string {
+  if (str == null) return str;
+  if (str.includes("Beneficiaries")) {
+    return "Beneficiaries";
+  }
+  return str
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^\w/, c => c.toUpperCase())
+    .trim();
+}
+
 const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const displayTrackingType = /[a-z][A-Z]/.test(trackingType)
+    ? camelCaseToTitleCase(trackingType)
+    : trackingType?.replace(/^\w/, c => c.toUpperCase());
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
@@ -90,7 +104,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
         </div>
         <div className="col-span-1 border-b border-l border-b-neutral-300 border-l-white bg-neutral-200 px-4 py-2 text-center">
           <Text variant="text-12-semibold" className="text-darkCustom">
-            {t(`Number of Jobs`)}
+            {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
       </>
