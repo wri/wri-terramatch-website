@@ -89,14 +89,14 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   progress,
   goal,
   color,
-  iconWithColor
+  iconWithColor,
+  type
 }) => {
   const t = useT();
-  const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
-
+  const progressValue = type === "jobsCreated" ? progress : goal > 0 ? (progress / goal) * 100 : 0;
   return (
     <Flex gap={3} alignItems="center">
-      <DonutChart progress={progressValue} color={color}>
+      <DonutChart progress={progressValue} color={color} type={type}>
         {iconWithColor}
       </DonutChart>
       <Flex direction="column" gap={2}>
@@ -106,7 +106,13 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
           </Text>
           <InformationRequired color="neutral.800" boxSize="14px" />
         </Flex>
-        {goal > 0 ? (
+        {type === "jobsCreated" && progressValue > 0 ? (
+          <Flex gap={1} alignItems="center">
+            <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
+              {progress.toLocaleString()}
+            </Text>
+          </Flex>
+        ) : goal > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
               {progress.toLocaleString()}
@@ -129,7 +135,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
 };
 
 const MetricCard: FC<MetricCardProps> = props => {
-  const { title, progress, goal, tooltipContent, variant = "medium", icon, color = "primary.600" } = props;
+  const { title, progress, goal, tooltipContent, variant = "medium", icon, color = "primary.600", type } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
   const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
@@ -157,6 +163,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           tooltipContent={tooltipContent}
           color={color}
           iconWithColor={iconWithColor24}
+          type={type}
         />
       );
       break;

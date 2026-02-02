@@ -1,7 +1,10 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useModalContext } from "@/context/modal.provider";
+import InviteMonitoringPartnerModal from "@/pages/project/[uuid]/components/InviteMonitoringPartnerModal";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -23,6 +26,8 @@ export interface IProfileListCardProps {
 
 interface ProfileListCardComponentProps {
   items: IProfileListCardProps[];
+  projectUUID: string;
+  refetch: () => void;
 }
 
 const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick, onInviteClick }) => {
@@ -85,7 +90,14 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
   );
 };
 
-const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
+const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, projectUUID, refetch }) => {
+  const { openModal } = useModalContext();
+  const handleInviteClick = useCallback(() => {
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={projectUUID} onSuccess={refetch} />
+    );
+  }, [openModal, projectUUID, refetch]);
   return (
     <Box
       paddingX={5}
@@ -98,7 +110,7 @@ const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
       minHeight={0}
     >
       {items.map((item, itemIndex) => (
-        <ProfileSection key={itemIndex} {...item} />
+        <ProfileSection key={itemIndex} {...item} onInviteClick={handleInviteClick} />
       ))}
     </Box>
   );

@@ -118,7 +118,9 @@ const OverviewItem = (props: OverviewItemProps) => {
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
 
-  const { data: partners } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
+  const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
+    data: GetV2ProjectsUUIDPartnersResponse;
+  }>({
     pathParams: { uuid: project?.uuid }
   });
 
@@ -296,6 +298,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant="donutChart"
               icon={<Tree />}
               color="secondary.600"
+              type="treesRestored"
             />
             <MetricCard
               title="Seedlings Grown"
@@ -304,6 +307,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant="donutChart"
               icon={<Seeds />}
               color="secondary.600"
+              type="saplingsRestored"
             />
             <MetricCard
               title="Hectares Restored"
@@ -312,6 +316,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant="donutChart"
               icon={<AreaHectares />}
               color="secondary.700"
+              type="hectaresRestored"
             />
             <MetricCard
               title="Jobs Created"
@@ -319,6 +324,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               goal={chartDataJobs.cardValues.totalValue}
               variant="donutChart"
               icon={<Jobs />}
+              type="jobsCreated"
             />
           </Flex>
         </OverviewItem>
@@ -335,6 +341,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             }}
           >
             <ProfileListCard
+              projectUUID={project.uuid}
               items={[
                 {
                   title: "Project Managers",
@@ -344,8 +351,10 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   }
                 }
               ]}
+              refetch={refetchPartners}
             />
             <ProfileListCard
+              projectUUID={project.uuid}
               items={[
                 {
                   title: "Data Quality Analysts",
@@ -355,6 +364,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   }
                 }
               ]}
+              refetch={refetchPartners}
             />
           </OverviewItem>
           <OverviewItem
