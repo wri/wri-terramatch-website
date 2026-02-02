@@ -44,7 +44,7 @@ const useGetDemographicTypeConfig = (type: CollectionType): DemographicalTypeCon
         titlePrefix: t("Project Workdays"),
         otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
         otherTitle: t("Other Activities Description"),
-        otherDescriptionProp: "paid_other_activity_description"
+        otherDescriptionProp: "paidOtherActivityDescription"
       },
       restorationPartners: {
         demographicType: "restorationPartners",
@@ -52,7 +52,7 @@ const useGetDemographicTypeConfig = (type: CollectionType): DemographicalTypeCon
         titlePrefix: t("Project Restoration Partners"),
         otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
         otherTitle: t("Other Restoration Partners Description"),
-        otherDescriptionProp: "other_restoration_partners_description"
+        otherDescriptionProp: "otherRestorationPartnersDescription"
       }
     }),
     [t]
