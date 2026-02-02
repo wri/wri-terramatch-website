@@ -21,6 +21,12 @@ const meta: Meta<typeof Table> = {
     selectable: {
       control: "boolean",
       description: "Enable row selection with checkboxes"
+    },
+    renderRow: {
+      description: "Custom render function for table rows. Receives rowData and returns React.ReactNode"
+    },
+    renderDataCell: {
+      description: "Custom render function for table cells. Receives rowData and columnKey, returns React.ReactNode"
     }
   }
 };

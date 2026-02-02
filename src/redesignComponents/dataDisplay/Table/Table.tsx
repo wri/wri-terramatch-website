@@ -18,6 +18,8 @@ interface TableProps {
   isScrollable?: boolean;
   scrollableWidth?: string;
   scrollableHeight?: string;
+  renderRow?: (rowData: RowData) => React.ReactNode;
+  renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
 }
 
 interface SelectableRowProps {
@@ -56,7 +58,9 @@ const Table: FC<TableProps> = ({
   selectable = false,
   isScrollable = false,
   scrollableWidth = "100%",
-  scrollableHeight = "100%"
+  scrollableHeight = "100%",
+  renderRow: customRenderRow,
+  renderDataCell: customRenderDataCell
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
@@ -65,7 +69,7 @@ const Table: FC<TableProps> = ({
 
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
-  const renderDataCell = useCallback((rowData: RowData, columnKey: string) => {
+  const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
     if (columnKey === "actions" && rowData.actionCell != null) {
       return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
     }
@@ -95,7 +99,9 @@ const Table: FC<TableProps> = ({
     return (rowData as any)[columnKey];
   }, []);
 
-  const renderRow = useCallback(
+  const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
+
+  const defaultRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <TableRow>
@@ -115,7 +121,7 @@ const Table: FC<TableProps> = ({
     [onAllItemsSelected, dataByPage]
   );
 
-  const selectableRenderRow = useCallback(
+  const defaultSelectableRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <SelectableRow
@@ -130,12 +136,27 @@ const Table: FC<TableProps> = ({
     [columns, renderDataCell, selectedRows, handleRowSelected]
   );
 
+  const finalRenderRow = useCallback(
+    (rowData: RowData) => {
+      if (customRenderRow != null) {
+        return customRenderRow(rowData);
+      }
+
+      if (selectable) {
+        return defaultSelectableRenderRow(rowData);
+      }
+
+      return defaultRenderRow(rowData);
+    },
+    [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
+  );
+
   return (
     <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={selectable ? selectableRenderRow : renderRow}
+        renderRow={finalRenderRow}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}

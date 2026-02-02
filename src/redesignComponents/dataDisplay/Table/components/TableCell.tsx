@@ -30,6 +30,7 @@ const TableCell: React.FC<TableCellProps> = ({
 }) => {
   const visibleAvatars = avatars != null ? avatars.slice(0, 2) : [];
   const extraAvatarsCount = avatars != null && avatars.length > 2 ? avatars.length - 2 : 0;
+  const isSingleAvatar = avatars != null && avatars.length === 1;
 
   return (
     <Box className={classNames("flex items-center gap-2")}>
@@ -44,6 +45,12 @@ const TableCell: React.FC<TableCellProps> = ({
               </div>
             ))}
           </Flex>
+
+          {isSingleAvatar && visibleAvatars[0]?.name != null && (
+            <Text fontSize="12px" className="text-theme-neutral-700">
+              {visibleAvatars[0].name}
+            </Text>
+          )}
 
           {extraAvatarsCount > 0 && (
             <Box className="text-theme-neutral-800 ml-2 text-xs font-semibold">+{extraAvatarsCount}</Box>
