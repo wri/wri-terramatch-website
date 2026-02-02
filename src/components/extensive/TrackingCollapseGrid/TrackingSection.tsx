@@ -26,8 +26,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
-  const displayTrackingType =
-    trackingType?.includes("Beneficiaries") === true ? "Beneficiaries" : startCase(trackingType);
+  const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
