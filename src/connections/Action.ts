@@ -1,40 +1,51 @@
 import { createSelector } from "reselect";
 
-import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { useLogin } from "@/connections/Login";
+import { connectionLoader } from "@/connections/util/connectionShortcuts";
 import { actionsIndex } from "@/generated/v3/userService/userServiceComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
+import { useConnection } from "@/hooks/useConnection";
+import { useValueChanged } from "@/hooks/useValueChanged";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 
-type ActionsConnection = {
-  data?: ActionDto[];
+type ActionsConnectionState = {
+  data: ActionDto[];
   isLoading: boolean;
   loadFailure: PendingError | undefined;
 };
+
+export type UseActionsProps = { enabled?: boolean };
+
+type ActionsConnection = ActionsConnectionState;
 
 const actionsSelector = (store: ApiDataStore) => store.actions;
 
 const actionsConnectionSelector = createSelector(
   [actionsSelector, actionsIndex.isFetchingSelector({} as never), actionsIndex.fetchFailedSelector({} as never)],
   (resources, isLoading, loadFailure): ActionsConnection => ({
-    data:
-      resources != null && Object.keys(resources).length > 0
-        ? Object.values(resources).map(r => r.attributes as ActionDto)
-        : undefined,
+    data: resources ? Object.values(resources).map(r => r.attributes as ActionDto) : [],
     isLoading: isLoading ?? false,
     loadFailure
   })
 );
 
-const actionsConnection: Connection<ActionsConnection> = {
-  selector: actionsConnectionSelector,
-  isLoaded: ({ data, loadFailure }) => data != null || loadFailure != null,
-  load: selected => {
-    if (!selected.isLoading && selected.loadFailure == null && selected.data == null) {
-      actionsIndex.fetch({});
-    }
-  }
+const actionsConnection: Connection<ActionsConnection, UseActionsProps> = {
+  selector: (state, _props) => actionsConnectionSelector(state)
 };
 
-export const useActions = connectionHook(actionsConnection);
+export type UseActionsReturn = readonly [boolean, ActionsConnectionState];
+
+export const useActions = (props: UseActionsProps = {}): UseActionsReturn => {
+  const connection = useConnection(actionsConnection, props);
+  const [, { data: login }] = useLogin({});
+
+  useValueChanged(login, () => {
+    if (login != null && props?.enabled !== false) actionsIndex.fetch({});
+  });
+
+  if (login == null) return [false, { data: [], isLoading: false, loadFailure: undefined }];
+  return connection as UseActionsReturn;
+};
+
 export const loadActions = connectionLoader(actionsConnection);

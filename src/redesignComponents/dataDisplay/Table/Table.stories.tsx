@@ -32,16 +32,27 @@ type Story = StoryObj<typeof Table>;
 const generateSampleData = (count: number) => {
   return Array.from({ length: count }, (_, index) => ({
     id: index + 1,
-    name: `User ${index + 1}`,
-    email: `user${index + 1}@example.com`,
-    age: Math.floor(Math.random() * 50) + 18
+    name: `Label ${index + 1}`,
+    email: `Label`,
+    age: Math.floor(Math.random() * 50) + 18,
+    department: "Label",
+    location: "Label",
+    status: "Label",
+    startDate: "Label",
+    budget: "Label",
+    teamSize: "Label",
+    priority: "Label",
+    category: "Label",
+    region: "Label",
+    manager: "Label",
+    completion: "Label"
   }));
 };
 
 const defaultColumns = [
-  { key: "name", label: "Name", sortable: true },
-  { key: "email", label: "Email", sortable: true },
-  { key: "age", label: "Age", sortable: true }
+  { key: "name", label: "Label", sortable: true },
+  { key: "email", label: "Label", sortable: true },
+  { key: "age", label: "Label", sortable: true }
 ];
 
 const defaultData = generateSampleData(25);
@@ -93,7 +104,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Organisation className="h-6 w-6 text-theme-neutral-800" />
+          icon: <Organisation className="text-theme-neutral-800 h-6 w-6" />
         }
       },
       ...generateSampleData(3),
@@ -175,7 +186,7 @@ export const WithCustomCells: Story = {
     data: [
       {
         id: "cell-default-label",
-        name: "",
+        name: "Label",
         email: "label@example.com",
         age: 30
       },
@@ -192,7 +203,7 @@ export const WithCustomCells: Story = {
       },
       {
         id: "cell-only-avatars",
-        name: "",
+        name: "Label",
         email: "label@example.com",
         age: 30,
         avatars: [{ name: "User Three", ariaLabel: "User Three" }]
@@ -208,7 +219,7 @@ export const WithCustomCells: Story = {
       },
       {
         id: "cell-only-multi-action-button",
-        name: "",
+        name: "Label",
         email: "label@example.com",
         age: 30,
         multiActionButton: {
@@ -232,6 +243,100 @@ export const WithCustomCells: Story = {
       }
     ],
     columns: defaultColumns,
+    selectable: false
+  }
+};
+
+export const WithActionCells: Story = {
+  args: {
+    data: [
+      {
+        id: 1,
+        name: "Label",
+        email: "Label",
+        age: 25,
+        actionCell: {
+          button: {
+            children: "View Details",
+            onClick: () => {
+              console.log("View Details clicked for Project Alpha");
+            }
+          },
+          onButtonIconClick: () => {
+            console.log("More options clicked for Project Alpha");
+          }
+        }
+      },
+      {
+        id: 2,
+        name: "Label",
+        email: "Label",
+        age: 30,
+        actionCell: {
+          button: {
+            children: "Edit",
+            variant: "secondary",
+            onClick: () => {
+              console.log("Edit clicked for Project Beta");
+            }
+          },
+          onButtonIconClick: () => {
+            console.log("More options clicked for Project Beta");
+          }
+        }
+      },
+      {
+        id: 3,
+        name: "Label",
+        email: "Label",
+        age: 35,
+        actionCell: {
+          button: {
+            children: "Delete",
+            variant: "outline",
+            onClick: () => {
+              console.log("Delete clicked for Project Gamma");
+            }
+          },
+          onButtonIconClick: () => {
+            console.log("More options clicked for Project Gamma");
+          }
+        }
+      }
+    ],
+    columns: [
+      { key: "name", label: "Name", sortable: true },
+      { key: "email", label: "Email", sortable: true },
+      { key: "age", label: "Age", sortable: true },
+      { key: "actions", label: "", sortable: false }
+    ],
+    selectable: false
+  }
+};
+
+const manyData = generateSampleData(100);
+export const WithManyColumns: Story = {
+  args: {
+    data: manyData,
+    isScrollable: true,
+    scrollableWidth: "800px",
+    scrollableHeight: "500px",
+    columns: [
+      { key: "name", label: "Label", sortable: true },
+      { key: "email", label: "Label", sortable: true },
+      { key: "age", label: "Label", sortable: true },
+      { key: "department", label: "Label", sortable: true },
+      { key: "location", label: "Label", sortable: true },
+      { key: "status", label: "Label", sortable: true },
+      { key: "startDate", label: "Label", sortable: true },
+      { key: "budget", label: "Label", sortable: true },
+      { key: "teamSize", label: "Label", sortable: true },
+      { key: "priority", label: "Label", sortable: true },
+      { key: "category", label: "Label", sortable: true },
+      { key: "region", label: "Label", sortable: true },
+      { key: "manager", label: "Label", sortable: true },
+      { key: "completion", label: "Label", sortable: true }
+    ],
     selectable: false
   }
 };

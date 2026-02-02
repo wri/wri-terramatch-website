@@ -270,6 +270,7 @@ function WizardForm(props: WizardFormProps) {
           setSelectedStepIndex={setSelectedStepIndex}
           onSubmitStep={onSubmitStep}
           submitButtonDisable={props.submitButtonDisable}
+          models={props.models}
         />
       )
     }),
@@ -285,7 +286,8 @@ function WizardForm(props: WizardFormProps) {
       props.tabOptions?.markDone,
       steps.length,
       selectedStepIndex,
-      t
+      t,
+      props.models
     ]
   );
 

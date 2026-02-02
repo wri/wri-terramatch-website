@@ -1,26 +1,38 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { RowData } from "./tableUtils";
 
-export const useTableSelection = (initialSelectable: boolean = false) => {
-  const [selectedRows, setSelectedRows] = useState<RowData[]>(initialSelectable ? [] : []);
+export const useTableSelection = (initialSelectable: boolean = false, sortedData?: RowData[]) => {
+  const [selectedRowIds, setSelectedRowIds] = useState<Set<string | number>>(new Set());
+  const [selectedRows, setSelectedRows] = useState<RowData[]>([]);
+
+  useEffect(() => {
+    if (sortedData != null && sortedData.length > 0) {
+      const syncedRows = sortedData.filter(row => selectedRowIds.has(row.id));
+      console.log("useTableSelection - syncedRows:", syncedRows.length);
+      setSelectedRows(syncedRows);
+    } else {
+      setSelectedRows([]);
+    }
+  }, [sortedData, selectedRowIds]);
 
   const handleRowSelected = useCallback((rowData: RowData, checked: boolean) => {
-    setSelectedRows(current => {
-      const currentRows = current ?? [];
+    setSelectedRowIds(current => {
+      const newSet = new Set(current);
       if (checked) {
-        return [...currentRows, rowData];
+        newSet.add(rowData.id);
+      } else {
+        newSet.delete(rowData.id);
       }
-
-      return currentRows.filter(item => item.id !== rowData.id);
+      return newSet;
     });
   }, []);
 
   const onAllItemsSelected = useCallback((checked: boolean, dataByPage: RowData[]) => {
     if (checked) {
-      setSelectedRows(dataByPage);
+      setSelectedRowIds(new Set(dataByPage.map(row => row.id)));
     } else {
-      setSelectedRows([]);
+      setSelectedRowIds(new Set());
     }
   }, []);
 
@@ -28,6 +40,7 @@ export const useTableSelection = (initialSelectable: boolean = false) => {
     selectedRows,
     setSelectedRows,
     handleRowSelected,
-    onAllItemsSelected
+    onAllItemsSelected,
+    initialSelectable
   };
 };

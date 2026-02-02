@@ -43,6 +43,11 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
             className="group cursor-pointer gap-1"
             role="button"
             onClick={handleAddTeamClick}
+            css={{
+              "&:hover .avatar-add": {
+                opacity: "0.8"
+              }
+            }}
           >
             <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
             <Text
@@ -54,7 +59,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
               backgroundColor="transparent"
               color="secondary.900"
               width="auto"
-              className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+              className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
             >
               {t("Add Team Members")}
               <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />

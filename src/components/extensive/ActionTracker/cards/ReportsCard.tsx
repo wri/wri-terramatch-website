@@ -2,11 +2,9 @@ import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
-import ApiSlice from "@/store/apiSlice";
 import { sortByDate } from "@/utils/sort";
 
 import { IconNames } from "../../Icon/Icon";
@@ -20,7 +18,6 @@ export type ReportsCardProps = {
 const ReportsCard = ({ actions }: ReportsCardProps) => {
   const t = useT();
 
-  const { mutate: clearAction } = usePutV2MyActionsUUIDComplete();
   const { format } = useDate();
 
   const reportActions = useMemo(() => {
@@ -41,7 +38,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         switch (type) {
           case "projectReports": {
-            ctaText = t("View Project Report");
+            ctaText = t("View Report(s)");
             subtitle = action.text;
 
             if (status?.includes("due")) {
@@ -52,8 +49,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "nurseryReports": {
-            ctaText = t("View Nursery Report");
-            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
+            ctaText = t("View Report(s)");
+            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.nursery?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
@@ -63,8 +60,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "siteReports": {
-            ctaText = t("View Site Report");
-            subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
+            ctaText = t("View Report(s)");
+            subtitle = t("<strong>Site:</strong> {name}", { name: target?.site?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${
@@ -83,14 +80,10 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
           updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
             date: format(target.updatedAt)
-          }),
-          onClick: () => {
-            action.uuid && clearAction({ pathParams: { uuid: action.uuid } });
-            ApiSlice.pruneCache("actions", [action.uuid]);
-          }
+          })
         } as ActionTrackerCardRowProps;
       });
-  }, [actions, format, clearAction, t]);
+  }, [actions, format, t]);
 
   return (
     <ActionTrackerCard
