@@ -46,12 +46,12 @@ const TableCell: React.FC<TableCellProps> = ({
           </Flex>
 
           {extraAvatarsCount > 0 && (
-            <Box className="text-theme-neutral-800 ml-2 text-xs font-semibold">+{extraAvatarsCount}</Box>
+            <Box className="ml-2 text-xs font-semibold text-theme-neutral-800">+{extraAvatarsCount}</Box>
           )}
           {progressTag != null && <ProgressTag {...progressTag} />}
           {trees != null && (
             <Flex>
-              <div className="border-theme-neutral-100 bg-theme-secondary-300 flex h-6 w-6 items-center justify-center rounded-full border">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-theme-neutral-100 bg-theme-secondary-300">
                 <Tree className="text-theme-secondary-800" />
               </div>
               <Text fontSize="16px" className="text-theme-neutral-700">
@@ -61,7 +61,7 @@ const TableCell: React.FC<TableCellProps> = ({
           )}
           {jobs != null && (
             <Flex>
-              <div className="border-theme-neutral-100 bg-theme-primary-300 flex h-6 w-6 items-center justify-center rounded-full border">
+              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-theme-neutral-100 bg-theme-primary-300">
                 <Jobs className="text-theme-primary-800" />
               </div>
               <Text fontSize="16px" className="text-theme-neutral-700">
