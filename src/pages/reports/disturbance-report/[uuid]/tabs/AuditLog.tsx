@@ -3,7 +3,6 @@ import { FC } from "react";
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
@@ -49,7 +48,7 @@ const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDistur
                     auditLogData={auditLogData}
                     refresh={refetch}
                     buttonToggle={AuditLogButtonStates.DISTURBANCE_REPORT}
-                    entityType={AuditLogEntityEnum.Disturbance_Report}
+                    entityType="disturbanceReports"
                     viewPD={true}
                   />
                 </div>
@@ -58,7 +57,7 @@ const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDistur
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
                     mutate={mutateEntity}
-                    entityType={AuditLogEntityEnum.Disturbance_Report}
+                    entityType="disturbanceReports"
                     refresh={() => {
                       loadEntityList();
                       refetch();

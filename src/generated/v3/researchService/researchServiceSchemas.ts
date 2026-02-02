@@ -539,6 +539,14 @@ export type SitePolygonFullDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
+export type SitePolygonStatusUpdate = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+};
+
 export type SitePolygonStatusBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
@@ -546,18 +554,49 @@ export type SitePolygonStatusBulkUpdateBodyDto = {
    * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: SitePolygonStatusUpdate[];
   /**
    * Comment for the status update
    */
   comment?: string;
 };
 
+export type SitePolygonUpdateAttributes = {
+  /**
+   * All indicators to update for this polygon
+   */
+  indicators: (
+    | IndicatorTreeCoverLossDto
+    | IndicatorHectaresDto
+    | IndicatorTreeCountDto
+    | IndicatorTreeCoverDto
+    | IndicatorFieldMonitoringDto
+    | IndicatorMsuCarbonDto
+  )[];
+};
+
+export type SitePolygonUpdate = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: SitePolygonUpdateAttributes;
+};
+
 export type SitePolygonBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
    */
-  data: any[][];
+  data: SitePolygonUpdate[];
+};
+
+export type SitePolygonDeleteData = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
 };
 
 export type SitePolygonBulkDeleteBodyDto = {
@@ -567,7 +606,7 @@ export type SitePolygonBulkDeleteBodyDto = {
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: SitePolygonDeleteData[];
 };
 
 export type VersionUpdateAttributes = {

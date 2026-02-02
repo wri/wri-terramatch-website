@@ -50,7 +50,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           }
           case "nurseryReports": {
             ctaText = t("View Report(s)");
-            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
+            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.nursery?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
@@ -61,7 +61,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           }
           case "siteReports": {
             ctaText = t("View Report(s)");
-            subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
+            subtitle = t("<strong>Site:</strong> {name}", { name: target?.site?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${

@@ -2,17 +2,17 @@ import { useT } from "@transifex/react";
 import { useState } from "react";
 import { When } from "react-if";
 
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
-import { getRequestPathParam } from "@/admin/components/ResourceTabs/AuditLogTab/utils/util";
 import Button from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { AuditStatusEntityType, useCreateAuditStatus } from "@/connections/AuditStatus";
 import { prepareFileForUpload } from "@/connections/Media";
 import { useNotificationContext } from "@/context/notification.provider";
-import { PostV2AuditStatusENTITYUUIDRequestBody, usePostV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
-import { AuditStatusResponse } from "@/generated/apiSchemas";
 import { uploadFile } from "@/generated/v3/entityService/entityServiceComponents";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 
 export interface CommentaryBoxProps {
   name: string;
@@ -21,36 +21,48 @@ export interface CommentaryBoxProps {
   mutate?: any;
   refresh?: () => void;
   record?: any;
-  entity?: AuditLogEntity;
+  entity?: AuditStatusEntityType;
 }
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
   const { name, lastName, buttonSendOnBox } = props;
   const t = useT();
 
-  const onSuccess = async (res: AuditStatusResponse) => {
-    const {
-      data: { uuid }
-    } = res as { data: { uuid: string } };
-    await Promise.all(
-      files.map(async file =>
-        uploadFile.fetchParallel({
-          pathParams: { entity: "auditStatuses", collection: "attachments", uuid },
-          body: { data: { type: "media", attributes: await prepareFileForUpload(file) } }
-        })
-      )
-    );
-    openNotification("success", "Success!", "Your comment was just added!");
-    setComment("");
-    setError("");
-    setFiles([]);
-    props.refresh?.();
-    setLoading(false);
+  const onSuccess = async (createdAuditStatus: AuditStatusDto) => {
+    try {
+      const uuid = createdAuditStatus.uuid;
+      if (files.length > 0) {
+        await Promise.all(
+          files.map(async file =>
+            uploadFile.fetchParallel({
+              pathParams: { entity: "auditStatuses", collection: "attachments", uuid },
+              body: { data: { type: "media", attributes: await prepareFileForUpload(file) } }
+            })
+          )
+        );
+      }
+      openNotification("success", "Success!", "Your comment was just added!");
+      setComment("");
+      setError("");
+      setFiles([]);
+      ApiSlice.pruneCache("auditStatuses");
+      props.refresh?.();
+    } catch (error) {
+      openNotification("error", "Error!", "Failed to upload files. Your comment was added but files may be missing.");
+      Log.error("Error uploading files after comment creation", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const { mutate: sendCommentary } = usePostV2AuditStatusENTITYUUID({
-    onSuccess
-  });
+  const { create: sendCommentary, isCreating } = useCreateAuditStatus(
+    {
+      entity: props.entity ?? "projects",
+      uuid: props.record?.uuid ?? ""
+    },
+    onSuccess,
+    "Failed to add comment. Please try again."
+  );
 
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState<string>("");
@@ -91,20 +103,16 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
     }
   };
   const submitComment = () => {
-    const body: PostV2AuditStatusENTITYUUIDRequestBody = {
-      status: props.record?.status,
-      comment: comment,
-      type: "comment"
-    };
+    if (props.entity == null || props.record?.uuid == null) {
+      setError("Missing required information. Cannot submit comment.");
+      return;
+    }
 
     setLoading(true);
-    sendCommentary?.({
-      pathParams: {
-        entity: getRequestPathParam(props.entity!),
-        uuid: props.record?.uuid as string
-      },
-      //@ts-ignore swagger issue
-      body
+    sendCommentary({
+      type: "comment",
+      comment: comment,
+      status: props.record?.status ?? null
     });
   };
 
@@ -175,14 +183,14 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       <When condition={!buttonSendOnBox}>
         <Button
           className="self-end border-[2.5px] border-primary"
-          disabled={loading}
+          disabled={loading || isCreating}
           iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}
           onClick={submitComment}
         >
           <Text variant="text-12-bold" className="text-white">
             {t("SEND")}
           </Text>
-          {loading && <Icon name={IconNames.ELLIPSE_POLYGON} className={"h-6 w-6 animate-spin"} />}
+          {(loading || isCreating) && <Icon name={IconNames.ELLIPSE_POLYGON} className={"h-6 w-6 animate-spin"} />}
         </Button>
       </When>
     </div>
