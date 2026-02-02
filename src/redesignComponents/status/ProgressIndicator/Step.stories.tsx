@@ -128,7 +128,12 @@ export const AllStatesAndInteractions: Story = {
               </Box>
               {componentStates.map(state => (
                 <InteractionCell key={`${state.status}-${interaction.name}`}>
-                  <Step index={1} status={state.status} label="Label" />
+                  <Step
+                    index={1}
+                    status={state.status}
+                    label="Label"
+                    isFocused={interaction.name === "Focused" && state.status != "disabled"}
+                  />
                 </InteractionCell>
               ))}
             </SimpleGrid>
