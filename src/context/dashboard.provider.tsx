@@ -29,8 +29,6 @@ type DashboardType = {
   >;
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
-  frameworks: { framework_slug?: string; name?: string }[];
-  setFrameworks: React.Dispatch<React.SetStateAction<{ framework_slug?: string; name?: string }[]>>;
   dashboardCountries: CountriesProps[];
   setDashboardCountries: React.Dispatch<React.SetStateAction<CountriesProps[]>>;
   lastUpdatedAt?: string;
@@ -55,8 +53,6 @@ const defaultValues: DashboardType = {
   setFilters: () => {},
   searchTerm: "",
   setSearchTerm: () => {},
-  frameworks: [],
-  setFrameworks: () => {},
   dashboardCountries: [],
   setDashboardCountries: () => {},
   lastUpdatedAt: "",
@@ -67,7 +63,6 @@ const DashboardContext = createContext<DashboardType>(defaultValues);
 export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [filters, setFilters] = React.useState<DashboardType["filters"]>(defaultValues.filters);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [frameworks, setFrameworks] = React.useState<{ framework_slug?: string; name?: string }[]>([]);
   const [dashboardCountries, setDashboardCountries] = React.useState<CountriesProps[]>([]);
   const [lastUpdatedAt, setLastUpdatedAt] = React.useState<string>("");
   const contextValue: DashboardType = {
@@ -75,8 +70,6 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
     setFilters,
     searchTerm,
     setSearchTerm,
-    frameworks,
-    setFrameworks,
     dashboardCountries,
     setDashboardCountries,
     lastUpdatedAt,

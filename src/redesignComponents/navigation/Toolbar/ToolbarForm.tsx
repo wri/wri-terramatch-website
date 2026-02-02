@@ -17,9 +17,9 @@ const ToolbarForm: FC<ToolbarFormProps> = ({ ButtonLeft, ButtonPrimary, ButtonSe
       contentRight={
         <div className="flex flex-row-reverse items-center gap-4">
           <Button {...ButtonPrimary} variant="primary" />
-          <div className="h-4 w-[1px] bg-theme-neutral-300" />
+          <div className="bg-theme-neutral-300 h-4 w-[1px]" />
           <Button {...ButtonSecondary} variant="secondary" />
-          <div className="h-4 w-[1px] bg-theme-neutral-300" />
+          <div className="bg-theme-neutral-300 h-4 w-[1px]" />
           <Button {...ButtonTertiary} variant="borderless" />
         </div>
       }
