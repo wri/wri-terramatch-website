@@ -72,7 +72,7 @@ const Table: FC<TableProps> = ({
 
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
-      setCurrentPage(1);
+      setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages, setCurrentPage]);
 

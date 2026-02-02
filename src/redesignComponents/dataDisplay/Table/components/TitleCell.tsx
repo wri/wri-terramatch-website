@@ -30,7 +30,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
           <Box>
             <Text
               as={link ? "a" : "p"}
-              {...(link && { href: link, target: "_blank" })}
+              {...(link == null ? {} : { href: link, target: "_blank" })}
               fontSize="16px"
               fontWeight="bold"
               className="text-theme-neutral-800 decoration-theme-primary-700 underline decoration-dotted underline-offset-4"
