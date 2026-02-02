@@ -43,6 +43,11 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
             className="group cursor-pointer gap-1"
             role="button"
             onClick={handleAddTeamClick}
+            css={{
+              "&:hover .avatar-add": {
+                opacity: "0.8"
+              }
+            }}
           >
             <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
             <Text

@@ -12,24 +12,29 @@ type ActionsConnection = {
   loadFailure: PendingError | undefined;
 };
 
+export type UseActionsProps = { enabled?: boolean };
+
 const actionsSelector = (store: ApiDataStore) => store.actions;
 
 const actionsConnectionSelector = createSelector(
   [actionsSelector, actionsIndex.isFetchingSelector({} as never), actionsIndex.fetchFailedSelector({} as never)],
   (resources, isLoading, loadFailure): ActionsConnection => ({
     data:
-      resources != null && Object.keys(resources).length > 0
+      resources == null
+        ? undefined
+        : Object.keys(resources).length > 0
         ? Object.values(resources).map(r => r.attributes as ActionDto)
-        : undefined,
+        : [],
     isLoading: isLoading ?? false,
     loadFailure
   })
 );
 
-const actionsConnection: Connection<ActionsConnection> = {
-  selector: actionsConnectionSelector,
-  isLoaded: ({ data, loadFailure }) => data != null || loadFailure != null,
-  load: selected => {
+const actionsConnection: Connection<ActionsConnection, UseActionsProps> = {
+  selector: (state, _props) => actionsConnectionSelector(state),
+  isLoaded: (selected, props) => props?.enabled === false || selected.data != null || selected.loadFailure != null,
+  load: (selected, props) => {
+    if (props?.enabled === false) return;
     if (!selected.isLoading && selected.loadFailure == null && selected.data == null) {
       actionsIndex.fetch({});
     }

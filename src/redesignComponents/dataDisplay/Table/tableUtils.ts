@@ -1,8 +1,14 @@
+import type { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import type { IMultiActionButtonProps } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import type { ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import type { TitleCellProps } from "./components/TitleCell";
+
+export type ActionCellProps = {
+  button: IButtonProps;
+  onButtonIconClick: () => void;
+};
 
 export type RowData = {
   id: string | number;
@@ -17,6 +23,7 @@ export type RowData = {
   trees?: string;
   jobs?: string;
   multiActionButton?: IMultiActionButtonProps;
+  actionCell?: ActionCellProps;
 };
 
 export const DEFAULT_TOTAL_ITEMS = 100;

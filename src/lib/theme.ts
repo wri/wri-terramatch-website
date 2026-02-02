@@ -63,8 +63,8 @@ const themeConfig = {
       accessible: {
         "text-on-primary-mids": { value: "#032230" },
         "text-on-secondary-mids": { value: "#F7FBFD" },
-        "controls-on-neutral-lights": { value: "#477010" },
-        "controls-on-neutral-darks": { value: "#284206" }
+        "controls-on-neutral-lights": { value: "#11688D" },
+        "controls-on-neutral-darks": { value: "#CCECFA" }
       }
     },
     shadows: {
