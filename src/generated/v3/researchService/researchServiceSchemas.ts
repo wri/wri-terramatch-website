@@ -546,7 +546,7 @@ export type SitePolygonStatusBulkUpdateBodyDto = {
    * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: void[][];
+  data: any[][];
   /**
    * Comment for the status update
    */
@@ -557,7 +557,7 @@ export type SitePolygonBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
    */
-  data: void[][];
+  data: any[][];
 };
 
 export type SitePolygonBulkDeleteBodyDto = {
@@ -567,7 +567,7 @@ export type SitePolygonBulkDeleteBodyDto = {
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: void[][];
+  data: any[][];
 };
 
 export type VersionUpdateAttributes = {
@@ -705,11 +705,11 @@ export type ValidationRequestBody = {
 
 export type ValidationSummaryDto = {
   /**
-   * The UUID of the site that was validated
+   * The UUID of the site that was validated (null for project-level validation)
    *
    * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
    */
-  siteUuid: string;
+  siteUuid: Record<string, any> | null;
   /**
    * Total number of polygons in the site
    */
