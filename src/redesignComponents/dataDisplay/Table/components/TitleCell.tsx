@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
 
-import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import { ChevronDownAlt } from "@/redesignComponents/foundations/Icons/ChevronDownAlt";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -12,9 +11,10 @@ export interface TitleCellProps {
   avatar?: AvatarProps;
   primaryText?: string;
   secondaryText?: string;
+  link?: string;
 }
 
-const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, primaryText, secondaryText }) => {
+const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, primaryText, secondaryText, link }) => {
   return (
     <Box
       className={classNames("flex items-baseline gap-2", {
@@ -24,14 +24,16 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
       <ChevronDownAlt />
       <Box>
         <Flex gap={2} items-center>
-          {image != null && <GalleryImage src={image} alt={label} size={24} />}
+          {image != null && <img src={image} alt={label} className="border-theme-neutral-300 h-6 w-6 rounded border" />}
           {icon != null && icon}
           {avatar != null && <Avatar {...avatar} size="small" />}
           <Box>
             <Text
+              as={link ? "a" : "p"}
+              {...(link && { href: link, target: "_blank" })}
               fontSize="16px"
               fontWeight="bold"
-              className="text-theme-neutral-800 decoration-theme-primary-900 underline decoration-dotted underline-offset-4"
+              className="text-theme-neutral-800 decoration-theme-primary-700 underline decoration-dotted underline-offset-4"
             >
               {label}
             </Text>

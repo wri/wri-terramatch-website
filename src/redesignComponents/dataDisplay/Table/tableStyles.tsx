@@ -50,7 +50,7 @@ export const getTableWrapperStyles = (
       borderBottom: `1px solid ${getThemedColor("primary", 700)}`
     },
 
-    "& button svg path": {
+    "& table button svg path": {
       fill: `${getThemedColor("neutral", 500)} !important`
     },
     "& button ": {
@@ -84,6 +84,49 @@ export const getTableWrapperStyles = (
         [`& table thead th[data-column-key="${sortColumn.key}"]`]: {
           fontWeight: "bold"
         }
-      })
+      }),
+
+    // Pagination button styles - non-selected
+    "& button[data-scope='pagination'][data-part='item']:not([data-selected]):not([aria-current='page'])": {
+      color: `${getThemedColor("neutral", 600)} !important`,
+      fontWeight: "bold !important",
+      "& p": {
+        color: `${getThemedColor("neutral", 600)} !important`,
+        fontWeight: "bold !important"
+      }
+    },
+    // Pagination selected button styles
+    "& button[data-selected]": {
+      color: `${getThemedColor("neutral", 900)} !important`,
+      fontWeight: "bold !important",
+      "& p": {
+        color: `${getThemedColor("neutral", 900)} !important`,
+        fontWeight: "bold !important"
+      }
+    },
+    "& button[aria-current='page']": {
+      color: `${getThemedColor("neutral", 900)} !important`,
+      fontWeight: "bold !important",
+      "& p": {
+        color: `${getThemedColor("neutral", 900)} !important`,
+        fontWeight: "bold !important"
+      }
+    },
+
+    // Checkbox column styles - minimum width
+    ...(selectable && {
+      "& table thead th:first-child": {
+        width: "1%",
+        minWidth: "48px",
+        maxWidth: "48px",
+        padding: "0.5rem"
+      },
+      "& table tbody td:first-child": {
+        width: "1%",
+        minWidth: "48px",
+        maxWidth: "48px",
+        padding: "0.5rem"
+      }
+    })
   };
 };
