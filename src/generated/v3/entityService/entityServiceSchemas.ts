@@ -281,6 +281,14 @@ export type UpdateImpactStoryBody = {
   data: UpdateImpactStoryDataDto;
 };
 
+export type ImpactStoryDeleteData = {
+  type: "impactStories";
+  /**
+   * @format uuid
+   */
+  id: string;
+};
+
 export type ImpactStoryBulkDeleteBodyDto = {
   /**
    * Array of impact story resource identifiers to delete
@@ -288,7 +296,7 @@ export type ImpactStoryBulkDeleteBodyDto = {
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: ImpactStoryDeleteData[];
 };
 
 export type TaskLightDto = {
@@ -606,6 +614,30 @@ export type MediaBulkErrorDto = {
 
 export type Object = {};
 
+export type MediaRequestBulkAttributes = {
+  /**
+   * The URL of the media
+   */
+  downloadUrl: string;
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestBulkData = {
+  type: "media";
+  attributes: MediaRequestBulkAttributes;
+};
+
 export type MediaRequestBulkBody = {
   /**
    * Array of media to create
@@ -613,7 +645,7 @@ export type MediaRequestBulkBody = {
    * @example {"type":"media","attributes":{"isPublic":true,"downloadUrl":"https://example.com/image.jpg"}}
    * @example {"type":"media","attributes":{"isPublic":false,"downloadUrl":"https://example.com/image.jpg"}}
    */
-  data: any[][];
+  data: MediaRequestBulkData[];
 };
 
 export type MediaRequestAttributes = {
