@@ -165,6 +165,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
     dashboardCountries?: any[];
     isDashboard?: string;
   };
+  disabledPolygonPanel?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -210,6 +211,7 @@ export const MapContainer = ({
   legendPosition,
   hasAccess,
   dashboardContext,
+  disabledPolygonPanel = false,
   ...props
 }: MapProps) => {
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
@@ -1057,7 +1059,7 @@ export const MapContainer = ({
             <PolygonCheck />
           </ControlGroup>
         ) : null}
-        {!polygonsExists ? <EmptyStateDisplay /> : null}
+        {!polygonsExists && !disabledPolygonPanel ? <EmptyStateDisplay /> : null}
         {(isMobile || isDashboard) && mobilePopupData !== null ? (
           <PopupMobile
             event={mobilePopupData}
