@@ -1,5 +1,5 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { AuditStatusEntityType, useAuditStatuses } from "@/connections/AuditStatus";
@@ -7,7 +7,6 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isValidCriteriaData } from "@/helpers/polygonValidation";
-import ApiSlice from "@/store/apiSlice";
 import {
   getValueForStatusDisturbanceReport,
   getValueForStatusEntityReport,
@@ -192,22 +191,24 @@ const useAuditLogActions = ({
       ? record?.projectUuid ?? record.uuid
       : entityHandlers.selectedEntityItem?.uuid;
 
-  const [isAuditLogLoaded, { data: auditStatusesData }] = useAuditStatuses({
+  const [isAuditLogLoaded, auditStatusConnection] = useAuditStatuses({
     entity: v3EntityType,
     uuid: targetUuid ?? ""
   });
 
-  const refetch = () => {
-    ApiSlice.pruneIndex("auditStatuses", "");
-  };
+  const { data: auditStatusesData, refetch: auditStatusRefetch } = auditStatusConnection;
 
+  const refetch = useCallback(() => {
+    if (auditStatusRefetch != null) {
+      auditStatusRefetch();
+    }
+  }, [auditStatusRefetch]);
   const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
   const isLoading = !isAuditLogLoaded;
 
   useEffect(() => {
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buttonToggle, record, entityListItem, selected, targetUuid, v3EntityType]);
+  }, [buttonToggle, record, entityListItem, refetch, selected, targetUuid, v3EntityType]);
 
   const buttonStates = ReverseButtonStates2[entityLevel!];
   const getValuesStatusEntity = (() => {

@@ -16,7 +16,6 @@ import { useAuditStatuses } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
-import ApiSlice from "@/store/apiSlice";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { ModalProps } from "./Modal";
@@ -49,14 +48,10 @@ const ModalWithLogo: FC<ModalWithLogoProps> = ({
   const [buttonToogle, setButtonToogle] = useState(true);
   const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.POLYGON);
 
-  const [, { data: auditStatusesData }] = useAuditStatuses({
+  const [, { data: auditStatusesData, refetch }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: uuid ?? ""
   });
-
-  const refetch = () => {
-    ApiSlice.pruneIndex("auditStatuses", "");
-  };
 
   const [, { user }] = useMyUser();
 

@@ -242,7 +242,7 @@ const StatusDisplay = ({
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus === "sitePolygons" ? record?.title || record?.poly_name : removeUnderscore(name)}.
+        {titleStatus === "sitePolygons" ? record?.title ?? record?.poly_name : removeUnderscore(name)}.
       </Text>
     </div>
   );

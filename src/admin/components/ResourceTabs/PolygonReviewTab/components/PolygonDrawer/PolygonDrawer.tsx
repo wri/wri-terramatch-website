@@ -161,14 +161,10 @@ const PolygonDrawer = ({
     entity_uuid: selectedPolygon?.polygonUuid as string
   };
 
-  const [, { data: auditStatusesData }] = useAuditStatuses({
+  const [, { data: auditStatusesData, refetch: refetchAuditLog }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: selectedPolygon?.uuid ?? ""
   });
-
-  const refetchAuditLog = () => {
-    ApiSlice.pruneIndex("auditStatuses", "");
-  };
 
   const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
 

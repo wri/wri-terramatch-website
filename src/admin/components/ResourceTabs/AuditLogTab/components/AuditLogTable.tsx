@@ -35,11 +35,8 @@ const getTextForActionTable = (item: { type: string; status: string }, entity?: 
   }
 };
 
-const generateUserName = (firstName?: string | null, lastName?: string | null): string => {
-  const first = firstName ?? "";
-  const last = lastName ?? "";
-  return `${first} ${last}`.trim() || "Unknown User";
-};
+const generateUserName = (firstName?: string | null, lastName?: string | null): string =>
+  firstName == null && lastName == null ? "Unknown User" : `${firstName} ${lastName}`.trim();
 
 const AuditLogTable: FC<{
   auditLogData: { data: AuditStatusDto[] };
