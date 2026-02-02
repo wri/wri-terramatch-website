@@ -198,11 +198,7 @@ const useAuditLogActions = ({
 
   const { data: auditStatusesData, refetch: auditStatusRefetch } = auditStatusConnection;
 
-  const refetch = useCallback(() => {
-    if (auditStatusRefetch != null) {
-      auditStatusRefetch();
-    }
-  }, [auditStatusRefetch]);
+  const refetch = useCallback(() => auditStatusRefetch?.(), [auditStatusRefetch]);
   const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
   const isLoading = !isAuditLogLoaded;
 
