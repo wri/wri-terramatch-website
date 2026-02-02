@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { Placeholder } from "../foundations/Icons";
+import { Placeholder } from "../../foundations/Icons";
 import MetricCard from "./MetricCard";
 
 const meta: Meta<typeof MetricCard> = {
