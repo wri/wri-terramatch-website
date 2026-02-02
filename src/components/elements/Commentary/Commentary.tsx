@@ -1,24 +1,26 @@
 import Text from "@/components/elements/Text/Text";
+
 export interface CommentaryFilesProps {
-  uuid?: string;
-  url?: string;
-  thumb_url?: string;
-  collection_name?: string;
-  title?: string;
-  file_name?: string;
-  mime_type?: string;
-  size?: number;
-  lat?: number;
-  lng?: number;
-  is_public?: boolean;
-  created_at?: string;
+  uuid: string;
+  url: string | null;
+  fileName: string | null;
+  thumbUrl?: string | null;
+  collectionName?: string | null;
+  title?: string | null;
+  mimeType?: string | null;
+  size?: number | null;
+  lat?: number | null;
+  lng?: number | null;
+  isPublic?: boolean | null;
+  createdAt?: string | null;
 }
+
 export interface CommentaryProps {
   name: string;
   lastName: string;
   date: string;
   commentary: string;
-  status?: string;
+  status?: string | null;
   files?: CommentaryFilesProps[];
 }
 
@@ -52,10 +54,10 @@ const Commentary = (props: CommentaryProps) => {
         {commentary}
       </Text>
       <div className="flex flex-wrap gap-2">
-        {files?.map((file: any) => (
+        {files?.map((file: CommentaryFilesProps) => (
           <div key={file.uuid} className="rounded-xl bg-neutral-150 px-2 py-1">
             <Text variant="text-14-light" className="text-grey-700">
-              {file?.file_name}
+              {file.fileName ?? ""}
             </Text>
           </div>
         ))}
