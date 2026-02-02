@@ -50,5 +50,5 @@ export type DelayedJobBulkUpdateBodyDto = {
   /**
    * List of jobs to update isAcknowledged
    */
-  data: void[][];
+  data: any[][];
 };

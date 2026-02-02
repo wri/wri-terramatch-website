@@ -288,7 +288,7 @@ export type ImpactStoryBulkDeleteBodyDto = {
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: void[][];
+  data: any[][];
 };
 
 export type TaskLightDto = {
@@ -613,7 +613,7 @@ export type MediaRequestBulkBody = {
    * @example {"type":"media","attributes":{"isPublic":true,"downloadUrl":"https://example.com/image.jpg"}}
    * @example {"type":"media","attributes":{"isPublic":false,"downloadUrl":"https://example.com/image.jpg"}}
    */
-  data: void[][];
+  data: any[][];
 };
 
 export type MediaRequestAttributes = {
