@@ -90,7 +90,44 @@ export const bulkUpdateSitePolygonStatus = async (
       id: resource.id
     }))
   };
-  return updateSitePolygonStatus.fetch({ body, pathParams: { status } });
+
+  const variables = { body, pathParams: { status } };
+  const fullUrl = resolveUrl(updateSitePolygonStatus.url, variables);
+
+  const failureSelector = updateSitePolygonStatus.fetchFailedSelector(variables);
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(fullUrl, updateSitePolygonStatus.method);
+  }
+
+  updateSitePolygonStatus.fetch(variables);
+
+  const initialPending = ApiSlice.currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
+  const initialFailure = failureSelector(ApiSlice.currentState);
+
+  if (initialPending == null && !initialFailure) {
+    return;
+  }
+
+  if (initialFailure != null) {
+    throw initialFailure;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const pending = currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
+      const failure = failureSelector(currentState);
+
+      if (pending == null && !failure) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {

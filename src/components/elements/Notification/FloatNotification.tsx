@@ -207,7 +207,8 @@ const FloatNotification = () => {
                       }
                     </div>
                     <Text variant="text-14-light" className="text-darkCustom">
-                      Site: <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
+                      {item?.name?.includes("Project") ? t("Project: ") : t("Site: ")}
+                      <b>{getSiteNameForJob(item, cachedSiteNames)}</b>
                     </Text>
                     <div className="mt-1">
                       {item.status === "failed" ? (
