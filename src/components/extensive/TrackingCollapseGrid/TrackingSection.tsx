@@ -75,7 +75,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
     },
     [entries, onChange]
   );
-  console.log("rows", typeMap);
+
   return (
     <>
       <>
