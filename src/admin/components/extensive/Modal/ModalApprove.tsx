@@ -69,7 +69,11 @@ interface InlineMessageCustomProps {
 }
 
 const InlineMessageCustom: FC<InlineMessageCustomProps> = ({ type, message }) => {
-  return <InlineMessage caption={message} label="Warning" variant={type} />;
+  return (
+    <div className="inline-message-full-width w-full">
+      <InlineMessage caption={message} label="Warning" variant={type} />
+    </div>
+  );
 };
 
 const ModalApprove: FC<ModalApproveProps> = ({
