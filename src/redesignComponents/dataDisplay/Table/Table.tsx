@@ -1,12 +1,12 @@
 import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { FC, useCallback } from "react";
+import React, { FC, useCallback, useEffect } from "react";
 
 import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, DEFAULT_TOTAL_ITEMS, hasCustomCellContent } from "./tableUtils";
+import { type RowData, hasCustomCellContent } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -20,6 +20,8 @@ interface TableProps {
   scrollableHeight?: string;
   renderRow?: (rowData: RowData) => React.ReactNode;
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
+  totalItems?: number;
+  showItemCount?: boolean;
 }
 
 interface SelectableRowProps {
@@ -60,12 +62,23 @@ const Table: FC<TableProps> = ({
   scrollableWidth = "100%",
   scrollableHeight = "100%",
   renderRow: customRenderRow,
-  renderDataCell: customRenderDataCell
+  renderDataCell: customRenderDataCell,
+  totalItems,
+  showItemCount = true
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
   const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
+
+  const actualTotalItems = totalItems ?? data.length;
+  const totalPages = Math.ceil(actualTotalItems / pageSize);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages, setCurrentPage]);
 
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
@@ -104,7 +117,7 @@ const Table: FC<TableProps> = ({
   const defaultRenderRow = useCallback(
     (rowData: RowData) => {
       return (
-        <TableRow>
+        <TableRow className="group">
           {columns.map(column => (
             <ChakraTableCell key={`${rowData.id}-${column.key}`}>{renderDataCell(rowData, column.key)}</ChakraTableCell>
           ))}
@@ -161,10 +174,10 @@ const Table: FC<TableProps> = ({
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
         pagination={{
-          totalItems: DEFAULT_TOTAL_ITEMS,
+          totalItems: actualTotalItems,
           currentPage,
           pageSize,
-          showItemCount: true
+          showItemCount
         }}
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}

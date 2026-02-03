@@ -30,14 +30,14 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
                   } as SearchProps)}
                 />
               </div>
-              <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
+              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
                 XX {search.label}
               </span>
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           {filters != null && filters.length > 0 ? (
-            <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
+            <div className="text-14 flex flex-wrap items-center gap-2 text-theme-neutral-900">
               {t("Filter by:")}
               {filters.map((filter, index) => (
                 <MultiActionButton key={index} {...filter} size="small" />

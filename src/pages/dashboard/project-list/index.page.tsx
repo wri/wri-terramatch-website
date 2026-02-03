@@ -126,7 +126,7 @@ const ProjectList = () => {
   ];
 
   const router = useRouter();
-  const { filters, setFilters, dashboardCountries, frameworks } = useDashboardContext();
+  const { filters, setFilters, dashboardCountries } = useDashboardContext();
   const { activeProjects } = useDashboardData(filters);
   const countryChoices = useGadmChoices({ level: 0 });
 
@@ -137,7 +137,7 @@ const ProjectList = () => {
             uuid: item.uuid,
             project: item.name,
             organization: item.organisationName,
-            programme: getFrameworkName(frameworks, item.frameworkKey),
+            programme: getFrameworkName(item.frameworkKey),
             country: {
               country_slug: item.country,
               label: countryChoices.find(country => country.id === item.country)?.name,

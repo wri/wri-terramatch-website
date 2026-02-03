@@ -44,6 +44,12 @@ export interface ChartDataVolunteers {
   total: number;
 }
 
+const FRAMEWORK_NAME_MAP = {
+  terrafund: "TerraFund Top 100",
+  "terrafund-landscapes": "TerraFund Landscapes",
+  enterprises: "TerraFund Enterprises"
+};
+
 export const parseJobCreatedByType = (
   data: TotalJobsCreatedDto | undefined,
   type: "gender" | "age",
@@ -583,9 +589,8 @@ export const parseDataToObjetive = (projectData?: {
   };
 };
 
-export const getFrameworkName = (frameworks: any[], frameworkKey: string): string | undefined => {
-  const framework = frameworks.find(fw => fw.framework_slug === frameworkKey);
-  return framework ? framework.name : undefined;
+export const getFrameworkName = (frameworkKey: string): string => {
+  return FRAMEWORK_NAME_MAP[frameworkKey as keyof typeof FRAMEWORK_NAME_MAP];
 };
 
 export const getCohortName = (cohortKey: string): string | undefined => {

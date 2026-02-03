@@ -73,6 +73,14 @@ strong {
   outline-style: solid !important;
 }
 
+.focus-visible\:outline-offset-safari:focus-visible {
+  outline-offset: 2px !important;
+}
+
+.focus-visible\:outline-offset-chrome:focus-visible {
+  outline-offset: 4px !important;
+}
+
 @media (max-width: 1200px) {
   html,
   body {

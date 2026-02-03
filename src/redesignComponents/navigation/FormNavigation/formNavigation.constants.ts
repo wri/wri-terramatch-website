@@ -1,3 +1,5 @@
+import { isSafari } from "@/utils/browserDetection";
+
 export const TAB_TYPE = {
   COMPLETE: "complete",
   AVAILABLE: "available",
@@ -9,8 +11,26 @@ export type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 export type BadgeStatus = "completed" | "active" | "available" | "disabled" | "error";
 
-export const BADGE_FOCUS_RING_CLASSES =
-  "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-theme-primary-700";
+export const getBadgeFocusRingClasses = (): string => {
+  const safariClass = isSafari() ? "focus-visible:outline-offset-safari" : "focus-visible:outline-offset-chrome";
+  return `focus-visible:outline-solid focus-visible:outline-2 ${safariClass} focus-visible:!outline-theme-primary-700`;
+};
+export const FORCED_FOCUS_CLASSES = "outline-solid outline-2 !outline-offset-2 outline-theme-primary-700";
+export const STEP_STATUS_HOVER_STYLE_MAP = {
+  completed: "bg-theme-primary-200",
+  active: "bg-theme-neutral-200",
+  available: "bg-theme-neutral-300",
+  disabled: "bg-theme-neutral-300",
+  error: "bg-theme-error-150"
+} as const;
+
+export const STEP_STATUS_PRESSED_STYLE_MAP = {
+  completed: "bg-theme-primary-300",
+  active: "bg-theme-neutral-400",
+  available: "bg-theme-neutral-400",
+  disabled: "bg-theme-neutral-300",
+  error: "bg-theme-error-300"
+} as const;
 
 export const NAVIGATION_CLASSES = {
   tab: {
@@ -24,7 +44,8 @@ export const NAVIGATION_CLASSES = {
       "border-theme-neutral-500 text-theme-neutral-700 group-hover:bg-theme-neutral-300 bg-theme-neutral-200 group-active:bg-theme-neutral-400",
     disabled:
       "border-theme-neutral-300 text-theme-neutral-700 group-hover:bg-theme-neutral-300 bg-theme-neutral-300 group-active:bg-theme-neutral-300",
-    error: "!border-theme-error-300 !bg-theme-error-500 "
+    error:
+      "border-theme-error-300 bg-theme-error-100 text-theme-error-500 group-hover:bg-theme-error-150 group-active:bg-theme-error-300"
   },
   label: {
     default: "text-16-light text-theme-neutral-700",

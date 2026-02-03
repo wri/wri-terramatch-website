@@ -25,6 +25,7 @@ import {
   InformationRequired,
   InformationRequiredSimple,
   Jobs,
+  JobsCircle,
   Landscape,
   Language,
   Messages,
@@ -45,11 +46,13 @@ import {
   Reports,
   Search,
   Seeds,
+  SeedsCircle,
   Site,
   Species,
   SpeciesNative,
   SurvivalRate,
   Tree,
+  TreeCircle,
   UserAdd,
   Visibility,
   VisibilityOff
@@ -96,6 +99,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Jobs">
             <Jobs boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Jobs Circle">
+            <JobsCircle boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Landscape">
             <Landscape boxSize={8} />
           </IconWrapper>
@@ -104,6 +110,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Seeds">
             <Seeds boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Seeds Circle">
+            <SeedsCircle boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Species">
             <Species boxSize={8} />
@@ -116,6 +125,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Tree">
             <Tree boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Tree Circle">
+            <TreeCircle boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -278,6 +290,9 @@ export const DataVisualisation: Story = {
         <IconWrapper name="Jobs">
           <Jobs boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Jobs Circle">
+          <JobsCircle boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Landscape">
           <Landscape boxSize={8} />
         </IconWrapper>
@@ -286,6 +301,9 @@ export const DataVisualisation: Story = {
         </IconWrapper>
         <IconWrapper name="Seeds">
           <Seeds boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Seeds Circle">
+          <SeedsCircle boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Species">
           <Species boxSize={8} />
@@ -298,6 +316,9 @@ export const DataVisualisation: Story = {
         </IconWrapper>
         <IconWrapper name="Tree">
           <Tree boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Tree Circle">
+          <TreeCircle boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
