@@ -6,6 +6,9 @@ export interface StepProps {
   label: string;
   actions?: React.ReactNode;
   onClick?: () => void;
+  isFocused?: boolean;
+  isHovered?: boolean;
+  isPressed?: boolean;
 }
 
 export interface ProgressStepsProps {
