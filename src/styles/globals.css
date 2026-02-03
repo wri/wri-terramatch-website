@@ -73,12 +73,15 @@ strong {
   outline-style: solid !important;
 }
 
-.focus-visible\:outline-offset-safari:focus-visible {
-  outline-offset: 2px !important;
+.outline-offset-ring:focus-visible {
+  outline-offset: 4px;
 }
 
-.focus-visible\:outline-offset-chrome:focus-visible {
-  outline-offset: 4px !important;
+/* Safari / WebKit only */
+@supports (-webkit-touch-callout: none) {
+  .outline-offset-ring:focus-visible {
+    outline-offset: 2px;
+  }
 }
 
 @media (max-width: 1200px) {
