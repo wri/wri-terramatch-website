@@ -1,3 +1,5 @@
+import { isSafari } from "@/utils/browserDetection";
+
 export const TAB_TYPE = {
   COMPLETE: "complete",
   AVAILABLE: "available",
@@ -9,8 +11,10 @@ export type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 export type BadgeStatus = "completed" | "active" | "available" | "disabled" | "error";
 
-export const BADGE_FOCUS_RING_CLASSES =
-  "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:!outline-theme-primary-700";
+export const getBadgeFocusRingClasses = (): string => {
+  const safariClass = isSafari() ? "focus-visible:outline-offset-safari" : "focus-visible:outline-offset-chrome";
+  return `focus-visible:outline-solid focus-visible:outline-2 ${safariClass} focus-visible:!outline-theme-primary-700`;
+};
 export const FORCED_FOCUS_CLASSES = "outline-solid outline-2 !outline-offset-2 outline-theme-primary-700";
 export const STEP_STATUS_HOVER_STYLE_MAP = {
   completed: "bg-theme-primary-200",
