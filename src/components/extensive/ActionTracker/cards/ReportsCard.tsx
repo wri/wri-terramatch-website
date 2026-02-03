@@ -38,7 +38,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         switch (type) {
           case "projectReports": {
-            ctaText = t("View Project Report");
+            ctaText = t("View Report(s)");
             subtitle = action.text;
 
             if (status?.includes("due")) {
@@ -49,8 +49,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "nurseryReports": {
-            ctaText = t("View Nursery Report");
-            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.name });
+            ctaText = t("View Report(s)");
+            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.nursery?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
@@ -60,8 +60,8 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             break;
           }
           case "siteReports": {
-            ctaText = t("View Site Report");
-            subtitle = t("<strong>Site:</strong> {name}", { name: target?.name });
+            ctaText = t("View Report(s)");
+            subtitle = t("<strong>Site:</strong> {name}", { name: target?.site?.name });
 
             if (status?.includes("due")) {
               ctaLink = `/project/${

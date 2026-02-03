@@ -4,14 +4,7 @@ import { Button, Link, TabbedShowLayout, TabProps, useBasename, useShowContext }
 
 import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
-import {
-  DISTURBANCE_REPORT,
-  FINANCIAL_REPORT,
-  NURSERY_REPORT,
-  PROJECT_REPORT,
-  SITE_REPORT,
-  SRP_REPORT
-} from "@/constants/entities";
+import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
@@ -104,20 +97,20 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
 
   const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));
 
-  const verifyEntityReport = () => {
+  const verifyEntityReport = (): AuditStatusEntityType => {
     switch (ReverseButtonStates2[isProjectReport || showOpenEntity ? buttonToggle! : entity!]) {
       case "project-reports":
-        return PROJECT_REPORT;
+        return "projectReports";
       case "site-reports":
-        return SITE_REPORT;
+        return "siteReports";
       case "nursery-reports":
-        return NURSERY_REPORT;
+        return "nurseryReports";
       case "disturbance-reports":
-        return DISTURBANCE_REPORT;
+        return "disturbanceReports";
       case "srp-reports":
-        return SRP_REPORT;
+        return "srpReports";
       case "financial-reports":
-        return FINANCIAL_REPORT;
+        return "financialReports";
       default:
         return entityType;
     }
