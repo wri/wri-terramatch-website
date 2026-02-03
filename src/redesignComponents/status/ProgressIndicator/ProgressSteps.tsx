@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import router from "next/router";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 
 import { TabItem } from "@/components/elements/Tabs/Default/Tabs";
@@ -31,8 +31,6 @@ const tabOptions = {
 export const ProgressSteps: FC<ProgressStepsProps> = ({ entityUUID, entityName }) => {
   const t = useT();
   const mode = router.query.mode as string | undefined;
-  // @ts-ignore
-  const [selectedStepIndex] = useState(0);
   const model = useMemo(
     () => ({ model: v3EntityName(entityName) as FormEntity, uuid: entityUUID }),
     [entityName, entityUUID]
@@ -59,7 +57,13 @@ export const ProgressSteps: FC<ProgressStepsProps> = ({ entityUUID, entityName }
     [framework, fieldsProvider, t]
   );
 
-  const selectedSection = steps[selectedStepIndex];
+  const firstIncompleteStepIndex = useMemo(() => {
+    if (defaultValues == null) return 0;
+    const idx = steps.findIndex(({ validation }) => !validation.isValidSync(defaultValues));
+    return idx < 0 ? steps.length : idx;
+  }, [defaultValues, steps]);
+
+  const selectedSection = steps[0];
   const formHook: UseFormReturn = useForm(
     useMemo(
       () =>
@@ -97,11 +101,13 @@ export const ProgressSteps: FC<ProgressStepsProps> = ({ entityUUID, entityName }
     () =>
       steps.map(({ id, title }, index) => ({
         title: title ?? "",
-        done: tabOptions.markDone && index < selectedStepIndex,
-        disabled: tabOptions.disableFutureTabs && index > selectedStepIndex,
+        done: tabOptions.markDone && index < firstIncompleteStepIndex,
+        // TODO: Uncomment this when we have a way to disable the future steps
+        // disabled: tabOptions.disableFutureTabs && index > firstIncompleteStepIndex,
+        disabled: false,
         renderBody: () => renderStep(id)
       })),
-    [renderStep, steps, selectedStepIndex]
+    [firstIncompleteStepIndex, renderStep, steps]
   );
 
   const tabItems: TabItem[] = stepTabItems;
@@ -114,23 +120,44 @@ export const ProgressSteps: FC<ProgressStepsProps> = ({ entityUUID, entityName }
     [entityName, entityUUID]
   );
 
-  const tabItemsStep: StepProps[] = tabItems.map((item, index) => ({
-    ...item,
-    index: index + 1,
-    status: selectedStepIndex === index ? "active" : item.done ? "completed" : item.disabled ? "disabled" : "active",
-    label: item.title,
-    actions: (
-      <Button
-        type="button"
-        variant="borderless"
-        size="small"
-        leftIcon={<Edit boxSize={3} />}
-        onClick={() => handleEditStep(index)}
-      >
-        Edit
-      </Button>
-    )
-  }));
+  // TODO: Uncomment this when we have a way to edit the step
+  // const isStepEditable = useCallback(
+  //   (index: number) => index <= firstIncompleteStepIndex,
+  //   [firstIncompleteStepIndex]
+  // );
+
+  const tabItemsStep: StepProps[] = tabItems.map((item, index) => {
+    const done = item.done ?? false;
+    const disabled = item.disabled ?? false;
+    // TODO: Uncomment this when we have a way to edit the step
+    // const editable = isStepEditable(index);
+    const isFirstIncomplete = index === firstIncompleteStepIndex && index < steps.length;
+    const status: StepProps["status"] = done
+      ? "completed"
+      : disabled
+      ? "disabled"
+      : isFirstIncomplete
+      ? "error"
+      : "active";
+    return {
+      ...item,
+      index: index + 1,
+      status,
+      label: item.title,
+      actions: (
+        <Button
+          type="button"
+          variant="borderless"
+          size="small"
+          leftIcon={<Edit boxSize={3} />}
+          onClick={() => handleEditStep(index)}
+        >
+          Edit
+        </Button>
+      ),
+      onClick: () => handleEditStep(index)
+    };
+  });
 
   return (
     <Box>
