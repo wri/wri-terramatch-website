@@ -7,6 +7,8 @@ import { When } from "react-if";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 
+import { TrackingGridVariantProps, TrackingType, useTrackingLabels } from "./types";
+
 export interface TrackingRowProps {
   entryType: string;
   usesName: boolean;
@@ -15,9 +17,21 @@ export interface TrackingRowProps {
   amount: number;
   onChange?: (amount: number, userLabel?: string) => void;
   onDelete?: () => void;
+  trackingType: TrackingType;
+  variant: TrackingGridVariantProps;
 }
 
-const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLabel, amount, onChange, onDelete }) => {
+const TrackingRow: FC<TrackingRowProps> = ({
+  entryType,
+  usesName,
+  label,
+  userLabel,
+  amount,
+  onChange,
+  onDelete,
+  trackingType,
+  variant
+}) => {
   const [focused, setFocused] = useState(false);
   const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -52,15 +66,12 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
     [onChange, amount]
   );
 
+  const { rowLabelSingular, rowLabelPlural } = useTrackingLabels(trackingType);
+
   return (
     <>
-      <div
-        className={classNames(
-          "flex items-center justify-between px-4 py-3",
-          "col-span-1 border-b border-neutral-200 bg-white"
-        )}
-      >
-        <Text variant="text-14-light" className="flex items-center text-darkCustom">
+      <div className={classNames("flex items-center justify-between bg-white px-4", variant.secondCol)}>
+        <Text variant="text-14-light" className="flex items-center">
           {t(label)}
         </Text>
         <When condition={usesName}>
@@ -79,27 +90,22 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
           </When>
         </When>
       </div>
-      <div
-        className={classNames(
-          "relative flex items-center justify-center py-3",
-          "col-span-1 border-b border-l border-b-neutral-200 border-l-white bg-white"
-        )}
-      >
+      <div className={classNames("relative flex items-center justify-center bg-white", variant.tertiaryCol)}>
         <When condition={onChange == null}>
-          <Text variant="text-14-light" className="w-full px-4 text-center text-darkCustom">
-            {amount}
+          <Text variant="text-14-light" className="w-full px-4 py-[9.5px] text-center">
+            {t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
           </Text>
         </When>
         <When condition={onChange != null}>
           <input
             ref={inputRef}
-            value={focused ? amount : t(`{amount}`, { amount })}
+            value={focused ? amount : t(`{amount} ${amount === 1 ? rowLabelSingular : rowLabelPlural}`, { amount })}
             type={focused ? "text" : undefined}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             onClick={handleClick}
             onChange={onAmountChange}
-            className="text-14-light hover:shadow-blue-border-input w-full border border-transparent px-0 text-center text-darkCustom outline-0 hover:border hover:border-primary"
+            className="text-14-light hover:shadow-blue-border-input border border-transparent px-0 py-[9.5px] text-center outline-0 hover:border hover:border-primary"
           />
           <When condition={usesName}>
             <div className="absolute ml-20 cursor-pointer opacity-30 hover:opacity-60" onClick={onDelete}>
