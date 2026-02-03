@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { startCase } from "lodash";
+import { sortBy, startCase } from "lodash";
 import { FC, useCallback, useState } from "react";
 import { When } from "react-if";
 
@@ -159,7 +159,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
               <div className="shadow-lg absolute z-10 -my-1 rounded-lg border border-b-neutral-200  bg-white p-2">
                 {addNameLabel == null
                   ? null
-                  : Object.keys(typeMap).map(subtype => (
+                  : sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => (
                       <button
                         key={subtype}
                         className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"
