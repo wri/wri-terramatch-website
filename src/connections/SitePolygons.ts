@@ -69,7 +69,7 @@ type SitePolygonResourceIdentifier = {
 
 const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SitePolygonBulkDeleteBodyDto => {
   return {
-    data: resources as never
+    data: resources
   };
 };
 
@@ -86,9 +86,9 @@ export const bulkUpdateSitePolygonStatus = async (
   const body: SitePolygonStatusBulkUpdateBodyDto = {
     comment,
     data: updateResources.map(resource => ({
-      type: "sitePolygons",
+      type: "sitePolygons" as const,
       id: resource.id
-    })) as unknown as never[][]
+    }))
   };
   return updateSitePolygonStatus.fetch({ body, pathParams: { status } });
 };

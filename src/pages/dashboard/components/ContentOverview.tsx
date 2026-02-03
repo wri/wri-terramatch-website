@@ -33,6 +33,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
@@ -135,7 +136,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         uuid: fullStory.uuid ?? "",
         title: fullStory.title ?? "",
         date: fullStory.date ?? "",
-        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        content: fullStory.content ? parseImpactStoryContent(fullStory.content) : "",
         category: fullStory.category ?? [],
         thumbnail: fullStory.thumbnail ?? "",
         organization: {

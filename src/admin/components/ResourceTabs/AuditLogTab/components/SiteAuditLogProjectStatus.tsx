@@ -2,14 +2,15 @@ import { FC } from "react";
 import { When } from "react-if";
 
 import Text from "@/components/elements/Text/Text";
-import { AuditStatusResponse, ProjectLiteRead } from "@/generated/apiSchemas";
+import { ProjectLiteRead } from "@/generated/apiSchemas";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ProjectLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import AuditLogTable from "./AuditLogTable";
 
 export interface SiteAuditLogProjectStatusProps {
   record?: ProjectLiteRead | ProjectLightDto | null;
-  auditLogData?: { data: AuditStatusResponse[] };
+  auditLogData?: { data: AuditStatusDto[] };
   auditData?: { entity: string; entity_uuid: string };
   refresh?: () => void;
   viewPD?: boolean;

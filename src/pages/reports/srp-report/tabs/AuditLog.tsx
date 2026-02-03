@@ -7,7 +7,6 @@ import AuditLogSiteTabSelection from "@/admin/components/ResourceTabs/AuditLogTa
 import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatus";
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntityEnum } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import Text from "@/components/elements/Text/Text";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -55,7 +54,7 @@ const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
     loadEntityList();
   });
 
-  const entityTypeSrpReport = srpReportLevel ? AuditLogEntityEnum.Srp_Report : entityType;
+  const entityTypeSrpReport = srpReportLevel ? "srpReports" : entityType;
 
   return (
     <PageBody>
