@@ -64,14 +64,15 @@ const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: bo
 };
 
 interface InlineMessageCustomProps {
+  label: string;
   type: "warning" | "info-grey";
   message: string;
 }
 
-const InlineMessageCustom: FC<InlineMessageCustomProps> = ({ type, message }) => {
+const InlineMessageCustom: FC<InlineMessageCustomProps> = ({ label, type, message }) => {
   return (
     <div className="inline-message-full-width w-full">
-      <InlineMessage caption={message} label="Warning" variant={type} />
+      <InlineMessage caption={message} label={label} variant={type} />
     </div>
   );
 };
@@ -255,6 +256,7 @@ const ModalApprove: FC<ModalApproveProps> = ({
         </div>
         {areaStats && (
           <InlineMessageCustom
+            label={areaStats.newPercentage > 125 ? "Warning" : "Info"}
             type={areaStats.newPercentage > 125 ? "warning" : "info-grey"}
             message={areaStats.message}
           />
