@@ -45,7 +45,11 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
             onClick={handleAddTeamClick}
             css={{
               "&:hover .avatar-add": {
-                opacity: "0.8"
+                opacity: "0.8",
+                transform: "scale(1) !important"
+              },
+              "& .avatar-add": {
+                transform: "scale(1) !important"
               }
             }}
           >
