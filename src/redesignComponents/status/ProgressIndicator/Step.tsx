@@ -3,8 +3,8 @@ import classNames from "classnames";
 import { FC } from "react";
 
 import {
-  BADGE_FOCUS_RING_CLASSES,
   FORCED_FOCUS_CLASSES,
+  getBadgeFocusRingClasses,
   STEP_STATUS_HOVER_STYLE_MAP,
   STEP_STATUS_PRESSED_STYLE_MAP
 } from "@/redesignComponents/navigation/FormNavigation/formNavigation.constants";
@@ -35,7 +35,7 @@ export const Step: FC<StepProps> = props => {
           aria-disabled={status === "disabled"}
           className={classNames(
             getStepBadgeClasses(status),
-            BADGE_FOCUS_RING_CLASSES,
+            getBadgeFocusRingClasses(),
             isFocused && FORCED_FOCUS_CLASSES,
             isHovered && STEP_STATUS_HOVER_STYLE_MAP[status],
             isPressed && STEP_STATUS_PRESSED_STYLE_MAP[status]
