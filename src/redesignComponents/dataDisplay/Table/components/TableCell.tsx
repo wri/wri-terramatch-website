@@ -47,13 +47,13 @@ const TableCell: React.FC<TableCellProps> = ({
           </Flex>
 
           {extraAvatarsCount > 0 && (
-            <Box className="text-theme-neutral-800 ml-2 text-xs font-semibold">+{extraAvatarsCount}</Box>
+            <Box className="ml-2 text-xs font-semibold text-theme-neutral-800">+{extraAvatarsCount}</Box>
           )}
           {progressTag != null && <ProgressTag {...progressTag} />}
           {trees != null && (
             <Flex gap={1} items-center>
               <MetricIcon type="trees" />
-              <Text fontSize="16px" className="text-theme-neutral-800 leading-[28px]">
+              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
                 {trees}
               </Text>
             </Flex>
@@ -61,7 +61,7 @@ const TableCell: React.FC<TableCellProps> = ({
           {jobs != null && (
             <Flex gap={2}>
               <MetricIcon type="jobs" />
-              <Text fontSize="16px" className="text-theme-neutral-800 leading-[28px]">
+              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
                 {jobs}
               </Text>
             </Flex>
