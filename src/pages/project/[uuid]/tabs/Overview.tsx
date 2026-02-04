@@ -1,23 +1,47 @@
 import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Divider } from "@mui/material";
+import { useT } from "@transifex/react";
+import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useCallback, useMemo } from "react";
+import { useRef } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { TabItem } from "@/components/elements/Tabs/Default/Tabs";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import { FormStep } from "@/components/extensive/WizardForm/FormStep";
+import { getSchema } from "@/components/extensive/WizardForm/utils";
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import { FormEntity } from "@/connections/Form";
+import { toFramework } from "@/context/framework.provider";
+import { useModalContext } from "@/context/modal.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
   GetV2ProjectsUUIDPartnersResponse,
   useGetV2ProjectsUUIDManagers,
   useGetV2ProjectsUUIDPartners
 } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { normalizedFormData } from "@/helpers/customForms";
+import { v2EntityName, v3EntityName } from "@/helpers/entity";
+import { useDebounce } from "@/hooks/useDebounce";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
+import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
-import ProfileListCard, { IProfile } from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
+import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import MetricCard from "@/redesignComponents/data-display/MetricCard";
-import { AreaHectares, ChevronRight, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
+import { AreaHectares, ChevronRight, Edit, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
+import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
+import { HookProps } from "@/types/connection";
+
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 interface ProjectOverviewTabProps {
   project: ProjectFullDto & { jobsCreatedGoal: number; totalHectaresRestoredGoal: number; treesGrownGoal: number };
 }
@@ -115,9 +139,29 @@ const OverviewItem = (props: OverviewItemProps) => {
   );
 };
 
+const tabOptions = {
+  markDone: true,
+  disableFutureTabs: true
+};
+
+const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) => {
+  return (
+    members
+      .map((member, index) => {
+        return {
+          id: member.uuid ?? "",
+          name: `${member.first_name} ${member.last_name}`,
+          image: `https://i.pravatar.cc/300?img=${index}`
+        };
+      })
+      ?.slice(0, 2) ?? []
+  );
+};
+
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
-
+  const t = useT();
+  const { openModal } = useModalContext();
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
   }>({
@@ -128,33 +172,22 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     pathParams: { uuid: project.uuid }
   });
 
-  const dataQualityAnalysts = useMemo(() => {
-    return (
-      partners?.data
-        .map((partner, index) => {
-          return {
-            id: partner.uuid ?? "",
-            name: `${partner.first_name} ${partner.last_name}`,
-            image: `https://i.pravatar.cc/300?img=${index}`
-          };
-        })
-        ?.slice(0, 2) ?? []
-    );
-  }, [partners?.data]) as IProfile[];
+  const [, { data: mediaList }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      return {
+        entity: "projects" as SupportedEntity,
+        uuid: project.uuid,
+        pageNumber: 1,
+        pageSize: 4,
+        sortDirection: "DESC"
+      };
+    }, [project.uuid])
+  );
 
-  const projectManagers = useMemo(() => {
-    return (
-      managers?.data
-        .map((manager, index) => {
-          return {
-            id: manager.uuid ?? "",
-            name: `${manager.first_name} ${manager.last_name}`,
-            image: `https://i.pravatar.cc/300?img=${index}`
-          };
-        })
-        ?.slice(0, 2) ?? []
-    );
-  }, [managers?.data]) as IProfile[];
+  const images = mediaList?.map(media => media.url) ?? [];
+
+  const dataQualityAnalysts = formatTeamMembers(partners?.data ?? []);
+  const projectManagers = formatTeamMembers(managers?.data ?? []);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -175,71 +208,162 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const totalTreesRestoredCount =
     (project?.treesPlantedCount ?? 0) + (project?.regeneratedTreesCount ?? 0) + (project?.seedsPlantedCount ?? 0);
   const chartDataJobs = {
-    chartData: [
-      { name: "JOBS CREATED", value: project.totalJobsCreated },
-      {
-        name: "TOTAL JOBS CREATED GOAL",
-        value: project.jobsCreatedGoal
-      }
-    ],
     cardValues: {
-      label: "Jobs Created",
       value: project.totalJobsCreated,
-      totalName: "TOTAL JOBS CREATED GOAL",
       totalValue: project.jobsCreatedGoal
-    },
-    graph: true,
-    hectares: false
+    }
   };
   const chartDataHectares = {
-    chartData: [
-      {
-        name: "HECTARES RESTORED",
-        value: project.totalHectaresRestoredSum,
-        tooltipContent: "Number of hectares within approved polygons for this project"
-      },
-      {
-        name: "TOTAL HECTARES RESTORED",
-        value: project.totalHectaresRestoredGoal
-      }
-    ],
     cardValues: {
-      label: "Hectares Restored",
       value: project.totalHectaresRestoredSum,
-      totalName: "TOTAL HECTARES RESTORED",
       totalValue: project.totalHectaresRestoredGoal
     }
   };
   const chartDataTreesRestored = {
-    chartData: [
-      { name: "TREES RESTORED", value: totalTreesRestoredCount },
-      {
-        name: "TOTAL TREES RESTORED",
-        value: project.treesGrownGoal
-      }
-    ],
     cardValues: {
-      label: "Trees Restored",
       value: totalTreesRestoredCount,
-      totalName: "TOTAL TREES RESTORED",
       totalValue: project.treesGrownGoal
     }
   };
   const chartDataSaplings = {
-    chartData: [
-      { name: "SAPLINGS RESTORED", value: totalTreesRestoredCount },
-      {
-        name: "TOTAL SAPLINGS RESTORED",
-        value: project.treesGrownGoal
-      }
-    ],
     cardValues: {
-      label: "Saplings Restored",
       value: totalTreesRestoredCount,
-      totalName: "TOTAL SAPLINGS RESTORED",
       totalValue: project.treesGrownGoal
     }
   };
+
+  const handleInviteClick = useCallback(() => {
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetchPartners} />
+    );
+  }, [openModal, project.uuid, refetchPartners]);
+
+  const mode = router.query.mode as string | undefined;
+  const model = useMemo(() => ({ model: v3EntityName("projects") as FormEntity, uuid: project.uuid }), [project.uuid]);
+  const { updateEntityAnswers } = useFormUpdate(model.model, project.uuid);
+  const { formData } = useEntityForm(model.model, project.uuid);
+
+  const feedbackFields = useMemo(
+    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
+    [formData?.feedbackFields, mode]
+  );
+
+  const framework = toFramework(formData?.frameworkKey);
+
+  const [, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
+  const steps = useMemo(
+    () =>
+      fieldsProvider.stepIds().map(stepId => ({
+        id: stepId,
+        title: fieldsProvider.step(stepId)?.title,
+        validation: getSchema(fieldsProvider, t, framework, fieldsProvider.fieldNames(stepId))
+      })),
+    [framework, fieldsProvider, t]
+  );
+
+  const firstIncompleteStepIndex = useMemo(() => {
+    if (defaultValues == null) return 0;
+    const idx = steps.findIndex(({ validation }) => !validation.isValidSync(defaultValues));
+    return idx < 0 ? steps.length : idx;
+  }, [defaultValues, steps]);
+
+  const selectedSection = steps[0];
+  const formHook: UseFormReturn = useForm(
+    useMemo(
+      () =>
+        selectedSection?.validation != null
+          ? {
+              resolver: yupResolver(selectedSection?.validation),
+              defaultValues: defaultValues,
+              mode: "onTouched"
+            }
+          : { mode: "onTouched" },
+      [defaultValues, selectedSection?.validation]
+    )
+  );
+
+  const formHasError = useRef(false);
+  formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
+  const onChange = useCallback(
+    (data: Dictionary<any>) => {
+      updateEntityAnswers({ answers: normalizedFormData(data, fieldsProvider) });
+    },
+    [fieldsProvider, updateEntityAnswers]
+  );
+  const _onChange = useDebounce(
+    useCallback(() => !formHasError.current && onChange?.(formHook.getValues()), [formHook, onChange]),
+    // Send an update to the server at most once per second
+    1000
+  );
+
+  const renderStep = useCallback(
+    (stepId: string) => <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />,
+    [formHook, _onChange]
+  );
+
+  const stepTabItems = useMemo(
+    () =>
+      steps.map(({ id, title }, index) => ({
+        title: title ?? "",
+        done: tabOptions.markDone && index < firstIncompleteStepIndex,
+        // TODO: Uncomment this when we have a way to disable the future steps
+        // disabled: tabOptions.disableFutureTabs && index > firstIncompleteStepIndex,
+        disabled: false,
+        renderBody: () => renderStep(id)
+      })),
+    [firstIncompleteStepIndex, renderStep, steps]
+  );
+
+  const tabItems: TabItem[] = stepTabItems;
+
+  const handleEditStep = useCallback(
+    (index: number) => {
+      const editPath = `/entity/${v2EntityName("projects")}/edit/${project.uuid}`;
+      router.push(`${editPath}?step=${index}`);
+    },
+    [project.uuid, router]
+  );
+
+  // TODO: Uncomment this when we have a way to edit the step
+  // const isStepEditable = useCallback(
+  //   (index: number) => index <= firstIncompleteStepIndex,
+  //   [firstIncompleteStepIndex]
+  // );
+
+  const tabItemsStep: StepProps[] = tabItems.map((item, index) => {
+    const done = item.done ?? false;
+    const disabled = item.disabled ?? false;
+    // TODO: Uncomment this when we have a way to edit the step
+    // const editable = isStepEditable(index);
+    const isFirstIncomplete = index === firstIncompleteStepIndex && index < steps.length;
+    const status: StepProps["status"] = done
+      ? "completed"
+      : disabled
+      ? "disabled"
+      : isFirstIncomplete
+      ? "error"
+      : "active";
+    return {
+      ...item,
+      index: index + 1,
+      status,
+      label: item.title,
+      actions: (
+        <Button
+          type="button"
+          variant="borderless"
+          size="small"
+          leftIcon={<Edit boxSize={3} />}
+          onClick={() => handleEditStep(index)}
+        >
+          Edit
+        </Button>
+      ),
+      onClick: () => handleEditStep(index)
+    };
+  });
 
   return (
     <PageBody>
@@ -276,7 +400,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               onClick: goToContinueEditingTab
             }}
           >
-            <ProgressSteps entityUUID={project.uuid} entityName="projects" />
+            <ProgressSteps steps={tabItemsStep} />
           </OverviewItem>
         </Flex>
         <OverviewItem
@@ -341,7 +465,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             }}
           >
             <ProfileListCard
-              projectUUID={project.uuid}
               items={[
                 {
                   title: "Project Managers",
@@ -351,10 +474,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   }
                 }
               ]}
-              refetch={refetchPartners}
+              onInviteClick={handleInviteClick}
             />
             <ProfileListCard
-              projectUUID={project.uuid}
               items={[
                 {
                   title: "Data Quality Analysts",
@@ -364,7 +486,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   }
                 }
               ]}
-              refetch={refetchPartners}
+              onInviteClick={handleInviteClick}
             />
           </OverviewItem>
           <OverviewItem
@@ -378,7 +500,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               onClick: () => goToTab("gallery")
             }}
           >
-            <ImageGalleryCard entityUUID={project.uuid} entityName="projects" />
+            <ImageGalleryCard images={images as string[]} />
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
             <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1}>

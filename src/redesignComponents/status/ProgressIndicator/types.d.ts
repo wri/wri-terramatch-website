@@ -9,6 +9,5 @@ export interface StepProps {
 }
 
 export interface ProgressStepsProps {
-  entityUUID: string;
-  entityName: EntityName | SingularEntityName;
+  steps: StepProps[];
 }

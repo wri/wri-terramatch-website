@@ -1,32 +1,15 @@
 import { Box, Grid, GridItem } from "@chakra-ui/react";
-import { FC, useMemo } from "react";
-
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import { EntityName } from "@/types/common";
-import { HookProps } from "@/types/connection";
+import { FC } from "react";
 
 import GalleryImage from "../../Images/GalleryImage/GalleryImage";
 import { MIN_ITEMS } from "./constants";
 
 interface IImageGalleryCardProps {
-  entityUUID: string;
-  entityName: EntityName;
+  images: string[] | undefined;
 }
 
-const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ entityUUID, entityName }) => {
-  const [, { data: mediaList }] = useMedias(
-    useMemo<HookProps<typeof useMedias>>(() => {
-      return {
-        entity: entityName as SupportedEntity,
-        uuid: entityUUID,
-        pageNumber: 1,
-        pageSize: 4,
-        sortDirection: "DESC"
-      };
-    }, [entityUUID, entityName])
-  );
-  const thumbnails = mediaList?.map(media => media.url);
-  const imageCount = thumbnails?.length ?? 0;
+const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
+  const imageCount = images?.length ?? 0;
   const itemsToShow = Math.max(MIN_ITEMS, imageCount);
   const placeholderCount = itemsToShow - imageCount;
   const isEmpty = imageCount === 0;
@@ -34,7 +17,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ entityUUID, entityName }
   return (
     <Box padding={5} backgroundColor="white" borderRadius="md">
       <Grid templateColumns="repeat(2, 1fr)" gapY={5} gapX={5}>
-        {thumbnails?.map((image, index) => (
+        {images?.map((image, index) => (
           <GridItem key={`image-${index}-${image}`}>
             <GalleryImage
               src={image!}
