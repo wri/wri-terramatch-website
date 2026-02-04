@@ -5,8 +5,9 @@ import MultiActionButton, {
   IMultiActionButtonProps
 } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
-import { Jobs, Tree } from "@/redesignComponents/foundations/Icons";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
+
+import MetricIcon from "../../Metrics/MetricIcon";
 
 export interface TableCellProps {
   label?: string;
@@ -50,21 +51,17 @@ const TableCell: React.FC<TableCellProps> = ({
           )}
           {progressTag != null && <ProgressTag {...progressTag} />}
           {trees != null && (
-            <Flex>
-              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-theme-neutral-100 bg-theme-secondary-300">
-                <Tree className="text-theme-secondary-800" />
-              </div>
-              <Text fontSize="16px" className="text-theme-neutral-700">
+            <Flex gap={1} items-center>
+              <MetricIcon type="trees" />
+              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
                 {trees}
               </Text>
             </Flex>
           )}
           {jobs != null && (
-            <Flex>
-              <div className="flex h-6 w-6 items-center justify-center rounded-full border border-theme-neutral-100 bg-theme-primary-300">
-                <Jobs className="text-theme-primary-800" />
-              </div>
-              <Text fontSize="16px" className="text-theme-neutral-700">
+            <Flex gap={2}>
+              <MetricIcon type="jobs" />
+              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
                 {jobs}
               </Text>
             </Flex>

@@ -1,6 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { sortBy, startCase } from "lodash";
 import { FC, useCallback } from "react";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
@@ -23,6 +24,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
@@ -87,7 +89,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
         </div>
         <div className="col-span-1 bg-theme-neutral-200 px-3 py-2 text-center">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
-            {t(`Number of Jobs`)}
+            {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
       </>
@@ -108,7 +110,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
             mainActionLabel="Add Ethnic Group"
             mainActionOnClick={() => {}}
             otherActions={[
-              ...Object.keys(typeMap).map(subtype => ({
+              ...sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => ({
                 label: t(typeMap[subtype]),
                 onClick: () => addRow(subtype),
                 value: subtype

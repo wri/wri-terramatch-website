@@ -12,7 +12,14 @@ interface ActionCellProps {
 
 const ActionCell: FC<ActionCellProps> = ({ button, onButtonIconClick }) => {
   return (
-    <Box textAlign="right" gap={2} display="flex" alignItems="center" justifyContent="flex-end">
+    <Box
+      textAlign="right"
+      gap={2}
+      display="flex"
+      alignItems="center"
+      justifyContent="flex-end"
+      className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    >
       <Button {...button} variant="secondary" size="small" />
       <IconButton icon={<MoreVert boxSize={4} className="text-theme-neutral-700" />} onClick={onButtonIconClick} />
     </Box>

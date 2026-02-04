@@ -61,17 +61,10 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
                 }
               )}
             >
-              <Icon
-                name={IconNames.IC_INFO}
-                width={16}
-                height={16}
-                className={classNames({
-                  "text-theme-neutral-700": status === "not-started",
-                  "text-theme-success-500": status == "complete",
-                  "text-theme-error-500": status === "in-progress"
-                })}
-              />
-              {t(status === "in-progress" ? "Totals don’t match across categories" : startCase(status))}
+              {t(startCase(status))}
+              {status === "complete" ? (
+                <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className="text-customGreen-200" />
+              ) : null}
             </Text>
           ) : null}
           <Icon
