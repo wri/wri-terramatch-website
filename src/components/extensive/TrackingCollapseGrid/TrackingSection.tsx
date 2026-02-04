@@ -143,16 +143,6 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           </Text>
         </div>
       </>
-
-      {/* <When condition={addNameLabel != null && onChange != null}>
-        <div
-          className={classNames(
-            "py-3",
-            variant.roundedBr,
-            "col-span-2 border-b border-l border-b-neutral-200 border-l-white bg-white"
-          )}
-        />
-      </When> */}
     </>
   );
 };
