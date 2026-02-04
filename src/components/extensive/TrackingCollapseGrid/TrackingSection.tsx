@@ -82,12 +82,12 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           </Text>
         </div>
         {/* Column headers */}
-        <div className="col-span-1 bg-theme-neutral-200 px-3 py-2">
+        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2 ">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`${title} Definition`)}
           </Text>
         </div>
-        <div className="col-span-1 bg-theme-neutral-200 px-3 py-2 text-center">
+        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2 text-center">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
