@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Organisation } from "@/redesignComponents/foundations/Icons";
+import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import Table from "./Table";
 
@@ -93,7 +93,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          image: "/images/about-us-1.png"
+          image: "https://i.pravatar.cc/300?img=4&w=640&q=75"
         }
       },
       ...generateSampleData(3),
@@ -104,7 +104,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Organisation className="h-6 w-6 text-theme-neutral-800" />
+          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
         }
       },
       ...generateSampleData(3),
@@ -131,6 +131,18 @@ export const WithTitleRows: Story = {
           label: "Label",
           primaryText: "Label",
           secondaryText: "Label"
+        }
+      },
+      ...generateSampleData(3),
+      {
+        id: "title-with-link",
+        name: "Label",
+        email: "Label",
+        age: 0,
+        title: {
+          label: "Label with Link",
+          link: "https://example.com",
+          primaryText: "Click to visit external link"
         }
       },
       ...generateSampleData(3)
@@ -172,6 +184,54 @@ export const WithTextTitleRow: Story = {
           label: "Label",
           primaryText: "Label",
           secondaryText: "Label"
+        }
+      },
+      ...generateSampleData(5)
+    ],
+    columns: defaultColumns,
+    selectable: false
+  }
+};
+
+export const WithLinkTitleRow: Story = {
+  args: {
+    data: [
+      {
+        id: "title-with-link-only",
+        name: "Label",
+        email: "Label",
+        age: 0,
+        title: {
+          label: "Label",
+          link: "/",
+          primaryText: "With link"
+        }
+      },
+      {
+        id: "title-with-link-and-image",
+        name: "Label",
+        email: "Label",
+        age: 0,
+        title: {
+          label: "Label",
+          link: "/",
+          image: "https://i.pravatar.cc/300?img=5&w=640&q=75",
+          primaryText: "Link with image"
+        }
+      },
+      {
+        id: "title-with-link-and-avatar",
+        name: "Label",
+        email: "Label",
+        age: 0,
+        title: {
+          label: "Label",
+          link: "/",
+          avatar: {
+            name: "John Doe",
+            ariaLabel: "John Doe avatar"
+          },
+          secondaryText: "Link with avatar"
         }
       },
       ...generateSampleData(5)
