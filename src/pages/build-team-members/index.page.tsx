@@ -1,65 +1,30 @@
-import { Box, Flex, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Modal } from "@worldresources/wri-design-systems";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback } from "react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useModalContext } from "@/context/modal.provider";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
+import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+
 const BuildTeamMembersPage: FC = () => {
   const t = useT();
-  const [isOpenMonitoringPartnerModal, setIsOpenMonitoringPartnerModal] = useState(false);
+  const { openModal } = useModalContext();
 
-  const handleCloseModal = useCallback(() => {
-    setIsOpenMonitoringPartnerModal(false);
-  }, []);
+  const handleInvite = () => {
+    openModal(
+      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
+    );
+  };
 
   return (
     <Box paddingX={8} paddingY={6}>
-      <Box
-        css={{
-          "& [data-part='content']": {
-            width: "600px",
-            maxWidth: "90vw"
-          },
-          "& [data-part='body']": {
-            padding: "32px"
-          }
-        }}
-      >
-        <Modal
-          open={isOpenMonitoringPartnerModal}
-          onClose={handleCloseModal}
-          size="xlarge"
-          content={
-            <Box className="flex flex-col gap-4">
-              <Text fontSize="24px" textAlign="center" fontWeight="bold">
-                INVITE MONITORING PARTNER
-              </Text>
-              <Text fontSize="14px" textAlign="center">
-                Here, you can invite someone to create a TerraMatch account as an observer. This will allow them to
-                access all your project data and reports.
-              </Text>
-              <TextInput label="Email Address" name="email" placeholder="Enter your email address" />
-              <Flex justify="space-between">
-                <Button variant="secondary" onClick={handleCloseModal}>
-                  CANCEL
-                </Button>
-                <Button variant="primary" onClick={() => console.log("Invite Monitoring Partner")}>
-                  INVITE MONITORING PARTNER
-                </Button>
-              </Flex>
-            </Box>
-          }
-          header={<></>}
-        />
-      </Box>
-
       <ToolbarTable
         className="!px-0"
         filters={[
@@ -68,8 +33,12 @@ const BuildTeamMembersPage: FC = () => {
             variant: "secondary",
             mainActionOnClick: () => console.log("Role"),
             otherActions: [
-              { label: "Project Manager", value: "project-manager", onClick: () => console.log("Project Manager") },
-              { label: "Team Member", value: "team-member", onClick: () => console.log("Team Member") }
+              {
+                label: "Monitoring Partner",
+                value: "monitoring-partner",
+                onClick: handleInvite
+              },
+              { label: "Project Manager", value: "project-manager", onClick: () => console.log("Project Manager") }
             ]
           }
         ]}
@@ -86,7 +55,7 @@ const BuildTeamMembersPage: FC = () => {
         button={{
           children: "Add Team Member",
           leftIcon: <UserAdd />,
-          onClick: () => setIsOpenMonitoringPartnerModal(true)
+          onClick: handleInvite
         }}
       />
       <Table
@@ -96,14 +65,64 @@ const BuildTeamMembersPage: FC = () => {
             organization: "WRI",
             email: "name@email.com",
             role: "Project Manager",
-            image: "https://i.pravatar.cc/300?img=4&w=640&q=75"
+            image: "https://i.pravatar.cc/300?img=4&w=640&q=75",
+            status: "Approved"
           },
           {
             name: "Jane Doe",
             organization: "WRI",
             email: "name@email.com",
             role: "Team Member",
-            image: "https://i.pravatar.cc/300?img=4&w=640&q=71"
+            image: "https://i.pravatar.cc/300?img=4&w=640&q=71",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
+          },
+          {
+            name: "John Doe",
+            organization: "WRI",
+            email: "name@email.com",
+            role: "Team Member",
+            status: "Pending"
           },
           {
             name: "John Doe",
@@ -121,7 +140,8 @@ const BuildTeamMembersPage: FC = () => {
             name: "John Doe",
             organization: "WRI",
             email: "name@email.com",
-            role: "Team Member"
+            role: "Team Member",
+            status: "Pending"
           },
           {
             name: "John Doe",
@@ -133,61 +153,22 @@ const BuildTeamMembersPage: FC = () => {
             name: "John Doe",
             organization: "WRI",
             email: "name@email.com",
-            role: "Team Member"
+            role: "Team Member",
+            status: "Pending"
           },
           {
             name: "John Doe",
             organization: "WRI",
             email: "name@email.com",
-            role: "Team Member"
+            role: "Team Member",
+            status: "Pending"
           },
           {
             name: "John Doe",
             organization: "WRI",
             email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
+            role: "Team Member",
+            status: "Pending"
           }
         ]}
         renderRow={useCallback(
@@ -207,7 +188,8 @@ const BuildTeamMembersPage: FC = () => {
               <ChakraTableCell>{(rowData as any).organization}</ChakraTableCell>
               <ChakraTableCell>{(rowData as any).email}</ChakraTableCell>
               <ChakraTableCell>{(rowData as any).role}</ChakraTableCell>
-              <ChakraTableCell>{/* Actions column - puedes agregar botones aquí si es necesario */}</ChakraTableCell>
+              <ChakraTableCell>{(rowData as any).status}</ChakraTableCell>
+              <ChakraTableCell>{/* */}</ChakraTableCell>
             </TableRow>
           ),
           []
@@ -231,6 +213,11 @@ const BuildTeamMembersPage: FC = () => {
           {
             key: "role",
             label: t("Role"),
+            sortable: true
+          },
+          {
+            key: "status",
+            label: t("Status"),
             sortable: true
           },
           {
