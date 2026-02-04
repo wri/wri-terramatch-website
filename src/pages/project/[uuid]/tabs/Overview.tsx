@@ -35,7 +35,7 @@ import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import MetricCard from "@/redesignComponents/data-display/MetricCard";
+import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectares, ChevronRight, Edit, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
