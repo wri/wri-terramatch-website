@@ -5,7 +5,6 @@ import classNames from "classnames";
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
-import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { Delete } from "@/redesignComponents/foundations/Icons";
 
@@ -66,15 +65,6 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
           <Text fontSize="16px" lineHeight="24px" color="neutral.800">
             {t(label)}
           </Text>
-        </When>
-        <When condition={label != null}>
-          <MultiActionButton
-            mainActionLabel={label ?? ""}
-            mainActionOnClick={() => {}}
-            otherActions={[]}
-            size="small"
-            variant="secondary"
-          />
         </When>
         <When condition={usesName}>
           <When condition={onChange == null}>
