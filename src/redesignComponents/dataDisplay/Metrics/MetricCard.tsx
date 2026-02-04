@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { InformationRequired } from "../foundations/Icons";
+import { InformationRequired } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
 import ProgressBar from "./ProgressBar";
 import {

@@ -69,6 +69,7 @@ export const Default: Story = {
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
+    countryFlag: "🇪🇹",
     country: "Ethiopia",
     team: [
       {
@@ -103,6 +104,7 @@ export const NotStarted: Story = {
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
     country: "Kenya",
+    countryFlag: "🇰🇪",
     team: [
       {
         name: "Jane Smith",
@@ -136,6 +138,7 @@ export const InProgress: Story = {
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
     country: "India",
+    countryFlag: "🇮🇳",
     team: [
       {
         name: "Michael Chen",
@@ -193,6 +196,7 @@ export const Complete: Story = {
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
     country: "Bangladesh",
+    countryFlag: "🇧🇩",
     team: [
       {
         name: "Sarah Johnson",
@@ -221,6 +225,7 @@ export const WithoutImage: Story = {
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
     country: "Philippines",
+    countryFlag: "🇵🇭",
     team: [
       {
         name: "David Martinez",
@@ -251,7 +256,8 @@ export const WithoutDescription: Story = {
     organization: "Organisation Name",
     startDate: "mm/yyyy",
     endDate: "mm/yyyy",
-    country: "🇨🇷 Costa Rica",
+    country: "Costa Rica",
+    countryFlag: "🇨🇷",
     team: [
       {
         name: "Alex Thompson",
@@ -284,7 +290,8 @@ export const WithoutTeam: Story = {
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     startDate: "2024-04-01",
     endDate: "2026-03-31",
-    country: "🇬🇭 Ghana"
+    country: "Ghana",
+    countryFlag: "🇬🇭"
   }
 };
 
@@ -301,6 +308,7 @@ export const AllProgressStates: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         startDate="2025-01-01"
         endDate="2026-12-31"
+        countryFlag="🇺🇸"
         country="USA"
         team={[
           {
@@ -316,6 +324,7 @@ export const AllProgressStates: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
         startDate="2024-01-01"
         endDate="2025-12-31"
+        countryFlag="🇨🇦"
         country="Canada"
         team={[
           {
@@ -331,6 +340,7 @@ export const AllProgressStates: Story = {
         description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
         startDate="2022-01-01"
         endDate="2023-12-31"
+        countryFlag="🇲🇽"
         country="Mexico"
         team={[
           {

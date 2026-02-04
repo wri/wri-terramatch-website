@@ -2,9 +2,9 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { ProgressTag } from "../actions/Tags/ProgressTag/ProgressTag";
-import { InformationRequired } from "../foundations/Icons";
-import SimpleDivider from "../miscellaneous/Dividers/SimpleDivider";
+import { ProgressTag } from "../../actions/Tags/ProgressTag/ProgressTag";
+import { InformationRequired } from "../../foundations/Icons";
+import SimpleDivider from "../../miscellaneous/Dividers/SimpleDivider";
 import DonutChart from "./DonutChart";
 import { MultiMetricCardProps } from "./types";
 import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";

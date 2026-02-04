@@ -5,12 +5,10 @@ import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { AuditStatusEntityType, v3EntityToAuditLogEntity } from "@/connections/AuditStatus";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import Log from "@/utils/log";
-
-import { AuditLogEntity, AuditLogEntityEnum } from "../../../AuditLogTab/constants/types";
-import { getRequestPathParam } from "../../../AuditLogTab/utils/util";
 
 const menuPolygonOptions = [
   {
@@ -149,7 +147,7 @@ const menuNurseryOptions = [
   }
 ];
 export interface StatusProps {
-  titleStatus: AuditLogEntity;
+  titleStatus: AuditStatusEntityType;
   mutate?: any;
   record?: any;
   refresh?: () => void;
@@ -200,7 +198,7 @@ const DescriptionRequestMap = {
 };
 
 const StatusDisplay = ({
-  titleStatus = AuditLogEntityEnum.Polygon,
+  titleStatus = "sitePolygons",
   mutate,
   refresh,
   name,
@@ -212,27 +210,52 @@ const StatusDisplay = ({
   const { refetch: reloadEntity } = useShowContext();
   const { openNotification } = useNotificationContext();
   const { openModal, closeModal } = useModalContext();
+
+  const legacyEntityType = v3EntityToAuditLogEntity(titleStatus);
   const removeUnderscore = (title: string) => title.replace("_", " ");
+
+  const getV2PathParam = (entityType: AuditStatusEntityType): string => {
+    // TODO: Remove this function when V2 status update endpoint is migrated to V3
+    const legacyType = v3EntityToAuditLogEntity(entityType);
+    if (legacyType === "Polygon") {
+      return "site-polygon";
+    } else if (legacyType === "Nursery_Report") {
+      return "nursery-reports";
+    } else if (legacyType === "Site_Report") {
+      return "site-reports";
+    } else if (legacyType === "Project_Report") {
+      return "project-reports";
+    } else if (legacyType === "Disturbance_Report") {
+      return "disturbance-reports";
+    } else if (legacyType === "Srp_Report") {
+      return "srp-reports";
+    } else if (legacyType === "Financial_Report") {
+      return "financial-reports";
+    }
+    return legacyType.toLowerCase();
+  };
+
   const contentStatus = (
     <div className="text-center">
       <Text variant="text-12-light" as="span" className="text-center">
-        {DescriptionStatusMap[titleStatus]}
+        {DescriptionStatusMap[legacyEntityType as keyof typeof DescriptionStatusMap]}
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus == AuditLogEntityEnum.Polygon ? record?.title || record?.poly_name : removeUnderscore(name)}.
+        {titleStatus === "sitePolygons" ? record?.title ?? record?.poly_name : removeUnderscore(name)}.
       </Text>
     </div>
   );
   const contentRequest = (
     <Text variant="text-12-light" as="p" className="text-center">
-      {DescriptionRequestMap[titleStatus]} <b style={{ fontSize: "inherit" }}>{name}</b>?
+      {DescriptionRequestMap[legacyEntityType as keyof typeof DescriptionRequestMap]}{" "}
+      <b style={{ fontSize: "inherit" }}>{name}</b>?
     </Text>
   );
 
   const filterViewPd = viewPD
-    ? menuOptionsMap[titleStatus].filter(option => option.viewPd === true)
-    : menuOptionsMap[titleStatus];
+    ? menuOptionsMap[legacyEntityType as keyof typeof menuOptionsMap].filter(option => option.viewPd === true)
+    : menuOptionsMap[legacyEntityType as keyof typeof menuOptionsMap];
 
   const onFinallyRequest = () => {
     refresh?.();
@@ -245,7 +268,7 @@ const StatusDisplay = ({
     openModal(
       ModalId.STATUS_CHANGE,
       <ModalConfirm
-        title={`${removeUnderscore(titleStatus)} Status Change`}
+        title={`${removeUnderscore(legacyEntityType)} Status Change`}
         commentArea
         menuLabel={""}
         menu={filterViewPd}
@@ -253,12 +276,14 @@ const StatusDisplay = ({
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
         onConfirm={async (text: any, opt) => {
-          const option = menuOptionsMap[titleStatus].find(option => option.value === opt[0]);
+          const option = menuOptionsMap[legacyEntityType as keyof typeof menuOptionsMap].find(
+            option => option.value === opt[0]
+          );
           try {
             await mutate({
               pathParams: {
                 uuid: record?.uuid,
-                entity: getRequestPathParam(titleStatus)
+                entity: getV2PathParam(titleStatus)
               },
               body: {
                 status: option?.status,
@@ -294,7 +319,7 @@ const StatusDisplay = ({
         onConfirm={async (text: any) => {
           try {
             await mutate({
-              pathParams: { uuid: record?.uuid, entity: getRequestPathParam(titleStatus) },
+              pathParams: { uuid: record?.uuid, entity: getV2PathParam(titleStatus) },
               body: {
                 status: "",
                 comment: text,
@@ -325,10 +350,10 @@ const StatusDisplay = ({
         <div className="flex w-full items-center gap-4">
           <Button
             className={classNames("w-full flex-1 border-[3px] border-primary", {
-              "opacity-0": titleStatus !== AuditLogEntityEnum.Polygon
+              "opacity-0": titleStatus !== "sitePolygons"
             })}
             onClick={openFormModalHandlerStatus}
-            disabled={titleStatus !== AuditLogEntityEnum.Polygon}
+            disabled={titleStatus !== "sitePolygons"}
           >
             <Text variant="text-12-bold">change status</Text>
           </Button>
