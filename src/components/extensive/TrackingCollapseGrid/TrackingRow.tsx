@@ -2,7 +2,7 @@ import { Button, Text } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, FormEvent, useCallback, useRef } from "react";
+import { FC, FormEvent, useCallback } from "react";
 
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { Delete } from "@/redesignComponents/foundations/Icons";
@@ -19,7 +19,6 @@ export interface TrackingRowProps {
 
 const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount, onChange, onDelete }) => {
   const t = useT();
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const onAmountChange = useCallback(
     (event: FormEvent<HTMLInputElement>) => {
@@ -100,7 +99,6 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
         ) : (
           <div className="flex w-16 items-center justify-center">
             <TextInput
-              ref={inputRef}
               size="small"
               value={amount}
               onChange={onAmountChange}
