@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
+import { sortBy, startCase } from "lodash";
 import { FC, useCallback, useState } from "react";
 import { When } from "react-if";
 
@@ -25,6 +26,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
@@ -90,7 +92,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
         </div>
         <div className="col-span-1 border-b border-l border-b-neutral-300 border-l-white bg-neutral-200 px-4 py-2 text-center">
           <Text variant="text-12-semibold" className="text-darkCustom">
-            {t(`Number of Jobs`)}
+            {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
       </>
@@ -157,7 +159,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
               <div className="shadow-lg absolute z-10 -my-1 rounded-lg border border-b-neutral-200  bg-white p-2">
                 {addNameLabel == null
                   ? null
-                  : Object.keys(typeMap).map(subtype => (
+                  : sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => (
                       <button
                         key={subtype}
                         className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"

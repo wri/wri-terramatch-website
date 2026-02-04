@@ -1264,6 +1264,115 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
   "DELETE"
 );
 
+export type SiteMediaBulkUploadPathParams = {
+  /**
+   * Entity type to upload media to
+   */
+  entity: Schemas.Object;
+  /**
+   * Entity UUID to upload media to
+   */
+  uuid: string;
+  /**
+   * Collection to upload media to
+   */
+  collection: string;
+};
+
+export type SiteMediaBulkUploadError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SiteMediaBulkUploadVariables = {
+  body: Schemas.MediaRequestBulkBody;
+  pathParams: SiteMediaBulkUploadPathParams;
+};
+
+/**
+ * Upload multiple files to a site photos collection
+ */
+export const siteMediaBulkUpload = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example media
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example media
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example mediaBulkResponses
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example mediaBulkResponses
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaBulkErrorDto;
+      };
+    },
+  SiteMediaBulkUploadError,
+  SiteMediaBulkUploadVariables,
+  {}
+>("/entities/v3/files/{entity}/{uuid}/media/{collection}", "POST");
+
 export type UploadFilePathParams = {
   /**
    * UUID of the resource.
@@ -1768,6 +1877,212 @@ export const disturbanceIndex = new V3ApiEndpoint<
   DisturbanceIndexVariables,
   {}
 >("/entities/v3/disturbances", "GET");
+
+export type GetAuditStatusesPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+};
+
+export type GetAuditStatusesError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAuditStatusesResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example auditStatuses
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AuditStatusDto;
+  }[];
+};
+
+export type GetAuditStatusesVariables = {
+  pathParams: GetAuditStatusesPathParams;
+};
+
+export const getAuditStatuses = new V3ApiEndpoint<
+  GetAuditStatusesResponse,
+  GetAuditStatusesError,
+  GetAuditStatusesVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}", "GET");
+
+export type CreateAuditStatusPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+};
+
+export type CreateAuditStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateAuditStatusResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example auditStatuses
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AuditStatusDto;
+  };
+};
+
+export type CreateAuditStatusVariables = {
+  body: Schemas.CreateAuditStatusBody;
+  pathParams: CreateAuditStatusPathParams;
+};
+
+export const createAuditStatus = new V3ApiEndpoint<
+  CreateAuditStatusResponse,
+  CreateAuditStatusError,
+  CreateAuditStatusVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}", "POST");
 
 export type EntityIndexPathParams = {
   /**
@@ -5356,9 +5671,10 @@ export const operationsByTag = {
     impactStoryBulkDelete
   },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
+  files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
+  auditStatus: { getAuditStatuses, createAuditStatus },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },

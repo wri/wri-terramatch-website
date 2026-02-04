@@ -1,11 +1,11 @@
 import { useT } from "@transifex/react";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { AuditStatusEntityType, useAuditStatuses } from "@/connections/AuditStatus";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
-import { GetV2AuditStatusENTITYUUIDResponse, useGetV2AuditStatusENTITYUUID } from "@/generated/apiComponents";
+import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isValidCriteriaData } from "@/helpers/polygonValidation";
 import {
   getValueForStatusDisturbanceReport,
@@ -33,13 +33,13 @@ interface AuditLogActionsResponse {
   mutateEntity: any;
   valuesForStatus: any;
   statusLabels: any;
-  entityType: AuditLogEntity;
+  entityType: AuditStatusEntityType;
   loadEntityList: () => void;
   entityListItem: any;
   selected: any;
   setSelected: any;
   checkPolygonsSite: boolean | undefined;
-  auditLogData: { data: GetV2AuditStatusENTITYUUIDResponse } | undefined;
+  auditLogData: { data: AuditStatusDto[] } | undefined;
   refetch: () => void;
   isLoading: boolean;
   auditData: { entity: string; entity_uuid: string };
@@ -60,27 +60,49 @@ const useAuditLogActions = ({
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
   const isLevelSrpReport = entityLevel === AuditLogButtonStates.SRP_REPORT;
   const isLevelFinancialReport = entityLevel === AuditLogButtonStates.FINANCIAL_REPORT;
-  const { mutateEntity, valuesForStatus, statusLabels, entityType } = useStatusActionsMap(buttonToggle!);
+  const { mutateEntity, valuesForStatus, statusLabels } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
   const isPolygon = buttonToggle === AuditLogButtonStates.POLYGON;
   const isSiteProject = entityLevel === AuditLogButtonStates.PROJECT;
+
+  const getV3EntityTypeFromButtonToggle = (toggle: number): AuditStatusEntityType => {
+    const mapping: Record<number, AuditStatusEntityType> = {
+      [AuditLogButtonStates.PROJECT]: "projects",
+      [AuditLogButtonStates.SITE]: "sites",
+      [AuditLogButtonStates.POLYGON]: "sitePolygons",
+      [AuditLogButtonStates.NURSERY]: "nurseries",
+      [AuditLogButtonStates.PROJECT_REPORT]: "projectReports",
+      [AuditLogButtonStates.SITE_REPORT]: "siteReports",
+      [AuditLogButtonStates.NURSERY_REPORT]: "nurseryReports",
+      [AuditLogButtonStates.DISTURBANCE_REPORT]: "disturbanceReports",
+      [AuditLogButtonStates.SRP_REPORT]: "srpReports",
+      [AuditLogButtonStates.FINANCIAL_REPORT]: "financialReports"
+    };
+    const mapped = mapping[toggle];
+    if (mapped == null) {
+      throw new Error(`Unsupported button toggle: ${toggle}. Cannot map to V3 entity.`);
+    }
+    return mapped;
+  };
+
+  const v3EntityType = getV3EntityTypeFromButtonToggle(buttonToggle!);
   const { entityListItem, selected, setSelected, loadEntityList } = useLoadEntityList({
     entity: record,
-    entityType: entityType as AuditLogEntity,
+    entityType: v3EntityType,
     buttonToggle,
     entityLevel,
     isProjectReport
   });
 
   const siteUuid =
-    entityType === "Site" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
+    v3EntityType === "sites" && record?.uuid && isSite ? (isSiteProject ? selected?.uuid : record.uuid) : undefined;
 
   const { data: sitePolygons } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: siteUuid,
-    enabled: !!siteUuid && entityType === "Site" && isSite
+    enabled: !!siteUuid && v3EntityType === "sites" && isSite
   });
 
   const checkPolygons = useMemo<boolean | undefined>(() => {
@@ -164,24 +186,25 @@ const useAuditLogActions = ({
     }
   })();
 
-  const {
-    data: auditLogData,
-    refetch,
-    isLoading
-  } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
-    pathParams: {
-      entity: ReverseButtonStates2[buttonToggle!],
-      uuid:
-        buttonToggle == AuditLogButtonStates.PROJECT
-          ? record?.projectUuid ?? record.uuid
-          : entityHandlers.selectedEntityItem?.uuid
-    }
+  const targetUuid =
+    buttonToggle == AuditLogButtonStates.PROJECT
+      ? record?.projectUuid ?? record.uuid
+      : entityHandlers.selectedEntityItem?.uuid;
+
+  const [isAuditLogLoaded, auditStatusConnection] = useAuditStatuses({
+    entity: v3EntityType,
+    uuid: targetUuid ?? ""
   });
+
+  const { data: auditStatusesData, refetch: auditStatusRefetch } = auditStatusConnection;
+
+  const refetch = useCallback(() => auditStatusRefetch?.(), [auditStatusRefetch]);
+  const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
+  const isLoading = !isAuditLogLoaded;
 
   useEffect(() => {
     refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buttonToggle, record, entityListItem, selected]);
+  }, [buttonToggle, record, entityListItem, refetch, selected, targetUuid, v3EntityType]);
 
   const buttonStates = ReverseButtonStates2[entityLevel!];
   const getValuesStatusEntity = (() => {
@@ -232,7 +255,7 @@ const useAuditLogActions = ({
     mutateEntity,
     valuesForStatus: getValuesStatusEntity.getValueForStatus,
     statusLabels: getValuesStatusEntity.statusLabels,
-    entityType: entityType as AuditLogEntity,
+    entityType: v3EntityType,
     loadEntityList: entityHandlers.loadToEntity,
     entityListItem: entityHandlers.ListItemToEntity,
     selected: entityHandlers.selectedEntityItem,

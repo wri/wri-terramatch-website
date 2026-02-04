@@ -50,7 +50,7 @@ export const useReportData = () => {
           pagination: { page: 1, perPage: 100 },
           sort: { field: "createdAt", order: "DESC" },
           meta: {
-            sideloads: [{ entity: "demographics", pageSize: 100 }]
+            sideloads: [{ entity: "trackings", pageSize: 100 }]
           }
         }) as Promise<GetListResult<ProjectReport>>;
 

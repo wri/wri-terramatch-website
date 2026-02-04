@@ -15,6 +15,7 @@ export interface ProjectHeaderProps {
   description?: string;
   startDate: string;
   endDate: string;
+  countryFlag: string;
   country: string;
   team?: TeamMember[];
 }
@@ -30,6 +31,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({
   description,
   startDate,
   endDate,
+  countryFlag,
   country,
   team
 }) => {
@@ -55,6 +57,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({
           startDate={startDate}
           endDate={endDate}
           description={description}
+          countryFlag={countryFlag}
         />
       </Flex>
       <TeamSection team={team} />

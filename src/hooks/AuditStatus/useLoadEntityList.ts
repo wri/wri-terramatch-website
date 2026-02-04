@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
+import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import {
   loadLightNurseryReportList,
   loadLightProjectReport,
@@ -12,7 +12,6 @@ import {
 import { loadAllSitePolygons } from "@/connections/SitePolygons";
 import { loadTask } from "@/connections/Task";
 import { IndexConnection } from "@/connections/util/apiConnectionFactory";
-import { NURSERY, NURSERY_REPORT, POLYGON, PROJECT_REPORT, SITE, SITE_REPORT } from "@/constants/entities";
 import { NurseryLightDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 export interface SelectedItem {
@@ -26,7 +25,7 @@ export interface SelectedItem {
 
 interface UseLoadEntityListParams {
   entity: any;
-  entityType: AuditLogEntity;
+  entityType: AuditStatusEntityType;
   buttonToggle?: number;
   entityLevel?: number;
   isProjectReport?: boolean;
@@ -89,7 +88,7 @@ async function loadReportsForTask({ pathParams }: { pathParams: { uuid: string }
 const unnamedTitleAndSort = (
   list: EntityListItem[],
   nameProperty: keyof EntityListItem,
-  entityType: AuditLogEntity,
+  entityType: AuditStatusEntityType,
   buttonToggle: number
 ) => {
   const unnamedItems = list?.map((item: EntityListItem) => {
@@ -97,7 +96,11 @@ const unnamedTitleAndSort = (
       return {
         ...item,
         [nameProperty]:
-          entityType === POLYGON ? "Unnamed Polygon" : entityType === SITE ? "Unnamed Site" : "Unnamed Nursery"
+          entityType === "sitePolygons"
+            ? "Unnamed Polygon"
+            : entityType === "sites"
+            ? "Unnamed Site"
+            : "Unnamed Nursery"
       };
     }
     return item;
@@ -126,7 +129,7 @@ const useLoadEntityList = ({
 
     let _entityList: EntityListItem[] = [];
 
-    if (entityType == POLYGON) {
+    if (entityType === "sitePolygons") {
       const entityName = isSiteProjectLevel ? "projects" : "sites";
       const polygons = await loadAllSitePolygons({
         entityName,
@@ -142,7 +145,7 @@ const useLoadEntityList = ({
     } else if (isProjectReport) {
       const res = await loadReportsForTask({ pathParams: { uuid: entity.taskUuid } });
       _entityList = res.data;
-    } else if (entityType === SITE) {
+    } else if (entityType === "sites") {
       const res: IndexConnection<SiteLightDto> = await loadSiteIndex({
         filter: { projectUuid: entity.uuid }
       });
@@ -152,7 +155,7 @@ const useLoadEntityList = ({
         status: site.status ?? undefined,
         polygonUuid: undefined
       }));
-    } else if (entityType === NURSERY) {
+    } else if (entityType === "nurseries") {
       const res: IndexConnection<NurseryLightDto> = await loadNurseryIndex({
         filter: { projectUuid: entity.uuid }
       });
@@ -165,7 +168,7 @@ const useLoadEntityList = ({
     }
     const statusActionsMap = {
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
-        entityType: PROJECT_REPORT,
+        entityType: "projectReports" as AuditStatusEntityType,
         list: _entityList
           ?.filter(entity => entity.type == "project-report")
           .map(report => ({
@@ -178,7 +181,7 @@ const useLoadEntityList = ({
           }))
       },
       [AuditLogButtonStates.SITE_REPORT as number]: {
-        entityType: SITE_REPORT,
+        entityType: "siteReports" as AuditStatusEntityType,
         list: _entityList
           ?.filter(entity => entity.type == "site-report")
           .map(report => ({
@@ -191,7 +194,7 @@ const useLoadEntityList = ({
           }))
       },
       [AuditLogButtonStates.NURSERY_REPORT as number]: {
-        entityType: NURSERY_REPORT,
+        entityType: "nurseryReports" as AuditStatusEntityType,
         list: _entityList
           ?.filter(entity => entity.type == "nursery-report")
           .map(report => ({

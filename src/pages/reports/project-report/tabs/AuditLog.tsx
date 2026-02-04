@@ -6,12 +6,11 @@ import SiteAuditLogEntityStatus from "@/admin/components/ResourceTabs/AuditLogTa
 import SiteAuditLogEntityStatusSide from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogEntityStatusSide";
 import SiteAuditLogProjectStatus from "@/admin/components/ResourceTabs/AuditLogTab/components/SiteAuditLogProjectStatus";
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditLogEntity } from "@/admin/components/ResourceTabs/AuditLogTab/constants/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import { NURSERY_REPORT, PROJECT_REPORT, SITE_REPORT } from "@/constants/entities";
+import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
@@ -59,24 +58,24 @@ const AuditLog: FC<AuditLogProps> = ({ projectReport }) => {
 
   const statusActionsMap = {
     [AuditLogButtonStates.PROJECT_REPORT as number]: {
-      entityType: PROJECT_REPORT
+      entityType: "projectReports" as AuditStatusEntityType
     },
     [AuditLogButtonStates.SITE_REPORT as number]: {
-      entityType: SITE_REPORT
+      entityType: "siteReports" as AuditStatusEntityType
     },
     [AuditLogButtonStates.NURSERY_REPORT as number]: {
-      entityType: NURSERY_REPORT
+      entityType: "nurseryReports" as AuditStatusEntityType
     }
   };
 
-  const verifyEntityReport = () => {
+  const verifyEntityReport = (): AuditStatusEntityType => {
     switch (reportTypesMappging[buttonToggle!]) {
       case "project-reports":
-        return PROJECT_REPORT;
+        return "projectReports";
       case "site-reports":
-        return SITE_REPORT;
+        return "siteReports";
       case "nursery-reports":
-        return NURSERY_REPORT;
+        return "nurseryReports";
       default:
         return entityType;
     }
@@ -109,7 +108,7 @@ const AuditLog: FC<AuditLogProps> = ({ projectReport }) => {
                     auditLogData={auditLogData}
                     refresh={refetch}
                     buttonToggle={buttonToggle}
-                    entityType={statusActionsMap[buttonToggle].entityType as AuditLogEntity}
+                    entityType={statusActionsMap[buttonToggle].entityType}
                     viewPD={true}
                     verifyEntity={verifyEntity}
                     isProjectReport

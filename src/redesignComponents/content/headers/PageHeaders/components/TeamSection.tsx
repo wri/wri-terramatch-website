@@ -23,51 +23,68 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
   }, []);
 
   return (
-    <Box width="240px" minWidth="240px" height="auto" className="flex flex-col gap-2 px-6 pt-8">
-      <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
-        {t("Team:")}
-      </Text>
-      <Flex className="flex-wrap">
-        {team != null ? (
-          team.map(member => (
-            <Box key={member.name} className="h-10 w-7">
-              <Box className="absolute">
-                <Avatar {...member.avatar} />
+    <Box
+      width="240px"
+      minWidth="240px"
+      height="auto"
+      className="flex flex-col gap-2 px-6 pt-8"
+      css={{
+        "&": {
+          alignItems: "self-end !important"
+        }
+      }}
+    >
+      <div className="flex w-fit flex-col gap-2">
+        <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
+          {t("Team:")}
+        </Text>
+        <Flex className="flex-wrap">
+          {team != null ? (
+            team.map(member => (
+              <Box key={member.name} className="h-10 w-7">
+                <Box className="absolute">
+                  <Avatar {...member.avatar} />
+                </Box>
               </Box>
-            </Box>
-          ))
-        ) : (
-          <Flex
-            alignItems="center"
-            tabIndex={0}
-            className="group cursor-pointer gap-1"
-            role="button"
-            onClick={handleAddTeamClick}
-            css={{
-              "&:hover .avatar-add": {
-                opacity: "0.8"
-              }
-            }}
-          >
-            <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
-            <Text
-              fontSize="12px"
-              lineHeight="16px"
-              fontWeight="700"
-              padding="6px 8px"
-              borderRadius="4px"
-              backgroundColor="transparent"
-              color="secondary.900"
-              width="auto"
-              className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+            ))
+          ) : (
+            <Flex
+              alignItems="center"
+              tabIndex={0}
+              className="group cursor-pointer gap-1"
+              role="button"
+              onClick={handleAddTeamClick}
+              css={{
+                "&:hover .avatar-add": {
+                  opacity: "0.8",
+                  transform: "scale(1) !important"
+                },
+                "& .avatar-add": {
+                  transform: "scale(1) !important"
+                }
+              }}
             >
-              {t("Add Team Members")}
-              <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
-            </Text>
-          </Flex>
-        )}
-      </Flex>
-      <TerraFundAFR100 className="mt-auto ml-auto" />
+              <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
+              <Text
+                fontSize="12px"
+                lineHeight="16px"
+                fontWeight="700"
+                padding="6px 8px"
+                borderRadius="4px"
+                backgroundColor="transparent"
+                color="secondary.900"
+                width="auto"
+                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+              >
+                {t("Add Team Members")}
+                <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
+              </Text>
+            </Flex>
+          )}
+        </Flex>
+      </div>
+
+      <TerraFundAFR100 className="mt-auto" />
     </Box>
   );
 };
