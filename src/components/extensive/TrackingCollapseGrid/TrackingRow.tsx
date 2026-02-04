@@ -78,7 +78,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
             {onChange != null && (
               <Button onClick={onDelete} className="flex items-center gap-1.5">
                 <Delete color="error.500" boxSize={3} className="leading-4" />
-                <Text fontSize="12px" lineHeight="16px" color="error.900">
+                <Text fontSize="12px" lineHeight="16px" color="error.900" fontWeight="bold">
                   Remove
                 </Text>
               </Button>

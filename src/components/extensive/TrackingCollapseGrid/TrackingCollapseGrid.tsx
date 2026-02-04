@@ -90,12 +90,12 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
                 key={entryType}
                 className={classNames("flex flex-col", {
                   "w-full": entryType === "ethnicity",
-                  "w-80": entryType !== "ethnicity"
+                  "min-w-80 max-w-[22rem]": entryType !== "ethnicity"
                 })}
               >
                 <div
                   className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
-                    "grid-cols-[auto_minmax(0,10rem)]": entryType === "ethnicity",
+                    "grid-cols-[auto_minmax(10rem,11rem)]": entryType === "ethnicity",
                     "grid-cols-2": entryType !== "ethnicity"
                   })}
                 >
