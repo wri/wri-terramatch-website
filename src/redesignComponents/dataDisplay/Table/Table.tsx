@@ -1,6 +1,8 @@
-import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
+import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect } from "react";
+
+import { getThemedColor } from "@/lib/theme";
 
 import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
@@ -162,6 +164,17 @@ const Table: FC<TableProps> = ({
         selectedRows={selectedRows}
         selectable={selectable}
       />
+      {showItemCount && (
+        <Text
+          fontSize="18px"
+          fontWeight="400"
+          lineHeight="28px"
+          color={getThemedColor("neutral", 700)}
+          className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
+        >
+          Showing {`${startRange + 1} - ${endRange} of ${actualTotalItems}`}
+        </Text>
+      )}
     </Box>
   );
 };
