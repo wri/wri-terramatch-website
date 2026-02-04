@@ -5,6 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useTableStatus } from "./hooks";
@@ -29,6 +30,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowTitle = t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
+  const user = useIsAdmin();
 
   return (
     <div>
@@ -82,10 +84,21 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
             </p>
           )}
 
-          <div className="flex flex-wrap gap-x-16 gap-y-6">
+          <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
             {entryTypes.map(entryType => (
-              <div key={entryType} className="flex flex-col">
-                <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
+              <div
+                key={entryType}
+                className={classNames("flex flex-col", {
+                  "w-full": entryType === "ethnicity",
+                  "w-80": entryType !== "ethnicity"
+                })}
+              >
+                <div
+                  className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
+                    "grid-cols-[auto_minmax(0,10rem)]": entryType === "ethnicity",
+                    "grid-cols-2": entryType !== "ethnicity"
+                  })}
+                >
                   <TrackingSection
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}

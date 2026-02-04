@@ -24,7 +24,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
       <ChevronDownAlt />
       <Box>
         <Flex gap={2} items-center>
-          {image != null && <img src={image} alt={label} className="border-theme-neutral-300 h-6 w-6 rounded border" />}
+          {image != null && <img src={image} alt={label} className="h-6 w-6 rounded border border-theme-neutral-300" />}
           {icon != null && icon}
           {avatar != null && <Avatar {...avatar} size="small" />}
           <Box>
@@ -33,7 +33,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
               {...(link == null ? {} : { href: link, target: "_blank" })}
               fontSize="16px"
               fontWeight="bold"
-              className="text-theme-neutral-800 decoration-theme-primary-700 underline decoration-dotted underline-offset-4"
+              className="text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
             >
               {label}
             </Text>

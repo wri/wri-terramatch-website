@@ -104,7 +104,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
+          icon: <Placeholder className="h-5 w-5 text-theme-neutral-800" />
         }
       },
       ...generateSampleData(3),
