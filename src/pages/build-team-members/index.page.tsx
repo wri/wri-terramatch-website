@@ -4,6 +4,7 @@ import { FC, useCallback } from "react";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
@@ -189,7 +190,15 @@ const BuildTeamMembersPage: FC = () => {
               <ChakraTableCell>{(rowData as any).email}</ChakraTableCell>
               <ChakraTableCell>{(rowData as any).role}</ChakraTableCell>
               <ChakraTableCell>{(rowData as any).status}</ChakraTableCell>
-              <ChakraTableCell>{/* */}</ChakraTableCell>
+              <ChakraTableCell>
+                <ActionCell
+                  button={{
+                    children: "View",
+                    onClick: () => console.log("View")
+                  }}
+                  onButtonIconClick={() => console.log("View")}
+                />
+              </ChakraTableCell>
             </TableRow>
           ),
           []
