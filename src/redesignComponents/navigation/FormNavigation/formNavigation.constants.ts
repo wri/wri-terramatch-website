@@ -9,8 +9,7 @@ export type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 export type BadgeStatus = "completed" | "active" | "available" | "disabled" | "error";
 
-export const BADGE_FOCUS_RING_CLASSES =
-  "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:!outline-theme-primary-700";
+export const BADGE_FOCUS_RING_CLASSES = "outline-offset-ring";
 export const FORCED_FOCUS_CLASSES = "outline-solid outline-2 !outline-offset-2 outline-theme-primary-700";
 export const STEP_STATUS_HOVER_STYLE_MAP = {
   completed: "bg-theme-primary-200",
