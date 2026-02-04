@@ -91,8 +91,19 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
 
           <div className="flex flex-wrap gap-x-16 gap-y-6">
             {entryTypes.map(entryType => (
-              <div key={entryType} className="flex flex-col">
-                <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
+              <div
+                key={entryType}
+                className={classNames("flex flex-col", {
+                  "w-full": entryType === "ethnicity",
+                  "w-80": entryType !== "ethnicity"
+                })}
+              >
+                <div
+                  className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
+                    "grid-cols-[auto_minmax(0,10rem)]": entryType === "ethnicity",
+                    "grid-cols-2": entryType !== "ethnicity"
+                  })}
+                >
                   <TrackingSection
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}

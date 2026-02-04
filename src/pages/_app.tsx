@@ -1,5 +1,6 @@
 import "src/styles/globals.css";
 
+import { ChakraProvider } from "@chakra-ui/react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { tx } from "@transifex/native";
 import { useT } from "@transifex/react";
@@ -23,6 +24,7 @@ import NotificationProvider from "@/context/notification.provider";
 import WrappedQueryClientProvider from "@/context/queryclient.provider";
 import RouteHistoryProvider from "@/context/routeHistory.provider";
 import ToastProvider from "@/context/toast.provider";
+import { system } from "@/lib/theme";
 import { WrappedReduxProvider } from "@/store/store";
 import Bootstrap from "@/utils/Bootstrap";
 import setupYup from "@/yup.locale";
@@ -85,34 +87,36 @@ const _App = ({ Component, pageProps }: AppProps) => {
   setupYup(t);
 
   return (
-    <ToastProvider>
-      <WrappedQueryClientProvider>
-        <WrappedReduxProvider>
-          <Bootstrap>
-            <LoadingProvider>
-              <NotificationProvider>
-                <ModalProvider>
-                  {isOnDashboards ? (
-                    <DashboardStack>
-                      <Component {...pageProps} />
-                    </DashboardStack>
-                  ) : isAdmin ? (
-                    <AdminStack>
-                      <Component {...pageProps} />
-                    </AdminStack>
-                  ) : (
-                    <PDStack>
-                      <Component {...pageProps} />
-                    </PDStack>
-                  )}
-                </ModalProvider>
-              </NotificationProvider>
-            </LoadingProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </Bootstrap>
-        </WrappedReduxProvider>
-      </WrappedQueryClientProvider>
-    </ToastProvider>
+    <ChakraProvider value={system}>
+      <ToastProvider>
+        <WrappedQueryClientProvider>
+          <WrappedReduxProvider>
+            <Bootstrap>
+              <LoadingProvider>
+                <NotificationProvider>
+                  <ModalProvider>
+                    {isOnDashboards ? (
+                      <DashboardStack>
+                        <Component {...pageProps} />
+                      </DashboardStack>
+                    ) : isAdmin ? (
+                      <AdminStack>
+                        <Component {...pageProps} />
+                      </AdminStack>
+                    ) : (
+                      <PDStack>
+                        <Component {...pageProps} />
+                      </PDStack>
+                    )}
+                  </ModalProvider>
+                </NotificationProvider>
+              </LoadingProvider>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </Bootstrap>
+          </WrappedReduxProvider>
+        </WrappedQueryClientProvider>
+      </ToastProvider>
+    </ChakraProvider>
   );
 };
 

@@ -1,11 +1,13 @@
+import { Button, Text } from "@chakra-ui/react";
+import { css } from "@emotion/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { startCase } from "lodash";
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
-import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
+import { Delete } from "@/redesignComponents/foundations/Icons";
 
 export interface TrackingRowProps {
   entryType: string;
@@ -60,22 +62,51 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
           "col-span-1 border-b border-neutral-200 bg-white"
         )}
       >
-        <Text variant="text-14-light" className="flex items-center text-darkCustom">
-          {t(label)}
-        </Text>
+        <When condition={label != null}>
+          <Text fontSize="16px" lineHeight="24px" color="neutral.800">
+            {t(label)}
+          </Text>
+        </When>
+        <When condition={label != null}>
+          <MultiActionButton
+            mainActionLabel={label ?? ""}
+            mainActionOnClick={() => {}}
+            otherActions={[]}
+            size="small"
+            variant="secondary"
+          />
+        </When>
         <When condition={usesName}>
           <When condition={onChange == null}>
-            <Text variant="text-14-light" className="items-left flex w-3/5 px-2 py-1">
+            <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="items-left flex w-3/5 px-2 py-1">
               {userLabel}
             </Text>
           </When>
           <When condition={onChange != null}>
-            <input
-              placeholder={t(`Enter ${startCase(entryType)}`)}
-              className="text-14-light hover:shadow-blue-border-input h-min w-3/5 rounded border border-transparent px-2 py-1 outline-0 hover:border hover:border-primary"
+            <TextInput
+              size="small"
+              placeholder={t("Add details")}
               value={userLabel ?? ""}
               onChange={onUserLabelChange}
+              css={css`
+                width: 100%;
+                padding: 0 24px 0 16px;
+                & > div {
+                  margin-bottom: 0;
+                }
+                & input {
+                  margin-top: 0;
+                }
+              `}
             />
+          </When>
+          <When condition={usesName}>
+            <Button onClick={onDelete} className="flex items-center gap-1.5">
+              <Delete color="error.500" boxSize={3} className="leading-4" />
+              <Text fontSize="12px" lineHeight="16px" color="error.900">
+                Remove
+              </Text>
+            </Button>
           </When>
         </When>
       </div>
@@ -86,26 +117,33 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
         )}
       >
         <When condition={onChange == null}>
-          <Text variant="text-14-light" className="w-full px-4 text-center text-darkCustom">
+          <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="w-full px-4 text-center">
             {amount}
           </Text>
         </When>
         <When condition={onChange != null}>
-          <input
-            ref={inputRef}
-            value={focused ? amount : t(`{amount}`, { amount })}
-            type={focused ? "text" : undefined}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            onClick={handleClick}
-            onChange={onAmountChange}
-            className="text-14-light hover:shadow-blue-border-input w-full border border-transparent px-0 text-center text-darkCustom outline-0 hover:border hover:border-primary"
-          />
-          <When condition={usesName}>
-            <div className="absolute ml-20 cursor-pointer opacity-30 hover:opacity-60" onClick={onDelete}>
-              <Icon name={IconNames.CROSS} viewBox="0 0 24 24" />
-            </div>
-          </When>
+          <div className="flex w-16 items-center justify-center">
+            <TextInput
+              ref={inputRef}
+              size="small"
+              value={focused ? amount : t(`{amount}`, { amount })}
+              type={focused ? "text" : undefined}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onClick={handleClick}
+              onChange={onAmountChange}
+              css={css`
+                width: 100%;
+                padding: 0 24px 0 16px;
+                & > div {
+                  margin-bottom: 0;
+                }
+                & input {
+                  margin-top: 0;
+                }
+              `}
+            />
+          </div>
         </When>
       </div>
     </>
