@@ -281,6 +281,14 @@ export type UpdateImpactStoryBody = {
   data: UpdateImpactStoryDataDto;
 };
 
+export type ImpactStoryDeleteData = {
+  type: "impactStories";
+  /**
+   * @format uuid
+   */
+  id: string;
+};
+
 export type ImpactStoryBulkDeleteBodyDto = {
   /**
    * Array of impact story resource identifiers to delete
@@ -288,7 +296,7 @@ export type ImpactStoryBulkDeleteBodyDto = {
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"impactStories","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: ImpactStoryDeleteData[];
 };
 
 export type TaskLightDto = {
@@ -593,6 +601,53 @@ export type TaskUpdateBody = {
   data: TaskData;
 };
 
+export type MediaBulkErrorDto = {
+  /**
+   * The index of the media
+   */
+  index: number;
+  /**
+   * The error message
+   */
+  error: string;
+};
+
+export type Object = {};
+
+export type MediaRequestBulkAttributes = {
+  /**
+   * The URL of the media
+   */
+  downloadUrl: string;
+  /**
+   * Whether the media is public
+   */
+  isPublic: boolean;
+  /**
+   * The latitude of the media
+   */
+  lat: number | null;
+  /**
+   * The longitude of the media
+   */
+  lng: number | null;
+};
+
+export type MediaRequestBulkData = {
+  type: "media";
+  attributes: MediaRequestBulkAttributes;
+};
+
+export type MediaRequestBulkBody = {
+  /**
+   * Array of media to create
+   *
+   * @example {"type":"media","attributes":{"isPublic":true,"downloadUrl":"https://example.com/image.jpg"}}
+   * @example {"type":"media","attributes":{"isPublic":false,"downloadUrl":"https://example.com/image.jpg"}}
+   */
+  data: MediaRequestBulkData[];
+};
+
 export type MediaRequestAttributes = {
   /**
    * Whether the media is public
@@ -792,6 +847,38 @@ export type DisturbanceDto = {
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
+};
+
+export type AuditStatusDto = {
+  id: number;
+  uuid: string;
+  status: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  comment: string | null;
+  type: string | null;
+  /**
+   * @format date-time
+   */
+  dateCreated: string | null;
+  attachments: MediaDto[];
+};
+
+export type CreateAuditStatusAttributes = {
+  type?: string | null;
+  comment?: string | null;
+  status?: string | null;
+  isActive?: boolean | null;
+  requestRemoved?: boolean | null;
+};
+
+export type CreateAuditStatusData = {
+  type: "auditStatuses";
+  attributes: CreateAuditStatusAttributes;
+};
+
+export type CreateAuditStatusBody = {
+  data: CreateAuditStatusData;
 };
 
 export type ANRDto = {
@@ -1136,8 +1223,6 @@ export type DisturbanceReportLightDto = {
   entries: DisturbanceReportEntryDto[] | null;
   reportId: number;
 };
-
-export type Object = {};
 
 export type ProjectFullDto = {
   /**

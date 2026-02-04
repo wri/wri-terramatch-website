@@ -3,10 +3,9 @@ import { When } from "react-if";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import Loader from "@/components/generic/Loading/Loader";
+import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import { useMyUser } from "@/connections/User";
 import { TextVariants } from "@/types/common";
-
-import { AuditLogEntity } from "../../../AuditLogTab/constants/types";
 
 const CommentarySection = ({
   record,
@@ -17,7 +16,7 @@ const CommentarySection = ({
   variantText = "text-16-bold"
 }: {
   record: any;
-  entity: AuditLogEntity;
+  entity: AuditStatusEntityType;
   refresh?: () => void;
   viewCommentsList?: boolean;
   loading?: boolean;

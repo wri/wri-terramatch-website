@@ -86,6 +86,7 @@
     "react-inlinesvg": "^3.0.0",
     "react-joyride": "^2.5.5",
     "react-redux": "^9.1.2",
+    "react-twemoji": "^0.7.2",
     "recharts": "^2.13.0",
     "redux-logger": "^3.0.6",
     "reselect": "^4.1.8",

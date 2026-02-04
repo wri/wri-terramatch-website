@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import { InlineMessage } from "@worldresources/wri-design-systems";
 import { FC, useEffect, useMemo, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
@@ -62,27 +63,16 @@ const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: bo
   return false;
 };
 
-interface InlineMessageProps {
-  type: "info" | "warning";
+interface InlineMessageCustomProps {
+  label: string;
+  type: "warning" | "info-grey";
   message: string;
 }
 
-const InlineMessage: FC<InlineMessageProps> = ({ type, message }) => {
-  const baseClasses = "flex items-start gap-3 rounded-lg p-4 mb-4";
-  const typeClasses = {
-    info: "bg-neutral-200 text-neutral-800",
-    warning: "bg-warning-100 text-warning-900"
-  };
-
-  const iconName = type === "warning" ? IconNames.WARNING_TRIANGLE : IconNames.INFO_CIRCLE;
-  const iconColorClass = type === "warning" ? "text-warning-700" : "text-neutral-600";
-
+const InlineMessageCustom: FC<InlineMessageCustomProps> = ({ label, type, message }) => {
   return (
-    <div className={tw(baseClasses, typeClasses[type])}>
-      <Icon name={iconName} className={tw("mt-0.5 h-5 w-5 flex-shrink-0", iconColorClass)} />
-      <Text variant="text-14" className="flex-1">
-        {message}
-      </Text>
+    <div className="inline-message-full-width w-full">
+      <InlineMessage caption={message} label={label} variant={type} />
     </div>
   );
 };
@@ -264,7 +254,13 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
-        {areaStats && <InlineMessage type={areaStats.type} message={areaStats.message} />}
+        {areaStats && (
+          <InlineMessageCustom
+            label={areaStats.newPercentage > 125 ? "Warning" : "Info"}
+            type={areaStats.newPercentage > 125 ? "warning" : "info-grey"}
+            message={areaStats.message}
+          />
+        )}
         <div className="mb-2 flex items-center">
           {content && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
