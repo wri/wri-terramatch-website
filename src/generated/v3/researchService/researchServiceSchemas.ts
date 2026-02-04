@@ -539,6 +539,14 @@ export type SitePolygonFullDto = {
   reportingPeriods: ReportingPeriodDto[];
 };
 
+export type SitePolygonStatusUpdate = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+};
+
 export type SitePolygonStatusBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
@@ -546,18 +554,49 @@ export type SitePolygonStatusBulkUpdateBodyDto = {
    * @example {"id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: SitePolygonStatusUpdate[];
   /**
    * Comment for the status update
    */
   comment?: string;
 };
 
+export type SitePolygonUpdateAttributes = {
+  /**
+   * All indicators to update for this polygon
+   */
+  indicators: (
+    | IndicatorTreeCoverLossDto
+    | IndicatorHectaresDto
+    | IndicatorTreeCountDto
+    | IndicatorTreeCoverDto
+    | IndicatorFieldMonitoringDto
+    | IndicatorMsuCarbonDto
+  )[];
+};
+
+export type SitePolygonUpdate = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: SitePolygonUpdateAttributes;
+};
+
 export type SitePolygonBulkUpdateBodyDto = {
   /**
    * Array of site polygons to update
    */
-  data: any[][];
+  data: SitePolygonUpdate[];
+};
+
+export type SitePolygonDeleteData = {
+  type: "sitePolygons";
+  /**
+   * @format uuid
+   */
+  id: string;
 };
 
 export type SitePolygonBulkDeleteBodyDto = {
@@ -567,7 +606,7 @@ export type SitePolygonBulkDeleteBodyDto = {
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174000"}
    * @example {"type":"sitePolygons","id":"123e4567-e89b-12d3-a456-426614174001"}
    */
-  data: any[][];
+  data: SitePolygonDeleteData[];
 };
 
 export type VersionUpdateAttributes = {
@@ -705,11 +744,11 @@ export type ValidationRequestBody = {
 
 export type ValidationSummaryDto = {
   /**
-   * The UUID of the site that was validated
+   * The UUID of the site that was validated (null for project-level validation)
    *
    * @example 7631be34-bbe0-4e1e-b4fe-592677dc4b50
    */
-  siteUuid: string;
+  siteUuid: Record<string, any> | null;
   /**
    * Total number of polygons in the site
    */

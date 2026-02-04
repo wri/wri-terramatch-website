@@ -35,7 +35,8 @@ const themeConfig = {
         600: { value: "#8ECA3F" },
         700: { value: "#477010" },
         800: { value: "#284206" },
-        900: { value: "#162602" }
+        900: { value: "#162602" },
+        neutral: { value: "#E9F1ED" }
       },
       success: {
         100: { value: "#EBF5F2" },
@@ -53,6 +54,7 @@ const themeConfig = {
       },
       error: {
         100: { value: "#FFEFED" },
+        150: { value: "#FFE3DF" },
         200: { value: "#EDA1A9" },
         300: { value: "#F6C5C1" },
         500: { value: "#C11101" },
@@ -61,8 +63,13 @@ const themeConfig = {
       accessible: {
         "text-on-primary-mids": { value: "#032230" },
         "text-on-secondary-mids": { value: "#F7FBFD" },
-        "controls-on-neutral-lights": { value: "#477010" },
-        "controls-on-neutral-darks": { value: "#284206" }
+        "controls-on-neutral-lights": { value: "#11688D" },
+        "controls-on-neutral-darks": { value: "#CCECFA" }
+      }
+    },
+    shadows: {
+      200: {
+        value: "0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10)"
       }
     }
   }

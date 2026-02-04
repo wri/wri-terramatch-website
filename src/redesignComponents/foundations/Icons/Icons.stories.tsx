@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   Applications,
   AreaHectares,
+  Calendar,
   Check,
   CheckApproved,
   ChevronDown,
@@ -22,7 +23,9 @@ import {
   Indeterminate,
   Info,
   InformationRequired,
+  InformationRequiredSimple,
   Jobs,
+  JobsCircle,
   Landscape,
   Language,
   Messages,
@@ -35,7 +38,7 @@ import {
   Organisation,
   Pending,
   PhotoAdd,
-  PlaceholderIcon,
+  Placeholder,
   Programme,
   Project,
   Regeneration,
@@ -43,11 +46,13 @@ import {
   Reports,
   Search,
   Seeds,
+  SeedsCircle,
   Site,
   Species,
   SpeciesNative,
   SurvivalRate,
   Tree,
+  TreeCircle,
   UserAdd,
   Visibility,
   VisibilityOff
@@ -94,6 +99,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Jobs">
             <Jobs boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Jobs Circle">
+            <JobsCircle boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Landscape">
             <Landscape boxSize={8} />
           </IconWrapper>
@@ -102,6 +110,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Seeds">
             <Seeds boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Seeds Circle">
+            <SeedsCircle boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Species">
             <Species boxSize={8} />
@@ -114,6 +125,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Tree">
             <Tree boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Tree Circle">
+            <TreeCircle boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -167,7 +181,7 @@ export const AllIcons: Story = {
             <NewTab boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Placeholder">
-            <PlaceholderIcon boxSize={8} />
+            <Placeholder boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Photo Add">
             <PhotoAdd boxSize={8} />
@@ -183,6 +197,12 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Visibility Off">
             <VisibilityOff boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Information Required Simple">
+            <InformationRequiredSimple boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Calendar">
+            <Calendar boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -270,6 +290,9 @@ export const DataVisualisation: Story = {
         <IconWrapper name="Jobs">
           <Jobs boxSize={8} />
         </IconWrapper>
+        <IconWrapper name="Jobs Circle">
+          <JobsCircle boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Landscape">
           <Landscape boxSize={8} />
         </IconWrapper>
@@ -278,6 +301,9 @@ export const DataVisualisation: Story = {
         </IconWrapper>
         <IconWrapper name="Seeds">
           <Seeds boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Seeds Circle">
+          <SeedsCircle boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Species">
           <Species boxSize={8} />
@@ -290,6 +316,9 @@ export const DataVisualisation: Story = {
         </IconWrapper>
         <IconWrapper name="Tree">
           <Tree boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Tree Circle">
+          <TreeCircle boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
@@ -347,7 +376,7 @@ export const Function: Story = {
           <NewTab boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Placeholder">
-          <PlaceholderIcon boxSize={8} />
+          <Placeholder boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Photo Add">
           <PhotoAdd boxSize={8} />
@@ -363,6 +392,12 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Visibility Off">
           <VisibilityOff boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Information Required Simple">
+          <InformationRequiredSimple boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Calendar">
+          <Calendar boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>

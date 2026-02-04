@@ -69,7 +69,7 @@ type SitePolygonResourceIdentifier = {
 
 const createBulkDeleteBody = (resources: SitePolygonResourceIdentifier[]): SitePolygonBulkDeleteBodyDto => {
   return {
-    data: resources as never
+    data: resources
   };
 };
 
@@ -86,11 +86,48 @@ export const bulkUpdateSitePolygonStatus = async (
   const body: SitePolygonStatusBulkUpdateBodyDto = {
     comment,
     data: updateResources.map(resource => ({
-      type: "sitePolygons",
+      type: "sitePolygons" as const,
       id: resource.id
-    })) as unknown as never[][]
+    }))
   };
-  return updateSitePolygonStatus.fetch({ body, pathParams: { status } });
+
+  const variables = { body, pathParams: { status } };
+  const fullUrl = resolveUrl(updateSitePolygonStatus.url, variables);
+
+  const failureSelector = updateSitePolygonStatus.fetchFailedSelector(variables);
+  const previousFailure = failureSelector(ApiSlice.currentState);
+  if (previousFailure != null) {
+    ApiSlice.clearPending(fullUrl, updateSitePolygonStatus.method);
+  }
+
+  updateSitePolygonStatus.fetch(variables);
+
+  const initialPending = ApiSlice.currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
+  const initialFailure = failureSelector(ApiSlice.currentState);
+
+  if (initialPending == null && !initialFailure) {
+    return;
+  }
+
+  if (initialFailure != null) {
+    throw initialFailure;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const unsubscribe = ApiSlice.redux.subscribe(() => {
+      const currentState = ApiSlice.currentState;
+      const pending = currentState.meta.pending[updateSitePolygonStatus.method][fullUrl];
+      const failure = failureSelector(currentState);
+
+      if (pending == null && !failure) {
+        unsubscribe();
+        resolve();
+      } else if (failure != null) {
+        unsubscribe();
+        reject(failure);
+      }
+    });
+  });
 };
 
 export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => {
@@ -127,6 +164,53 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
 
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
+};
+
+export const loadAllSitePolygons = async (
+  props: Omit<ConnectionProps<typeof sitePolygonsConnection>, "pageNumber" | "pageSize"> & {
+    sortField?: string;
+    sortDirection?: "ASC" | "DESC";
+  }
+): Promise<SitePolygonLightDto[]> => {
+  const firstPageResponse = await loadConnection(sitePolygonsConnection, {
+    ...props,
+    pageSize: ALL_POLYGONS_PAGE_SIZE,
+    pageNumber: 1,
+    sortField: props.sortField,
+    sortDirection: props.sortDirection ?? "ASC"
+  });
+
+  if (firstPageResponse.loadFailure) {
+    throw firstPageResponse.loadFailure;
+  }
+
+  const polygons = firstPageResponse.data ?? [];
+  const totalCount = firstPageResponse.indexTotal ?? 0;
+
+  if (totalCount === 0 || totalCount <= ALL_POLYGONS_PAGE_SIZE) {
+    return polygons;
+  }
+
+  const totalPages = Math.ceil(totalCount / ALL_POLYGONS_PAGE_SIZE);
+  let allPolygons = [...polygons];
+
+  for (let pageNumber = 2; pageNumber <= totalPages; pageNumber++) {
+    const pageResponse = await loadConnection(sitePolygonsConnection, {
+      ...props,
+      pageSize: ALL_POLYGONS_PAGE_SIZE,
+      pageNumber,
+      sortField: props.sortField,
+      sortDirection: props.sortDirection ?? "ASC"
+    });
+
+    if (pageResponse.loadFailure) {
+      throw pageResponse.loadFailure;
+    }
+
+    allPolygons.push(...(pageResponse.data ?? []));
+  }
+
+  return allPolygons;
 };
 
 export const useAllSitePolygons = (

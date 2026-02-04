@@ -7215,51 +7215,6 @@ export type GeometryString = {
   geometry?: string;
 };
 
-export type SitePolygonsDataResponse = {
-  id?: number;
-  uuid?: string;
-  primary_uuid?: string;
-  project_id?: string;
-  proj_name?: string;
-  org_name?: string;
-  poly_id?: string;
-  poly_name?: string;
-  site_id?: string;
-  site_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  created_by?: string;
-  last_modified_by?: string;
-  /**
-   * @format date-time
-   */
-  deleted_at?: string;
-  /**
-   * @format date-time
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   */
-  updated_at?: string;
-  status?: string;
-  source?: string;
-  country?: string;
-  is_active?: boolean;
-  version_name?: string;
-  validation_status?: boolean;
-}[];
-
 export type SitePolygonsBboxResponse = {
   bbox?: number[];
 };
@@ -7565,18 +7520,6 @@ export type AuditStatusUpdateRequest = {
   status?: string;
   is_active?: boolean;
   request_removed?: boolean;
-};
-
-export type SitePolygonResource = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  status?: string;
-  /**
-   * @format date-time
-   */
-  date_created?: string;
-  created_by?: string;
 };
 
 export type DashboardProjectViewResponse = {
@@ -7902,65 +7845,6 @@ export type IndicatorPolygonsStatus = {
   submitted?: number;
   approved?: number;
   ["needs-more-information"]?: number;
-};
-
-export type V2ImpactStoryRead = {
-  /**
-   * @example 123e4567-e89b-12d3-a456-426614174000
-   */
-  uuid?: string;
-  /**
-   * @example Empowering Local Communities
-   */
-  title?: string;
-  /**
-   * @example This is an inspiring story of impact...
-   */
-  content?: string;
-  /**
-   * @example published
-   */
-  status?: "draft" | "published" | "archived";
-  /**
-   * @format date-time
-   * @example 2024-09-02T15:04:05Z
-   */
-  created_at?: string;
-  /**
-   * @format date-time
-   * @example 2024-09-02T15:04:05Z
-   */
-  updated_at?: string;
-};
-
-export type V2ImpactStoryUpdate = {
-  /**
-   * @example Updated Title
-   */
-  title?: string;
-  /**
-   * @example Updated content of the impact story.
-   */
-  content?: string;
-  /**
-   * @example published
-   */
-  status?: "draft" | "published" | "archived";
-};
-
-export type V2ImpactStoryCreate = {
-  /**
-   * @example Empowering Local Communities
-   */
-  title: string;
-  /**
-   * @example This is an inspiring story of impact...
-   */
-  content: string;
-  /**
-   * @example draft
-   */
-  status?: "draft" | "published" | "archived";
 };
 
 export type V2FinancialIndicatorsRead = Record<string, any>[];

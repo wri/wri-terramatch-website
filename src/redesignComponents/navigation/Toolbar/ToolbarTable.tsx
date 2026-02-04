@@ -1,0 +1,68 @@
+import { useT } from "@transifex/react";
+import { Search } from "@worldresources/wri-design-systems";
+import { FC } from "react";
+
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+
+import Toolbar from "./Toolbar";
+import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
+
+const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
+  const t = useT();
+  return (
+    <Toolbar
+      contentLeft={
+        <div className="flex flex-wrap items-center gap-2">
+          {search != null && (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="mt-2.5">
+                <Search
+                  {...({
+                    placeholder: search.placeholder,
+                    disabled: search.disabled,
+                    options: search.options,
+                    resultsMaxHeight: search.resultsMaxHeight,
+                    isLoading: search.isLoading,
+                    displayResults: search.displayResults,
+                    size: "default"
+                  } as SearchProps)}
+                />
+              </div>
+              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
+                XX {search.label}
+              </span>
+            </div>
+          )}
+          {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
+          {filters != null && filters.length > 0 ? (
+            <div className="text-14 flex flex-wrap items-center gap-2 text-theme-neutral-900">
+              {t("Filter by:")}
+              {filters.map((filter, index) => (
+                <MultiActionButton key={index} {...filter} size="small" />
+              ))}
+            </div>
+          ) : (
+            <Button
+              variant="secondary"
+              size="small"
+              leftIcon={
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M2.5 8.32914V7.21803H7.5V8.32914H2.5ZM1.25 5.55136V4.44025H8.75V5.55136H1.25ZM0 2.77359V1.66248H10V2.77359H0Z"
+                    fill="#5C5959"
+                  />
+                </svg>
+              }
+            >
+              {t("Add Filter")}
+            </Button>
+          )}
+        </div>
+      }
+      contentRight={<Button {...button} size="small" />}
+    />
+  );
+};
+
+export default ToolbarTable;

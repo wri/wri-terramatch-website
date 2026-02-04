@@ -3,13 +3,13 @@ import { Fragment, useMemo } from "react";
 
 import TextField from "@/components/elements/Field/TextField";
 import Text from "@/components/elements/Text/Text";
-import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
-import useCollectionsTotal from "@/components/extensive/DemographicsCollapseGrid/hooks";
-import { DemographicType } from "@/components/extensive/DemographicsCollapseGrid/types";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import useCollectionsTotal from "@/components/extensive/TrackingCollapseGrid/hooks";
+import TrackingDisplay from "@/components/extensive/TrackingCollapseGrid/TrackingDisplay";
+import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import Loader from "@/components/generic/Loading/Loader";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 
@@ -25,7 +25,7 @@ interface DemographicsCardProps {
 }
 
 type DemographicalTypeConfig = {
-  demographicType: DemographicType;
+  demographicType: TrackingType;
   collections: readonly string[];
   titlePrefix: string;
   otherCollection?: string;
@@ -44,7 +44,7 @@ const useGetDemographicTypeConfig = (type: CollectionType): DemographicalTypeCon
         titlePrefix: t("Project Workdays"),
         otherCollection: DemographicCollections.WORKDAYS_PROJECT_OTHER,
         otherTitle: t("Other Activities Description"),
-        otherDescriptionProp: "paid_other_activity_description"
+        otherDescriptionProp: "paidOtherActivityDescription"
       },
       restorationPartners: {
         demographicType: "restorationPartners",
@@ -52,7 +52,7 @@ const useGetDemographicTypeConfig = (type: CollectionType): DemographicalTypeCon
         titlePrefix: t("Project Restoration Partners"),
         otherCollection: DemographicCollections.RESTORATION_PARTNERS_PROJECT_OTHER,
         otherTitle: t("Other Restoration Partners Description"),
-        otherDescriptionProp: "other_restoration_partners_description"
+        otherDescriptionProp: "otherRestorationPartnersDescription"
       }
     }),
     [t]
@@ -68,7 +68,8 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
   const demographicsTotal = useCollectionsTotal({
     entity: "projectReports",
     uuid: report.uuid,
-    demographicType,
+    domain: "demographics",
+    trackingType: demographicType,
     collections
   });
   if (demographicsTotal == null) {
@@ -87,9 +88,10 @@ const DemographicsCard = ({ report, type }: DemographicsCardProps) => {
           {otherDescriptionProp != null && collection === otherCollection ? (
             <TextField label={otherTitle!} value={report[otherDescriptionProp]} />
           ) : null}
-          <DemographicsDisplay
+          <TrackingDisplay
             entity="projectReports"
             uuid={report.uuid}
+            domain="demographics"
             type={demographicType}
             collection={collection}
           />

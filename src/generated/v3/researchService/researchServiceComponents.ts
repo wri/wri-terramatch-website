@@ -2078,6 +2078,40 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
   {}
 >("/research/v3/indicators/{slug}", "POST");
 
+export type ExportIndicatorCsvPathParams = {
+  entityType: string;
+  entityUuid: string;
+};
+
+export type ExportIndicatorCsvError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type ExportIndicatorCsvVariables = {
+  pathParams: ExportIndicatorCsvPathParams;
+};
+
+/**
+ * Export indicator data for a site or project as a CSV file.
+ *     Supports: treeCoverLoss, treeCoverLossFires, restorationByStrategy, restorationByLandUse, restorationByEcoRegion, treeCover
+ */
+export const exportIndicatorCsv = new V3ApiEndpoint<
+  undefined,
+  ExportIndicatorCsvError,
+  ExportIndicatorCsvVariables,
+  {}
+>("/research/v3/indicators/export/{entityType}/{entityUuid}/{slug}", "GET");
+
 export type GetProjectPolygonGeoJsonQueryParams = {
   /**
    * UUID of a project pitch to get its polygon
@@ -2305,7 +2339,7 @@ export type CreateProjectPolygonVariables = {
  * Create a project polygon for a project pitch from GeoJSON.
  *
  *     Each feature must have `projectPitchUuid` in properties.
- *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, the request will fail.
+ *     Only one polygon per project pitch is supported. If a polygon already exists for the project pitch, it will be deleted and replaced with the new polygon.
  */
 export const createProjectPolygon = new V3ApiEndpoint<
   CreateProjectPolygonResponse,
@@ -2572,7 +2606,7 @@ export const operationsByTag = {
     validateGeometries
   },
   polygonClipping: { createClippedVersions, createPolygonListClippedVersions },
-  indicators: { startIndicatorCalculation },
+  indicators: { startIndicatorCalculation, exportIndicatorCsv },
   projectPolygons: {
     getProjectPolygonGeoJson,
     getProjectPolygon,

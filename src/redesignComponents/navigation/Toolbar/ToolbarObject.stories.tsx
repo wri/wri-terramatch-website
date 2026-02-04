@@ -1,0 +1,102 @@
+import { Meta, StoryObj } from "@storybook/react";
+import { BrowserRouter, Link } from "react-router-dom";
+
+import { Placeholder } from "@/redesignComponents/foundations/Icons";
+
+import ToolbarObject from "./ToolbarObject";
+
+const meta: Meta<typeof ToolbarObject> = {
+  title: "Redesign Components/Navigation/Toolbar/Object Toolbar",
+  component: ToolbarObject,
+  tags: ["autodocs"],
+  parameters: {
+    layout: "padded"
+  },
+  decorators: [
+    Story => (
+      <BrowserRouter>
+        <div style={{ backgroundColor: "#F5F5F5", padding: "20px", borderRadius: "8px" }}>
+          <Story />
+        </div>
+      </BrowserRouter>
+    )
+  ],
+  argTypes: {
+    breadcrumbs: {
+      description: "Breadcrumb configuration with links and navigation"
+    },
+    slots: {
+      description: "Array of toolbar slots with title and description"
+    }
+  }
+};
+
+export default meta;
+type Story = StoryObj<typeof ToolbarObject>;
+
+export const Default: Story = {
+  args: {
+    breadcrumbs: {
+      links: [
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 2", link: "#" },
+        { label: "Page level 3", link: "#" }
+      ],
+      linkRouter: Link
+    },
+    slots: [
+      { title: "Slot one", description: "Add button or input" },
+      { title: "Slot two", description: "Add button or input" }
+    ]
+  }
+};
+
+export const MultipleSlots: Story = {
+  args: {
+    breadcrumbs: {
+      links: [
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 2", link: "#" }
+      ],
+      linkRouter: Link
+    },
+    slots: [
+      { title: "Slot one", description: "Add button or input" },
+      { title: "Slot two", description: "Add button or input" },
+      { title: "Slot three", description: "Add button or input" },
+      { title: "Slot four", description: "Add button or input" }
+    ]
+  }
+};
+
+export const WithBreadcrumbIcons: Story = {
+  args: {
+    breadcrumbs: {
+      links: [
+        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 2", link: "#" },
+        { label: "Page level 3", link: "#" }
+      ],
+      linkRouter: Link
+    },
+    slots: [
+      { title: "Slot one", description: "Add button or input" },
+      { title: "Slot two", description: "Add button or input" }
+    ]
+  }
+};
+
+export const PageTitle: Story = {
+  args: {
+    breadcrumbs: {
+      links: [{ label: "Title", link: "#", icon: <Placeholder /> }],
+      linkRouter: Link
+    },
+    slots: [
+      { title: "Slot one", description: "Add button or input" },
+      { title: "Slot two", description: "Add button or input" },
+      { title: "Slot three", description: "Add button or input" },
+      { title: "Slot four", description: "Add button or input" }
+    ]
+  }
+};

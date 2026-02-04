@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { GetListResult, useDataProvider, useShowContext } from "react-admin";
 
 import { useDisturbance } from "@/connections/Disturbance";
-import { selectDemographics, usePlants } from "@/connections/EntityAssociation";
+import { selectTrackings, usePlants } from "@/connections/EntityAssociation";
 import { isNotNull } from "@/utils/array";
 
 import { BeneficiaryData, EmploymentDemographicData, ProjectReport, ReportData, Site, SiteReport } from "../types";
@@ -50,7 +50,7 @@ export const useReportData = () => {
           pagination: { page: 1, perPage: 100 },
           sort: { field: "createdAt", order: "DESC" },
           meta: {
-            sideloads: [{ entity: "demographics", pageSize: 100 }]
+            sideloads: [{ entity: "trackings", pageSize: 100 }]
           }
         }) as Promise<GetListResult<ProjectReport>>;
 
@@ -74,9 +74,9 @@ export const useReportData = () => {
         // Pull the demographics data sideloaded on the reports request.
         const demographics = flatten(
           reportsResult.data
-            .map(({ uuid }) => selectDemographics({ entity: "projectReports", uuid }).data)
+            .map(({ uuid }) => selectTrackings({ entity: "projectReports", uuid }).data)
             .filter(isNotNull)
-        );
+        ).filter(({ domain }) => domain === "demographics");
         if (demographics.length > 0) {
           setEmploymentData(processDemographicData(demographics));
           setBeneficiaryData(processBeneficiaryData(demographics));

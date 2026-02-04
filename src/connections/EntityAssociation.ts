@@ -8,11 +8,11 @@ import {
   EntityAssociationIndexVariables
 } from "@/generated/v3/entityService/entityServiceComponents";
 import {
-  DemographicDto,
   DisturbanceDto,
   InvasiveDto,
   MediaDto,
   SeedingDto,
+  TrackingDto,
   TreeSpeciesDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getStableIndexPath } from "@/generated/v3/utils";
@@ -20,6 +20,7 @@ import { useConnection } from "@/hooks/useConnection";
 import ApiSlice from "@/store/apiSlice";
 import { Connected, Connection, Filter, PaginatedConnectionProps } from "@/types/connection";
 import Log from "@/utils/log";
+import { valueWiseEqual } from "@/utils/valueWiseEqual";
 
 import {
   EnabledProp,
@@ -31,7 +32,7 @@ import {
 } from "./util/apiConnectionFactory";
 
 export type EntityAssociationDtoType =
-  | DemographicDto
+  | TrackingDto
   | TreeSpeciesDto
   | SeedingDto
   | MediaDto
@@ -79,6 +80,7 @@ type CollectionProps = EntityAssociationIndexConnectionProps & {
 };
 
 type CollectionTypeProps = CollectionProps & {
+  domain?: string;
   type?: string;
 };
 
@@ -105,8 +107,12 @@ const collectionTypeHook =
     const data = useMemo(() => {
       if (!loaded) return undefined;
 
-      const matches = ((associations as { collection?: string; type?: string }[]) ?? []).filter(
-        ({ collection, type }) => collection === props.collection && type === props.type
+      const matches = ((associations as { collection?: string; type?: string; domain?: string }[]) ?? []).filter(
+        ({ collection, type, domain }) =>
+          valueWiseEqual(
+            { domain, type, collection },
+            { domain: props.domain, type: props.type, collection: props.collection }
+          )
       );
       if (matches.length > 1) {
         Log.error("Expecting to find only one collection / type match, but found many", { props, matches });
@@ -118,14 +124,14 @@ const collectionTypeHook =
     return loaded ? [true, { data, loadFailure }] : [false, {}];
   };
 
-const demographicConnection = createAssociationIndexConnection<DemographicDto>("demographics");
+const trackingConnection = createAssociationIndexConnection<TrackingDto>("trackings");
 const mediaConnection = createAssociationIndexConnection<MediaDto>("media");
 
-/** Returns the one demographic that matches the given type / collection on the given entity */
-export const useDemographic = collectionTypeHook(demographicConnection);
-/** Returns all demographics for the given entity */
-export const useDemographics = connectionHook(demographicConnection);
-export const selectDemographics = connectionSelector(demographicConnection);
+/** Returns the one tracking that matches the given type / collection on the given entity */
+export const useTracking = collectionTypeHook(trackingConnection);
+/** Returns all trackings for the given entity */
+export const useTrackings = connectionHook(trackingConnection);
+export const selectTrackings = connectionSelector(trackingConnection);
 /** Returns the one media that matches the given type / collection on the given entity */
 export const useMedia = collectionTypeHook(mediaConnection);
 /** Returns all media for the given entity */

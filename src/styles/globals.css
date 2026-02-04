@@ -69,6 +69,24 @@ strong {
   font-size: inherit;
 }
 
+.outline-solid {
+  outline-style: solid !important;
+}
+
+
+.outline-offset-ring:focus-visible {
+  outline-offset: 4px;
+  outline: 2px solid #11688D !important;
+}
+
+/* Safari / WebKit only */
+@supports (-webkit-appearance: none) {
+  .outline-offset-ring:focus-visible {
+    outline-offset: 2px;
+    outline: 2px solid #11688D !important;
+  }
+}
+
 @media (max-width: 1200px) {
   html,
   body {
@@ -83,3 +101,4 @@ strong {
 @import url("./extended-utilities.css");
 @import url("./extended-components.css");
 @import url("./custom-admin-page-styles.css");
+@import url("./extended-redesign.css");
