@@ -6,6 +6,7 @@ export interface StepProps {
   label: string;
   actions?: any;
   onClick?: () => void;
+  isFocused?: boolean;
 }
 
 export interface ProgressStepsProps {
