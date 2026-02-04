@@ -15,7 +15,7 @@ export const JobsCircle = (props: JobsCircleProps) => {
     color = getThemedColor("primary", 800),
     innerBgColor = getThemedColor("primary", 200),
     outerBgColor = getThemedColor("neutral", 100),
-    borderColor = getThemedColor("primary", 300)
+    borderColor = getThemedColor("primary", 400)
   } = props;
 
   return (
