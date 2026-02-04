@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Placeholder } from "../foundations/Icons";
+import { Placeholder } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
 
 const meta: Meta<typeof DonutChart> = {
