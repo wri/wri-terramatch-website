@@ -2,7 +2,6 @@ import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useCallback } from "react";
-import { When } from "react-if";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -103,7 +102,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           {...{ entryType, label, userLabel, amount }}
         />
       ))}
-      <When condition={addNameLabel != null && onChange != null}>
+      {addNameLabel != null && onChange != null && (
         <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
           <MultiActionButton
             mainActionLabel="Add Ethnic Group"
@@ -119,7 +118,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
             variant="secondary"
           />
         </div>
-      </When>
+      )}
       <>
         <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
           <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
@@ -143,7 +142,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
         </div>
       </>
 
-      <When condition={addNameLabel != null && onChange != null}>
+      {/* <When condition={addNameLabel != null && onChange != null}>
         <div
           className={classNames(
             "py-3",
@@ -151,7 +150,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
             "col-span-2 border-b border-l border-b-neutral-200 border-l-white bg-white"
           )}
         />
-      </When>
+      </When> */}
     </>
   );
 };

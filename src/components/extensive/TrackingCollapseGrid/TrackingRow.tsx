@@ -3,7 +3,6 @@ import { css } from "@emotion/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, FormEvent, useCallback, useRef, useState } from "react";
-import { When } from "react-if";
 
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { Delete } from "@/redesignComponents/foundations/Icons";
@@ -61,44 +60,43 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
           "col-span-1 border-b border-neutral-200 bg-white"
         )}
       >
-        <When condition={label != null}>
-          <Text fontSize="16px" lineHeight="24px" color="neutral.800">
-            {t(label)}
-          </Text>
-        </When>
-        <When condition={usesName}>
-          <When condition={onChange == null}>
-            <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="items-left flex w-3/5 px-2 py-1">
-              {userLabel}
-            </Text>
-          </When>
-          <When condition={onChange != null}>
-            <TextInput
-              size="small"
-              placeholder={t("Add details")}
-              value={userLabel ?? ""}
-              onChange={onUserLabelChange}
-              css={css`
-                width: 100%;
-                padding: 0 24px 0 16px;
-                & > div {
-                  margin-bottom: 0;
-                }
-                & input {
-                  margin-top: 0;
-                }
-              `}
-            />
-          </When>
-          <When condition={usesName}>
-            <Button onClick={onDelete} className="flex items-center gap-1.5">
-              <Delete color="error.500" boxSize={3} className="leading-4" />
-              <Text fontSize="12px" lineHeight="16px" color="error.900">
-                Remove
+        <Text fontSize="16px" lineHeight="24px" color="neutral.800">
+          {t(label)}
+        </Text>
+        {usesName && (
+          <>
+            {onChange == null ? (
+              <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="items-left flex w-3/5 px-2 py-1">
+                {userLabel}
               </Text>
-            </Button>
-          </When>
-        </When>
+            ) : (
+              <TextInput
+                size="small"
+                placeholder={t("Add details")}
+                value={userLabel ?? ""}
+                onChange={onUserLabelChange}
+                css={css`
+                  width: 100%;
+                  padding: 0 24px 0 16px;
+                  & > div {
+                    margin-bottom: 0;
+                  }
+                  & input {
+                    margin-top: 0;
+                  }
+                `}
+              />
+            )}
+            {onChange != null && (
+              <Button onClick={onDelete} className="flex items-center gap-1.5">
+                <Delete color="error.500" boxSize={3} className="leading-4" />
+                <Text fontSize="12px" lineHeight="16px" color="error.900">
+                  Remove
+                </Text>
+              </Button>
+            )}
+          </>
+        )}
       </div>
       <div
         className={classNames(
@@ -106,12 +104,11 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
           "col-span-1 border-b border-l border-b-neutral-200 border-l-white bg-white"
         )}
       >
-        <When condition={onChange == null}>
+        {onChange == null ? (
           <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="w-full px-4 text-center">
             {amount}
           </Text>
-        </When>
-        <When condition={onChange != null}>
+        ) : (
           <div className="flex w-16 items-center justify-center">
             <TextInput
               ref={inputRef}
@@ -134,7 +131,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
               `}
             />
           </div>
-        </When>
+        )}
       </div>
     </>
   );
