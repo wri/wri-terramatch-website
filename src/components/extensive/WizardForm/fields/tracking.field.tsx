@@ -48,10 +48,7 @@ export const TrackingField: FormFieldFactory = {
       )
       .test(
         "totals-match",
-        () =>
-          framework === Framework.HBF
-            ? t("At least one entry in gender is required")
-            : t("The totals for each demographic type do not match"),
+        () => (framework === Framework.HBF ? t("At least one entry in gender is required") : ""),
         value => {
           const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
           if (entries == null) return true;

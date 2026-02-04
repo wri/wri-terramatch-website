@@ -27,29 +27,37 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
   const entryTypes = useEntryTypes(type);
 
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
-  const rowTitle = t(`{total} ${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural}`, { total });
+  const rowTitle = t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
 
   return (
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className={classNames("flex w-full items-center justify-between p-4", variant.header, {
-          [`${variant.open}`]: !open
-        })}
+        className={classNames(
+          "flex w-full items-center justify-between !rounded-none border-b border-black p-4 px-0",
+          {
+            [`${variant.open}`]: !open
+          },
+          variant.header
+        )}
       >
-        <Text variant="text-18-bold">{fullTitle}</Text>
+        <Text variant="text-16-light">{fullTitle}</Text>
 
         <div className="flex items-baseline gap-2">
           {onChange != null ? (
             <Text
               as={"div"}
               variant="text-14-bold"
-              className={classNames("flex items-start gap-2 leading-normal", {
-                "text-customGreen-200": status === "complete",
-                "text-neutral-550": status === "not-started",
-                "text-tertiary-450": status === "in-progress"
-              })}
+              className={classNames(
+                "flex h-fit w-fit items-center justify-center gap-2 rounded-md border px-2 py-1 leading-normal",
+                {
+                  "border-theme-success-300 bg-theme-success-100 text-theme-success-900": status == "complete",
+                  "border-theme-neutral-300 text-theme-neutral-700": status === "not-started",
+                  "text-tertiary-450 border-theme-error-300 bg-theme-error-100 text-theme-error-900":
+                    status === "in-progress"
+                }
+              )}
             >
               {t(startCase(status))}
               {status === "complete" ? (
@@ -67,20 +75,26 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
       </button>
       {open ? (
         <div className={classNames("", variant.bodyCollapse)}>
-          <div
-            className={classNames(
-              "grid w-full gap-x-px gap-y-px border border-neutral-200 bg-neutral-200 leading-normal",
-              variant.gridStyle
-            )}
-          >
+          {status === "in-progress" && (
+            <p className="text-14-light mb-4 text-theme-error-900">
+              {t("The total number of entries must be the same for each category.")}{" "}
+              <b>{t("Please review your entries.")}</b>
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-x-16 gap-y-6">
             {entryTypes.map(entryType => (
-              <TrackingSection
-                key={entryType}
-                trackingType={type}
-                onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
-                entries={byType[entryType] ?? []}
-                {...{ entryType, variant }}
-              />
+              <div key={entryType} className="flex flex-col">
+                <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
+                  <TrackingSection
+                    trackingType={type}
+                    onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
+                    entries={byType[entryType] ?? []}
+                    {...{ entryType, variant }}
+                    status={status}
+                  />
+                </div>
+              </div>
             ))}
           </div>
         </div>
