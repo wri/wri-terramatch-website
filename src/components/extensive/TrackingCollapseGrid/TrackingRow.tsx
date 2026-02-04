@@ -2,7 +2,7 @@ import { Button, Text } from "@chakra-ui/react";
 import { css } from "@emotion/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { FC, FormEvent, useCallback, useRef, useState } from "react";
+import { FC, FormEvent, useCallback, useRef } from "react";
 
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { Delete } from "@/redesignComponents/foundations/Icons";
@@ -17,20 +17,9 @@ export interface TrackingRowProps {
   onDelete?: () => void;
 }
 
-const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLabel, amount, onChange, onDelete }) => {
-  const [focused, setFocused] = useState(false);
+const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount, onChange, onDelete }) => {
   const t = useT();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const handleClick = useCallback(() => {
-    if (inputRef.current != null) {
-      requestAnimationFrame(() => {
-        const input = inputRef.current!;
-        const length = input.value.length;
-        input.setSelectionRange(length, length);
-      });
-    }
-  }, []);
 
   const onAmountChange = useCallback(
     (event: FormEvent<HTMLInputElement>) => {
@@ -113,11 +102,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ entryType, usesName, label, userLab
             <TextInput
               ref={inputRef}
               size="small"
-              value={focused ? amount : t(`{amount}`, { amount })}
-              type={focused ? "text" : undefined}
-              onFocus={() => setFocused(true)}
-              onBlur={() => setFocused(false)}
-              onClick={handleClick}
+              value={amount}
               onChange={onAmountChange}
               css={css`
                 width: 100%;

@@ -5,6 +5,7 @@ import type { ComponentProps } from "react";
 import { FC } from "react";
 
 type TextInputProps = ComponentProps<typeof WriTextInput> & {
+  ref?: React.RefObject<HTMLInputElement>;
   css?: SerializedStyles;
 };
 
@@ -13,11 +14,11 @@ const StyledWrapper = styled.div<{ css?: SerializedStyles }>`
 `;
 
 const TextInput: FC<TextInputProps> = props => {
-  const { css: cssProp, ...rest } = props;
+  const { css: cssProp, ref, ...rest } = props;
 
   return (
     <StyledWrapper css={cssProp}>
-      <WriTextInput {...rest} />
+      <WriTextInput ref={ref} {...rest} />
     </StyledWrapper>
   );
 };
