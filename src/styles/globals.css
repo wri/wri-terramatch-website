@@ -73,12 +73,18 @@ strong {
   outline-style: solid !important;
 }
 
-.focus-visible\:outline-offset-safari:focus-visible {
-  outline-offset: 2px !important;
+
+.outline-offset-ring:focus-visible {
+  outline-offset: 4px;
+  outline: 2px solid #11688D !important;
 }
 
-.focus-visible\:outline-offset-chrome:focus-visible {
-  outline-offset: 4px !important;
+/* Safari / WebKit only */
+@supports (-webkit-appearance: none) {
+  .outline-offset-ring:focus-visible {
+    outline-offset: 2px;
+    outline: 2px solid #11688D !important;
+  }
 }
 
 @media (max-width: 1200px) {

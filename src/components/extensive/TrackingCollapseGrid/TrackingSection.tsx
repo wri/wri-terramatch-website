@@ -1,14 +1,13 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { sortBy, startCase } from "lodash";
-import { FC, useCallback, useState } from "react";
-import { When } from "react-if";
+import { FC, useCallback } from "react";
 
-import Text from "@/components/elements/Text/Text";
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
-import Icon, { IconNames } from "../Icon/Icon";
 import { useSectionData } from "./hooks";
 import { Status, TrackingGridVariantProps, TrackingType, useEntryTypeDefinition } from "./types";
 
@@ -22,7 +21,6 @@ export interface TrackingSectionProps {
 }
 
 const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
-  const [openMenu, setOpenMenu] = useState(false);
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
@@ -58,7 +56,6 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
 
   const addRow = useCallback(
     (subtype: string) => {
-      setOpenMenu(false);
       onChange?.([...entries, { type: entryType, subtype, amount: 0 }]);
     },
     [entries, entryType, onChange]
@@ -79,19 +76,19 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
   return (
     <>
       <>
-        <div className="col-span-2 border-b border-neutral-300 bg-neutral-700 px-4 py-3">
-          <Text variant="text-14-semibold" className="mb-1 text-white">
+        <div className="border-theme-primary-200 bg-theme-primary-900 col-span-2 border-b px-3 py-2.5">
+          <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
             {t("By: " + title)}
           </Text>
         </div>
         {/* Column headers */}
-        <div className="col-span-1 border-b border-neutral-300 bg-neutral-200 px-4 py-2">
-          <Text variant="text-12-semibold" className="text-darkCustom">
+        <div className="bg-theme-neutral-200 col-span-1 flex items-center px-3 py-2">
+          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`${title} Definition`)}
           </Text>
         </div>
-        <div className="col-span-1 border-b border-l border-b-neutral-300 border-l-white bg-neutral-200 px-4 py-2 text-center">
-          <Text variant="text-12-semibold" className="text-darkCustom">
+        <div className="bg-theme-neutral-200 col-span-1 flex items-center px-3 py-2 text-center">
+          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
@@ -107,79 +104,45 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           {...{ entryType, label, userLabel, amount }}
         />
       ))}
-
+      {addNameLabel != null && onChange != null && (
+        <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
+          <MultiActionButton
+            mainActionLabel="Add Ethnic Group"
+            mainActionOnClick={() => {}}
+            otherActions={[
+              ...sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => ({
+                label: t(typeMap[subtype]),
+                onClick: () => addRow(subtype),
+                value: subtype
+              }))
+            ]}
+            size="small"
+            variant="secondary"
+          />
+        </div>
+      )}
       <>
-        <div
-          className={classNames(
-            "flex items-center justify-between px-4 py-3",
-            "col-span-1 border-b border-neutral-200 bg-white"
-          )}
-        >
-          <Text variant="text-14-semibold" className="text-darkCustom">
+        <div className={classNames("bg-theme-neutral-100 col-span-1 flex items-center justify-between px-3 py-2.5")}>
+          <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`Total Created:`)}
           </Text>
         </div>
         <div
-          className={classNames(
-            "flex items-center justify-center px-4 py-3",
-            "col-span-1 border-b border-neutral-200 bg-white",
-            { "!bg-theme-error-100": status === "in-progress" }
-          )}
+          className={classNames("flex items-center justify-center px-3 py-2.5", "bg-theme-primary-100 col-span-1", {
+            "bg-theme-error-100": status === "in-progress",
+            "bg-theme-primary-100": status != "in-progress"
+          })}
         >
           <Text
-            variant="text-14-semibold"
-            className={classNames("text-center text-darkCustom", {
-              "text-theme-error-900": status === "in-progress"
-            })}
+            color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"}
+            fontSize="14px"
+            lineHeight="20px"
+            fontWeight="bold"
           >
             {t(`{total}`, { total })}
           </Text>
         </div>
       </>
-
-      <When condition={addNameLabel != null && onChange != null}>
-        <div className={classNames("flex items-center py-3", "col-span-2 border-b border-neutral-200 bg-white")}>
-          <div className="relative">
-            <button
-              className={classNames(
-                "text-14-semibold flex items-baseline gap-1 px-4 py-1 hover:text-primary",
-                "text-primary"
-              )}
-              onClick={() => setOpenMenu(!openMenu)}
-            >
-              {addNameLabel && t(addNameLabel)}
-              <Icon
-                name={IconNames.IC_ARROW_COLLAPSE}
-                width={9}
-                height={9}
-                className={classNames("duration-150", { "rotate-180 transform": openMenu })}
-              />
-            </button>
-            <When condition={openMenu}>
-              <div className="shadow-lg absolute z-10 -my-1 rounded-lg border border-b-neutral-200  bg-white p-2">
-                {addNameLabel == null
-                  ? null
-                  : sortBy(Object.keys(typeMap), subtype => t(typeMap[subtype])).map(subtype => (
-                      <button
-                        key={subtype}
-                        className="hover:bg-customBlue-75 w-full rounded-lg p-2 text-left hover:text-primary"
-                        onClick={() => addRow(subtype)}
-                      >
-                        {t(typeMap[subtype])}
-                      </button>
-                    ))}
-              </div>
-            </When>
-          </div>
-        </div>
-        <div
-          className={classNames(
-            "py-3",
-            variant.roundedBr,
-            "col-span-2 border-b border-l border-b-neutral-200 border-l-white bg-white"
-          )}
-        />
-      </When>
     </>
   );
 };

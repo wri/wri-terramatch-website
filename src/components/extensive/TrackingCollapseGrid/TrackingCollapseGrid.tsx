@@ -5,6 +5,7 @@ import { FC, useCallback, useMemo, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import { useTableStatus } from "./hooks";
@@ -29,6 +30,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowTitle = t(`${sectionLabel} ${total === 1 ? rowLabelSingular : rowLabelPlural} {total} `, { total });
   const fullTitle = title == null ? rowTitle : `${title} - ${rowTitle}`;
+  const user = useIsAdmin();
 
   return (
     <div>
@@ -59,17 +61,10 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
                 }
               )}
             >
-              <Icon
-                name={IconNames.IC_INFO}
-                width={16}
-                height={16}
-                className={classNames({
-                  "text-theme-neutral-700": status === "not-started",
-                  "text-theme-success-500": status == "complete",
-                  "text-theme-error-500": status === "in-progress"
-                })}
-              />
-              {t(status === "in-progress" ? "Totals don’t match across categories" : startCase(status))}
+              {t(startCase(status))}
+              {status === "complete" ? (
+                <Icon name={IconNames.ROUND_CUSTOM_TICK} width={16} height={16} className="text-customGreen-200" />
+              ) : null}
             </Text>
           ) : null}
           <Icon
@@ -83,16 +78,27 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
       {open ? (
         <div className={classNames("", variant.bodyCollapse)}>
           {status === "in-progress" && (
-            <p className="text-14-light mb-4 text-theme-error-900">
+            <p className="text-14-light text-theme-error-900 mb-4">
               {t("The total number of entries must be the same for each category.")}{" "}
               <b>{t("Please review your entries.")}</b>
             </p>
           )}
 
-          <div className="flex flex-wrap gap-x-16 gap-y-6">
+          <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
             {entryTypes.map(entryType => (
-              <div key={entryType} className="flex flex-col">
-                <div className={classNames("shadow-sm grid w-80 grid-cols-2 bg-white leading-normal")}>
+              <div
+                key={entryType}
+                className={classNames("flex flex-col", {
+                  "w-full": entryType === "ethnicity",
+                  "min-w-80 max-w-[22rem]": entryType !== "ethnicity"
+                })}
+              >
+                <div
+                  className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
+                    "grid-cols-[auto_minmax(10rem,11rem)]": entryType === "ethnicity",
+                    "grid-cols-2": entryType !== "ethnicity"
+                  })}
+                >
                   <TrackingSection
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
