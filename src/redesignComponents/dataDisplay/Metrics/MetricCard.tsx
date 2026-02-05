@@ -135,7 +135,17 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
 };
 
 const MetricCard: FC<MetricCardProps> = props => {
-  const { title, progress, goal, tooltipContent, variant = "medium", icon, color = "primary.600", type } = props;
+  const {
+    title,
+    progress,
+    goal,
+    tooltipContent,
+    variant = "medium",
+    icon,
+    color = "primary.600",
+    type,
+    className
+  } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
   const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
@@ -185,7 +195,15 @@ const MetricCard: FC<MetricCardProps> = props => {
   }
 
   return (
-    <Box padding={3} borderRadius={8} border={`1px solid ${getThemedColor("neutral", 300)}`} height="fit-content">
+    <Box
+      padding={3}
+      borderRadius={8}
+      border={`1px solid ${getThemedColor("neutral", 300)}`}
+      height="fit-content"
+      justifyContent="center"
+      display="flex"
+      className={className}
+    >
       {content}
     </Box>
   );

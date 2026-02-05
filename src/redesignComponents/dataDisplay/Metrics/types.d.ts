@@ -31,6 +31,7 @@ export interface MetricCardProps {
   icon?: ReactNode;
   color?: string;
   type?: string;
+  className?: string;
 }
 
 export interface MetricCardCommonVariantProps

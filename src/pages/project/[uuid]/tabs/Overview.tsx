@@ -1,7 +1,8 @@
-import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
+import { Box, Flex, FlexProps, Text, useMediaQuery } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { ReactNode, useCallback, useMemo } from "react";
@@ -163,6 +164,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }>({
     pathParams: { uuid: project?.uuid }
   });
+  const [isLargerResolution] = useMediaQuery(["(min-width: 1500px)"]);
 
   const [, { data: mediaList }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
@@ -381,7 +383,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             </Box>
           </OverviewItem>
           <OverviewItem
-            flexProps={{ flex: 1 }}
+            flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
             buttonProps={{
               variant: "primary",
@@ -405,7 +407,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             onClick: () => goToTab("goals")
           }}
         >
-          <Flex gap={2} flex={1} justify="space-between">
+          <Flex gap={10} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
             <MetricCard
               title="Trees Planted"
               progress={chartDataTreesRestored.cardValues.value}
@@ -414,6 +416,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               icon={<Tree />}
               color="secondary.600"
               type="treesRestored"
+              className={classNames({ "flex-1": !isLargerResolution })}
             />
             <MetricCard
               title="Seedlings Grown"
@@ -423,6 +426,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               icon={<Seeds />}
               color="secondary.600"
               type="saplingsRestored"
+              className={classNames({ "flex-1": !isLargerResolution })}
             />
             <MetricCard
               title="Hectares Restored"
@@ -432,6 +436,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               icon={<AreaHectares />}
               color="secondary.700"
               type="hectaresRestored"
+              className={classNames({ "flex-1": !isLargerResolution })}
             />
             <MetricCard
               title="Jobs Created"
@@ -440,10 +445,11 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant="donutChart"
               icon={<Jobs />}
               type="jobsCreated"
+              className={classNames({ "flex-1": !isLargerResolution })}
             />
           </Flex>
         </OverviewItem>
-        <Flex gap={7} height="445px" paddingY={2}>
+        <Flex gap={7} height="532px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
             title="Team Members"
@@ -482,22 +488,16 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             <ImageGalleryCard images={images as string[]} />
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
-            <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1}>
+            <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
               <Text color="neutral.900" fontSize="14px" lineHeight="20px">
                 {mrvOnboardingContentItem?.content.introText}
               </Text>
-              <Flex direction="column" gap={2}>
+              <Flex direction="column" gap={2} minHeight={0}>
                 <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
                   Helpful Links
                 </Text>
                 <Divider />
-                <Flex
-                  direction="column"
-                  gap={3}
-                  paddingTop={3}
-                  alignItems="flex-start"
-                  className="max-h-[75px] overflow-y-auto"
-                >
+                <Flex direction="column" gap={3} paddingTop={3} alignItems="flex-start" className="overflow-y-auto">
                   {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
                     <Button
                       variant="borderless"
