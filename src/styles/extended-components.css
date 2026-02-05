@@ -137,3 +137,10 @@
   font-weight: 700 !important;
 }
 
+.inline-message-full-width,
+.inline-message-full-width > *,
+.inline-message-full-width > * > * {
+  width: 100% !important;
+  max-width: none !important;
+}
+

@@ -56,7 +56,7 @@ type ImpactStoryResourceIdentifier = {
 
 const createBulkDeleteBody = (resources: ImpactStoryResourceIdentifier[]): ImpactStoryBulkDeleteBodyDto => {
   return {
-    data: resources as unknown as ImpactStoryBulkDeleteBodyDto["data"]
+    data: resources
   };
 };
 
