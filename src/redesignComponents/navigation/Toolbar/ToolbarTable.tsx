@@ -1,9 +1,11 @@
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import { Info } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
@@ -30,14 +32,14 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
                   } as SearchProps)}
                 />
               </div>
-              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
+              <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
                 XX {search.label}
               </span>
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           {filters != null && filters.length > 0 ? (
-            <div className="text-14 flex flex-wrap items-center gap-2 text-theme-neutral-900">
+            <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
               {t("Filter by:")}
               {filters.map((filter, index) => (
                 <MultiActionButton key={index} {...filter} size="small" />
@@ -61,7 +63,11 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
           )}
         </div>
       }
-      contentRight={<Button {...button} size="small" />}
+      contentRight={
+        <Flex gap={2} alignItems="center" justifyContent="right">
+          <Button {...button} size="small" /> <Info className="text-theme-neutral-800" />
+        </Flex>
+      }
     />
   );
 };

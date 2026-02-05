@@ -2,20 +2,23 @@ import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import { getThemedColor } from "@/lib/theme";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { UserAdd } from "@/redesignComponents/foundations/Icons";
+import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
 
 const BuildTeamMembersPage: FC = () => {
   const t = useT();
-  const { openModal } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
 
   const handleInvite = () => {
     openModal(
@@ -23,6 +26,36 @@ const BuildTeamMembersPage: FC = () => {
       <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
     );
   };
+
+  const ModalConfirmDeletePartner = useCallback(
+    (email_address: string) => {
+      openModal(
+        ModalId.MODAL_CONFIRM_DELETE_PARTNER,
+        <Modal
+          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
+          title={"REMOVE MONITORING PARTNER?"}
+          content={t(
+            "Remove {email_address} as Monitoring Partner to Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County International Tree Foundation??",
+            {
+              email_address
+            }
+          )}
+          primaryButtonProps={{
+            children: t("Confirm"),
+            onClick: () => {
+              console.log("deletePartner", email_address);
+              closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
+            }
+          }}
+          secondaryButtonProps={{
+            children: t("Cancel"),
+            onClick: () => closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER)
+          }}
+        />
+      );
+    },
+    [closeModal, openModal, t]
+  );
 
   return (
     <Box paddingX={8} paddingY={6}>
@@ -174,7 +207,7 @@ const BuildTeamMembersPage: FC = () => {
         ]}
         renderRow={useCallback(
           (rowData: RowData) => (
-            <TableRow>
+            <TableRow className="group">
               <ChakraTableCell>
                 <CustomTableCell
                   avatars={[
@@ -193,15 +226,43 @@ const BuildTeamMembersPage: FC = () => {
               <ChakraTableCell>
                 <ActionCell
                   button={{
-                    children: "View",
-                    onClick: () => console.log("View")
+                    children: "Edit",
+                    onClick: () => console.log("Edit"),
+                    leftIcon: (
+                      <Edit
+                        className="!text-theme-neutral-900"
+                        css={{
+                          "& svg path": {
+                            fill: getThemedColor("neutral", 900) + " !important",
+                            color: getThemedColor("neutral", 900) + " !important"
+                          }
+                        }}
+                      />
+                    )
                   }}
-                  onButtonIconClick={() => console.log("View")}
+                  buttonSecondary={{
+                    children: "Remove",
+                    variant: "secondary",
+                    onClick: () => ModalConfirmDeletePartner((rowData as any).email as string),
+                    leftIcon: (
+                      <Delete
+                        className="!text-theme-error-500"
+                        css={{
+                          "& svg path": {
+                            fill: getThemedColor("error", 500) + " !important",
+                            color: getThemedColor("error", 500) + " !important"
+                          }
+                        }}
+                      />
+                    ),
+                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100",
+                    size: "small"
+                  }}
                 />
               </ChakraTableCell>
             </TableRow>
           ),
-          []
+          [ModalConfirmDeletePartner]
         )}
         columns={[
           {
@@ -231,7 +292,7 @@ const BuildTeamMembersPage: FC = () => {
           },
           {
             key: "actions",
-            label: t("Actions"),
+            label: t(""),
             sortable: false
           }
         ]}
