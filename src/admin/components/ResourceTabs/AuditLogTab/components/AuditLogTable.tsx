@@ -7,8 +7,8 @@ import { convertDateFormat } from "@/admin/apiProvider/utils/entryFormat";
 import Menu from "@/components/elements/Menu/Menu";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { AuditStatusEntityType, deleteAuditStatusAsync } from "@/connections/AuditStatus";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useDeleteV2ENTITYUUIDIDDelete } from "@/generated/apiComponents";
 import { AuditStatusDto, MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 const formattedTextStatus = (text: string) => {
@@ -40,7 +40,7 @@ const generateUserName = (firstName?: string | null, lastName?: string | null): 
 
 const AuditLogTable: FC<{
   auditLogData: { data: AuditStatusDto[] };
-  auditData?: { entity: string; entity_uuid: string };
+  auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
   fullColumns?: boolean;
 }> = ({ auditLogData, auditData, refresh, fullColumns = true }) => {
@@ -81,23 +81,40 @@ const AuditLogTable: FC<{
 
   const { openNotification } = useNotificationContext();
   const t = useT();
-  const { mutate } = useDeleteV2ENTITYUUIDIDDelete({
-    onSuccess() {
+
+  const deleteAuditStatus = async (auditUuid: string) => {
+    try {
+      if (!auditData?.entity || !auditData?.entityUuid) {
+        openNotification("error", "Error!", t("Missing required information to delete audit log."));
+        return;
+      }
+
+      const entityMap: Record<string, AuditStatusEntityType> = {
+        "site-polygon": "sitePolygons",
+        project: "projects",
+        site: "sites",
+        nursery: "nurseries",
+        "project-reports": "projectReports",
+        "site-reports": "siteReports",
+        "nursery-reports": "nurseryReports",
+        "disturbance-reports": "disturbanceReports",
+        "srp-reports": "srpReports",
+        "financial-reports": "financialReports"
+      };
+
+      const entityType = entityMap[auditData.entity];
+      if (!entityType) {
+        openNotification("error", "Error!", t("Unknown entity type."));
+        return;
+      }
+
+      await deleteAuditStatusAsync(auditUuid, entityType, auditData.entityUuid);
+
       refresh?.();
       openNotification("success", "Success!", t("audit log deleted."));
-    },
-    onError: () => {
+    } catch (error) {
       openNotification("error", "Error!", t("An error occurred while deleting the audit log."));
     }
-  });
-  const deleteAuditStatus = (id: string) => {
-    mutate({
-      pathParams: {
-        entity: auditData?.entity as string,
-        uuid: auditData?.entity_uuid as string,
-        id
-      }
-    });
   };
   return (
     <>
