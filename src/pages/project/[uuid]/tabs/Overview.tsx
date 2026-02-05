@@ -159,6 +159,17 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
+  const mode = router.query.mode as string | undefined;
+  const model = useMemo(() => ({ model: v3EntityName("projects") as FormEntity, uuid: project.uuid }), [project.uuid]);
+  const { updateEntityAnswers } = useFormUpdate(model.model, project.uuid);
+  const { formData } = useEntityForm(model.model, project.uuid);
+  const framework = toFramework(formData?.frameworkKey);
+  const feedbackFields = useMemo(
+    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
+    [formData?.feedbackFields, mode]
+  );
+  const [, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
+
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
   }>({
@@ -238,19 +249,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     );
   }, [openModal, project.uuid, refetchPartners]);
 
-  const mode = router.query.mode as string | undefined;
-  const model = useMemo(() => ({ model: v3EntityName("projects") as FormEntity, uuid: project.uuid }), [project.uuid]);
-  const { updateEntityAnswers } = useFormUpdate(model.model, project.uuid);
-  const { formData } = useEntityForm(model.model, project.uuid);
-
-  const feedbackFields = useMemo(
-    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
-    [formData?.feedbackFields, mode]
-  );
-
-  const framework = toFramework(formData?.frameworkKey);
-
-  const [, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
   const defaultValues = useDefaultValues(formData, fieldsProvider);
   const steps = useMemo(
     () =>
