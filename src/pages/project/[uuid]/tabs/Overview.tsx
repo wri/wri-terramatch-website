@@ -20,11 +20,7 @@ import { FormEntity } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
-import {
-  GetV2ProjectsUUIDPartnersResponse,
-  useGetV2ProjectsUUIDManagers,
-  useGetV2ProjectsUUIDPartners
-} from "@/generated/apiComponents";
+import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
 import { v2EntityName, v3EntityName } from "@/helpers/entity";
@@ -154,7 +150,7 @@ const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) => {
           image: `https://i.pravatar.cc/300?img=${index}`
         };
       })
-      ?.slice(0, 2) ?? []
+      ?.slice(0, 4) ?? []
   );
 };
 
@@ -166,10 +162,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     data: GetV2ProjectsUUIDPartnersResponse;
   }>({
     pathParams: { uuid: project?.uuid }
-  });
-
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
   });
 
   const [, { data: mediaList }] = useMedias(
@@ -187,7 +179,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const images = mediaList?.map(media => media.url) ?? [];
 
   const dataQualityAnalysts = formatTeamMembers(partners?.data ?? []);
-  const projectManagers = formatTeamMembers(managers?.data ?? []);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -467,19 +458,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             <ProfileListCard
               items={[
                 {
-                  title: "Project Managers",
-                  profiles: projectManagers,
-                  onProfileClick: profile => {
-                    console.log("Profile clicked:", profile);
-                  }
-                }
-              ]}
-              onInviteClick={handleInviteClick}
-            />
-            <ProfileListCard
-              items={[
-                {
-                  title: "Data Quality Analysts",
+                  title: "Team Members",
                   profiles: dataQualityAnalysts,
                   onProfileClick: profile => {
                     console.log("Profile clicked:", profile);
