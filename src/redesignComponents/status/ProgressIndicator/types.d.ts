@@ -4,7 +4,7 @@ export interface StepProps {
   index: number;
   status: BadgeStatus;
   label: string;
-  actions?: React.ReactNode;
+  actions?: any;
   onClick?: () => void;
   isFocused?: boolean;
   isHovered?: boolean;

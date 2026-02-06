@@ -62,6 +62,9 @@ export const Default: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {
+          console.log("Invite clicked");
+        }}
         items={[
           {
             title: "Header Label",
@@ -86,6 +89,9 @@ export const SingleProfile: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {
+          console.log("Invite clicked");
+        }}
         items={[
           {
             title: "Header Label",
@@ -113,6 +119,9 @@ export const ManyProfiles: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {
+          console.log("Invite clicked");
+        }}
         items={[
           {
             title: "Header Label",
@@ -170,6 +179,9 @@ export const ProfilesWithoutImages: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {
+          console.log("Invite clicked");
+        }}
         items={[
           {
             title: "Header Label",
@@ -207,6 +219,9 @@ export const NoData: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {
+          console.log("Invite clicked");
+        }}
         items={[
           {
             title: "Header Label",

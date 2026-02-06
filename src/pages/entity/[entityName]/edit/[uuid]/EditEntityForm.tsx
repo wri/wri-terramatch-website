@@ -123,7 +123,18 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     )
   };
 
+  const queryStep = router.query.step;
+  const queryStepIndex =
+    typeof queryStep === "string" && /^\d+$/.test(queryStep) ? Math.max(0, parseInt(queryStep, 10)) : null;
+
   const initialStepProps = useMemo(() => {
+    // Open at a specific step when coming from Overview "Edit" (e.g. ?step=2)
+    if (queryStepIndex != null && providerLoaded && fieldsProvider.stepIds().length > 0) {
+      const maxIndex = fieldsProvider.stepIds().length - 1;
+      const stepIndex = Math.min(Math.max(0, queryStepIndex), maxIndex);
+      return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
+    }
+
     if (providerLoaded && feedbackFields != null) {
       for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
         for (const fieldId of fieldsProvider.fieldNames(stepId)) {
@@ -135,7 +146,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
 
     return { initialStepIndex: 0, disableInitialAutoProgress: false };
-  }, [feedbackFields, fieldsProvider, providerLoaded]);
+  }, [feedbackFields, fieldsProvider, providerLoaded, queryStepIndex]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
