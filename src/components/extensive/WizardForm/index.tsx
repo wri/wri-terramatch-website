@@ -1,13 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
+import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -83,7 +84,7 @@ export interface WizardFormProps {
 function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
-  const [selectedStepIndex, setSelectedStepIndex] = useState(props.initialStepIndex ?? 0);
+  const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
   const steps = useMemo(
     () =>
       props.fieldsProvider.stepIds().map(stepId => ({
@@ -93,7 +94,7 @@ function WizardForm(props: WizardFormProps) {
       })),
     [props.framework, props.fieldsProvider, t]
   );
-  const selectedSection = steps[selectedStepIndex];
+  const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
@@ -112,7 +113,7 @@ function WizardForm(props: WizardFormProps) {
 
   useValueChanged(selectedStepIndex, () => {
     // Force validation on all fields when the step changes
-    formHook.trigger();
+    if (selectedStepIndex >= 0) formHook.trigger();
   });
 
   const formHasError = useRef(false);
@@ -148,7 +149,7 @@ function WizardForm(props: WizardFormProps) {
         props.onSubmit(data);
       }
     },
-    [formHook, lastIndex, props, selectedStepIndex]
+    [formHook, lastIndex, props, selectedStepIndex, setSelectedStepIndex]
   );
 
   const onClickSaveAndClose = useCallback(() => {
@@ -180,9 +181,16 @@ function WizardForm(props: WizardFormProps) {
   }, [formHook, props.errors]);
 
   useOnMount(() => {
-    if (props.disableAutoProgress || props.disableInitialAutoProgress) return;
+    // We linked directly to a step; stay on that step.
+    if (selectedStepIndex >= 0) return;
 
-    // If none of the steps has an invalid field, use the last step
+    if (props.disableAutoProgress || props.disableInitialAutoProgress) {
+      // We don't auto progress, so either use the initial step or default to 0;
+      setSelectedStepIndex(props.initialStepIndex ?? 0);
+      return;
+    }
+
+    // Find the first invalid step or go straight to the last step.
     const stepIndex = steps.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
   });
@@ -242,13 +250,13 @@ function WizardForm(props: WizardFormProps) {
         />
       </div>
     ),
-    [formHasError, formHook, lastIndex, _onChange, onSubmitStep, props, selectedStepIndex, t]
+    [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex]
   );
 
   const stepTabItems = useMemo(
     () =>
       steps.map(({ id, title }, index) => ({
-        title: t(`Step {number}<br/> <p className="text-14-light">{title} </p>`, { number: index + 1, title }),
+        title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
         done: props.tabOptions?.markDone && index < selectedStepIndex,
         disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
         renderBody: () => renderStep(id, title ?? null, index)
@@ -275,19 +283,20 @@ function WizardForm(props: WizardFormProps) {
       )
     }),
     [
-      formHook,
+      t,
       lastIndex,
-      onSubmitStep,
-      props.submitButtonDisable,
-      props.summaryOptions?.downloadButtonText,
-      props.summaryOptions?.subtitle,
       props.summaryOptions?.title,
-      props.tabOptions?.disableFutureTabs,
+      props.summaryOptions?.subtitle,
+      props.summaryOptions?.downloadButtonText,
       props.tabOptions?.markDone,
+      props.tabOptions?.disableFutureTabs,
+      props.submitButtonDisable,
+      props.models,
       steps.length,
       selectedStepIndex,
-      t,
-      props.models
+      formHook,
+      setSelectedStepIndex,
+      onSubmitStep
     ]
   );
 
@@ -298,7 +307,7 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
-  return (
+  return selectedStepIndex < 0 ? null : (
     <div>
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
