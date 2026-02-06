@@ -66,11 +66,6 @@ export interface WizardFormProps {
   hideBackButton?: boolean;
   hideSaveAndCloseButton?: boolean;
 
-  tabOptions?: {
-    disableFutureTabs?: boolean;
-    markDone?: boolean;
-  };
-
   saveAndCloseModal?: SaveAndCloseModalProps;
 
   disableAutoProgress?: boolean;
@@ -254,21 +249,17 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const stepTabItems = useMemo(
-    () =>
+    (): TabItem[] =>
       steps.map(({ id, title }, index) => ({
         title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
-        done: props.tabOptions?.markDone && index < selectedStepIndex,
-        disabled: props.tabOptions?.disableFutureTabs && index > selectedStepIndex,
         renderBody: () => renderStep(id, title ?? null, index)
       })),
-    [props.tabOptions?.disableFutureTabs, props.tabOptions?.markDone, renderStep, steps, selectedStepIndex, t]
+    [renderStep, steps, t]
   );
 
   const summaryItem = useMemo(
-    () => ({
+    (): TabItem => ({
       title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
-      done: props.tabOptions?.markDone && steps.length < selectedStepIndex,
-      disabled: props.tabOptions?.disableFutureTabs && steps.length > selectedStepIndex,
       renderBody: () => (
         <SummaryItem
           title={props.summaryOptions?.title!}
@@ -288,12 +279,8 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.title,
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
-      props.tabOptions?.markDone,
-      props.tabOptions?.disableFutureTabs,
       props.submitButtonDisable,
       props.models,
-      steps.length,
-      selectedStepIndex,
       formHook,
       setSelectedStepIndex,
       onSubmitStep
