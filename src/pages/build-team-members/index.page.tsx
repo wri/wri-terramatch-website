@@ -6,6 +6,13 @@ import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
+import {
+  GetV2ProjectsUUIDManagersResponse,
+  GetV2ProjectsUUIDPartnersResponse,
+  useGetV2ProjectsUUIDManagers,
+  useGetV2ProjectsUUIDPartners
+} from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
@@ -15,8 +22,6 @@ import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
-import { GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDManagers, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 interface BuildTeamMembersPageProps {
   project: ProjectFullDto;
@@ -49,14 +54,17 @@ export const teamMemberRoleChoices = [
   }
 ];
 
-const teamMembersFormatted = (teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse, role: string) => {
+const teamMembersFormatted = (
+  teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse,
+  role: string
+) => {
   return teamMembers?.map((member, index) => ({
     name: `${member.first_name} ${member.last_name}`,
     organization: member.organisation?.name,
     email: member.email_address,
     role: role,
     status: member.status,
-    image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`,
+    image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
   }));
 };
 
@@ -69,7 +77,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const handleInvite = () => {
     openModal(
       ModalId.INVITE_MONITORING_PSRTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => { }} />
+      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
     );
   };
 
@@ -124,10 +132,18 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
     const q = searchQuery.trim().toLowerCase();
     return all.filter(
       member =>
-        String(member.name ?? "").toLowerCase().includes(q) ||
-        String(member.organization ?? "").toLowerCase().includes(q) ||
-        String(member.email ?? "").toLowerCase().includes(q) ||
-        String(member.role ?? "").toLowerCase().includes(q)
+        String(member.name ?? "")
+          .toLowerCase()
+          .includes(q) ||
+        String(member.organization ?? "")
+          .toLowerCase()
+          .includes(q) ||
+        String(member.email ?? "")
+          .toLowerCase()
+          .includes(q) ||
+        String(member.role ?? "")
+          .toLowerCase()
+          .includes(q)
     );
   }, [partners?.data, managers?.data, selectedRole, searchQuery]);
 
@@ -139,7 +155,8 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
           {
             mainActionLabel: "Role",
             variant: "secondary",
-            mainActionOnClick: () => setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
+            mainActionOnClick: () =>
+              setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
             otherActions: [
               {
                 label: "Monitoring Partner",
@@ -187,7 +204,9 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
               </ChakraTableCell>
               <ChakraTableCell>{rowData?.organization}</ChakraTableCell>
               <ChakraTableCell>{rowData?.email}</ChakraTableCell>
-              <ChakraTableCell>{rowData?.role ? teamMemberRoleChoices.find(choice => choice.id === rowData?.role)?.name : "-"}</ChakraTableCell>
+              <ChakraTableCell>
+                {rowData?.role ? teamMemberRoleChoices.find(choice => choice.id === rowData?.role)?.name : "-"}
+              </ChakraTableCell>
               <ChakraTableCell>{rowData?.status}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell

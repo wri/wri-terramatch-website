@@ -19,7 +19,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
         <div className="flex flex-wrap items-center gap-2">
           {search != null && (
             <div className="flex flex-wrap items-center gap-2">
-              <div className="mt-2.5">
+              <div className="mt-2.5 mb-5">
                 <Search
                   {...({
                     placeholder: search.placeholder,
