@@ -18,9 +18,11 @@ export const getTableWrapperStyles = (
   return {
     ...(scrollable && {
       "& ": {
-        width: scrollableWidth
+        width: scrollableWidth,
+        position: "relative"
       }
     }),
+    position: "relative",
     "& table tbody tr": {
       backgroundColor: "transparent",
       borderBottom: `1px solid ${getThemedColor("neutral", 300)}`,
@@ -127,6 +129,18 @@ export const getTableWrapperStyles = (
         maxWidth: "48px",
         padding: "0.5rem"
       }
-    })
+    }),
+
+    // Page size select value styles (e.g. the "10" inside the Per Page select)
+    "& [data-scope='select'][data-part='value-text'] p": {
+      fontWeight: "700 !important",
+      color: `${getThemedColor("neutral", 700)} !important`
+    },
+
+    // "Per Page" label styles - find the wrapper div that contains the DS select
+    // and target its direct <p> child (the "Per Page" label)
+    "& div:has(.ds-select-input-container) > p": {
+      textTransform: "lowercase !important"
+    }
   };
 };

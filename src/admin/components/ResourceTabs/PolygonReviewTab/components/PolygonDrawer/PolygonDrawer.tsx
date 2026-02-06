@@ -174,22 +174,6 @@ const PolygonDrawer = ({
   const polygonUuid = selectedPolygon?.uuid;
   const hasValidUuid = polygonUuid != null && polygonUuid !== "";
 
-  // Log for debugging
-  useEffect(() => {
-    if (selectedPolygon != null) {
-      Log.info("PolygonDrawer useAuditStatuses", {
-        entity: "sitePolygons",
-        uuid: polygonUuid,
-        hasValidUuid,
-        selectedPolygon: {
-          uuid: selectedPolygon?.uuid,
-          polygonUuid: selectedPolygon?.polygonUuid,
-          name: selectedPolygon?.name
-        }
-      });
-    }
-  }, [selectedPolygon, polygonUuid, hasValidUuid]);
-
   const [, { data: auditStatusesData, refetch: refetchAuditLog }] = useAuditStatuses({
     entity: "sitePolygons",
     uuid: polygonUuid ?? "",
