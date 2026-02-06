@@ -115,7 +115,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         ) : goal > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
-              {progress.toLocaleString()}
+              {Math.round(progress).toLocaleString()}
             </Text>
             <Text fontSize="18px" color="neutral.800" lineHeight="28px">
               {t("of")}
