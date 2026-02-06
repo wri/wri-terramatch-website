@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -32,12 +31,6 @@ const BaseImage: FC<BaseImageProps> = ({
 }) => {
   const t = useT();
   const showNotAvailable = !isAvailable || src == null;
-  const router = useRouter();
-  const goToTab = (tab: string) => {
-    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
-      shallow: true
-    });
-  };
 
   return (
     <div
@@ -60,7 +53,7 @@ const BaseImage: FC<BaseImageProps> = ({
           )}
         >
           <PhotoAdd className="h-6 w-6" />
-          <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
+          <Button variant="borderless" size="small">
             {t("Add Image")}
           </Button>
         </div>

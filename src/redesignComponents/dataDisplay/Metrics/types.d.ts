@@ -9,7 +9,6 @@ export interface DonutChartProps extends DetailedHTMLProps<HTMLAttributes<HTMLDi
   backgroundColor?: string;
   children?: React.ReactNode;
   className?: string;
-  type?: string;
 }
 
 export interface ProgressBarProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -30,23 +29,21 @@ export interface MetricCardProps {
   variant?: MetricCardVariant;
   icon?: ReactNode;
   color?: string;
-  type?: string;
-  className?: string;
 }
 
 export interface MetricCardCommonVariantProps
-  extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color" | "type"> {
+  extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color"> {
   iconWithColor: ReactNode;
 }
 
 export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "color" | "iconWithColor" | "type"
+  "title" | "progress" | "color" | "iconWithColor"
 >;
 
 export type ProgressBarMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "goal" | "color" | "iconWithColor" | "type"
+  "title" | "progress" | "goal" | "color" | "iconWithColor"
 >;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;
