@@ -238,9 +238,9 @@ function WizardForm(props: WizardFormProps) {
               selectedStepIndex < lastIndex
                 ? props.nextButtonText ?? t("Save and continue")
                 : props.submitButtonText ?? t("Submit"),
-            onClick: formHook.handleSubmit(onSubmitStep),
+            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep),
             className: "py-3",
-            disabled: (selectedStepIndex === lastIndex && props.submitButtonDisable) || formHasError.current
+            disabled: selectedStepIndex === lastIndex && props.submitButtonDisable
           }}
         />
       </div>
@@ -248,13 +248,27 @@ function WizardForm(props: WizardFormProps) {
     [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex]
   );
 
+  const stepsVisited = useRef<number[]>([]);
   const stepTabItems = useMemo(
     (): TabItem[] =>
-      steps.map(({ id, title }, index) => ({
-        title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
-        renderBody: () => renderStep(id, title ?? null, index)
-      })),
-    [renderStep, steps, t]
+      steps.map(({ id, title, validation }, index) => {
+        const state: TabItem["state"] = validation.isValidSync(formHook.getValues())
+          ? stepsVisited.current.includes(index)
+            ? "complete"
+            : "unstarted"
+          : "error";
+        return {
+          title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
+          state,
+          renderBody: () => {
+            if (!stepsVisited.current.includes(index)) {
+              stepsVisited.current.push(index);
+            }
+            return renderStep(id, title ?? null, index);
+          }
+        };
+      }),
+    [formHook, renderStep, steps, t]
   );
 
   const summaryItem = useMemo(
