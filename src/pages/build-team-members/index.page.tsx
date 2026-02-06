@@ -106,11 +106,11 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const { data: partners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
   }>({
-    pathParams: { uuid: project?.uuid }
+    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
   });
 
   const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDManagersResponse }>({
-    pathParams: { uuid: project?.uuid }
+    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
   });
 
   const teamMembers = useMemo(() => {
