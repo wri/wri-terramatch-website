@@ -2,6 +2,8 @@ import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/re
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
 import React, { FC, useCallback, useEffect } from "react";
 
+import { getThemedColor } from "@/lib/theme";
+
 import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
