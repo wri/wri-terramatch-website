@@ -179,10 +179,6 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             defaultValues={defaultValues}
             title={formTitle}
             subtitle={formSubtitle}
-            tabOptions={{
-              markDone: true,
-              disableFutureTabs: true
-            }}
             summaryOptions={{
               title: t("Review Details"),
               downloadButtonText: t("Download")

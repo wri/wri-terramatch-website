@@ -35,7 +35,7 @@ export interface TabsProps {
 export interface TabItem {
   title: string;
   renderBody: () => ReactElement;
-  done?: boolean;
+  state?: "unstarted" | "complete" | "error";
   disabled?: boolean;
   key?: string;
 }
