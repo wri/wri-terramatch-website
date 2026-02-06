@@ -18,9 +18,11 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
     <div className="flex w-full items-center justify-between">
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
-          <Text fontSize="16px" lineHeight="24px" color={"neutral.800"}>
-            {label}:
-          </Text>
+          {label && (
+            <Text fontSize="16px" lineHeight="24px" color={"neutral.800"}>
+              {label}:
+            </Text>
+          )}
           <Text fontSize="20px" lineHeight="28px" color={"primary.900"}>
             {title}
           </Text>

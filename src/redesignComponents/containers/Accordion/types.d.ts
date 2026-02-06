@@ -23,7 +23,7 @@ declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
 }
 
 export interface AccordionHeaderProps {
-  label: string;
+  label?: string;
   title: string;
   badge?: string;
   status?: "success" | "error";
