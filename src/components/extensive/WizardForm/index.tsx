@@ -261,9 +261,7 @@ function WizardForm(props: WizardFormProps) {
           title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
           state,
           renderBody: () => {
-            if (!stepsVisited.current.includes(index)) {
-              stepsVisited.current.push(index);
-            }
+            if (!stepsVisited.current.includes(index)) stepsVisited.current.push(index);
             return renderStep(id, title ?? null, index);
           }
         };
@@ -274,18 +272,23 @@ function WizardForm(props: WizardFormProps) {
   const summaryItem = useMemo(
     (): TabItem => ({
       title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
-      renderBody: () => (
-        <SummaryItem
-          title={props.summaryOptions?.title!}
-          subtitle={props.summaryOptions?.subtitle}
-          formHook={formHook}
-          downloadButtonText={props.summaryOptions?.downloadButtonText}
-          setSelectedStepIndex={setSelectedStepIndex}
-          onSubmitStep={onSubmitStep}
-          submitButtonDisable={props.submitButtonDisable}
-          models={props.models}
-        />
-      )
+      renderBody: () => {
+        const submitButtonDisable =
+          props.submitButtonDisable ||
+          steps.find(({ validation }) => !validation.isValidSync(formHook.getValues())) != null;
+        return (
+          <SummaryItem
+            title={props.summaryOptions?.title!}
+            subtitle={props.summaryOptions?.subtitle}
+            formHook={formHook}
+            downloadButtonText={props.summaryOptions?.downloadButtonText}
+            setSelectedStepIndex={setSelectedStepIndex}
+            onSubmitStep={onSubmitStep}
+            submitButtonDisable={submitButtonDisable}
+            models={props.models}
+          />
+        );
+      }
     }),
     [
       t,
@@ -295,6 +298,7 @@ function WizardForm(props: WizardFormProps) {
       props.summaryOptions?.downloadButtonText,
       props.submitButtonDisable,
       props.models,
+      steps,
       formHook,
       setSelectedStepIndex,
       onSubmitStep
