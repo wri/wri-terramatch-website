@@ -41,21 +41,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       <EntityStatusBar entityName="projects" entity={project} />
       <SecondaryTabs
         tabItems={[
-          {
-            key: "overview",
-            title: t("Overview"),
-            body: (
-              <ProjectOverviewTab
-                project={
-                  project as ProjectFullDto & {
-                    jobsCreatedGoal: number;
-                    totalHectaresRestoredGoal: number;
-                    treesGrownGoal: number;
-                  }
-                }
-              />
-            )
-          },
+          { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
           { key: "details", title: t("Details"), body: <ProjectDetailTab project={project} /> },
           {
             key: "gallery",
