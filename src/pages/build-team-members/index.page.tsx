@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -15,15 +15,61 @@ import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+import { GetV2ProjectsUUIDManagersResponse, GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDManagers, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-const BuildTeamMembersPage: FC = () => {
+interface BuildTeamMembersPageProps {
+  project: ProjectFullDto;
+}
+
+export const teamMemberRoleChoices = [
+  {
+    id: "admin-ppc",
+    name: "PPC Admin"
+  },
+  {
+    id: "admin-terrafund",
+    name: "TerraFund Admin"
+  },
+  {
+    id: "admin-hbf",
+    name: "HBF Admin"
+  },
+  {
+    id: "admin-epa-ghana-pilot",
+    name: "EPA Ghana Pilot Admin"
+  },
+  {
+    id: "monitoring-partner",
+    name: "Monitoring Partner"
+  },
+  {
+    id: "project-manager",
+    name: "Project Manager"
+  }
+];
+
+const teamMembersFormatted = (teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse, role: string) => {
+  return teamMembers?.map((member, index) => ({
+    name: `${member.first_name} ${member.last_name}`,
+    organization: member.organisation?.name,
+    email: member.email_address,
+    role: role,
+    status: member.status,
+    image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`,
+  }));
+};
+
+const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleInvite = () => {
     openModal(
       ModalId.INVITE_MONITORING_PSRTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
+      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => { }} />
     );
   };
 
@@ -57,6 +103,34 @@ const BuildTeamMembersPage: FC = () => {
     [closeModal, openModal, t]
   );
 
+  const { data: partners } = useGetV2ProjectsUUIDPartners<{
+    data: GetV2ProjectsUUIDPartnersResponse;
+  }>({
+    pathParams: { uuid: project?.uuid }
+  });
+
+  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDManagersResponse }>({
+    pathParams: { uuid: project?.uuid }
+  });
+
+  const teamMembers = useMemo(() => {
+    const all = [
+      ...teamMembersFormatted(partners?.data ?? [], "monitoring-partner"),
+      ...teamMembersFormatted(managers?.data ?? [], "project-manager")
+    ].filter(member => (selectedRole ? member.role === selectedRole : true));
+
+    if (!searchQuery.trim()) return all;
+
+    const q = searchQuery.trim().toLowerCase();
+    return all.filter(
+      member =>
+        String(member.name ?? "").toLowerCase().includes(q) ||
+        String(member.organization ?? "").toLowerCase().includes(q) ||
+        String(member.email ?? "").toLowerCase().includes(q) ||
+        String(member.role ?? "").toLowerCase().includes(q)
+    );
+  }, [partners?.data, managers?.data, selectedRole, searchQuery]);
+
   return (
     <Box paddingX={8} paddingY={6}>
       <ToolbarTable
@@ -65,26 +139,29 @@ const BuildTeamMembersPage: FC = () => {
           {
             mainActionLabel: "Role",
             variant: "secondary",
-            mainActionOnClick: () => console.log("Role"),
+            mainActionOnClick: () => setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
             otherActions: [
               {
                 label: "Monitoring Partner",
                 value: "monitoring-partner",
-                onClick: handleInvite
+                onClick: () => setSelectedRole("monitoring-partner")
               },
-              { label: "Project Manager", value: "project-manager", onClick: () => console.log("Project Manager") }
+              { label: "Project Manager", value: "project-manager", onClick: () => setSelectedRole("project-manager") }
             ]
           }
         ]}
         search={{
-          label: "Members",
-          placeholder: "Search",
+          label: t("Members"),
+          placeholder: t("Search"),
           options: [
-            { label: "Name", value: "name" },
-            { label: "Organization", value: "organization" },
-            { label: "Email", value: "email" },
-            { label: "Role", value: "role" }
-          ]
+            { label: t("Name"), value: "name" },
+            { label: t("Organization"), value: "organization" },
+            { label: t("Email"), value: "email" },
+            { label: t("Role"), value: "role" }
+          ],
+          displayResults: "none",
+          onQueryChange: setSearchQuery,
+          count: teamMembers.length
         }}
         button={{
           children: "Add Team Member",
@@ -93,118 +170,7 @@ const BuildTeamMembersPage: FC = () => {
         }}
       />
       <Table
-        data={[
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Project Manager",
-            image: "https://i.pravatar.cc/300?img=4&w=640&q=75",
-            status: "Approved"
-          },
-          {
-            name: "Jane Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            image: "https://i.pravatar.cc/300?img=4&w=640&q=71",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          },
-          {
-            name: "John Doe",
-            organization: "WRI",
-            email: "name@email.com",
-            role: "Team Member",
-            status: "Pending"
-          }
-        ]}
+        data={teamMembers}
         renderRow={useCallback(
           (rowData: RowData) => (
             <TableRow className="group">
@@ -219,10 +185,10 @@ const BuildTeamMembersPage: FC = () => {
                   ]}
                 />
               </ChakraTableCell>
-              <ChakraTableCell>{(rowData as any).organization}</ChakraTableCell>
-              <ChakraTableCell>{(rowData as any).email}</ChakraTableCell>
-              <ChakraTableCell>{(rowData as any).role}</ChakraTableCell>
-              <ChakraTableCell>{(rowData as any).status}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.organization}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.email}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.role ? teamMemberRoleChoices.find(choice => choice.id === rowData?.role)?.name : "-"}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.status}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   button={{

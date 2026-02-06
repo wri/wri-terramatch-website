@@ -62,6 +62,8 @@ export interface SearchProps {
   isLoading?: boolean;
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
+  onQueryChange?: (query: string) => void;
+  count?: number;
 }
 
 export interface ToolbarTableProps {

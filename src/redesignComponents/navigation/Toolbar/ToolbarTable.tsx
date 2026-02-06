@@ -27,13 +27,14 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
                     options: search.options,
                     resultsMaxHeight: search.resultsMaxHeight,
                     isLoading: search.isLoading,
-                    displayResults: search.displayResults,
+                    displayResults: search.displayResults ?? "none",
+                    onQueryChange: search.onQueryChange,
                     size: "default"
                   } as SearchProps)}
                 />
               </div>
               <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
-                XX {search.label}
+                {search.count != null ? `${search.count} ${search.label}` : ""}
               </span>
             </div>
           )}
