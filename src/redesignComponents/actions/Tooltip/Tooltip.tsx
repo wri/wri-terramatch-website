@@ -1,9 +1,7 @@
 import { Tooltip as WriTooltip } from "@worldresources/wri-design-systems";
 import type { ReactNode, RefObject } from "react";
 
-// Type assertion needed due to WRI Tooltip's complex return type definition
-// and React type conflicts between different versions in node_modules
-const WriTooltipComponent = WriTooltip;
+const WriTooltipComponent = WriTooltip as any;
 
 type TooltipProps = {
   children: ReactNode;
