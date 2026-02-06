@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { ReactNode, useCallback, useMemo } from "react";
-import { useRef } from "react";import { useState } from "react";
+import { useRef } from "react";
 
 import { UseFormReturn } from "react-hook-form";
 import { useForm } from "react-hook-form";
@@ -39,7 +39,7 @@ import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/Pro
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 import { HookProps } from "@/types/connection";
 
-import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";import Log from "@/utils/log";
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto & { jobsCreatedGoal: number; totalHectaresRestoredGoal: number; treesGrownGoal: number };
@@ -363,22 +363,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
       onClick: () => handleEditStep(index)
     };
   });
-  const [isDownloading, setIsDownloading] = useState(false);
-
-  const handleDownloadPolygons = async () => {
-    if (!project?.uuid || !project?.name) return;
-
-    setIsDownloading(true);
-    try {
-      await downloadProjectSitePolygonsGeoJson(project.uuid, project.name, {
-        includeExtendedData: true
-      });
-    } catch (error) {
-      Log.error("Failed to download project polygons:", error);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
 
   return (
     <PageBody>
