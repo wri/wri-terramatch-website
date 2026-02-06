@@ -148,6 +148,7 @@ const menuNurseryOptions = [
 ];
 export interface StatusProps {
   titleStatus: AuditStatusEntityType;
+  /** @deprecated V2 mutation function — use onStatusChange/onChangeRequest instead */
   mutate?: any;
   record?: any;
   refresh?: () => void;
@@ -156,6 +157,10 @@ export interface StatusProps {
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
+  /** V3 callback: receives (status, comment). Preferred over mutate. */
+  onStatusChange?: (status: string, comment: string) => Promise<void>;
+  /** V3 callback: receives (comment). Preferred over mutate. */
+  onChangeRequest?: (comment: string) => Promise<void>;
 }
 
 const menuOptionsMap = {
@@ -205,7 +210,9 @@ const StatusDisplay = ({
   record,
   checkPolygonsSite,
   showChangeRequest = false,
-  viewPD
+  viewPD,
+  onStatusChange,
+  onChangeRequest
 }: StatusProps) => {
   const { refetch: reloadEntity } = useShowContext();
   const { openNotification } = useNotificationContext();
@@ -235,6 +242,23 @@ const StatusDisplay = ({
     return legacyType.toLowerCase();
   };
 
+  const getDisplayName = () => {
+    let displayName: string;
+    if (titleStatus === "sitePolygons") {
+      displayName = record?.title ?? record?.poly_name ?? "";
+    } else {
+      displayName = name != null ? removeUnderscore(name) : "";
+    }
+    // Log for debugging
+    Log.info("ModalConfirm contentStatus", {
+      titleStatus,
+      record: { title: record?.title, poly_name: record?.poly_name },
+      name,
+      displayName
+    });
+    return displayName ? `${displayName}.` : ".";
+  };
+
   const contentStatus = (
     <div className="text-center">
       <Text variant="text-12-light" as="span" className="text-center">
@@ -242,7 +266,7 @@ const StatusDisplay = ({
       </Text>
       <Text variant="text-12-bold" as="span">
         {" "}
-        {titleStatus === "sitePolygons" ? record?.title ?? record?.poly_name : removeUnderscore(name)}.
+        {getDisplayName()}
       </Text>
     </div>
   );
@@ -280,17 +304,23 @@ const StatusDisplay = ({
             option => option.value === opt[0]
           );
           try {
-            await mutate({
-              pathParams: {
-                uuid: record?.uuid,
-                entity: getV2PathParam(titleStatus)
-              },
-              body: {
-                status: option?.status,
-                comment: text,
-                type: "status"
-              }
-            });
+            if (onStatusChange != null && option?.status != null) {
+              // V3 path: caller handles the endpoint details
+              await onStatusChange(option.status, text ?? "");
+            } else if (mutate != null) {
+              // V2 fallback — will be removed once all callers migrate
+              await mutate({
+                pathParams: {
+                  uuid: record?.uuid,
+                  entity: getV2PathParam(titleStatus)
+                },
+                body: {
+                  status: option?.status,
+                  comment: text,
+                  type: "status"
+                }
+              });
+            }
             openNotification("success", "Success!", "Your Status Update was just saved!");
           } catch (e) {
             openNotification(
@@ -318,16 +348,22 @@ const StatusDisplay = ({
         onClose={() => closeModal(ModalId.CHANGE_REQUEST)}
         onConfirm={async (text: any) => {
           try {
-            await mutate({
-              pathParams: { uuid: record?.uuid, entity: getV2PathParam(titleStatus) },
-              body: {
-                status: "",
-                comment: text,
-                type: "change-request",
-                is_active: true,
-                request_removed: false
-              }
-            });
+            if (onChangeRequest != null) {
+              // V3 path: caller handles the endpoint details
+              await onChangeRequest(text ?? "");
+            } else if (mutate != null) {
+              // V2 fallback — will be removed once all callers migrate
+              await mutate({
+                pathParams: { uuid: record?.uuid, entity: getV2PathParam(titleStatus) },
+                body: {
+                  status: "",
+                  comment: text,
+                  type: "change-request",
+                  is_active: true,
+                  request_removed: false
+                }
+              });
+            }
             openNotification("success", "Success!", "Your Change Request was just added!");
           } catch (e) {
             openNotification(

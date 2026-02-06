@@ -1,7 +1,7 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
 import { Else, If, Then, When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
@@ -11,12 +11,12 @@ import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
 import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
+import { bulkUpdateSitePolygonStatus, PolygonStatus } from "@/connections/SitePolygons";
 import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { fetchPutV2ENTITYUUIDStatus } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -99,7 +99,17 @@ const PolygonDrawer = ({
       openNotification("error", t("Error! TerraMatch could not review polygons"), t("Please try again later."));
     }
   };
-  const mutateSitePolygons = fetchPutV2ENTITYUUIDStatus;
+  const handlePolygonStatusChange = useCallback(
+    async (status: string, comment: string) => {
+      if (selectedPolygon?.uuid == null) {
+        Log.error("Cannot update polygon status: site polygon UUID is missing");
+        return;
+      }
+      await bulkUpdateSitePolygonStatus([selectedPolygon.uuid], status as PolygonStatus, comment);
+      ApiSlice.pruneCache("auditStatuses");
+    },
+    [selectedPolygon?.uuid]
+  );
 
   useEffect(() => {
     if (checkPolygonValidation) {
@@ -161,9 +171,29 @@ const PolygonDrawer = ({
     entity_uuid: selectedPolygon?.polygonUuid as string
   };
 
+  const polygonUuid = selectedPolygon?.uuid;
+  const hasValidUuid = polygonUuid != null && polygonUuid !== "";
+
+  // Log for debugging
+  useEffect(() => {
+    if (selectedPolygon != null) {
+      Log.info("PolygonDrawer useAuditStatuses", {
+        entity: "sitePolygons",
+        uuid: polygonUuid,
+        hasValidUuid,
+        selectedPolygon: {
+          uuid: selectedPolygon?.uuid,
+          polygonUuid: selectedPolygon?.polygonUuid,
+          name: selectedPolygon?.name
+        }
+      });
+    }
+  }, [selectedPolygon, polygonUuid, hasValidUuid]);
+
   const [, { data: auditStatusesData, refetch: refetchAuditLog }] = useAuditStatuses({
     entity: "sitePolygons",
-    uuid: selectedPolygon?.uuid ?? ""
+    uuid: polygonUuid ?? "",
+    enabled: hasValidUuid
   });
 
   const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
@@ -209,7 +239,7 @@ const PolygonDrawer = ({
               name={selectedPolygon?.name}
               refresh={refresh}
               record={selectedPolygon}
-              mutate={mutateSitePolygons}
+              onStatusChange={handlePolygonStatusChange}
               showChangeRequest={false}
               checkPolygonsSite={true}
             />

@@ -15,6 +15,7 @@ const auditStatusIndexConnection = v3Resource("auditStatuses", getAuditStatuses)
   .index<AuditStatusDto, GetAuditStatusesPathParams>(({ entity, uuid }) => ({
     pathParams: { entity, uuid }
   }))
+  .enabledProp()
   .refetch(() => ApiSlice.pruneIndex("auditStatuses", ""))
   .buildConnection();
 
