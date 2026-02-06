@@ -8,7 +8,6 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { AuditStatusEntityType, v3EntityToAuditLogEntity } from "@/connections/AuditStatus";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import Log from "@/utils/log";
 
 const menuPolygonOptions = [
   {
@@ -148,8 +147,6 @@ const menuNurseryOptions = [
 ];
 export interface StatusProps {
   titleStatus: AuditStatusEntityType;
-  /** @deprecated V2 mutation function — use onStatusChange/onChangeRequest instead */
-  mutate?: any;
   record?: any;
   refresh?: () => void;
   name: any;
@@ -157,10 +154,10 @@ export interface StatusProps {
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  /** V3 callback: receives (status, comment). Preferred over mutate. */
+  /** V3 callback for status changes: receives (status, comment). */
   onStatusChange?: (status: string, comment: string) => Promise<void>;
-  /** V3 callback: receives (comment). Preferred over mutate. */
-  onChangeRequest?: (comment: string) => Promise<void>;
+  /** V3 callback for change requests: receives (comment). */
+  onChangeRequest?: (comment: string) => void;
 }
 
 const menuOptionsMap = {
@@ -204,7 +201,6 @@ const DescriptionRequestMap = {
 
 const StatusDisplay = ({
   titleStatus = "sitePolygons",
-  mutate,
   refresh,
   name,
   record,
@@ -221,27 +217,6 @@ const StatusDisplay = ({
   const legacyEntityType = v3EntityToAuditLogEntity(titleStatus);
   const removeUnderscore = (title: string) => title.replace("_", " ");
 
-  const getV2PathParam = (entityType: AuditStatusEntityType): string => {
-    // TODO: Remove this function when V2 status update endpoint is migrated to V3
-    const legacyType = v3EntityToAuditLogEntity(entityType);
-    if (legacyType === "Polygon") {
-      return "site-polygon";
-    } else if (legacyType === "Nursery_Report") {
-      return "nursery-reports";
-    } else if (legacyType === "Site_Report") {
-      return "site-reports";
-    } else if (legacyType === "Project_Report") {
-      return "project-reports";
-    } else if (legacyType === "Disturbance_Report") {
-      return "disturbance-reports";
-    } else if (legacyType === "Srp_Report") {
-      return "srp-reports";
-    } else if (legacyType === "Financial_Report") {
-      return "financial-reports";
-    }
-    return legacyType.toLowerCase();
-  };
-
   const getDisplayName = () => {
     let displayName: string;
     if (titleStatus === "sitePolygons") {
@@ -249,13 +224,6 @@ const StatusDisplay = ({
     } else {
       displayName = name != null ? removeUnderscore(name) : "";
     }
-    // Log for debugging
-    Log.info("ModalConfirm contentStatus", {
-      titleStatus,
-      record: { title: record?.title, poly_name: record?.poly_name },
-      name,
-      displayName
-    });
     return displayName ? `${displayName}.` : ".";
   };
 
@@ -304,22 +272,8 @@ const StatusDisplay = ({
             option => option.value === opt[0]
           );
           try {
-            if (onStatusChange != null && option?.status != null) {
-              // V3 path: caller handles the endpoint details
-              await onStatusChange(option.status, text ?? "");
-            } else if (mutate != null) {
-              // V2 fallback — will be removed once all callers migrate
-              await mutate({
-                pathParams: {
-                  uuid: record?.uuid,
-                  entity: getV2PathParam(titleStatus)
-                },
-                body: {
-                  status: option?.status,
-                  comment: text,
-                  type: "status"
-                }
-              });
+            if (option?.status != null) {
+              await onStatusChange!(option.status, text ?? "");
             }
             openNotification("success", "Success!", "Your Status Update was just saved!");
           } catch (e) {
@@ -328,8 +282,6 @@ const StatusDisplay = ({
               "Error!",
               "The request encountered an issue, or the comment exceeds 255 characters."
             );
-
-            Log.error("The request encountered an issue", e);
           } finally {
             onFinallyRequest();
           }
@@ -339,6 +291,8 @@ const StatusDisplay = ({
   };
 
   const openFormModalHandlerRequest = () => {
+    if (onChangeRequest == null) return;
+
     openModal(
       ModalId.CHANGE_REQUEST,
       <ModalConfirm
@@ -348,22 +302,7 @@ const StatusDisplay = ({
         onClose={() => closeModal(ModalId.CHANGE_REQUEST)}
         onConfirm={async (text: any) => {
           try {
-            if (onChangeRequest != null) {
-              // V3 path: caller handles the endpoint details
-              await onChangeRequest(text ?? "");
-            } else if (mutate != null) {
-              // V2 fallback — will be removed once all callers migrate
-              await mutate({
-                pathParams: { uuid: record?.uuid, entity: getV2PathParam(titleStatus) },
-                body: {
-                  status: "",
-                  comment: text,
-                  type: "change-request",
-                  is_active: true,
-                  request_removed: false
-                }
-              });
-            }
+            await onChangeRequest!(text ?? "");
             openNotification("success", "Success!", "Your Change Request was just added!");
           } catch (e) {
             openNotification(
@@ -371,7 +310,6 @@ const StatusDisplay = ({
               "Error!",
               "The request encountered an issue, or the comment exceeds 255 characters."
             );
-            Log.error("Request encountered an issue", e);
           } finally {
             onFinallyRequest();
           }
@@ -394,7 +332,7 @@ const StatusDisplay = ({
             <Text variant="text-12-bold">change status</Text>
           </Button>
           <Button
-            disabled={!showChangeRequest}
+            disabled={!showChangeRequest || onChangeRequest == null}
             variant="semi-black"
             className={classNames("w-full flex-1 whitespace-nowrap", { "opacity-0": !showChangeRequest })}
             onClick={openFormModalHandlerRequest}

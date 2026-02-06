@@ -3,7 +3,6 @@ import { useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
 import { ENTITY_REPORT, NURSERY, POLYGON, PROJECT, SITE } from "@/constants/entities";
-import { fetchPutV2ENTITYUUIDStatus } from "@/generated/apiComponents";
 import {
   getValueForStatusEntityReport,
   getValueForStatusNursery,
@@ -18,7 +17,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
   const ACTIONS_MAP = useMemo(
     () => ({
       [AuditLogButtonStates.PROJECT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusProject,
         statusLabels: [
           { id: "1", label: t("Started") },
@@ -29,7 +27,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: PROJECT
       },
       [AuditLogButtonStates.SITE as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusSite,
         statusLabels: [
           { id: "1", label: t("Started") },
@@ -40,7 +37,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: SITE
       },
       [AuditLogButtonStates.POLYGON as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusPolygon,
         statusLabels: [
           { id: "1", label: t("Draft") },
@@ -51,7 +47,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: POLYGON
       },
       [AuditLogButtonStates.NURSERY as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusNursery,
         statusLabels: [
           { id: "1", label: t("Started") },
@@ -62,7 +57,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: NURSERY
       },
       [AuditLogButtonStates.SRP_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
@@ -74,7 +68,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.SITE_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
@@ -86,7 +79,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.NURSERY_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
@@ -98,7 +90,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.PROJECT_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
@@ -110,7 +101,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.DISTURBANCE_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
@@ -122,7 +112,6 @@ export const useStatusActionsMap = (reportEntityTypes: number) => {
         entityType: ENTITY_REPORT
       },
       [AuditLogButtonStates.FINANCIAL_REPORT as number]: {
-        mutateEntity: fetchPutV2ENTITYUUIDStatus,
         valuesForStatus: getValueForStatusEntityReport,
         statusLabels: [
           { id: "1", label: t("Due") },
