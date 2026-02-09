@@ -204,12 +204,34 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
             <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
-              <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                {t(mrvOnboardingContentItem?.content.introText)}
+              <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
+                {t("Monitoring, Reporting, and Verification (MRV)")}
               </Text>
+              <Box as="ul" listStyleType="disc" marginInlineStart={6} paddingLeft={4}>
+                <Box as="li">
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.monitoring ?? "" }} />
+                </Box>
+                <Box as="li">
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.reporting ?? "" }} />
+                </Box>
+                <Box as="li">
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.verification ?? "" }} />
+                </Box>
+              </Box>
+              <Flex alignItems="center">
+                {t("Learn more in the full")}
+                <Button
+                  variant="borderless"
+                  size="small"
+                  rightIcon={<ChevronRight />}
+                  onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
+                >
+                  {"MRV Framework"}
+                </Button>
+              </Flex>
               <Flex direction="column" gap={2} minHeight={0}>
                 <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
-                  Helpful Links
+                  {t("Helpful Links")}
                 </Text>
                 <Divider />
                 <Flex direction="column" gap={3} paddingTop={3} alignItems="flex-start" className="overflow-y-auto">
