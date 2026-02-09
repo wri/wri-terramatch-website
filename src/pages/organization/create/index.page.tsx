@@ -108,10 +108,6 @@ const CreateOrganisationForm = () => {
           submitButtonDisable={isSubmitting}
           onBackFirstStep={onBackFirstStep}
           title={t("Create Organization")}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
           hideSaveAndCloseButton
           roundedCorners
         />
