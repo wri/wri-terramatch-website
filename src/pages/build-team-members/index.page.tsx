@@ -111,6 +111,10 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
     [closeModal, openModal, t]
   );
 
+  // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
+  // will be replaced once these endpoints are migrated to V3.
+  // Related migration ticket: TM-2996
+
   const { data: partners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
   }>({
