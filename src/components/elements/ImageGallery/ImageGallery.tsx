@@ -96,7 +96,7 @@ const ImageGallery = ({
     reports: t("Report")
   };
 
-  // Map UI source to API modelType (entityType); "reports" is entity-specific
+  // Map UI source to API modelType (entityType); "reports" is entity-specifics and handled separately
   const modelTypeForApi =
     source === ""
       ? undefined
