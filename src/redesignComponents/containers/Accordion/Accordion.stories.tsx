@@ -24,7 +24,8 @@ type Story = StoryObj<typeof Accordion>;
 export const Default: Story = {
   args: {
     header: "Header Title",
-    children: "This is the accordion content. You can put any content here."
+    children: "This is the accordion content. You can put any content here.",
+    className: "p-4"
   }
 };
 
@@ -77,5 +78,21 @@ export const LongContent: Story = {
         </ul>
       </div>
     )
+  }
+};
+
+export const variantSecondary: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" />,
+    children: "This is the accordion content. You can put any content here.",
+    variant: "secondary"
+  }
+};
+
+export const StatusLabel: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" status="error" statusLabel="Status Label" />,
+    children: "This is the accordion content. You can put any content here.",
+    variant: "secondary"
   }
 };

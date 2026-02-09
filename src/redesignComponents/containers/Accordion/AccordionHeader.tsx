@@ -1,33 +1,53 @@
-import { Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { CheckApproved, InformationRequired } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
-import type { AccordionHeaderProps } from "./types";
+import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
-const getStatusIcon = (status: "success" | "error") =>
+const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
   status === "success" ? (
-    <CheckApproved boxSize={4} color="success.500" />
+    <CheckApproved boxSize={boxSize} color="success.500" />
   ) : (
-    <InformationRequired boxSize={4} color="error.500" />
+    <InformationRequired boxSize={boxSize} color="error.500" />
   );
 
-const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status }) => {
+const StatusLabelTag = ({ label, status }: { label: string; status: AccordionStatus }) => {
+  return (
+    <Flex
+      alignItems="center"
+      gap={2}
+      paddingX={2}
+      paddingY={1}
+      borderRadius="4px"
+      backgroundColor="error.100"
+      border="1px solid"
+      borderColor="error.300"
+    >
+      {getStatusIcon(status, 2.5)}
+      <Text fontSize="12px" lineHeight="16px" fontWeight="bold" color="error.900">
+        {label}
+      </Text>
+    </Flex>
+  );
+};
+
+const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status, statusLabel }) => {
   return (
     <div className="flex w-full items-center justify-between">
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2">
-          <Text fontSize="16px" lineHeight="24px" color={"neutral.800"}>
-            {label}:
-          </Text>
-          <Text fontSize="20px" lineHeight="28px" color={"primary.900"}>
-            {title}
-          </Text>
+        <div className="line-height-[28px] flex items-center gap-2 text-[20px] text-theme-primary-900">
+          {label && (
+            <Text fontSize="16px" lineHeight="24px" color={"neutral.800"}>
+              {label}:
+            </Text>
+          )}
+          {title}
         </div>
         {badge && <TextBadge>{badge}</TextBadge>}
       </div>
-      {status && getStatusIcon(status)}
+      {statusLabel && status ? <StatusLabelTag label={statusLabel} status={status} /> : status && getStatusIcon(status)}
     </div>
   );
 };

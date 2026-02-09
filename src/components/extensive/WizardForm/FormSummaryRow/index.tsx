@@ -3,16 +3,18 @@ import classNames from "classnames";
 import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import Accordion from "@/components/elements/Accordion/Accordion";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
+import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
+import { Edit } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
 import { isDemographicType } from "../../TrackingCollapseGrid/types";
-
 export interface FormSummaryRowProps extends FormSummaryProps {
   type?: EntityName;
   stepId: string;
@@ -27,15 +29,14 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
   return (
     <Accordion
-      variant="secondary"
-      title={title ?? ""}
-      ctaButtonProps={
-        props.onEdit
-          ? {
-              text: t("Edit"),
-              onClick: () => props.onEdit?.(index)
-            }
-          : undefined
+      variant="primary"
+      header={<AccordionHeader title={title ?? ""} />}
+      actions={
+        props.onEdit ? (
+          <Button variant="secondary" size="small" leftIcon={<Edit />} onClick={() => props.onEdit?.(index)}>
+            {t("Edit")}
+          </Button>
+        ) : undefined
       }
     >
       <List
