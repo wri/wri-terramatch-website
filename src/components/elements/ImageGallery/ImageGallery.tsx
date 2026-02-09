@@ -44,7 +44,7 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onChangeGeotagged: Dispatch<SetStateAction<boolean | null>>;
   sortOrder: "ASC" | "DESC";
   setSortOrder: Dispatch<SetStateAction<"ASC" | "DESC">>;
-  setFilters: Dispatch<SetStateAction<{ isPublic?: boolean; modelType?: string }>>;
+  setFilters: Dispatch<SetStateAction<{ isPublic: boolean | undefined; modelType: string | undefined }>>;
   entity: string;
   isAdmin?: boolean;
   entityData?: Record<string, unknown>;
