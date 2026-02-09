@@ -7,7 +7,12 @@ import { FC, ReactNode, useCallback, useMemo } from "react";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDManagers, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
+import { useModalContext } from "@/context/modal.provider";
+import {
+  GetV2ProjectsUUIDPartnersResponse,
+  useGetV2ProjectsUUIDManagers,
+  useGetV2ProjectsUUIDPartners
+} from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -19,10 +24,9 @@ import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LastestImagesSectionTab from "./LastestImagesSection";
 import ProjectSetUpSection from "./ProjectSetUpSection";
-import { useModalContext } from "@/context/modal.provider";
 
 interface ProjectOverviewTabProps {
-  project: ProjectFullDto
+  project: ProjectFullDto;
 }
 
 interface OverviewItemProps {
@@ -31,7 +35,6 @@ interface OverviewItemProps {
   children?: ReactNode;
   flexProps?: FlexProps;
 }
-
 
 const OverviewItem: FC<OverviewItemProps> = props => {
   const { title, buttonProps, children, flexProps } = props;
@@ -68,7 +71,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const { openModal } = useModalContext();
   const [isLargerResolution] = useMediaQuery(["(min-width: 1500px)"]);
-
 
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
@@ -157,7 +159,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         >
           <KeyIndicatorsInsightsTab project={project} isLargerResolution={isLargerResolution} />
         </OverviewItem>
-        <Flex gap={7} height="532px" paddingY={2}>
+        <Flex gap={7} height="550px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
             title="Team Members"
@@ -203,23 +205,31 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
-            <Flex direction="column" gap={6} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
-              <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
+            <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
+              <Text color="neutral.900" fontSize="16px" lineHeight="24px" fontWeight="bold">
                 {t("Monitoring, Reporting, and Verification (MRV)")}
               </Text>
-              <Box as="ul" listStyleType="disc" marginInlineStart={6} paddingLeft={4}>
+              <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.monitoring ?? "" }} />
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                    <strong>Monitoring:</strong> {mrvOnboardingContentItem?.content.monitoring}
+                  </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.reporting ?? "" }} />
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                    <strong>Reporting:</strong> {mrvOnboardingContentItem?.content.reporting}
+                  </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px" dangerouslySetInnerHTML={{ __html: mrvOnboardingContentItem?.content.verification ?? "" }} />
+                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                    <strong>Verification:</strong> {mrvOnboardingContentItem?.content.verification}
+                  </Text>
                 </Box>
               </Box>
               <Flex alignItems="center">
-                {t("Learn more in the full")}
+                <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                  {t("Learn more in the full")}
+                </Text>
                 <Button
                   variant="borderless"
                   size="small"
@@ -234,7 +244,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   {t("Helpful Links")}
                 </Text>
                 <Divider />
-                <Flex direction="column" gap={3} paddingTop={3} alignItems="flex-start" className="overflow-y-auto">
+                <Flex direction="column" paddingTop={1.5} alignItems="flex-start" className="overflow-y-auto">
                   {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
                     <Button
                       variant="borderless"

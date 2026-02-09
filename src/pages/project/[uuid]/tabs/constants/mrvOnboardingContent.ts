@@ -4,10 +4,14 @@ export const MRV_ONBOARDING_CONTENT = [
     content: {
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time. ",
-      monitoring: "<strong>Monitoring:</strong> refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like \u201CTrees restored\u201D or socioeconomic, like \u201CJobs created\u201D) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
-      reporting: "<strong>Reporting:</strong> refers to your team's work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification: "<strong>Verification:</strong> refers to remote or field-based measurement of project progress.",
-      mrvFrameworkLink: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
+      monitoring:
+        "The process of collecting and analysing data and information to measure progress toward specific goals that the restoration effort aims to achieve.",
+      reporting:
+        "The sharing of data collected by restoration champions through project, nursery, and site reports, which are submitted on the TerraMatch platform in a standardised format every six months.",
+      verification:
+        "Periodically subjecting reported information to some form of review, analysis or independent assessment to establish completeness and reliability.",
+      mrvFrameworkLink:
+        "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
       helpfulLinks: [
         {
           title: "Glossary - Monitoring, Reporting, and Verification",
@@ -33,10 +37,14 @@ export const MRV_ONBOARDING_CONTENT = [
     content: {
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time.",
-      monitoring: "<strong>Monitoring:</strong> refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like \u201CTrees restored\u201D or socioeconomic, like \u201CJobs created\u201D) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
-      reporting: "<strong>Reporting:</strong> refers to your team's work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification: "<strong>Verification:</strong> refers to remote or field-based measurement of project progress.",
-      mrvFrameworkLink: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
+      monitoring:
+        "The process of collecting and analysing data and information to measure progress toward specific goals that the restoration effort aims to achieve.",
+      reporting:
+        "The sharing of data collected by restoration champions through project, nursery, and site reports, which are submitted on the TerraMatch platform in a standardised format every six months.",
+      verification:
+        "Periodically subjecting reported information to some form of review, analysis or independent assessment to establish completeness and reliability.",
+      mrvFrameworkLink:
+        "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
       helpfulLinks: [
         {
           title: "Glossary - Monitoring, Reporting, and Verification",
@@ -54,10 +62,14 @@ export const MRV_ONBOARDING_CONTENT = [
     content: {
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time.",
-      monitoring: "<strong>Monitoring:</strong> refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like \u201CTrees restored\u201D or socioeconomic, like \u201CWorkdays created\u201D) at pre-determined intervals (for example, Year 0, Year 2.5, and Year 5 of a project).",
-      reporting: "<strong>Reporting:</strong> refers to your team's work, filling out project, site, socioeconomic restoration partners, and disturbance reports on TerraMatch.",
-      verification: "<strong>Verification:</strong> refers to remote or field-based measurement of project progress.",
-      mrvFrameworkLink: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322085147035-How-to-Submit-Your-Quarterly-Reports-PPC",
+      monitoring:
+        "The process of collecting and analysing data and information to measure progress toward specific goals that the restoration effort aims to achieve.",
+      reporting:
+        "The sharing of data collected by restoration champions through project, nursery, and site reports, which are submitted on the TerraMatch platform in a standardised format every six months.",
+      verification:
+        "Periodically subjecting reported information to some form of review, analysis or independent assessment to establish completeness and reliability.",
+      mrvFrameworkLink:
+        "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322085147035-How-to-Submit-Your-Quarterly-Reports-PPC",
       helpfulLinks: [
         {
           title: "Glossary - Monitoring, Reporting, and Verification",
