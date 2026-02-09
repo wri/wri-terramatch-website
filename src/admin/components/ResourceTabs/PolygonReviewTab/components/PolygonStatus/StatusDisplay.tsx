@@ -220,7 +220,7 @@ const StatusDisplay = ({
   const getDisplayName = () => {
     let displayName: string;
     if (titleStatus === "sitePolygons") {
-      displayName = record?.title ?? record?.poly_name ?? "";
+      displayName = name ?? record?.name ?? "";
     } else {
       displayName = name != null ? removeUnderscore(name) : "";
     }
