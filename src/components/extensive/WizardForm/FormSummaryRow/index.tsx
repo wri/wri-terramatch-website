@@ -42,10 +42,11 @@ export interface FormSummaryRowProps extends FormSummaryProps {
 
 const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const t = useT();
-  const { title } = useFieldsProvider().step(stepId) ?? {};
+  const fieldsProvider = useFieldsProvider();
+  const { title } = fieldsProvider.step(stepId) ?? {};
   const frameworkKey = useFramework();
   const framework = toFramework(frameworkKey) as Framework;
-  const stepsWithValidation = useFormStepsWithValidation(useFieldsProvider(), framework);
+  const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
   const valid = props.values == null || validation.isValidSync(props.values);
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
