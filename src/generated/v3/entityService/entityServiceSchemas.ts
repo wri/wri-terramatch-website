@@ -3,6 +3,56 @@
  *
  * @version 1.0
  */
+export type UserFramework = {
+  /**
+   * @example TerraFund Landscapes
+   */
+  name: string;
+  /**
+   * @example terrafund-landscapes
+   */
+  slug: string;
+};
+
+export type UserDto = {
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * Currently just calculated by appending lastName to firstName.
+   */
+  fullName: string | null;
+  primaryRole: string;
+  /**
+   * @example person@foocorp.net
+   */
+  emailAddress: string;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: UserFramework[];
+};
+
+export type AssociatedUserDto = {
+  uuid: string;
+  /**
+   * @example person@example.com
+   */
+  emailAddress: string;
+  firstName: string | null;
+  lastName: string | null;
+  fullName: string | null;
+  primaryRole: string | null;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: Record<string, any>[];
+};
+
 export type ProjectPitchDto = {
   uuid: string;
   capacityBuildingNeeds: string[] | null;
@@ -1312,6 +1362,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
