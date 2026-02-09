@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { FC } from "react";
 
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { BreadcrumbProps } from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
 import { ToolbarSlot, ViewToolbarProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
@@ -14,6 +15,7 @@ export interface ProjectBannerProps {
   breadcrumbs: BreadcrumbProps;
   slots: ToolbarSlot[];
   title: string;
+  description?: string | undefined | null;
   tag: ProgressTagProps;
   organization: string;
   startDate: string;
@@ -22,6 +24,7 @@ export interface ProjectBannerProps {
   countryFlag: string;
   team: TeamMember[];
   toolbar: ViewToolbarProps;
+  project: ProjectFullDto;
 }
 
 const ProjectBanner: FC<ProjectBannerProps> = ({
@@ -29,18 +32,23 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
   slots,
   title,
   tag,
+  description,
   organization,
   startDate,
   endDate,
   country,
   countryFlag,
   team,
-  toolbar
+  toolbar,
+  project
 }) => {
   return (
     <Box>
-      <ToolbarObject breadcrumbs={breadcrumbs} slots={slots} />
+      <Box className="sticky top-0 px-0.5">
+        <ToolbarObject breadcrumbs={breadcrumbs} slots={slots} />
+      </Box>
       <ProjectHeader
+        project={project}
         title={title}
         tag={tag}
         organization={organization}
@@ -49,8 +57,11 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
         country={country}
         countryFlag={countryFlag}
         team={team}
+        description={description}
       />
-      <ViewToolbar tabBar={toolbar.tabBar} />
+      <Box className="sticky top-9 px-0.5">
+        <ViewToolbar tabBar={toolbar.tabBar} />
+      </Box>
     </Box>
   );
 };

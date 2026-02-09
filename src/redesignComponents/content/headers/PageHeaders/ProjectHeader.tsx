@@ -1,6 +1,7 @@
 import { Box, Flex } from "@chakra-ui/react";
 import { FC } from "react";
 
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 
 import ProfileImage, { ProfileImageProps } from "../../Images/ProfileImage/ProfileImage";
@@ -8,6 +9,7 @@ import ProjectInfo from "./components/ProjectInfo";
 import TeamSection, { TeamMember } from "./components/TeamSection";
 
 export interface ProjectHeaderProps {
+  project: ProjectFullDto;
   title: string;
   image?: ProfileImageProps;
   tag: ProgressTagProps;
@@ -24,6 +26,7 @@ const IMAGE_SIZE = 164;
 const IMAGE_CONTAINER_CLASSES = "!min-w-40 !min-h-40 !h-44 !w-44";
 
 const ProjectHeader: FC<ProjectHeaderProps> = ({
+  project,
   title,
   image,
   tag,
@@ -40,8 +43,8 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({
       display="flex"
       items-center
       gap={4}
-      paddingX={5}
-      paddingY={4}
+      paddingX={6}
+      paddingY={5}
       justifyContent="space-between"
       background="secondary.neutral"
     >
@@ -50,6 +53,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({
           <ProfileImage size={IMAGE_SIZE} {...image} />
         </div>
         <ProjectInfo
+          project={project}
           title={title}
           tag={tag}
           organization={organization}

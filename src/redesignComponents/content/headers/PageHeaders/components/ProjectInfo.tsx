@@ -3,6 +3,8 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 import Twemoji from "react-twemoji";
 
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
@@ -20,6 +22,7 @@ export interface ProjectInfoProps {
   startDate: string;
   endDate: string;
   description?: string;
+  project: ProjectFullDto;
 }
 
 const ProjectInfo: FC<ProjectInfoProps> = ({
@@ -30,10 +33,16 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   countryFlag,
   startDate,
   endDate,
-  description
+  description,
+  project
 }) => {
   const t = useT();
-
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
   return (
     <Box gap={2} className="flex flex-col">
       <Text fontSize="28px" lineHeight="36px" color="primary.900" fontWeight="bold" className="flex items-center gap-3">
@@ -54,7 +63,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         <ProjectDescription description={description} />
       ) : (
         <div className="w-fit">
-          <Button variant="secondary" size="small" rightIcon={<ChevronRight />} className="w-auto">
+          <Button onClick={handleEdit} variant="secondary" size="small" rightIcon={<ChevronRight />} className="w-auto">
             {t("Add Project Information")}
           </Button>
         </div>
