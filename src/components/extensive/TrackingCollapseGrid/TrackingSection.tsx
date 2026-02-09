@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { startCase } from "lodash";
+import { sortBy, startCase } from "lodash";
 import { FC, useCallback } from "react";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
