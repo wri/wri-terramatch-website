@@ -1,4 +1,4 @@
-import { useFormStepsSummary } from "@/components/extensive/WizardForm/useFormStepsSummary";
+import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { FormEntity } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
 import { Framework } from "@/context/framework.provider";
@@ -13,21 +13,7 @@ import { useMemo } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Box, Spinner } from "@chakra-ui/react";
 
-
-const mapStatus = (status: string): StepProps["status"] => {
-  switch (status) {
-    case "completed":
-      return "completed";
-    case "error":
-      return "error";
-    case "active":
-      return "error";
-    case "available":
-      return "available";
-    default:
-      return "available";
-  }
-};
+const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
 const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
   const router = useRouter();
@@ -41,7 +27,7 @@ const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
   );
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
   const defaultValues = useDefaultValues(formData, fieldsProvider);
-  const stepsWithStatus = useFormStepsSummary(fieldsProvider, framework, defaultValues);
+  const steps = useFormStepsWithValidation(fieldsProvider, framework);
 
   const isReady = !isFormLoading && providerLoaded;
 
@@ -50,29 +36,28 @@ const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
     [entityUuid]
   );
 
-  const tabItemsStep: StepProps[] = useMemo(
-    () =>
-      stepsWithStatus.map((step, index) => {
-        return {
-          index: index + 1,
-          status: mapStatus(step.status),
-          label: step.title ?? "",
-          actions: (
-            <Button
-              type="button"
-              variant="borderless"
-              size="small"
-              leftIcon={<Edit boxSize={3} />}
-              onClick={() => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)}
-            >
-              Edit
-            </Button>
-          ),
-          onClick: () => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)
-        };
-      }),
-    [editPath, router, stepsWithStatus]
-  );
+  const tabItemsStep: StepProps[] = useMemo(() => {
+    return steps.map((step, index) => {
+      const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
+      return {
+        index: index + 1,
+        status: stepStatusToBadge(valid),
+        label: step.title ?? "",
+        actions: (
+          <Button
+            type="button"
+            variant="borderless"
+            size="small"
+            leftIcon={<Edit boxSize={3} />}
+            onClick={() => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)}
+          >
+            Edit
+          </Button>
+        ),
+        onClick: () => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)
+      };
+    });
+  }, [editPath, router, steps, defaultValues]);
 
   if (!isReady) {
     return (

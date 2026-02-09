@@ -102,12 +102,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: (entity as SiteReportFullDto)?.siteName })
       : entityName === "financial-reports"
-        ? t("{orgName} Financial Report", { orgName: entity?.organisationName })
-        : entityName === "disturbance-reports"
-          ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
-          : entityName === "srp-reports"
-            ? t("{projectName} Socio-Economic Report", { projectName: (entity as SrpReportFullDto)?.projectName })
-            : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
+      ? t("{orgName} Financial Report", { orgName: entity?.organisationName })
+      : entityName === "disturbance-reports"
+      ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
+      : entityName === "srp-reports"
+      ? t("{projectName} Socio-Economic Report", { projectName: (entity as SrpReportFullDto)?.projectName })
+      : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
