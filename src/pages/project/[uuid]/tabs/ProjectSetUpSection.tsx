@@ -1,3 +1,4 @@
+import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { FormEntity } from "@/connections/Form";
 import { toFramework } from "@/context/framework.provider";
@@ -9,13 +10,13 @@ import { Edit } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Box, Spinner } from "@chakra-ui/react";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
-const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
+const ProjectSetUpSection: FC<{ entityUuid: string }> = ({ entityUuid }) => {
   const router = useRouter();
   const mode = router.query.mode as string | undefined;
   const model = useMemo(() => ({ model: v3EntityName("projects") as FormEntity, uuid: entityUuid }), [entityUuid]);
@@ -49,12 +50,12 @@ const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
             variant="borderless"
             size="small"
             leftIcon={<Edit boxSize={3} />}
-            onClick={() => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)}
+            onClick={() => router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`)}
           >
             Edit
           </Button>
         ),
-        onClick: () => router.push(`${editPath}?formStepId=${encodeURIComponent(step.id)}`)
+        onClick: () => router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`)
       };
     });
   }, [editPath, router, steps, defaultValues]);
@@ -70,4 +71,4 @@ const EntitySetUpSection = ({ entityUuid }: { entityUuid: string }) => {
   return <ProgressSteps steps={tabItemsStep} />;
 };
 
-export default EntitySetUpSection;
+export default ProjectSetUpSection;

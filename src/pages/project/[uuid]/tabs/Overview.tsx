@@ -36,35 +36,26 @@ interface OverviewItemProps {
   flexProps?: FlexProps;
 }
 
-const OverviewItem: FC<OverviewItemProps> = props => {
-  const { title, buttonProps, children, flexProps } = props;
-
-  return (
-    <Flex direction="column" gap={4} flex={1} {...flexProps}>
-      <Flex alignItems="center" justifyContent="space-between">
-        <Text color="primary.900" fontSize="20px" lineHeight="28px">
-          {title}
-        </Text>
-        {buttonProps ? <Button {...buttonProps} /> : null}
-      </Flex>
-      {children}
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, children, flexProps }) => (
+  <Flex direction="column" gap={4} flex={1} {...flexProps}>
+    <Flex alignItems="center" justifyContent="space-between">
+      <Text color="primary.900" fontSize="20px" lineHeight="28px">
+        {title}
+      </Text>
+      {buttonProps ? <Button {...buttonProps} /> : null}
     </Flex>
-  );
-};
+    {children}
+  </Flex>
+);
 
-const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) => {
-  return (
-    members
-      .map((member, index) => {
-        return {
-          id: member.uuid ?? "",
-          name: `${member.first_name} ${member.last_name}`,
-          image: `https://i.pravatar.cc/300?img=${index}`
-        };
-      })
-      ?.slice(0, 2) ?? []
-  );
-};
+const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) =>
+  members
+    .map((member, index) => ({
+      id: member.uuid ?? "",
+      name: `${member.first_name} ${member.last_name}`,
+      image: `https://i.pravatar.cc/300?img=${index}`
+    }))
+    ?.slice(0, 2) ?? [];
 
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
@@ -176,16 +167,12 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 {
                   title: "Project Managers",
                   profiles: projectManagers,
-                  onProfileClick: profile => {
-                    console.log("Profile clicked:", profile);
-                  }
+                  onProfileClick: () => {}
                 },
                 {
                   title: "Data Quality Analysts",
                   profiles: dataQualityAnalysts,
-                  onProfileClick: profile => {
-                    console.log("Profile clicked:", profile);
-                  }
+                  onProfileClick: () => {}
                 }
               ]}
               onInviteClick={handleInviteClick}
@@ -212,17 +199,17 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>Monitoring:</strong> {mrvOnboardingContentItem?.content.monitoring}
+                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring ?? "")}
                   </Text>
                 </Box>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>Reporting:</strong> {mrvOnboardingContentItem?.content.reporting}
+                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting ?? "")}
                   </Text>
                 </Box>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>Verification:</strong> {mrvOnboardingContentItem?.content.verification}
+                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification ?? "")}
                   </Text>
                 </Box>
               </Box>
@@ -236,7 +223,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   rightIcon={<ChevronRight />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
-                  {"MRV Framework"}
+                  {t("MRV Framework")}
                 </Button>
               </Flex>
               <Flex direction="column" gap={2} minHeight={0}>
@@ -253,7 +240,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                       key={link.title}
                       onClick={() => window.open(link.link, "_blank")}
                     >
-                      {link.title}
+                      {t(link.title)}
                     </Button>
                   ))}
                 </Flex>
