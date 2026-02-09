@@ -104,7 +104,7 @@ const TeamTabContent = () => {
 
   const handleInvite = () => {
     openModal(
-      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
       <InviteTeamMemberModal organisationUUID={query.id as string} onSuccess={() => {}} />
     );
   };

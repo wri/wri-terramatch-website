@@ -102,12 +102,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     entityName === "site-reports"
       ? t("{siteName} Site Report", { siteName: (entity as SiteReportFullDto)?.siteName })
       : entityName === "financial-reports"
-      ? t("{orgName} Financial Report", { orgName: entity?.organisationName })
-      : entityName === "disturbance-reports"
-      ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
-      : entityName === "srp-reports"
-      ? t("{projectName} Socio-Economic Report", { projectName: (entity as SrpReportFullDto)?.projectName })
-      : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
+        ? t("{orgName} Financial Report", { orgName: entity?.organisationName })
+        : entityName === "disturbance-reports"
+          ? `${t("Disturbance Report")} ${formatDateForEnGb(disturbanceReportDate)}`
+          : entityName === "srp-reports"
+            ? t("{projectName} Socio-Economic Report", { projectName: (entity as SrpReportFullDto)?.projectName })
+            : `${formData?.formTitle} ${isReport ? reportingWindow : ""}`;
   const formSubtitle =
     entityName === "site-reports" ? t("Reporting Period: {reportingWindow}", { reportingWindow }) : undefined;
 
@@ -123,18 +123,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     )
   };
 
-  const queryStep = router.query.step;
-  const queryStepIndex =
-    typeof queryStep === "string" && /^\d+$/.test(queryStep) ? Math.max(0, parseInt(queryStep, 10)) : null;
-
   const initialStepProps = useMemo(() => {
-    // Open at a specific step when coming from Overview "Edit" (e.g. ?step=2)
-    if (queryStepIndex != null && providerLoaded && fieldsProvider.stepIds().length > 0) {
-      const maxIndex = fieldsProvider.stepIds().length - 1;
-      const stepIndex = Math.min(Math.max(0, queryStepIndex), maxIndex);
-      return { initialStepIndex: stepIndex, disableInitialAutoProgress: true };
-    }
-
     if (providerLoaded && feedbackFields != null) {
       for (const [stepIndex, stepId] of fieldsProvider.stepIds().entries()) {
         for (const fieldId of fieldsProvider.fieldNames(stepId)) {
@@ -146,7 +135,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
 
     return { initialStepIndex: 0, disableInitialAutoProgress: false };
-  }, [feedbackFields, fieldsProvider, providerLoaded, queryStepIndex]);
+  }, [feedbackFields, fieldsProvider, providerLoaded]);
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
