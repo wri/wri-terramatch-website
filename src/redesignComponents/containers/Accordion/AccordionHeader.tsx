@@ -7,7 +7,7 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
 const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
-  status === "success" ? (
+  status === "complete" ? (
     <CheckApproved boxSize={boxSize} color="success.500" />
   ) : (
     <InformationRequired boxSize={boxSize} color="error.500" />

@@ -8,7 +8,7 @@ export interface ExtendableCardProps {
   className?: string;
 }
 
-export type AccordionStatus = "success" | "error";
+export type AccordionStatus = "success" | "error" | "complete";
 
 declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemProps {
