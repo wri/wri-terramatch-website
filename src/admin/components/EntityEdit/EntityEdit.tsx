@@ -96,10 +96,6 @@ const EntityEditDisplay = () => {
         onSubmit={() => navigate(createPath({ resource, id, type: "show" }))}
         defaultValues={defaultValues}
         title={bannerTitle}
-        tabOptions={{
-          markDone: true,
-          disableFutureTabs: true
-        }}
         summaryOptions={{
           title: "Review Details",
           downloadButtonText: "Download"
