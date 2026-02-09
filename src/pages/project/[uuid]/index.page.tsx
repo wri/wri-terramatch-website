@@ -28,6 +28,7 @@ import { formatOptionsList } from "@/utils/options";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
+import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 
 // Adapter component to make Next.js Link compatible with WRI design system breadcrumbs
 // The design system expects a Link component with a 'to' prop (React Router style),
@@ -257,7 +258,8 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
             key: "audit-log",
             title: t("Audit Log"),
             body: <AuditLog project={project} refresh={refetch} />
-          }
+          },
+          { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> },
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
