@@ -13,7 +13,7 @@ import {
 
 import Menu, { MenuItemProps } from "@/components/elements/Menu/Menu";
 import MenuCollapse from "@/components/elements/Menu/MenuCollapse";
-import { MENU_PLACEMENT_BOTTOM_BOTTOM, MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
+import { MENU_PLACEMENT_BOTTOM_BOTTOM, MENU_PLACEMENT_LEFT_HALF_TOP } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
@@ -44,10 +44,10 @@ export interface ImageGalleryProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onChangeGeotagged: Dispatch<SetStateAction<boolean | null>>;
   sortOrder: "ASC" | "DESC";
   setSortOrder: Dispatch<SetStateAction<"ASC" | "DESC">>;
-  setFilters: Dispatch<SetStateAction<any>>;
+  setFilters: Dispatch<SetStateAction<{ isPublic?: boolean; modelType?: string }>>;
   entity: string;
   isAdmin?: boolean;
-  entityData?: any;
+  entityData?: Record<string, unknown>;
   reloadGalleryImages?: () => void;
   isLoading?: boolean;
 }
@@ -96,8 +96,20 @@ const ImageGallery = ({
     reports: t("Report")
   };
 
+  // Map UI source to API modelType (entityType); "reports" is entity-specific
+  const modelTypeForApi =
+    source === ""
+      ? undefined
+      : source === "reports"
+      ? entity === "projects"
+        ? "projectReports"
+        : entity === "sites"
+        ? "siteReports"
+        : "nurseryReports"
+      : source;
+
   useEffect(() => {
-    setFilters({ isPublic: privacy, modelType: source });
+    setFilters({ isPublic: privacy, modelType: modelTypeForApi });
     const currentPrivacytLabel = privacy === false ? "Private" : privacy === true ? "Public" : undefined;
     setFilterLabel(
       source || currentPrivacytLabel
@@ -109,7 +121,7 @@ const ImageGallery = ({
         : t("Filter")
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [privacy, source]);
+  }, [privacy, source, modelTypeForApi]);
 
   useValueChanged(sortOrder, () => {
     setSortLabel(sortOrder === "ASC" ? t("Oldest to Newest") : t("Newest to Oldest"));
@@ -352,11 +364,11 @@ const ImageGallery = ({
             </MenuCollapse>
             <Menu
               menu={menuSort}
-              placement={isAdmin ? MENU_PLACEMENT_BOTTOM_LEFT : MENU_PLACEMENT_BOTTOM_BOTTOM}
-              classNameContentMenu="!sticky"
+              placement={isAdmin ? MENU_PLACEMENT_LEFT_HALF_TOP : MENU_PLACEMENT_BOTTOM_BOTTOM}
+              classNameContentMenu={isAdmin ? "!sticky min-h-[5.5rem]" : "!sticky"}
             >
               <button
-                className="text-14-bold flex w-36 items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
+                className="text-14-bold flex min-w-[8rem] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
                 onClick={() => {
                   setOpenSort(!openSort);
                 }}
