@@ -1,40 +1,88 @@
-import { DataProvider } from "react-admin";
+import { DataProvider, GetListParams, GetListResult, GetOneParams } from "react-admin";
 
+import { loadReportingFramework, loadReportingFrameworks } from "@/connections/ReportingFramework";
 import {
   fetchDeleteV2AdminReportingFrameworksUUID,
-  fetchGetV2AdminReportingFrameworks,
   fetchPostV2AdminReportingFrameworks,
   fetchPutV2AdminReportingFrameworksUUID,
   GetV2AdminReportingFrameworksError
 } from "@/generated/apiComponents";
+import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 
+import { v3ErrorForRA } from "../utils/error";
 import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
 
-// @ts-ignore
 export const reportingFrameworkDataProvider: DataProvider = {
-  async getList(_, params) {
+  async getList(_: string, params: GetListParams): Promise<GetListResult> {
     try {
-      const response = await fetchGetV2AdminReportingFrameworks({
-        queryParams: raListParamsToQueryParams(params, [])
-      });
+      const connected = await loadReportingFrameworks({});
+      if (connected.loadFailure != null) {
+        throw v3ErrorForRA("Reporting frameworks index fetch failed", connected.loadFailure);
+      }
 
-      return apiListResponseToRAListResult(response);
+      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => ({
+        ...framework,
+        id: framework.slug,
+        access_code: framework.accessCode,
+        project_form_uuid: framework.projectFormUuid,
+        site_form_uuid: framework.siteFormUuid,
+        nursery_form_uuid: framework.nurseryFormUuid,
+        project_report_form_uuid: framework.projectReportFormUuid,
+        site_report_form_uuid: framework.siteReportFormUuid,
+        nursery_report_form_uuid: framework.nurseryReportFormUuid,
+        total_projects_count: framework.totalProjectsCount
+      }));
+
+      return {
+        data,
+        total: connected.indexTotal ?? data.length
+      };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting frameworks fetch failed", err);
     }
   },
-  //@ts-ignore
-  async getOne(_, params) {
-    try {
-      //To be replaced with fetchGetV2AdminReportingFrameworksUUID When implemented
-      const list = await fetchGetV2AdminReportingFrameworks({});
-      const response = { data: list.data?.find(item => item.uuid === params.id) };
 
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
+  //@ts-ignore
+  async getOne(_: string, params: GetOneParams) {
+    try {
+      const frameworkKey = params.id as string;
+
+      if (frameworkKey == null || frameworkKey === "") {
+        throw v3ErrorForRA("Reporting framework ID is required", {
+          statusCode: 400,
+          message: "Framework key is required"
+        });
+      }
+
+      ApiSlice.pruneCache("reportingFrameworks", [frameworkKey]);
+
+      const connected = await loadReportingFramework({ frameworkKey, enabled: true });
+
+      if (connected.loadFailure != null) {
+        throw v3ErrorForRA("Reporting framework fetch failed", connected.loadFailure);
+      }
+
+      if (connected.data == null) {
+        throw v3ErrorForRA("Reporting framework not found", { statusCode: 404, message: "Not found" });
+      }
+
+      return {
+        data: {
+          ...connected.data,
+          id: connected.data.slug,
+          access_code: connected.data.accessCode,
+          project_form_uuid: connected.data.projectFormUuid,
+          site_form_uuid: connected.data.siteFormUuid,
+          nursery_form_uuid: connected.data.nurseryFormUuid,
+          project_report_form_uuid: connected.data.projectReportFormUuid,
+          site_report_form_uuid: connected.data.siteReportFormUuid,
+          nursery_report_form_uuid: connected.data.nurseryReportFormUuid,
+          total_projects_count: connected.data.totalProjectsCount
+        }
+      };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework fetch failed", err);
     }
   },
   //@ts-ignore

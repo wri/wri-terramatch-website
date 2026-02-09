@@ -45,7 +45,8 @@ import {
   FormTranslationDto,
   ApplicationDto,
   ApplicationHistoryDto,
-  FundingProgrammeDto
+  FundingProgrammeDto,
+  ReportingFrameworkDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -82,7 +83,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "formTranslations",
   "applications",
   "applicationHistories",
-  "fundingProgrammes"
+  "fundingProgrammes",
+  "reportingFrameworks"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -120,6 +122,7 @@ export type EntityServiceApiResources = {
   applications: StoreResourceMap<ApplicationDto>;
   applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
   fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;
+  reportingFrameworks: StoreResourceMap<ReportingFrameworkDto>;
 };
 
 export const TreeEntityTypes = {

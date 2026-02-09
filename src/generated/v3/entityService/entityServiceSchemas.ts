@@ -3349,3 +3349,17 @@ export type UpdateFundingProgrammeData = {
 export type UpdateFundingProgrammeBody = {
   data: UpdateFundingProgrammeData;
 };
+
+export type ReportingFrameworkDto = {
+  uuid: string;
+  name: string;
+  slug: string | null;
+  accessCode: string | null;
+  projectFormUuid: string | null;
+  projectReportFormUuid: string | null;
+  siteFormUuid: string | null;
+  siteReportFormUuid: string | null;
+  nurseryFormUuid: string | null;
+  nurseryReportFormUuid: string | null;
+  totalProjectsCount: number;
+};

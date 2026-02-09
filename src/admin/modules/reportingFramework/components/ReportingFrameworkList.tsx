@@ -51,8 +51,8 @@ export const ReportingFrameworkList: FC = () => {
         <AutoResetSort />
         <Datagrid bulkActionButtons={false} rowClick={"show"}>
           <TextField source="name" label="Framework" />
-          <TextField source="access_code" label="Access Code" />
-          <TextField source="total_projects_count" label="Enrolled Projects" />
+          <TextField source="accessCode" label="Access Code" />
+          <TextField source="totalProjectsCount" label="Enrolled Projects" />
           <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
             <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
           </Menu>
