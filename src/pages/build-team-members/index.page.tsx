@@ -60,10 +60,10 @@ const teamMembersFormatted = (
 ) => {
   return teamMembers?.map((member, index) => ({
     name: `${member.first_name} ${member.last_name}`,
-    organization: member.organisation?.name,
-    email: member.email_address,
+    organization: member?.organisation?.name,
+    email: member?.email_address,
     role: role,
-    status: member.status,
+    status: member?.status,
     image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
   }));
 };
