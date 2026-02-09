@@ -2,10 +2,8 @@ import { useT } from "@transifex/react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, forwardRef, ReactElement, useEffect, useMemo, useState } from "react";
+import { FC, forwardRef, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
-import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -16,34 +14,88 @@ import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
+import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
+import { Project } from "@/redesignComponents/foundations/Icons";
 import { formatOptionsList } from "@/utils/options";
 
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
-import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
+
+// Constants
+const COUNTRY_NAME_TO_ISO_CODE: Record<string, string> = {
+  "Democratic Republic of the Congo": "CD",
+  "Republic of the Congo": "CG",
+  Congo: "CG"
+};
+
+const ISO_CODE_MAP: Record<string, string> = {
+  COD: "CD",
+  COG: "CG",
+  BRA: "BR"
+};
+
+const FLAG_OFFSET = 127397;
+
+// Helper functions
+const formatMonthYear = (date: string | null | undefined): string => {
+  if (!date) return "-";
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "-";
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
+  const year = parsed.getUTCFullYear();
+  return `${month}/${year}`;
+};
+
+const convertToFlagEmoji = (isoCode: string): string => {
+  return isoCode.toUpperCase().replace(/./g, char => String.fromCodePoint(FLAG_OFFSET + char.charCodeAt(0)));
+};
+
+const countryCodeToFlag = (
+  gadmCode: string,
+  countryOptions?: Array<{ value: string | number; title: string }>
+): string => {
+  if (!gadmCode) return "";
+  const gadmCodeStr = String(gadmCode);
+  const upperCode = gadmCodeStr.toUpperCase();
+
+  // Try to get country name from GADM options
+  const countryOption = countryOptions?.find(opt => String(opt.value) === gadmCodeStr);
+  const countryName = countryOption?.title;
+
+  // Check direct mapping for country name
+  if (countryName && COUNTRY_NAME_TO_ISO_CODE[countryName]) {
+    return convertToFlagEmoji(COUNTRY_NAME_TO_ISO_CODE[countryName]);
+  }
+
+  // Check 3-letter ISO code mapping
+  if (ISO_CODE_MAP[upperCode]) {
+    return convertToFlagEmoji(ISO_CODE_MAP[upperCode]);
+  }
+
+  // Default: use first 2 characters
+  const code = gadmCodeStr.length >= 2 ? gadmCodeStr.slice(0, 2) : gadmCodeStr;
+  return convertToFlagEmoji(code);
+};
 
 // Adapter component to make Next.js Link compatible with WRI design system breadcrumbs
-// The design system expects a Link component with a 'to' prop (React Router style),
-// but Next.js Link uses 'href', so we adapt it here.
 const NextLinkAdapter = forwardRef<HTMLAnchorElement, { to: string; children: React.ReactNode; className?: string }>(
-  ({ to, children, className, ...props }, ref) => {
-    return (
-      <Link href={to} ref={ref} className={className} {...props}>
-        {children}
-      </Link>
-    );
-  }
+  ({ to, children, className, ...props }, ref) => (
+    <Link href={to} ref={ref} className={className} {...props}>
+      {children}
+    </Link>
+  )
 );
 NextLinkAdapter.displayName = "NextLinkAdapter";
 
+// Types
 type TabItem = {
   key: string;
   title: string;
@@ -56,35 +108,30 @@ type ProjectContentProps = {
   project: ProjectFullDto;
   refetch: () => void;
 };
+
+type SuffixButtonConfig = {
+  key: string;
+  labelKey: string;
+};
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
   const countryOptions = useGadmOptions({ level: 0 });
 
-  // Get initial tab from query or default to "overview"
   const initialTab = (router.query.tab as string) || "overview";
   const [activeTab, setActiveTab] = useState(initialTab);
-
-  console.log(project);
-  function countryCodeToFlag(code: string) {
-    return code
-      .slice(0, 2) // BRA -> BR
-      .toUpperCase()
-      .replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0)));
-  }
+  const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
 
   const { data: partners } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
     pathParams: { uuid: project.uuid }
   });
 
-  console.log(partners, "PARTNERS");
-
   // Define all tab items
   const allTabItems = useMemo<TabItem[]>(
     () => [
       { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
-      { key: "details", title: t("Details"), body: <ProjectDetailTab project={project} /> },
+      { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
       {
         key: "gallery",
         title: t("Gallery"),
@@ -102,24 +149,14 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       },
       { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
       { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
-      {
-        key: "nurseries",
-        title: t("Nurseries"),
-        body: <ProjectNurseriesTab project={project} />,
-        hide: [Framework.PPC]
-      },
-      {
-        key: "reporting-tasks",
-        title: t("Reporting Tasks"),
-        body: <ProgressReportTab projectUUID={project.uuid} />
-      },
+      { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> },
       {
         key: "audit-log",
         title: t("Audit Log"),
         body: <AuditLog project={project} refresh={refetch} />
       }
     ],
-    [project, refetch, t]
+    [project, t, refetch]
   );
 
   // Filter tabs based on framework
@@ -146,22 +183,15 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [filteredTabItems]
   );
 
-  // Ensure active tab is valid after filtering
-  useEffect(() => {
-    const isValidTab = filteredTabItems.some(item => item.key === activeTab);
-    if (!isValidTab && filteredTabItems.length > 0) {
-      setActiveTab(filteredTabItems[0].key);
-    }
-  }, [filteredTabItems, activeTab]);
-
-  // Sync with router query
+  // Sync tab state with router query and validate against filtered tabs
   useEffect(() => {
     const queryTab = router.query.tab as string;
-    if (queryTab && queryTab !== activeTab) {
-      const isValidTab = filteredTabItems.some(item => item.key === queryTab);
-      if (isValidTab) {
-        setActiveTab(queryTab);
-      }
+    const isValidTab = (tab: string) => filteredTabItems.some(item => item.key === tab);
+
+    if (queryTab && queryTab !== activeTab && isValidTab(queryTab)) {
+      setActiveTab(queryTab);
+    } else if (!isValidTab(activeTab) && filteredTabItems.length > 0) {
+      setActiveTab(filteredTabItems[0].key);
     }
   }, [router.query.tab, filteredTabItems, activeTab]);
 
@@ -171,12 +201,54 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [filteredTabItems, activeTab]
   );
 
-  // Handle tab click
-  const handleTabClick = (tabValue: string) => {
-    setActiveTab(tabValue);
-    router.query.tab = tabValue;
-    router.push(router, undefined, { shallow: true });
-  };
+  const handleTabClick = useCallback(
+    (tabValue: string) => {
+      setActiveTab(tabValue);
+      setActiveSuffixView(null);
+      router.query.tab = tabValue;
+      router.push(router, undefined, { shallow: true });
+    },
+    [router]
+  );
+
+  const handleSuffixButtonClick = useCallback((viewKey: string) => {
+    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
+  }, []);
+
+  const shouldHideNurseries = framework === Framework.PPC;
+
+  const suffixViewContent = useMemo(() => {
+    if (!activeSuffixView) return null;
+
+    const viewMap: Record<string, ReactElement> = {
+      reports: <ProgressReportTab projectUUID={project.uuid} />,
+      sites: <ProjectSitesTab project={project} />,
+      nurseries: <ProjectNurseriesTab project={project} />
+    };
+
+    return viewMap[activeSuffixView] || null;
+  }, [activeSuffixView, project]);
+
+  const suffixButtons: SuffixButtonConfig[] = useMemo(
+    () => [
+      { key: "reports", labelKey: "Reports" },
+      { key: "sites", labelKey: "Sites" },
+      ...(shouldHideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
+    ],
+    [shouldHideNurseries]
+  );
+
+  const teamMembers = useMemo(
+    () =>
+      partners?.data.slice(0, 5).map(partner => {
+        const fullName = `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim();
+        return {
+          name: fullName,
+          avatar: { name: fullName }
+        };
+      }) ?? [],
+    [partners]
+  );
 
   return (
     <>
@@ -187,29 +259,38 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         project={project}
         breadcrumbs={{
           links: [
-            { label: t("My Projects"), link: "/" },
+            { label: t("Projects"), link: "/my-projects", icon: <Project className="!text-primary-900" /> },
             { label: project?.name ?? "", link: `/project/${project?.uuid}` }
           ],
           linkRouter: NextLinkAdapter,
           size: "default"
         }}
-        slots={[{ title: t("Overview"), description: "overview" }]}
+        suffix={
+          <div className="flex gap-1.5">
+            {suffixButtons.map((button, index) => (
+              <div key={button.key} className="flex gap-1.5">
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                <Button
+                  variant="borderless"
+                  size="small"
+                  className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
+                  onClick={() => handleSuffixButtonClick(button.key)}
+                >
+                  {t(button.labelKey)}
+                </Button>
+              </div>
+            ))}
+          </div>
+        }
         title={project?.name ?? ""}
         description={project.description}
         tag={{ state: "not-started" }}
         organization={project.organisationName ?? ""}
-        startDate="Jan 2024"
-        endDate="Dec 2026"
+        startDate={formatMonthYear((project as any).plantingStartDate)}
+        endDate={formatMonthYear((project as any).plantingEndDate)}
         country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
-        countryFlag={countryCodeToFlag(project.country ?? "")}
-        team={
-          partners?.data.slice(0, 5).map(partner => ({
-            name: `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim(),
-            avatar: {
-              name: `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim()
-            }
-          })) ?? []
-        }
+        countryFlag={countryCodeToFlag(project.country ?? "", countryOptions ?? undefined)}
+        team={teamMembers}
         toolbar={{
           tabBar: {
             tabs: tabBarTabs,
@@ -218,51 +299,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      {/* <PageBreadcrumbs links={[{ title: t("My Projects"), path: "/my-projects" }, { title: project?.name ?? "" }]} /> */}
-      <ProjectHeader {...{ project }} />
-      <EntityStatusBar entityName="projects" entity={project} />
-      <div className="w-full max-w-[82vw] px-10 xl:px-0">{activeTabContent}</div>
-      <SecondaryTabs
-        tabItems={[
-          { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
-          { key: "details", title: t("Details"), body: <ProjectDetailTab project={project} /> },
-          {
-            key: "gallery",
-            title: t("Gallery"),
-            body: (
-              <GalleryTab
-                modelName="projects"
-                modelUUID={project.uuid}
-                modelTitle={t("Project")}
-                entityData={project}
-                emptyStateContent={t(
-                  "Your gallery is currently empty. Add images by using the 'Edit' button on this project, or images added to your sites and reports will also automatically populate this gallery."
-                )}
-              />
-            )
-          },
-          { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
-          { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
-          {
-            key: "nurseries",
-            title: t("Nurseries"),
-            body: <ProjectNurseriesTab project={project} />,
-            hide: [Framework.PPC]
-          },
-          {
-            key: "reporting-tasks",
-            title: t("Reporting Tasks"),
-            body: <ProgressReportTab projectUUID={project.uuid} />
-          },
-          {
-            key: "audit-log",
-            title: t("Audit Log"),
-            body: <AuditLog project={project} refresh={refetch} />
-          },
-          { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> },
-        ]}
-        containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
-      />
+      <div className="w-full">{activeSuffixView ? suffixViewContent : activeTabContent}</div>
       <PageFooter />
     </>
   );
@@ -272,24 +309,25 @@ const ProjectDetailPage = () => {
   const router = useRouter();
   const { loading } = useLoading();
   const projectUUID = router.query.uuid as string;
-
   const [isLoaded, { data: project, refetch }] = useFullProject({ id: projectUUID });
 
+  if (!isLoaded || project == null) {
+    return null;
+  }
+
   return (
-    (!isLoaded || project != null) && (
-      <MapAreaProvider>
-        <FrameworkProvider frameworkKey={project?.frameworkKey}>
-          {loading && (
-            <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
-              <Loader />
-            </div>
-          )}
-          <LoadingContainer loading={!isLoaded}>
-            {project && <ProjectContent {...{ project, refetch }} />}
-          </LoadingContainer>
-        </FrameworkProvider>
-      </MapAreaProvider>
-    )
+    <MapAreaProvider>
+      <FrameworkProvider frameworkKey={project.frameworkKey}>
+        {loading && (
+          <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
+            <Loader />
+          </div>
+        )}
+        <LoadingContainer loading={!isLoaded}>
+          <ProjectContent project={project} refetch={refetch} />
+        </LoadingContainer>
+      </FrameworkProvider>
+    </MapAreaProvider>
   );
 };
 
