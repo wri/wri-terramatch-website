@@ -98,10 +98,6 @@ const RequestMoreInformationPage = () => {
           onSubmit={onSubmit}
           submitButtonDisable={isSubmitting}
           defaultValues={defaultValues}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
           summaryOptions={{
             title: t("Review Application Details"),
             downloadButtonText: t("Download Application")

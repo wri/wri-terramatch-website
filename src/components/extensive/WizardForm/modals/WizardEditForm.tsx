@@ -59,10 +59,6 @@ const WizardEditForm = ({
         onStepChange={onSave}
         onBackFirstStep={() => null}
         hideSaveAndCloseButton
-        tabOptions={{
-          markDone: false,
-          disableFutureTabs: false
-        }}
         className="max-w-none p-0"
       />
     </div>
