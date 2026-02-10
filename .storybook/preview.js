@@ -47,7 +47,7 @@ export const decorators = [
     return (
       <ChakraProvider value={system}>
         <QueryClientProvider client={client}>
-        <StoreProvider storeBuilder={parameters.storeBuilder}>
+          <StoreProvider storeBuilder={parameters.storeBuilder}>
             <Story {...options} />
           </StoreProvider>
         </QueryClientProvider>
