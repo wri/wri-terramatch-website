@@ -21,9 +21,9 @@ const ActionCell: FC<ActionCellProps> = ({ button, buttonSecondary, onButtonIcon
       justifyContent="flex-end"
       className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
     >
-      {button && <Button {...button} variant="secondary" size="small" />}
-      {buttonSecondary && <Button {...buttonSecondary} />}
-      {onButtonIconClick && (
+      {button != null && <Button {...button} variant="secondary" size="small" />}
+      {buttonSecondary != null && <Button {...buttonSecondary} />}
+      {onButtonIconClick != null && (
         <IconButton icon={<MoreVert boxSize={4} className="text-theme-neutral-700" />} onClick={onButtonIconClick} />
       )}
     </Box>

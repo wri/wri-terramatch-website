@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -31,6 +32,12 @@ const BaseImage: FC<BaseImageProps> = ({
 }) => {
   const t = useT();
   const showNotAvailable = !isAvailable || src == null;
+  const router = useRouter();
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
 
   return (
     <div
@@ -48,12 +55,12 @@ const BaseImage: FC<BaseImageProps> = ({
       {showNotAvailable ? (
         <div
           className={classNames(
-            "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+            "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
             borderRadius
           )}
         >
           <PhotoAdd className="h-6 w-6" />
-          <Button variant="borderless" size="small">
+          <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
             {t("Add Image")}
           </Button>
         </div>
@@ -64,7 +71,7 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
           <div
             className={classNames(
-              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+              "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
           >
