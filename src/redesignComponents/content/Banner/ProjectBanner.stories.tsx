@@ -48,7 +48,7 @@ const mockProject: ProjectFullDto = {
   name: "Restoration project in the Congo Basin",
   shortName: "Congo Basin Project",
   plantingStartDate: "2024-01-01T00:00:00.000Z",
-  country: "COD",
+  country: "Republic of the Congo",
   lat: null,
   long: null,
   totalHectaresRestoredSum: 1500,
