@@ -76,7 +76,13 @@ const baseArgs: ProjectBannerProps = {
   toolbar: {
     tabBar: mockTabBar
   },
-  project: mockProject
+  project: mockProject,
+  onAddTeamClick: () => {
+    console.log("Add team clicked");
+  },
+  gotoTeamMembers: () => {
+    console.log("Go to team members clicked");
+  }
 };
 
 export const Default: Story = {
