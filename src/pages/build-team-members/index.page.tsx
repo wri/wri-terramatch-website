@@ -96,7 +96,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
 
   const handleInvite = () => {
     openModal(
-      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
       <InviteMonitoringPartnerModal projectUUID={project?.uuid} onSuccess={() => { }} />
     );
   };
