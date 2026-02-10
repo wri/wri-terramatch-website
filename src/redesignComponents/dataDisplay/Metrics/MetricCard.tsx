@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
 import { getThemedColor } from "@/lib/theme";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 
 import { InformationRequired } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
@@ -15,14 +16,22 @@ import {
 } from "./types";
 import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
-const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title, progress, color, iconWithColor }) => (
+const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
+  title,
+  progress,
+  color,
+  iconWithColor,
+  tooltipContent
+}) => (
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
       {iconWithColor}
       <Text fontSize="14px" color="neutral.800" lineHeight="20px" paddingLeft={1}>
         {title}
       </Text>
-      <InformationRequired color="neutral.800" boxSize="14px" />
+      <Tooltip content={tooltipContent} position="top">
+        <InformationRequired color="neutral.800" boxSize="14px" />
+      </Tooltip>
     </Flex>
     <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
       {progress.toLocaleString()}
@@ -30,7 +39,13 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title
   </Flex>
 );
 
-const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title, progress, color, iconWithColor }) => (
+const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
+  title,
+  progress,
+  color,
+  iconWithColor,
+  tooltipContent
+}) => (
   <Flex gap={3} color={color} alignItems="center">
     {iconWithColor}
     <Flex direction="column" gap={0}>
@@ -38,7 +53,9 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title,
         <Text fontSize="16px" color="neutral.800" lineHeight="24px">
           {title}
         </Text>
-        <InformationRequired color="neutral.800" boxSize="14px" />
+        <Tooltip content={tooltipContent} position="top">
+          <InformationRequired color="neutral.800" boxSize="14px" />
+        </Tooltip>
       </Flex>
       <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
         {progress.toLocaleString()}
@@ -52,7 +69,8 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   progress,
   goal,
   color,
-  iconWithColor
+  iconWithColor,
+  tooltipContent
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
@@ -64,7 +82,9 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
         <Text fontSize="14px" color="neutral.800" lineHeight="20px">
           {title}
         </Text>
-        <InformationRequired color="neutral.800" boxSize="14px" />
+        <Tooltip content={tooltipContent} position="top">
+          <InformationRequired color="neutral.800" boxSize="14px" />
+        </Tooltip>
       </Flex>
       <Flex gap={2} alignItems="center">
         <ProgressBar progress={progressValue} color={color} />
@@ -90,7 +110,8 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   goal,
   color,
   iconWithColor,
-  type
+  type,
+  tooltipContent
 }) => {
   const t = useT();
   const progressValue = type === "jobsCreated" ? progress : goal > 0 ? (progress / goal) * 100 : 0;
@@ -104,7 +125,9 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
           <Text fontSize="16px" color="neutral.900" lineHeight="24px">
             {title}
           </Text>
-          <InformationRequired color="neutral.800" boxSize="14px" />
+          <Tooltip content={tooltipContent} position="top">
+            <InformationRequired color="neutral.800" boxSize="14px" />
+          </Tooltip>
         </Flex>
         {type === "jobsCreated" && progressValue > 0 ? (
           <Flex gap={1} alignItems="center">
@@ -161,6 +184,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           goal={goal}
           color={color}
           iconWithColor={iconWithColor14}
+          tooltipContent={tooltipContent}
         />
       );
       break;
@@ -184,12 +208,19 @@ const MetricCard: FC<MetricCardProps> = props => {
           progress={progress}
           color={color}
           iconWithColor={iconWithColor14}
+          tooltipContent={tooltipContent}
         />
       );
       break;
     case "large":
       content = (
-        <NoGoalLargeMetricCardContent title={title} progress={progress} color={color} iconWithColor={iconWithColor50} />
+        <NoGoalLargeMetricCardContent
+          title={title}
+          progress={progress}
+          color={color}
+          iconWithColor={iconWithColor50}
+          tooltipContent={tooltipContent}
+        />
       );
       break;
   }
