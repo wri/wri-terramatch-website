@@ -52,7 +52,7 @@ export const getTableWrapperStyles = (
       borderBottom: `1px solid ${getThemedColor("primary", 700)}`
     },
 
-    "& table button svg path": {
+    "& table thead button svg path": {
       fill: `${getThemedColor("neutral", 500)} !important`
     },
     "& button ": {

@@ -38,7 +38,7 @@ interface StatusChangeModalProps extends DialogProps {
 
 const moreInfoValidationSchema = yup.object({
   feedback: yup.string().nullable(),
-  feedback_fields: yup.array().min(1).of(yup.string()).required()
+  feedback_fields: yup.array().min(1, "Feedback fields must have at least 1 item").of(yup.string()).required()
 });
 const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()

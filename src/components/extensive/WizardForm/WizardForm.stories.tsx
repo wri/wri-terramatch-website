@@ -244,12 +244,7 @@ export const CreateForm: Story = {
     nextButtonText: "Save and Continue",
     submitButtonText: "Submit",
     hideBackButton: false,
-    initialStepIndex: 2,
-
-    tabOptions: {
-      disableFutureTabs: false,
-      markDone: true
-    }
+    initialStepIndex: 2
   }
 };
 
@@ -266,10 +261,6 @@ export const EditForm = {
 
     header: {
       hide: true
-    },
-    tabOptions: {
-      disableFutureTabs: false,
-      markDone: false
     },
     disableAutoProgress: true,
     defaultValues: {

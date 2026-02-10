@@ -1,5 +1,5 @@
 import { T, useT } from "@transifex/react";
-import { Case, Switch } from "react-if";
+import { FC } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -14,7 +14,20 @@ export interface WizardFormHeaderProps {
   subtitle?: string;
 }
 
-export const WizardFormHeader = (props: WizardFormHeaderProps) => {
+const statusText = (formStatus: WizardFormHeaderProps["formStatus"]) => {
+  switch (formStatus) {
+    case "saving":
+      return "Saving...";
+    case "saved":
+      return "Saved";
+    case null:
+      return "Unsaved";
+    default:
+      return "Something went wrong.";
+  }
+};
+
+export const WizardFormHeader: FC<WizardFormHeaderProps> = props => {
   const t = useT();
 
   const subtitle =
@@ -34,12 +47,7 @@ export const WizardFormHeader = (props: WizardFormHeaderProps) => {
               {subtitle}
             </Text>
             <Text variant="text-14-light" className="pl-1">
-              <Switch>
-                <Case condition={!props.formStatus}>{t("Unsaved")}</Case>
-                <Case condition={props.formStatus === "saving"}>{t("Saving…")}</Case>
-                <Case condition={props.formStatus === "saved"}>{t("Saved")}</Case>
-                <Case condition={props.errorMessage}>{t("Something went wrong.")}</Case>
-              </Switch>
+              {t(statusText(props.formStatus))}
             </Text>
           </div>
         </div>
