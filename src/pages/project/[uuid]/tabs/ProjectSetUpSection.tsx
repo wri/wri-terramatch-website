@@ -1,3 +1,7 @@
+import { Box, Spinner } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { FC, useMemo } from "react";
+
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { FormEntity } from "@/connections/Form";
@@ -6,13 +10,10 @@ import { Framework } from "@/context/framework.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { v2EntityName, v3EntityName } from "@/helpers/entity";
 import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Edit } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
-import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Box, Spinner } from "@chakra-ui/react";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
@@ -32,10 +33,7 @@ const ProjectSetUpSection: FC<{ entityUuid: string }> = ({ entityUuid }) => {
 
   const isReady = !isFormLoading && providerLoaded;
 
-  const editPath = useMemo(
-    () => `/entity/${v2EntityName("projects")}/edit/${entityUuid}`,
-    [entityUuid]
-  );
+  const editPath = useMemo(() => `/entity/${v2EntityName("projects")}/edit/${entityUuid}`, [entityUuid]);
 
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {

@@ -1,11 +1,10 @@
-import { useT } from "@transifex/react";
-import classNames from "classnames";
-
 import { Flex } from "@chakra-ui/react";
+import classNames from "classnames";
+import { FC } from "react";
+
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { AreaHectares, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { FC } from "react";
 
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;

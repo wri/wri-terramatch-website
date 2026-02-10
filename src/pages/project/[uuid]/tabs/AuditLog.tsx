@@ -53,8 +53,8 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
   });
 
   return (
-    <PageBody>
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageColumn>
           <LoadingContainer wrapInPaper loading={isLoading}>
             <PageCard>

@@ -14,14 +14,13 @@ import {
 } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
+import InviteMonitoringPartnerModal from "@/pages/project/[uuid]/components/InviteMonitoringPartnerModal";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
-
-import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
 
 interface BuildTeamMembersPageProps {
   project: ProjectFullDto;
@@ -68,7 +67,7 @@ const teamMembersFormatted = (
   }));
 };
 
-const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
+const TeamMembersTab: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -76,7 +75,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
 
   const handleInvite = () => {
     openModal(
-      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
       <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
     );
   };
@@ -148,7 +147,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   }, [partners?.data, managers?.data, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingY={6}>
+    <Box paddingX={6} paddingBottom={6} paddingTop={2}>
       <ToolbarTable
         className="!px-0"
         filters={[
@@ -286,4 +285,4 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   );
 };
 
-export default BuildTeamMembersPage;
+export default TeamMembersTab;

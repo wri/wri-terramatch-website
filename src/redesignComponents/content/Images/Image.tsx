@@ -55,7 +55,7 @@ const BaseImage: FC<BaseImageProps> = ({
       {showNotAvailable ? (
         <div
           className={classNames(
-            "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+            "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
             borderRadius
           )}
         >
@@ -71,7 +71,7 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
           <div
             className={classNames(
-              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+              "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
           >
