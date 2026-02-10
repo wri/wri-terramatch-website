@@ -3,7 +3,7 @@ import Text from "@/components/elements/Text/Text";
 import { Status } from "@/types/common";
 
 interface StatusTableCellProps {
-  statusProps: { status: Status; statusText: string };
+  statusProps?: { status: Status; statusText: string };
 }
 
 export const StatusTableCell = ({ statusProps }: StatusTableCellProps) => {

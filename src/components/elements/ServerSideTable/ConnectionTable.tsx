@@ -12,6 +12,11 @@ import { IndexConnection } from "@/connections/util/apiConnectionFactory";
 import { useConnection } from "@/hooks/useConnection";
 import { Connection, PaginatedConnectionProps } from "@/types/connection";
 
+export type DataProcessorSortContext = {
+  sortField?: string;
+  sortDirection?: "ASC" | "DESC";
+};
+
 type ConnectionTableProps<
   TData,
   TSelected extends IndexConnection<TData>,
@@ -24,7 +29,8 @@ type ConnectionTableProps<
   columns: ColumnDef<TResult>[];
   columnFilters?: ColumnFilter[];
   onFetch?: (connectedData: TSelected) => void;
-  dataProcessor?: (data: TData[]) => TResult[];
+  /** Optional processor; receives current sort context so callers can e.g. re-sort by submittedAt with consistent null handling */
+  dataProcessor?: (data: TData[], sortContext: DataProcessorSortContext) => TResult[];
 };
 
 export const queryParamsToPaginatedConnectionProps = (
@@ -101,11 +107,19 @@ export function ConnectionTable<
     if (connectionLoaded) onFetch?.(connected as TSelected);
   }, [connected, connectionLoaded, onFetch]);
 
+  const sortContext: DataProcessorSortContext = useMemo(
+    () => ({
+      sortField: paginatedConnectionProps.sortField,
+      sortDirection: paginatedConnectionProps.sortDirection
+    }),
+    [paginatedConnectionProps.sortField, paginatedConnectionProps.sortDirection]
+  );
+
   const data = useMemo(() => {
     if (connected?.data == null) return [] as TResult[];
     if (dataProcessor == null) return connected.data as unknown as TResult[];
-    return dataProcessor(connected.data);
-  }, [connected.data, dataProcessor]);
+    return dataProcessor(connected.data, sortContext);
+  }, [connected.data, dataProcessor, sortContext]);
 
   const indexTotal = connected?.indexTotal;
 

@@ -1,10 +1,10 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { FC, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
+import { ConnectionTable, DataProcessorSortContext } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getActionCardStatusMapper } from "@/components/extensive/ActionTracker/ActionTrackerCard";
@@ -13,15 +13,35 @@ import { indexNurseryReportConnection, indexSiteReportConnection } from "@/conne
 import { NurseryReportLightDto, SiteReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { singularEntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import { Status } from "@/types/common";
+import { sortBySubmittedAt } from "@/utils/sort";
 
 interface CompletedReportsTableProps {
   modelName: "nurseries" | "sites";
   modelUUID: string;
 }
 
+const SUBMITTED_AT_FIELD = "submittedAt";
+
+/** Re-sorts current page by submittedAt with consistent null handling when backend returns inconsistent order */
+const completedReportsDataProcessor = <T extends SiteReportLightDto | NurseryReportLightDto>(
+  data: T[],
+  sortContext: DataProcessorSortContext
+): T[] => {
+  if (sortContext.sortField !== SUBMITTED_AT_FIELD || data.length === 0) return data;
+  const direction = sortContext.sortDirection ?? "ASC";
+  return sortBySubmittedAt(data, direction);
+};
+
 const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, modelUUID }) => {
   const t = useT();
   const { format } = useDate();
+
+  const dataProcessor = useCallback(
+    (data: (SiteReportLightDto | NurseryReportLightDto)[], sortContext: DataProcessorSortContext) =>
+      completedReportsDataProcessor(data, sortContext),
+    []
+  );
 
   const columns = useMemo(
     () =>
@@ -37,7 +57,8 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
           accessorKey: "submittedAt",
           header: t("Date submitted"),
           cell: props => {
-            return format(props.getValue() as string);
+            const value = props.getValue() as string | null | undefined;
+            return value == null ? "" : format(value);
           }
         },
         {
@@ -59,24 +80,27 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
           accessorKey: "status",
           header: t("Completion Status"),
           cell: props => {
-            let value = props.getValue() as string;
-
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-            return <StatusTableCell statusProps={statusProps} />;
+            const value = props.getValue() as string;
+            const statusProps = getActionCardStatusMapper(t)[value];
+            const propsForCell =
+              statusProps && "status" in statusProps && "statusText" in statusProps
+                ? { status: statusProps.status as Status, statusText: statusProps.statusText }
+                : undefined;
+            return <StatusTableCell statusProps={propsForCell} />;
           }
         },
         {
           accessorKey: "updateRequestStatus",
           header: t("Change Request"),
           cell: props => {
-            let value = props.getValue() as string;
-            const statusProps = getActionCardStatusMapper(t)[value] as any;
-
-            if (value === "no-update") {
-              return t("N/A");
-            } else {
-              return <StatusTableCell statusProps={statusProps} />;
-            }
+            const value = props.getValue() as string;
+            if (value === "no-update") return t("N/A");
+            const statusProps = getActionCardStatusMapper(t)[value];
+            const propsForCell =
+              statusProps && "status" in statusProps && "statusText" in statusProps
+                ? { status: statusProps.status as Status, statusText: statusProps.statusText }
+                : undefined;
+            return <StatusTableCell statusProps={propsForCell} />;
           }
         },
         {
@@ -104,6 +128,9 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
         connectionProps={{ filter: { siteUuid: modelUUID } }}
         variant={VARIANT_TABLE_BORDER_ALL}
         columns={columns as ColumnDef<SiteReportLightDto>[]}
+        dataProcessor={
+          dataProcessor as (data: SiteReportLightDto[], sortContext: DataProcessorSortContext) => SiteReportLightDto[]
+        }
       />
     );
   } else if (modelName === "nurseries") {
@@ -113,6 +140,12 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
         connectionProps={{ filter: { nurseryUuid: modelUUID } }}
         variant={VARIANT_TABLE_BORDER_ALL}
         columns={columns as ColumnDef<NurseryReportLightDto>[]}
+        dataProcessor={
+          dataProcessor as (
+            data: NurseryReportLightDto[],
+            sortContext: DataProcessorSortContext
+          ) => NurseryReportLightDto[]
+        }
       />
     );
   } else {
