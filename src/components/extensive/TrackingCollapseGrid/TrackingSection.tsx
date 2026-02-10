@@ -78,16 +78,16 @@ const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entry
       <>
         <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
           <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
-            {t("By: " + title)}
+            {t(`By: {title}`, { title })}
           </Text>
         </div>
         {/* Column headers */}
-        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2 ">
+        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`${title} Definition`)}
           </Text>
         </div>
-        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2 text-center">
+        <div className="col-span-1 flex items-center justify-center bg-theme-neutral-200 px-3 py-2 text-center">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
@@ -139,7 +139,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entry
             lineHeight="20px"
             fontWeight="bold"
           >
-            {t(`{total}`, { total })}
+            {total}
           </Text>
         </div>
       </>

@@ -17,7 +17,7 @@ const FormSummary = (props: FormSummaryProps) => {
   const stepIds = useFieldsProvider().stepIds();
   return (
     <List
-      className="space-y-8"
+      className="space-y-6"
       items={stepIds}
       render={(stepId, index) => <FormSummaryRow index={index} stepId={stepId} {...props} />}
     />
