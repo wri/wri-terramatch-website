@@ -51,6 +51,12 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
         { index: 8, name: t("Socio-Economic Report") }
       ];
     }
+    if (entityLevel === AuditLogButtonStates.SITE && !isReport && !isAdmin) {
+      return [
+        { index: AuditLogButtonStates.SITE, name: t("Site Status") },
+        { index: AuditLogButtonStates.POLYGON, name: t("Polygon Status") }
+      ];
+    }
     if (isReport) {
       let tabsReport = [t("Project Report"), t("Site Report")];
       if (!doesNotHaveNurseries && existNurseries) {
@@ -63,7 +69,7 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
       tabs.push(t("Nursery Status"));
     }
     return tabs;
-  }, [framework, isReport, entityLevel, existNurseries, t]);
+  }, [framework, isReport, entityLevel, existNurseries, isAdmin, t]);
   return (
     <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
       {tabNames.map((tab: any, index) => {
