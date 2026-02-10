@@ -22,12 +22,11 @@ export const Step: FC<StepProps> = props => {
   return (
     <Flex gap={3} alignItems="center" justify="space-between">
       <Button
-        alignItems="center"
         gap={2}
         disabled={status === "disabled"}
         onClick={onClick}
         tabIndex={-1}
-        className="group focus-visible:outline-none"
+        className="group flex min-w-0 flex-1 basis-0 items-center justify-start focus-visible:outline-none"
       >
         <div
           role="button"
@@ -43,7 +42,13 @@ export const Step: FC<StepProps> = props => {
         >
           {getStepBadgeContent(status, index)}
         </div>
-        <Text fontSize="16px" lineHeight="24px" {...getStepLabelStyle(status)}>
+        <Text
+          title={label}
+          fontSize="16px"
+          lineHeight="24px"
+          {...getStepLabelStyle(status)}
+          className="min-w-0 truncate"
+        >
           {label}
         </Text>
       </Button>
