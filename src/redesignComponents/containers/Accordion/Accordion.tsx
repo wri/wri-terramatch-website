@@ -1,5 +1,5 @@
 import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
-import type { ComponentType } from "react";
+import type { ComponentType, FC } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { ChevronDown, Minus, Plus } from "@/redesignComponents/foundations/Icons";
@@ -100,7 +100,7 @@ const AccordionIcon = ({ variant }: { variant: "primary" | "secondary" }) => {
   return <IconComponent {...props} />;
 };
 
-const Accordion = ({ children, header, actions, variant = "primary", className }: ExtendableCardProps) => {
+const Accordion: FC<ExtendableCardProps> = ({ children, header, actions, variant = "primary", className }) => {
   const containerStyles = variantStyles[variant].container;
 
   const handleActionsClick = (e: React.MouseEvent) => {
