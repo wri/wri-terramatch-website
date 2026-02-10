@@ -202,6 +202,7 @@ const MetricCard: FC<MetricCardProps> = props => {
       height="fit-content"
       justifyContent="center"
       display="flex"
+      backgroundColor="neutral.100"
       className={className}
     >
       {content}
