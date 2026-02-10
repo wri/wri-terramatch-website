@@ -100,7 +100,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }, [openModal, project.uuid, refetchPartners]);
 
   return (
-    <PageBody>
+    <PageBody className="bg-theme-neutral-200 pt-5">
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
           <OverviewItem

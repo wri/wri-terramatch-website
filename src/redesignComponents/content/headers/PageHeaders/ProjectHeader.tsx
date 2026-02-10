@@ -21,9 +21,11 @@ import TeamSection from "./components/TeamSection";
 
 export interface ProjectHeaderProps {
   project: ProjectFullDto;
+  onAddTeamClick: () => void;
+  gotoTeamMembers: () => void;
 }
 
-const ProjectHeader: FC<ProjectHeaderProps> = ({ project }) => {
+const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
   const { data: partners } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
     pathParams: { uuid: project.uuid }
   });
@@ -59,7 +61,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project }) => {
         />
       </Flex>
 
-      <TeamSection team={teamMembers} />
+      <TeamSection team={teamMembers} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
     </Box>
   );
 };

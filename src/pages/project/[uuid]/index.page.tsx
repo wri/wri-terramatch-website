@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -10,8 +11,8 @@ import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
@@ -21,9 +22,11 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
 import { Project } from "@/redesignComponents/foundations/Icons";
 
+import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
+import TeamMembersTab from "./tabs/TeamMembers";
 
 // Types
 type TabItem = {
@@ -47,6 +50,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
+  const { openModal } = useModalContext();
 
   const initialTab = (router.query.tab as string) || "overview";
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -73,7 +77,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       },
       { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab project={project} /> },
       { key: "sites", title: t("Sites"), body: <ProjectSitesTab project={project} /> },
-      { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> },
+      { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> },
       {
         key: "audit-log",
         title: t("Audit Log"),
@@ -135,9 +139,21 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [router]
   );
 
-  const handleSuffixButtonClick = useCallback((viewKey: string) => {
-    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
-  }, []);
+  const handleSuffixButtonClick = useCallback(
+    (viewKey: string) => {
+      setActiveSuffixView(prev => {
+        const next = prev === viewKey ? null : viewKey;
+
+        // Si el sufijo tiene un tab correspondiente, sincronizamos la selección del TabBar
+        if (next === "sites") {
+          handleTabClick("sites");
+        }
+
+        return next;
+      });
+    },
+    [handleTabClick]
+  );
 
   const shouldHideNurseries = framework === Framework.PPC;
 
@@ -162,6 +178,22 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [shouldHideNurseries]
   );
 
+  // Cuando estamos viendo "reports" o "nurseries" no queremos ningún tab seleccionado visualmente,
+  // así que usamos un defaultValue que no coincide con ningún tab y forzamos el remount en ViewToolbar.
+  const tabBarDefaultValue = useMemo(() => {
+    if (activeSuffixView === "reports" || activeSuffixView === "nurseries") {
+      return "__none__";
+    }
+    return activeTab;
+  }, [activeSuffixView, activeTab]);
+
+  const handleInvite = () => {
+    openModal(
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={() => {}} />
+    );
+  };
+
   return (
     <>
       <Head>
@@ -170,6 +202,8 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
       <ProjectBanner
         className="top-[70px]"
         project={project}
+        onAddTeamClick={handleInvite}
+        gotoTeamMembers={() => handleTabClick("team-members")}
         breadcrumbs={[
           { label: t("Projects"), link: "/my-projects", icon: <Project className="!text-theme-primary-900" /> },
           { label: project?.name ?? "", link: `/project/${project?.uuid}` }
@@ -194,7 +228,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         toolbar={{
           tabBar: {
             tabs: tabBarTabs,
-            defaultValue: activeTab,
+            defaultValue: tabBarDefaultValue,
             onTabClick: handleTabClick
           }
         }}

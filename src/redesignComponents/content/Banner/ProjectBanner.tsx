@@ -16,9 +16,19 @@ export interface ProjectBannerProps {
   toolbar: ViewToolbarProps;
   project: ProjectFullDto;
   className?: string;
+  onAddTeamClick: () => void;
+  gotoTeamMembers: () => void;
 }
 
-const ProjectBanner: FC<ProjectBannerProps> = ({ breadcrumbs, suffix, toolbar, project, className }) => {
+const ProjectBanner: FC<ProjectBannerProps> = ({
+  breadcrumbs,
+  suffix,
+  toolbar,
+  project,
+  className,
+  onAddTeamClick,
+  gotoTeamMembers
+}) => {
   const NextLinkAdapter = forwardRef<HTMLAnchorElement, { to: string; children: React.ReactNode; className?: string }>(
     ({ to, children, className, ...props }, ref) => (
       <Link href={to} ref={ref} className={className} {...props}>
@@ -29,7 +39,7 @@ const ProjectBanner: FC<ProjectBannerProps> = ({ breadcrumbs, suffix, toolbar, p
   NextLinkAdapter.displayName = "NextLinkAdapter";
   return (
     <>
-      <Box className={classNames("border-theme-neutral-300 sticky z-50 border-b px-1", className)}>
+      <Box className={classNames("border-theme-neutral-300 sticky z-20 border-b px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
             links: breadcrumbs.map(link => ({
@@ -42,8 +52,8 @@ const ProjectBanner: FC<ProjectBannerProps> = ({ breadcrumbs, suffix, toolbar, p
           suffix={suffix}
         />
       </Box>
-      <ProjectHeader project={project} />
-      <Box className="border-theme-neutral-200 sticky top-[115px] z-50 border-b-4 px-0.5">
+      <ProjectHeader project={project} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
+      <Box className="border-theme-neutral-200 sticky top-[115px] z-20 border-b-4 px-0.5">
         <ViewToolbar tabBar={toolbar.tabBar} />
       </Box>
     </>

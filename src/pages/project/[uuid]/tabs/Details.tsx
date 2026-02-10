@@ -106,8 +106,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody>
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 pt-5">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageColumn>
           <PageCard title={t("Project Information")}>
             <LongTextField title={t("Description of Timeline")}>{project.description}</LongTextField>
