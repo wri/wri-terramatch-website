@@ -1,10 +1,9 @@
-import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
+import { Accordion as AccordionChakra, Box, Flex, useAccordionItemContext } from "@chakra-ui/react";
 import type { ComponentType } from "react";
-import { useEffect, useRef, useState } from "react";
 
 import { ChevronDown, Minus, Plus } from "@/redesignComponents/foundations/Icons";
 
-import { ExtendableCardProps } from "./types";
+import { AccordionIconProps, ExtendableCardProps } from "./types";
 
 const ICON_PROPS = {
   boxSize: 4,
@@ -42,66 +41,32 @@ const variantStyles = {
       width: "100%",
       alignItems: "center",
       justifyContent: "space-between"
+    },
+    header: {
+      gap: 3
     }
-  },
-  header: {
-    gap: 3
   }
 };
 
-const useAccordionState = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const getItemElement = (element: HTMLElement | null) => {
-      return element?.closest("[data-state]") ?? element?.closest("[data-accordion-item]");
-    };
-
-    const updateState = () => {
-      const itemElement = getItemElement(ref.current) ?? getItemElement(ref.current?.parentElement ?? null);
-      if (itemElement) {
-        const state = itemElement.getAttribute("data-state");
-        setIsOpen(state === "open");
-      }
-    };
-
-    updateState();
-
-    const observer = new MutationObserver(updateState);
-    const itemElement = getItemElement(ref.current);
-
-    if (itemElement) {
-      observer.observe(itemElement, {
-        attributes: true,
-        attributeFilter: ["data-state"]
-      });
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  return { isOpen, ref };
-};
-
-const AccordionIcon = ({ variant }: { variant: "primary" | "secondary" }) => {
-  const { isOpen, ref } = useAccordionState();
-
+const AccordionIconInner = ({ variant }: AccordionIconProps) => {
+  const { expanded } = useAccordionItemContext();
   if (variant === "secondary") {
-    const IconComponent = isOpen ? Minus : Plus;
-    return (
-      <div ref={ref}>
-        <IconComponent boxSize={6} color={ICON_PROPS.color} />
-      </div>
-    );
+    const IconComponent = expanded ? Minus : Plus;
+    return <IconComponent boxSize={6} color={ICON_PROPS.color} />;
   }
 
   const { component: IconComponent, props } = variantStyles.primary.icon;
   return <IconComponent {...props} />;
 };
 
+const AccordionIcon = ({ variant }: AccordionIconProps) => (
+  <AccordionChakra.ItemIndicator>
+    <AccordionIconInner variant={variant} />
+  </AccordionChakra.ItemIndicator>
+);
+
 const Accordion = ({ children, header, actions, variant = "primary", className }: ExtendableCardProps) => {
-  const containerStyles = variantStyles[variant].container;
+  const { container, header: headerStyles } = variantStyles[variant];
 
   const handleActionsClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -111,25 +76,26 @@ const Accordion = ({ children, header, actions, variant = "primary", className }
     <Box className={className}>
       <AccordionChakra.Root multiple>
         <AccordionChakra.Item>
-          <Flex {...containerStyles} gap={4}>
+          <Flex {...container} gap={4}>
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
-              <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...variantStyles.header}>
+              <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
                 <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">
                   <Box flex="1" fontSize="20px" lineHeight="28px" color="primary.900">
                     {header}
                   </Box>
+
                   {actions && (
                     <Box display="flex" gap={3} alignItems="center" onClick={handleActionsClick} flexShrink={0}>
                       {actions}
                     </Box>
                   )}
                 </Flex>
-                <AccordionChakra.ItemIndicator>
-                  <AccordionIcon variant={variant} />
-                </AccordionChakra.ItemIndicator>
+
+                <AccordionIcon variant={variant} />
               </Flex>
             </AccordionChakra.ItemTrigger>
           </Flex>
+
           <AccordionChakra.ItemContent>{children}</AccordionChakra.ItemContent>
         </AccordionChakra.Item>
       </AccordionChakra.Root>

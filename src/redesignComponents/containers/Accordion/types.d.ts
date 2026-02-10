@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+export type AccordionIconProps = {
+  variant: "primary" | "secondary";
+};
 export interface ExtendableCardProps {
   children: ReactNode;
   header: ReactNode;
