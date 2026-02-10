@@ -66,7 +66,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
           </p>
         )}
 
-        <div className={classNames("flex flex-wrap gap-y-6 gap-x-16", { "justify-between": user })}>
+        <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
           {entryTypes.map(entryType => (
             <div
               key={entryType}
