@@ -52,10 +52,14 @@ export const DEMOGRAPHIC_TYPES = [
   "indirectBeneficiaries",
   "associates"
 ] as const;
+export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
+export const isDemographicType = (value: unknown): value is DemographicType =>
+  typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
 
-export const isDemographicType = (value: unknown): value is TrackingType => {
-  return typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as TrackingType);
-};
+export const RESTORATION_TYPES = ["trees", "hectares"] as const;
+export type RestorationType = (typeof RESTORATION_TYPES)[number];
+export const isRestorationType = (value: unknown): value is RestorationType =>
+  typeof value === "string" && RESTORATION_TYPES.includes(value as RestorationType);
 
 type TrackingLabelProperties = {
   sectionLabel: string;
@@ -108,6 +112,16 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
     sectionLabel: "Total",
     rowLabelSingular: "Associate",
     rowLabelPlural: "Associates"
+  },
+  trees: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Tree",
+    rowLabelPlural: "Trees"
+  },
+  hectares: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Hectare",
+    rowLabelPlural: "Hectares"
   }
 };
 
@@ -355,7 +369,7 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
-export const getTypeMap = (type: TrackingType, framework: Framework) => {
+const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
   if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
     switch (framework) {
       case Framework.HBF:
@@ -395,17 +409,82 @@ export const getTypeMap = (type: TrackingType, framework: Framework) => {
   }
 };
 
-export const useEntryTypeMap = (type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => getTypeMap(type, framework), [type, framework]);
+const HECTARES_RESTORED_YEARS: Dictionary<string> = {
+  "1-year": "1 year",
+  "2-year": "2 year",
+  unknown: "Unknown"
 };
 
-export const useEntryTypes = (type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => Object.keys(getTypeMap(type, framework)), [framework, type]);
+const HECTARES_STRATEGY: Dictionary<string> = {
+  anr: "Assisted Natural Regeneration",
+  "direct-seeding": "Direct Seeding",
+  planting: "Planting",
+  unknown: "Unknown"
 };
 
-export const useEntryTypeDefinition = (type: TrackingType, entryType: string) => {
+const LAND_USE: Dictionary<string> = {
+  agroforest: "Agroforest",
+  mangrove: "Mangrove",
+  "natural-forest": "Natural Forest",
+  "open-natural-ecosystem": "Open Natural Ecosystem",
+  peatland: "Peatland",
+  "riparian-area-or-wetland": "Riparian Area or Wetland",
+  "riparian-area-wetland-or-mangrove": "Riparian Area, Wetland or Mangrove",
+  silvopasture: "Silvopasture",
+  "urban-forest": "Urban Forest",
+  "woodlot-or-plantation": "Woodlot or Plantation",
+  unknown: "Unknown"
+};
+
+const HECTARES_RESTORED: Dictionary<TypeMapValue> = {
+  years: {
+    title: "Years",
+    typeMap: HECTARES_RESTORED_YEARS,
+    balanced: true
+  },
+  strategy: {
+    title: "Strategy",
+    typeMap: HECTARES_STRATEGY,
+    balanced: true
+  },
+  "land-use": {
+    title: "Land Use",
+    typeMap: LAND_USE,
+    balanced: true
+  }
+};
+
+const getRestorationTypeMap = (type: TrackingType) => {
+  return HECTARES_RESTORED;
+};
+
+export const getTypeMap = (
+  domain: TrackingDomain,
+  type: TrackingType,
+  framework: Framework
+): Dictionary<TypeMapValue> => {
+  switch (domain) {
+    case "demographics":
+      return getDemographicsTypeMap(type, framework);
+    case "restoration":
+      return getRestorationTypeMap(type);
+
+    default:
+      throw new Error(`Unsupported domain: ${domain}`);
+  }
+};
+
+export const useEntryTypeMap = (domain: TrackingDomain, type: TrackingType) => {
   const { framework } = useFrameworkContext();
-  return useMemo(() => getTypeMap(type, framework)[entryType], [entryType, framework, type]);
+  return useMemo(() => getTypeMap(domain, type, framework), [domain, type, framework]);
+};
+
+export const useEntryTypes = (domain: TrackingDomain, type: TrackingType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => Object.keys(getTypeMap(domain, type, framework)), [framework, domain, type]);
+};
+
+export const useEntryTypeDefinition = (domain: TrackingDomain, type: TrackingType, entryType: string) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => getTypeMap(domain, type, framework)[entryType], [entryType, framework, domain, type]);
 };

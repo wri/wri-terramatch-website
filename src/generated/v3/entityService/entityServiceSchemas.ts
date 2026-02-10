@@ -1312,6 +1312,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -1642,6 +1643,7 @@ export type ProjectReportFullDto = {
   plantingStatus: string | null;
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
+  otherRestorationPartnersDescription: string | null;
   nonTreeTotal: number | null;
   createdBy: number | null;
   createdByFirstName: string | null;
@@ -2546,7 +2548,7 @@ export type TrackingDto = {
    */
   entityUuid: string;
   uuid: string;
-  domain: "demographics";
+  domain: "demographics" | "restoration";
   type:
     | "workdays"
     | "restoration-partners"
@@ -2556,7 +2558,9 @@ export type TrackingDto = {
     | "all-beneficiaries"
     | "training-beneficiaries"
     | "indirect-beneficiaries"
-    | "associates";
+    | "associates"
+    | "trees"
+    | "hectares";
   collection: string;
   entries: TrackingEntryDto[];
 };
@@ -2754,6 +2758,7 @@ export type LinkedFieldDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectares"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2763,6 +2768,7 @@ export type LinkedFieldDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "trees"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -2929,6 +2935,7 @@ export type FormQuestionDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectares"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2938,6 +2945,7 @@ export type FormQuestionDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "trees"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -3077,6 +3085,7 @@ export type StoreFormQuestionAttributes = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectares"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -3086,6 +3095,7 @@ export type StoreFormQuestionAttributes = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "trees"
     | "treeSpecies"
     | "volunteers"
     | "workdays"

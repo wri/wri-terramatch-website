@@ -9,21 +9,21 @@ import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSche
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import { useSectionData } from "./hooks";
-import { Status, TrackingGridVariantProps, TrackingType, useEntryTypeDefinition } from "./types";
+import { Status, TrackingDomain, TrackingType, useEntryTypeDefinition } from "./types";
 
 export interface TrackingSectionProps {
+  domain: TrackingDomain;
   trackingType: TrackingType;
   entryType: string;
   entries: TrackingEntryDto[];
-  variant: TrackingGridVariantProps;
   onChange?: (entries: TrackingEntryDto[]) => void;
   status?: Status;
 }
 
-const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
+const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entryType, entries, onChange, status }) => {
   const t = useT();
-  const { title, rows, total } = useSectionData(trackingType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const { title, rows, total } = useSectionData(domain, trackingType, entryType, entries);
+  const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
   const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
