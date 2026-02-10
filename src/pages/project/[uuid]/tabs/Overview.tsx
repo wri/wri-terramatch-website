@@ -159,7 +159,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               size: "small",
               children: "Manage Team",
               rightIcon: <ChevronRight />,
-              onClick: () => goToTab("details")
+              onClick: () => goToTab("team-members")
             }}
           >
             <ProfileListCard
