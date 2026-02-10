@@ -13,14 +13,16 @@ export interface TeamMember {
 
 export interface TeamSectionProps {
   team?: TeamMember[];
+  onAddTeamClick: () => void;
+  gotoTeamMembers: () => void;
 }
 
-const TeamSection: FC<TeamSectionProps> = ({ team }) => {
+const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers }) => {
   const t = useT();
 
   const handleAddTeamClick = useCallback(() => {
-    // TODO: Implement add team functionality
-  }, []);
+    onAddTeamClick();
+  }, [onAddTeamClick]);
 
   return (
     <Box
@@ -34,7 +36,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
         }
       }}
     >
-      <div className="flex w-fit flex-col gap-2">
+      <div className="flex w-fit flex-col gap-2" onClick={gotoTeamMembers} role="button" tabIndex={0}>
         <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
           {t("Team:")}
         </Text>
@@ -74,7 +76,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team }) => {
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Add Team Members")}
                 <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
