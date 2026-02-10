@@ -27,6 +27,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { usePostV2ExportImage } from "@/generated/apiComponents";
+import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -128,17 +129,15 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   zoom?: number;
   mapStyle?: MapStyle;
   onStyleChange?: (style: MapStyle) => void;
-  setPolygonFromMap?: React.Dispatch<
-    React.SetStateAction<{ uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string }>
-  >;
-  polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string };
+  setPolygonFromMap?: React.Dispatch<React.SetStateAction<{ uuid: string; isOpen: boolean }>>;
+  polygonFromMap?: { uuid: string; isOpen: boolean };
   record?: any;
   showPopups?: boolean;
   showLegend?: boolean;
   showDownloadPolygons?: boolean;
   mapFunctions?: any;
   tooltipType?: TooltipType;
-  sitePolygonData?: SitePolygonLightDto[];
+  sitePolygonData?: SitePolygonsDataResponse;
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
   modelFilesData?: MediaDto[];
@@ -165,7 +164,6 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
     dashboardCountries?: any[];
     isDashboard?: string;
   };
-  disabledPolygonPanel?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -211,7 +209,6 @@ export const MapContainer = ({
   legendPosition,
   hasAccess,
   dashboardContext,
-  disabledPolygonPanel = false,
   ...props
 }: MapProps) => {
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
@@ -661,22 +658,9 @@ export const MapContainer = ({
     removePopups("POLYGON");
     if (polygonFromMap?.isOpen && polygonFromMap?.uuid !== "") {
       const polygonuuid = polygonFromMap?.uuid as string;
-      const isProjectPolygon =
-        polygonFromMap?.entityName == "project-pitches" || polygonFromMap?.entityName == "project-pitch";
-      const projectPitchUuid = polygonFromMap?.projectPitchUuid;
-
-      try {
-        const geometry = await fetchPolygonGeometry(polygonuuid, true, isProjectPolygon ? projectPitchUuid : undefined);
-        if (geometry == null) {
-          openNotification("error", t("Error"), t("No geometry found for polygon. The polygon may have been deleted."));
-          return;
-        }
-        if (map.current && draw.current && geometry) {
-          addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
-        }
-      } catch (error) {
-        Log.error("Error fetching polygon geometry:", error);
-        openNotification("error", t("Error"), t("Failed to load polygon geometry. Please try again."));
+      const geometry = await fetchPolygonGeometry(polygonuuid);
+      if (map.current && draw.current && geometry) {
+        addGeojsonToDraw(geometry, polygonuuid, () => handleAddGeojsonToDraw(polygonuuid), draw.current);
       }
     }
   };
@@ -692,7 +676,6 @@ export const MapContainer = ({
           if (formMap) {
             try {
               showLoader();
-              const projectPitchUuid = polygonFromMap?.projectPitchUuid;
               await updatePolygonProjectGeometry([feature], polygonFromMap.uuid, reloadSiteData);
 
               if (draw.current) {
@@ -701,13 +684,7 @@ export const MapContainer = ({
 
               await new Promise(resolve => setTimeout(resolve, 100));
 
-              const isProjectPolygon = polygonFromMap?.entityName == "project-pitches";
-
-              const updatedGeometry = await fetchPolygonGeometry(
-                polygonFromMap.uuid,
-                true,
-                isProjectPolygon ? projectPitchUuid : undefined
-              );
+              const updatedGeometry = await fetchPolygonGeometry(polygonFromMap.uuid);
               if (updatedGeometry && map.current) {
                 const newPolygonData = { [FORM_POLYGONS]: [polygonFromMap.uuid] };
                 addSourcesToLayers(map.current, newPolygonData, centroids);
@@ -722,8 +699,8 @@ export const MapContainer = ({
             return;
           }
 
-          const selectedPolygon = sitePolygonData?.find(item => item.polygonUuid === polygonFromMap?.uuid);
-          if (selectedPolygon?.primaryUuid == null) {
+          const selectedPolygon = sitePolygonData?.find(item => item.poly_id === polygonFromMap?.uuid);
+          if (!selectedPolygon?.primary_uuid) {
             openNotification("error", t("Error"), t("Missing polygon information"));
             return;
           }
@@ -731,13 +708,13 @@ export const MapContainer = ({
           try {
             showLoader();
 
-            const siteId = selectedPolygon?.siteId;
+            const siteId = selectedPolygon?.site_id;
             if (!siteId) {
-              throw new Error("Missing siteId for polygon");
+              throw new Error("Missing site_id for polygon");
             }
 
             await createVersionWithGeometry(
-              selectedPolygon.primaryUuid,
+              selectedPolygon.primary_uuid,
               pdView ? "Updated geometry" : "Updated geometry from admin panel",
               {
                 type: "Feature",
@@ -748,12 +725,12 @@ export const MapContainer = ({
               }
             );
 
-            if (selectedPolygon.polygonUuid != null) {
-              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
+            if (selectedPolygon.poly_id) {
+              await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.poly_id]);
             }
 
             const polygonVersionResponse = await loadListPolygonVersions({
-              uuid: selectedPolygon.primaryUuid
+              uuid: selectedPolygon.primary_uuid
             });
 
             const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);
@@ -972,7 +949,7 @@ export const MapContainer = ({
                 <ControlGroup position="top-left">
                   <PolygonHandler />
                 </ControlGroup>
-                <ControlGroup position="top-right" className="top-[17rem]">
+                <ControlGroup position="top-right" className="top-64">
                   <PolygonModifier
                     polygonFromMap={polygonFromMap}
                     onClick={handleEditPolygon}
@@ -1039,7 +1016,7 @@ export const MapContainer = ({
                 {isDashboard === "dashboard" && isMapReady && map.current != null && (
                   <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
                 )}
-                {isDashboard !== "dashboard" && isDashboard !== "modal" && !disabledPolygonPanel && (
+                {isDashboard !== "dashboard" && isDashboard !== "modal" && (
                   <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />
                 )}
               </ControlGroup>
@@ -1048,9 +1025,7 @@ export const MapContainer = ({
         ) : null}
         {showLegend ? (
           <ControlGroup
-            position={
-              disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"
-            }
+            position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
             isFullscreen={isFullscreen}
           >
             <FilterControl />
@@ -1061,7 +1036,7 @@ export const MapContainer = ({
             <PolygonCheck />
           </ControlGroup>
         ) : null}
-        {!polygonsExists && !disabledPolygonPanel ? <EmptyStateDisplay /> : null}
+        {!polygonsExists ? <EmptyStateDisplay /> : null}
         {(isMobile || isDashboard) && mobilePopupData !== null ? (
           <PopupMobile
             event={mobilePopupData}
