@@ -1312,6 +1312,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -1642,6 +1643,7 @@ export type ProjectReportFullDto = {
   plantingStatus: string | null;
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
+  otherRestorationPartnersDescription: string | null;
   nonTreeTotal: number | null;
   createdBy: number | null;
   createdByFirstName: string | null;
@@ -3354,7 +3356,6 @@ export type ReportingFrameworkDto = {
   uuid: string;
   name: string;
   slug: string | null;
-  accessCode: string | null;
   projectFormUuid: string | null;
   projectReportFormUuid: string | null;
   siteFormUuid: string | null;
