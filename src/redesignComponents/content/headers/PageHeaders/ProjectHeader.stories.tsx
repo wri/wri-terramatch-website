@@ -98,6 +98,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     sdgsImpacted: null,
     totalHectaresRestoredGoal: 2000,
     treesGrownGoal: 100000,
+    jobsCreatedGoal: 0,
     survivalRate: 85,
     lastReportedSurvivalRate: 85,
     landUseTypes: null,
@@ -284,6 +285,8 @@ export const AllProgressStates: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <ProjectHeader
+        onAddTeamClick={() => {}}
+        gotoTeamMembers={() => {}}
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "not-started",
@@ -295,6 +298,8 @@ export const AllProgressStates: Story = {
         })}
       />
       <ProjectHeader
+        onAddTeamClick={() => {}}
+        gotoTeamMembers={() => {}}
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "in-progress",
@@ -306,6 +311,8 @@ export const AllProgressStates: Story = {
         })}
       />
       <ProjectHeader
+        onAddTeamClick={() => {}}
+        gotoTeamMembers={() => {}}
         project={createMockProject({
           name: "Project Name",
           plantingStatus: "completed",
