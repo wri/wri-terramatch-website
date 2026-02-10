@@ -1312,6 +1312,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
