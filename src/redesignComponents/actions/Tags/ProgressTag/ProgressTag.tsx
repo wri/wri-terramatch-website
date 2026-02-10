@@ -30,7 +30,9 @@ export function ProgressTag({ state = "not-started", className }: ProgressTagPro
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-theme-neutral-900 whitespace-nowrap text-sm font-bold">{t(config.label)}</span>
+        <span className="text-theme-neutral-900 text-nowrap whitespace-nowrap text-sm font-bold">
+          {t(config.label)}
+        </span>
       </Tag.Label>
     </Tag.Root>
   );

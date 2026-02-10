@@ -1,13 +1,9 @@
+import { useMedias, SupportedEntity } from "@/connections/EntityAssociation";
 import { FC, useMemo } from "react";
-
-import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
-import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import { HookProps } from "@/types/connection";
+import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 
-const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEntity }> = ({
-  entityUuid,
-  entityName
-}) => {
+const LastestImagesSectionTab: FC<{entityUuid:string, entityName: SupportedEntity}> = ({entityUuid, entityName}) => {
   const [, { data: mediaList }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       return {

@@ -1005,7 +1005,7 @@ export const MapContainer = ({
             <ControlGroup position="top-right" className="top-[10.5rem]">
               <button
                 type="button"
-                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
+                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
                 onClick={() => {
                   if (center && zoom !== undefined && map.current) {
                     zoomToCenter(center, zoom, map.current);
@@ -1021,7 +1021,7 @@ export const MapContainer = ({
               <ControlGroup position="top-right" className="top-[13.75rem]">
                 <button
                   type="button"
-                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
+                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
                   onClick={toggleFullscreen}
                   aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 >
@@ -1048,9 +1048,7 @@ export const MapContainer = ({
         ) : null}
         {showLegend ? (
           <ControlGroup
-            position={
-              disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"
-            }
+          position={disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
             isFullscreen={isFullscreen}
           >
             <FilterControl />

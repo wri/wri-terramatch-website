@@ -1,13 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
-import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { Framework, toFramework, useFramework } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -18,6 +16,8 @@ import { EntityName } from "@/types/common";
 import List from "../../List/List";
 import { isDemographicType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
+import { Framework, toFramework, useFramework } from "@/context/framework.provider";
+import type * as yup from "yup";
 
 const getFieldsRequiringAttentionCount = (
   validation: yup.ObjectSchema<Record<string, unknown>>,
@@ -58,11 +58,9 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       header={
         <AccordionHeader
           title={title ?? ""}
-          badge={
-            !valid && fieldsRequiringAttention > 0
-              ? t("{count} requires attention", { count: fieldsRequiringAttention })
-              : undefined
-          }
+          badge={!valid && fieldsRequiringAttention > 0
+            ? t("{count} requires attention", { count: fieldsRequiringAttention })
+            : undefined}
           status={valid ? "complete" : "error"}
         />
       }

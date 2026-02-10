@@ -28,7 +28,6 @@ import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
 import TeamMembersTab from "./tabs/TeamMembers";
 
-// Types
 type TabItem = {
   key: string;
   title: string;
@@ -46,6 +45,7 @@ type SuffixButtonConfig = {
   key: string;
   labelKey: string;
 };
+
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
@@ -55,7 +55,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const initialTab = (router.query.tab as string) || "overview";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
-  // Define all tab items
   const allTabItems = useMemo<TabItem[]>(
     () => [
       { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
@@ -87,7 +86,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [project, t, refetch]
   );
 
-  // Filter tabs based on framework
   const filteredTabItems = useMemo(
     () =>
       allTabItems.filter(item => {
@@ -101,7 +99,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [allTabItems, framework]
   );
 
-  // Map to TabBar format
   const tabBarTabs = useMemo(
     () =>
       filteredTabItems.map(item => ({
@@ -111,7 +108,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [filteredTabItems]
   );
 
-  // Sync tab state with router query and validate against filtered tabs
   useEffect(() => {
     const queryTab = router.query.tab as string;
     const isValidTab = (tab: string) => filteredTabItems.some(item => item.key === tab);
@@ -123,7 +119,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     }
   }, [router.query.tab, filteredTabItems, activeTab]);
 
-  // Get active tab content
   const activeTabContent = useMemo(
     () => filteredTabItems.find(item => item.key === activeTab)?.body,
     [filteredTabItems, activeTab]
@@ -143,8 +138,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     (viewKey: string) => {
       setActiveSuffixView(prev => {
         const next = prev === viewKey ? null : viewKey;
-
-        // Si el sufijo tiene un tab correspondiente, sincronizamos la selección del TabBar
         if (next === "sites") {
           handleTabClick("sites");
         }
@@ -178,8 +171,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [shouldHideNurseries]
   );
 
-  // Cuando estamos viendo "reports" o "nurseries" no queremos ningún tab seleccionado visualmente,
-  // así que usamos un defaultValue que no coincide con ningún tab y forzamos el remount en ViewToolbar.
   const tabBarDefaultValue = useMemo(() => {
     if (activeSuffixView === "reports" || activeSuffixView === "nurseries") {
       return "__none__";
