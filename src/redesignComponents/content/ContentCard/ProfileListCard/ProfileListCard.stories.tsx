@@ -62,16 +62,13 @@ export const Default: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {}}
         items={[
           {
             title: "Header Label",
             profiles: sampleProfiles,
-            onProfileClick: profile => {
-              console.log("Profile clicked:", profile);
-            },
-            onInviteClick: () => {
-              console.log("Invite clicked");
-            }
+            onProfileClick: () => {},
+            onInviteClick: () => {}
           }
         ]}
       />
@@ -86,6 +83,7 @@ export const SingleProfile: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {}}
         items={[
           {
             title: "Header Label",
@@ -96,9 +94,7 @@ export const SingleProfile: Story = {
                 image: "https://i.pravatar.cc/300?img=1"
               }
             ],
-            onProfileClick: profile => {
-              console.log("Profile clicked:", profile);
-            }
+            onProfileClick: () => {}
           }
         ]}
       />
@@ -113,6 +109,7 @@ export const ManyProfiles: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {}}
         items={[
           {
             title: "Header Label",
@@ -153,9 +150,7 @@ export const ManyProfiles: Story = {
                 image: "https://i.pravatar.cc/300?img=7"
               }
             ],
-            onProfileClick: profile => {
-              console.log("Profile clicked:", profile);
-            }
+            onProfileClick: () => {}
           }
         ]}
       />
@@ -170,6 +165,7 @@ export const ProfilesWithoutImages: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {}}
         items={[
           {
             title: "Header Label",
@@ -190,9 +186,7 @@ export const ProfilesWithoutImages: Story = {
                 image: ""
               }
             ],
-            onProfileClick: profile => {
-              console.log("Profile clicked:", profile);
-            }
+            onProfileClick: () => {}
           }
         ]}
       />
@@ -207,13 +201,12 @@ export const NoData: Story = {
   render: () => (
     <StoryWrapper>
       <ProfileListCard
+        onInviteClick={() => {}}
         items={[
           {
             title: "Header Label",
             profiles: [],
-            onProfileClick: profile => {
-              console.log("Profile clicked:", profile);
-            }
+            onProfileClick: () => {}
           }
         ]}
       />

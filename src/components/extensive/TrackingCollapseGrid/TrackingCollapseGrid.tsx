@@ -41,7 +41,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
   );
 
   const statusMap: Record<Status, AccordionStatus | undefined> = {
-    complete: undefined,
+    complete: "complete",
     "not-started": undefined,
     "in-progress": "error"
   };

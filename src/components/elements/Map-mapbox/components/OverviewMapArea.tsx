@@ -1,4 +1,5 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useEffect, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
@@ -22,6 +23,8 @@ interface EntityAreaProps {
   refetch?: () => void;
   polygonVersionData?: SitePolygonLightDto[];
   refetchPolygonVersions?: () => void;
+  className?: string;
+  disabledPolygonPanel?: boolean;
 }
 
 const OverviewMapArea = ({
@@ -29,7 +32,9 @@ const OverviewMapArea = ({
   type,
   refetch: refreshEntity,
   polygonVersionData,
-  refetchPolygonVersions
+  refetchPolygonVersions,
+  className,
+  disabledPolygonPanel
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
@@ -161,32 +166,34 @@ const OverviewMapArea = ({
 
   return (
     <>
-      <MapPolygonPanel
-        title={type === "sites" ? t("Site Polygons") : t("Polygons")}
-        items={(polygonsData ?? []) as SitePolygonLightDto[]}
-        mapFunctions={mapFunctions}
-        polygonsData={polygonDataMap}
-        className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
-        emptyText={t("No polygons are available.")}
-        checkedValues={checkedValues}
-        onCheckboxChange={handleCheckboxChange}
-        setSortOrder={setSortField}
-        sortField={sortField}
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        type={type}
-        onSelectItem={() => {}}
-        onLoadMore={() => {}}
-        stateViewPanel={stateViewPanel}
-        setStateViewPanel={setStateViewPanel}
-        tabEditPolygon={tabEditPolygon}
-        setTabEditPolygon={setTabEditPolygon}
-        recallEntityData={refetch}
-        polygonVersionData={polygonVersionData}
-        refetchPolygonVersions={refetchPolygonVersions}
-        refreshEntity={refreshEntity}
-        entityUuid={entityModel?.uuid}
-      />
+      {!disabledPolygonPanel && (
+        <MapPolygonPanel
+          title={type === "sites" ? t("Site Polygons") : t("Polygons")}
+          items={(polygonsData ?? []) as SitePolygonLightDto[]}
+          mapFunctions={mapFunctions}
+          polygonsData={polygonDataMap}
+          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
+          emptyText={t("No polygons are available.")}
+          checkedValues={checkedValues}
+          onCheckboxChange={handleCheckboxChange}
+          setSortOrder={setSortField}
+          sortField={sortField}
+          sortDirection={sortDirection}
+          setSortDirection={setSortDirection}
+          type={type}
+          onSelectItem={() => {}}
+          onLoadMore={() => {}}
+          stateViewPanel={stateViewPanel}
+          setStateViewPanel={setStateViewPanel}
+          tabEditPolygon={tabEditPolygon}
+          setTabEditPolygon={setTabEditPolygon}
+          recallEntityData={refetch}
+          polygonVersionData={polygonVersionData}
+          refetchPolygonVersions={refetchPolygonVersions}
+          refreshEntity={refreshEntity}
+          entityUuid={entityModel?.uuid}
+        />
+      )}
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
@@ -198,7 +205,7 @@ const OverviewMapArea = ({
         status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
         validationType={type === "sites" ? (editPolygon.isOpen ? "individualValidation" : "bulkValidation") : ""}
         record={entityModel}
-        className="h-[650px] flex-1 rounded-r-lg wide:h-[1225px]"
+        className={classNames("h-[650px] flex-1 rounded-r-lg wide:h-[1225px]", className)}
         polygonsExists={polygonsData.length > 0}
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
@@ -206,6 +213,7 @@ const OverviewMapArea = ({
         modelFilesData={modelFilesData}
         sitePolygonData={sitePolygonDataV2 as any}
         pdView={true}
+        disabledPolygonPanel={disabledPolygonPanel}
       />
     </>
   );

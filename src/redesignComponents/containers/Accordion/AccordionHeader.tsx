@@ -7,13 +7,18 @@ import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
 const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
-  status === "success" ? (
+  status === "complete" ? (
     <CheckApproved boxSize={boxSize} color="success.500" />
   ) : (
     <InformationRequired boxSize={boxSize} color="error.500" />
   );
 
-const StatusLabelTag = ({ label, status }: { label: string; status: AccordionStatus }) => {
+interface StatusLabelTagProps {
+  label: string;
+  status: AccordionStatus;
+}
+
+const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
   return (
     <Flex
       alignItems="center"
@@ -47,7 +52,11 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
         </div>
         {badge && <TextBadge>{badge}</TextBadge>}
       </div>
-      {statusLabel && status ? <StatusLabelTag label={statusLabel} status={status} /> : status && getStatusIcon(status)}
+      {statusLabel != null && status != null ? (
+        <StatusLabelTag label={statusLabel} status={status} />
+      ) : (
+        status != null && getStatusIcon(status)
+      )}
     </div>
   );
 };
