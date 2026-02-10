@@ -12,6 +12,7 @@ const DonutChart: FC<DonutChartProps> = ({
   backgroundColor,
   className,
   children,
+  type,
   ...rest
 }) => {
   const progressValue = Math.max(0, Math.min(100, progress));
@@ -63,14 +64,20 @@ const DonutChart: FC<DonutChartProps> = ({
       >
         {children}
       </Box>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-        {progressValue < 100 && <circle cx={center} cy={center} r={radius} fill={bgColor} />}
-        {progressValue === 100 ? (
+      {type === "jobsCreated" && progressValue > 0 ? (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <circle cx={center} cy={center} r={radius} fill="currentColor" />
-        ) : (
-          pathData && <path d={pathData} fill="currentColor" />
-        )}
-      </svg>
+        </svg>
+      ) : (
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {progressValue < 100 && <circle cx={center} cy={center} r={radius} fill={bgColor} />}
+          {progressValue === 100 ? (
+            <circle cx={center} cy={center} r={radius} fill="currentColor" />
+          ) : (
+            pathData && <path d={pathData} fill="currentColor" />
+          )}
+        </svg>
+      )}
     </Box>
   );
 };

@@ -9,8 +9,14 @@ export const validateForm = (schema: AnyObjectSchema) => (values: any) => {
     schema.validateSync(values, { abortEarly: false });
     //@ts-ignore
   } catch (e: any) {
+    const FEEDBACK_FIELDS_MESSAGE = "Feedback fields must have at least 1 item";
     e.inner.forEach((item: any) => {
-      errors[item.path] = item.message;
+      let message: string = item.message;
+      const isFeedbackFieldsPath = item.path === "feedback_fields" || item.path === "feedbackFields";
+      if (isFeedbackFieldsPath && (message.includes("1 items") || message.includes("item is required"))) {
+        message = FEEDBACK_FIELDS_MESSAGE;
+      }
+      errors[item.path] = message;
     });
   }
 

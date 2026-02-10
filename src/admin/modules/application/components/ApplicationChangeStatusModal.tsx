@@ -32,9 +32,11 @@ const statusTitles = {
   "requires-more-information": "Request more information for this Application"
 };
 
+const FEEDBACK_FIELDS_MIN_MESSAGE = "Feedback fields must have at least 1 item";
+
 const moreInfoValidationSchema = yup.object({
   feedback: yup.string().nullable(),
-  feedbackFields: yup.array().min(1).of(yup.string()).required()
+  feedbackFields: yup.array().min(1, FEEDBACK_FIELDS_MIN_MESSAGE).of(yup.string()).required()
 });
 const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
