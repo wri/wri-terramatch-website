@@ -38,6 +38,19 @@ const getTextForActionTable = (item: { type: string; status: string }, entity?: 
 const generateUserName = (firstName?: string | null, lastName?: string | null): string =>
   firstName == null && lastName == null ? "Unknown User" : `${firstName} ${lastName}`.trim();
 
+const ENTITY_MAP: Record<string, AuditStatusEntityType> = {
+  "site-polygon": "sitePolygons",
+  project: "projects",
+  site: "sites",
+  nursery: "nurseries",
+  "project-reports": "projectReports",
+  "site-reports": "siteReports",
+  "nursery-reports": "nurseryReports",
+  "disturbance-reports": "disturbanceReports",
+  "srp-reports": "srpReports",
+  "financial-reports": "financialReports"
+};
+
 const AuditLogTable: FC<{
   auditLogData: { data: AuditStatusDto[] };
   auditData?: { entity: string; entityUuid: string };
@@ -84,26 +97,13 @@ const AuditLogTable: FC<{
 
   const deleteAuditStatus = async (auditUuid: string) => {
     try {
-      if (!auditData?.entity || !auditData?.entityUuid) {
+      if (auditData?.entity == null || auditData?.entityUuid == null) {
         openNotification("error", "Error!", t("Missing required information to delete audit log."));
         return;
       }
 
-      const entityMap: Record<string, AuditStatusEntityType> = {
-        "site-polygon": "sitePolygons",
-        project: "projects",
-        site: "sites",
-        nursery: "nurseries",
-        "project-reports": "projectReports",
-        "site-reports": "siteReports",
-        "nursery-reports": "nurseryReports",
-        "disturbance-reports": "disturbanceReports",
-        "srp-reports": "srpReports",
-        "financial-reports": "financialReports"
-      };
-
-      const entityType = entityMap[auditData.entity];
-      if (!entityType) {
+      const entityType = ENTITY_MAP[auditData.entity];
+      if (entityType == null) {
         openNotification("error", "Error!", t("Unknown entity type."));
         return;
       }

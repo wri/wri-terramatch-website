@@ -1,18 +1,15 @@
-import { createSelector } from "reselect";
-
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   createAuditStatus,
   CreateAuditStatusPathParams,
   deleteAuditStatus,
-  DeleteAuditStatusPathParams,
   getAuditStatuses,
   GetAuditStatusesPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { resolveUrl } from "@/generated/v3/utils";
-import ApiSlice, { ApiDataStore } from "@/store/apiSlice";
+import ApiSlice from "@/store/apiSlice";
 
 export type AuditStatusEntityType = GetAuditStatusesPathParams["entity"];
 
@@ -35,49 +32,13 @@ const auditStatusCreateConnection = v3Resource("auditStatuses", createAuditStatu
 export const useCreateAuditStatus = creationHook(auditStatusCreateConnection);
 
 export const createAuditStatusDeleter = (entity: AuditStatusEntityType, uuid: string) => {
+  const baseDeleter = deleterAsync("auditStatuses", deleteAuditStatus, (auditUuid: string) => ({
+    pathParams: { entity, uuid, auditUuid }
+  }));
+
   return async function deleteAuditStatusResource(auditUuid: string): Promise<void> {
-    const variables: DeleteAuditStatusPathParams = {
-      entity,
-      uuid,
-      auditUuid
-    };
-
-    const pathParams = { pathParams: variables };
-    const selector = createSelector(
-      [
-        (store: ApiDataStore) => store.meta.deleted.auditStatuses ?? [],
-        deleteAuditStatus.fetchFailedSelector(pathParams)
-      ],
-      (deleted, deleteFailure) => ({
-        isDeleted: auditUuid != null && deleted.includes(auditUuid),
-        deleteFailure
-      })
-    );
-
-    const { isDeleted, deleteFailure } = selector(ApiSlice.currentState);
-    if (isDeleted) return;
-
-    if (deleteFailure != null) {
-      ApiSlice.clearPending(resolveUrl(deleteAuditStatus.url, pathParams), deleteAuditStatus.method);
-    }
-
-    deleteAuditStatus.fetch(pathParams);
-
-    await new Promise<void>((resolve, reject) => {
-      const unsubscribe = ApiSlice.redux.subscribe(() => {
-        const { isDeleted, deleteFailure } = selector(ApiSlice.currentState);
-        if (isDeleted || deleteFailure != null) {
-          unsubscribe();
-
-          if (isDeleted) {
-            ApiSlice.pruneIndex("auditStatuses", "");
-            resolve();
-          } else {
-            reject(deleteFailure);
-          }
-        }
-      });
-    });
+    await baseDeleter(auditUuid);
+    ApiSlice.pruneIndex("auditStatuses", "");
   };
 };
 
