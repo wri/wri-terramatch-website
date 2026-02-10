@@ -30,7 +30,7 @@ export const ModalId = {
   DELETE_DRAFT: "DeleteDraft",
   ERROR_MODAL: "ErrorModal",
   FORM_MODAL: "FormModal",
-  INVITE_MONITORING_PSRTNER_MODAL: "InviteMonitoringPartnerModal",
+  INVITE_MONITORING_PARTNER_MODAL: "InviteMonitoringPartnerModal",
   MONITORING_PARTNER: "MonitoringPartner",
   MODAL_CONFIRM: "ModalConfirm",
   MODAL_CONFIRM_DELETE_PARTNER: "ModalConfirmDeletePartner",

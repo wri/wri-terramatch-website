@@ -24,6 +24,28 @@ const EditButton = ({ onClick }: { onClick: () => void }) => (
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
   const { framework } = useFrameworkContext();
+  const countryOptions = useGadmOptions({ level: 0 });
+
+  const restorationOptions = getRestorationStrategyOptions(t);
+
+  const filterRestorationStrategyOptions = restorationOptions
+    .filter(option => project.restorationStrategy?.includes(option.value as string))
+    .map(option => option.value.toString());
+
+  const landUseTypesOptions = useGetOptions(project.landUseTypes);
+  const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
+  const detailedInterventionTypeOptions = useGetOptions(project.detailedInterventionTypes);
+
+  const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
+    pathParams: { uuid: project.uuid }
+  });
+
+  const handleInvite = () => {
+    openModal(
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
+      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
+    );
+  };
 
   const downloadButtons: JSX.Element[] = [];
   if (framework === Framework.PPC) {
