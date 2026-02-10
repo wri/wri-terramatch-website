@@ -1,18 +1,15 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, forwardRef, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullProject } from "@/connections/Entity";
-import { useGadmOptions } from "@/connections/Gadm";
 import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
@@ -23,77 +20,10 @@ import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
 import { Project } from "@/redesignComponents/foundations/Icons";
-import { formatOptionsList } from "@/utils/options";
 
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
-
-// Constants
-const COUNTRY_NAME_TO_ISO_CODE: Record<string, string> = {
-  "Democratic Republic of the Congo": "CD",
-  "Republic of the Congo": "CG",
-  Congo: "CG"
-};
-
-const ISO_CODE_MAP: Record<string, string> = {
-  COD: "CD",
-  COG: "CG",
-  BRA: "BR"
-};
-
-const FLAG_OFFSET = 127397;
-
-// Helper functions
-const formatMonthYear = (date: string | null | undefined): string => {
-  if (!date) return "-";
-  const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return "-";
-  const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
-  const year = parsed.getUTCFullYear();
-  return `${month}/${year}`;
-};
-
-const convertToFlagEmoji = (isoCode: string): string => {
-  return isoCode.toUpperCase().replace(/./g, char => String.fromCodePoint(FLAG_OFFSET + char.charCodeAt(0)));
-};
-
-const countryCodeToFlag = (
-  gadmCode: string,
-  countryOptions?: Array<{ value: string | number; title: string }>
-): string => {
-  if (!gadmCode) return "";
-  const gadmCodeStr = String(gadmCode);
-  const upperCode = gadmCodeStr.toUpperCase();
-
-  // Try to get country name from GADM options
-  const countryOption = countryOptions?.find(opt => String(opt.value) === gadmCodeStr);
-  const countryName = countryOption?.title;
-
-  // Check direct mapping for country name
-  if (countryName && COUNTRY_NAME_TO_ISO_CODE[countryName]) {
-    return convertToFlagEmoji(COUNTRY_NAME_TO_ISO_CODE[countryName]);
-  }
-
-  // Check 3-letter ISO code mapping
-  if (ISO_CODE_MAP[upperCode]) {
-    return convertToFlagEmoji(ISO_CODE_MAP[upperCode]);
-  }
-
-  // Default: use first 2 characters
-  const code = gadmCodeStr.length >= 2 ? gadmCodeStr.slice(0, 2) : gadmCodeStr;
-  return convertToFlagEmoji(code);
-};
-
-// Adapter component to make Next.js Link compatible with WRI design system breadcrumbs
-const NextLinkAdapter = forwardRef<HTMLAnchorElement, { to: string; children: React.ReactNode; className?: string }>(
-  ({ to, children, className, ...props }, ref) => (
-    <Link href={to} ref={ref} className={className} {...props}>
-      {children}
-    </Link>
-  )
-);
-NextLinkAdapter.displayName = "NextLinkAdapter";
 
 // Types
 type TabItem = {
@@ -117,16 +47,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
-  const countryOptions = useGadmOptions({ level: 0 });
 
   const initialTab = (router.query.tab as string) || "overview";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
-
-  const { data: partners } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
-  });
-
   // Define all tab items
   const allTabItems = useMemo<TabItem[]>(
     () => [
@@ -238,33 +162,18 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [shouldHideNurseries]
   );
 
-  const teamMembers = useMemo(
-    () =>
-      partners?.data.slice(0, 5).map(partner => {
-        const fullName = `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim();
-        return {
-          name: fullName,
-          avatar: { name: fullName }
-        };
-      }) ?? [],
-    [partners]
-  );
-
   return (
     <>
       <Head>
         <title>{t("Project")}</title>
       </Head>
       <ProjectBanner
+        className="top-[70px]"
         project={project}
-        breadcrumbs={{
-          links: [
-            { label: t("Projects"), link: "/my-projects", icon: <Project className="!text-primary-900" /> },
-            { label: project?.name ?? "", link: `/project/${project?.uuid}` }
-          ],
-          linkRouter: NextLinkAdapter,
-          size: "default"
-        }}
+        breadcrumbs={[
+          { label: t("Projects"), link: "/my-projects", icon: <Project className="!text-theme-primary-900" /> },
+          { label: project?.name ?? "", link: `/project/${project?.uuid}` }
+        ]}
         suffix={
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
@@ -282,15 +191,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
             ))}
           </div>
         }
-        title={project?.name ?? ""}
-        description={project.description}
-        tag={{ state: "not-started" }}
-        organization={project.organisationName ?? ""}
-        startDate={formatMonthYear((project as any).plantingStartDate)}
-        endDate={formatMonthYear((project as any).plantingEndDate)}
-        country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
-        countryFlag={countryCodeToFlag(project.country ?? "", countryOptions ?? undefined)}
-        team={teamMembers}
         toolbar={{
           tabBar: {
             tabs: tabBarTabs,
