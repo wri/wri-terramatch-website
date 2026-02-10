@@ -124,7 +124,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entry
       <>
         <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
           <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
-            {t(`Total Created:`)}
+            {domain === "demographics" ? t("Total Created:") : t("Total:")}
           </Text>
         </div>
         <div
