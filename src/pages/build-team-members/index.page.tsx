@@ -22,12 +22,14 @@ import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+import Log from "@/utils/log";
+import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 interface BuildTeamMembersPageProps {
   project: ProjectFullDto;
 }
 
-export const teamMemberRoleChoices = [
+export const TEAM_MEMBER_ROLE_CHOICES = [
   {
     id: "admin-ppc",
     name: "PPC Admin"
@@ -59,8 +61,9 @@ const teamMembersFormatted = (
   role: string
 ) => {
   return teamMembers?.map((member, index) => ({
+    uuid: member?.uuid,
     name: `${member.first_name} ${member.last_name}`,
-    organization: member?.organisation?.name,
+    organization: (member as any)?.organisation?.name,
     email: member?.email_address,
     role: role,
     status: member?.status,
@@ -74,30 +77,51 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
+  // will be replaced once these endpoints are migrated to V3.
+  // Related migration ticket: TM-2996
+
+  const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{
+    data: GetV2ProjectsUUIDPartnersResponse;
+  }>({
+    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
+  });
+
+  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDManagersResponse }>({
+    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
+  });
+
+  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
+  const { deletePartner: deleteManager } = useDeleteAssociate("manager", project, refetch);
+
   const handleInvite = () => {
     openModal(
       ModalId.INVITE_MONITORING_PSRTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID="123" onSuccess={() => {}} />
+      <InviteMonitoringPartnerModal projectUUID={project?.uuid} onSuccess={() => { }} />
     );
   };
 
   const ModalConfirmDeletePartner = useCallback(
-    (email_address: string) => {
+    (rowData: RowData) => {
       openModal(
         ModalId.MODAL_CONFIRM_DELETE_PARTNER,
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={"REMOVE MONITORING PARTNER?"}
+          title={t("REMOVE MONITORING PARTNER?")}
           content={t(
             "Remove {email_address} as Monitoring Partner to Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County International Tree Foundation??",
             {
-              email_address
+              email_address: rowData?.email
             }
           )}
           primaryButtonProps={{
             children: t("Confirm"),
             onClick: () => {
-              console.log("deletePartner", email_address);
+              if (rowData.role === "monitoring-partner") {
+                deletePartner(rowData?.email);
+              } else if (rowData.role === "project-manager") {
+                deleteManager(rowData?.uuid ?? "");
+              }
               closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
             }
           }}
@@ -111,44 +135,20 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
     [closeModal, openModal, t]
   );
 
-  // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
-  // will be replaced once these endpoints are migrated to V3.
-  // Related migration ticket: TM-2996
-
-  const { data: partners } = useGetV2ProjectsUUIDPartners<{
-    data: GetV2ProjectsUUIDPartnersResponse;
-  }>({
-    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
-  });
-
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDManagersResponse }>({
-    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
-  });
-
   const teamMembers = useMemo(() => {
     const all = [
       ...teamMembersFormatted(partners?.data ?? [], "monitoring-partner"),
       ...teamMembersFormatted(managers?.data ?? [], "project-manager")
     ].filter(member => (selectedRole ? member.role === selectedRole : true));
 
-    if (!searchQuery.trim()) return all;
-
     const q = searchQuery.trim().toLowerCase();
-    return all.filter(
-      member =>
-        String(member.name ?? "")
-          .toLowerCase()
-          .includes(q) ||
-        String(member.organization ?? "")
-          .toLowerCase()
-          .includes(q) ||
-        String(member.email ?? "")
-          .toLowerCase()
-          .includes(q) ||
-        String(member.role ?? "")
-          .toLowerCase()
-          .includes(q)
-    );
+    if (q.length === 0) return all;
+    return all.filter(member => {
+      const includes = (key: "name" | "organization" | "email" | "role") =>
+        typeof member[key] === "string" && (member[key] as string).toLowerCase().includes(q);
+
+      return includes("name") || includes("organization") || includes("email") || includes("role");
+    });
   }, [partners?.data, managers?.data, selectedRole, searchQuery]);
 
   return (
@@ -157,17 +157,21 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
         className="!px-0"
         filters={[
           {
-            mainActionLabel: "Role",
+            mainActionLabel: t("Role"),
             variant: "secondary",
             mainActionOnClick: () =>
               setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
             otherActions: [
               {
-                label: "Monitoring Partner",
+                label: t("Monitoring Partner"),
                 value: "monitoring-partner",
                 onClick: () => setSelectedRole("monitoring-partner")
               },
-              { label: "Project Manager", value: "project-manager", onClick: () => setSelectedRole("project-manager") }
+              {
+                label: t("Project Manager"),
+                value: "project-manager",
+                onClick: () => setSelectedRole("project-manager")
+              }
             ]
           }
         ]}
@@ -185,7 +189,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
           count: teamMembers.length
         }}
         button={{
-          children: "Add Team Member",
+          children: t("Add Team Member"),
           leftIcon: <UserAdd />,
           onClick: handleInvite
         }}
@@ -209,14 +213,16 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
               <ChakraTableCell>{rowData?.organization}</ChakraTableCell>
               <ChakraTableCell>{rowData?.email}</ChakraTableCell>
               <ChakraTableCell>
-                {rowData?.role ? teamMemberRoleChoices.find(choice => choice.id === rowData?.role)?.name : "-"}
+                {rowData?.role != null
+                  ? TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.role)?.name
+                  : "-"}
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.status}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   button={{
-                    children: "Edit",
-                    onClick: () => console.log("Edit"),
+                    children: t("Edit"),
+                    onClick: () => Log.debug("Edit team member click"),
                     leftIcon: (
                       <Edit
                         className="!text-theme-neutral-900"
@@ -230,9 +236,9 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                     )
                   }}
                   buttonSecondary={{
-                    children: "Remove",
+                    children: t("Remove"),
                     variant: "secondary",
-                    onClick: () => ModalConfirmDeletePartner((rowData as any).email as string),
+                    onClick: () => ModalConfirmDeletePartner(rowData),
                     leftIcon: (
                       <Delete
                         className="!text-theme-error-500"
