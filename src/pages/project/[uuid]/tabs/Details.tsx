@@ -1,11 +1,16 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC } from "react";
+import * as yup from "yup";
 
-import ButtonField from "@/components/elements/Field/ButtonField";
+import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { getFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { v3EntityName } from "@/helpers/entity";
+import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
@@ -15,182 +20,115 @@ interface ProjectDetailsTabProps {
   project: ProjectFullDto;
 }
 
-const EditButton = ({ onClick }: { onClick: () => void }) => (
+const EditButton: FC<{ onClick: () => void }> = ({ onClick }) => (
   <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={onClick}>
     Edit
   </Button>
 );
 
+const getFieldsRequiringAttentionCount = (
+  validation: yup.ObjectSchema<Record<string, unknown>>,
+  values: Record<string, unknown> | undefined
+): number => {
+  if (values == null) return 0;
+  try {
+    validation.validateSync(values, { abortEarly: false });
+    return 0;
+  } catch (err: unknown) {
+    const yupError = err as { inner?: unknown[] };
+    return yupError.inner?.length ?? 0;
+  }
+};
+
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
-  const { framework } = useFrameworkContext();
-  const countryOptions = useGadmOptions({ level: 0 });
+  const router = useRouter();
+  const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
+    "projects",
+    project?.uuid
+  );
 
-  const restorationOptions = getRestorationStrategyOptions(t);
+  const formValues = defaultValues ?? {};
 
-  const filterRestorationStrategyOptions = restorationOptions
-    .filter(option => project.restorationStrategy?.includes(option.value as string))
-    .map(option => option.value.toString());
-
-  const landUseTypesOptions = useGetOptions(project.landUseTypes);
-  const restorationStrategyOptions = useGetOptions(filterRestorationStrategyOptions);
-  const detailedInterventionTypeOptions = useGetOptions(project.detailedInterventionTypes);
-
-  const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
-  });
-
-  const handleInvite = () => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
-    );
-  };
-
-  const downloadButtons: JSX.Element[] = [];
-  if (framework === Framework.PPC) {
-    project.file.forEach(({ url, fileName }) => {
-      if (url != null) {
-        downloadButtons.push(
-          <ButtonField
-            key={url}
-            label={t("Files")}
-            subtitle={fileName}
-            subtitleClassName="break-words whitespace-normal max-w-[450px]"
-            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-            style={{ marginBottom: "10px" }}
-          />
-        );
-      }
-    });
-    project.otherAdditionalDocuments.forEach(({ url, fileName }) => {
-      if (url != null) {
-        downloadButtons.push(
-          <ButtonField
-            key={url}
-            label={t("Other Documents")}
-            subtitle={fileName}
-            subtitleClassName="break-words whitespace-normal max-w-[450px]"
-            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-            style={{ marginBottom: "10px" }}
-          />
-        );
-      }
-    });
-  } else if (framework === Framework.TF_LANDSCAPES) {
-    project.proofOfLandTenureMou.forEach(({ url, fileName }) => {
-      if (url != null) {
-        downloadButtons.push(
-          <ButtonField
-            key={url}
-            label={t("Land Tenure MOU")}
-            subtitle={fileName}
-            subtitleClassName="break-words whitespace-normal max-w-[450px]"
-            buttonProps={{ as: Link, children: t("Download"), href: url, download: true }}
-          />
-        );
-      }
-    });
+  if (isFormLoading || !providerLoaded) {
+    return null;
   }
 
   return (
     <PageBody>
       <Flex flexDirection="column" gap={2}>
-        <Accordion
-          header={<AccordionHeader title="Project Overview" status="success" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <Flex flexDirection="column" gap={3}>
-            <Flex direction="column" gap={1}>
-              <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                Project name:
-              </Text>
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Project Name
-              </Text>
-            </Flex>
-            <Flex direction="column" gap={1}>
-              <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                Continent:
-              </Text>
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Continent
-              </Text>
-            </Flex>
-            <Flex direction="column" gap={1}>
-              <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                Country:
-              </Text>
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Country
-              </Text>
-            </Flex>
-            <Flex direction="column" gap={1}>
-              <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                Objectives:
-              </Text>
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum in lorem in rutrum.
-                Vestibulum in dictum turpis, id congue augue. Aliquam aliquam turpis iaculis bibendum fermentum. Nam
-                pretium viverra ante, vel posuere arcu porttitor quis. Pellentesque a porttitor purus, a molestie orci.
-                Quisque sodales porttitor leo nec dignissim. Morbi tincidunt leo tincidunt rutrum tristique. Mauris quis
-                cursus sapien, vitae pellentesque mauris.{" "}
-              </Text>
-              <br />
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum in lorem in rutrum.
-                Vestibulum in dictum turpis, id congue augue. Aliquam aliquam turpis iaculis bibendum fermentum. Nam
-                pretium viverra ante, vel posuere arcu porttitor quis. Pellentesque a porttitor purus, a molestie orci.
-                Quisque sodales porttitor leo nec dignissim. Morbi tincidunt leo tincidunt rutrum tristique. Mauris quis
-                cursus sapien, vitae pellentesque mauris.{" "}
-              </Text>
-              <br />
-              <Text fontSize="16px" lineHeight="24px" color="neutral.900">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vestibulum in lorem in rutrum.
-                Vestibulum in dictum turpis, id congue augue. Aliquam aliquam turpis iaculis bibendum fermentum. Nam
-                pretium viverra ante, vel posuere arcu porttitor quis. Pellentesque a porttitor purus, a molestie orci.
-                Quisque sodales porttitor leo nec dignissim. Morbi tincidunt leo tincidunt rutrum tristique. Mauris quis
-                cursus sapien, vitae pellentesque mauris.{" "}
-              </Text>
-            </Flex>
-          </Flex>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Tree Restoration Goals" status="success" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Land Restoration Goals" status="success" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Sitting Strategy" badge="2 require attention" status="error" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Nursery Strategy" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Socioeconomic Objectives" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
-        <Accordion
-          header={<AccordionHeader title="Community Engagement" />}
-          actions={<EditButton onClick={() => console.log("Edit clicked")} />}
-        >
-          <div>content</div>
-        </Accordion>
+        {steps.map(step => {
+          const isValid = step.validation.isValidSync(formValues);
+          const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
+          const entries = getFormEntries(
+            fieldsProvider,
+            {
+              stepId: step.id,
+              values: formValues,
+              nullText: "Answer Not Provided",
+              type: "projects",
+              entity: { entityName: "projects", entityUUID: project.uuid }
+            },
+            t
+          );
+
+          return (
+            <Accordion
+              key={step.id}
+              header={
+                <AccordionHeader
+                  title={step.title ?? ""}
+                  status={isValid ? "complete" : "error"}
+                  badge={
+                    !isValid && fieldsRequiringAttention > 0
+                      ? t("{count} requires attention", { count: fieldsRequiringAttention })
+                      : undefined
+                  }
+                />
+              }
+              actions={
+                <EditButton
+                  onClick={() =>
+                    router.push(
+                      `/entity/${v3EntityName("projects")}/edit/${
+                        project?.uuid
+                      }?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`
+                    )
+                  }
+                />
+              }
+            >
+              <Flex flexDirection="column" gap={3}>
+                {entries.map((entry, index) => (
+                  <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
+                    <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
+                      {entry.title}
+                    </Text>
+                    {(() => {
+                      const rawValue = entry.value ?? "-";
+                      if (typeof rawValue === "string" || typeof rawValue === "number") {
+                        return (
+                          <Text
+                            fontSize="16px"
+                            lineHeight="24px"
+                            color="neutral.900"
+                            dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
+                          />
+                        );
+                      }
+
+                      return (
+                        <Text fontSize="16px" lineHeight="24px" color="neutral.900">
+                          {formatEntryValue(rawValue)}
+                        </Text>
+                      );
+                    })()}
+                  </Flex>
+                ))}
+              </Flex>
+            </Accordion>
+          );
+        })}
       </Flex>
     </PageBody>
   );
