@@ -2,9 +2,10 @@ import { Box, Flex, FlexProps, Text, useMediaQuery } from "@chakra-ui/react";
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, ReactNode, useCallback, useMemo } from "react";
+import { FC, ReactNode, useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useModalContext } from "@/context/modal.provider";
@@ -18,6 +19,7 @@ import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRight, Download } from "@/redesignComponents/foundations/Icons";
+import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
@@ -66,6 +68,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const t = useT();
   const { openModal } = useModalContext();
   const [isLargerResolution] = useMediaQuery(["(min-width: 1500px)"]);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
@@ -103,6 +106,21 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     );
   }, [openModal, project.uuid, refetchPartners]);
 
+  const handleDownloadPolygons = async () => {
+    if (!project?.uuid || !project?.name) return;
+
+    setIsDownloading(true);
+    try {
+      await downloadProjectSitePolygonsGeoJson(project.uuid, project.name, {
+        includeExtendedData: true
+      });
+    } catch (error) {
+      Log.error("Failed to download project polygons:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <PageBody>
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
@@ -121,7 +139,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "Download Project Polygons",
-              leftIcon: <Download />
+              leftIcon: <Download />,
+              onClick: handleDownloadPolygons,
+              loading: isDownloading
             }}
           >
             <Box className="relative h-auto">
