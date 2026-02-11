@@ -10,6 +10,7 @@ export interface BreadcrumbProps {
   maxItems?: number;
   linkRouter: any;
   size?: "small" | "default";
+  className?: string;
 }
 
 const StyledBreadcrumbWrapper = styled.div`
@@ -22,10 +23,10 @@ const StyledBreadcrumbWrapper = styled.div`
 `;
 
 const Breadcrumb: FC<BreadcrumbProps> = props => {
-  const { links = [], separator, maxItems, linkRouter, size } = props;
+  const { links = [], separator, maxItems, linkRouter, size, className } = props;
 
   return (
-    <StyledBreadcrumbWrapper>
+    <StyledBreadcrumbWrapper className={className}>
       <WriBreadcrumb links={links} separator={separator} maxItems={maxItems} linkRouter={linkRouter!} size={size} />
     </StyledBreadcrumbWrapper>
   );

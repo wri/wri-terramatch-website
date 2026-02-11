@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
+import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
@@ -22,6 +23,9 @@ import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import { Project } from "@/redesignComponents/foundations/Icons/Project";
+import Breadcrumb from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -30,7 +34,6 @@ import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-
 export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
   models: FormModelsDefinition;
@@ -239,7 +242,7 @@ function WizardForm(props: WizardFormProps) {
             : "unstarted"
           : "error";
         return {
-          title: t(`Step {number}<br/> <p class="text-14-light">{title} </p>`, { number: index + 1, title }),
+          title: t(`{title}`, { title }),
           state,
           renderBody: () => {
             if (!stepsVisited.current.includes(index)) stepsVisited.current.push(index);
@@ -252,7 +255,7 @@ function WizardForm(props: WizardFormProps) {
 
   const summaryItem = useMemo(
     (): TabItem => ({
-      title: t(`Step {number}<br/> {title}`, { number: lastIndex + 1, title: props.summaryOptions?.title }),
+      title: t(`{title}`, { title: props.summaryOptions?.title }),
       renderBody: () => {
         const submitButtonDisable =
           props.submitButtonDisable ||
@@ -273,7 +276,6 @@ function WizardForm(props: WizardFormProps) {
     }),
     [
       t,
-      lastIndex,
       props.summaryOptions?.title,
       props.summaryOptions?.subtitle,
       props.summaryOptions?.downloadButtonText,
@@ -313,13 +315,27 @@ function WizardForm(props: WizardFormProps) {
               subtitle={props.subtitle}
             />
           )}
-          <div className={twMerge("mx-auto mt-0 max-w-[82vw] px-6 py-6 xl:px-0", props.className)}>
+          <div className={twMerge("flex w-full flex-col", props.className)}>
+            <Breadcrumb
+              links={[
+                { label: "projects", link: "/my-projects", icon: <Project /> },
+                { label: "Project Name", link: `/project/${props.projectDetails?.uuid}` },
+                { label: "Edit", link: `/entity/projects/edit/${props.projectDetails?.uuid}` }
+              ]}
+              linkRouter={Link}
+              className="bg-theme-neutral-100 py-2 px-6"
+            />
+            <PageHeader
+              tag={{
+                state: "draft"
+              }}
+              title="Project Name"
+            />
             <Tabs
               onChangeSelected={setSelectedStepIndex}
               selectedIndex={selectedStepIndex}
               tabItems={tabItems}
               rounded={props.roundedCorners}
-              tabListClassName="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]"
               itemOption={{}}
               carouselOptions={{
                 slidesPerView: 3
