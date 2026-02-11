@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC } from "react";
 
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
@@ -19,10 +19,6 @@ export interface TeamSectionProps {
 
 const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers }) => {
   const t = useT();
-
-  const handleAddTeamClick = useCallback(() => {
-    onAddTeamClick();
-  }, [onAddTeamClick]);
 
   return (
     <Box
@@ -55,7 +51,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
               tabIndex={0}
               className="group cursor-pointer gap-1"
               role="button"
-              onClick={handleAddTeamClick}
+              onClick={onAddTeamClick}
               css={{
                 "&:hover .avatar-add": {
                   opacity: "0.8",

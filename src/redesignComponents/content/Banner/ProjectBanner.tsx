@@ -10,6 +10,22 @@ import ViewToolbar from "@/redesignComponents/navigation/Toolbar/ViewToolbar";
 
 import ProjectHeader from "../headers/PageHeaders/ProjectHeader";
 
+interface NextLinkAdapterProps {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const NextLinkAdapter = forwardRef<HTMLAnchorElement, NextLinkAdapterProps>(
+  ({ to, children, className, ...props }, ref) => (
+    <Link href={to} ref={ref} className={className} {...props}>
+      {children}
+    </Link>
+  )
+);
+
+NextLinkAdapter.displayName = "NextLinkAdapter";
+
 export interface ProjectBannerProps {
   breadcrumbs: { label: string; link: string; icon?: React.ReactNode }[];
   suffix: React.ReactNode;
@@ -29,14 +45,6 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
   onAddTeamClick,
   gotoTeamMembers
 }) => {
-  const NextLinkAdapter = forwardRef<HTMLAnchorElement, { to: string; children: React.ReactNode; className?: string }>(
-    ({ to, children, className, ...props }, ref) => (
-      <Link href={to} ref={ref} className={className} {...props}>
-        {children}
-      </Link>
-    )
-  );
-  NextLinkAdapter.displayName = "NextLinkAdapter";
   return (
     <>
       <Box className={classNames("border-theme-neutral-300 sticky z-20 border-b px-1", className)}>
