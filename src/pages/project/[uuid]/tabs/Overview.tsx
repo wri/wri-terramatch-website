@@ -216,7 +216,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   </Text>
                 </Box>
               </Box>
-              <Flex alignItems="center">
+              <Flex alignItems="center" flexWrap="wrap">
                 <Text color="neutral.900" fontSize="14px" lineHeight="20px">
                   {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
                 </Text>
