@@ -48,7 +48,7 @@ const mockProject: ProjectFullDto = {
   name: "Restoration project in the Congo Basin",
   shortName: "Congo Basin Project",
   plantingStartDate: "2024-01-01T00:00:00.000Z",
-  country: "COD",
+  country: "Republic of the Congo",
   lat: null,
   long: null,
   totalHectaresRestoredSum: 1500,
@@ -60,7 +60,7 @@ const mockProject: ProjectFullDto = {
   feedbackFields: null,
   cohort: null,
   continent: "Africa",
-  states: ["COD"],
+  states: ["Republic of the Congo"],
   projectCountyDistrict: null,
   plantingEndDate: "2026-12-31T00:00:00.000Z",
   description: "High-impact restoration project in the Congo Basin."
@@ -76,7 +76,13 @@ const baseArgs: ProjectBannerProps = {
   toolbar: {
     tabBar: mockTabBar
   },
-  project: mockProject
+  project: mockProject,
+  onAddTeamClick: () => {
+    console.log("Add team clicked");
+  },
+  gotoTeamMembers: () => {
+    console.log("Go to team members clicked");
+  }
 };
 
 export const Default: Story = {

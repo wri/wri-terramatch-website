@@ -41,7 +41,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
           {t("Team:")}
         </Text>
         <Flex className="flex-wrap">
-          {team != null ? (
+          {team != null && team.length > 0 ? (
             team.map(member => (
               <Box key={member.name} className="h-10 w-7">
                 <Box className="absolute">
