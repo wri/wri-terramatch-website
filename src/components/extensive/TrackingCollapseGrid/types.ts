@@ -419,17 +419,20 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
   }
 };
 
-const HECTARES_RESTORED_YEARS: Dictionary<string> = {
-  "1-year": "1 year",
-  "2-year": "2 year",
-  unknown: "Unknown"
+const HISTORICAL_YEARS: Dictionary<string> = {
+  "3-year": "Last 3 Years",
+  older: "More than 3 Years Ago"
 };
 
-const HECTARES_STRATEGY: Dictionary<string> = {
+const GOAL_YEARS: Dictionary<string> = {
+  "1-year": "First Year",
+  "2-year": "Second Year"
+};
+
+const GOAL_STRATEGY: Dictionary<string> = {
   anr: "Assisted Natural Regeneration",
   "direct-seeding": "Direct Seeding",
-  planting: "Planting",
-  unknown: "Unknown"
+  planting: "Planting"
 };
 
 const LAND_USE: Dictionary<string> = {
@@ -439,24 +442,34 @@ const LAND_USE: Dictionary<string> = {
   "open-natural-ecosystem": "Open Natural Ecosystem",
   peatland: "Peatland",
   "riparian-area-or-wetland": "Riparian Area or Wetland",
-  "riparian-area-wetland-or-mangrove": "Riparian Area, Wetland or Mangrove",
   silvopasture: "Silvopasture",
   "urban-forest": "Urban Forest",
-  "woodlot-or-plantation": "Woodlot or Plantation",
-  unknown: "Unknown"
+  "woodlot-or-plantation": "Woodlot or Plantation"
 };
 
-const HECTARES_RESTORED: Dictionary<TypeMapValue> = {
+const HISTORICAL: Dictionary<TypeMapValue> = {
   years: {
     title: "Years",
-    typeMap: HECTARES_RESTORED_YEARS,
+    typeMap: HISTORICAL_YEARS,
+    balanced: true
+  }
+};
+
+const TREES_GOAL: Dictionary<TypeMapValue> = {
+  years: {
+    title: "Years",
+    typeMap: GOAL_YEARS,
     balanced: true
   },
   strategy: {
     title: "Strategy",
-    typeMap: HECTARES_STRATEGY,
+    typeMap: GOAL_STRATEGY,
     balanced: true
-  },
+  }
+};
+
+const HECTARES_GOAL: Dictionary<TypeMapValue> = {
+  ...TREES_GOAL,
   "land-use": {
     title: "Land Use",
     typeMap: LAND_USE,
@@ -465,7 +478,11 @@ const HECTARES_RESTORED: Dictionary<TypeMapValue> = {
 };
 
 const getRestorationTypeMap = (type: TrackingType) => {
-  return HECTARES_RESTORED;
+  if (type === "treesGoal") {
+    return TREES_GOAL;
+  } else if (type === "hectaresGoal") {
+    return HECTARES_GOAL;
+  } else return HISTORICAL;
 };
 
 export const getTypeMap = (
