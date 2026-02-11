@@ -82,10 +82,10 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
           cell: props => {
             const value = props.getValue() as string;
             const statusProps = getActionCardStatusMapper(t)[value];
-            const propsForCell =
-              statusProps && "status" in statusProps && "statusText" in statusProps
-                ? { status: statusProps.status as Status, statusText: statusProps.statusText }
-                : undefined;
+            const status = statusProps?.status;
+            const statusText = statusProps?.statusText;
+            const propsForCell: { status: Status; statusText: string } | undefined =
+              status != null && typeof statusText === "string" ? { status: status as Status, statusText } : undefined;
             return <StatusTableCell statusProps={propsForCell} />;
           }
         },
@@ -96,10 +96,10 @@ const CompletedReportsTable: FC<CompletedReportsTableProps> = ({ modelName, mode
             const value = props.getValue() as string;
             if (value === "no-update") return t("N/A");
             const statusProps = getActionCardStatusMapper(t)[value];
-            const propsForCell =
-              statusProps && "status" in statusProps && "statusText" in statusProps
-                ? { status: statusProps.status as Status, statusText: statusProps.statusText }
-                : undefined;
+            const status = statusProps?.status;
+            const statusText = statusProps?.statusText;
+            const propsForCell: { status: Status; statusText: string } | undefined =
+              status != null && typeof statusText === "string" ? { status: status as Status, statusText } : undefined;
             return <StatusTableCell statusProps={propsForCell} />;
           }
         },
