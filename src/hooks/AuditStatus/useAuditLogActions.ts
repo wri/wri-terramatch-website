@@ -42,7 +42,7 @@ interface AuditLogActionsResponse {
   auditLogData: { data: AuditStatusDto[] } | undefined;
   refetch: () => void;
   isLoading: boolean;
-  auditData: { entity: string; entity_uuid: string };
+  auditData: { entity: string; entityUuid: string };
 }
 
 const useAuditLogActions = ({
@@ -264,7 +264,7 @@ const useAuditLogActions = ({
     auditLogData,
     refetch,
     isLoading,
-    auditData: { entity: ReverseButtonStates2[buttonToggle!], entity_uuid: entityHandlers.selectedEntityItem?.uuid }
+    auditData: { entity: ReverseButtonStates2[buttonToggle!], entityUuid: entityHandlers.selectedEntityItem?.uuid }
   };
 };
 

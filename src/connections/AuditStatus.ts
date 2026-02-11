@@ -1,8 +1,10 @@
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, creationHook } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
 import {
   createAuditStatus,
   CreateAuditStatusPathParams,
+  deleteAuditStatus,
   getAuditStatuses,
   GetAuditStatusesPathParams
 } from "@/generated/v3/entityService/entityServiceComponents";
@@ -28,6 +30,26 @@ const auditStatusCreateConnection = v3Resource("auditStatuses", createAuditStatu
   .buildConnection();
 
 export const useCreateAuditStatus = creationHook(auditStatusCreateConnection);
+
+export const createAuditStatusDeleter = (entity: AuditStatusEntityType, uuid: string) => {
+  const baseDeleter = deleterAsync("auditStatuses", deleteAuditStatus, (auditUuid: string) => ({
+    pathParams: { entity, uuid, auditUuid }
+  }));
+
+  return async function deleteAuditStatusResource(auditUuid: string): Promise<void> {
+    await baseDeleter(auditUuid);
+    ApiSlice.pruneIndex("auditStatuses", "");
+  };
+};
+
+export const deleteAuditStatusAsync = async (
+  auditUuid: string,
+  entity: AuditStatusEntityType,
+  uuid: string
+): Promise<void> => {
+  const deleter = createAuditStatusDeleter(entity, uuid);
+  await deleter(auditUuid);
+};
 
 export const formatAuditStatusEntityForDisplay = (entityType: AuditStatusEntityType): string => {
   if (entityType === "sitePolygons") {

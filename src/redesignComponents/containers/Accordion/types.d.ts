@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 
-export interface ExtendableCardProps {
+export type AccordionVariant = "primary" | "secondary";
+
+export interface AccordionProps {
   children: ReactNode;
   header: ReactNode;
   actions?: ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: AccordionVariant;
   className?: string;
 }
 
