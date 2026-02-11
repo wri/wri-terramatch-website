@@ -17,7 +17,7 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRight, Download } from "@/redesignComponents/foundations/Icons";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
@@ -32,17 +32,21 @@ interface ProjectOverviewTabProps {
 interface OverviewItemProps {
   title: string;
   buttonProps?: IButtonProps;
+  downloadButtonProps?: IButtonProps;
   children?: ReactNode;
   flexProps?: FlexProps;
 }
 
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, children, flexProps }) => (
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
       <Text color="primary.900" fontSize="20px" lineHeight="28px">
         {title}
       </Text>
-      {buttonProps ? <Button {...buttonProps} /> : null}
+      <Flex gap={4}>
+        {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
+        {buttonProps ? <Button {...buttonProps} /> : null}
+      </Flex>
     </Flex>
     {children}
   </Flex>
@@ -112,6 +116,12 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               children: "View Sites",
               rightIcon: <ChevronRight />,
               onClick: () => goToTab("sites")
+            }}
+            downloadButtonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "Download Project Polygons",
+              leftIcon: <Download />
             }}
           >
             <Box className="relative h-auto">
