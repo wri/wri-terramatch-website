@@ -10,6 +10,14 @@ import { sortByDate } from "@/utils/sort";
 import { IconNames } from "../../Icon/Icon";
 import ActionTrackerCard, { getActionCardStatusMapper } from "../ActionTrackerCard";
 import { ActionTrackerCardRowProps } from "../ActionTrackerCardRow";
+import {
+  type ReportActionTarget,
+  filterDisplayableReportActions,
+  getProjectName,
+  getProjectUuid,
+  getTaskUuid,
+  groupSiteAndNurseryReportsByTask
+} from "./ReportsCard.utils";
 
 export type ReportsCardProps = {
   actions?: ActionDto[];
@@ -22,67 +30,97 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
   const reportActions = useMemo(() => {
     if (!actions) return [];
-    return sortByDate(actions, "target.updatedAt")
-      .filter(action => action.target != null)
-      .slice(0, 5)
-      .map(action => {
-        const target = action.target as any;
-        const project = target?.project ?? target;
-        const type = action.targetableType;
-        const status = getEntityCombinedStatus(target);
 
-        let dueText = t("<strong>Due:</strong> {date}", { date: format(target?.dueAt) });
-        let subtitle;
-        let ctaText;
-        let ctaLink;
+    const displayableActions = filterDisplayableReportActions(actions);
+    const projectReportActions = displayableActions.filter(a => a.targetableType === "projectReports");
+    const siteAndNurseryByTask = groupSiteAndNurseryReportsByTask(displayableActions);
 
-        switch (type) {
-          case "projectReports": {
-            ctaText = t("View Report(s)");
-            subtitle = action.text;
+    type CardWithSort = { card: ActionTrackerCardRowProps; sortAt: string };
 
-            if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
-                target?.task?.uuid ?? target?.taskUuid
-              }`;
-            } else ctaLink = getEntityDetailPageLink("project-reports", target?.uuid);
-            break;
-          }
-          case "nurseryReports": {
-            ctaText = t("View Report(s)");
-            subtitle = t("<strong>Nursery:</strong> {name}", { name: target?.nursery?.name });
+    const cardsWithSort: CardWithSort[] = [];
 
-            if (status?.includes("due")) {
-              ctaLink = `/project/${target?.project?.uuid ?? target?.projectUuid}/reporting-task/${
-                target?.task?.uuid ?? target?.taskUuid
-              }`;
-            } else ctaLink = `reports/nursery-report/${target?.uuid}`;
-            break;
-          }
-          case "siteReports": {
-            ctaText = t("View Report(s)");
-            subtitle = t("<strong>Site:</strong> {name}", { name: target?.site?.name });
+    projectReportActions.forEach(action => {
+      const target = action.target as ReportActionTarget;
+      const status = getEntityCombinedStatus(target);
+      const projectUuid = getProjectUuid(target);
+      const taskUuid = getTaskUuid(target);
+      const dueText = target?.dueAt ? t("<strong>Due:</strong> {date}", { date: format(target.dueAt) }) : "";
+      const ctaLink =
+        status?.includes("due") && projectUuid && taskUuid
+          ? `/project/${projectUuid}/reporting-task/${taskUuid}`
+          : getEntityDetailPageLink("project-reports", target?.uuid ?? "");
 
-            if (status?.includes("due")) {
-              ctaLink = `/project/${
-                target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid
-              }/reporting-task/${target?.task?.uuid ?? target?.taskUuid}`;
-            } else ctaLink = `reports/site-report/${target?.uuid}`;
-            break;
-          }
-        }
-
-        return {
-          ...getActionCardStatusMapper(t)[status!],
+      cardsWithSort.push({
+        sortAt: target?.updatedAt ?? "",
+        card: {
+          ...getActionCardStatusMapper(t)[status ?? "started"],
           ctaLink,
-          ctaText,
-          title: project?.name,
-          subtitle: `${subtitle != null ? `${subtitle}\n` : ""}${target?.dueAt != null ? dueText : ""}`,
+          ctaText: t("View Report(s)"),
+          title: getProjectName(target) ?? "",
+          subtitle: `${action.text ?? ""}\n${dueText}`.trim(),
           updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
-            date: format(target.updatedAt)
+            date: format(target?.updatedAt ?? "")
           })
-        } as ActionTrackerCardRowProps;
+        } as ActionTrackerCardRowProps
       });
+    });
+
+    siteAndNurseryByTask.forEach(({ siteReports, nurseryReports }, taskUuid) => {
+      const hasProjectReportForTask = projectReportActions.some(a => {
+        const tgt = a.target as ReportActionTarget;
+        return getTaskUuid(tgt) === taskUuid;
+      });
+      if (hasProjectReportForTask) return;
+
+      const allReports = [...siteReports, ...nurseryReports];
+      const representative = allReports[0];
+      if (!representative) return;
+
+      const target = representative.target as ReportActionTarget;
+      const projectUuid = getProjectUuid(target);
+      if (!projectUuid) return;
+
+      const statuses = allReports.map(r => getEntityCombinedStatus(r.target as ReportActionTarget));
+      const status = statuses.some(
+        s => s?.includes("needs-more-information") || s?.includes("requires-more-information")
+      )
+        ? "needs-more-information"
+        : statuses.some(s => s?.includes("due"))
+        ? "due"
+        : "started";
+
+      const maxUpdatedAt = allReports.reduce<string>((max, r) => {
+        const u = (r.target as ReportActionTarget)?.updatedAt ?? "";
+        return u > max ? u : max;
+      }, "");
+      const dueDates = allReports
+        .map(r => (r.target as ReportActionTarget)?.dueAt)
+        .filter((d): d is string => Boolean(d));
+      const earliestDue =
+        dueDates.length > 0 ? [...dueDates].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] : null;
+
+      const dueText = earliestDue ? t("<strong>Due:</strong> {date}", { date: format(earliestDue) }) : "";
+      const subtitle = t("Site and nursery reports available");
+      const ctaLink = `/project/${projectUuid}/reporting-task/${taskUuid}`;
+
+      cardsWithSort.push({
+        sortAt: maxUpdatedAt,
+        card: {
+          ...getActionCardStatusMapper(t)[status],
+          ctaLink,
+          ctaText: t("View Report(s)"),
+          title: getProjectName(target) ?? "",
+          subtitle: `${subtitle}\n${dueText}`.trim(),
+          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
+            date: format(maxUpdatedAt)
+          })
+        } as ActionTrackerCardRowProps
+      });
+    });
+
+    return sortByDate([...cardsWithSort], "sortAt")
+      .map(({ card }) => card)
+      .slice(0, 5);
   }, [actions, format, t]);
 
   return (
