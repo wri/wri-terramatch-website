@@ -106,6 +106,18 @@ const EntityMapAndGalleryCard = ({
     ])
   );
 
+  const sortedMediaList = useMemo(
+    () =>
+      (mediaList ?? [])
+        .slice()
+        .sort((a, b) =>
+          sortOrder === "DESC"
+            ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        ),
+    [mediaList, sortOrder]
+  );
+
   // Fetch site polygons using V3 endpoint
   const { data: sitePolygonData } = useAllSitePolygons({
     entityName: modelName as "projects" | "sites",
@@ -225,7 +237,7 @@ const EntityMapAndGalleryCard = ({
             headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
           >
             <ImageGallery
-              data={mediaList ?? []}
+              data={sortedMediaList}
               entity={modelName}
               entityData={entityData}
               pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}

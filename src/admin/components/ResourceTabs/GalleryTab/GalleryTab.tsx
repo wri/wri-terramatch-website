@@ -77,6 +77,18 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ])
   );
 
+  const sortedMediaList = useMemo(
+    () =>
+      (mediaList ?? [])
+        .slice()
+        .sort((a, b) =>
+          sortOrder === "DESC"
+            ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        ),
+    [mediaList, sortOrder]
+  );
+
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -119,7 +131,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Button>
         </div>
         <ImageGallery
-          data={mediaList!}
+          data={sortedMediaList}
           entity={resource}
           entityData={ctx.record}
           pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
