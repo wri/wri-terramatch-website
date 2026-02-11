@@ -8,26 +8,27 @@ export const MRV_ONBOARDING_CONTENT = [
         "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Jobs created”) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
       reporting:
         "refers to your team’s work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification:
-        "refers to remote or field-based measurement of project progress.",
+      verification: "refers to remote or field-based measurement of project progress.",
+      mrvLinkPrefix: "Learn more in the full",
+      mrvLinkText: "MRV framework",
       mrvFrameworkLink:
         "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
       helpfulLinks: [
         {
-          title: "Glossary - Monitoring, Reporting, and Verification",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification"
+          title: "MRV Glossary",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-TerraFund-Monitoring-Reporting-Verification"
         },
         {
-          title: "TerraFund Siting Guidance",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/25201750730907-TerraFund-Siting-Guide"
+          title: "Project Establishment Checklist",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
         },
         {
-          title: "How to Prepare and Submit Your Reports on TerraMatch",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21683197977627-How-to-Prepare-Submit-Your-Reports-on-TerraMatch"
+          title: "How to Complete Your Project Profile",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21995497152027-How-to-Create-Your-TerraMatch-Project-Profile"
         },
         {
-          title: "Checklists for your TerraFund Reports",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/26920946851227-Checklists-for-your-TerraFund-Project-Nursery-and-Site-Reports"
+          title: "How to Add Partners to Your Project",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/22124468665243-How-to-Add-Partners-to-Your-Project"
         }
       ]
     }
@@ -41,18 +42,19 @@ export const MRV_ONBOARDING_CONTENT = [
         "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Jobs created”) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
       reporting:
         "refers to your team’s work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification:
-        "refers to remote or field-based measurement of project progress.",
+      verification: "refers to remote or field-based measurement of project progress.",
+      mrvLinkPrefix: "Learn more in the full",
+      mrvLinkText: "MRV framework",
       mrvFrameworkLink:
-        "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification",
+        "https://terramatchsupport.zendesk.com/hc/en-us/articles/21178354112539-The-TerraFund-Monitoring-Reporting-and-Verification-Framework?brand_id=12511322362267",
       helpfulLinks: [
         {
-          title: "Glossary - Monitoring, Reporting, and Verification",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-Monitoring-Reporting-Verification"
+          title: "MRV Glossary",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21972136717979-Glossary-TerraFund-Monitoring-Reporting-Verification"
         },
         {
-          title: "How to Prepare and Submit Your Reports on TerraMatch",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21683197977627-How-to-Prepare-Submit-Your-Reports-on-TerraMatch"
+          title: "How to Complete Your Project Profile ",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21995497152027-How-to-Create-Your-TerraMatch-Project-Profile"
         }
       ]
     }
@@ -66,13 +68,14 @@ export const MRV_ONBOARDING_CONTENT = [
         "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Workdays created”) at pre-determined intervals (for example, Year 0, Year 2.5, and Year 5 of a project).",
       reporting:
         "refers to your team’s work, filling out project, site, socioeconomic restoration partners, and disturbance reports on TerraMatch.",
-      verification:
-        "refers to remote or field-based measurement of project progress.",
+      verification: "refers to remote or field-based measurement of project progress.",
+      mrvLinkPrefix: "Learn more about project tracking in the",
+      mrvLinkText: "PPC’s Monitoring Framework",
       mrvFrameworkLink:
-        "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322085147035-How-to-Submit-Your-Quarterly-Reports-PPC",
+        "https://terramatchsupport.zendesk.com/hc/en-us/articles/13319985438363-What-is-the-Tree-Restoration-Monitoring-Framework",
       helpfulLinks: [
         {
-          title: "Glossary - Monitoring, Reporting, and Verification",
+          title: "How to Submit Your Quarterly Reports",
           link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322085147035-How-to-Submit-Your-Quarterly-Reports-PPC"
         },
         {

@@ -26,7 +26,7 @@ export const Step: FC<StepProps> = props => {
         disabled={status === "disabled"}
         onClick={onClick}
         tabIndex={-1}
-        className="group flex min-w-0 flex-1 basis-0 items-center justify-start focus-visible:outline-none"
+        className="group flex h-fit min-w-0 flex-1 basis-0 items-center justify-start focus-visible:outline-none"
       >
         <div
           role="button"
