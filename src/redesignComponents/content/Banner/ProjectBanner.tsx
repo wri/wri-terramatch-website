@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { FC, forwardRef } from "react";
@@ -45,13 +46,15 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
   onAddTeamClick,
   gotoTeamMembers
 }) => {
+  const t = useT();
+
   return (
     <>
       <Box className={classNames("border-theme-neutral-300 sticky z-20 border-b px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
             links: breadcrumbs.map(link => ({
-              label: link.label,
+              label: t(link.label),
               link: link.link,
               icon: link.icon
             })),
