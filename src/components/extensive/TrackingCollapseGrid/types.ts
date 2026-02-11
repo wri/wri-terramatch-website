@@ -56,7 +56,7 @@ export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
 export const isDemographicType = (value: unknown): value is DemographicType =>
   typeof value === "string" && DEMOGRAPHIC_TYPES.includes(value as DemographicType);
 
-export const RESTORATION_TYPES = ["trees", "hectares"] as const;
+export const RESTORATION_TYPES = ["hectaresGoal", "hectaresHistorical", "treesGoal", "treesHistorical"] as const;
 export type RestorationType = (typeof RESTORATION_TYPES)[number];
 export const isRestorationType = (value: unknown): value is RestorationType =>
   typeof value === "string" && RESTORATION_TYPES.includes(value as RestorationType);
@@ -113,12 +113,22 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
     rowLabelSingular: "Associate",
     rowLabelPlural: "Associates"
   },
-  trees: {
+  treesHistorical: {
     sectionLabel: "Total",
     rowLabelSingular: "Tree",
     rowLabelPlural: "Trees"
   },
-  hectares: {
+  treesGoal: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Tree",
+    rowLabelPlural: "Trees"
+  },
+  hectaresHistorical: {
+    sectionLabel: "Total",
+    rowLabelSingular: "Hectare",
+    rowLabelPlural: "Hectares"
+  },
+  hectaresGoal: {
     sectionLabel: "Total",
     rowLabelSingular: "Hectare",
     rowLabelPlural: "Hectares"
