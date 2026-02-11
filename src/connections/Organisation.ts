@@ -2,19 +2,24 @@ import { createSelector } from "reselect";
 
 import { selectMe, useMyUser } from "@/connections/User";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceMutator";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
   organisationCreation,
+  organisationDelete,
   organisationIndex,
-  OrganisationIndexQueryParams
+  OrganisationIndexQueryParams,
+  organisationShow,
+  organisationUpdate
 } from "@/generated/v3/userService/userServiceComponents";
-import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationFullDto, OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connected, Connection, Filter } from "@/types/connection";
 
 type OrganisationConnection = {
-  organisation?: OrganisationDto;
+  organisation?: OrganisationLightDto;
 };
 
 type UserStatus = "approved" | "rejected" | "requested";
@@ -39,10 +44,36 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
 };
 
 export const indexOrgsConnection = v3Resource("organisations", organisationIndex)
-  .index<OrganisationDto>()
+  .index<OrganisationLightDto>()
   .pagination()
   .filter<Filter<OrganisationIndexQueryParams>>()
   .buildConnection();
+
+// OrganisationFullDto from API may include lightResource even though it's not in the type
+// We need lightResource to be required (not optional) for singleFullResource constraint
+type OrganisationFullDtoWithLightResource = OrganisationFullDto & { lightResource: boolean };
+
+const organisationConnection = v3Resource("organisations", organisationShow)
+  .singleFullResource<OrganisationFullDtoWithLightResource>(({ id }) => {
+    console.log("[organisationConnection] variablesFactory called with id:", id);
+    if (id == null || id === "") {
+      console.log("[organisationConnection] Returning undefined (id is null or empty)");
+      return undefined;
+    }
+    const variables = { pathParams: { uuid: id } };
+    console.log("[organisationConnection] Returning variables:", variables);
+    return variables;
+  })
+  .update(organisationUpdate)
+  .buildConnection("organisationConnection");
+
+export const useOrganisation = connectionHook(organisationConnection);
+export const loadOrganisation = connectionLoader(organisationConnection);
+export const updateOrganisation = resourceUpdater(organisationConnection);
+
+export const deleteOrganisation = deleterAsync("organisations", organisationDelete, uuid => ({
+  pathParams: { uuid }
+}));
 
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
@@ -54,7 +85,7 @@ export const useMyOrg = (): Connected<MyOrganisationConnection> => {
 };
 
 const orgCreationConnection = v3Resource("organisations", organisationCreation)
-  .create<OrganisationDto>()
+  .create<OrganisationLightDto>()
   .buildConnection();
 
 export const createOrg = resourceCreator(orgCreationConnection);

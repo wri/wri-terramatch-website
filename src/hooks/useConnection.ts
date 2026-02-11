@@ -24,6 +24,19 @@ export function useConnection<TSelected, TProps extends OptionalProps, State>(
         const state = (getState ?? ApiSlice.getState)(store) as State;
         const selected = selector(state, stableProps);
         const loadingDone = isLoaded == null || isLoaded(selected, stableProps);
+
+        // Debug logging for organisation connection
+        if (stableProps?.id != null && String(stableProps.id).includes("15c07e71")) {
+          console.log("[useConnection] Organisation connection state:", {
+            props: stableProps,
+            selected,
+            loadingDone,
+            isLoadedResult: isLoaded != null ? isLoaded(selected, stableProps) : "no isLoaded",
+            hasLoad: load != null,
+            selectedData: (selected as any)?.data
+          });
+        }
+
         if (load != null) setTimeout(() => load(selected, stableProps));
         return loadingDone ? selected : undefined;
       },

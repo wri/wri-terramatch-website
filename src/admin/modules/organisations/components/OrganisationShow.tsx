@@ -29,6 +29,7 @@ import FinancialMetrics from "@/admin/components/ResourceTabs/HistoryTab/compone
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
+import { updateOrganisation } from "@/connections/Organisation";
 import {
   getFarmersEngagementStrategyOptions,
   getWomenEngagementStrategyOptions,
@@ -36,7 +37,6 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
@@ -53,17 +53,16 @@ const OrganisationShowActions: FC = () => {
   const { uuid, is_test } = record;
   const refresh = useRefresh();
   const queryClient = useQueryClient();
-  const { mutate: updateOrg } = usePutV2OrganisationsUUID({
-    onSuccess: async (data, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["v2", "admin", "organisations", variables.pathParams.uuid] });
-      refresh();
-    }
-  });
 
-  const toggleTestStatus = useCallback(() => {
-    // @ts-ignore
-    updateOrg({ pathParams: { uuid: uuid }, body: { is_test: !is_test } });
-  }, [is_test, updateOrg, uuid]);
+  const toggleTestStatus = useCallback(async () => {
+    try {
+      await updateOrganisation({ isTest: !is_test }, { id: uuid });
+      await queryClient.invalidateQueries({ queryKey: ["v2", "admin", "organisations", uuid] });
+      refresh();
+    } catch (error) {
+      console.error("Failed to toggle test status:", error);
+    }
+  }, [is_test, uuid, queryClient, refresh]);
 
   return <ShowActions toggleTestStatus={toggleTestStatus} />;
 };

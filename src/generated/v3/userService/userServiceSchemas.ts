@@ -50,69 +50,356 @@ export type VerificationUserRequest = {
   token: string;
 };
 
-export type OrganisationDto = {
+export type OrganisationLightDto = {
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
 };
 
-export type UserFramework = {
-  /**
-   * @example TerraFund Landscapes
-   */
-  name: string;
-  /**
-   * @example terrafund-landscapes
-   */
-  slug: string;
-};
-
-export type UserDto = {
+export type OrganisationFullDto = {
   uuid: string;
-  firstName: string | null;
-  lastName: string | null;
-  /**
-   * Currently just calculated by appending lastName to firstName.
-   */
-  fullName: string | null;
-  primaryRole: string;
-  /**
-   * @example person@foocorp.net
-   */
-  emailAddress: string;
+  status: "draft" | "pending" | "approved" | "rejected";
+  name: string | null;
+  type: string | null;
+  private: boolean;
+  isTest: boolean;
+  phone: string | null;
+  hqStreet1: string | null;
+  hqStreet2: string | null;
+  hqCity: string | null;
+  hqState: string | null;
+  hqZipcode: string | null;
+  hqCountry: string | null;
+  leadershipTeamTxt: string | null;
   /**
    * @format date-time
    */
-  emailAddressVerifiedAt: string | null;
-  locale: string | null;
-  frameworks: UserFramework[];
+  foundingDate: string | null;
+  description: string | null;
+  countries: string[] | null;
+  languages: string[] | null;
+  treeCareApproach: string | null;
+  relevantExperienceYears: number | null;
+  treesGrown3Year: number | null;
+  treesGrownTotal: number | null;
+  haRestored3Year: number | null;
+  haRestoredTotal: number | null;
+  finStartMonth: number | null;
+  webUrl: string | null;
+  facebookUrl: string | null;
+  instagramUrl: string | null;
+  linkedinUrl: string | null;
+  twitterUrl: string | null;
+  ftPermanentEmployees: number | null;
+  ptPermanentEmployees: number | null;
+  tempEmployees: number | null;
+  femaleEmployees: number | null;
+  maleEmployees: number | null;
+  youngEmployees: number | null;
+  over35Employees: number | null;
+  additionalFundingDetails: string | null;
+  communityExperience: string | null;
+  totalEngagedCommunityMembers3Yr: number | null;
+  percentEngagedWomen3Yr: number | null;
+  percentEngagedMen3Yr: number | null;
+  percentEngagedUnder353Yr: number | null;
+  percentEngagedOver353Yr: number | null;
+  percentEngagedSmallholder3Yr: number | null;
+  totalTreesGrown: number | null;
+  avgTreeSurvivalRate: number | null;
+  treeMaintenanceAftercareApproach: string | null;
+  restoredAreasDescription: string | null;
+  restorationTypesImplemented: string[] | null;
+  historicMonitoringGeojson: string | null;
+  monitoringEvaluationExperience: string | null;
+  fundingHistory: string | null;
+  engagementFarmers: string[] | null;
+  engagementWomen: string[] | null;
+  engagementYouth: string[] | null;
+  currency: string;
+  states: string[] | null;
+  district: string | null;
+  accountNumber1: string | null;
+  accountNumber2: string | null;
+  loanStatusAmount: string | null;
+  loanStatusTypes: string[] | null;
+  approachOfMarginalizedCommunities: string | null;
+  communityEngagementNumbersMarginalized: string | null;
+  landSystems: string[] | null;
+  fundUtilisation: string[] | null;
+  detailedInterventionTypes: string[] | null;
+  communityMembersEngaged3yr: number | null;
+  communityMembersEngaged3yrWomen: number | null;
+  communityMembersEngaged3yrMen: number | null;
+  communityMembersEngaged3yrYouth: number | null;
+  communityMembersEngaged3yrNonYouth: number | null;
+  communityMembersEngaged3yrSmallholder: number | null;
+  communityMembersEngaged3YrBackwardClass: number | null;
+  engagementNonYouth: string | null;
+  treeRestorationPractices: string[] | null;
+  businessModel: string | null;
+  subtype: string | null;
+  fieldStaffSkills: string | null;
+  fpcCompany: "yes" | "no" | null;
+  numOfMarginalisedEmployees: number | null;
+  benefactorsFpcCompany: string | null;
+  boardRemunerationFpcCompany: string | null;
+  boardEngagementFpcCompany: string | null;
+  biodiversityFocus: string[] | null;
+  globalPlanningFrameworks: string[] | null;
+  pastGovCollaboration: string | null;
+  engagementLandless: string | null;
+  socioeconomicImpact: string | null;
+  environmentalImpact: string | null;
+  growthStage: string | null;
+  totalEmployees: number | null;
+  additionalComments: string | null;
+  consortium: string | null;
+  femaleYouthLeadershipExample: string | null;
+  level0PastRestoration: string[] | null;
+  level1PastRestoration: string[] | null;
+  level2PastRestoration: string[] | null;
+  treesNaturallyRegeneratedTotal: number | null;
+  treesNaturallyRegenerated3Year: number | null;
+  externalTechnicalAssistance: string | null;
+  barriersToFunding: string | null;
+  capacityBuildingSupportNeeded: string | null;
+  associationsCooperatives: boolean | null;
+  territoriesOfOperation: string[] | null;
+  decisionMakingStructureDescription: string | null;
+  decisionMakingStructureIndividualsInvolved: string | null;
+  averageWorkerIncome: number | null;
+  anrPracticesPast: string[] | null;
+  anrMonitoringApproaches: string[] | null;
+  anrMonitoringApproachesDescription: string | null;
+  anrCommunicationFunders: string | null;
+  bioeconomyProducts: string | null;
+  bioeconomyTraditionalKnowledge: string | null;
+  bioeconomyProductProcessing: string | null;
+  bioeconomyBuyers: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type OrganisationFilterDto = {
+  status?: string;
+  type?: string;
+  hqCountry?: string;
+};
+
+export type EmbeddedMediaDto = {
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+};
+
+export type FinancialIndicatorDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  collection: string;
+  description: string | null;
+  amount: number | null;
+  exchangeRate: number | null;
+  year: number;
+  documentation: EmbeddedMediaDto[] | null;
+};
+
+export type OrganisationUpdateAttributes = {
+  status?: "approved" | "pending" | "rejected" | "draft";
+  type?: "non-profit-organization" | "for-profit-organization";
+  subtype?: Record<string, any> | null;
+  private?: boolean;
+  name?: Record<string, any> | null;
+  phone?: Record<string, any> | null;
+  hqStreet1?: Record<string, any> | null;
+  hqStreet2?: Record<string, any> | null;
+  hqCity?: Record<string, any> | null;
+  hqState?: Record<string, any> | null;
+  hqZipcode?: Record<string, any> | null;
+  hqCountry?: Record<string, any> | null;
+  /**
+   * @format date-time
+   */
+  foundingDate?: string | null;
+  description?: Record<string, any> | null;
+  countries?: string[] | null;
+  languages?: string[] | null;
+  treeCareApproach?: Record<string, any> | null;
+  relevantExperienceYears?: number | null;
+  treesGrown3Year?: number | null;
+  treesGrownTotal?: number | null;
+  haRestored3Year?: number | null;
+  haRestoredTotal?: number | null;
+  finStartMonth?: number | null;
+  webUrl?: Record<string, any> | null;
+  facebookUrl?: Record<string, any> | null;
+  instagramUrl?: Record<string, any> | null;
+  linkedinUrl?: Record<string, any> | null;
+  twitterUrl?: Record<string, any> | null;
+  leadershipTeamTxt?: Record<string, any> | null;
+  engagementFarmers?: string[] | null;
+  engagementWomen?: string[] | null;
+  engagementYouth?: string[] | null;
+  currency?: string;
+  states?: string[] | null;
+  district?: Record<string, any> | null;
+  accountNumber1?: Record<string, any> | null;
+  accountNumber2?: Record<string, any> | null;
+  loanStatusAmount?: Record<string, any> | null;
+  loanStatusTypes?: string[] | null;
+  approachOfMarginalizedCommunities?: Record<string, any> | null;
+  communityEngagementNumbersMarginalized?: Record<string, any> | null;
+  landSystems?: string[] | null;
+  fundUtilisation?: string[] | null;
+  detailedInterventionTypes?: string[] | null;
+  treeMaintenanceAftercareApproach?: Record<string, any> | null;
+  restoredAreasDescription?: Record<string, any> | null;
+  restorationTypesImplemented?: string[] | null;
+  historicMonitoringGeojson?: Record<string, any> | null;
+  monitoringEvaluationExperience?: Record<string, any> | null;
+  fundingHistory?: Record<string, any> | null;
+  totalEngagedCommunityMembers3Yr?: number | null;
+  percentEngagedWomen3Yr?: number | null;
+  percentEngagedMen3Yr?: number | null;
+  percentEngagedUnder353Yr?: number | null;
+  percentEngagedOver353Yr?: number | null;
+  percentEngagedSmallholder3Yr?: number | null;
+  totalTreesGrown?: number | null;
+  avgTreeSurvivalRate?: number | null;
+  ftPermanentEmployees?: number | null;
+  ptPermanentEmployees?: number | null;
+  tempEmployees?: number | null;
+  femaleEmployees?: number | null;
+  maleEmployees?: number | null;
+  youngEmployees?: number | null;
+  over35Employees?: number | null;
+  additionalFundingDetails?: Record<string, any> | null;
+  communityExperience?: Record<string, any> | null;
+  businessModel?: Record<string, any> | null;
+  fieldStaffSkills?: Record<string, any> | null;
+  fpcCompany?: "yes" | "no" | null;
+  numOfMarginalisedEmployees?: number | null;
+  benefactorsFpcCompany?: Record<string, any> | null;
+  boardRemunerationFpcCompany?: Record<string, any> | null;
+  boardEngagementFpcCompany?: Record<string, any> | null;
+  biodiversityFocus?: string[] | null;
+  globalPlanningFrameworks?: string[] | null;
+  pastGovCollaboration?: Record<string, any> | null;
+  engagementLandless?: Record<string, any> | null;
+  socioeconomicImpact?: Record<string, any> | null;
+  environmentalImpact?: Record<string, any> | null;
+  growthStage?: Record<string, any> | null;
+  totalEmployees?: number | null;
+  additionalComments?: Record<string, any> | null;
+  consortium?: Record<string, any> | null;
+  femaleYouthLeadershipExample?: Record<string, any> | null;
+  level0PastRestoration?: string[] | null;
+  level1PastRestoration?: string[] | null;
+  level2PastRestoration?: string[] | null;
+  treesNaturallyRegeneratedTotal?: number | null;
+  treesNaturallyRegenerated3Year?: number | null;
+  externalTechnicalAssistance?: Record<string, any> | null;
+  barriersToFunding?: Record<string, any> | null;
+  capacityBuildingSupportNeeded?: Record<string, any> | null;
+  associationsCooperatives?: Record<string, any> | null;
+  territoriesOfOperation?: string[] | null;
+  decisionMakingStructureDescription?: Record<string, any> | null;
+  decisionMakingStructureIndividualsInvolved?: Record<string, any> | null;
+  averageWorkerIncome?: number | null;
+  anrPracticesPast?: string[] | null;
+  anrMonitoringApproaches?: string[] | null;
+  anrMonitoringApproachesDescription?: Record<string, any> | null;
+  anrCommunicationFunders?: Record<string, any> | null;
+  bioeconomyProducts?: Record<string, any> | null;
+  bioeconomyTraditionalKnowledge?: Record<string, any> | null;
+  bioeconomyProductProcessing?: Record<string, any> | null;
+  bioeconomyBuyers?: Record<string, any> | null;
+  communityMembersEngaged3yr?: number | null;
+  communityMembersEngaged3yrWomen?: number | null;
+  communityMembersEngaged3yrMen?: number | null;
+  communityMembersEngaged3yrYouth?: number | null;
+  communityMembersEngaged3yrNonYouth?: number | null;
+  communityMembersEngaged3yrSmallholder?: number | null;
+  communityMembersEngaged3YrBackwardClass?: number | null;
+  engagementNonYouth?: Record<string, any> | null;
+  treeRestorationPractices?: string[] | null;
+};
+
+export type OrganisationUpdateData = {
+  type: "organisations";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: OrganisationUpdateAttributes;
+};
+
+export type OrganisationUpdateBody = {
+  data: OrganisationUpdateData;
 };
 
 export type OrganisationCreateAttributes = {
-  name: string;
-  type: "non-profit-organization" | "for-profit-organization";
-  hqStreet1: string;
+  name?: string;
+  type?: "non-profit-organization" | "for-profit-organization";
+  hqStreet1?: string;
   hqStreet2?: string;
-  hqCity: string;
-  hqState: string;
+  hqCity?: string;
+  hqState?: string;
   hqZipcode?: string;
-  hqCountry: string;
-  phone: string;
-  countries: string[];
-  fundingProgrammeUuid: string;
+  hqCountry?: string;
+  phone?: string;
+  countries?: string[];
   /**
    * @default USD
    */
   currency?: string;
-  level0Proposed?: string[];
-  level1Proposed?: string[];
   level0PastRestoration?: string[];
   level1PastRestoration?: string[];
-  userFirstName: string;
-  userLastName: string;
-  userEmailAddress: string;
-  userRole: string;
-  userLocale: "en-US" | "es-MX" | "fr-FR" | "pt-BR";
 };
 
 export type OrganisationCreateData = {
@@ -159,6 +446,38 @@ export type ActionDto = {
    * @format date-time
    */
   updatedAt: string;
+};
+
+export type UserFramework = {
+  /**
+   * @example TerraFund Landscapes
+   */
+  name: string;
+  /**
+   * @example terrafund-landscapes
+   */
+  slug: string;
+};
+
+export type UserDto = {
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * Currently just calculated by appending lastName to firstName.
+   */
+  fullName: string | null;
+  primaryRole: string;
+  /**
+   * @example person@foocorp.net
+   */
+  emailAddress: string;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: UserFramework[];
 };
 
 export type UserUpdateAttributes = {

@@ -11,13 +11,13 @@ import Container from "@/components/generic/Layout/Container";
 import { useGadmOptions } from "@/connections/Gadm";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { useModalContext } from "@/context/modal.provider";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 import OrganizationEditModal from "./edit/OrganizationEditModal";
 
 export type OrganizationHeaderProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
@@ -47,7 +47,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
           <div
             className="tranform h-[200px] w-[200px] translate-y-[-100px] rounded-full border-4 border-solid border-white bg-cover bg-center"
             style={{
-              backgroundImage: `url('${organization?.logo?.url ?? "/images/pitch-placeholder.webp"}')`
+              backgroundImage: `url('${(organization as any)?.logo?.url ?? "/images/pitch-placeholder.webp"}')`
             }}
           />
           {/* Content Container */}
@@ -65,7 +65,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
             <div className="flex items-center gap-1">
               <Icon name={IconNames.MAP_PIN} width={13} height={18} />
               <Text variant="text-body-900">
-                {formatOptionsList(countryOptions ?? [], organization?.hq_country ?? [])}
+                {formatOptionsList(countryOptions ?? [], organization?.hqCountry ? [organization.hqCountry] : [])}
               </Text>
             </div>
             <Text variant="text-body-900">
@@ -74,11 +74,11 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
           </div>
         </div>
         <div className="flex translate-y-[-30px] transform gap-6">
-          <IconSocial name={IconNames.SOCIAL_FACEBOOK} url={organization?.facebook_url} />
-          <IconSocial name={IconNames.SOCIAL_INSTAGRAM} url={organization?.instagram_url} />
-          <IconSocial name={IconNames.SOCIAL_LINKEDIN} url={organization?.linkedin_url} />
-          <IconSocial name={IconNames.SOCIAL_TWITTER} url={organization?.twitter_url} />
-          <IconSocial name={IconNames.EARTH} url={organization?.web_url} />
+          <IconSocial name={IconNames.SOCIAL_FACEBOOK} url={organization?.facebookUrl ?? undefined} />
+          <IconSocial name={IconNames.SOCIAL_INSTAGRAM} url={organization?.instagramUrl ?? undefined} />
+          <IconSocial name={IconNames.SOCIAL_LINKEDIN} url={organization?.linkedinUrl ?? undefined} />
+          <IconSocial name={IconNames.SOCIAL_TWITTER} url={organization?.twitterUrl ?? undefined} />
+          <IconSocial name={IconNames.EARTH} url={organization?.webUrl ?? undefined} />
         </div>
       </Container>
     </div>

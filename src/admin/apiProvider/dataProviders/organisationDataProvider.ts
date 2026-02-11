@@ -1,22 +1,15 @@
 import lo from "lodash";
 import { DataProvider } from "react-admin";
 
-import { createOrg } from "@/connections/Organisation";
+import { createOrg, deleteOrganisation, loadOrganisation, updateOrganisation } from "@/connections/Organisation";
 import {
-  DeleteV2AdminOrganisationsUUIDError,
-  fetchDeleteV2AdminOrganisationsUUID,
   fetchGetV2AdminOrganisations,
   fetchGetV2AdminOrganisationsExport,
   fetchGetV2AdminOrganisationsMulti,
-  fetchGetV2AdminOrganisationsUUID,
-  fetchPutV2AdminOrganisationsUUID,
   GetV2AdminOrganisationsError,
   GetV2AdminOrganisationsExportError,
-  GetV2AdminOrganisationsMultiError,
-  GetV2AdminOrganisationsUUIDError,
-  PutV2AdminOrganisationsUUIDError
+  GetV2AdminOrganisationsMultiError
 } from "@/generated/apiComponents";
-import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
@@ -30,16 +23,18 @@ export interface OrganisationDataProvider extends DataProvider {
 // TODO: Ask BED to provide sortable fields list.
 export const organisationSortableList: string[] = ["name", "created_at", "type"];
 
-const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
-  // @ts-ignore incorrect docs
-  const enrolled_funding_programmes = object.data?.project_pitches
-    // @ts-ignore incorrect docs
+const normalizeOrganisationObject = (orgData: any) => {
+  // Handle both v2 and v3 response formats
+  const data = orgData?.data ?? orgData;
+  // @ts-ignore - project_pitches may not exist in v3
+  const enrolled_funding_programmes = data?.project_pitches
+    // @ts-ignore
     ?.map(pitch => pitch.funding_programme?.uuid)
     // @ts-ignore
     .filter((value, index, self) => self.indexOf(value) === index);
 
   //@ts-ignore
-  return { data: { ...object.data, id: object.data.uuid, enrolled_funding_programmes } };
+  return { data: { ...data, id: data?.uuid ?? data?.id, enrolled_funding_programmes } };
 };
 
 export const organisationDataProvider: OrganisationDataProvider = {
@@ -67,13 +62,10 @@ export const organisationDataProvider: OrganisationDataProvider = {
 
   async getOne(_, params) {
     try {
-      const response = await fetchGetV2AdminOrganisationsUUID({
-        pathParams: { uuid: params.id }
-      });
-
-      return normalizeOrganisationObject(response);
+      const orgData = await loadOrganisation({ id: params.id });
+      return normalizeOrganisationObject(orgData);
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation fetch failed", err);
     }
   },
 
@@ -90,27 +82,21 @@ export const organisationDataProvider: OrganisationDataProvider = {
   //@ts-ignore
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminOrganisationsUUID({
-        pathParams: { uuid: params.id as string }
-      });
-
+      await deleteOrganisation(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation deletion failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminOrganisationsUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteOrganisation(id as string);
       }
-
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation bulk deletion failed", err);
     }
   },
 
@@ -120,12 +106,11 @@ export const organisationDataProvider: OrganisationDataProvider = {
     const body = lo.omit(params.data, uploadKeys);
     await handleUploads(params, uploadKeys, { uuid, entity: "organisations" });
     try {
-      const resp = await fetchPutV2AdminOrganisationsUUID({ pathParams: { uuid }, body });
-
+      const updatedData = await updateOrganisation(body, { id: uuid });
       //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+      return { data: { ...updatedData, id: updatedData?.uuid ?? uuid } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation update failed", err);
     }
   },
 

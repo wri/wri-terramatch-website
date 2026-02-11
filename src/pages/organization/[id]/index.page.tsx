@@ -5,8 +5,7 @@ import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { useOrganisation } from "@/connections/Organisation";
 
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationHeader from "./components/OrganizationHeader";
@@ -15,37 +14,30 @@ import ProjectsTabContent from "./components/projects/ProjectsTabContent";
 import TeamTabContent from "./components/team/TeamTabContent";
 
 const OrganizationPage = () => {
-  const { query } = useRouter();
-  const organizationId = query.id as string;
+  const router = useRouter();
+  const organizationId = router.isReady ? (router.query.id as string | undefined) : undefined;
 
   const t = useT();
-  const { data: organizationData, isLoading: organizationLoading } = useGetV2OrganisationsUUID<{
-    data: V2OrganisationRead;
-  }>({
-    pathParams: {
-      uuid: organizationId
-    }
-  });
+  const [loaded, { data: org }] = useOrganisation({ id: organizationId });
+
+  const coverImage = (org as any)?.cover?.url;
 
   return (
-    <LoadingContainer loading={organizationLoading}>
-      <HeroBanner
-        bgImage={organizationData?.data.cover?.url ?? "/images/bg-hero-banner-2.webp"}
-        className="h-[200px]"
-      />
-      <OrganizationHeader organization={organizationData?.data} />
+    <LoadingContainer loading={!loaded}>
+      <HeroBanner bgImage={coverImage ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
+      <OrganizationHeader organization={org} />
       <SecondaryTabs
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
         tabItems={[
           {
             key: "overview",
             title: t("Overview"),
-            body: <OverviewTabContent organization={organizationData?.data} />
+            body: <OverviewTabContent organization={org} />
           },
           {
             key: "financial_information",
             title: t("Financial Information"),
-            body: <FinancialTabContent organization={organizationData?.data} />
+            body: <FinancialTabContent organization={org} />
           },
           // Todo: to add these sections back when asked!
           // {

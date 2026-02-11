@@ -17,7 +17,7 @@ import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FileRead, V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
@@ -34,7 +34,7 @@ import Files from "../Files";
 import CardFinancial from "./components/cardFinancial";
 
 type FinancialTabContentProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 type FinancialStackedBarChartProps = {
@@ -57,11 +57,14 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
-    const statementFiles = _.pick<any, keyof V2OrganisationRead>(
-      organization,
-      // @ts-ignore
-      ["op_budget_3year", "op_budget_2year", "op_budget_1year"]
-    );
+    // Note: These fields may be sideloaded or in a different structure in v3
+    const statementFiles = organization
+      ? {
+          op_budget_3year: (organization as any)?.op_budget_3year,
+          op_budget_2year: (organization as any)?.op_budget_2year,
+          op_budget_1year: (organization as any)?.op_budget_1year
+        }
+      : {};
 
     return {
       statementFiles: _.some(statementFiles, _.isEmpty)
@@ -70,13 +73,12 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
 
   const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
 
-  const files: V2FileRead[] = useMemo(() => {
+  const files: any[] = useMemo(() => {
+    // Note: These fields may be sideloaded or in a different structure in v3
     return [
-      // @ts-ignore
-      ...(organization?.op_budget_3year ?? []),
-      ...(organization?.op_budget_2year ?? []),
-      // @ts-ignore
-      ...(organization?.op_budget_1year ?? [])
+      ...((organization as any)?.op_budget_3year ?? []),
+      ...((organization as any)?.op_budget_2year ?? []),
+      ...((organization as any)?.op_budget_1year ?? [])
     ];
   }, [organization]);
 
@@ -96,7 +98,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
   const fundingTypes: V2FundingTypeRead[] =
     organization && (organization as any)?.funding_types ? (organization as any)?.funding_types : [];
 
-  const financialData = (organization as any)?.financialCollection;
+  const financialData = (organization as any)?.financialCollection ?? [];
   const financialRatioStats = calculateFinancialRatioStats(financialData);
   const hasNetProfitData =
     Array.isArray(financialData) &&
@@ -130,8 +132,8 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             <div className="flex flex-col gap-1">
               <Text variant="text-16-light">{t("Financial Year Start Month")}</Text>
               <Text variant="text-18-bold">
-                {organization?.fin_start_month
-                  ? getMonthOptions(t).find(opt => opt.value == organization?.fin_start_month)?.title
+                {organization?.finStartMonth
+                  ? getMonthOptions(t).find(opt => opt.value == organization?.finStartMonth)?.title
                   : "Not Provided"}
               </Text>
             </div>

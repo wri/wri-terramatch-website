@@ -2084,87 +2084,6 @@ export const createAuditStatus = new V3ApiEndpoint<
   {}
 >("/entities/v3/auditStatuses/{entity}/{uuid}", "POST");
 
-export type DeleteAuditStatusPathParams = {
-  /**
-   * UUID of the resource.
-   */
-  uuid: string;
-  /**
-   * Entity type to retrieve audit statuses for
-   */
-  entity:
-    | "projects"
-    | "sites"
-    | "nurseries"
-    | "projectReports"
-    | "nurseryReports"
-    | "siteReports"
-    | "financialReports"
-    | "disturbanceReports"
-    | "srpReports"
-    | "sitePolygons";
-  /**
-   * UUID of the audit status to delete
-   */
-  auditUuid: string;
-};
-
-export type DeleteAuditStatusError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type DeleteAuditStatusResponse = {
-  meta?: {
-    /**
-     * @example auditStatuses
-     */
-    resourceType?: string;
-    /**
-     * @format uuid
-     */
-    resourceId?: string;
-  };
-};
-
-export type DeleteAuditStatusVariables = {
-  pathParams: DeleteAuditStatusPathParams;
-};
-
-/**
- * Soft deletes an audit status by UUID. The audit status must belong to the specified entity. Requires authentication and appropriate permissions.
- */
-export const deleteAuditStatus = new V3ApiEndpoint<
-  DeleteAuditStatusResponse,
-  DeleteAuditStatusError,
-  DeleteAuditStatusVariables,
-  {}
->("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "DELETE");
-
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -5755,7 +5674,7 @@ export const operationsByTag = {
   files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
-  auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
+  auditStatus: { getAuditStatuses, createAuditStatus },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },

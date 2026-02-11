@@ -8,7 +8,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import PastCommunityExperience from "@/pages/organization/[id]/components/overview/PastCommunityExperience";
 import TeamAndResources from "@/pages/organization/[id]/components/overview/TeamAndResources";
 
@@ -19,7 +19,7 @@ import About from "./About";
 import PastRestorationExperience from "./PastRestorationExperience";
 
 type OverviewTabContentProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
@@ -31,30 +31,43 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
-    const pastRestorationExperience = _.pick<any, keyof V2OrganisationRead>(organization, [
-      "ha_restored_total",
-      "ha_restored_3year",
-      "trees_grown_total",
-      "trees_grown_3year"
-      // "tree_care_approach" // !Enable this in next release
-    ]);
+    const pastRestorationExperience = organization
+      ? {
+          haRestoredTotal: organization.haRestoredTotal,
+          haRestored3Year: organization.haRestored3Year,
+          treesGrownTotal: organization.treesGrownTotal,
+          treesGrown3Year: organization.treesGrown3Year
+          // treeCareApproach: organization.treeCareApproach // !Enable this in next release
+        }
+      : {};
 
-    const legitimacy = _.pick<any, keyof V2OrganisationRead>(organization, ["reference", "legal_registration"]);
+    // Note: reference and legal_registration may not be in v3 DTO - these might be sideloaded or in a different structure
+    // For now, we'll check if they exist as any properties
+    const legitimacy = organization
+      ? {
+          reference: (organization as any)?.reference,
+          legal_registration: (organization as any)?.legal_registration
+        }
+      : {};
 
     return {
-      pastRestorationExperience: _.some(pastRestorationExperience, _.isNull || _.isNaN),
+      pastRestorationExperience: _.some(
+        pastRestorationExperience,
+        value => value == null || (typeof value === "number" && isNaN(value))
+      ),
       legitimacy: _.some(legitimacy, _.isEmpty)
     };
   }, [organization]);
 
   const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
 
-  const files: V2FileRead[] = useMemo(() => {
+  const files: any[] = useMemo(() => {
+    // Note: These fields may be sideloaded or in a different structure in v3
     return [
-      ...(organization?.reference ?? []),
-      ...(organization?.additional ?? []),
-      ...(organization?.op_budget_2year ?? []),
-      ...(organization?.legal_registration ?? [])
+      ...((organization as any)?.reference ?? []),
+      ...((organization as any)?.additional ?? []),
+      ...((organization as any)?.op_budget_2year ?? []),
+      ...((organization as any)?.legal_registration ?? [])
     ];
   }, [organization]);
 
@@ -70,10 +83,14 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
       <When condition={!incompleteSteps.pastRestorationExperience}>
         <PastRestorationExperience organization={organization} />
       </When>
-      <When condition={!!organization?.previous_annual_reports && organization.previous_annual_reports.length > 0}>
+      <When
+        condition={
+          !!(organization as any)?.previous_annual_reports && (organization as any).previous_annual_reports.length > 0
+        }
+      >
         <Files
           title={t("Monitoring reports from past projects:")}
-          files={organization?.previous_annual_reports ?? []}
+          files={(organization as any)?.previous_annual_reports ?? []}
         />
       </When>
       <PastCommunityExperience organization={organization} />

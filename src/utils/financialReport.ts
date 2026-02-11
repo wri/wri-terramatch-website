@@ -46,7 +46,19 @@ type FinancialRatioStats = {
   yearCount: number;
 };
 
-export const calculateFinancialRatioStats = (financialData: FinancialDataItem[]): FinancialRatioStats => {
+export const calculateFinancialRatioStats = (
+  financialData: FinancialDataItem[] | null | undefined
+): FinancialRatioStats => {
+  if (!Array.isArray(financialData)) {
+    return {
+      latestRatio: 0,
+      latestYear: new Date().getFullYear(),
+      averageRatio: 0,
+      yearRange: "",
+      yearCount: 0
+    };
+  }
+
   const currentRatioData = financialData
     .filter(item => item.collection === "current-ratio")
     .sort((a, b) => a.year - b.year);

@@ -9,17 +9,21 @@ import ConfirmationModal from "@/components/extensive/WizardForm/modals/Confirma
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
 import { useGadmOptions } from "@/connections/Gadm";
+import { updateOrganisation } from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
 import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
 
 import { getSteps } from "./getEditOrganisationSteps";
 
+// Support both v2 and v3 DTOs during migration
+type OrganizationData = V2OrganisationRead | OrganisationFullDto;
+
 type OrganizationEditModalProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganizationData;
 };
 
 const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => {
@@ -34,28 +38,24 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const provider = useLocalStepsProvider(formSteps);
   const defaultValues = useMemo(() => formDefaultValues(organization ?? {}, provider), [organization, provider]);
 
-  const { mutateAsync: updateOrganization, error } = usePutV2OrganisationsUUID({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["v2", "organisations"] });
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-    }
-  });
-
   const handleSave = useCallback(
     async (data: any) => {
-      const res = await updateOrganization({
-        body: normalizedFormData(data, provider),
-        pathParams: { uuid }
-      });
+      try {
+        const updatedData = await updateOrganisation(normalizedFormData(data, provider), { id: uuid });
+        queryClient.invalidateQueries({ queryKey: ["v2", "organisations"] });
+        queryClient.refetchQueries({ queryKey: ["auth", "me"] });
 
-      if (res.uuid != null) {
-        closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
-        return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
-      } else {
+        if (updatedData?.uuid != null) {
+          closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
+          return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
+        } else {
+          return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
+        }
+      } catch (error) {
         return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
       }
     },
-    [closeModal, openModal, provider, updateOrganization, uuid]
+    [closeModal, openModal, provider, uuid, queryClient]
   );
 
   const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
@@ -69,7 +69,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         fieldsProvider={provider}
         onSave={handleSave}
         defaultValues={defaultValues}
-        errors={error}
+        errors={undefined}
       />
     </EditModalBase>
   );
