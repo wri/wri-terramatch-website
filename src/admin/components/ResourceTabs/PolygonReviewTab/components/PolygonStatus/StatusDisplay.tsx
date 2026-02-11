@@ -8,6 +8,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { AuditStatusEntityType, v3EntityToAuditLogEntity } from "@/connections/AuditStatus";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
+import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
 
 const menuPolygonOptions = [
   {
@@ -154,10 +155,10 @@ export interface StatusProps {
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
-  /** V3 callback for status changes: receives (status, comment). */
-  onStatusChange?: (status: string, comment: string) => Promise<void>;
-  /** V3 callback for change requests: receives (comment). */
-  onChangeRequest?: (comment: string) => void;
+  /** V3 callback for status changes: type-safe reference to useAuditLogActions.onStatusChange */
+  onStatusChange?: ReturnType<typeof useAuditLogActions>["onStatusChange"];
+  /** V3 callback for change requests: type-safe reference to useAuditLogActions.onChangeRequest */
+  onChangeRequest?: ReturnType<typeof useAuditLogActions>["onChangeRequest"];
 }
 
 const menuOptionsMap = {
@@ -215,16 +216,15 @@ const StatusDisplay = ({
   const { openModal, closeModal } = useModalContext();
 
   const legacyEntityType = v3EntityToAuditLogEntity(titleStatus);
-  const removeUnderscore = (title: string) => title.replace("_", " ");
+  const removeUnderscore = (title: string): string => title.replace(/_/g, " ");
 
-  const getDisplayName = () => {
-    let displayName: string;
+  const getDisplayName = (): string => {
     if (titleStatus === "sitePolygons") {
-      displayName = name ?? record?.name ?? "";
-    } else {
-      displayName = name != null ? removeUnderscore(name) : "";
+      const displayName = name ?? record?.name ?? "";
+      return displayName != null && displayName.length > 0 ? `${displayName}.` : ".";
     }
-    return displayName ? `${displayName}.` : ".";
+    const displayName = name != null ? removeUnderscore(name) : "";
+    return displayName != null && displayName.length > 0 ? `${displayName}.` : ".";
   };
 
   const contentStatus = (
@@ -267,13 +267,13 @@ const StatusDisplay = ({
         onClose={() => closeModal(ModalId.STATUS_CHANGE)}
         content={contentStatus}
         checkPolygonsSite={checkPolygonsSite}
-        onConfirm={async (text: any, opt) => {
+        onConfirm={async (text: string | undefined, opt: number[]) => {
           const option = menuOptionsMap[legacyEntityType as keyof typeof menuOptionsMap].find(
             option => option.value === opt[0]
           );
           try {
-            if (option?.status != null) {
-              await onStatusChange!(option.status, text ?? "");
+            if (option?.status != null && onStatusChange != null) {
+              await onStatusChange(option.status, text ?? "");
             }
             openNotification("success", "Success!", "Your Status Update was just saved!");
           } catch (e) {
@@ -300,9 +300,11 @@ const StatusDisplay = ({
         content={contentRequest}
         commentArea
         onClose={() => closeModal(ModalId.CHANGE_REQUEST)}
-        onConfirm={async (text: any) => {
+        onConfirm={async (text: string | undefined) => {
           try {
-            await onChangeRequest!(text ?? "");
+            if (onChangeRequest != null) {
+              await onChangeRequest(text ?? "");
+            }
             openNotification("success", "Success!", "Your Change Request was just added!");
           } catch (e) {
             openNotification(
