@@ -1,4 +1,4 @@
-import { Box, Flex, FlexProps, Text, useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
@@ -15,6 +15,7 @@ import {
   useGetV2ProjectsUUIDPartners
 } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
@@ -67,7 +68,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const [isLargerResolution] = useMediaQuery(["(min-width: 1500px)"]);
+  const { isLargerResolution } = useResolutions();
   const [isDownloading, setIsDownloading] = useState(false);
 
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
@@ -122,7 +123,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   };
 
   return (
-    <PageBody>
+    <PageBody className="bg-theme-neutral-200">
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
           <OverviewItem
@@ -164,12 +165,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               onClick: goToContinueEditingTab
             }}
           >
-            <ProjectSetUpSection entityUuid={project.uuid} />
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <ProjectSetUpSection entityUuid={project.uuid} />
+            </Box>
           </OverviewItem>
         </Flex>
         <OverviewItem
           title="Key Indicators & Insights"
-          flexProps={{ paddingY: 2 }}
+          flexProps={{ paddingY: 2, width: isLargerResolution ? "fit-content" : "100%" }}
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -178,7 +181,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             onClick: () => goToTab("goals")
           }}
         >
-          <KeyIndicatorsInsightsTab project={project} isLargerResolution={isLargerResolution} />
+          <KeyIndicatorsInsightsTab project={project} />
         </OverviewItem>
         <Flex gap={7} height="550px" paddingY={2}>
           <OverviewItem
@@ -229,23 +232,23 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring ?? "")}
+                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
                   </Text>
                 </Box>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting ?? "")}
+                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
                   </Text>
                 </Box>
                 <Box as="li">
                   <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification ?? "")}
+                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
                   </Text>
                 </Box>
               </Box>
-              <Flex alignItems="center">
+              <Flex alignItems="center" flexWrap="wrap">
                 <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                  {t("Learn more in the full")}
+                  {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
                 </Text>
                 <Button
                   variant="borderless"
@@ -253,7 +256,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   rightIcon={<ChevronRight />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
-                  {t("MRV Framework")}
+                  {t(mrvOnboardingContentItem?.content.mrvLinkText)}
                 </Button>
               </Flex>
               <Flex direction="column" gap={2} minHeight={0}>

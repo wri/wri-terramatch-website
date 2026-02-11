@@ -158,7 +158,7 @@ const PolygonDrawer = ({
 
   const auditData = {
     entity: "site-polygon",
-    entity_uuid: selectedPolygon?.polygonUuid as string
+    entityUuid: selectedPolygon?.polygonUuid as string
   };
 
   const [, { data: auditStatusesData, refetch: refetchAuditLog }] = useAuditStatuses({
