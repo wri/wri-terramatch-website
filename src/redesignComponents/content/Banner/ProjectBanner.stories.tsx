@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { Project } from "@/redesignComponents/foundations/Icons";
 import { TabBarWriProps } from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import ProjectBanner, { ProjectBannerProps } from "./ProjectBanner";
@@ -30,8 +30,7 @@ const mockTabBar: TabBarWriProps = {
 };
 
 const mockBreadcrumbs = [
-  { label: "Home", link: "/", icon: <ChevronRight /> },
-  { label: "Projects", link: "/projects" },
+  { label: "Projects", link: "/", icon: <Project className="!text-theme-primary-900" /> },
   { label: "Restoration project in the Congo Basin", link: "/projects/1" }
 ];
 
@@ -45,10 +44,10 @@ const mockProject: ProjectFullDto = {
   status: "started",
   plantingStatus: "in-progress",
   updateRequestStatus: "no-update",
-  name: "Restoration project in the Congo Basin",
+  name: "Restoration project in the Uganda Basin",
   shortName: "Congo Basin Project",
   plantingStartDate: "2024-01-01T00:00:00.000Z",
-  country: "Republic of the Congo",
+  country: "Uganda",
   lat: null,
   long: null,
   totalHectaresRestoredSum: 1500,
@@ -60,17 +59,18 @@ const mockProject: ProjectFullDto = {
   feedbackFields: null,
   cohort: null,
   continent: "Africa",
-  states: ["COD"],
+  states: ["Uganda"],
   projectCountyDistrict: null,
   plantingEndDate: "2026-12-31T00:00:00.000Z",
-  description: "High-impact restoration project in the Congo Basin."
+  description:
+    "Lorem ipsum dolor sit amet consectetur adipiscing elit, odio lacus dui platea eu aptent aliquam egestas, malesuada class nostra arcu imperdiet suscipit. Molestie posuere nam ullamcorper dui nibh velit himenaeos, taciti felis quam vivamus justo egestas iaculis, nunc volutpat erat augue tempus curabitur. Taciti orci tempus primis erat vulputate purus ornare vehicula, semper sollicitudin feugiat hendrerit viverra etiam torquent nam nisl, fames non nisi morbi egestas vel iaculis."
 } as ProjectFullDto;
 
 const baseArgs: ProjectBannerProps = {
   breadcrumbs: mockBreadcrumbs,
   suffix: (
-    <Button variant="secondary" size="small" rightIcon={<ChevronRight />}>
-      Edit project
+    <Button variant="borderless" size="small" className="underline underline-offset-2">
+      Reports
     </Button>
   ),
   toolbar: {
