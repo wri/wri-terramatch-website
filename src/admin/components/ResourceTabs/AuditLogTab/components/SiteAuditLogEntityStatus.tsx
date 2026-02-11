@@ -21,7 +21,7 @@ export interface SiteAuditLogEntityStatusProps {
   buttonToggle: number;
   verifyEntity?: boolean;
   viewPD?: boolean;
-  auditData?: { entity: string; entity_uuid: string };
+  auditData?: { entity: string; entityUuid: string };
   isProjectReport?: boolean;
 }
 

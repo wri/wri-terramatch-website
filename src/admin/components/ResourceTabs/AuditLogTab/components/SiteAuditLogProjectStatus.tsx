@@ -11,7 +11,7 @@ import AuditLogTable from "./AuditLogTable";
 export interface SiteAuditLogProjectStatusProps {
   record?: ProjectLiteRead | ProjectLightDto | null;
   auditLogData?: { data: AuditStatusDto[] };
-  auditData?: { entity: string; entity_uuid: string };
+  auditData?: { entity: string; entityUuid: string };
   refresh?: () => void;
   viewPD?: boolean;
 }
