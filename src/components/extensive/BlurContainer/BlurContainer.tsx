@@ -1,21 +1,45 @@
 import { useT } from "@transifex/react";
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { When } from "react-if";
 import { twMerge as tw } from "tailwind-merge";
 
 import Text from "@/components/elements/Text/Text";
+import { useMyUser } from "@/connections/User";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
+import { checkUserAccess, getBlurTextType } from "@/utils/userAccessUtils";
 
 export interface BlurContainerProps {
-  isBlur: boolean;
+  isBlur?: boolean;
   textType?: string;
   children: React.ReactNode;
   className?: string;
   logout?: () => void;
+  projectFrameworkKey?: string | null;
+  backendHasAccess?: boolean;
 }
 
-const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurContainerProps) => {
+const BlurContainer = ({
+  isBlur,
+  textType,
+  children,
+  className,
+  logout,
+  projectFrameworkKey,
+  backendHasAccess
+}: BlurContainerProps) => {
   const t = useT();
+  const [, { user }] = useMyUser();
+
+  const hasAccess = useMemo(() => {
+    return checkUserAccess(user, projectFrameworkKey, backendHasAccess);
+  }, [user, projectFrameworkKey, backendHasAccess]);
+
+  const shouldBlur = hasAccess !== undefined && projectFrameworkKey !== undefined ? !hasAccess : isBlur;
+
+  const displayTextType = useMemo(() => {
+    if (textType) return textType;
+    return getBlurTextType(user, hasAccess);
+  }, [textType, user, hasAccess]);
 
   const getCurrentPath = useCallback(() => {
     if (typeof window !== "undefined") {
@@ -34,7 +58,7 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
     logout && logout();
   }, [logout, getCurrentPath]);
 
-  if (!isBlur) {
+  if (!shouldBlur) {
     return <>{children}</>;
   }
 
@@ -76,7 +100,7 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
   const NoGraph = () => <a>{t("Graph not available.")}</a>;
 
   const renderText = () => {
-    switch (textType) {
+    switch (displayTextType) {
       case TEXT_TYPES.LOGGED_USER:
         return <ProjectAccessText />;
       case TEXT_TYPES.NOT_LOGGED_USER:
@@ -94,10 +118,10 @@ const BlurContainer = ({ isBlur, textType, children, className, logout }: BlurCo
     <div className={tw("relative w-full text-black", className)}>
       <div
         className={`absolute left-0 top-0 flex h-full w-full items-center justify-center rounded-xl ${
-          isBlur ? "z-[2] bg-[#9d9a9a29] backdrop-blur-sm" : ""
+          shouldBlur ? "z-[2] bg-[#9d9a9a29] backdrop-blur-sm" : ""
         }`}
       >
-        <When condition={isBlur && !!textType}>
+        <When condition={shouldBlur && !!displayTextType}>
           <Text variant="text-12-semibold" className="h-fit w-fit max-w-[80%] rounded-lg bg-white px-4 py-3">
             {renderText()}
           </Text>

@@ -33,6 +33,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
+import { parseImpactStoryContent } from "@/utils/impactStory";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
@@ -76,6 +77,7 @@ interface ContentOverviewProps<TData> {
   transformedStories: any;
   isLoading: boolean;
   hasAccess?: boolean;
+  projectFrameworkKey?: string | null;
 }
 
 const ContentOverview = (props: ContentOverviewProps<RowData>) => {
@@ -93,7 +95,8 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
     isLoadingHectaresUnderRestoration = false,
     transformedStories,
     isLoading,
-    hasAccess
+    hasAccess,
+    projectFrameworkKey
   } = props;
   const t = useT();
   const modalMapFunctions = useMap();
@@ -133,7 +136,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         uuid: fullStory.uuid ?? "",
         title: fullStory.title ?? "",
         date: fullStory.date ?? "",
-        content: fullStory.content ? JSON.parse(fullStory.content) : "",
+        content: fullStory.content ? parseImpactStoryContent(fullStory.content) : "",
         category: fullStory.category ?? [],
         thumbnail: fullStory.thumbnail ?? "",
         organization: {
@@ -618,6 +621,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         classNameSubTitle="mt-4"
         gap={8}
         isUserAllowed={isUserAllowed}
+        projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
         title={t("HECTARES UNDER RESTORATION")}
         variantSubTitle="text-14-light"
@@ -670,6 +674,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
           classNameSubTitle="mt-4"
           gap={6}
           isUserAllowed={isUserAllowed}
+          projectFrameworkKey={projectFrameworkKey}
           subtitleMore={true}
           title={t(titleTable)}
           tooltip={textTooltipTable}
@@ -729,6 +734,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
         classNameSubTitle="mt-4"
         gap={6}
         isUserAllowed={props.isUserAllowed}
+        projectFrameworkKey={projectFrameworkKey}
         subtitleMore={true}
         title={t("IMPACT STORIES")}
         tooltip={t(IMPACT_STORIES_TOOLTIP)}

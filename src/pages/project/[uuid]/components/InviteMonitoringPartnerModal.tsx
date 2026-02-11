@@ -61,7 +61,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
   };
 
   const hideModal = () => {
-    closeModal(ModalId.INVITE_MONITORING_PSRTNER_MODAL);
+    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
     reset();
   };
 

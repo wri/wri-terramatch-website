@@ -216,7 +216,7 @@ export type ImpactStoryIndexQueryParams = {
   /**
    * Filter results by organisationType
    */
-  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization")[];
+  ["organisationType[]"]?: ("for-profit-organization" | "non-profit-organization" | "government-agency")[];
   projectUuid?: string;
   category?: string[];
   title?: string;
@@ -308,6 +308,69 @@ export const impactStoryIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/impactStories", "GET");
 
+export type ImpactStoryCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryCreateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryCreateVariables = {
+  body: Schemas.CreateImpactStoryBody;
+};
+
+/**
+ * Create a new impact story for an organization. Requires authentication and appropriate permissions.
+ */
+export const impactStoryCreate = new V3ApiEndpoint<
+  ImpactStoryCreateResponse,
+  ImpactStoryCreateError,
+  ImpactStoryCreateVariables,
+  {}
+>("/entities/v3/impactStories", "POST");
+
 export type ImpactStoryGetPathParams = {
   /**
    * Impact Story UUID
@@ -374,6 +437,224 @@ export const impactStoryGet = new V3ApiEndpoint<
   ImpactStoryGetVariables,
   {}
 >("/entities/v3/impactStories/{uuid}", "GET");
+
+export type ImpactStoryUpdatePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryUpdateResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example impactStories
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ImpactStoryFullDto;
+  };
+};
+
+export type ImpactStoryUpdateVariables = {
+  body: Schemas.UpdateImpactStoryBody;
+  pathParams: ImpactStoryUpdatePathParams;
+};
+
+/**
+ * Update an impact story by UUID. Requires authentication and appropriate permissions.
+ *
+ *     All fields except status are optional. Status is required.
+ */
+export const impactStoryUpdate = new V3ApiEndpoint<
+  ImpactStoryUpdateResponse,
+  ImpactStoryUpdateError,
+  ImpactStoryUpdateVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "PATCH");
+
+export type ImpactStoryDeletePathParams = {
+  /**
+   * Impact Story UUID
+   */
+  uuid: string;
+};
+
+export type ImpactStoryDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryDeleteVariables = {
+  pathParams: ImpactStoryDeletePathParams;
+};
+
+/**
+ * Soft deletes an impact story by UUID. Requires authentication and appropriate permissions.
+ */
+export const impactStoryDelete = new V3ApiEndpoint<
+  ImpactStoryDeleteResponse,
+  ImpactStoryDeleteError,
+  ImpactStoryDeleteVariables,
+  {}
+>("/entities/v3/impactStories/{uuid}", "DELETE");
+
+export type ImpactStoryBulkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ImpactStoryBulkDeleteResponse = {
+  meta?: {
+    /**
+     * @example impactStories
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type ImpactStoryBulkDeleteVariables = {
+  body: Schemas.ImpactStoryBulkDeleteBodyDto;
+};
+
+/**
+ * Bulk delete multiple impact stories by UUIDs. Requires admin permissions.
+ */
+export const impactStoryBulkDelete = new V3ApiEndpoint<
+  ImpactStoryBulkDeleteResponse,
+  ImpactStoryBulkDeleteError,
+  ImpactStoryBulkDeleteVariables,
+  {}
+>("/entities/v3/impactStories/bulkDelete", "DELETE");
 
 export type TaskIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -983,6 +1264,115 @@ export const mediaDelete = new V3ApiEndpoint<MediaDeleteResponse, MediaDeleteErr
   "DELETE"
 );
 
+export type SiteMediaBulkUploadPathParams = {
+  /**
+   * Entity type to upload media to
+   */
+  entity: Schemas.Object;
+  /**
+   * Entity UUID to upload media to
+   */
+  uuid: string;
+  /**
+   * Collection to upload media to
+   */
+  collection: string;
+};
+
+export type SiteMediaBulkUploadError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SiteMediaBulkUploadVariables = {
+  body: Schemas.MediaRequestBulkBody;
+  pathParams: SiteMediaBulkUploadPathParams;
+};
+
+/**
+ * Upload multiple files to a site photos collection
+ */
+export const siteMediaBulkUpload = new V3ApiEndpoint<
+  | {
+      meta?: {
+        /**
+         * @example media
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example media
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaDto;
+      };
+    }
+  | {
+      meta?: {
+        /**
+         * @example mediaBulkResponses
+         */
+        resourceType?: string;
+      };
+      data?: {
+        /**
+         * @example mediaBulkResponses
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaBulkErrorDto;
+      };
+    },
+  SiteMediaBulkUploadError,
+  SiteMediaBulkUploadVariables,
+  {}
+>("/entities/v3/files/{entity}/{uuid}/media/{collection}", "POST");
+
 export type UploadFilePathParams = {
   /**
    * UUID of the resource.
@@ -1370,132 +1760,6 @@ export const treeReportCountsFind = new V3ApiEndpoint<
   {}
 >("/trees/v3/reportCounts/{entity}/{uuid}", "GET");
 
-export type DemographicsIndexQueryParams = {
-  ["sort[field]"]?: string;
-  /**
-   * @default ASC
-   */
-  ["sort[direction]"]?: "ASC" | "DESC";
-  /**
-   * The size of page being requested
-   *
-   * @minimum 1
-   * @maximum 100
-   * @default 100
-   */
-  ["page[size]"]?: number;
-  /**
-   * The page number to return. If page[number] is not provided, the first page is returned.
-   */
-  ["page[number]"]?: number;
-  /**
-   * project uuid array
-   */
-  projectUuid?: string[];
-  /**
-   * projectReport uuid array
-   */
-  projectReportUuid?: string[];
-  /**
-   * siteReport uuid array
-   */
-  siteReportUuid?: string[];
-};
-
-export type DemographicsIndexError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type DemographicsIndexResponse = {
-  meta?: {
-    /**
-     * @example demographics
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The current page number.
-       */
-      pageNumber?: number;
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example demographics
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.DemographicDto;
-  }[];
-};
-
-export type DemographicsIndexVariables = {
-  queryParams?: DemographicsIndexQueryParams;
-};
-
-export const demographicsIndex = new V3ApiEndpoint<
-  DemographicsIndexResponse,
-  DemographicsIndexError,
-  DemographicsIndexVariables,
-  {}
->("/entities/v3/demographics", "GET");
-
 export type DisturbanceIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -1614,6 +1878,293 @@ export const disturbanceIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/disturbances", "GET");
 
+export type GetAuditStatusesPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+};
+
+export type GetAuditStatusesError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAuditStatusesResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example auditStatuses
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AuditStatusDto;
+  }[];
+};
+
+export type GetAuditStatusesVariables = {
+  pathParams: GetAuditStatusesPathParams;
+};
+
+export const getAuditStatuses = new V3ApiEndpoint<
+  GetAuditStatusesResponse,
+  GetAuditStatusesError,
+  GetAuditStatusesVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}", "GET");
+
+export type CreateAuditStatusPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+};
+
+export type CreateAuditStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateAuditStatusResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example auditStatuses
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AuditStatusDto;
+  };
+};
+
+export type CreateAuditStatusVariables = {
+  body: Schemas.CreateAuditStatusBody;
+  pathParams: CreateAuditStatusPathParams;
+};
+
+export const createAuditStatus = new V3ApiEndpoint<
+  CreateAuditStatusResponse,
+  CreateAuditStatusError,
+  CreateAuditStatusVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}", "POST");
+
+export type DeleteAuditStatusPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+  /**
+   * UUID of the audit status to delete
+   */
+  auditUuid: string;
+};
+
+export type DeleteAuditStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteAuditStatusResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteAuditStatusVariables = {
+  pathParams: DeleteAuditStatusPathParams;
+};
+
+/**
+ * Soft deletes an audit status by UUID. The audit status must belong to the specified entity. Requires authentication and appropriate permissions.
+ */
+export const deleteAuditStatus = new V3ApiEndpoint<
+  DeleteAuditStatusResponse,
+  DeleteAuditStatusError,
+  DeleteAuditStatusVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "DELETE");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -1681,6 +2232,10 @@ export type EntityIndexQueryParams = {
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;
+  /**
+   * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
+   */
+  taskId?: number;
 };
 
 export type EntityIndexError = Fetcher.ErrorWrapper<{
@@ -3017,7 +3572,7 @@ export type EntityAssociationIndexPathParams = {
   /**
    * Association type to retrieve
    */
-  association: "demographics" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
+  association: "trackings" | "seedings" | "treeSpecies" | "media" | "disturbances" | "invasives" | "stratas";
 };
 
 export type EntityAssociationIndexQueryParams = {
@@ -3071,6 +3626,10 @@ export type EntityAssociationIndexQueryParams = {
   nothingToReport?: boolean;
   shortName?: string;
   plantingStatus?: Schemas.Object;
+  /**
+   * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
+   */
+  taskId?: number;
   modelType?: string;
   /**
    * @default false
@@ -3129,7 +3688,7 @@ export const entityAssociationIndex = new V3ApiEndpoint<
   | {
       meta?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         resourceType?: string;
         indices?: {
@@ -3165,14 +3724,14 @@ export const entityAssociationIndex = new V3ApiEndpoint<
       };
       data?: {
         /**
-         * @example demographics
+         * @example trackings
          */
         type?: string;
         /**
          * @format uuid
          */
         id?: string;
-        attributes?: Schemas.DemographicDto;
+        attributes?: Schemas.TrackingDto;
       }[];
     }
   | {
@@ -5184,12 +5743,19 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
 
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
-  impactStories: { impactStoryIndex, impactStoryGet },
+  impactStories: {
+    impactStoryIndex,
+    impactStoryCreate,
+    impactStoryGet,
+    impactStoryUpdate,
+    impactStoryDelete,
+    impactStoryBulkDelete
+  },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { getMedia, mediaUpdate, mediaDelete, uploadFile, mediaBulkDelete },
+  files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
-  demographics: { demographicsIndex },
   disturbances: { disturbanceIndex },
+  auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },

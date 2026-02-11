@@ -1,0 +1,80 @@
+import type { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import type { IMultiActionButtonProps } from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import type { ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
+import { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
+
+import type { TitleCellProps } from "./components/TitleCell";
+
+export type ActionCellProps = {
+  button: IButtonProps;
+  onButtonIconClick: () => void;
+};
+
+export type RowData = {
+  id: string | number;
+  uuid?: string;
+  name: string;
+  email: string;
+  organization: string;
+  role: string;
+  status: string;
+  title?: TitleCellProps;
+  avatars?: AvatarProps[];
+  primaryText?: string;
+  secondaryText?: string;
+  progressTag?: ProgressTagProps;
+  trees?: string;
+  jobs?: string;
+  multiActionButton?: IMultiActionButtonProps;
+  actionCell?: ActionCellProps;
+};
+
+export const DEFAULT_TOTAL_ITEMS = 100;
+export const DEFAULT_PAGE_SIZE = 10;
+export const DEFAULT_CURRENT_PAGE = 1;
+
+export type SortColumn = {
+  key: string;
+  order: string;
+};
+
+export const hasCustomCellContent = (rowData: RowData): boolean => {
+  return (
+    rowData.avatars != null ||
+    rowData.primaryText != null ||
+    rowData.secondaryText != null ||
+    rowData.progressTag != null ||
+    rowData.trees != null ||
+    rowData.jobs != null ||
+    rowData.multiActionButton != null
+  );
+};
+
+export const calculatePaginationRange = (currentPage: number, pageSize: number) => {
+  const startRange = (currentPage - 1) * pageSize;
+  const endRange = startRange + pageSize;
+  return { startRange, endRange };
+};
+
+export const sortData = <T extends Record<string, any>>(data: T[], sortColumn: SortColumn | null): T[] => {
+  if (sortColumn == null || sortColumn.key === "") {
+    return [...data];
+  }
+
+  const { key, order } = sortColumn;
+  const isDesc = order === "desc";
+
+  return [...data].sort((a, b) => {
+    if (typeof a[key] === "string" && typeof b[key] === "string") {
+      const newA = a[key];
+      const newB = b[key];
+
+      return isDesc ? newA.localeCompare(newB) : newB.localeCompare(newA);
+    }
+
+    const newA = a[key] as number;
+    const newB = b[key] as number;
+
+    return isDesc ? newA - newB : newB - newA;
+  });
+};

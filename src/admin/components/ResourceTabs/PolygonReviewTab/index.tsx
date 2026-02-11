@@ -27,6 +27,8 @@ import ModalAdd from "@/components/extensive/Modal/ModalAdd";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useBoundingBox } from "@/connections/BoundingBox";
+import { useDelayedJobs } from "@/connections/DelayedJob";
+import { pruneEntityCache } from "@/connections/Entity";
 import { useMedias } from "@/connections/EntityAssociation";
 import {
   prepareGeometryForUpload,
@@ -40,7 +42,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
-import { SitePolygonsDataResponse } from "@/generated/apiSchemas";
+import { listDelayedJobs } from "@/generated/v3/jobService/jobServiceComponents";
 import {
   CompareGeometryFileResponse,
   uploadGeometryFile,
@@ -49,6 +51,7 @@ import {
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import useLoadSitePolygonsData from "@/hooks/paginated/useLoadSitePolygonData";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import { EntityName, FileType, UploadedFile } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -137,7 +140,7 @@ const ContentForApproval = ({
   polygonsForApprovals,
   recordName
 }: {
-  polygonsForApprovals: SitePolygonsDataResponse;
+  polygonsForApprovals: SitePolygonLightDto[];
   recordName: string;
 }) => (
   <>
@@ -147,9 +150,9 @@ const ContentForApproval = ({
       </Text>
       <ul style={{ listStyleType: "circle" }}>
         {polygonsForApprovals?.map(polygon => (
-          <li key={polygon.id}>
+          <li key={polygon.uuid}>
             <Text variant="text-12-light" as="p">
-              {polygon?.poly_name ?? "Unnamed Polygon"}
+              {polygon?.name ?? "Unnamed Polygon"}
             </Text>
           </li>
         ))}
@@ -163,6 +166,10 @@ const PolygonReviewTab: FC<IProps> = props => {
   const { selectPolygonFromMap, setSelectPolygonFromMap } = useMonitoredDataContext();
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [saveFlags, setSaveFlags] = useState<boolean>(false);
+  const [pendingValidationRefresh, setPendingValidationRefresh] = useState<boolean>(false);
+  const [pendingJobUuids, setPendingJobUuids] = useState<Set<string>>(new Set());
+
+  const [, { delayedJobs }] = useDelayedJobs();
 
   const polygonFromMap = selectPolygonFromMap ?? { isOpen: false, uuid: "" };
   const setPolygonFromMap = useCallback(
@@ -236,39 +243,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   useValueChanged(validFilter, () => {
     refetch();
   });
-
-  // Simple transformation for MapContainer compatibility
-  const transformForMapContainer = (data: SitePolygonLightDto[]) => {
-    return data.map(polygon => ({
-      id: undefined,
-      uuid: polygon.polygonUuid ?? undefined,
-      primary_uuid: polygon.primaryUuid ?? undefined,
-      project_id: polygon.projectId ?? undefined,
-      proj_name: polygon.projectShortName ?? undefined,
-      org_name: undefined,
-      poly_id: polygon.polygonUuid ?? undefined,
-      poly_name: polygon.name ?? undefined,
-      site_id: polygon.siteId ?? undefined,
-      site_name: polygon.siteName ?? undefined,
-      plantstart: polygon.plantStart ?? undefined,
-      practice: polygon.practice?.join(",") ?? undefined,
-      target_sys: polygon.targetSys ?? undefined,
-      distr: polygon.distr?.join(",") ?? undefined,
-      num_trees: polygon.numTrees ?? undefined,
-      calc_area: polygon.calcArea ?? undefined,
-      created_by: undefined,
-      last_modified_by: undefined,
-      deleted_at: undefined,
-      created_at: undefined,
-      updated_at: undefined,
-      status: polygon.status,
-      source: polygon.source ?? undefined,
-      country: undefined,
-      is_active: undefined,
-      version_name: polygon.versionName ?? undefined,
-      validation_status: polygon.validationStatus != null
-    }));
-  };
 
   const sitePolygonDataTable: SitePolygonRow[] = useMemo(
     () =>
@@ -396,6 +370,80 @@ const PolygonReviewTab: FC<IProps> = props => {
       setShouldRefetchValidation(false);
     }
   }, [refetch, setShouldRefetchValidation, shouldRefetchValidation]);
+
+  useEffect(() => {
+    if (pendingValidationRefresh && delayedJobs && delayedJobs.length > 0) {
+      const pendingUuids = new Set(delayedJobs.filter(job => job.status === "pending").map(job => job.uuid));
+      if (pendingUuids.size > 0) {
+        setPendingJobUuids(pendingUuids);
+      }
+    }
+  }, [pendingValidationRefresh, delayedJobs]);
+
+  useEffect(() => {
+    if (!pendingValidationRefresh || !delayedJobs || delayedJobs.length === 0 || !record) {
+      return;
+    }
+
+    const siteUuid = record.uuid;
+    const projectUuid = "projectUuid" in record ? record.projectUuid : null;
+
+    const completedJobs = delayedJobs.filter(job => {
+      const isCompleted = job.status === "succeeded" || job.status === "failed";
+      if (!isCompleted) return false;
+
+      const wasTracked = pendingJobUuids.has(job.uuid);
+
+      const matchesEntity = job.entityName === "sites" || (projectUuid && job.entityName === "projects");
+      const matchesSite = job.payload?.data?.attributes?.siteUuid === siteUuid;
+      const matchesProject = projectUuid && job.payload?.data?.attributes?.projectUuid === projectUuid;
+      const isValidationRelated =
+        job.name?.toLowerCase().includes("validation") ||
+        job.name?.toLowerCase().includes("area") ||
+        job.name?.toLowerCase().includes("polygon");
+
+      return wasTracked || matchesEntity || matchesSite || matchesProject || isValidationRelated;
+    });
+
+    if (completedJobs.length > 0) {
+      if (projectUuid) {
+        pruneEntityCache("projects", projectUuid);
+        ApiSlice.pruneIndex("projects", "");
+      }
+
+      pruneEntityCache("sites", siteUuid);
+      ApiSlice.pruneIndex("sites", "");
+
+      ApiSlice.pruneCache("sitePolygons");
+      ApiSlice.pruneIndex("sitePolygons", "");
+
+      ApiSlice.pruneCache("validations");
+      ApiSlice.pruneIndex("validations", "");
+
+      if (sitePolygonData && Array.isArray(sitePolygonData)) {
+        const polygonUuids = sitePolygonData
+          .map(polygon => polygon.polygonUuid)
+          .filter((uuid): uuid is string => Boolean(uuid));
+        if (polygonUuids.length > 0) {
+          ApiSlice.pruneCache("validations", polygonUuids);
+        }
+      }
+
+      refetch();
+      setShouldRefetchValidation(true);
+
+      setPendingValidationRefresh(false);
+      setPendingJobUuids(new Set());
+    }
+  }, [
+    delayedJobs,
+    pendingValidationRefresh,
+    pendingJobUuids,
+    record,
+    refetch,
+    sitePolygonData,
+    setShouldRefetchValidation
+  ]);
 
   const extractErrorMessage = (error: unknown): string => {
     if (error && typeof error === "object" && "error" in error) {
@@ -553,7 +601,7 @@ const PolygonReviewTab: FC<IProps> = props => {
       />
     );
   };
-  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonsDataResponse, recordName: string) => {
+  const openFormModalHandlerConfirm = (polygonsForApprovals: SitePolygonLightDto[], recordName: string) => {
     openModal(
       ModalId.CONFIRM_POLYGON_APPROVAL,
       <ModalConfirm
@@ -565,14 +613,48 @@ const PolygonReviewTab: FC<IProps> = props => {
           closeModal(ModalId.CONFIRM_POLYGON_APPROVAL);
           try {
             await bulkUpdateSitePolygonStatus(
-              polygonsForApprovals.map(polygon => polygon.uuid) as string[],
+              polygonsForApprovals.map(polygon => polygon.uuid),
               "approved",
               data
             );
             openNotification("success", "Success, Your Polygons were approved!", "");
-            refetch();
+
+            const siteUuid = record?.uuid;
+            const projectUuid =
+              "projectUuid" in (record ?? {}) ? (record as { projectUuid?: string | null }).projectUuid : null;
+
+            if (projectUuid) {
+              pruneEntityCache("projects", projectUuid);
+              ApiSlice.pruneIndex("projects", "");
+            }
+            if (siteUuid) {
+              pruneEntityCache("sites", siteUuid);
+              ApiSlice.pruneIndex("sites", "");
+            }
+            ApiSlice.pruneCache("sitePolygons");
+            ApiSlice.pruneIndex("sitePolygons", "");
+            ApiSlice.pruneCache("validations");
+            ApiSlice.pruneIndex("validations", "");
+
+            if (sitePolygonData && Array.isArray(sitePolygonData)) {
+              const polygonUuids = sitePolygonData
+                .map(polygon => polygon.polygonUuid)
+                .filter((uuid): uuid is string => Boolean(uuid));
+              if (polygonUuids.length > 0) {
+                ApiSlice.pruneCache("validations", polygonUuids);
+              }
+            }
+
+            const refetchResult = refetch() as unknown;
+            if (refetchResult && typeof refetchResult === "object" && "then" in refetchResult) {
+              await (refetchResult as Promise<void>);
+            }
+
+            setPendingValidationRefresh(true);
+            await listDelayedJobs.fetch({});
           } catch (error) {
             Log.error("Polygon approval error", error);
+            setPendingValidationRefresh(false);
           }
         }}
       />
@@ -666,7 +748,7 @@ const PolygonReviewTab: FC<IProps> = props => {
           variant: "primary",
           onClick: (polygons: unknown) => {
             closeModal(ModalId.APPROVE_POLYGONS);
-            openFormModalHandlerConfirm(polygons as SitePolygonsDataResponse, record?.name ?? "");
+            openFormModalHandlerConfirm(polygons as SitePolygonLightDto[], record?.name ?? "");
           }
         }}
         secondaryButtonText="Cancel"
@@ -841,7 +923,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                 showLegend
                 mapFunctions={mapFunctions}
                 tooltipType="edit"
-                sitePolygonData={transformForMapContainer(sitePolygonData)}
+                sitePolygonData={sitePolygonData}
                 modelFilesData={modelFilesData}
                 setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                 isLoadingDelayedJob={props.isLoadingDelayedJob}

@@ -130,10 +130,10 @@ export const polygonStatusLabels = [
 ];
 
 export const commentaryFiles = [
-  { uuid: "1", file_name: "img-attachment.jpeg" },
-  { uuid: "2", file_name: "img-attachment-with-large-name.jpeg" },
-  { uuid: "3", file_name: "img-attachment.jpeg" },
-  { uuid: "4", file_name: "img-attachment.jpeg" }
+  { uuid: "1", fileName: "img-attachment.jpeg", url: null },
+  { uuid: "2", fileName: "img-attachment-with-large-name.jpeg", url: null },
+  { uuid: "3", fileName: "img-attachment.jpeg", url: null },
+  { uuid: "4", fileName: "img-attachment.jpeg", url: null }
 ];
 
 export const commentariesItems = [

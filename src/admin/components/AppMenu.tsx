@@ -1,8 +1,30 @@
+import DefaultIcon from "@mui/icons-material/ViewList";
 import classNames from "classnames";
-import { Menu } from "react-admin";
+import { createElement, FC } from "react";
+import { Menu, useGetResourceLabel, useResourceDefinitions } from "react-admin";
 import { useLocation } from "react-router-dom";
 
+import Log from "@/utils/log";
+
 import modules from "../modules";
+
+const FilterClearMenuItem: FC<{ resourceName: string }> = ({ resourceName }) => {
+  const resources = useResourceDefinitions();
+  const getResourceLabel = useGetResourceLabel();
+  const resource = resources?.[resourceName];
+  if (resource == null) {
+    Log.error("Resource not found for admin nav", { resourceName });
+    return null;
+  }
+
+  return (
+    <Menu.Item
+      to={`/${resourceName}?filter=%7B%7D`}
+      primaryText={getResourceLabel(resourceName, 2)}
+      leftIcon={resource.icon ? createElement(resource.icon) : <DefaultIcon />}
+    />
+  );
+};
 
 const AppMenu = () => {
   const location = useLocation();
@@ -10,55 +32,55 @@ const AppMenu = () => {
   return (
     <Menu className="!w-full">
       <div className={classNames({ "Sidebar-active": hash === "user" })}>
-        <Menu.ResourceItem name={modules.user.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.user.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "organisation" })}>
-        <Menu.ResourceItem name={modules.organisation.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.organisation.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "fundingProgramme" })}>
-        <Menu.ResourceItem name={modules.fundingProgramme.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.fundingProgramme.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "reportingFramework" })}>
-        <Menu.ResourceItem name={modules.reportingFramework.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.reportingFramework.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "application" })}>
-        <Menu.ResourceItem name={modules.application.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.application.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "form" })}>
-        <Menu.ResourceItem name={modules.form.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.form.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "project" })}>
-        <Menu.ResourceItem name={modules.project.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.project.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "site" })}>
-        <Menu.ResourceItem name={modules.site.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.site.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "nursery" })}>
-        <Menu.ResourceItem name={modules.nursery.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.nursery.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "task" })}>
-        <Menu.ResourceItem name={modules.task.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.task.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "projectReport" })}>
-        <Menu.ResourceItem name={modules.projectReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.projectReport.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "siteReport" })}>
-        <Menu.ResourceItem name={modules.siteReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.siteReport.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "nurseryReport" })}>
-        <Menu.ResourceItem name={modules.nurseryReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.nurseryReport.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "financialReport" })}>
-        <Menu.ResourceItem name={modules.financialReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.financialReport.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "impactStories" })}>
-        <Menu.ResourceItem name={modules.impactStories.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.impactStories.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "disturbanceReport" })}>
-        <Menu.ResourceItem name={modules.disturbanceReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.disturbanceReport.ResourceName} />
       </div>
       <div className={classNames({ "Sidebar-active": hash === "srpReport" })}>
-        <Menu.ResourceItem name={modules.srpReport.ResourceName} />
+        <FilterClearMenuItem resourceName={modules.srpReport.ResourceName} />
       </div>
     </Menu>
   );

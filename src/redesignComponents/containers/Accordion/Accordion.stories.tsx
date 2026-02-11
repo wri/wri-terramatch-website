@@ -1,9 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { getThemedColor } from "@/lib/theme";
-import { InformationRequired } from "@/redesignComponents/foundations/Icons";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { Edit } from "@/redesignComponents/foundations/Icons";
 
 import Accordion from "./Accordion";
+import AccordionHeader from "./AccordionHeader";
 
 const meta: Meta<typeof Accordion> = {
   title: "Redesign Components/Containers/Accordion",
@@ -20,43 +21,52 @@ const meta: Meta<typeof Accordion> = {
 export default meta;
 type Story = StoryObj<typeof Accordion>;
 
-const header = (
-  <div className="flex w-full items-center justify-between gap-4">
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-2">
-        <span className="text-[16px] leading-[24px] text-[#1A1919]">Label:</span>
-        <span className="text-[20px] leading-[28px] text-[#032230]">Header Title</span>
-      </div>
-      <div className="rounded-full border bg-[#032230] px-2 py-1">
-        <span className="font-inter flex text-[14px] font-bold leading-[20px] text-[#ffffff]">Label</span>
-      </div>
-    </div>
-    <div className="flex items-center gap-3">
-      <InformationRequired boxSize={4} color={getThemedColor("error", 500)} />
-      <div className="rounded border px-2 py-1.5">
-        <span className="font-inter flex text-[12px] font-bold leading-[16px] text-[#3D3B3B]">Label</span>
-      </div>
-    </div>
-  </div>
-);
-
 export const Default: Story = {
   args: {
     header: "Header Title",
+    children: "This is the accordion content. You can put any content here.",
+    className: "p-4"
+  }
+};
+
+const actionsSuccess = (
+  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+    Edit
+  </Button>
+);
+
+const actionsError = (
+  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+    Edit
+  </Button>
+);
+
+export const WithHeaderError: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" badge="Label" status="error" />,
+    actions: actionsError,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
-export const CustomHeader: Story = {
+export const WithHeaderSuccess: Story = {
   args: {
-    header: header,
+    header: <AccordionHeader label="Label" title="Header Title" status="success" />,
+    actions: actionsSuccess,
+    children: "This is the accordion content. You can put any content here."
+  }
+};
+
+export const WithHeaderNoButton: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" status="success" />,
     children: "This is the accordion content. You can put any content here."
   }
 };
 
 export const LongContent: Story = {
   args: {
-    header: header,
+    header: <AccordionHeader label="Label" title="Header Title with Long Content" status="success" />,
     children: (
       <div>
         <p>This is a longer content example.</p>
@@ -68,5 +78,21 @@ export const LongContent: Story = {
         </ul>
       </div>
     )
+  }
+};
+
+export const variantSecondary: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" />,
+    children: "This is the accordion content. You can put any content here.",
+    variant: "secondary"
+  }
+};
+
+export const StatusLabel: Story = {
+  args: {
+    header: <AccordionHeader label="Label" title="Header Title" status="error" statusLabel="Status Label" />,
+    children: "This is the accordion content. You can put any content here.",
+    variant: "secondary"
   }
 };

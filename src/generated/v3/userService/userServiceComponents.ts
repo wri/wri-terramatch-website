@@ -398,6 +398,63 @@ export const organisationCreation = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations", "POST");
 
+export type ActionsIndexError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ActionsIndexResponse = {
+  meta?: {
+    /**
+     * @example actions
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example actions
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ActionDto;
+  };
+};
+
+/**
+ * Returns pending actions for reports and entities associated with the user's projects
+ */
+export const actionsIndex = new V3ApiEndpoint<ActionsIndexResponse, ActionsIndexError, {}, {}>(
+  "/users/v3/actions",
+  "GET"
+);
+
 export type UsersFindPathParams = {
   /**
    * A valid user UUID or "me"
@@ -490,7 +547,7 @@ export type UsersFindVariables = {
  * Fetch a user by UUID, or with the 'me' identifier
  */
 export const usersFind = new V3ApiEndpoint<UsersFindResponse, UsersFindError, UsersFindVariables, {}>(
-  "/users/v3/{uuid}",
+  "/users/v3/users/{uuid}",
   "GET"
 );
 
@@ -598,7 +655,7 @@ export type UserUpdateVariables = {
  * Update a user by UUID
  */
 export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError, UserUpdateVariables, {}>(
-  "/users/v3/{uuid}",
+  "/users/v3/users/{uuid}",
   "PATCH"
 );
 
@@ -670,7 +727,7 @@ export type UserCreationVariables = {
  * Create a new user
  */
 export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreationError, UserCreationVariables, {}>(
-  "/users/v3",
+  "/users/v3/users",
   "POST"
 );
 
@@ -679,5 +736,6 @@ export const operationsByTag = {
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
   organisations: { organisationIndex, organisationCreation },
+  actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation }
 };

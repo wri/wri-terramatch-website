@@ -6,13 +6,16 @@ import mapboxgl, { LngLat } from "mapbox-gl";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
-import { loadPolygonGeoJson, loadProjectPolygonsGeoJson, loadSitePolygonsGeoJson } from "@/connections/GeoJsonExport";
+import {
+  loadPolygonGeoJson,
+  loadProjectPolygonsGeoJson,
+  loadProjectSitePolygonsGeoJson,
+  loadSitePolygonsGeoJson
+} from "@/connections/GeoJsonExport";
 import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@/connections/ProjectPolygons";
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { geoserverUrl, geoserverWorkspace } from "@/constants/environment";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
-import { fetchGetV2TypeEntity } from "@/generated/apiComponents";
-import { SitePolygon, SitePolygonsDataResponse } from "@/generated/apiSchemas";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { GetSitePolygonsGeoJsonQueryParams } from "@/generated/v3/researchService/researchServiceComponents";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -138,7 +141,7 @@ const handleLayerClick = (
   PopupComponent: any,
   map: mapboxgl.Map,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -561,7 +564,7 @@ export const addPopupsToMap = (
   map: mapboxgl.Map,
   popupComponent: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -602,7 +605,7 @@ export const addPopupToLayer = (
   popupComponent: any,
   layer: any,
   setPolygonFromMap: any,
-  sitePolygonData: SitePolygonsDataResponse | undefined,
+  sitePolygonData: SitePolygonLightDto[] | undefined,
   type: TooltipType,
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
@@ -993,11 +996,22 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
 
   try {
     const layers = map.getStyle().layers ?? [];
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
     const layersToHide = layers.filter(
       layer =>
-        layer.type === "background" ||
-        layer.type === "fill" ||
-        (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)
+        (layer.type === "background" ||
+          (layer.type === "fill" && !isPolygonLayer(layer.id)) ||
+          (layer.type === "raster" && layer.id !== GOOGLE_RASTER_LAYER_ID)) &&
+        !isPolygonLayer(layer.id)
     );
 
     let hiddenCount = 0;
@@ -1064,9 +1078,20 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
     }
 
     const layers = map.getStyle()?.layers ?? [];
-    const layersToRestore = layers.filter(
-      layer => layer.type === "background" || layer.type === "fill" || layer.type === "raster"
-    );
+    const polygonLayerPrefixes = [
+      LAYERS_NAMES.POLYGON_GEOMETRY,
+      LAYERS_NAMES.DELETED_GEOMETRIES,
+      LAYERS_NAMES.CENTROIDS,
+      LAYERS_NAMES.POLYGON_CENTROIDS
+    ];
+    const isPolygonLayer = (layerId: string) => {
+      return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
+    };
+
+    const layersToRestore = layers.filter(layer => {
+      const isBaseMapLayer = layer.type === "background" || layer.type === "fill" || layer.type === "raster";
+      return isBaseMapLayer && !isPolygonLayer(layer.id);
+    });
 
     let restoredCount = 0;
     layersToRestore.forEach(layer => {
@@ -1217,67 +1242,6 @@ export const countStatusesV3 = (sitePolygonData: SitePolygonLightDto[]): DataPol
   return orderedData;
 };
 
-export function parsePolygonData(sitePolygonData: SitePolygonsDataResponse | undefined) {
-  return (sitePolygonData ?? []).reduce((acc: Record<string, string[]>, data: SitePolygon) => {
-    if (data.status && data.poly_id !== undefined) {
-      if (!acc[data.status]) {
-        acc[data.status] = [];
-      }
-      acc[data.status].push(data.poly_id);
-    }
-    return acc;
-  }, {});
-}
-
-export function getPolygonsData(
-  uuid: string,
-  statusFilter: string | undefined,
-  sortOrder: string,
-  type: string,
-  cb: Function
-) {
-  const queryParams: any = {
-    uuid: uuid,
-    type: type,
-    [`sort[${sortOrder}]`]: sortOrder === "created_at" ? "desc" : "asc"
-  };
-  if (statusFilter) {
-    queryParams.status = statusFilter;
-  }
-  fetchGetV2TypeEntity({ queryParams }).then(result => {
-    cb(result);
-  });
-}
-
-export const countStatuses = (sitePolygonData: SitePolygon[]): DataPolygonOverview => {
-  const statusOrder = ["Draft", "Submitted", "Needs Info", "Approved"];
-
-  const statusCountMap: Record<string, number> = {};
-
-  sitePolygonData.forEach(item => {
-    let statusKey = item.status?.toLowerCase();
-
-    if (statusKey) {
-      if (statusKey === "needs-more-information") {
-        statusKey = "Needs Info";
-      } else {
-        statusKey = statusKey.replace(/\b\w/g, char => char.toUpperCase());
-      }
-
-      statusCountMap[statusKey] = (statusCountMap[statusKey] || 0) + 1;
-    }
-  });
-
-  const unorderedData = Object.entries(statusCountMap).map(([status, count]) => ({
-    status,
-    count
-  }));
-
-  const orderedData = unorderedData.sort((a, b) => statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
-
-  return orderedData;
-};
-
 export const formatFileName = (inputString: string) => {
   return inputString.toLowerCase().replace(/\s+/g, "_");
 };
@@ -1344,6 +1308,30 @@ export async function downloadPolygonGeoJson(
   }
 }
 
+export async function downloadProjectSitePolygonsGeoJson(
+  projectUuid: string,
+  projectName: string,
+  options?: Omit<GetSitePolygonsGeoJsonQueryParams, "uuid" | "projectUuid">
+): Promise<void> {
+  try {
+    const result = await loadProjectSitePolygonsGeoJson({
+      projectUuid,
+      ...options
+    });
+
+    const geojson = extractGeoJsonFromResponse(result.data);
+    if (!geojson) {
+      throw new Error("Failed to extract GeoJSON from response");
+    }
+
+    const safeFilename = formatFileName(projectName);
+    downloadGeoJsonFile(geojson, safeFilename);
+  } catch (error) {
+    Log.error("Failed to download project site polygons GeoJSON:", error);
+    throw error;
+  }
+}
+
 export async function downloadSitePolygonsGeoJson(
   siteUuid: string,
   siteName: string,
@@ -1368,23 +1356,37 @@ export async function downloadSitePolygonsGeoJson(
   }
 }
 
-export async function fetchPolygonGeometry(polygonUuid: string, geometryOnly: boolean = true): Promise<any> {
-  if (!polygonUuid) {
-    Log.error("fetchPolygonGeometry called with undefined polygonUuid");
+export async function fetchPolygonGeometry(
+  polygonUuid: string,
+  geometryOnly: boolean = true,
+  projectPitchUuid?: string
+): Promise<any | null> {
+  if (polygonUuid == null || polygonUuid === "") {
+    Log.error("fetchPolygonGeometry called with undefined or empty polygonUuid");
     throw new Error("polygonUuid is required");
   }
 
   try {
-    const result = await loadPolygonGeoJson({
-      uuid: polygonUuid,
-      geometryOnly,
-      includeExtendedData: false,
-      enabled: true
-    });
+    let result;
+
+    if (projectPitchUuid != null) {
+      result = await loadProjectPolygonsGeoJson({
+        projectPitchUuid,
+        enabled: true
+      });
+    } else {
+      result = await loadPolygonGeoJson({
+        uuid: polygonUuid,
+        geometryOnly,
+        includeExtendedData: false,
+        enabled: true
+      });
+    }
 
     const geojson = extractGeoJsonFromResponse(result.data);
-    if (!geojson || !geojson.features || geojson.features.length === 0) {
-      throw new Error("No geometry found for polygon");
+    if (geojson == null || geojson.features == null || geojson.features.length === 0) {
+      Log.warn("No geometry found in GeoJSON response for polygon:", polygonUuid);
+      return null;
     }
 
     return geojson.features[0].geometry;
@@ -1552,7 +1554,12 @@ export async function storePolygonProject(
     const polygonUuid = response.polygonUuid;
     if (polygonUuid) {
       refetch?.();
-      setPolygonFromMap?.({ uuid: polygonUuid, isOpen: true });
+      setPolygonFromMap?.({
+        uuid: polygonUuid,
+        isOpen: true,
+        entityName: "project-pitches",
+        projectPitchUuid: entityUuid
+      });
     }
   }
 }

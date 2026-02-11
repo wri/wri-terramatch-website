@@ -54,7 +54,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
 
   const handleInvite = () => {
     openModal(
-      ModalId.INVITE_MONITORING_PSRTNER_MODAL,
+      ModalId.INVITE_MONITORING_PARTNER_MODAL,
       <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetch} />
     );
   };
@@ -186,25 +186,13 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
           <PageCard title={t("Files")}>
             {downloadButtons.length === 0 ? <h3>{t("Files not found")}</h3> : <>{downloadButtons}</>}
           </PageCard>
-          {project.application && (
-            <>
-              <Paper className="min-w-[500px]">
-                <ButtonField
-                  label={t("Funding Application: {title}", { title: project.application.fundingProgrammeName })}
-                  buttonProps={{ as: Link, children: t("View"), href: `/applications/${project.application.uuid}` }}
-                />
-              </Paper>
-              <Paper className="min-w-[500px]">
-                <ButtonField
-                  label={t("Project pitch")}
-                  buttonProps={{
-                    as: Link,
-                    children: t("View"),
-                    href: `/project-pitches/${project.application.projectPitchUuid}`
-                  }}
-                />
-              </Paper>
-            </>
+          {project.application != null && (
+            <Paper className="min-w-[500px]">
+              <ButtonField
+                label={t("Funding Application: {title}", { title: project.application.fundingProgrammeName })}
+                buttonProps={{ as: Link, children: t("View"), href: `/applications/${project.application.uuid}` }}
+              />
+            </Paper>
           )}
           <PageCard
             title={t("Monitoring Partners") + `${partners?.data.length! > 0 ? `(${partners?.data.length})` : ""}`}

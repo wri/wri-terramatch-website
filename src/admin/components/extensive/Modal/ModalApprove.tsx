@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from "react";
-import { When } from "react-if";
+import { useT } from "@transifex/react";
+import { InlineMessage } from "@worldresources/wri-design-systems";
+import { FC, useEffect, useMemo, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
@@ -7,6 +8,9 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Text from "@/components/elements/Text/Text";
 import CollapsibleRow from "@/components/extensive/Modal/components/CollapsibleRow";
+import { pruneEntityCache, useFullProject } from "@/connections/Entity";
+import { SiteFullDto, SiteLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
 import Icon, { IconNames } from "../../../../components/extensive/Icon/Icon";
 import { ModalProps } from "../../../../components/extensive/Modal/Modal";
@@ -18,8 +22,19 @@ export interface ModalApproveProps extends ModalProps {
   toogleButton?: boolean;
   status?: StatusEnum;
   onClose?: () => void;
-  site: any;
-  polygonList: any;
+  site: SiteFullDto | SiteLightDto | null;
+  polygonList: SitePolygonLightDto[] | null;
+}
+
+interface AreaStats {
+  message: string;
+  type: "info" | "warning";
+  currentArea: number;
+  areaBeingApproved: number;
+  newTotalArea: number;
+  currentPercentage: number;
+  newPercentage: number;
+  projectGoal: number;
 }
 
 export interface DisplayedPolygonType {
@@ -48,6 +63,20 @@ const checkCriteriaCanBeApproved = (validationStatus: string | null, checked: bo
   return false;
 };
 
+interface InlineMessageCustomProps {
+  label: string;
+  type: "warning" | "info-grey";
+  message: string;
+}
+
+const InlineMessageCustom: FC<InlineMessageCustomProps> = ({ label, type, message }) => {
+  return (
+    <div className="inline-message-full-width w-full">
+      <InlineMessage caption={message} label={label} variant={type} />
+    </div>
+  );
+};
+
 const ModalApprove: FC<ModalApproveProps> = ({
   iconProps,
   title,
@@ -64,14 +93,27 @@ const ModalApprove: FC<ModalApproveProps> = ({
   polygonList,
   ...rest
 }) => {
+  const t = useT();
   const [displayedPolygons, setDisplayedPolygons] = useState<DisplayedPolygonType[]>([]);
   const [polygonsSelected, setPolygonsSelected] = useState<boolean[]>([]);
+
+  const projectUuid = site !== null && "projectUuid" in site ? site.projectUuid : null;
+
+  const [isProjectLoaded, { data: project }] = useFullProject({
+    id: projectUuid ?? ""
+  });
+
+  useEffect(() => {
+    if (projectUuid) {
+      pruneEntityCache("projects", projectUuid);
+    }
+  }, [projectUuid]);
 
   useEffect(() => {
     if (!polygonList) {
       return;
     }
-    setPolygonsSelected(polygonList.map((_: any) => false));
+    setPolygonsSelected(polygonList.map(() => false));
   }, [polygonList]);
 
   useEffect(() => {
@@ -79,19 +121,23 @@ const ModalApprove: FC<ModalApproveProps> = ({
       return;
     }
 
-    setPolygonsSelected(polygonList.map((_: any) => false));
+    setPolygonsSelected(polygonList.map(() => false));
 
     setDisplayedPolygons(
-      polygonList.map((polygon: any) => {
+      polygonList.map((polygon: SitePolygonLightDto) => {
         const checked =
           polygon.validationStatus === "passed" ||
           polygon.validationStatus === "partial" ||
           polygon.validationStatus === "failed";
 
-        const canBeApproved = checkCriteriaCanBeApproved(polygon.validationStatus, checked, polygon.canBeApproved);
+        const canBeApproved = checkCriteriaCanBeApproved(
+          polygon.validationStatus,
+          checked,
+          (polygon as SitePolygonLightDto & { canBeApproved?: boolean }).canBeApproved
+        );
 
         return {
-          id: polygon.polygonUuid,
+          id: polygon.polygonUuid ?? undefined,
           checked,
           name: polygon.name ?? "Unnamed Polygon",
           canBeApproved,
@@ -103,15 +149,91 @@ const ModalApprove: FC<ModalApproveProps> = ({
     );
   }, [polygonList]);
 
+  const areaStats = useMemo<AreaStats | null>(() => {
+    if (project === null || project === undefined || !isProjectLoaded) {
+      return null;
+    }
+
+    const projectGoal = project.totalHectaresRestoredGoal ?? null;
+    const currentApprovedArea = project.totalHectaresRestoredSum ?? null;
+
+    if (projectGoal === null || currentApprovedArea === null) {
+      return null;
+    }
+
+    if (polygonList === null || polygonList === undefined) {
+      return null;
+    }
+
+    const selectedPolygons: SitePolygonLightDto[] = polygonsSelected
+      .map((selected, index) => (selected && polygonList[index] ? polygonList[index] : null))
+      .filter((polygon): polygon is SitePolygonLightDto => polygon !== null);
+
+    if (selectedPolygons.length === 0) {
+      return null;
+    }
+
+    const areaBeingApproved = selectedPolygons.reduce((sum, polygon) => {
+      const area = polygon.calcArea ?? null;
+      return sum + (area !== null ? area : 0);
+    }, 0);
+
+    if (areaBeingApproved === 0) {
+      return null;
+    }
+
+    const newTotalArea = currentApprovedArea + areaBeingApproved;
+    const currentPercentage = projectGoal > 0 ? (currentApprovedArea / projectGoal) * 100 : 0;
+    const newPercentage = projectGoal > 0 ? (newTotalArea / projectGoal) * 100 : 0;
+
+    const wouldExceed125 = newPercentage > 125;
+    const messageType: "info" | "warning" = wouldExceed125 ? "warning" : "info";
+
+    const formatNumber = (num: number): string => {
+      return num.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 0 });
+    };
+
+    const polygonCount = selectedPolygons.length;
+    const polygonText = polygonCount === 1 ? "polygon" : "polygons";
+    const getVerb = polygonCount === 1 ? "gets" : "get";
+
+    const message = t(
+      "Approving {count} {polygonText} will change the total approved area for the project. Approved polygons currently sum to {currentArea} ha ({currentPercentage}%). If {count} {polygonText} ({areaBeingApproved} ha) {get} approved, the total would be {newTotalArea} ha ({newPercentage}%) of the total hectares to be restored ({projectGoal} ha).",
+      {
+        count: polygonCount,
+        polygonText,
+        currentArea: formatNumber(currentApprovedArea),
+        currentPercentage: formatNumber(currentPercentage),
+        areaBeingApproved: formatNumber(areaBeingApproved),
+        get: getVerb,
+        newTotalArea: formatNumber(newTotalArea),
+        newPercentage: formatNumber(newPercentage),
+        projectGoal: formatNumber(projectGoal)
+      }
+    );
+
+    return {
+      message,
+      type: messageType,
+      currentArea: currentApprovedArea,
+      areaBeingApproved,
+      newTotalArea,
+      currentPercentage,
+      newPercentage,
+      projectGoal
+    };
+  }, [project, polygonList, polygonsSelected, isProjectLoaded, t]);
+
   const handleSelectAll = (isChecked: boolean) => {
-    if (displayedPolygons) {
-      const newSelected = displayedPolygons.map((polygon, index) => {
+    if (displayedPolygons.length > 0) {
+      const newSelected: boolean[] = displayedPolygons.map((polygon, index) => {
         if (isChecked) {
-          return polygonsSelected[index] || (polygon.canBeApproved && polygon.status !== StatusEnum.APPROVED);
+          const currentValue = polygonsSelected[index] ?? false;
+          return currentValue || (polygon.canBeApproved === true && polygon.status !== StatusEnum.APPROVED);
         }
         return false;
       });
-      setPolygonsSelected(newSelected as boolean[]);
+      setPolygonsSelected(newSelected);
     }
   };
 
@@ -121,23 +243,30 @@ const ModalApprove: FC<ModalApproveProps> = ({
         <Icon name={IconNames.WRI_LOGO} width={108} height={30} className="min-w-[108px]" />
       </header>
       <div className="max-h-[100%] w-full overflow-auto px-8 py-8">
-        <When condition={!!iconProps}>
+        {iconProps && (
           <Icon
-            {...iconProps!}
-            width={iconProps?.width ?? 40}
-            className={tw("mb-8", iconProps?.className)}
-            style={{ minHeight: iconProps?.height ?? iconProps?.width ?? 40 }}
+            {...iconProps}
+            width={iconProps.width ?? 40}
+            className={tw("mb-8", iconProps.className)}
+            style={{ minHeight: iconProps.height ?? iconProps.width ?? 40 }}
           />
-        </When>
+        )}
         <div className="flex items-center justify-between">
           <Text variant="text-24-bold">{title}</Text>
         </div>
+        {areaStats && (
+          <InlineMessageCustom
+            label={areaStats.newPercentage > 125 ? "Warning" : "Info"}
+            type={areaStats.newPercentage > 125 ? "warning" : "info-grey"}
+            message={areaStats.message}
+          />
+        )}
         <div className="mb-2 flex items-center">
-          <When condition={!!content}>
+          {content && (
             <Text as="div" variant="text-12-light" className="my-1" containHtml>
               {content}
             </Text>
-          </When>
+          )}
           <Text variant="text-14-bold" className="ml-auto flex items-center justify-end gap-2">
             <Checkbox
               className="flex h-min items-center"
@@ -176,25 +305,35 @@ const ModalApprove: FC<ModalApproveProps> = ({
         </div>
       </div>
       <div className="flex w-full justify-end gap-3 px-8 py-4">
-        <When condition={!!secondaryButtonProps}>
-          <Button {...secondaryButtonProps!} variant="white-page-admin">
+        {secondaryButtonProps && (
+          <Button {...secondaryButtonProps} variant="white-page-admin">
             <Text variant="text-14-bold" className="capitalize">
               {secondaryButtonText}
             </Text>
           </Button>
-        </When>
+        )}
         <Button
           {...primaryButtonProps}
-          onClick={() => {
-            const polygons: any = polygonsSelected
+          onClick={(e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+            if (polygonList === null || polygonList === undefined) {
+              if (primaryButtonProps?.onClick) {
+                (primaryButtonProps.onClick as unknown as (polygons: SitePolygonLightDto[]) => void)([]);
+              }
+              return;
+            }
+
+            const polygons: SitePolygonLightDto[] = polygonsSelected
               .map((polygonSelected, index: number) => {
-                if (polygonSelected) {
-                  return polygonList?.[index];
+                if (polygonSelected && polygonList[index]) {
+                  return polygonList[index];
                 }
                 return null;
               })
-              .filter((polygon: any) => polygon !== null);
-            primaryButtonProps?.onClick?.(polygons);
+              .filter((polygon): polygon is SitePolygonLightDto => polygon !== null);
+
+            if (primaryButtonProps?.onClick) {
+              (primaryButtonProps.onClick as unknown as (polygons: SitePolygonLightDto[]) => void)(polygons);
+            }
           }}
         >
           <Text variant="text-14-bold" className="capitalize text-white">

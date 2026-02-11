@@ -2,12 +2,12 @@ import { useT } from "@transifex/react";
 
 import LongTextField from "@/components/elements/Field/LongTextField";
 import TextField from "@/components/elements/Field/TextField";
-import DemographicsDisplay from "@/components/extensive/DemographicsCollapseGrid/DemographicsDisplay";
-import { GRID_VARIANT_GREEN } from "@/components/extensive/DemographicsCollapseGrid/DemographicVariant";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
+import TrackingDisplay from "@/components/extensive/TrackingCollapseGrid/TrackingDisplay";
+import { GRID_VARIANT_GREEN } from "@/components/extensive/TrackingCollapseGrid/TrackingVariant";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
@@ -27,9 +27,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
         <PageColumn>
           <PageCard title={framework === Framework.HBF ? t("Direct Jobs") : t("New Jobs")} gap={4}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <DemographicsDisplay
+              <TrackingDisplay
                 entity="projectReports"
                 uuid={report.uuid}
+                domain="demographics"
                 type="workdays"
                 collection="direct"
                 variant={GRID_VARIANT_GREEN}
@@ -39,10 +40,11 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             <ContextCondition frameworksShow={ALL_TF}>
               <LongTextField title={t("Description of Jobs")}>{report.newJobsDescription}</LongTextField>
               {["full-time", "part-time"].map(collection => (
-                <DemographicsDisplay
+                <TrackingDisplay
                   key={collection}
                   entity="projectReports"
                   uuid={report.uuid}
+                  domain="demographics"
                   type="jobs"
                   collection={collection}
                 />
@@ -52,10 +54,11 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           <PageCard title={t("Volunteers")} gap={4} frameworksHide={[Framework.HBF]}>
             <LongTextField title={t("Description of Volunteers")}>{report.volunteersWorkDescription}</LongTextField>
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
-              <DemographicsDisplay
+              <TrackingDisplay
                 key={collection}
                 entity="projectReports"
                 uuid={report.uuid}
+                domain="demographics"
                 type="volunteers"
                 collection={collection}
               />
@@ -73,9 +76,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             <LongTextField title={t("Description of Community Assets")}>
               {report.communityPartnersAssetsDescription}
             </LongTextField>
-            <DemographicsDisplay
+            <TrackingDisplay
               entity="projectReports"
               uuid={report.uuid}
+              domain="demographics"
               type="allBeneficiaries"
               collection="all"
               variant={GRID_VARIANT_GREEN}
@@ -94,9 +98,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             <LongTextField title={t("Description of Benefits to Community Partners")}>
               {report.beneficiariesDescription}
             </LongTextField>
-            <DemographicsDisplay
+            <TrackingDisplay
               entity="projectReports"
               uuid={report.uuid}
+              domain="demographics"
               type="allBeneficiaries"
               collection="all"
               variant={GRID_VARIANT_GREEN}
@@ -104,9 +109,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
             <LongTextField title={t("Description of Training")}>
               {report.beneficiariesSkillsKnowledgeIncreaseDescription}
             </LongTextField>
-            <DemographicsDisplay
+            <TrackingDisplay
               entity="projectReports"
               uuid={report.uuid}
+              domain="demographics"
               type="trainingBeneficiaries"
               collection="training"
               variant={GRID_VARIANT_GREEN}
@@ -120,9 +126,10 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           </PageCard>
 
           <PageCard title={t("Convergence Jobs")} gap={4} frameworksShow={[Framework.HBF]}>
-            <DemographicsDisplay
+            <TrackingDisplay
               entity="projectReports"
               uuid={report.uuid}
+              domain="demographics"
               type="workdays"
               collection="convergence"
               variant={GRID_VARIANT_GREEN}
@@ -134,10 +141,11 @@ const TFSocioeconomicTab = ({ report }: ReportOverviewTabProps) => {
           <PageCard title={t("Volunteers")} gap={4} frameworksShow={[Framework.HBF]}>
             <LongTextField title={t("Description of Volunteers")}>{report.volunteersWorkDescription}</LongTextField>
             {DemographicCollections.VOLUNTEERS_PROJECT.map(collection => (
-              <DemographicsDisplay
+              <TrackingDisplay
                 key={collection}
                 entity="projectReports"
                 uuid={report.uuid}
+                domain="demographics"
                 type="volunteers"
                 collection={collection}
               />

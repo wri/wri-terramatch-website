@@ -9,17 +9,14 @@ import Button from "@/components/elements/Button/Button";
 import { StatusEnum } from "@/components/elements/Status/constants/statusMap";
 import Status from "@/components/elements/Status/Status";
 import Text from "@/components/elements/Text/Text";
+import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { createPolygonValidation } from "@/connections/Validation";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import {
-  fetchPutV2ENTITYUUIDStatus,
-  GetV2AuditStatusENTITYUUIDResponse,
-  useGetV2AuditStatusENTITYUUID
-} from "@/generated/apiComponents";
+import { fetchPutV2ENTITYUUIDStatus } from "@/generated/apiComponents";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
@@ -161,15 +158,15 @@ const PolygonDrawer = ({
 
   const auditData = {
     entity: "site-polygon",
-    entity_uuid: selectedPolygon?.polygonUuid as string
+    entityUuid: selectedPolygon?.polygonUuid as string
   };
 
-  const { data: auditLogData, refetch } = useGetV2AuditStatusENTITYUUID<{ data: GetV2AuditStatusENTITYUUIDResponse }>({
-    pathParams: {
-      entity: "site-polygon",
-      uuid: selectedPolygon?.uuid as string
-    }
+  const [, { data: auditStatusesData, refetch: refetchAuditLog }] = useAuditStatuses({
+    entity: "sitePolygons",
+    uuid: selectedPolygon?.uuid ?? ""
   });
+
+  const auditLogData = auditStatusesData != null ? { data: auditStatusesData } : undefined;
 
   return (
     <div className="flex flex-1 flex-col gap-6 overflow-visible">
@@ -208,7 +205,7 @@ const PolygonDrawer = ({
               </When>
             </div>
             <StatusDisplay
-              titleStatus="Polygon"
+              titleStatus="sitePolygons"
               name={selectedPolygon?.name}
               refresh={refresh}
               record={selectedPolygon}
@@ -219,10 +216,10 @@ const PolygonDrawer = ({
             <CommentarySection
               variantText="text-14-semibold"
               record={selectedPolygon}
-              entity={"Polygon"}
-              refresh={refetch}
+              entity="sitePolygons"
+              refresh={refetchAuditLog}
             ></CommentarySection>
-            {auditLogData && (
+            {auditLogData != null && (
               <>
                 <Text variant="text-14-semibold" className="">
                   Audit Log
@@ -231,7 +228,7 @@ const PolygonDrawer = ({
                   fullColumns={false}
                   auditLogData={auditLogData}
                   auditData={auditData}
-                  refresh={refetch}
+                  refresh={refetchAuditLog}
                 />
               </>
             )}

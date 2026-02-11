@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useActions } from "@/connections/Action";
 import { applicationsConnection } from "@/connections/Application";
-import { useGetV2MyActions } from "@/generated/apiComponents";
 import { useAllPages } from "@/hooks/useConnection";
 
 import ApplicationsCard from "./cards/ApplicationsCard";
 import ProjectsCard from "./cards/ProjectsCard";
 import ReportsCard from "./cards/ReportsCard";
 
-const PROJECT_TARGETABLE_TYPES = ["Project", "Site", "Nursery"];
-const REPORT_TARGETABLE_TYPES = ["ProjectReport", "SiteReport", "NurseryReport", "FinancialReport"];
+const PROJECT_TARGETABLE_TYPES = ["projects", "sites", "nurseries"];
+const REPORT_TARGETABLE_TYPES = ["projectReports", "siteReports", "nurseryReports"];
 
 const ActionTracker = () => {
   const [applicationsLoaded, applications] = useAllPages(applicationsConnection, {
@@ -18,22 +18,22 @@ const ActionTracker = () => {
     sortDirection: "DESC"
   });
 
-  const { data: actions, isLoading: isLoadingActions } = useGetV2MyActions({}, { retry: false });
+  const [, { data: actions, isLoading: isLoadingActions }] = useActions({});
 
   const reportActions = useMemo(
     () =>
-      actions?.data?.filter(item => {
-        return REPORT_TARGETABLE_TYPES.some(type => item.targetable_type === type);
+      actions?.filter(item => {
+        return REPORT_TARGETABLE_TYPES.some(type => item.targetableType == type);
       }),
-    [actions?.data]
+    [actions]
   );
 
   const projectActions = useMemo(
     () =>
-      actions?.data?.filter(item => {
-        return PROJECT_TARGETABLE_TYPES.some(type => item.targetable_type === type);
+      actions?.filter(item => {
+        return PROJECT_TARGETABLE_TYPES.some(type => item.targetableType == type);
       }),
-    [actions?.data]
+    [actions]
   );
 
   return (

@@ -59,6 +59,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
         uuid: ctx?.record?.uuid,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
+        sortField: "createdAt",
         sortDirection: sortOrder,
         filter: requestFilters
       };

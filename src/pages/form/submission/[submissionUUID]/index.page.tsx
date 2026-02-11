@@ -102,10 +102,6 @@ const SubmissionPage = () => {
           submitButtonDisable={submissionUpdating}
           defaultValues={defaultValues}
           title={form?.title}
-          tabOptions={{
-            markDone: true,
-            disableFutureTabs: true
-          }}
           summaryOptions={{
             title: t("Review Application Details"),
             downloadButtonText: t("Download Application")
