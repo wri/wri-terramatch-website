@@ -60,10 +60,10 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
     >
       <div>
         {status === "in-progress" && (
-          <p className="text-14-light mb-4 text-theme-error-900">
+          <Text fontSize="14px" lineHeight="20px" color="error.900" marginBottom={4}>
             {t("The total number of entries must be the same for each category.")}{" "}
-            <b>{t("Please review your entries.")}</b>
-          </p>
+            <strong>{t("Please review your entries.")}</strong>
+          </Text>
         )}
 
         <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
