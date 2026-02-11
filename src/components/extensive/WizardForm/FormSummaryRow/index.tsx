@@ -16,7 +16,7 @@ import { Edit } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
-import { isDemographicType } from "../../TrackingCollapseGrid/types";
+import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
 const getFieldsRequiringAttentionCount = (
@@ -80,7 +80,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         render={entry => (
           <div
             className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-              "w-full flex-col": isDemographicType(entry.value.props?.type)
+              "w-full flex-col": isTrackingType(entry.value?.props?.type)
             })}
           >
             <Text variant="text-body-500" className=" flex-1">
@@ -88,7 +88,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
             </Text>
             <div
               className={classNames("flex-1", {
-                "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+                "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
               })}
             >
               <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
@@ -100,7 +100,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                 <Else>
                   <div
                     className={classNames("", {
-                      "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+                      "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
                     })}
                   >
                     {formatEntryValue(entry.value)}

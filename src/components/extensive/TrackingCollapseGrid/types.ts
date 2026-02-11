@@ -61,6 +61,9 @@ export type RestorationType = (typeof RESTORATION_TYPES)[number];
 export const isRestorationType = (value: unknown): value is RestorationType =>
   typeof value === "string" && RESTORATION_TYPES.includes(value as RestorationType);
 
+export const isTrackingType = (value: unknown): value is TrackingType =>
+  isDemographicType(value) || isRestorationType(value);
+
 type TrackingLabelProperties = {
   sectionLabel: string;
   rowLabelSingular: string;
