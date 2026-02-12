@@ -17,10 +17,19 @@ export interface TrackingSectionProps {
   entryType: string;
   entries: TrackingEntryDto[];
   onChange?: (entries: TrackingEntryDto[]) => void;
+  onBlur?: () => void;
   status?: Status;
 }
 
-const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entryType, entries, onChange, status }) => {
+const TrackingSection: FC<TrackingSectionProps> = ({
+  domain,
+  trackingType,
+  entryType,
+  entries,
+  onBlur,
+  onChange,
+  status
+}) => {
   const t = useT();
   const { title, rows, total } = useSectionData(domain, trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
@@ -99,6 +108,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entry
           onChange={
             onChange == null ? undefined : (amount, userLabel) => onRowChange(entryIndex, typeName, amount, userLabel)
           }
+          onBlur={onBlur}
           onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
           usesName={addNameLabel != null}
           {...{ entryType, label, userLabel, amount }}
@@ -128,7 +138,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ domain, trackingType, entry
           </Text>
         </div>
         <div
-          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1 bg-theme-primary-100", {
+          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1", {
             "bg-theme-error-100": status === "in-progress",
             "bg-theme-primary-100": status != "in-progress"
           })}
