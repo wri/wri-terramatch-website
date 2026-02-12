@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { Dictionary } from "lodash";
 import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
@@ -23,6 +24,7 @@ import WizardFormProvider, {
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
@@ -91,6 +93,7 @@ function WizardForm(props: WizardFormProps) {
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
   const [loadingProject, { data: project }] = useFullProject({ id: props.projectDetails?.uuid });
   const primaryModel = Array.isArray(props.models) ? props.models[0] : props.models;
+  const isAdmin = useIsAdmin();
 
   const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
     switch (status) {
@@ -250,7 +253,12 @@ function WizardForm(props: WizardFormProps) {
             disabled: selectedStepIndex === lastIndex && props.submitButtonDisable
           }}
         />
-        <Box className="absolute right-0 bottom-[112px] left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]">
+        <Box
+          className={classNames(
+            "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+            isAdmin ? "bottom-0" : "bottom-[0px]"
+          )}
+        >
           <ToolbarForm
             ButtonLeft={{
               children: "Label",
@@ -272,7 +280,7 @@ function WizardForm(props: WizardFormProps) {
         </Box>
       </div>
     ),
-    [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex]
+    [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex, isAdmin]
   );
 
   const stepsVisited = useRef<number[]>([]);
@@ -341,7 +349,7 @@ function WizardForm(props: WizardFormProps) {
   console.log("tabItems", tabItems, "props", props, "project", project);
 
   return selectedStepIndex < 0 ? null : (
-    <div>
+    <div className="relative">
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
           models={props.models}
@@ -362,7 +370,7 @@ function WizardForm(props: WizardFormProps) {
           )}
           <div className={twMerge("flex w-full flex-col", props.className)}>
             {loadingProject && (
-              <Box className="sticky top-[70px] z-20 px-1">
+              <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
                 <ToolbarObject
                   breadcrumbs={{
                     links: [
