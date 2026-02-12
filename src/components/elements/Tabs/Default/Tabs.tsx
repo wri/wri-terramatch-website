@@ -85,10 +85,15 @@ const Tabs = (props: TabsProps) => {
   const currentTabValue = props.tabItems[selectedIndex]?.key ?? `tab-${selectedIndex}`;
 
   return (
-    <div className={twMerge("flex h-full w-full rounded-2xl shadow", props.className)}>
+    <div className={twMerge("bg-theme-neutral-100 flex h-full w-full rounded-2xl shadow", props.className)}>
       <div className={twMerge("flex flex-col", props.tabListClassName)}>
         <FormNavigation tabs={formNavigationTabs} defaultValue={currentTabValue} onTabClick={handleTabClick} />
-        <div className={classNames("flex-1 border border-neutral-100 bg-white", props.rounded && "rounded-bl-lg")} />
+        <div
+          className={classNames(
+            "bg-theme-neutral-100 flex-1 border border-neutral-100",
+            props.rounded && "rounded-bl-lg"
+          )}
+        />
       </div>
       <div
         className={classNames(

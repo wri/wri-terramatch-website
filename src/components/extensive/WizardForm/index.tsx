@@ -1,3 +1,4 @@
+import { Box } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
@@ -11,6 +12,7 @@ import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -23,9 +25,11 @@ import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { Project } from "@/redesignComponents/foundations/Icons/Project";
-import Breadcrumb from "@/redesignComponents/navigation/Breadcrumbs/Breadcrumb";
+import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
+import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -85,6 +89,25 @@ function WizardForm(props: WizardFormProps) {
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
   const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
+  const [loadingProject, { data: project }] = useFullProject({ id: props.projectDetails?.uuid });
+  const primaryModel = Array.isArray(props.models) ? props.models[0] : props.models;
+
+  const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
+    switch (status) {
+      case "draft":
+        return "draft";
+      case "awaiting-approval":
+        return "pending-approval";
+      case "needs-more-information":
+        return "information-required";
+      case "approved":
+        return "approved";
+      case "no-update":
+        return "nothing-reported";
+      default:
+        return undefined;
+    }
+  };
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
@@ -227,6 +250,26 @@ function WizardForm(props: WizardFormProps) {
             disabled: selectedStepIndex === lastIndex && props.submitButtonDisable
           }}
         />
+        <Box className="absolute right-0 bottom-[112px] left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]">
+          <ToolbarForm
+            ButtonLeft={{
+              children: "Label",
+              onClick: () => {}
+            }}
+            ButtonPrimary={{
+              children: "Label",
+              onClick: () => {}
+            }}
+            ButtonSecondary={{
+              children: "Label",
+              onClick: () => {}
+            }}
+            ButtonTertiary={{
+              children: "Label",
+              onClick: () => {}
+            }}
+          />
+        </Box>
       </div>
     ),
     [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex]
@@ -295,6 +338,8 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
+  console.log("tabItems", tabItems, "props", props, "project", project);
+
   return selectedStepIndex < 0 ? null : (
     <div>
       <FrameworkProvider frameworkKey={props.framework}>
@@ -304,7 +349,7 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
         >
-          {!props.header?.hide && (
+          {!props.header?.hide && !loadingProject && (
             <WizardFormHeader
               currentStep={selectedStepIndex + 1}
               numberOfSteps={tabItems.length}
@@ -316,21 +361,34 @@ function WizardForm(props: WizardFormProps) {
             />
           )}
           <div className={twMerge("flex w-full flex-col", props.className)}>
-            <Breadcrumb
-              links={[
-                { label: "projects", link: "/my-projects", icon: <Project /> },
-                { label: "Project Name", link: `/project/${props.projectDetails?.uuid}` },
-                { label: "Edit", link: `/entity/projects/edit/${props.projectDetails?.uuid}` }
-              ]}
-              linkRouter={Link}
-              className="bg-theme-neutral-100 py-2 px-6"
-            />
-            <PageHeader
-              tag={{
-                state: "draft"
-              }}
-              title="Project Name"
-            />
+            {loadingProject && (
+              <Box className="sticky top-[70px] z-20 px-1">
+                <ToolbarObject
+                  breadcrumbs={{
+                    links: [
+                      {
+                        label: primaryModel?.model ?? "projects",
+                        link: "/my-projects",
+                        icon: <Project className="!text-theme-primary-900" />
+                      },
+                      { label: project?.name ?? "", link: `/project/${props.projectDetails?.uuid}` },
+                      { label: "Edit", link: `/entity/projects/edit/${props.projectDetails?.uuid}` }
+                    ],
+                    linkRouter: Link
+                  }}
+                  slots={[{ title: "Project Name", description: "Project Description" }]}
+                />
+                <PageHeader
+                  title={project?.name ?? "Project Name"}
+                  label="Set Up Status:"
+                  tag={
+                    mapUpdateRequestStatusToTagState(project?.updateRequestStatus)
+                      ? { state: mapUpdateRequestStatusToTagState(project?.updateRequestStatus)! }
+                      : undefined
+                  }
+                />
+              </Box>
+            )}
             <Tabs
               onChangeSelected={setSelectedStepIndex}
               selectedIndex={selectedStepIndex}
