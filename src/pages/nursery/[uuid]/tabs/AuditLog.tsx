@@ -17,7 +17,8 @@ interface ReportingTasksProps {
 
 const AuditLog = ({ label, nursery, refresh: refreshSite, enableChangeStatus, ...rest }: ReportingTasksProps) => {
   const {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus,
     statusLabels,
     entityType,
@@ -56,7 +57,6 @@ const AuditLog = ({ label, nursery, refresh: refreshSite, enableChangeStatus, ..
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
-                    mutate={mutateEntity}
                     entityType={entityType}
                     refresh={() => {
                       loadEntityList();
@@ -70,6 +70,8 @@ const AuditLog = ({ label, nursery, refresh: refreshSite, enableChangeStatus, ..
                     checkPolygonsSite={checkPolygonsSite}
                     showChangeRequest={false}
                     viewPD={true}
+                    onStatusChange={onStatusChange}
+                    onChangeRequest={onChangeRequest}
                   />
                 </div>
               </div>

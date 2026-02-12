@@ -7,7 +7,7 @@ import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
-import { Option } from "@/types/common";
+import { Option, OptionValue } from "@/types/common";
 
 import { ModalBase, ModalProps } from "./Modal";
 
@@ -35,7 +35,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
 }) => {
   const t = useT();
   const [data, useData] = useState("");
-  const [selectedOption, setSelectedOption] = useState<any>(null);
+  const [selectedOption, setSelectedOption] = useState<OptionValue[] | null>(null);
   const [showError, setShowError] = useState(false);
 
   const handleCommentChange = (e: any) => {
@@ -68,6 +68,7 @@ const ModalConfirm: FC<ModalConfirmProps> = ({
               placeholder={"New Status"}
               inputVariant="text-12-light"
               options={menu}
+              value={selectedOption != null ? selectedOption : []}
               onChange={opt => {
                 setSelectedOption(opt);
               }}
