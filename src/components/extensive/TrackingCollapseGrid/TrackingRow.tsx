@@ -14,10 +14,11 @@ export interface TrackingRowProps {
   userLabel?: string;
   amount: number;
   onChange?: (amount: number, userLabel?: string) => void;
+  onBlur?: () => void;
   onDelete?: () => void;
 }
 
-const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount, onChange, onDelete }) => {
+const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount, onChange, onBlur, onDelete }) => {
   const t = useT();
 
   const onAmountChange = useCallback(
@@ -63,6 +64,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
                 placeholder={t("Add details")}
                 value={userLabel ?? ""}
                 onChange={onUserLabelChange}
+                onBlur={onBlur}
                 css={css`
                   width: 100%;
                   padding: 0 24px 0 16px;
@@ -102,6 +104,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
               size="small"
               value={amount}
               onChange={onAmountChange}
+              onBlur={onBlur}
               css={css`
                 width: 100%;
                 padding: 0 24px 0 16px;
