@@ -1,6 +1,6 @@
 import { Box, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -17,7 +17,12 @@ import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
-const ProjectSetUpSection: FC<{ entityUuid: string }> = ({ entityUuid }) => {
+interface ProjectSetUpSectionProps {
+  entityUuid: string;
+  onStatusChange?: (allCompleted: boolean) => void;
+}
+
+const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entityUuid, onStatusChange }) => {
   const router = useRouter();
   const mode = router.query.mode as string | undefined;
   const model = useMemo(() => ({ model: v3EntityName("projects") as FormEntity, uuid: entityUuid }), [entityUuid]);
@@ -57,6 +62,21 @@ const ProjectSetUpSection: FC<{ entityUuid: string }> = ({ entityUuid }) => {
       };
     });
   }, [editPath, router, steps, defaultValues]);
+
+  const allStepsCompleted = useMemo(() => {
+    if (!steps.length) return false;
+
+    return steps.every(step => {
+      const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
+      return stepStatusToBadge(valid) === "completed";
+    });
+  }, [steps, defaultValues]);
+
+  useEffect(() => {
+    if (onStatusChange) {
+      onStatusChange(allStepsCompleted);
+    }
+  }, [allStepsCompleted, onStatusChange]);
 
   if (!isReady) {
     return (
