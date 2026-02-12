@@ -9,10 +9,8 @@ export const countryCodeToFlag = (code: string | string[] | null | undefined): s
   if (code == null) return "";
 
   const value = Array.isArray(code) ? code[0] : code;
-  const trimmed = value.trim();
-  if (trimmed.length === 0) return "";
-
-  const upper = trimmed.toUpperCase();
+  const upper = value.trim().toUpperCase();
+  if (upper.length === 0) return "";
 
   if (/^[A-Z]{2}$/.test(upper)) {
     return convertToFlagEmoji(upper);
