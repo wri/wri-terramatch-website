@@ -1,6 +1,5 @@
 import { Box } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ChevronRight } from "@mui/icons-material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
@@ -30,13 +29,13 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
+import { ChevronRight } from "@/redesignComponents/foundations/Icons/ChevronRight";
 import { Project } from "@/redesignComponents/foundations/Icons/Project";
 import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
-import { FormFooter } from "./FormFooter";
 import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
@@ -227,8 +226,8 @@ function WizardForm(props: WizardFormProps) {
             </div>
           </div>
         )}
-        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
-        <FormFooter
+        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} className="pb-24" />
+        {/* <FormFooter
           variant="sticky"
           backButtonProps={
             !props.hideBackButton
@@ -253,7 +252,7 @@ function WizardForm(props: WizardFormProps) {
             className: "py-3",
             disabled: selectedStepIndex === lastIndex && props.submitButtonDisable
           }}
-        />
+        /> */}
         <Box
           className={classNames(
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
@@ -267,23 +266,24 @@ function WizardForm(props: WizardFormProps) {
             }}
             ButtonPrimary={{
               children: "Next",
-              rightIcon: <ChevronRight />,
-              onClick: () => {}
+              onClick: () => setSelectedStepIndex(selectedStepIndex + 1)
             }}
             ButtonSecondary={{
               children: "Save and Exit",
-              onClick: () => {}
+              onClick: () => (selectedStepIndex !== lastIndex ? setSelectedStepIndex(selectedStepIndex + 1) : undefined)
             }}
-            ButtonTertiary={{
-              children: "Previous",
-              leftIcon: <ChevronRight />,
-              onClick: () => {}
-            }}
+            {...(index !== 0 && {
+              ButtonTertiary: {
+                children: "Previous",
+                leftIcon: <ChevronRight className="rotate-180" />,
+                onClick: () => setSelectedStepIndex(selectedStepIndex - 1)
+              }
+            })}
           />
         </Box>
       </div>
     ),
-    [t, formHook, _onChange, props, selectedStepIndex, lastIndex, onSubmitStep, setSelectedStepIndex, isAdmin]
+    [t, formHook, _onChange, selectedStepIndex, lastIndex, setSelectedStepIndex, isAdmin]
   );
 
   const stepsVisited = useRef<number[]>([]);
@@ -348,8 +348,6 @@ function WizardForm(props: WizardFormProps) {
     (): OrgFormDetails => ({ title: props.title, ...props.orgDetails }),
     [props.orgDetails, props.title]
   );
-
-  console.log("tabItems", tabItems, "props", props, "project", project);
 
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
