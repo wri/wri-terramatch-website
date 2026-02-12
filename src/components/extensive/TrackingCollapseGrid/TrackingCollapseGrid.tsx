@@ -14,10 +14,10 @@ import { useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
 import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useTrackingLabels } from "./types";
 
-const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
+const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
   const t = useT();
   const [hasBlurred, setHasBlurred] = useState(false);
-  const { total, status, counts, startedBalancedCount } = useTableStatus(type, entries);
+  const { total, status, counts, startedBalancedCount } = useTableStatus(domain, type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onBlur = useCallback(() => setHasBlurred(true), []);
@@ -29,7 +29,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
     [onChange, entries]
   );
 
-  const entryTypes = useEntryTypes(type);
+  const entryTypes = useEntryTypes(domain, type);
   const entryTypeMap = useEntryTypeMap(type);
 
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
@@ -106,6 +106,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
                   })}
                 >
                   <TrackingSection
+                    domain={domain}
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
                     onBlur={onBlur}

@@ -13,6 +13,7 @@ import {
   useGetV2ProjectsUUIDPartners
 } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 import { getThemedColor } from "@/lib/theme";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
@@ -20,10 +21,9 @@ import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
+import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
-import Log from "@/utils/log";
-import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 interface BuildTeamMembersPageProps {
   project: ProjectFullDto;
@@ -97,7 +97,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   const handleInvite = () => {
     openModal(
       ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project?.uuid} onSuccess={() => { }} />
+      <InviteMonitoringPartnerModal projectUUID={project?.uuid} onSuccess={() => {}} />
     );
   };
 
@@ -132,7 +132,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
         />
       );
     },
-    [closeModal, openModal, t]
+    [closeModal, deleteManager, deletePartner, openModal, t]
   );
 
   const teamMembers = useMemo(() => {
@@ -257,7 +257,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
               </ChakraTableCell>
             </TableRow>
           ),
-          [ModalConfirmDeletePartner]
+          [ModalConfirmDeletePartner, t]
         )}
         columns={[
           {

@@ -14,6 +14,7 @@ import {
   Correct,
   Dashboard,
   Delete,
+  Download,
   Draft,
   Drag,
   Due,
@@ -203,6 +204,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Calendar">
             <Calendar boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Download">
+            <Download boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -398,6 +402,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Calendar">
           <Calendar boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Download">
+          <Download boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>

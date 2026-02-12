@@ -9,22 +9,30 @@ import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSche
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import { useSectionData } from "./hooks";
-import { Status, TrackingGridVariantProps, TrackingType, useEntryTypeDefinition } from "./types";
+import { Status, TrackingDomain, TrackingType, useEntryTypeDefinition } from "./types";
 
 export interface TrackingSectionProps {
+  domain: TrackingDomain;
   trackingType: TrackingType;
   entryType: string;
   entries: TrackingEntryDto[];
-  variant: TrackingGridVariantProps;
   onChange?: (entries: TrackingEntryDto[]) => void;
   onBlur?: () => void;
   status?: Status;
 }
 
-const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, onBlur, onChange, status }) => {
+const TrackingSection: FC<TrackingSectionProps> = ({
+  domain,
+  trackingType,
+  entryType,
+  entries,
+  onBlur,
+  onChange,
+  status
+}) => {
   const t = useT();
-  const { title, rows, total } = useSectionData(trackingType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const { title, rows, total } = useSectionData(domain, trackingType, entryType, entries);
+  const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
   const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
@@ -79,7 +87,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
       <>
         <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
           <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
-            {t("By: " + title)}
+            {t(`By: {title}`, { title })}
           </Text>
         </div>
         {/* Column headers */}
@@ -126,11 +134,11 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
       <>
         <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
           <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
-            {t(`Total Created:`)}
+            {domain === "demographics" ? t("Total Created:") : t("Total:")}
           </Text>
         </div>
         <div
-          className={classNames("col-span-1 flex items-center justify-center px-3  py-2.5", {
+          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1 bg-theme-primary-100", {
             "bg-theme-error-100": status === "in-progress",
             "bg-theme-primary-100": status != "in-progress"
           })}
@@ -141,7 +149,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
             lineHeight="20px"
             fontWeight="bold"
           >
-            {t(`{total}`, { total })}
+            {total}
           </Text>
         </div>
       </>
