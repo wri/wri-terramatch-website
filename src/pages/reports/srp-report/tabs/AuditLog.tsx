@@ -31,7 +31,8 @@ const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
   const srpReportLevel = buttonToggle === AuditLogButtonStates.SRP_REPORT;
 
   const {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus,
     statusLabels,
     entityType,
@@ -97,7 +98,6 @@ const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
-                    mutate={mutateEntity}
                     entityType={entityTypeSrpReport}
                     refresh={() => {
                       loadEntityList();
@@ -111,6 +111,8 @@ const AuditLog: FC<AuditLogProps> = ({ srpReport, refresh: refreshReport }) => {
                     checkPolygonsSite={checkPolygonsSite}
                     showChangeRequest={false}
                     viewPD={true}
+                    onStatusChange={onStatusChange}
+                    onChangeRequest={onChangeRequest}
                   />
                 </div>
               </div>

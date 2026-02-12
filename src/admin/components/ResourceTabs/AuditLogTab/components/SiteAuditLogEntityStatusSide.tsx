@@ -17,12 +17,13 @@ const SiteAuditLogEntityStatusSide = ({
   selectedPolygon,
   setSelectedPolygon,
   entityType = "sitePolygons",
-  mutate,
   getValueForStatus,
   progressBarLabels,
   showChangeRequest = false,
   checkPolygonsSite,
-  viewPD = false
+  viewPD = false,
+  onStatusChange,
+  onChangeRequest
 }: {
   entityType: AuditStatusEntityType;
   refresh?: () => void;
@@ -30,12 +31,13 @@ const SiteAuditLogEntityStatusSide = ({
   polygonList?: any[];
   selectedPolygon?: SelectedItem | null;
   setSelectedPolygon?: Dispatch<SetStateAction<SelectedItem | null>> | null;
-  mutate?: any;
   getValueForStatus?: (status: string) => number;
   progressBarLabels?: Array<{ id: string; label: string }>;
   showChangeRequest?: boolean;
   checkPolygonsSite?: boolean | undefined;
   viewPD?: boolean;
+  onStatusChange?: (status: string, comment: string) => Promise<void>;
+  onChangeRequest?: (comment: string) => void;
 }) => {
   const displayEntityName = formatAuditStatusEntityForDisplay(entityType);
 
@@ -67,11 +69,12 @@ const SiteAuditLogEntityStatusSide = ({
         titleStatus={entityType}
         name={displayEntityName}
         refresh={refresh}
-        mutate={mutate}
         record={record}
         showChangeRequest={showChangeRequest}
         checkPolygonsSite={checkPolygonsSite}
         viewPD={viewPD}
+        onStatusChange={onStatusChange}
+        onChangeRequest={onChangeRequest}
       />
     </div>
   );

@@ -14,6 +14,7 @@ import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 import ProjectHeader from "@/pages/project/[uuid]/components/ProjectHeader";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -24,7 +25,6 @@ import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
-import BuildTeamMembersPage from "@/pages/build-team-members/index.page";
 
 type ProjectContentProps = {
   project: ProjectFullDto;
@@ -77,7 +77,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
             title: t("Audit Log"),
             body: <AuditLog project={project} refresh={refetch} />
           },
-          { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> },
+          { key: "team-members", title: t("Team Members"), body: <BuildTeamMembersPage project={project} /> }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
