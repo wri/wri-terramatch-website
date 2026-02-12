@@ -119,7 +119,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Button>
         </div>
         <ImageGallery
-          data={mediaList!}
+          data={mediaList ?? []}
           entity={resource}
           entityData={ctx.record}
           pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}
