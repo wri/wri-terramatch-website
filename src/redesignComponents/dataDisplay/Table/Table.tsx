@@ -166,6 +166,9 @@ const Table: FC<TableProps> = ({
     [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
   );
 
+  const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
+  const displayEnd = Math.min(endRange, actualTotalItems);
+
   return (
     <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
       <WriTable
@@ -193,7 +196,7 @@ const Table: FC<TableProps> = ({
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >
-          Showing {`${startRange + 1} - ${endRange} of ${actualTotalItems}`}
+          Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>
       )}
     </Box>
