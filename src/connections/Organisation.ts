@@ -2,19 +2,29 @@ import { createSelector } from "reselect";
 
 import { selectMe, useMyUser } from "@/connections/User";
 import { v3Resource } from "@/connections/util/apiConnectionFactory";
-import { resourceCreator } from "@/connections/util/resourceMutator";
+import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
+import { deleterAsync } from "@/connections/util/resourceDeleter";
+import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
   organisationCreation,
+  organisationDelete,
   organisationIndex,
-  OrganisationIndexQueryParams
+  OrganisationIndexQueryParams,
+  organisationShow,
+  organisationUpdate,
+  OrganisationUpdateVariables
 } from "@/generated/v3/userService/userServiceComponents";
-import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
+import {
+  OrganisationFullDto,
+  OrganisationLightDto,
+  OrganisationUpdateAttributes
+} from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
 import { Connected, Connection, Filter } from "@/types/connection";
 
 type OrganisationConnection = {
-  organisation?: OrganisationDto;
+  organisation?: OrganisationLightDto | OrganisationFullDto;
 };
 
 type UserStatus = "approved" | "rejected" | "requested";
@@ -39,9 +49,21 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
 };
 
 export const indexOrgsConnection = v3Resource("organisations", organisationIndex)
-  .index<OrganisationDto>()
+  .index<OrganisationLightDto | OrganisationFullDto>()
   .pagination()
   .filter<Filter<OrganisationIndexQueryParams>>()
+  .buildConnection();
+
+const organisationConnection = v3Resource("organisations", organisationShow)
+  .singleResource<OrganisationFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .sideloads()
+  .isLoading()
+  .loadFailure()
+  .update<OrganisationUpdateAttributes, OrganisationUpdateVariables>(organisationUpdate)
+  .buildConnection();
+
+const orgCreationConnection = v3Resource("organisations", organisationCreation)
+  .create<OrganisationLightDto>()
   .buildConnection();
 
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
@@ -53,8 +75,21 @@ export const useMyOrg = (): Connected<MyOrganisationConnection> => {
   return loaded ? [true, orgShape] : [false, {}];
 };
 
-const orgCreationConnection = v3Resource("organisations", organisationCreation)
-  .create<OrganisationDto>()
-  .buildConnection();
+export const loadOrganisation = connectionLoader(organisationConnection);
+export const useOrganisation = connectionHook(organisationConnection);
+export const updateOrganisation = resourceUpdater(
+  organisationConnection as unknown as Connection<
+    import("@/connections/util/apiConnectionFactory").DataConnection<OrganisationFullDto> &
+      import("@/connections/util/apiConnectionFactory").LoadFailureConnection &
+      import("@/connections/util/apiConnectionFactory").UpdateConnection<OrganisationUpdateAttributes>,
+    { id?: string }
+  >
+);
+export const deleteOrganisation = deleterAsync("organisations", organisationDelete, uuid => ({
+  pathParams: { uuid }
+}));
+
+export const loadOrganisations = connectionLoader(indexOrgsConnection);
+export const useOrganisations = connectionHook(indexOrgsConnection);
 
 export const createOrg = resourceCreator(orgCreationConnection);
