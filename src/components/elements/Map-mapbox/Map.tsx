@@ -1048,7 +1048,9 @@ export const MapContainer = ({
         ) : null}
         {showLegend ? (
           <ControlGroup
-          position={disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
+            position={
+              disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"
+            }
             isFullscreen={isFullscreen}
           >
             <FilterControl />

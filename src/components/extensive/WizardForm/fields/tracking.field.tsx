@@ -4,7 +4,12 @@ import RHFTrackingTable from "@/components/elements/Inputs/TrackingInput/RHFTrac
 import { calculateTotals } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import TrackingCollapseGrid from "@/components/extensive/TrackingCollapseGrid/TrackingCollapseGrid";
 import { GRID_VARIANT_NARROW } from "@/components/extensive/TrackingCollapseGrid/TrackingVariant";
-import { isDemographicType, TrackingDomain, TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import {
+  isDemographicType,
+  isRestorationType,
+  TrackingDomain,
+  TrackingType
+} from "@/components/extensive/TrackingCollapseGrid/types";
 import { addEntryWith } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { FieldInputType, FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { Framework } from "@/context/framework.provider";
@@ -13,8 +18,11 @@ import Log from "@/utils/log";
 import { addValidationWith } from "@/utils/yup";
 
 const getDomain = (inputType: FieldInputType): TrackingDomain => {
-  // TODO this will get more sophisticated as we add restoration
-  const domain = isDemographicType(inputType) ? "demographics" : null;
+  const domain = isDemographicType(inputType)
+    ? "demographics"
+    : isRestorationType(inputType)
+    ? "restoration"
+    : undefined;
   if (domain == null) {
     Log.error("Invalid type for tracking field, defaulting to demographics", { inputType });
     return "demographics";
@@ -25,6 +33,7 @@ const getDomain = (inputType: FieldInputType): TrackingDomain => {
 
 export const TrackingField: FormFieldFactory = {
   addValidation: addValidationWith(({ inputType }, t, framework) => {
+    const domain = getDomain(inputType);
     const type = inputType as TrackingType;
     return yup
       .array()
@@ -48,12 +57,13 @@ export const TrackingField: FormFieldFactory = {
       )
       .test(
         "totals-match",
-        () => (framework === Framework.HBF ? t("At least one entry in gender is required") : ""),
+        () =>
+          framework === Framework.HBF && domain === "demographics" ? t("At least one entry in gender is required") : "",
         value => {
           const { entries } = value != null && value.length > 0 ? value[0] : ({} as NonNullable<typeof value>[number]);
           if (entries == null) return true;
 
-          return calculateTotals(entries as TrackingEntryDto[], framework, type).complete;
+          return calculateTotals(entries as TrackingEntryDto[], framework, domain, type).complete;
         }
       );
   }),

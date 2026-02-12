@@ -231,8 +231,9 @@ const MetricCard: FC<MetricCardProps> = props => {
       borderRadius={8}
       border={`1px solid ${getThemedColor("neutral", 300)}`}
       height="fit-content"
-      justifyContent="center"
+      justifyContent="start"
       display="flex"
+      backgroundColor="neutral.100"
       className={className}
     >
       {content}

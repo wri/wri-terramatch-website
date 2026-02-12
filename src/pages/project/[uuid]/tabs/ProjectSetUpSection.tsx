@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
-import { v2EntityName } from "@/helpers/entity";
+import { v3EntityName } from "@/helpers/entity";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { Edit } from "@/redesignComponents/foundations/Icons";
@@ -16,7 +16,7 @@ const ProjectSetUpSection: FC<{ entityUuid: string }> = ({ entityUuid }) => {
   const router = useRouter();
   const { defaultValues, steps, isReady } = useEntityFormSetup("projects", entityUuid);
 
-  const editPath = useMemo(() => `/entity/${v2EntityName("projects")}/edit/${entityUuid}`, [entityUuid]);
+  const editPath = useMemo(() => `/entity/${v3EntityName("projects")}/edit/${entityUuid}`, [entityUuid]);
 
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {

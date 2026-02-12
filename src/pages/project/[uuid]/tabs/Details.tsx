@@ -20,9 +20,9 @@ interface ProjectDetailsTabProps {
   project: ProjectFullDto;
 }
 
-const EditButton: FC<{ onClick: () => void }> = ({ onClick }) => (
+const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
   <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={onClick}>
-    Edit
+    {text}
   </Button>
 );
 
@@ -95,6 +95,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       }?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`
                     )
                   }
+                  text={t("Edit")}
                 />
               }
             >
