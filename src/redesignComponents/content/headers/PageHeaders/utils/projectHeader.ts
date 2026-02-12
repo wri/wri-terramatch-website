@@ -10,7 +10,7 @@ export const countryCodeToFlag = (code: string | string[] | null | undefined): s
 
   const value = Array.isArray(code) ? code[0] : code;
   const trimmed = value.trim();
-  if (!trimmed) return "";
+  if (trimmed.length === 0) return "";
 
   const upper = trimmed.toUpperCase();
 
@@ -29,7 +29,7 @@ export const formatMonthYear = (date?: string | null): string => {
   if (date == null) return "-";
 
   const trimmed = date.trim();
-  if (!trimmed) return "-";
+  if (trimmed.length === 0) return "-";
 
   const parsed = new Date(trimmed);
   if (Number.isNaN(parsed.getTime())) return "-";
