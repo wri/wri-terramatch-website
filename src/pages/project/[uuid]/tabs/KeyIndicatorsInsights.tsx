@@ -18,6 +18,10 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const t = useT();
   const { isLargerResolution, isSmallResolution } = useResolutions();
   const metricClassName = classNames("flex-1", { "w-[350px]": isLargerResolution });
+  const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
+  const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
+  const hectaresTargetPercentage =
+    totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
 
   return (
     <Flex gap={isSmallResolution ? 10 : 3} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
@@ -56,9 +60,9 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         }
       />
       <MetricCard
-        title="Hectares Restored"
-        progress={project.totalHectaresRestoredSum}
-        goal={project.totalHectaresRestoredGoal ?? 0}
+        title={t("Area Restored (ha)")}
+        progress={totalHectaresRestored}
+        goal={totalHectaresRestoredGoal}
         variant="donutChart"
         icon={<AreaHectares />}
         color="secondary.700"
@@ -66,9 +70,15 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         className={metricClassName}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
-            <b>{t("Hectares Restored")}</b>
+            <b>{t("Area Restored (ha)")}</b>
             <br />
             {t("Number of hectares within approved polygons for this project")}
+            {hectaresTargetPercentage != null && (
+              <>
+                <br />
+                {t("{percentage}% of target", { percentage: hectaresTargetPercentage })}
+              </>
+            )}
           </Box>
         }
       />
