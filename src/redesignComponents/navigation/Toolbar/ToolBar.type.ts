@@ -35,7 +35,7 @@ export interface ToolbarSlot {
 
 export interface ToolbarObjectProps {
   breadcrumbs: BreadcrumbProps;
-  slots: ToolbarSlot[];
+  suffix: React.ReactNode;
 }
 
 export type ListItemVariant = "data" | "navigation" | "select";

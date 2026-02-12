@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from "@storybook/react";
+import { Fragment } from "react";
 import { BrowserRouter, Link } from "react-router-dom";
 
 import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
+import { ToolbarSlot } from "./ToolBar.type";
 import ToolbarObject from "./ToolbarObject";
 
 const meta: Meta<typeof ToolbarObject> = {
@@ -24,11 +26,20 @@ const meta: Meta<typeof ToolbarObject> = {
   argTypes: {
     breadcrumbs: {
       description: "Breadcrumb configuration with links and navigation"
-    },
-    slots: {
-      description: "Array of toolbar slots with title and description"
     }
   }
+};
+
+const renderSuffix = (slots: ToolbarSlot[]) => {
+  return slots.map((slot, index) => (
+    <Fragment key={`${slot.title}-${index}`}>
+      <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col rounded border border-dashed p-1">
+        <p className="text-10-bold text-theme-neutral-800 leading-[normal]">{slot.title}</p>
+        <p className="text-10 text-theme-neutral-700 leading-[normal]">{slot.description}</p>
+      </div>
+      {index < slots.length - 1 && <div className="bg-theme-neutral-300 h-3.5 w-[1px]" />}
+    </Fragment>
+  ));
 };
 
 export default meta;
@@ -44,10 +55,10 @@ export const Default: Story = {
       ],
       linkRouter: Link
     },
-    slots: [
+    suffix: renderSuffix([
       { title: "Slot one", description: "Add button or input" },
       { title: "Slot two", description: "Add button or input" }
-    ]
+    ])
   }
 };
 
@@ -60,12 +71,12 @@ export const MultipleSlots: Story = {
       ],
       linkRouter: Link
     },
-    slots: [
+    suffix: renderSuffix([
       { title: "Slot one", description: "Add button or input" },
       { title: "Slot two", description: "Add button or input" },
       { title: "Slot three", description: "Add button or input" },
       { title: "Slot four", description: "Add button or input" }
-    ]
+    ])
   }
 };
 
@@ -79,10 +90,10 @@ export const WithBreadcrumbIcons: Story = {
       ],
       linkRouter: Link
     },
-    slots: [
+    suffix: renderSuffix([
       { title: "Slot one", description: "Add button or input" },
       { title: "Slot two", description: "Add button or input" }
-    ]
+    ])
   }
 };
 
@@ -92,11 +103,11 @@ export const PageTitle: Story = {
       links: [{ label: "Title", link: "#", icon: <Placeholder /> }],
       linkRouter: Link
     },
-    slots: [
+    suffix: renderSuffix([
       { title: "Slot one", description: "Add button or input" },
       { title: "Slot two", description: "Add button or input" },
       { title: "Slot three", description: "Add button or input" },
       { title: "Slot four", description: "Add button or input" }
-    ]
+    ])
   }
 };

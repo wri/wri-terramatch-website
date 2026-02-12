@@ -2,11 +2,13 @@ import { useT } from "@transifex/react";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import { AuditStatusEntityType, useAuditStatuses } from "@/connections/AuditStatus";
-import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { AuditStatusEntityType, useAuditStatuses, useCreateAuditStatus } from "@/connections/AuditStatus";
+import { bulkUpdateSitePolygonStatus, PolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
 import { usePolygonValidation } from "@/connections/Validation";
 import { AuditStatusDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isValidCriteriaData } from "@/helpers/polygonValidation";
+import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 import {
   getValueForStatusDisturbanceReport,
   getValueForStatusEntityReport,
@@ -30,7 +32,8 @@ const ReverseButtonStates2: { [key: number]: string } = {
 };
 
 interface AuditLogActionsResponse {
-  mutateEntity: any;
+  onStatusChange: (status: string, comment: string) => Promise<void>;
+  onChangeRequest: (comment: string) => void;
   valuesForStatus: any;
   statusLabels: any;
   entityType: AuditStatusEntityType;
@@ -42,7 +45,7 @@ interface AuditLogActionsResponse {
   auditLogData: { data: AuditStatusDto[] } | undefined;
   refetch: () => void;
   isLoading: boolean;
-  auditData: { entity: string; entity_uuid: string };
+  auditData: { entity: string; entityUuid: string };
 }
 
 const useAuditLogActions = ({
@@ -60,7 +63,7 @@ const useAuditLogActions = ({
   const isLevelDisturbanceReport = entityLevel === AuditLogButtonStates.DISTURBANCE_REPORT;
   const isLevelSrpReport = entityLevel === AuditLogButtonStates.SRP_REPORT;
   const isLevelFinancialReport = entityLevel === AuditLogButtonStates.FINANCIAL_REPORT;
-  const { mutateEntity, valuesForStatus, statusLabels } = useStatusActionsMap(buttonToggle!);
+  const { valuesForStatus, statusLabels } = useStatusActionsMap(buttonToggle!);
   const isProject = buttonToggle === AuditLogButtonStates.PROJECT;
   const isSite = buttonToggle === AuditLogButtonStates.SITE;
   const isNursery = buttonToggle === AuditLogButtonStates.NURSERY;
@@ -251,8 +254,51 @@ const useAuditLogActions = ({
     }
   })();
 
+  const onStatusChange = useCallback(
+    async (status: string, comment: string): Promise<void> => {
+      const uuid = targetUuid;
+      if (uuid == null) {
+        Log.error("Cannot update polygon status: target UUID is missing", { v3EntityType, buttonToggle });
+        return;
+      }
+
+      await bulkUpdateSitePolygonStatus([uuid], status as PolygonStatus, comment);
+      ApiSlice.pruneCache("auditStatuses");
+    },
+    [targetUuid, v3EntityType, buttonToggle]
+  );
+
+  const handleChangeRequestSuccess = useCallback(() => {
+    ApiSlice.pruneCache("auditStatuses");
+    refetch();
+  }, [refetch]);
+
+  const { create: createChangeRequest } = useCreateAuditStatus(
+    { entity: v3EntityType, uuid: targetUuid ?? "" },
+    handleChangeRequestSuccess,
+    "Failed to create change request. Please try again."
+  );
+
+  const onChangeRequest = useCallback(
+    (comment: string): void => {
+      if (targetUuid == null) {
+        Log.error("Cannot create change request: target UUID is missing", { v3EntityType, buttonToggle });
+        return;
+      }
+
+      createChangeRequest({
+        type: "change-request",
+        comment,
+        isActive: true,
+        requestRemoved: false
+      });
+    },
+    [targetUuid, v3EntityType, buttonToggle, createChangeRequest]
+  );
+
   return {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus: getValuesStatusEntity.getValueForStatus,
     statusLabels: getValuesStatusEntity.statusLabels,
     entityType: v3EntityType,
@@ -264,7 +310,7 @@ const useAuditLogActions = ({
     auditLogData,
     refetch,
     isLoading,
-    auditData: { entity: ReverseButtonStates2[buttonToggle!], entity_uuid: entityHandlers.selectedEntityItem?.uuid }
+    auditData: { entity: ReverseButtonStates2[buttonToggle!], entityUuid: entityHandlers.selectedEntityItem?.uuid }
   };
 };
 

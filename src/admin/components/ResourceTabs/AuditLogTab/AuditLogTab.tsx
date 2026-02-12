@@ -48,7 +48,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
 
   const {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus,
     statusLabels,
     entityType,
@@ -206,7 +207,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
           <SiteAuditLogEntityStatusSide
             getValueForStatus={valuesForStatus}
             progressBarLabels={statusLabels}
-            mutate={mutateEntity}
             entityType={verifyEntityReport()}
             refresh={() => {
               refetch();
@@ -217,6 +217,8 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
             selectedPolygon={selected}
             setSelectedPolygon={setSelected}
             checkPolygonsSite={checkPolygonsSite}
+            onStatusChange={onStatusChange}
+            onChangeRequest={onChangeRequest}
           />
         </Grid>
       </Grid>
