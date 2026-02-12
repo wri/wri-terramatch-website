@@ -19,9 +19,8 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
+import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
-import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
 
@@ -79,7 +78,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
 
   // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
   // will be replaced once these endpoints are migrated to V3.
-  // Related migration ticket: TM-2996
+  // Related migration ticket: TM-2880
 
   const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
@@ -171,6 +170,11 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                 label: t("Project Manager"),
                 value: "project-manager",
                 onClick: () => setSelectedRole("project-manager")
+              },
+              {
+                label: t("Clear Filter"),
+                value: "clear-filter",
+                onClick: () => setSelectedRole("")
               }
             ]
           }
@@ -220,21 +224,23 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
               <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
-                  button={{
-                    children: t("Edit"),
-                    onClick: () => Log.debug("Edit team member click"),
-                    leftIcon: (
-                      <Edit
-                        className="!text-theme-neutral-900"
-                        css={{
-                          "& svg path": {
-                            fill: getThemedColor("neutral", 900) + " !important",
-                            color: getThemedColor("neutral", 900) + " !important"
-                          }
-                        }}
-                      />
-                    )
-                  }}
+                  // TODO: comment out for now as we don't have an edit functionality yet
+                  // button={{
+                  //   children: t("Edit"),
+                  //   onClick: () => Log.debug("Edit team member click"),
+                  //   leftIcon: (
+                  //     <Edit
+                  //       // className="!text-theme-neutral-900 hidden"
+                  //       className="hidden"
+                  //       css={{
+                  //         "& svg path": {
+                  //           fill: getThemedColor("neutral", 900) + " !important",
+                  //           color: getThemedColor("neutral", 900) + " !important"
+                  //         }
+                  //       }}
+                  //     />
+                  //   )
+                  // }}
                   buttonSecondary={{
                     children: t("Remove"),
                     variant: "secondary",
