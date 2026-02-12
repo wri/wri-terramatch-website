@@ -96,6 +96,19 @@ const useGetTrackingTitle = (type: TrackingType, collection: string) => {
       },
       associates: {
         all: t("All Associates")
+      },
+      hectaresGoal: {
+        all: t("Hectares Goal")
+      },
+      hectaresHistorical: {
+        all: t("Hectares Restored")
+      },
+      treesGoal: {
+        all: t("Trees Goal")
+      },
+      treesHistorical: {
+        regenerated: t("Trees Regenerated"),
+        grown: t("Trees Grown")
       }
     }),
     [t]

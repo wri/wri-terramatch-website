@@ -14,9 +14,9 @@ import { useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
 import { Status, TrackingCollapseGridProps, useEntryTypes, useTrackingLabels } from "./types";
 
-const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
+const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
   const t = useT();
-  const { total, status } = useTableStatus(type, entries);
+  const { total, status } = useTableStatus(domain, type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(
@@ -26,7 +26,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
     [onChange, entries]
   );
 
-  const entryTypes = useEntryTypes(type);
+  const entryTypes = useEntryTypes(domain, type);
 
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
@@ -82,6 +82,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
                 })}
               >
                 <TrackingSection
+                  domain={domain}
                   trackingType={type}
                   onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
                   entries={byType[entryType] ?? []}

@@ -1643,6 +1643,7 @@ export type ProjectReportFullDto = {
   plantingStatus: string | null;
   siteAddition: boolean;
   paidOtherActivityDescription: string | null;
+  otherRestorationPartnersDescription: string | null;
   nonTreeTotal: number | null;
   createdBy: number | null;
   createdByFirstName: string | null;
@@ -2547,7 +2548,7 @@ export type TrackingDto = {
    */
   entityUuid: string;
   uuid: string;
-  domain: "demographics";
+  domain: "demographics" | "restoration";
   type:
     | "workdays"
     | "restoration-partners"
@@ -2557,7 +2558,11 @@ export type TrackingDto = {
     | "all-beneficiaries"
     | "training-beneficiaries"
     | "indirect-beneficiaries"
-    | "associates";
+    | "associates"
+    | "hectares-goal"
+    | "hectares-historical"
+    | "trees-goal"
+    | "trees-historical";
   collection: string;
   entries: TrackingEntryDto[];
 };
@@ -2755,6 +2760,8 @@ export type LinkedFieldDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2764,6 +2771,8 @@ export type LinkedFieldDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -2930,6 +2939,8 @@ export type FormQuestionDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2939,6 +2950,8 @@ export type FormQuestionDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -3078,6 +3091,8 @@ export type StoreFormQuestionAttributes = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -3087,6 +3102,8 @@ export type StoreFormQuestionAttributes = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
