@@ -11,6 +11,7 @@ import {
   organisationIndex,
   OrganisationIndexQueryParams,
   organisationShow,
+  OrganisationShowQueryParams,
   organisationUpdate
 } from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationFullDto, OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
@@ -53,17 +54,25 @@ export const indexOrgsConnection = v3Resource("organisations", organisationIndex
 // We need lightResource to be required (not optional) for singleFullResource constraint
 type OrganisationFullDtoWithLightResource = OrganisationFullDto & { lightResource: boolean };
 
+type OrganisationConnectionProps = { id?: string; sideloads?: OrganisationShowQueryParams["sideloads"] };
+
 const organisationConnection = v3Resource("organisations", organisationShow)
-  .singleFullResource<OrganisationFullDtoWithLightResource>(({ id }) => {
+  .singleFullResource<OrganisationFullDtoWithLightResource>(({ id, sideloads }: OrganisationConnectionProps) => {
     console.log("[organisationConnection] variablesFactory called with id:", id);
     if (id == null || id === "") {
       console.log("[organisationConnection] Returning undefined (id is null or empty)");
       return undefined;
     }
-    const variables = { pathParams: { uuid: id } };
+    const variables: { pathParams: { uuid: string }; queryParams?: OrganisationShowQueryParams } = {
+      pathParams: { uuid: id }
+    };
+    if (sideloads) {
+      variables.queryParams = { sideloads };
+    }
     console.log("[organisationConnection] Returning variables:", variables);
     return variables;
   })
+  .addProps<{ sideloads?: OrganisationShowQueryParams["sideloads"] }>()
   .update(organisationUpdate)
   .buildConnection("organisationConnection");
 

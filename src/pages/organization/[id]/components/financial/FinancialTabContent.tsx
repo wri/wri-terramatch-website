@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import { useMemo } from "react";
 import { When } from "react-if";
+import { useSelector } from "react-redux";
 
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
@@ -17,10 +18,20 @@ import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
-import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import { V2FundingTypeRead } from "@/generated/apiSchemas";
+import {
+  FinancialIndicatorDto,
+  FinancialReportLightDto,
+  FundingTypeDto,
+  MediaDto,
+  OrganisationFullDto
+} from "@/generated/v3/userService/userServiceSchemas";
 import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
+import { StoreResource } from "@/store/apiSlice";
+import { AppStore } from "@/store/store";
+import { mediaToUploadedFile, UploadedFile } from "@/types/common";
 import {
   calculateFinancialRatioStats,
   formatDescriptionData,
@@ -37,69 +48,143 @@ type FinancialTabContentProps = {
   organization?: OrganisationFullDto;
 };
 
-type FinancialStackedBarChartProps = {
+type FinancialChartDataItem = {
   uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
+  organisationId?: number;
+  financialReportId?: number;
   collection: string;
   amount: number | null;
   year: number;
   description: string | null;
-  documentation: any[];
+  documentation: unknown[];
+};
+
+type OrganisationWithFinancialData = OrganisationFullDto & {
+  financialCollection?: FinancialIndicatorDto[];
+  financialReports?: FinancialReportLightDto[];
+  fundingTypes?: FundingTypeDto[];
 };
 
 const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
   const t = useT();
   const { openModal } = useModalContext();
 
+  const financialIndicators = useSelector((store: AppStore): FinancialIndicatorDto[] => {
+    const financialIndicatorsStore = store.api?.financialIndicators;
+    if (!financialIndicatorsStore) return [];
+    return Object.values(financialIndicatorsStore)
+      .map((resource: StoreResource<FinancialIndicatorDto>) => resource?.attributes)
+      .filter((attrs): attrs is FinancialIndicatorDto => Boolean(attrs));
+  });
+
+  const financialReportsStore = useSelector((store: AppStore): FinancialReportLightDto[] => {
+    const financialReportsStore = store.api?.financialReports;
+    if (!financialReportsStore) return [];
+    return Object.values(financialReportsStore)
+      .map((resource: StoreResource<FinancialReportLightDto>) => resource?.attributes)
+      .filter((attrs): attrs is FinancialReportLightDto => Boolean(attrs));
+  });
+
+  const fundingTypesStore = useSelector((store: AppStore): FundingTypeDto[] => {
+    const fundingTypesStore = store.api?.fundingTypes;
+    if (!fundingTypesStore) return [];
+    return Object.values(fundingTypesStore)
+      .map((resource: StoreResource<FundingTypeDto>) => resource?.attributes)
+      .filter((attrs): attrs is FundingTypeDto => Boolean(attrs));
+  });
+
+  const convertToChartData = useMemo(
+    () =>
+      (indicators: FinancialIndicatorDto[]): FinancialChartDataItem[] => {
+        return indicators.map(item => ({
+          uuid: item.entityUuid,
+          collection: item.collection,
+          amount: item.amount,
+          year: item.year,
+          description: item.description,
+          documentation: (item.documentation as unknown[]) || []
+        }));
+      },
+    []
+  );
+
+  const orgWithFinancialData = organization as OrganisationWithFinancialData | undefined;
+
+  const financialData: FinancialIndicatorDto[] = useMemo(
+    () =>
+      financialIndicators.length > 0
+        ? financialIndicators.filter(
+            (item: FinancialIndicatorDto) =>
+              item.collection === "budget" ||
+              item.collection === "revenue" ||
+              item.collection === "expenses" ||
+              item.collection === "profit" ||
+              item.collection === "current-ratio" ||
+              item.collection === "description-documents"
+          )
+        : orgWithFinancialData?.financialCollection ?? [],
+    [financialIndicators, orgWithFinancialData]
+  );
+
   /**
    * Checks if there are incomplete steps (Build a Stronger Profile section).
+   * Uses FinancialIndicators with 'description-documents' collection to check for missing documentation.
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
-    // Note: These fields may be sideloaded or in a different structure in v3
-    const statementFiles = organization
-      ? {
-          op_budget_3year: (organization as any)?.op_budget_3year,
-          op_budget_2year: (organization as any)?.op_budget_2year,
-          op_budget_1year: (organization as any)?.op_budget_1year
-        }
-      : {};
+    const descriptionDocs = financialData.filter(item => item.collection === "description-documents");
+
+    const hasEmptyDocumentation = descriptionDocs.some(
+      item => !item.documentation || (Array.isArray(item.documentation) && item.documentation.length === 0)
+    );
 
     return {
-      statementFiles: _.some(statementFiles, _.isEmpty)
+      statementFiles: hasEmptyDocumentation
     };
-  }, [organization]);
+  }, [financialData]);
 
   const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
 
-  const files: any[] = useMemo(() => {
-    // Note: These fields may be sideloaded or in a different structure in v3
-    return [
-      ...((organization as any)?.op_budget_3year ?? []),
-      ...((organization as any)?.op_budget_2year ?? []),
-      ...((organization as any)?.op_budget_1year ?? [])
-    ];
-  }, [organization]);
+  const files: UploadedFile[] = useMemo(() => {
+    const descriptionDocs = financialData.filter(item => item.collection === "description-documents");
 
-  const financialReports = (organization as any)?.financialReports ?? [];
-  const mappedReportActions: ActionTrackerCardRowProps[] = (financialReports ?? []).map((report: any) => ({
-    title: report.name,
-    subtitle: `Year: ${report.year_of_report}`,
-    status: Object.values(StatusEnum).includes(report.status) ? report.status : StatusEnum.DRAFT,
-    ctaLink: `/reports/financial-report/${report.uuid}`,
-    ctaText: t("View Report"),
-    onClick: () => {},
-    statusText: report.status,
-    updatedAt: report.due_at ? `Due: ${new Date(report.due_at).toLocaleDateString()}` : "",
-    updatedBy: report.updated_by || ""
-  }));
+    const mediaFiles: MediaDto[] = descriptionDocs.flatMap(item => (item.documentation as MediaDto[]) || []);
+
+    return mediaFiles.map(media => mediaToUploadedFile(media));
+  }, [financialData]);
+
+  const financialReports: FinancialReportLightDto[] = useMemo(
+    () => (financialReportsStore.length > 0 ? financialReportsStore : orgWithFinancialData?.financialReports ?? []),
+    [financialReportsStore, orgWithFinancialData]
+  );
+
+  const mappedReportActions: ActionTrackerCardRowProps[] = useMemo(
+    () =>
+      financialReports.map((report: FinancialReportLightDto) => ({
+        title: organization?.name || report.organisationName || `Financial Report ${report.yearOfReport || ""}`,
+        subtitle: `Year: ${report.yearOfReport ?? ""}`,
+        status: Object.values(StatusEnum).includes(report.status as StatusEnum)
+          ? (report.status as StatusEnum)
+          : StatusEnum.DRAFT,
+        ctaLink: `/reports/financial-report/${report.uuid}`,
+        ctaText: t("View Report"),
+        onClick: (): {} => ({}),
+        statusText: report.status,
+        updatedAt: report.dueAt ? `Due: ${new Date(report.dueAt).toLocaleDateString()}` : "",
+        updatedBy: ""
+      })),
+    [financialReports, organization, t]
+  );
 
   const fundingTypes: V2FundingTypeRead[] =
-    organization && (organization as any)?.funding_types ? (organization as any)?.funding_types : [];
+    fundingTypesStore.length > 0
+      ? (fundingTypesStore as unknown as V2FundingTypeRead[])
+      : orgWithFinancialData?.fundingTypes
+      ? (orgWithFinancialData.fundingTypes as unknown as V2FundingTypeRead[])
+      : [];
 
-  const financialData = (organization as any)?.financialCollection ?? [];
-  const financialRatioStats = calculateFinancialRatioStats(financialData);
+  const chartData = useMemo(() => convertToChartData(financialData), [convertToChartData, financialData]);
+  const financialRatioStats = calculateFinancialRatioStats(chartData);
   const hasNetProfitData =
     Array.isArray(financialData) &&
     financialData.some(
@@ -158,14 +243,14 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
-              <FinancialStackedBarChart data={financialData} currency={organization?.currency} />
+              <FinancialStackedBarChart data={chartData} currency={organization?.currency} />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorDto) => item.collection === "profit")
+                .map((item: FinancialIndicatorDto) => (
                   <CardFinancial
-                    key={item.uuid}
+                    key={item.entityUuid}
                     title={t(item.year.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Net Profit")}
@@ -183,7 +268,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               <Text variant="text-24-bold" className="mb-2">
                 {t("Current Ratio by Year")}
               </Text>
-              <FinancialCurrentRatioChart data={financialData} currency={organization?.currency} />
+              <FinancialCurrentRatioChart data={chartData} currency={organization?.currency} />
             </div>
             <div className="flex h-full flex-col justify-center">
               <div className="grid h-fit grid-cols-3 gap-x-4 gap-y-4">
@@ -212,14 +297,14 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           </Text>
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-6">
-              <FinancialBudgetStackedBarChart data={financialData} currency={organization?.currency} />
+              <FinancialBudgetStackedBarChart data={chartData} currency={organization?.currency} />
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorDto) => item.collection === "budget")
+                .map((item: FinancialIndicatorDto) => (
                   <CardFinancial
-                    key={item.uuid}
+                    key={item.entityUuid}
                     title={t(item.year.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Budget")}
@@ -236,19 +321,19 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
           <Text variant="text-24-bold" className="mb-2">
             {t("Financial Documents per Year")}
           </Text>
-          <FinancialDocumentsSection files={formatDocumentData(financialData)} />
+          <FinancialDocumentsSection files={formatDocumentData(chartData)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Descriptions of Financials per Year")}
           </Text>
-          <FinancialDescriptionsSection items={formatDescriptionData(financialData)} />
+          <FinancialDescriptionsSection items={formatDescriptionData(chartData)} />
         </div>
         <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-all">
           <Text variant="text-24-bold" className="mb-2">
             {t("Exchange Rate by Year")}
           </Text>
-          <FinancialExchangeSection items={formatExchangeData(financialData)} />
+          <FinancialExchangeSection items={formatExchangeData(chartData)} />
         </div>
       </Container>
       <Container className="mx-auto rounded-2xl p-8 shadow-all">

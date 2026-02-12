@@ -19,13 +19,13 @@ import { currencyInput, formatProfitValue, formatYAxisNumber } from "@/utils/fin
 
 type FinancialStackedBarChartProps = {
   uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
+  organisationId?: number;
+  financialReportId?: number;
   collection: string;
   amount: number | null;
   year: number;
   description: string | null;
-  documentation?: any[];
+  documentation?: unknown[];
 };
 
 const FinancialStackedBarChart = ({ data, currency }: { data: FinancialStackedBarChartProps[]; currency?: string }) => {

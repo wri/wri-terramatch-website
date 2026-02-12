@@ -399,19 +399,6 @@ export type OrganisationCreationError = Fetcher.ErrorWrapper<
         message: string;
       };
     }
-  | {
-      status: 409;
-      payload: {
-        /**
-         * @example 409
-         */
-        statusCode: number;
-        /**
-         * @example Conflict
-         */
-        message: string;
-      };
-    }
 >;
 
 export type OrganisationCreationResponse = {
@@ -432,6 +419,32 @@ export type OrganisationCreationResponse = {
     id?: string;
     attributes?: Schemas.OrganisationLightDto;
   };
+  included?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  }[];
 };
 
 export type OrganisationCreationVariables = {
@@ -439,7 +452,7 @@ export type OrganisationCreationVariables = {
 };
 
 /**
- * Create a new organisation for the authenticated user.
+ * Create a new organisation, and the first user for it.
  */
 export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationResponse,
@@ -456,7 +469,7 @@ export type OrganisationShowQueryParams = {
   /**
    * sideloads to include
    */
-  sideloads?: "financialCollection"[];
+  sideloads?: ("financialCollection" | "financialReport" | "cover" | "fundingTypes")[];
 };
 
 export type OrganisationShowError = Fetcher.ErrorWrapper<
@@ -506,17 +519,52 @@ export type OrganisationShowResponse = {
     id?: string;
     attributes?: Schemas.OrganisationFullDto;
   };
-  included?: {
-    /**
-     * @example financialIndicators
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.FinancialIndicatorDto;
-  }[];
+  included?: (
+    | {
+        /**
+         * @example financialIndicators
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialIndicatorDto;
+      }
+    | {
+        /**
+         * @example financialReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialReportLightDto;
+      }
+    | {
+        /**
+         * @example media
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaDto;
+      }
+    | {
+        /**
+         * @example fundingTypes
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FundingTypeDto;
+      }
+  )[];
 };
 
 export type OrganisationShowVariables = {

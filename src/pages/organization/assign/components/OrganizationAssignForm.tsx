@@ -6,8 +6,12 @@ import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import { createOrg } from "@/connections/Organisation";
-import { useGetV2OrganisationsListing, usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
+import {
+  useGetV2OrganisationsListing,
+  usePostV2Organisations,
+  usePostV2OrganisationsJoinExisting
+} from "@/generated/apiComponents";
+import { V2OrganisationUpdate } from "@/generated/apiSchemas";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
@@ -20,20 +24,14 @@ const OrganizationAssignForm = () => {
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
 
   const [searchedTerm, setSearchTerm] = useState<string>("");
-  const [organisationCreateLoading, setOrganisationCreateLoading] = useState(false);
 
-  const handleCreateOrganisation = async () => {
-    setOrganisationCreateLoading(true);
-    try {
-      const org = await createOrg({});
-      const orgUUID = org.uuid;
+  const { mutate: createOrganisation, isLoading: organisationCreateLoading } = usePostV2Organisations({
+    onSuccess: async (data: any) => {
+      const orgUUID = data.data.uuid;
       queryClient.refetchQueries({ queryKey: ["auth", "me"] });
       router.push(`/organization/create?uuid=${orgUUID}`);
-    } catch (err: any) {
-      form.setError("name", { message: err.message ?? "Failed to create organization" });
-      setOrganisationCreateLoading(false);
     }
-  };
+  });
 
   // Mutations
   const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
@@ -90,7 +88,11 @@ const OrganizationAssignForm = () => {
    * Handle Create Organization Button Click
    */
   const handleCreate = async () => {
-    await handleCreateOrganisation();
+    try {
+      await createOrganisation({ body: {} as V2OrganisationUpdate });
+    } catch (err: any) {
+      form.setError("name", { message: err.message });
+    }
   };
 
   const loading = isTyping || isFetching || isLoading;

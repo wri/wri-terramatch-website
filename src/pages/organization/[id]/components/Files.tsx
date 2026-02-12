@@ -3,13 +3,12 @@ import { When } from "react-if";
 import FilePreviewCard from "@/components/elements/FilePreviewCard/FilePreviewCard";
 import Text from "@/components/elements/Text/Text";
 import List from "@/components/extensive/List/List";
-import { V2FileRead } from "@/generated/apiSchemas";
 import { UploadedFile } from "@/types/common";
 import { downloadFile } from "@/utils/network";
 
 type FilesProps = {
   title?: string;
-  files: V2FileRead[];
+  files: UploadedFile[];
 };
 
 const Files = ({ files, title }: FilesProps) => {
@@ -25,7 +24,7 @@ const Files = ({ files, title }: FilesProps) => {
         items={files}
         render={file => (
           <FilePreviewCard
-            file={file as UploadedFile}
+            file={file}
             onDownload={f => {
               if (f.url != null) downloadFile(f.url);
             }}

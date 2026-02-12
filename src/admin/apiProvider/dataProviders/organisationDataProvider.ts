@@ -100,6 +100,7 @@ export const organisationDataProvider: OrganisationDataProvider = {
     }
   },
 
+  // @ts-ignore
   async update(_, params) {
     const uuid = params.id as string;
     const uploadKeys = ["logo", "cover", "legal_registration", "reference", "additional"];

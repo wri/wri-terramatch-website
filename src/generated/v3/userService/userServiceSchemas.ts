@@ -249,6 +249,153 @@ export type FinancialIndicatorDto = {
   documentation: EmbeddedMediaDto[] | null;
 };
 
+export type FinancialReportLightDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  /**
+   * Report status for this financial report
+   */
+  status: "due" | "started" | "awaiting-approval" | "approved" | "needs-more-information";
+  /**
+   * Update request status for this financial report
+   */
+  updateRequestStatus: "no-update" | "draft" | "awaiting-approval" | "approved" | "needs-more-information" | null;
+  /**
+   * The associated organisation name
+   */
+  organisationName: string | null;
+  /**
+   * The associated organisation uuid
+   */
+  organisationUuid: string | null;
+  yearOfReport: number | null;
+  /**
+   * @format date-time
+   */
+  submittedAt: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  updatedAt: string;
+};
+
+export type MediaDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  collectionName: string;
+  url: string | null;
+  thumbUrl: string | null;
+  name: string;
+  fileName: string;
+  mimeType: string | null;
+  size: number;
+  lat: number | null;
+  lng: number | null;
+  isPublic: boolean;
+  isCover: boolean;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  description: string | null;
+  photographer: string | null;
+  createdByUserName: string | null;
+};
+
+export type FundingTypeDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  source: string | null;
+  amount: number | null;
+  year: number | null;
+  type: string | null;
+  organisationName: string | null;
+  organisationUuid: string | null;
+  financialReportId: number | null;
+};
+
 export type OrganisationUpdateAttributes = {
   status?: "approved" | "pending" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";
@@ -383,23 +530,63 @@ export type OrganisationUpdateBody = {
   data: OrganisationUpdateData;
 };
 
+export type UserFramework = {
+  /**
+   * @example TerraFund Landscapes
+   */
+  name: string;
+  /**
+   * @example terrafund-landscapes
+   */
+  slug: string;
+};
+
+export type UserDto = {
+  uuid: string;
+  firstName: string | null;
+  lastName: string | null;
+  /**
+   * Currently just calculated by appending lastName to firstName.
+   */
+  fullName: string | null;
+  primaryRole: string;
+  /**
+   * @example person@foocorp.net
+   */
+  emailAddress: string;
+  /**
+   * @format date-time
+   */
+  emailAddressVerifiedAt: string | null;
+  locale: string | null;
+  frameworks: UserFramework[];
+};
+
 export type OrganisationCreateAttributes = {
-  name?: string;
-  type?: "non-profit-organization" | "for-profit-organization";
-  hqStreet1?: string;
+  name: string;
+  type: "non-profit-organization" | "for-profit-organization";
+  hqStreet1: string;
   hqStreet2?: string;
-  hqCity?: string;
-  hqState?: string;
+  hqCity: string;
+  hqState: string;
   hqZipcode?: string;
-  hqCountry?: string;
-  phone?: string;
-  countries?: string[];
+  hqCountry: string;
+  phone: string;
+  countries: string[];
+  fundingProgrammeUuid: string;
   /**
    * @default USD
    */
   currency?: string;
+  level0Proposed?: string[];
+  level1Proposed?: string[];
   level0PastRestoration?: string[];
   level1PastRestoration?: string[];
+  userFirstName: string;
+  userLastName: string;
+  userEmailAddress: string;
+  userRole: string;
+  userLocale: "en-US" | "es-MX" | "fr-FR" | "pt-BR";
 };
 
 export type OrganisationCreateData = {
@@ -446,38 +633,6 @@ export type ActionDto = {
    * @format date-time
    */
   updatedAt: string;
-};
-
-export type UserFramework = {
-  /**
-   * @example TerraFund Landscapes
-   */
-  name: string;
-  /**
-   * @example terrafund-landscapes
-   */
-  slug: string;
-};
-
-export type UserDto = {
-  uuid: string;
-  firstName: string | null;
-  lastName: string | null;
-  /**
-   * Currently just calculated by appending lastName to firstName.
-   */
-  fullName: string | null;
-  primaryRole: string;
-  /**
-   * @example person@foocorp.net
-   */
-  emailAddress: string;
-  /**
-   * @format date-time
-   */
-  emailAddressVerifiedAt: string | null;
-  locale: string | null;
-  frameworks: UserFramework[];
 };
 
 export type UserUpdateAttributes = {

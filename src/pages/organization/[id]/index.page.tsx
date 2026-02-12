@@ -18,7 +18,10 @@ const OrganizationPage = () => {
   const organizationId = router.isReady ? (router.query.id as string | undefined) : undefined;
 
   const t = useT();
-  const [loaded, { data: org }] = useOrganisation({ id: organizationId });
+  const [loaded, { data: org }] = useOrganisation({
+    id: organizationId,
+    sideloads: ["cover", "financialCollection", "financialReport", "fundingTypes"]
+  });
 
   const coverImage = (org as any)?.cover?.url;
 
