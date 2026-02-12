@@ -265,7 +265,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   {t("Helpful Links")}
                 </Text>
                 <Divider />
-                <Flex direction="column" paddingTop={1.5} alignItems="flex-start" className="overflow-y-auto">
+                <Flex direction="column" paddingTop={1.5} alignItems="flex-start">
                   {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
                     <Button
                       variant="borderless"
