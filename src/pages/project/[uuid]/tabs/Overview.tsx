@@ -70,6 +70,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const { openModal } = useModalContext();
   const { isLargerResolution } = useResolutions();
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
   const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
@@ -160,13 +161,13 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: "Continue Editing",
+              children: isProjectSetupComplete ? "Edit" : "Continue Editing",
               rightIcon: <ChevronRight />,
               onClick: goToContinueEditingTab
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProjectSetUpSection entityUuid={project.uuid} />
+              <ProjectSetUpSection entityUuid={project.uuid} onStatusChange={setIsProjectSetupComplete} />
             </Box>
           </OverviewItem>
         </Flex>
@@ -183,7 +184,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         >
           <KeyIndicatorsInsightsTab project={project} />
         </OverviewItem>
-        <Flex gap={7} height="550px" paddingY={2}>
+        <Flex gap={7} height="570px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
             title="Team Members"
@@ -264,7 +265,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   {t("Helpful Links")}
                 </Text>
                 <Divider />
-                <Flex direction="column" paddingTop={1.5} alignItems="flex-start" className="overflow-y-auto">
+                <Flex direction="column" paddingTop={1.5} alignItems="flex-start">
                   {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
                     <Button
                       variant="borderless"
