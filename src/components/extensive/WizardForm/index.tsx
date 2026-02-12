@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ChevronRight } from "@mui/icons-material";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
@@ -261,19 +262,21 @@ function WizardForm(props: WizardFormProps) {
         >
           <ToolbarForm
             ButtonLeft={{
-              children: "Label",
+              children: "Cancel",
               onClick: () => {}
             }}
             ButtonPrimary={{
-              children: "Label",
+              children: "Next",
+              rightIcon: <ChevronRight />,
               onClick: () => {}
             }}
             ButtonSecondary={{
-              children: "Label",
+              children: "Save and Exit",
               onClick: () => {}
             }}
             ButtonTertiary={{
-              children: "Label",
+              children: "Previous",
+              leftIcon: <ChevronRight />,
               onClick: () => {}
             }}
           />
@@ -384,7 +387,6 @@ function WizardForm(props: WizardFormProps) {
                     ],
                     linkRouter: Link
                   }}
-                  slots={[{ title: "Project Name", description: "Project Description" }]}
                 />
                 <PageHeader
                   title={project?.name ?? "Project Name"}
