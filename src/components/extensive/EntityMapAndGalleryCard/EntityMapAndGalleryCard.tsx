@@ -23,6 +23,7 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
+import { sortByCreatedAt } from "@/utils/sort";
 
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
@@ -106,17 +107,7 @@ const EntityMapAndGalleryCard = ({
     ])
   );
 
-  const sortedMediaList = useMemo(
-    () =>
-      (mediaList ?? [])
-        .slice()
-        .sort((a, b) =>
-          sortOrder === "DESC"
-            ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        ),
-    [mediaList, sortOrder]
-  );
+  const sortedMediaList = useMemo(() => sortByCreatedAt(mediaList ?? [], sortOrder), [mediaList, sortOrder]);
 
   // Fetch site polygons using V3 endpoint
   const { data: sitePolygonData } = useAllSitePolygons({

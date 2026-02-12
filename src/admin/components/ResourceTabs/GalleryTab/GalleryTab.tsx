@@ -16,6 +16,7 @@ import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
+import { sortByCreatedAt } from "@/utils/sort";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -77,17 +78,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ])
   );
 
-  const sortedMediaList = useMemo(
-    () =>
-      (mediaList ?? [])
-        .slice()
-        .sort((a, b) =>
-          sortOrder === "DESC"
-            ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        ),
-    [mediaList, sortOrder]
-  );
+  const sortedMediaList = useMemo(() => sortByCreatedAt(mediaList ?? [], sortOrder), [mediaList, sortOrder]);
 
   const openFormModalHandlerUploadImages = () => {
     openModal(
