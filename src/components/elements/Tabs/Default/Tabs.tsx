@@ -49,7 +49,6 @@ const Tabs = (props: TabsProps) => {
     if (typeof props.selectedIndex === "number") setSelectedIndex(props.selectedIndex);
   });
 
-  // Map TabItem state to FormNavigation TabType
   const mapStateToType = (state?: TabItem["state"]): TabType => {
     switch (state) {
       case "complete":
@@ -61,8 +60,7 @@ const Tabs = (props: TabsProps) => {
         return "available";
     }
   };
-  console.log(props.tabItems);
-  // Convert tabItems to FormNavigation tabs format
+
   const formNavigationTabs = useMemo(
     () =>
       props.tabItems.map((item, index) => ({
@@ -85,15 +83,9 @@ const Tabs = (props: TabsProps) => {
   const currentTabValue = props.tabItems[selectedIndex]?.key ?? `tab-${selectedIndex}`;
 
   return (
-    <div className={twMerge("bg-theme-neutral-100 flex h-full w-full rounded-2xl shadow", props.className)}>
+    <div className={twMerge("flex h-full w-full rounded-2xl bg-theme-neutral-100 shadow", props.className)}>
       <div className={twMerge("flex flex-col", props.tabListClassName)}>
         <FormNavigation tabs={formNavigationTabs} defaultValue={currentTabValue} onTabClick={handleTabClick} />
-        <div
-          className={classNames(
-            "bg-theme-neutral-100 flex-1 border border-neutral-100",
-            props.rounded && "rounded-bl-lg"
-          )}
-        />
       </div>
       <div
         className={classNames(
