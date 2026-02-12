@@ -17,10 +17,11 @@ export interface TrackingSectionProps {
   entries: TrackingEntryDto[];
   variant: TrackingGridVariantProps;
   onChange?: (entries: TrackingEntryDto[]) => void;
+  onBlur?: () => void;
   status?: Status;
 }
 
-const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
+const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, onBlur, onChange, status }) => {
   const t = useT();
   const { title, rows, total } = useSectionData(trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
@@ -76,13 +77,13 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
   return (
     <>
       <>
-        <div className="border-theme-primary-200 bg-theme-primary-900 col-span-2 border-b px-3 py-2.5">
+        <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
           <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
             {t("By: " + title)}
           </Text>
         </div>
         {/* Column headers */}
-        <div className="bg-theme-neutral-200 col-span-1 flex items-center px-3 py-2">
+        <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2">
           <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`${title} Definition`)}
           </Text>
@@ -99,6 +100,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           onChange={
             onChange == null ? undefined : (amount, userLabel) => onRowChange(entryIndex, typeName, amount, userLabel)
           }
+          onBlur={onBlur}
           onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
           usesName={addNameLabel != null}
           {...{ entryType, label, userLabel, amount }}
@@ -122,13 +124,13 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
         </div>
       )}
       <>
-        <div className={classNames("bg-theme-neutral-100 col-span-1 flex items-center justify-between px-3 py-2.5")}>
+        <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
           <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
             {t(`Total Created:`)}
           </Text>
         </div>
         <div
-          className={classNames("flex items-center justify-center px-3 py-2.5", "bg-theme-primary-100 col-span-1", {
+          className={classNames("col-span-1 flex items-center justify-center px-3  py-2.5", {
             "bg-theme-error-100": status === "in-progress",
             "bg-theme-primary-100": status != "in-progress"
           })}
