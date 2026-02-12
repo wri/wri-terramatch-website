@@ -16,8 +16,8 @@ import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useT
 
 const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
   const t = useT();
-  const [hasBlurred, setHasBlurred] = useState(false);
   const { total, status, counts, startedBalancedCount } = useTableStatus(domain, type, entries);
+  const [hasBlurred, setHasBlurred] = useState(() => entries.some(entry => entry.amount > 0));
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onBlur = useCallback(() => setHasBlurred(true), []);
@@ -30,8 +30,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
   );
 
   const entryTypes = useEntryTypes(domain, type);
-  const entryTypeMap = useEntryTypeMap(type);
-
+  const entryTypeMap = useEntryTypeMap(domain, type);
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
   const user = useIsAdmin();

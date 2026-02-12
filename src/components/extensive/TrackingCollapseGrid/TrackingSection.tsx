@@ -138,7 +138,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
           </Text>
         </div>
         <div
-          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1 bg-theme-primary-100", {
+          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1", {
             "bg-theme-error-100": status === "in-progress",
             "bg-theme-primary-100": status != "in-progress"
           })}
