@@ -1,22 +1,31 @@
 import { V2FinancialIndicatorsRead } from "@/generated/apiSchemas";
 
 export const formatDocumentData = (documents: V2FinancialIndicatorsRead) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
+    .filter(financial => financial?.collection == "description-documents")
     .map(financial => ({ year: financial?.year, files: financial?.documentation }))
     .sort((a, b) => b.year - a.year);
 };
 
 export const formatDescriptionData = (documents: V2FinancialIndicatorsRead) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
+    .filter(financial => financial?.collection == "description-documents")
     .map(financial => ({ label: financial?.year, description: financial?.description }))
     .sort((a, b) => b.label - a.label);
 };
 
 export const formatExchangeData = (documents: V2FinancialIndicatorsRead) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
+    .filter(financial => financial?.collection == "description-documents")
     .map(financial => ({ label: financial?.year, exchangeRate: financial?.exchangeRate }))
     .sort((a, b) => b.label - a.label);
 };
@@ -47,6 +56,16 @@ type FinancialRatioStats = {
 };
 
 export const calculateFinancialRatioStats = (financialData: FinancialDataItem[]): FinancialRatioStats => {
+  if (financialData == null || !Array.isArray(financialData)) {
+    return {
+      latestRatio: 0,
+      latestYear: new Date().getFullYear(),
+      averageRatio: 0,
+      yearRange: "",
+      yearCount: 0
+    };
+  }
+
   const currentRatioData = financialData
     .filter(item => item.collection === "current-ratio")
     .sort((a, b) => a.year - b.year);
@@ -62,12 +81,12 @@ export const calculateFinancialRatioStats = (financialData: FinancialDataItem[])
   }
 
   const latestEntry = currentRatioData[currentRatioData.length - 1];
-  const latestRatio = latestEntry.amount || 0;
+  const latestRatio = latestEntry.amount ?? 0;
   const latestYear = latestEntry.year;
 
-  const validRatios = currentRatioData.filter(item => item.amount !== null);
+  const validRatios = currentRatioData.filter(item => item.amount != null);
   const averageRatio =
-    validRatios.length > 0 ? validRatios.reduce((sum, item) => sum + (item.amount || 0), 0) / validRatios.length : 0;
+    validRatios.length > 0 ? validRatios.reduce((sum, item) => sum + (item.amount ?? 0), 0) / validRatios.length : 0;
 
   const minYear = currentRatioData[0].year;
   const maxYear = currentRatioData[currentRatioData.length - 1].year;
