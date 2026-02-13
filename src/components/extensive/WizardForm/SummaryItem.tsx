@@ -1,8 +1,9 @@
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, SetStateAction, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { FormFooter } from "@/components/extensive/WizardForm/FormFooter";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
@@ -10,6 +11,8 @@ import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 import ApiSlice from "@/store/apiSlice";
 
 type SummaryItemProps = {
@@ -59,7 +62,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   };
 
   return (
-    <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+    <div className="mb-20 overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
       <FormStepHeader
         id="step"
         title={title}
@@ -75,7 +78,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
       >
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
-      <FormFooter
+      {/* <FormFooter
         variant="sticky"
         backButtonProps={{
           children: t("Back"),
@@ -87,7 +90,34 @@ const SummaryItem: FC<SummaryItemProps> = ({
           disabled: submitButtonDisable,
           className: "py-3"
         }}
-      />
+      /> */}
+      <Box
+        className={classNames(
+          "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+          user ? "bottom-0" : "bottom-[0px]"
+        )}
+      >
+        <ToolbarForm
+          ButtonLeft={{
+            children: t("Cancel")
+          }}
+          ButtonPrimary={{
+            children: t("Submit"),
+            onClick: handleSubmitClick,
+            disabled: submitButtonDisable
+          }}
+          ButtonSecondary={{
+            children: t("Save and Exit"),
+            onClick: handleSubmitClick,
+            disabled: submitButtonDisable
+          }}
+          ButtonTertiary={{
+            children: t("Previous"),
+            leftIcon: <ChevronRight className="rotate-180" />,
+            onClick: () => setSelectedStepIndex(n => n - 1)
+          }}
+        />
+      </Box>
     </div>
   );
 };
