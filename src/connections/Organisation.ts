@@ -48,7 +48,7 @@ const myOrganisationConnection: Connection<MyOrganisationConnection> = {
 };
 
 export const indexOrgsConnection = v3Resource("organisations", organisationIndex)
-  .index<OrganisationLightDto | OrganisationFullDto>()
+  .index<OrganisationLightDto>(() => ({ queryParams: { lightResource: true } }))
   .pagination()
   .filter<Filter<OrganisationIndexQueryParams>>()
   .buildConnection();

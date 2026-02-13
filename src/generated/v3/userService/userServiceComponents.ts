@@ -218,7 +218,9 @@ export type OrganisationIndexQueryParams = {
   ["page[number]"]?: number;
   fundingProgrammeUuid?: string;
   search?: string;
-  filter?: Schemas.OrganisationFilterDto;
+  status?: string;
+  type?: string;
+  hqCountry?: string;
   /**
    * Return light resource instead of full resource
    *

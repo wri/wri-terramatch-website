@@ -54,6 +54,11 @@ export type OrganisationLightDto = {
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
+  type: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
 };
 
 export type OrganisationFullDto = {
@@ -61,6 +66,10 @@ export type OrganisationFullDto = {
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
   type: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
   private: boolean;
   isTest: boolean;
   phone: string | null;
@@ -180,17 +189,7 @@ export type OrganisationFullDto = {
   /**
    * @format date-time
    */
-  createdAt: string;
-  /**
-   * @format date-time
-   */
   updatedAt: string;
-};
-
-export type OrganisationFilterDto = {
-  status?: string;
-  type?: string;
-  hqCountry?: string;
 };
 
 export type EmbeddedMediaDto = {

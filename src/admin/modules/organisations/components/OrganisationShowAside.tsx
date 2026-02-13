@@ -59,7 +59,7 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "readable_status"} />
+            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "status"} />
           </Labeled>
         </Grid>
       </Grid>

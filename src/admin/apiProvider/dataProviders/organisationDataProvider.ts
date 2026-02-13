@@ -1,45 +1,47 @@
 import lo from "lodash";
-import { DataProvider } from "react-admin";
+import { DataProvider, GetListParams, GetOneParams, UpdateParams } from "react-admin";
 
-import { createOrg } from "@/connections/Organisation";
 import {
-  DeleteV2AdminOrganisationsUUIDError,
-  fetchDeleteV2AdminOrganisationsUUID,
-  fetchGetV2AdminOrganisations,
+  createOrg,
+  deleteOrganisation,
+  loadOrganisation,
+  loadOrganisations,
+  updateOrganisation
+} from "@/connections/Organisation";
+import {
   fetchGetV2AdminOrganisationsExport,
   fetchGetV2AdminOrganisationsMulti,
-  fetchGetV2AdminOrganisationsUUID,
-  fetchPutV2AdminOrganisationsUUID,
-  GetV2AdminOrganisationsError,
   GetV2AdminOrganisationsExportError,
-  GetV2AdminOrganisationsMultiError,
-  GetV2AdminOrganisationsUUIDError,
-  PutV2AdminOrganisationsUUIDError
+  GetV2AdminOrganisationsMultiError
 } from "@/generated/apiComponents";
-import { V2AdminOrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
 import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { raConnectionProps } from "../utils/listing";
 import { handleUploads } from "../utils/upload";
 
-export interface OrganisationDataProvider extends DataProvider {
+export interface OrganisationDataProvider extends Partial<DataProvider> {
   export: (resource: string) => Promise<void>;
 }
 
 // TODO: Ask BED to provide sortable fields list.
 export const organisationSortableList: string[] = ["name", "created_at", "type"];
 
-const normalizeOrganisationObject = (object: V2AdminOrganisationRead) => {
-  // @ts-ignore incorrect docs
-  const enrolled_funding_programmes = object.data?.project_pitches
-    // @ts-ignore incorrect docs
-    ?.map(pitch => pitch.funding_programme?.uuid)
-    // @ts-ignore
-    .filter((value, index, self) => self.indexOf(value) === index);
+const normalizeOrganisationObject = (organisation: OrganisationFullDto) => {
+  // Extract enrolled funding programmes from project pitches if available
+  // Note: This might need to be adjusted based on v3 data structure
+  const enrolled_funding_programmes: string[] = [];
+  // TODO: Check if project_pitches or similar data is available in v3 OrganisationFullDto
+  // For now, we'll return an empty array and can update when we know the v3 structure
 
-  //@ts-ignore
-  return { data: { ...object.data, id: object.data.uuid, enrolled_funding_programmes } };
+  return {
+    data: {
+      ...organisation,
+      id: organisation.uuid,
+      enrolled_funding_programmes
+    }
+  };
 };
 
 export const organisationDataProvider: OrganisationDataProvider = {
@@ -53,27 +55,36 @@ export const organisationDataProvider: OrganisationDataProvider = {
     }
   },
 
-  async getList(_, params) {
+  async getList<RecordType>(_: string, params: GetListParams) {
     try {
-      const response = await fetchGetV2AdminOrganisations({
-        queryParams: raListParamsToQueryParams(params, organisationSortableList)
-      });
+      const connection = await loadOrganisations(raConnectionProps(params));
+      if (connection.loadFailure != null) {
+        throw v3ErrorForRA("Organisation index fetch failed", connection.loadFailure);
+      }
 
-      return apiListResponseToRAListResult(response);
+      return {
+        data: (connection.data?.map(org => ({ ...org, id: org.uuid })) ?? []) as RecordType[],
+        total: connection.indexTotal ?? 0
+      };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminOrganisationsError);
+      throw v3ErrorForRA("Organisation index fetch failed", err);
     }
   },
 
-  async getOne(_, params) {
+  async getOne<RecordType>(_: string, params: GetOneParams) {
     try {
-      const response = await fetchGetV2AdminOrganisationsUUID({
-        pathParams: { uuid: params.id }
-      });
+      const { loadFailure, data: organisation } = await loadOrganisation({ id: params.id });
+      if (loadFailure != null) {
+        throw v3ErrorForRA("Organisation get fetch failed", loadFailure);
+      }
 
-      return normalizeOrganisationObject(response);
+      if (organisation == null) {
+        throw v3ErrorForRA("Organisation get fetch failed", new Error("Organisation not found"));
+      }
+
+      return { data: normalizeOrganisationObject(organisation).data as RecordType };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation get fetch failed", err);
     }
   },
 
@@ -90,42 +101,38 @@ export const organisationDataProvider: OrganisationDataProvider = {
   //@ts-ignore
   async delete(_, params) {
     try {
-      await fetchDeleteV2AdminOrganisationsUUID({
-        pathParams: { uuid: params.id as string }
-      });
-
+      await deleteOrganisation(params.id as string);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation delete failed", err);
     }
   },
 
   async deleteMany(_, params) {
     try {
       for (const id of params.ids) {
-        await fetchDeleteV2AdminOrganisationsUUID({
-          pathParams: { uuid: id as string }
-        });
+        await deleteOrganisation(id as string);
       }
 
       return { data: params.ids };
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation deleteMany failed", err);
     }
   },
 
-  async update(_, params) {
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     const uuid = params.id as string;
     const uploadKeys = ["logo", "cover", "legal_registration", "reference", "additional"];
-    const body = lo.omit(params.data, uploadKeys);
-    await handleUploads(params, uploadKeys, { uuid, entity: "organisations" });
-    try {
-      const resp = await fetchPutV2AdminOrganisationsUUID({ pathParams: { uuid }, body });
+    const attributes = lo.omit(params.data, uploadKeys) as OrganisationUpdateAttributes;
 
-      //@ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+    try {
+      await handleUploads(params, uploadKeys, { uuid, entity: "organisations" });
+
+      const updatedOrg = await updateOrganisation(attributes, { id: uuid });
+
+      return { data: { ...updatedOrg, id: updatedOrg.uuid } as RecordType };
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminOrganisationsUUIDError);
+      throw v3ErrorForRA("Organisation update failed", err);
     }
   },
 

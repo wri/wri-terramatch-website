@@ -115,7 +115,7 @@ export const OrganisationShow = () => {
         <TabbedShowLayout>
           <TabbedShowLayout.Tab label="Organization Details">
             <TextField source="name" label="Legal Name" emptyText="Not Provided" />
-            <TextField source="readable_status" label="Status" emptyText="Not Provided" />
+            <TextField source="status" label="Status" emptyText="Not Provided" />
             <SelectField
               source="type"
               label="Organization Type"
