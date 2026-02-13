@@ -99,7 +99,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
             {amount}
           </Text>
         ) : (
-          <div className="flex w-30 items-center justify-center">
+          <div className="flex w-[5.625rem] items-center justify-center">
             <TextInput
               size="small"
               value={amount}
