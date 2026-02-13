@@ -469,7 +469,7 @@ export type OrganisationShowQueryParams = {
   /**
    * sideloads to include
    */
-  sideloads?: ("financialCollection" | "financialReport" | "cover" | "fundingTypes")[];
+  sideloads?: ("financialCollection" | "financialReport" | "media" | "fundingTypes" | "leadership")[];
 };
 
 export type OrganisationShowError = Fetcher.ErrorWrapper<
@@ -563,6 +563,17 @@ export type OrganisationShowResponse = {
          */
         id?: string;
         attributes?: Schemas.FundingTypeDto;
+      }
+    | {
+        /**
+         * @example leaderships
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.LeadershipDto;
       }
   )[];
 };

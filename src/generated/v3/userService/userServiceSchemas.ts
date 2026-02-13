@@ -396,6 +396,43 @@ export type FundingTypeDto = {
   financialReportId: number | null;
 };
 
+export type LeadershipDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  collection: string;
+  nationality: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  position: string | null;
+  gender: string | null;
+  age: number | null;
+};
+
 export type OrganisationUpdateAttributes = {
   status?: "approved" | "pending" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";

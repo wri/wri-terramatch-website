@@ -11,8 +11,7 @@ import {
   organisationIndex,
   OrganisationIndexQueryParams,
   organisationShow,
-  organisationUpdate,
-  OrganisationUpdateVariables
+  organisationUpdate
 } from "@/generated/v3/userService/userServiceComponents";
 import {
   OrganisationFullDto,
@@ -55,11 +54,13 @@ export const indexOrgsConnection = v3Resource("organisations", organisationIndex
   .buildConnection();
 
 const organisationConnection = v3Resource("organisations", organisationShow)
-  .singleResource<OrganisationFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .singleFullResource<OrganisationFullDto & { lightResource: boolean }>(({ id }) =>
+    id == null ? undefined : { pathParams: { uuid: id } }
+  )
   .sideloads()
   .isLoading()
   .loadFailure()
-  .update<OrganisationUpdateAttributes, OrganisationUpdateVariables>(organisationUpdate)
+  .update(organisationUpdate)
   .buildConnection();
 
 const orgCreationConnection = v3Resource("organisations", organisationCreation)

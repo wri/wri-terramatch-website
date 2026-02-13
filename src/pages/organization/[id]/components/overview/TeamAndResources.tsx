@@ -1,74 +1,87 @@
 import { useT } from "@transifex/react";
 import React from "react";
 import { When } from "react-if";
+import { useSelector } from "react-redux";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { useGadmOptions } from "@/connections/Gadm";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { LeadershipDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import { AppStore } from "@/store/store";
 import { formatOptionsList } from "@/utils/options";
 
 type TeamAndResourcesProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
   const t = useT();
   const countryOptions = useGadmOptions({ level: 0 });
 
+  const leadershipTeam = useSelector<AppStore, LeadershipDto[]>(state => {
+    if (organization?.uuid == null || state.api.leaderships == null) return [];
+
+    return Object.values(state.api.leaderships)
+      .filter(
+        resource =>
+          resource.attributes.entityUuid === organization.uuid &&
+          resource.attributes.entityType === "organisations" &&
+          resource.attributes.collection === "leadership-team"
+      )
+      .map(resource => resource.attributes)
+      .filter((attrs): attrs is LeadershipDto => Boolean(attrs));
+  });
+
   return (
     <section className="my-10 rounded-lg bg-neutral-150 p-8">
       <Text variant="text-heading-300">{t("Team and Resources")}</Text>
       <div className="mt-10 flex flex-col gap-12">
-        <When condition={organization?.leadership_team && organization?.leadership_team.length > 0}>
+        <When condition={leadershipTeam && leadershipTeam.length > 0}>
           <Table
-            initialTableState={{
-              pagination: { pageSize: 10 }
-            }}
+            variant={VARIANT_TABLE_BORDER_ALL}
             columns={[
               {
-                accessorKey: "id",
-                header: "#"
+                accessorKey: "name",
+                header: t("Name"),
+                enableSorting: false
               },
               {
-                accessorKey: "firstName",
-                header: t("First Name")
-              },
-              {
-                accessorKey: "lastName",
-                header: t("Last Name")
-              },
-              {
-                accessorKey: "gender",
-                header: t("Gender")
-              },
-              {
-                accessorKey: "age",
-                header: t("Age")
-              },
-              {
-                accessorKey: "role",
-                header: t("Role")
+                accessorKey: "position",
+                header: t("Position"),
+                enableSorting: false
               },
               {
                 accessorKey: "nationality",
-                header: t("Nationality")
+                header: t("Nationality"),
+                enableSorting: false,
+                cell: ({ getValue }) => {
+                  const nationality = getValue() as string | null;
+                  return nationality ? formatOptionsList(countryOptions ?? [], nationality ? [nationality] : []) : null;
+                }
+              },
+              {
+                accessorKey: "gender",
+                header: t("Gender"),
+                enableSorting: false
+              },
+              {
+                accessorKey: "age",
+                header: t("Age"),
+                enableSorting: false
               }
             ]}
-            // @ts-expect-error
-            data={organization?.leaderships.map((member, index) => ({
-              id: (index + 1).toString(),
-              firstName: member.first_name,
-              lastName: member.last_name,
-              age: member.age,
-              role: member.position,
-              gender: member.gender,
-              nationality: formatOptionsList(countryOptions ?? [], member.nationality as string)
+            initialTableState={{
+              pagination: { pageSize: 10 }
+            }}
+            data={leadershipTeam.map(leader => ({
+              id: leader.uuid,
+              name: [leader.firstName, leader.lastName].filter(Boolean).join(" ") || null,
+              position: leader.position ?? null,
+              nationality: leader.nationality ?? null,
+              gender: leader.gender ?? null,
+              age: leader.age ?? null
             }))}
-            variant={VARIANT_TABLE_BORDER_ALL}
-            alwaysShowPagination
-            hasPagination
           />
         </When>
         <Table
@@ -91,38 +104,37 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
             {
               id: "1",
               label: "Number of full-time permanent employees",
-              count: organization?.ft_permanent_employees
+              count: organization?.ftPermanentEmployees ?? undefined
             },
             {
               id: "2",
               label: "Number of part-time permanent employees",
-              count: organization?.pt_permanent_employees
+              count: organization?.ptPermanentEmployees ?? undefined
             },
             {
               id: "3",
               label: "Number of temporary employees",
-              count: organization?.temp_employees
+              count: organization?.tempEmployees ?? undefined
             },
             {
               id: "4",
               label: "Number of female employees",
-              count: organization?.female_employees
+              count: organization?.femaleEmployees ?? undefined
             },
             {
               id: "5",
               label: "Number of male employees",
-              count: organization?.male_employees
+              count: organization?.maleEmployees ?? undefined
             },
             {
               id: "6",
               label: "Number of employees between and including ages 18 and 35",
-              count: organization?.young_employees
+              count: organization?.youngEmployees ?? undefined
             },
             {
               id: "7",
               label: "Number of employees older than 35 years of age",
-              // @ts-expect-error
-              count: organization?.over_35_employees
+              count: organization?.over35Employees ?? undefined
             }
           ]}
         />
