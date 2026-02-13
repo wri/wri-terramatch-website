@@ -433,6 +433,77 @@ export type LeadershipDto = {
   age: number | null;
 };
 
+export type OwnershipStakeDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  organisationId: string;
+  firstName: string;
+  lastName: string;
+  title: string;
+  gender: string;
+  percentOwnership: number;
+  yearOfBirth: number;
+};
+
+export type TreeSpeciesDto = {
+  /**
+   * The entity type this resource is associated with.
+   */
+  entityType:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "siteReports"
+    | "nurseryReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "organisations"
+    | "auditStatuses"
+    | "forms"
+    | "formQuestionOptions"
+    | "fundingProgrammes"
+    | "impactStories"
+    | "financialIndicators"
+    | "projectPitches"
+    | any;
+  /**
+   * The entity UUID this resource is associated with.
+   */
+  entityUuid: string;
+  uuid: string;
+  name: string | null;
+  amount: number | null;
+  taxonId: string | null;
+  collection: string | null;
+};
+
 export type OrganisationUpdateAttributes = {
   status?: "approved" | "pending" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";

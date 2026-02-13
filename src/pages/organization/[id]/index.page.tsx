@@ -24,7 +24,15 @@ const OrganizationPage = () => {
   const t = useT();
   const [loaded, { data: organisation, isLoading: organizationLoading }] = useOrganisation({
     id: organizationId,
-    sideloads: ["media", "financialCollection", "financialReport", "fundingTypes", "leadership"]
+    sideloads: [
+      "media",
+      "financialCollection",
+      "financialReport",
+      "fundingTypes",
+      "leadership",
+      "ownershipStakes",
+      "treeSpeciesHistorical"
+    ]
   });
   const coverMedia = useSelector<AppStore, MediaDto[]>(state => {
     if (organisation?.uuid == null || state.api.media == null) return [];

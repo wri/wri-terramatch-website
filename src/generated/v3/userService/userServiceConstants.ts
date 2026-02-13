@@ -11,6 +11,8 @@ import {
   MediaDto,
   FundingTypeDto,
   LeadershipDto,
+  OwnershipStakeDto,
+  TreeSpeciesDto,
   ActionDto
 } from "./userServiceSchemas";
 
@@ -25,6 +27,8 @@ export const USER_SERVICE_RESOURCES = [
   "media",
   "fundingTypes",
   "leaderships",
+  "ownershipStakes",
+  "treeSpecies",
   "actions"
 ] as const;
 
@@ -39,5 +43,7 @@ export type UserServiceApiResources = {
   media: StoreResourceMap<MediaDto>;
   fundingTypes: StoreResourceMap<FundingTypeDto>;
   leaderships: StoreResourceMap<LeadershipDto>;
+  ownershipStakes: StoreResourceMap<OwnershipStakeDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   actions: StoreResourceMap<ActionDto>;
 };

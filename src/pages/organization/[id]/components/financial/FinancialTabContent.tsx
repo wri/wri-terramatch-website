@@ -18,7 +18,7 @@ import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FundingTypeRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { V2FundingTypeRead } from "@/generated/apiSchemas";
 import {
   FinancialIndicatorDto,
   FinancialReportLightDto,
@@ -351,10 +351,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
               "Organizational Profiles with financial information are more likely to be successful in Funding Applications."
             )}
             onEdit={() =>
-              openModal(
-                ModalId.ORGANIZATION_EDIT_MODAL,
-                <OrganizationEditModal organization={organization as unknown as V2OrganisationRead | undefined} />
-              )
+              openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
             }
           />
         </When>

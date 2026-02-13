@@ -469,7 +469,15 @@ export type OrganisationShowQueryParams = {
   /**
    * sideloads to include
    */
-  sideloads?: ("financialCollection" | "financialReport" | "media" | "fundingTypes" | "leadership")[];
+  sideloads?: (
+    | "financialCollection"
+    | "financialReport"
+    | "media"
+    | "fundingTypes"
+    | "leadership"
+    | "ownershipStakes"
+    | "treeSpeciesHistorical"
+  )[];
 };
 
 export type OrganisationShowError = Fetcher.ErrorWrapper<
@@ -574,6 +582,28 @@ export type OrganisationShowResponse = {
          */
         id?: string;
         attributes?: Schemas.LeadershipDto;
+      }
+    | {
+        /**
+         * @example ownershipStakes
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.OwnershipStakeDto;
+      }
+    | {
+        /**
+         * @example treeSpecies
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TreeSpeciesDto;
       }
   )[];
 };

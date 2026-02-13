@@ -9,7 +9,6 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { MediaDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import PastCommunityExperience from "@/pages/organization/[id]/components/overview/PastCommunityExperience";
 import TeamAndResources from "@/pages/organization/[id]/components/overview/TeamAndResources";
@@ -181,10 +180,7 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
             "Organizational Profiles with overview information are more likely to be successful in Funding Applications."
           )}
           onEdit={() =>
-            openModal(
-              ModalId.ORGANIZATION_EDIT_MODAL,
-              <OrganizationEditModal organization={organization as unknown as V2OrganisationRead | undefined} />
-            )
+            openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />)
           }
         />
       </When>

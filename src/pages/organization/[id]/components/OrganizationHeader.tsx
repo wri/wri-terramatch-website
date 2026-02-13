@@ -12,7 +12,6 @@ import Container from "@/components/generic/Layout/Container";
 import { useGadmOptions } from "@/connections/Gadm";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { useModalContext } from "@/context/modal.provider";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { MediaDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { AppStore } from "@/store/store";
 import { formatOptionsList } from "@/utils/options";
@@ -47,11 +46,7 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const logoUrl = logoMedia[0]?.url ?? null;
 
   const showEditOrgModal = () => {
-    // TODO: Update OrganizationEditModal to accept OrganisationFullDto
-    return openModal(
-      ModalId.ORGANIZATION_EDIT_MODAL,
-      <OrganizationEditModal organization={organization as unknown as V2OrganisationRead | undefined} />
-    );
+    return openModal(ModalId.ORGANIZATION_EDIT_MODAL, <OrganizationEditModal organization={organization} />);
   };
 
   useEffect(() => {
