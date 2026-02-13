@@ -99,7 +99,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
             {amount}
           </Text>
         ) : (
-          <div className="flex w-16 items-center justify-center">
+          <div className="flex w-30 items-center justify-center">
             <TextInput
               size="small"
               value={amount}
@@ -107,7 +107,6 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
               onBlur={onBlur}
               css={css`
                 width: 100%;
-                padding: 0 24px 0 16px;
                 & > div {
                   margin-bottom: 0;
                 }
