@@ -62,6 +62,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         <Button
           variant="borderless"
           size="small"
+          className="-mr-2"
           onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
         >
           {organization}
