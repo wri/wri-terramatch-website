@@ -73,7 +73,10 @@ export const organisationDataProvider: OrganisationDataProvider = {
 
   async getOne<RecordType>(_: string, params: GetOneParams) {
     try {
-      const { loadFailure, data: organisation } = await loadOrganisation({ id: params.id });
+      const { loadFailure, data: organisation } = await loadOrganisation({
+        id: params.id,
+        sideloads: ["media", "financialCollection", "treeSpeciesHistorical", "fundingTypes"]
+      });
       if (loadFailure != null) {
         throw v3ErrorForRA("Organisation get fetch failed", loadFailure);
       }

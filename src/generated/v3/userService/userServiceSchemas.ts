@@ -508,6 +508,10 @@ export type OrganisationUpdateAttributes = {
   type?: "non-profit-organization" | "for-profit-organization";
   subtype?: Record<string, any> | null;
   private?: boolean;
+  /**
+   * Update the isTest flag.
+   */
+  isTest?: boolean;
   name?: Record<string, any> | null;
   phone?: Record<string, any> | null;
   hqStreet1?: Record<string, any> | null;

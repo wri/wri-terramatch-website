@@ -1,12 +1,13 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
-import { useQueryClient } from "@tanstack/react-query";
-import { FC, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { FC, useCallback, useMemo } from "react";
 import {
   ArrayField,
   Datagrid,
   DateField,
   ImageField,
   NumberField,
+  RecordContextProvider,
   SelectField,
   Show,
   ShowBase,
@@ -18,6 +19,7 @@ import {
   useRefresh,
   useShowContext
 } from "react-admin";
+import { useSelector } from "react-redux";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
@@ -29,6 +31,7 @@ import FinancialMetrics from "@/admin/components/ResourceTabs/HistoryTab/compone
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
+import { updateOrganisation } from "@/connections/Organisation";
 import {
   getFarmersEngagementStrategyOptions,
   getWomenEngagementStrategyOptions,
@@ -36,34 +39,53 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { usePutV2OrganisationsUUID } from "@/generated/apiComponents";
+import {
+  FinancialIndicatorDto,
+  FundingTypeDto,
+  MediaDto,
+  OrganisationUpdateAttributes,
+  TreeSpeciesDto
+} from "@/generated/v3/userService/userServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
+import { AppStore } from "@/store/store";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
-import { V2FinancialIndicatorsRead } from "../../../../generated/apiSchemas";
+import { V2FinancialIndicatorsRead, V2FundingTypeRead } from "../../../../generated/apiSchemas";
 import OrganisationApplicationsTable from "./OrganisationApplicationsTable";
 import OrganisationFundingProgrammesTable from "./OrganisationFundingProgrammesTable";
 import OrganisationPitchesTable from "./OrganisationPitchesTable";
 import { OrganisationShowAside } from "./OrganisationShowAside";
 import OrganisationUserTable from "./OrganisationUserTable";
 
+type FinancialIndicator = FinancialIndicatorDto & {
+  organisationUuid?: string;
+};
+
 const OrganisationShowActions: FC = () => {
   const record = useRecordContext();
   if (!record) return null;
-  const { uuid, is_test } = record;
+  const { uuid, isTest } = record;
   const refresh = useRefresh();
   const queryClient = useQueryClient();
-  const { mutate: updateOrg } = usePutV2OrganisationsUUID({
-    onSuccess: async (data, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["v2", "admin", "organisations", variables.pathParams.uuid] });
+  const { mutate: updateOrg } = useMutation({
+    mutationFn: async (attributes: OrganisationUpdateAttributes) => {
+      if (uuid == null) throw new Error("UUID is required");
+      return updateOrganisation(attributes, { id: uuid });
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["v3", "organisations", uuid] });
+      if (uuid != null) {
+        ApiSlice.pruneCache("organisations", [uuid]);
+      }
       refresh();
     }
   });
 
   const toggleTestStatus = useCallback(() => {
-    // @ts-ignore
-    updateOrg({ pathParams: { uuid: uuid }, body: { is_test: !is_test } });
-  }, [is_test, updateOrg, uuid]);
+    if (uuid == null) return;
+    updateOrg({ isTest: !isTest });
+  }, [isTest, updateOrg, uuid]);
 
   return <ShowActions toggleTestStatus={toggleTestStatus} />;
 };
@@ -72,28 +94,70 @@ const OrganisationDataConsumer = () => {
   const { record } = useShowContext();
   if (!record) <></>;
 
-  const years = Array.isArray(record?.financialCollection)
-    ? Array.from(
-        new Set((record.financialCollection as V2FinancialIndicatorsRead)?.map(item => item.year).filter(Boolean))
-      ).sort()
+  const financialIndicators = useSelector<AppStore, Array<FinancialIndicator & { uuid: string }>>(state => {
+    if (record?.uuid == null || state.api.financialIndicators == null) return [];
+
+    return Object.entries(state.api.financialIndicators)
+      .map(([uuid, resource]) => {
+        const attrs = resource.attributes as FinancialIndicator;
+        return { ...attrs, uuid };
+      })
+      .filter(indicator => indicator.organisationUuid === record.uuid);
+  });
+  const financialCollection: V2FinancialIndicatorsRead = useMemo(() => {
+    return financialIndicators.map(fi => ({
+      uuid: fi.uuid,
+      organisation_id: 0,
+      financial_report_id: 0,
+      collection: fi.collection,
+      amount: fi.amount,
+      year: fi.year,
+      description: fi.description,
+      documentation: fi.documentation ?? [],
+      exchangeRate: fi.exchangeRate
+    }));
+  }, [financialIndicators]);
+
+  const fundingTypes = useSelector<AppStore, FundingTypeDto[]>(state => {
+    if (record?.uuid == null || state.api.fundingTypes == null) return [];
+    return Object.values(state.api.fundingTypes)
+      .filter(resource => resource.attributes.organisationUuid === record.uuid)
+      .map(resource => resource.attributes);
+  });
+
+  // Convert FundingTypeDto to V2FundingTypeRead format for FundingSourcesSection
+  const fundingTypesV2: V2FundingTypeRead[] = useMemo(() => {
+    return fundingTypes.map(ft => ({
+      source: ft.source ?? undefined,
+      amount: ft.amount ?? undefined,
+      year: ft.year ?? undefined,
+      type: ft.type ?? undefined,
+      organisation_name: ft.organisationName ?? undefined,
+      organisation_uuid: ft.organisationUuid ?? undefined,
+      financial_report_id: ft.financialReportId != null ? String(ft.financialReportId) : undefined
+    })) as V2FundingTypeRead[];
+  }, [fundingTypes]);
+
+  const years = Array.isArray(financialCollection)
+    ? Array.from(new Set(financialCollection?.map(item => item.year).filter(Boolean))).sort()
     : [];
 
   return (
     <div className="flex flex-col gap-8 p-2">
-      <FinancialMetrics data={record?.financialCollection} years={years} />
+      <FinancialMetrics data={financialCollection} years={years} />
       <Accordion
         title="Financial Documents per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDocumentsSection files={formatDocumentData(record?.financialCollection)} />
+        <FinancialDocumentsSection files={formatDocumentData(financialCollection)} />
       </Accordion>
       <Accordion
         title="Descriptions of Financials per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDescriptionsSection items={formatDescriptionData(record?.financialCollection)} />
+        <FinancialDescriptionsSection items={formatDescriptionData(financialCollection)} />
       </Accordion>
 
       <Accordion
@@ -101,164 +165,241 @@ const OrganisationDataConsumer = () => {
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FundingSourcesSection data={record?.funding_types} currency={record?.currency} />
+        <FundingSourcesSection data={fundingTypesV2} currency={record?.currency ?? undefined} />
       </Accordion>
     </div>
   );
 };
 
-export const OrganisationShow = () => {
+const EnrichedOrganisationShowContent = () => {
+  const { record: baseRecord } = useShowContext();
   const countryChoices = useGadmChoices({ level: 0 });
+
+  const allMediaFiles = useSelector<AppStore, MediaDto[]>(state => {
+    if (baseRecord?.uuid == null || state.api.media == null) return [];
+
+    return Object.values(state.api.media)
+      .filter(
+        resource =>
+          resource.attributes.entityUuid === baseRecord.uuid && resource.attributes.entityType === "organisations"
+      )
+      .map(resource => resource.attributes)
+      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  });
+
+  const treeSpeciesHistorical = useSelector<AppStore, TreeSpeciesDto[]>(state => {
+    if (baseRecord?.uuid == null || state.api.treeSpecies == null) return [];
+
+    return Object.values(state.api.treeSpecies)
+      .filter(
+        resource =>
+          resource.attributes.entityUuid === baseRecord.uuid &&
+          resource.attributes.entityType === "organisations" &&
+          resource.attributes.collection === "historical-tree-species"
+      )
+      .map(resource => resource.attributes)
+      .filter((attrs): attrs is TreeSpeciesDto => Boolean(attrs));
+  });
+
+  const enrichedRecord = useMemo(() => {
+    if (!baseRecord) return baseRecord;
+
+    const mediaFilesByCollection: Record<string, any[]> = {
+      logo: [],
+      cover: [],
+      reference: [],
+      additional: [],
+      legal_registration: [],
+      previousAnnualReports: [],
+      historicRestoration: []
+    };
+
+    allMediaFiles.forEach(media => {
+      const collectionName = media.collectionName;
+      if (collectionName && Object.prototype.hasOwnProperty.call(mediaFilesByCollection, collectionName)) {
+        mediaFilesByCollection[collectionName].push({
+          url: media.url,
+          file_name: media.fileName,
+          uuid: media.uuid
+        });
+      }
+    });
+
+    return {
+      ...baseRecord,
+      logo: mediaFilesByCollection.logo[0] || baseRecord.logo,
+      cover: mediaFilesByCollection.cover[0] || baseRecord.cover,
+      reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
+      additional:
+        mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,
+      legal_registration:
+        mediaFilesByCollection.legal_registration.length > 0
+          ? mediaFilesByCollection.legal_registration
+          : baseRecord.legal_registration,
+      previousAnnualReports:
+        mediaFilesByCollection.previousAnnualReports.length > 0
+          ? mediaFilesByCollection.previousAnnualReports
+          : baseRecord.previousAnnualReports,
+      historicRestoration:
+        mediaFilesByCollection.historicRestoration.length > 0
+          ? mediaFilesByCollection.historicRestoration
+          : baseRecord.historicRestoration,
+      tree_species_historical:
+        treeSpeciesHistorical.length > 0 ? treeSpeciesHistorical : baseRecord.tree_species_historical
+    };
+  }, [baseRecord, allMediaFiles, treeSpeciesHistorical]);
+
+  if (!enrichedRecord) return null;
+
+  return (
+    <RecordContextProvider value={enrichedRecord}>
+      <TabbedShowLayout>
+        <TabbedShowLayout.Tab label="Organization Details">
+          <TextField source="name" label="Legal Name" emptyText="Not Provided" />
+          <TextField source="status" label="Status" emptyText="Not Provided" className="capitalize" />
+          <SelectField
+            source="type"
+            label="Organization Type"
+            choices={optionToChoices(getOrganisationTypeOptions())}
+            emptyText="Not Provided"
+          />
+          <TextField source="hqStreet1" label="Headquarters Street address" emptyText="Not Provided" />
+          <TextField source="hqStreet2" label="Headquarters Street address 2" emptyText="Not Provided" />
+          <TextField source="hqCity" label="Headquarters City" emptyText="Not Provided" />
+          <TextField source="hqState" label="Headquarters address State/Province" emptyText="Not Provided" />
+          <TextField source="hqZipcode" label="Headquarters address Zipcode" emptyText="Not Provided" />
+          <SelectField
+            source="hqCountry"
+            label="Headquarters address Country"
+            choices={countryChoices}
+            emptyText="Not Provided"
+          />
+          <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
+          <DateField source="foundingDate" label="Date organization founded" emptyText="Not Provided" locales="en-GB" />
+          <TextField source="description" label="Organization Details" emptyText="Not Provided" />
+          <ImageField source="logo.url" label="Logo" title="logo.file_name" emptyText="Not Provided" />
+          <ImageField source="cover.url" label="Cover" title="cover.file_name" emptyText="Not Provided" />
+
+          <FileArrayField source="reference" label="Reference Letters" />
+          <FileArrayField source="additional" label="Other additional documents" />
+          <FileArrayField source="legal_registration" label="Proof of legal registrations" />
+          <Divider />
+
+          <Typography variant="h6" component="h3">
+            Social Media
+          </Typography>
+          <UrlField source="webUrl" label="Website" emptyText="Not Provided" target="_blank" />
+          <UrlField source="facebookUrl" label="Facebook" emptyText="Not Provided" target="_blank" />
+          <UrlField source="instagramUrl" label="Instagram" emptyText="Not Provided" target="_blank" />
+          <UrlField source="linkedinUrl" label="LinkedIn" emptyText="Not Provided" target="_blank" />
+          <UrlField source="twitterUrl" label="Twitter" emptyText="Not Provided" target="_blank" />
+        </TabbedShowLayout.Tab>
+
+        <TabbedShowLayout.Tab label="Financial History">
+          <OrganisationDataConsumer />
+        </TabbedShowLayout.Tab>
+
+        <TabbedShowLayout.Tab label="Community Engagement">
+          <SimpleChipFieldArray
+            source="engagementFarmers"
+            label="Enagement: Farmers"
+            choices={optionToChoices(getFarmersEngagementStrategyOptions())}
+            emptyText="Not Provided"
+          />
+          <SimpleChipFieldArray
+            source="engagementWomen"
+            label="Enagement: Women"
+            choices={optionToChoices(getWomenEngagementStrategyOptions())}
+            emptyText="Not Provided"
+          />
+          <SimpleChipFieldArray
+            source="engagementYouth"
+            label="Engagement: Youth"
+            choices={optionToChoices(getYoungerThan35EngagementStrategyOptions())}
+            emptyText="Not Provided"
+          />
+          <TextField
+            source="communityExperience"
+            label="Community Engagement Experience/Approach"
+            emptyText="Not Provided"
+          />
+          <TextField
+            source="totalEngagedCommunityMembers3Yr"
+            label="Community Engagement Numbers"
+            emptyText="Not Provided"
+          />
+        </TabbedShowLayout.Tab>
+
+        <TabbedShowLayout.Tab label="Restoration Experience">
+          <NumberField
+            source="relevantExperienceYears"
+            label="Years of relevant restoration experience"
+            emptyText="Not Provided"
+          />
+          <NumberField source="haRestoredTotal" label="Total Hectares Restored" emptyText="Not Provided" />
+          <NumberField
+            source="haRestored3Year"
+            label="Hectares Restored in the last 3 years"
+            emptyText="Not Provided"
+          />
+          <NumberField source="treesGrownTotal" label="Total Trees Grown" emptyText="Not Provided" />
+          <NumberField source="treesGrown3Year" label="Trees Grown in the last 3 years" emptyText="Not Provided" />
+          <ArrayField source="tree_species_historical" label="Tree Species Grown" emptyText="Not Provided">
+            <Datagrid
+              bulkActionButtons={false}
+              empty={
+                <Typography component="span" variant="body2">
+                  Not Provided
+                </Typography>
+              }
+            >
+              <TextField label={false} source="name" />
+            </Datagrid>
+          </ArrayField>
+          <NumberField source="avgTreeSurvivalRate" label="Average Tree Survival Rate" emptyText="Not Provided" />
+          <SimpleChipFieldArray
+            source="restorationTypesImplemented"
+            label="Restoration Intervention Types Implemented"
+            choices={optionToChoices(getRestorationInterventionTypeOptions())}
+            emptyText="Not Provided"
+          />
+          <TextField
+            source="treeMaintenanceAftercareApproach"
+            label="Tree Maintenance & After Care Approach"
+            emptyText="Not Provided"
+          />
+          <TextField source="restoredAreasDescription" label="Description of areas restored" emptyText="Not Provided" />
+          <TextField
+            source="monitoringEvaluationExperience"
+            label="Monitoring and evaluation experience"
+            emptyText="Not Provided"
+          />
+          <MapField
+            label="Historic monitoring shapefile"
+            source="historic_monitoring_geojson"
+            emptyText="Not Provided"
+          />
+          <FileArrayField
+            source="previousAnnualReports"
+            label="Previous Annual Reports for Monitored Restoration Projects"
+            emptyText="Not Provided"
+          />
+          <FileArrayField
+            source="historicRestoration"
+            label="Photos of past restoration work"
+            emptyText="Not Provided"
+          />
+        </TabbedShowLayout.Tab>
+      </TabbedShowLayout>
+    </RecordContextProvider>
+  );
+};
+
+export const OrganisationShow = () => {
   return (
     <>
       <Show actions={<OrganisationShowActions />} aside={<OrganisationShowAside />}>
-        <TabbedShowLayout>
-          <TabbedShowLayout.Tab label="Organization Details">
-            <TextField source="name" label="Legal Name" emptyText="Not Provided" />
-            <TextField source="status" label="Status" emptyText="Not Provided" />
-            <SelectField
-              source="type"
-              label="Organization Type"
-              choices={optionToChoices(getOrganisationTypeOptions())}
-              emptyText="Not Provided"
-            />
-            <TextField source="hq_street_1" label="Headquarters Street address" emptyText="Not Provided" />
-            <TextField source="hq_street_2" label="Headquarters Street address 2" emptyText="Not Provided" />
-            <TextField source="hq_city" label="Headquarters City" emptyText="Not Provided" />
-            <TextField source="hq_state" label="Headquarters address State/Province" emptyText="Not Provided" />
-            <TextField source="hq_zipcode" label="Headquarters address Zipcode" emptyText="Not Provided" />
-            <SelectField
-              source="hq_country"
-              label="Headquarters address Country"
-              choices={countryChoices}
-              emptyText="Not Provided"
-            />
-            <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
-            <DateField
-              source="founding_date"
-              label="Date organization founded"
-              emptyText="Not Provided"
-              locales="en-GB"
-            />
-            <TextField source="description" label="Organization Details" emptyText="Not Provided" />
-            <ImageField source="logo.url" label="Logo" title="logo.file_name" emptyText="Not Provided" />
-            <ImageField source="cover.url" label="Cover" title="cover.file_name" emptyText="Not Provided" />
-
-            <FileArrayField source="reference" label="Reference Letters" />
-            <FileArrayField source="additional" label="Other additional documents" />
-            <FileArrayField source="legal_registration" label="Proof of legal registrations" />
-            <Divider />
-
-            <Typography variant="h6" component="h3">
-              Social Media
-            </Typography>
-            <UrlField source="web_url" label="Website" emptyText="Not Provided" target="_blank" />
-            <UrlField source="facebook_url" label="Facebook" emptyText="Not Provided" target="_blank" />
-            <UrlField source="instagram_url" label="Instagram" emptyText="Not Provided" target="_blank" />
-            <UrlField source="linkedin_url" label="LinkedIn" emptyText="Not Provided" target="_blank" />
-            <UrlField source="twitter_url" label="Twitter" emptyText="Not Provided" target="_blank" />
-          </TabbedShowLayout.Tab>
-
-          <TabbedShowLayout.Tab label="Financial History">
-            <OrganisationDataConsumer />
-          </TabbedShowLayout.Tab>
-
-          <TabbedShowLayout.Tab label="Community Engagement">
-            <SimpleChipFieldArray
-              source="engagement_farmers"
-              label="Enagement: Farmers"
-              choices={optionToChoices(getFarmersEngagementStrategyOptions())}
-              emptyText="Not Provided"
-            />
-            <SimpleChipFieldArray
-              source="engagement_women"
-              label="Enagement: Women"
-              choices={optionToChoices(getWomenEngagementStrategyOptions())}
-              emptyText="Not Provided"
-            />
-            <SimpleChipFieldArray
-              source="engagement_youth"
-              label="Engagement: Youth"
-              choices={optionToChoices(getYoungerThan35EngagementStrategyOptions())}
-              emptyText="Not Provided"
-            />
-            <TextField
-              source="community_experience"
-              label="Community Engagement Experience/Approach"
-              emptyText="Not Provided"
-            />
-            <TextField
-              source="total_engaged_community_members_3yr"
-              label="Community Engagement Numbers"
-              emptyText="Not Provided"
-            />
-          </TabbedShowLayout.Tab>
-
-          <TabbedShowLayout.Tab label="Restoration Experience">
-            <NumberField
-              source="relevant_experience_years"
-              label="Years of relevant restoration experience"
-              emptyText="Not Provided"
-            />
-            <NumberField source="ha_restored_total" label="Total Hectares Restored" emptyText="Not Provided" />
-            <NumberField
-              source="ha_restored_3year"
-              label="Hectares Restored in the last 3 years"
-              emptyText="Not Provided"
-            />
-            <NumberField source="trees_grown_total" label="Total Trees Grown" emptyText="Not Provided" />
-            <NumberField source="trees_grown_3year" label="Trees Grown in the last 3 years" emptyText="Not Provided" />
-            <ArrayField source="tree_species_historical" label="Tree Species Grown" emptyText="Not Provided">
-              <Datagrid
-                bulkActionButtons={false}
-                empty={
-                  <Typography component="span" variant="body2">
-                    Not Provided
-                  </Typography>
-                }
-              >
-                <TextField label={false} source="name" />
-              </Datagrid>
-            </ArrayField>
-            <NumberField source="avg_tree_survival_rate" label="Average Tree Survival Rate" emptyText="Not Provided" />
-            <SimpleChipFieldArray
-              source="restoration_types_implemented"
-              label="Restoration Intervention Types Implemented"
-              choices={optionToChoices(getRestorationInterventionTypeOptions())}
-              emptyText="Not Provided"
-            />
-            <TextField
-              source="tree_maintenance_aftercare_approach"
-              label="Tree Maintenance & After Care Approach"
-              emptyText="Not Provided"
-            />
-            <TextField
-              source="restored_areas_description"
-              label="Description of areas restored"
-              emptyText="Not Provided"
-            />
-            <TextField
-              source="monitoring_evaluation_experience"
-              label="Monitoring and evaluation experience"
-              emptyText="Not Provided"
-            />
-            <MapField
-              label="Historic monitoring shapefile"
-              source="historic_monitoring_geojson"
-              emptyText="Not Provided"
-            />
-            <FileArrayField
-              source="previous_annual_reports"
-              label="Previous Annual Reports for Monitored Restoration Projects"
-              emptyText="Not Provided"
-            />
-            <FileArrayField
-              source="historic_restoration"
-              label="Photos of past restoration work"
-              emptyText="Not Provided"
-            />
-          </TabbedShowLayout.Tab>
-        </TabbedShowLayout>
+        <EnrichedOrganisationShowContent />
       </Show>
       <ShowBase>
         <Box mr="366px">
