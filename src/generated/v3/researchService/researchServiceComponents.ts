@@ -2079,8 +2079,28 @@ export const startIndicatorCalculation = new V3ApiEndpoint<
 >("/research/v3/indicators/{slug}", "POST");
 
 export type ExportIndicatorCsvPathParams = {
-  entityType: string;
+  /**
+   * Entity type for export
+   */
+  entityType: "sites" | "projects";
+  /**
+   * UUID of the entity.
+   */
   entityUuid: string;
+  /**
+   * Indicator slug for export
+   */
+  slug:
+    | "treeCover"
+    | "treeCoverLoss"
+    | "treeCoverLossFires"
+    | "restorationByEcoRegion"
+    | "restorationByStrategy"
+    | "restorationByLandUse"
+    | "treeCount"
+    | "earlyTreeVerification"
+    | "fieldMonitoring"
+    | "msuCarbon";
 };
 
 export type ExportIndicatorCsvError = Fetcher.ErrorWrapper<{
