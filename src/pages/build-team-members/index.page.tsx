@@ -65,7 +65,7 @@ const teamMembersFormatted = (
     organization: (member as any)?.organisation?.name,
     email: member?.email_address,
     role: role,
-    status: member?.status,
+    status: member?.role == "project-manager" ? "Accepted" : member?.status,
     image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
   }));
 };
