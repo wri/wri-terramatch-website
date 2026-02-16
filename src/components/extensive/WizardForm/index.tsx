@@ -4,14 +4,16 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { forwardRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
-import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
+import { STEP_QUERY_PARAM, useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
@@ -85,6 +87,57 @@ export interface WizardFormProps {
   className?: string;
 }
 
+// Wrapper component to handle both relative routes (Next.js Link) and full URLs (window.location)
+const AdminLinkWrapper = forwardRef<HTMLAnchorElement, { to?: string; children?: React.ReactNode; className?: string }>(
+  ({ to, children, className, ...props }, ref) => {
+    const isFullUrl = to?.startsWith("http://") || to?.startsWith("https://");
+
+    if (isFullUrl) {
+      return (
+        <a
+          ref={ref}
+          href={to}
+          className={className}
+          onClick={e => {
+            e.preventDefault();
+            if (to) window.location.href = to;
+          }}
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
+
+    return (
+      <Link ref={ref} href={to || "#"} className={className} {...props}>
+        {children}
+      </Link>
+    );
+  }
+);
+
+AdminLinkWrapper.displayName = "AdminLinkWrapper";
+
+// Helper function to map model type to React Admin route (ResourceName format)
+const getModelRoute = (model?: string): string => {
+  if (!model) return "project";
+
+  const modelRouteMap: Record<string, string> = {
+    projects: "project",
+    sites: "site",
+    nurseries: "nursery",
+    projectReports: "projectReport",
+    siteReports: "siteReport",
+    nurseryReports: "nurseryReport",
+    financialReports: "financialReport",
+    disturbanceReports: "disturbanceReport",
+    srpReports: "srpReport"
+  };
+
+  return modelRouteMap[model] || "project";
+};
+
 function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
@@ -94,6 +147,9 @@ function WizardForm(props: WizardFormProps) {
   const [loadingProject, { data: project }] = useFullProject({ id: props.projectDetails?.uuid });
   const primaryModel = Array.isArray(props.models) ? props.models[0] : props.models;
   const isAdmin = useIsAdmin();
+  const searchParams = useSearchParams();
+  const formStepId = searchParams.get(STEP_QUERY_PARAM);
+  const modelRoute = getModelRoute(primaryModel?.model);
 
   const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
     switch (status) {
@@ -377,13 +433,31 @@ function WizardForm(props: WizardFormProps) {
                     links: [
                       {
                         label: primaryModel?.model ?? "projects",
-                        link: "/my-projects",
+                        link: isAdmin
+                          ? `http://localhost:3000/admin?formStepId=summary#/${modelRoute}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`
+                          : "/my-projects",
                         icon: <Project className="!text-theme-primary-900" />
                       },
-                      { label: project?.name ?? "", link: `/project/${props.projectDetails?.uuid}` },
-                      { label: "Edit", link: `/entity/projects/edit/${props.projectDetails?.uuid}` }
+                      {
+                        label: project?.name ?? "",
+                        link: isAdmin
+                          ? formStepId && props.projectDetails?.uuid
+                            ? `http://localhost:3000/admin?formStepId=${formStepId}#/${modelRoute}/${props.projectDetails.uuid}/show`
+                            : props.projectDetails?.uuid
+                            ? `/${modelRoute}/${props.projectDetails.uuid}`
+                            : "#"
+                          : props.projectDetails?.uuid
+                          ? `/${modelRoute}/${props.projectDetails.uuid}`
+                          : "#"
+                      },
+                      {
+                        label: "Edit",
+                        link: props.projectDetails?.uuid
+                          ? `/entity/${modelRoute}/edit/${props.projectDetails.uuid}`
+                          : "#"
+                      }
                     ],
-                    linkRouter: Link
+                    linkRouter: isAdmin ? AdminLinkWrapper : Link
                   }}
                 />
                 <PageHeader
