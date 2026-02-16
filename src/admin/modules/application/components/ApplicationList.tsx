@@ -21,7 +21,7 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import modules from "../..";
 
@@ -47,7 +47,7 @@ const tableMenu = [
 const ApplicationDataGrid: FC = () => (
   <Datagrid rowClick={"show"}>
     <ReferenceField source="organisationUuid" reference={modules.organisation.ResourceName} label="Organization">
-      <FunctionField render={(record: V2OrganisationRead) => `${record?.name || ""}`} />
+      <FunctionField render={(record: OrganisationFullDto) => `${record?.name || ""}`} />
     </ReferenceField>
     <ReferenceField
       source="fundingProgrammeUuid"

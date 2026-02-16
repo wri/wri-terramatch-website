@@ -15,14 +15,14 @@ import { When } from "react-if";
 import Aside from "@/admin/components/Aside/Aside";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { usePutV2AdminOrganisationsApprove, usePutV2AdminOrganisationsReject } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 export const OrganisationShowAside = ({ financialReportTab }: { financialReportTab?: boolean }) => {
   const refresh = useRefresh();
-  const { record } = useShowContext<V2OrganisationRead & RaRecord>();
+  const { record } = useShowContext<OrganisationFullDto & RaRecord>();
   const hasOrganisationAttrib = !!record?.organisationUuid;
   const uuid = hasOrganisationAttrib ? record?.organisationUuid : (record?.uuid as string);
   const status = hasOrganisationAttrib ? record?.organisationStatus : record?.status;
