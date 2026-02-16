@@ -82,6 +82,11 @@ const TrackingSection: FC<TrackingSectionProps> = ({
     [entries, onChange]
   );
 
+  // Tailwind doesn't supply classes for high row counts, so we apply this prop ourselves.
+  const rowSpanCount = addNameLabel == null || onChange == null ? rows.length + 1 : rows.length + 2;
+  const firstColGridRow = `span ${rowSpanCount} / span ${rowSpanCount}`;
+  const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(trackingType);
+
   return (
     <>
       <>
@@ -105,13 +110,14 @@ const TrackingSection: FC<TrackingSectionProps> = ({
       {rows.map(({ entryIndex, typeName, label, userLabel, amount }, index) => (
         <TrackingRow
           key={index}
+          trackingType={trackingType}
           onChange={
             onChange == null ? undefined : (amount, userLabel) => onRowChange(entryIndex, typeName, amount, userLabel)
           }
           onBlur={onBlur}
           onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
           usesName={addNameLabel != null}
-          {...{ entryType, label, userLabel, amount }}
+          {...{ entryType, label, userLabel, amount, variant }}
         />
       ))}
       {addNameLabel != null && onChange != null && (
