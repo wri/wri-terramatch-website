@@ -7,8 +7,6 @@ import { FC, FormEvent, useCallback } from "react";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { Delete } from "@/redesignComponents/foundations/Icons";
 
-import { TrackingGridVariantProps, TrackingType, useTrackingLabels } from "./types";
-
 export interface TrackingRowProps {
   entryType: string;
   usesName: boolean;
@@ -18,8 +16,6 @@ export interface TrackingRowProps {
   onChange?: (amount: number, userLabel?: string) => void;
   onBlur?: () => void;
   onDelete?: () => void;
-  trackingType: TrackingType;
-  variant: TrackingGridVariantProps;
 }
 
 const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount, onChange, onBlur, onDelete }) => {
@@ -44,8 +40,6 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
     },
     [onChange, amount]
   );
-
-  const { rowLabelSingular, rowLabelPlural } = useTrackingLabels(trackingType);
 
   return (
     <>
