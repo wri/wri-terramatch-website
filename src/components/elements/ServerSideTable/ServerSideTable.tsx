@@ -70,6 +70,7 @@ export function ServerSideTable<TData extends RowData>({
       <Table<TData>
         {...props}
         serverSideData
+        resetOnDataChange={false}
         onTableStateChange={state => {
           setSorting(state.sorting);
           setFilter(state.filters);

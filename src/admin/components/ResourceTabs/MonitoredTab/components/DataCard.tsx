@@ -28,7 +28,10 @@ import {
 } from "@/constants/dashboardConsts";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { fetchGetV2IndicatorsEntityUuidSlugExport } from "@/generated/apiComponents";
+import {
+  exportIndicatorCsv,
+  ExportIndicatorCsvPathParams
+} from "@/generated/v3/researchService/researchServiceComponents";
 import { OptionValue } from "@/types/common";
 import {
   parsePolygonsIndicatorDataForEcoRegion,
@@ -764,8 +767,12 @@ const DataCard = ({
   const handleExport = async () => {
     try {
       setExporting(true);
-      const blob = await fetchGetV2IndicatorsEntityUuidSlugExport({
-        pathParams: { entity: type, uuid: record.uuid, slug: indicatorSlug! }
+      const blob = await exportIndicatorCsv.fetchBlob({
+        pathParams: {
+          entityType: type,
+          entityUuid: record.uuid,
+          slug: indicatorSlug as ExportIndicatorCsvPathParams["slug"]
+        }
       });
       downloadFileBlob(blob!, `Indicator (${DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.title}).csv`);
 

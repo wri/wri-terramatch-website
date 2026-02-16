@@ -88,6 +88,7 @@ const EntityMapAndGalleryCard = ({
         uuid: isSiteReport ? queryUuid : entityUUID,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
+        sortField: "createdAt",
         sortDirection: sortOrder,
         filter: queryFilter
       };
