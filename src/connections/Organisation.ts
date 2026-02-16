@@ -94,3 +94,4 @@ export const loadOrganisations = connectionLoader(indexOrgsConnection);
 export const useOrganisations = connectionHook(indexOrgsConnection);
 
 export const createOrg = resourceCreator(orgCreationConnection);
+export const useOrgCreate = connectionHook(orgCreationConnection);
