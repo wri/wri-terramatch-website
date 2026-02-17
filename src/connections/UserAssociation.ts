@@ -1,4 +1,6 @@
 import {
+  createUserAssociation,
+  CreateUserAssociationPathParams,
   deleteUserAssociation,
   getUserAssociation,
   GetUserAssociationPathParams,
@@ -9,15 +11,12 @@ import { resolveUrl } from "@/generated/v3/utils";
 import ApiSlice from "@/store/apiSlice";
 
 import { v3Resource } from "./util/apiConnectionFactory";
-import { connectionHook, connectionLoader } from "./util/connectionShortcuts";
+import { connectionHook } from "./util/connectionShortcuts";
 
 const userAssociationConnection = v3Resource("associatedUsers", getUserAssociation)
   .index<UserAssociationDto, GetUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid } }))
   .filter<GetUserAssociationQueryParams>()
   .buildConnection();
-
-//
-export const loadUserAssociations = connectionLoader(userAssociationConnection);
 
 export const useUserAssociations = connectionHook(userAssociationConnection);
 
@@ -50,3 +49,9 @@ export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: str
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
 };
+
+const userAssociationCreationConnection = v3Resource("associatedUsers", createUserAssociation)
+  .create<UserAssociationDto, CreateUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid } }))
+  .buildConnection();
+
+export const useUserAssociationCreation = connectionHook(userAssociationCreationConnection);

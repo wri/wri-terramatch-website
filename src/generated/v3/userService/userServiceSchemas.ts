@@ -225,7 +225,7 @@ export type UserAssociationCreateAttributes = {
 };
 
 export type UserAssociationCreateData = {
-  type: "userAssociations";
+  type: "associatedUsers";
   attributes: UserAssociationCreateAttributes;
 };
 
