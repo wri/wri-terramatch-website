@@ -13,11 +13,14 @@ import {
   Stack,
   Typography
 } from "@mui/material";
+import { useCallback } from "react";
 import { useNotify, useRecordContext, useRefresh } from "react-admin";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { usePostV2ProjectsUUIDInvite } from "@/generated/apiComponents";
+import { useUserAssociationCreation } from "@/connections/UserAssociation";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import ApiSlice from "@/store/apiSlice";
 
 interface InviteMonitoringPartnerDialogProps extends DialogProps {
   handleClose: () => void;
@@ -41,28 +44,32 @@ export const InviteMonitoringPartnerDialog = ({ handleClose, ...props }: InviteM
     handleSubmit
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
-  const { mutate: invitePartner } = usePostV2ProjectsUUIDInvite({
-    onSuccess() {
-      notify("Invitation sent successfully");
-      refresh();
-      reset();
-      handleClose();
-    },
-    onError() {
-      setError("email", {
-        message: "This user is already a monitoring partner for this project, please try a different email address.",
-        type: "validate"
-      });
-    }
+  const [, { isCreating, createFailure, create: invitePartner }] = useUserAssociationCreation({
+    uuid: record.id as string
   });
+
+  useRequestComplete(
+    isCreating,
+    useCallback(() => {
+      if (createFailure != null) {
+        setError("email", {
+          message: createFailure.message as string,
+          type: "validate"
+        });
+      } else {
+        notify("Invitation sent successfully");
+        ApiSlice.pruneCache("associatedUsers");
+        refresh();
+        reset();
+        handleClose();
+      }
+    }, [createFailure, notify, reset, refresh, handleClose, setError])
+  );
 
   const onSubmit = (data: FormValues) => {
     invitePartner({
-      pathParams: { uuid: record.id as string },
-      queryParams: {
-        email_address: data.email,
-        callback_url: `${window.location.origin}/auth/reset-password`
-      }
+      emailAddress: data.email,
+      isManager: false
     });
   };
 
