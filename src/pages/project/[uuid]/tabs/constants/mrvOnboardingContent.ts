@@ -57,6 +57,10 @@ export const MRV_ONBOARDING_CONTENT = [
         {
           title: "How to Complete Your Project Profile ",
           link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/21995497152027-How-to-Create-Your-TerraMatch-Project-Profile"
+        },
+        {
+          title: "How to Add Partners to Your Project",
+          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/22124468665243-How-to-Add-Partners-to-Your-Project"
         }
       ]
     }
@@ -87,10 +91,6 @@ export const MRV_ONBOARDING_CONTENT = [
         {
           title: "How to do Field Tree Monitoring for the PPC – TerraMatch Help Center",
           link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13384531523227-How-to-do-Field-Tree-Monitoring-for-the-PPC"
-        },
-        {
-          title: "PPC Tree Restoration Monitoring Framework",
-          link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13319985438363-What-is-the-Tree-Restoration-Monitoring-Framework"
         }
       ]
     }
