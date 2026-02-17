@@ -206,8 +206,11 @@ export type UserCreateBody = {
 export type UserAssociationDto = {
   uuid: string;
   emailAddress: string;
+  fullName: string;
   status: string;
   isManager: boolean;
+  organisationName: string;
+  roleName: string | null;
 };
 
 export type UserAssociationCreateAttributes = {

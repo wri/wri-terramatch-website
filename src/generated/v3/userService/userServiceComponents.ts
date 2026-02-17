@@ -900,6 +900,16 @@ export type DeleteUserAssociationPathParams = {
   uuid: string;
 };
 
+export type DeleteUserAssociationQueryParams = {
+  /**
+   * The UUIDs of the users to delete
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   * @example 123e4567-e89b-12d3-a456-426614174001
+   */
+  uuids: string[];
+};
+
 export type DeleteUserAssociationError = Fetcher.ErrorWrapper<
   | {
       status: 401;
@@ -951,6 +961,7 @@ export type DeleteUserAssociationResponse = {
 
 export type DeleteUserAssociationVariables = {
   pathParams: DeleteUserAssociationPathParams;
+  queryParams: DeleteUserAssociationQueryParams;
 };
 
 export const deleteUserAssociation = new V3ApiEndpoint<

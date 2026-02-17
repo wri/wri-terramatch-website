@@ -2,7 +2,7 @@ import { Box, Flex } from "@chakra-ui/react";
 import { FC, useMemo } from "react";
 
 import { useGadmOptions } from "@/connections/Gadm";
-import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
+import { useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   IMAGE_CONTAINER_CLASSES,
@@ -26,17 +26,18 @@ export interface ProjectHeaderProps {
 }
 
 const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
-  const { data: partners } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid,
+    filter: { isManager: false }
   });
 
   const teamMembers = useMemo(
     () =>
-      (partners?.data ?? []).slice(0, 5).map(partner => {
-        const name = `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim();
+      (associatedUsers ?? []).slice(0, 5).map(user => {
+        const name = `${user.fullName ?? ""}`.trim();
         return { name, avatar: { name } };
       }),
-    [partners?.data]
+    [associatedUsers]
   );
 
   const countryOptions = useGadmOptions({ level: 0 });

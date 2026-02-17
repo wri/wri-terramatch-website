@@ -108,7 +108,7 @@ const Table: FC<TableProps> = ({
         );
       }
 
-      return rowData.name;
+      return rowData.fullName;
     }
 
     return (rowData as any)[columnKey];
