@@ -5,10 +5,11 @@ export const MRV_ONBOARDING_CONTENT = [
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time. ",
       monitoring:
-        "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Jobs created”) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
+        "The process of collecting and analyzing data and information to measure progress toward specific goals that the restoration effort aims to achieve.",
       reporting:
-        "refers to your team’s work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification: "refers to remote or field-based measurement of project progress.",
+        "The sharing of data collected by restoration champions through project, nursery, and site reports, which are submitted on the TerraMatch platform in a standardized format every six months.",
+      verification:
+        "Periodically subjecting reported information to some form of review, analysis or independent assessment to establish completeness and reliability.",
       mrvLinkPrefix: "Learn more in the full",
       mrvLinkText: "MRV framework",
       mrvFrameworkLink:
@@ -39,10 +40,11 @@ export const MRV_ONBOARDING_CONTENT = [
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time. ",
       monitoring:
-        "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Jobs created”) at pre-determined intervals (for example, Year 0, Year 3, and Year 6 of a project).",
+        "The process of collecting and analyzing data and information to measure progress toward specific goals that the restoration effort aims to achieve.",
       reporting:
-        "refers to your team’s work, filling out project, site, nursery, financial, and disturbance reports on TerraMatch.",
-      verification: "refers to remote or field-based measurement of project progress.",
+        "The sharing of data collected by restoration champions through project and site reports, which are submitted on the TerraMatch platform in a standardized format every six months.",
+      verification:
+        "Periodically subjecting reported information to some form of review, analysis or independent assessment to establish completeness and reliability.",
       mrvLinkPrefix: "Learn more in the full",
       mrvLinkText: "MRV framework",
       mrvFrameworkLink:
@@ -65,7 +67,7 @@ export const MRV_ONBOARDING_CONTENT = [
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time.",
       monitoring:
-        "refers to checking your project against relevant datasetsa set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Workdays created”) at pre-determined intervals (for example, Year 0, Year 2.5, and Year 5 of a project).",
+        "refers to checking your project against a set of indicators (these can be ecological, like “Trees restored” or socioeconomic, like “Workdays created”) at pre-determined intervals (for example, Year 0, Year 2.5, and Year 5 of a project).",
       reporting:
         "refers to your team’s work, filling out project, site, socioeconomic restoration partners, and disturbance reports on TerraMatch.",
       verification: "refers to remote or field-based measurement of project progress.",
