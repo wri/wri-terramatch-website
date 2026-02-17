@@ -50,9 +50,7 @@ export function calculateTotals(
 
 export function useTableStatus(
   domain: TrackingDomain,
-
   type: TrackingType,
-
   entries: TrackingEntryDto[]
 ): { total: number; status: Status; counts: Dictionary<number>; startedBalancedCount: number } {
   const { framework } = useFrameworkContext();
