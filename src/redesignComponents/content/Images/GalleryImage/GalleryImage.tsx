@@ -8,6 +8,7 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   size?: number;
   className?: string;
   isAvailable?: boolean;
+  isAdd?: boolean;
 }
 
 const GalleryImage: FC<GalleryImageProps> = ({ alt, ...rest }) => {
