@@ -13,7 +13,6 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   alt?: string;
   size?: number;
   className?: string;
-  isAvailable?: boolean;
   borderRadius?: "rounded-md" | "rounded-full";
   defaultAlt?: string;
   classNamesHover?: string;
@@ -25,7 +24,6 @@ const BaseImage: FC<BaseImageProps> = ({
   alt,
   size = 164,
   className,
-  isAvailable = true,
   borderRadius = "rounded-md",
   defaultAlt = "Image",
   classNamesHover,
@@ -39,7 +37,7 @@ const BaseImage: FC<BaseImageProps> = ({
     setLoadError(false);
   }, [src]);
 
-  const showNotAvailable = !isAvailable || src == null || loadError;
+  const showNotAvailable = src == null || loadError;
   const router = useRouter();
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -77,7 +75,7 @@ const BaseImage: FC<BaseImageProps> = ({
           <div
             className={classNames("bg-theme-neutral-300 flex h-full w-full items-center justify-center", borderRadius)}
           >
-            <div className="flex flex-col items-center justify-center gap-2">
+            <div className="flex flex-col items-center justify-center gap-1.5">
               <Rejected className="text-theme-neutral-500 h-5 w-5" />
               <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                 {t("Image unavailable")}

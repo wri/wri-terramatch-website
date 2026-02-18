@@ -8,16 +8,13 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   alt?: string;
   size?: number;
   className?: string;
-  isAvailable?: boolean;
   isAdd?: boolean;
 }
 
-export const ProfileImage: FC<ProfileImageProps> = ({ alt, isAvailable = true, src, className, isAdd, ...rest }) => {
-  const showNotAvailable = !isAvailable || src == null;
+export const ProfileImage: FC<ProfileImageProps> = ({ alt, src, className, isAdd, ...rest }) => {
   return (
     <BaseImage
       {...rest}
-      isAvailable={isAvailable}
       isAdd={isAdd}
       src={src}
       alt={alt}
@@ -25,7 +22,7 @@ export const ProfileImage: FC<ProfileImageProps> = ({ alt, isAvailable = true, s
       defaultAlt="Profile"
       className={classNames(
         "border",
-        { "border-theme-neutral-600": showNotAvailable, "border-theme-primary-900": !showNotAvailable },
+        { "border-theme-neutral-600": src == null, "border-theme-primary-900": src != null },
         className
       )}
     />
