@@ -174,11 +174,6 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                 label: t("Project Manager"),
                 value: "project-manager",
                 onClick: () => setSelectedRole("project-manager")
-              },
-              {
-                label: t("Clear Filter"),
-                value: "clear-filter",
-                onClick: () => setSelectedRole("")
               }
             ]
           }
