@@ -20,9 +20,9 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
         {images?.map((image, index) => (
           <GridItem key={`image-${index}-${image}`}>
             <GalleryImage
-              src={image!}
-              alt="No Image Available"
-              className="h-full min-h-full w-full min-w-full bg-theme-neutral-200"
+              src={image}
+              alt="Image"
+              className="bg-theme-neutral-200 h-full min-h-full w-full min-w-full"
             />
           </GridItem>
         ))}
@@ -33,9 +33,9 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
           return (
             <GridItem key={`placeholder-${index}`}>
               {showContent ? (
-                <GalleryImage alt="No images available" isAvailable={false} />
+                <GalleryImage alt="No images available" isAdd={true} />
               ) : (
-                <div className="rounded-md bg-theme-neutral-200" style={{ width: 164, height: 164 }} />
+                <div className="bg-theme-neutral-200 rounded-md" style={{ width: 164, height: 164 }} />
               )}
             </GridItem>
           );
