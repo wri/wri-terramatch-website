@@ -81,12 +81,12 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
         const allReports: ActionDto[] = [...siteReports, ...nurseryReports];
         const representative = allReports[0];
 
-        if (!representative) return;
+        if (representative == null) return;
 
         const target = representative.target as ReportActionTarget;
         const projectUuid = getProjectUuid(target);
 
-        if (!projectUuid) return;
+        if (projectUuid == null) return;
 
         const statuses = allReports.map(report => getEntityCombinedStatus(report.target as ReportActionTarget));
 
@@ -105,7 +105,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         const dueDates = allReports
           .map(report => (report.target as ReportActionTarget)?.dueAt)
-          .filter((d): d is string => Boolean(d));
+          .filter((d): d is string => d != null);
 
         const earliestDue =
           dueDates.length > 0 ? [...dueDates].sort((a, b) => new Date(a).getTime() - new Date(b).getTime())[0] : null;

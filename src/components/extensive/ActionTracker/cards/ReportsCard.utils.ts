@@ -28,22 +28,16 @@ export type ReportActionTarget = {
   projectName?: string;
 };
 
-export function isDisplayableStatus(status: string | null | undefined): boolean {
-  if (!status) return false;
-  return DISPLAYABLE_REPORT_STATUSES.some(s => status.includes(s));
-}
+export const isDisplayableStatus = (status: string | null | undefined): boolean =>
+  status == null ? false : DISPLAYABLE_REPORT_STATUSES.some(s => status.includes(s));
 
-export function getProjectUuid(target: ReportActionTarget): string | undefined {
-  return target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid;
-}
+export const getProjectUuid = (target: ReportActionTarget): string | undefined =>
+  target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid;
 
-export function getTaskUuid(target: ReportActionTarget): string | undefined {
-  return target?.task?.uuid ?? target?.taskUuid;
-}
+export const getTaskUuid = (target: ReportActionTarget): string | undefined => target?.task?.uuid ?? target?.taskUuid;
 
-export function getProjectName(target: ReportActionTarget): string | undefined {
-  return target?.project?.name ?? target?.projectName;
-}
+export const getProjectName = (target: ReportActionTarget): string | undefined =>
+  target?.project?.name ?? target?.projectName;
 
 /** Filters actions to only those with displayable report status */
 export function filterDisplayableReportActions(actions: ActionDto[]): ActionDto[] {
@@ -64,7 +58,7 @@ export function groupSiteAndNurseryReportsByTask(actions: ActionDto[]) {
     .forEach((action: ActionDto) => {
       const target = action.target as ReportActionTarget;
       const taskUuid = getTaskUuid(target);
-      if (!taskUuid) return;
+      if (taskUuid == null) return;
 
       const existing = map.get(taskUuid) ?? { siteReports: [] as ActionDto[], nurseryReports: [] as ActionDto[] };
       existing.siteReports.push(action);
@@ -76,7 +70,7 @@ export function groupSiteAndNurseryReportsByTask(actions: ActionDto[]) {
     .forEach((action: ActionDto) => {
       const target = action.target as ReportActionTarget;
       const taskUuid = getTaskUuid(target);
-      if (!taskUuid) return;
+      if (taskUuid == null) return;
 
       const existing = map.get(taskUuid) ?? { siteReports: [] as ActionDto[], nurseryReports: [] as ActionDto[] };
       existing.nurseryReports.push(action);
