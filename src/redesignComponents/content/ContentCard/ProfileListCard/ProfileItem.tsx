@@ -16,9 +16,15 @@ interface ProfileProps {
 const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
   const t = useT();
 
+  const canMessage = profile.isProjectManager && !!profile.email;
+
   const handleClick = useCallback(() => {
     onProfileClick(profile);
-  }, [onProfileClick, profile]);
+    if (canMessage && profile.email) {
+      const mailtoUrl = `mailto:${profile.email}?cc=info@terramatch.org`;
+      window.location.href = mailtoUrl;
+    }
+  }, [canMessage, onProfileClick, profile]);
 
   return (
     <>
@@ -31,6 +37,7 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
         size="small"
         onClick={handleClick}
         leftIcon={<Messages boxSize={3} color="neutral.800" />}
+        className={canMessage ? undefined : "hidden"}
       >
         {t("Message")}
       </Button>
