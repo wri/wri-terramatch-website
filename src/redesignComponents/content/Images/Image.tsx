@@ -88,7 +88,7 @@ const BaseImage: FC<BaseImageProps> = ({
           <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
             <Image
               src={src!}
-              alt={alt || defaultAlt}
+              alt={alt ?? defaultAlt}
               fill
               className="object-cover"
               sizes={`${size}px`}
