@@ -10,6 +10,7 @@ export { CloseFullscreen } from "./CloseFullscreen";
 export { Correct } from "./Correct";
 export { Dashboard } from "./Dashboard";
 export { Delete } from "./Delete";
+export { Download } from "./Download";
 export { Draft } from "./Draft";
 export { Drag } from "./Drag";
 export { Due } from "./Due";

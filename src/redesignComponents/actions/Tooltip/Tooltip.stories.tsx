@@ -54,7 +54,9 @@ export const AnyContent: Story = {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          gap: "5px"
+          gap: "5px",
+          fontSize: "14px",
+          lineHeight: "20px"
         }}
       >
         <InfoIcon />

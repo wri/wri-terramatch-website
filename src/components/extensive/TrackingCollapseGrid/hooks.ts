@@ -17,8 +17,8 @@ export type SectionRow = {
   amount: number;
 };
 
-const getInitialCounts = <T extends Framework>(framework: T, type: TrackingType): Dictionary<number> =>
-  Object.keys(getTypeMap(type, framework)).reduce(
+const getInitialCounts = (framework: Framework, domain: TrackingDomain, type: TrackingType): Dictionary<number> =>
+  Object.keys(getTypeMap(domain, type, framework)).reduce(
     (counts, type) => ({
       ...counts,
       [type]: 0
@@ -29,27 +29,40 @@ const getInitialCounts = <T extends Framework>(framework: T, type: TrackingType)
 const addToCounts = (counts: Dictionary<number>, { type, amount }: TrackingEntryDto) =>
   Object.keys(counts).includes(type) ? { ...counts, [type]: counts[type] + amount } : counts;
 
-export function calculateTotals(entries: TrackingEntryDto[], framework: Framework, type: TrackingType) {
-  const counts = entries.reduce(addToCounts, getInitialCounts(framework, type));
-  const typeMap = getTypeMap(type, framework);
+export function calculateTotals(
+  entries: TrackingEntryDto[],
+  framework: Framework,
+  domain: TrackingDomain,
+  type: TrackingType
+) {
+  const counts = entries.reduce(addToCounts, getInitialCounts(framework, domain, type));
+  const typeMap = getTypeMap(domain, type, framework);
   const balancedCounts = Object.entries(counts)
     .filter(([type]) => typeMap[type].balanced)
     .map(([, count]) => count);
   const total = Math.max(...balancedCounts);
   const complete = uniq(balancedCounts).length === 1;
 
-  return { counts, total, complete };
+  const startedBalancedCount = balancedCounts.filter(count => count > 0).length;
+
+  return { counts, total, complete, startedBalancedCount };
 }
 
-export function useTableStatus(type: TrackingType, entries: TrackingEntryDto[]): { total: number; status: Status } {
+export function useTableStatus(
+  domain: TrackingDomain,
+  type: TrackingType,
+  entries: TrackingEntryDto[]
+): { total: number; status: Status; counts: Dictionary<number>; startedBalancedCount: number } {
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const { total, complete } = calculateTotals(entries, framework, type);
+    const { total, complete, counts, startedBalancedCount } = calculateTotals(entries, framework, domain, type);
     return {
       total,
-      status: total === 0 ? "not-started" : complete ? "complete" : "in-progress"
+      status: total === 0 ? "not-started" : complete ? "complete" : "in-progress",
+      counts,
+      startedBalancedCount
     };
-  }, [entries, framework, type]);
+  }, [entries, framework, domain, type]);
 }
 
 function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: TrackingEntryDto[]) {
@@ -78,8 +91,13 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: Tracki
   });
 }
 
-export function useSectionData(type: TrackingType, entryType: string, entries: TrackingEntryDto[]) {
-  const trackingEntryTypes = useEntryTypeMap(type);
+export function useSectionData(
+  domain: TrackingDomain,
+  type: TrackingType,
+  entryType: string,
+  entries: TrackingEntryDto[]
+) {
+  const trackingEntryTypes = useEntryTypeMap(domain, type);
 
   return useMemo(
     function () {
@@ -120,6 +138,9 @@ export default function useCollectionsTotal({
             ({ domain, type, collection }) =>
               domain === trackingDomain && type === apiType && collections.includes(collection)
           )
-          .reduce((total, { entries }) => total + calculateTotals(entries, framework, trackingType).total, 0);
+          .reduce(
+            (total, { entries }) => total + calculateTotals(entries, framework, trackingDomain, trackingType).total,
+            0
+          );
   }, [trackingType, trackings, trackingDomain, collections, framework]);
 }

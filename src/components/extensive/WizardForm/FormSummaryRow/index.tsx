@@ -1,11 +1,13 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
+import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { Framework, toFramework, useFramework } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
@@ -14,10 +16,8 @@ import { Edit } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
-import { isDemographicType } from "../../TrackingCollapseGrid/types";
+import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
-import { Framework, toFramework, useFramework } from "@/context/framework.provider";
-import type * as yup from "yup";
 
 const getFieldsRequiringAttentionCount = (
   validation: yup.ObjectSchema<Record<string, unknown>>,
@@ -58,9 +58,11 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       header={
         <AccordionHeader
           title={title ?? ""}
-          badge={!valid && fieldsRequiringAttention > 0
-            ? t("{count} requires attention", { count: fieldsRequiringAttention })
-            : undefined}
+          badge={
+            !valid && fieldsRequiringAttention > 0
+              ? t("{count} requires attention", { count: fieldsRequiringAttention })
+              : undefined
+          }
           status={valid ? "complete" : "error"}
         />
       }
@@ -78,7 +80,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         render={entry => (
           <div
             className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-              "w-full flex-col": isDemographicType(entry.value.props?.type)
+              "w-full flex-col": isTrackingType(entry.value?.props?.type)
             })}
           >
             <Text variant="text-body-500" className=" flex-1">
@@ -86,7 +88,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
             </Text>
             <div
               className={classNames("flex-1", {
-                "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+                "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
               })}
             >
               <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
@@ -98,7 +100,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                 <Else>
                   <div
                     className={classNames("", {
-                      "w-full !min-w-full": isDemographicType(entry.value.props?.type)
+                      "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
                     })}
                   >
                     {formatEntryValue(entry.value)}
