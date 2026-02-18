@@ -84,7 +84,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     pathParams: { uuid: project.uuid }
   });
 
-  const dataQualityAnalysts = formatTeamMembers(partners?.data ?? [], false);
+  const monitoringPartners = formatTeamMembers(partners?.data ?? [], false);
   const projectManagers = formatTeamMembers(managers?.data ?? [], true);
 
   const goToContinueEditingTab = () => {
@@ -206,8 +206,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   onProfileClick: () => {}
                 },
                 {
-                  title: "Data Quality Analysts",
-                  profiles: dataQualityAnalysts,
+                  title: "Monitoring Partners",
+                  profiles: monitoringPartners,
                   onProfileClick: () => {}
                 }
               ]}
