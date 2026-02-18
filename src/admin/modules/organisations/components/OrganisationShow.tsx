@@ -1,5 +1,5 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { FC, useCallback, useMemo } from "react";
 import {
   ArrayField,
@@ -67,14 +67,12 @@ const OrganisationShowActions: FC = () => {
   if (!record) return null;
   const { uuid, isTest } = record;
   const refresh = useRefresh();
-  const queryClient = useQueryClient();
   const { mutate: updateOrg } = useMutation({
     mutationFn: async (attributes: OrganisationUpdateAttributes) => {
-      if (uuid == null) throw new Error("UUID is required");
+      if (uuid == null) throw Error("UUID is required");
       return updateOrganisation(attributes, { id: uuid });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["v3", "organisations", uuid] });
       if (uuid != null) {
         ApiSlice.pruneCache("organisations", [uuid]);
       }
