@@ -96,8 +96,8 @@ const EnrichedOrganisationEditContent = () => {
 
     return {
       ...baseRecord,
-      logo: mediaFilesByCollection.logo[0] || baseRecord.logo,
-      cover: mediaFilesByCollection.cover[0] || baseRecord.cover,
+      logo: mediaFilesByCollection.logo[0] ?? baseRecord.logo,
+      cover: mediaFilesByCollection.cover[0] ?? baseRecord.cover,
       reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
       additional:
         mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,
