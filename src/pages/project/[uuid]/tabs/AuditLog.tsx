@@ -29,7 +29,8 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
   const [buttonToggle, setButtonToggle] = useState(ButtonStates.PROJECTS);
 
   const {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus,
     statusLabels,
     entityType,
@@ -85,7 +86,6 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
-                    mutate={mutateEntity}
                     refresh={() => {
                       loadEntityList();
                       refetch();
@@ -99,6 +99,8 @@ const AuditLog: FC<AuditLogProps> = ({ project, refresh: refreshProject }) => {
                     entityType={entityType}
                     showChangeRequest={false}
                     viewPD={true}
+                    onStatusChange={onStatusChange}
+                    onChangeRequest={onChangeRequest}
                   />
                 </div>
               </div>

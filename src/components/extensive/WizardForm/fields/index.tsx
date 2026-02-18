@@ -1,3 +1,9 @@
+import {
+  DEMOGRAPHIC_TYPES,
+  DemographicType,
+  RESTORATION_TYPES,
+  RestorationType
+} from "@/components/extensive/TrackingCollapseGrid/types";
 import { FieldInputType, FormFieldFactory } from "@/components/extensive/WizardForm/types";
 
 import { BooleanField } from "./boolean.field";
@@ -57,15 +63,21 @@ export const FormFieldFactories: Record<FieldInputType, FormFieldFactory> = {
   "strategy-area": StrategyAreaField,
   financialIndicators: FinancialIndicatorsField,
 
-  workdays: TrackingField,
-  restorationPartners: TrackingField,
-  jobs: TrackingField,
-  employees: TrackingField,
-  volunteers: TrackingField,
-  allBeneficiaries: TrackingField,
-  trainingBeneficiaries: TrackingField,
-  indirectBeneficiaries: TrackingField,
-  associates: TrackingField,
+  ...DEMOGRAPHIC_TYPES.reduce(
+    (map, type) => ({
+      ...map,
+      [type]: TrackingField
+    }),
+    {} as Record<DemographicType, FormFieldFactory>
+  ),
+
+  ...RESTORATION_TYPES.reduce(
+    (map, type) => ({
+      ...map,
+      [type]: TrackingField
+    }),
+    {} as Record<RestorationType, FormFieldFactory>
+  ),
 
   empty: EmptyField
 };
