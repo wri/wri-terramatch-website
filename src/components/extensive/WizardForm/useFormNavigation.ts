@@ -6,7 +6,7 @@ import { SetStateAction, useCallback, useRef } from "react";
 import { FormFieldsProvider } from "@/context/wizardForm.provider";
 import Log from "@/utils/log";
 
-const STEP_QUERY_PARAM = "formStepId";
+export const STEP_QUERY_PARAM = "formStepId";
 const SUMMARY_ID = "summary";
 
 type NavigationContext = {
