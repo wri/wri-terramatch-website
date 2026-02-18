@@ -154,6 +154,10 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
     <Box paddingX={8} paddingY={6}>
       <ToolbarTable
         className="!px-0"
+        onClearFilters={() => {
+          setSelectedRole(null);
+          setSearchQuery("");
+        }}
         filters={[
           {
             mainActionLabel: t("Role"),
@@ -170,11 +174,6 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                 label: t("Project Manager"),
                 value: "project-manager",
                 onClick: () => setSelectedRole("project-manager")
-              },
-              {
-                label: t("Clear Filter"),
-                value: "clear-filter",
-                onClick: () => setSelectedRole("")
               }
             ]
           }
