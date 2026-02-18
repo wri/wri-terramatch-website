@@ -1,9 +1,8 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Link } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { forwardRef } from "react";
@@ -15,7 +14,7 @@ import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { STEP_QUERY_PARAM, useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
-import { useFullProject } from "@/connections/Entity";
+import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -144,12 +143,10 @@ function WizardForm(props: WizardFormProps) {
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
   const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
-  const [loadingProject, { data: project }] = useFullProject({ id: props.projectDetails?.uuid });
-  const primaryModel = Array.isArray(props.models) ? props.models[0] : props.models;
+  const [isLoading, { data: entity }] = useFullEntity(props?.models?.model as SupportedEntity, props?.models?.uuid);
   const isAdmin = useIsAdmin();
   const searchParams = useSearchParams();
   const formStepId = searchParams.get(STEP_QUERY_PARAM);
-  const modelRoute = getModelRoute(primaryModel?.model);
 
   const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
     switch (status) {
@@ -165,6 +162,31 @@ function WizardForm(props: WizardFormProps) {
         return "nothing-reported";
       default:
         return undefined;
+    }
+  };
+
+  const mapEntityTitle = (entityName: string | null | undefined, title: string | null): string => {
+    switch (entityName) {
+      case "projects":
+        return title ?? "Project";
+      case "sites":
+        return title ?? "Site";
+      case "nurseries":
+        return title ?? "Nursery";
+      case "projectReports":
+        return title ?? "ProjectReport";
+      case "siteReports":
+        return title ?? "Site Report";
+      case "nurseryReports":
+        return title ?? "NurseryReport";
+      case "financialReports":
+        return title ?? "Financial Report";
+      case "disturbanceReports":
+        return title ?? "DisturbanceReport";
+      case "srpReports":
+        return title ?? "SrpReport";
+      default:
+        return title ?? "Entity";
     }
   };
 
@@ -414,7 +436,7 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
         >
-          {!props.header?.hide && !loadingProject && (
+          {!props.header?.hide && !isLoading && (
             <WizardFormHeader
               currentStep={selectedStepIndex + 1}
               numberOfSteps={tabItems.length}
@@ -426,46 +448,43 @@ function WizardForm(props: WizardFormProps) {
             />
           )}
           <div className={twMerge("flex w-full flex-col", props.className)}>
-            {loadingProject && (
+            {isLoading && (
               <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
                 <ToolbarObject
                   breadcrumbs={{
                     links: [
                       {
-                        label: primaryModel?.model ?? "projects",
-                        link: isAdmin
-                          ? `http://localhost:3000/admin?formStepId=summary#/${modelRoute}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`
-                          : "/my-projects",
+                        label: getModelRoute(props.models?.model) ?? "projects",
+                        link: `/admin?formStepId=summary#/${getModelRoute(
+                          props.models?.model
+                        )}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`,
                         icon: <Project className="!text-theme-primary-900" />
                       },
                       {
-                        label: project?.name ?? "",
-                        link: isAdmin
-                          ? formStepId && props.projectDetails?.uuid
-                            ? `http://localhost:3000/admin?formStepId=${formStepId}#/${modelRoute}/${props.projectDetails.uuid}/show`
-                            : props.projectDetails?.uuid
-                            ? `/${modelRoute}/${props.projectDetails.uuid}`
-                            : "#"
-                          : props.projectDetails?.uuid
-                          ? `/${modelRoute}/${props.projectDetails.uuid}`
-                          : "#"
+                        label: mapEntityTitle(props.models?.model, entity?.title ?? entity?.name),
+                        link: `/admin?formStepId=${formStepId}#/${getModelRoute(props.models?.model)}/${
+                          props?.models?.uuid
+                        }/show`
                       },
                       {
                         label: "Edit",
-                        link: props.projectDetails?.uuid
-                          ? `/entity/${modelRoute}/edit/${props.projectDetails.uuid}`
+                        link: props.models?.uuid
+                          ? `/entity/${getModelRoute(props.models?.model)}/edit/${props.models?.uuid}`
                           : "#"
                       }
                     ],
-                    linkRouter: isAdmin ? AdminLinkWrapper : Link
+                    linkRouter: Link
                   }}
                 />
                 <PageHeader
-                  title={project?.name ?? "Project Name"}
+                  title={mapEntityTitle(
+                    props.models?.model,
+                    entity?.title && entity?.title !== "" ? entity?.title : entity?.name
+                  )}
                   label="Set Up Status:"
                   tag={
-                    mapUpdateRequestStatusToTagState(project?.updateRequestStatus)
-                      ? { state: mapUpdateRequestStatusToTagState(project?.updateRequestStatus)! }
+                    mapUpdateRequestStatusToTagState(entity?.updateRequestStatus)
+                      ? { state: mapUpdateRequestStatusToTagState(entity?.updateRequestStatus)! }
                       : undefined
                   }
                 />
