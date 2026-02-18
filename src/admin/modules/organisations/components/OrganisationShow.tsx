@@ -178,14 +178,9 @@ const EnrichedOrganisationShowContent = () => {
       historicRestoration: []
     };
 
-    allMediaFiles.forEach(media => {
-      const collectionName = media.collectionName;
-      if (collectionName && Object.prototype.hasOwnProperty.call(mediaFilesByCollection, collectionName)) {
-        mediaFilesByCollection[collectionName].push({
-          url: media.url,
-          file_name: media.fileName,
-          uuid: media.uuid
-        });
+    allMediaFiles.forEach(({ collectionName, url, fileName, uuid }) => {
+      if (collectionName && mediaFilesByCollection[collectionName]) {
+        mediaFilesByCollection[collectionName].push({ url, fileName, uuid });
       }
     });
 
@@ -241,8 +236,8 @@ const EnrichedOrganisationShowContent = () => {
           <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
           <DateField source="foundingDate" label="Date organization founded" emptyText="Not Provided" locales="en-GB" />
           <TextField source="description" label="Organization Details" emptyText="Not Provided" />
-          <ImageField source="logo.url" label="Logo" title="logo.file_name" emptyText="Not Provided" />
-          <ImageField source="cover.url" label="Cover" title="cover.file_name" emptyText="Not Provided" />
+          <ImageField source="logo.url" label="Logo" title="logo.fileName" emptyText="Not Provided" />
+          <ImageField source="cover.url" label="Cover" title="cover.fileName" emptyText="Not Provided" />
 
           <FileArrayField source="reference" label="Reference Letters" />
           <FileArrayField source="additional" label="Other additional documents" />
