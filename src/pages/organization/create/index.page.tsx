@@ -10,11 +10,11 @@ import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useMyOrg, useOrganisation } from "@/connections/Organisation";
+import { deleteOrganisation, useMyOrg, useOrganisation } from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import { useDeleteV2OrganisationsRetractMyDraft, usePutV2OrganisationsSubmitUUID } from "@/generated/apiComponents";
+import { usePutV2OrganisationsSubmitUUID } from "@/generated/apiComponents";
 import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 
@@ -50,13 +50,17 @@ const CreateOrganisationForm = () => {
     }
   });
 
-  const { mutate: deleteDraft } = useDeleteV2OrganisationsRetractMyDraft({
-    async onSuccess() {
+  const handleDeleteDraft = useCallback(async () => {
+    if (uuid == null) return;
+    try {
+      await deleteOrganisation(uuid);
       await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
       router.push("/assign");
       closeModal(ModalId.WARNING);
+    } catch (error) {
+      console.error("Failed to delete draft organization:", error);
     }
-  });
+  }, [uuid, queryClient, router, closeModal]);
 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
@@ -70,7 +74,7 @@ const CreateOrganisationForm = () => {
         content={t("Leaving this page will cause you to lose your progress. Are you sure?")}
         primaryButtonProps={{
           children: t("Yes"),
-          onClick: () => deleteDraft({})
+          onClick: handleDeleteDraft
         }}
         secondaryButtonProps={{
           children: t("No"),

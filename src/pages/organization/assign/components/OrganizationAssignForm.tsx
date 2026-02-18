@@ -22,7 +22,6 @@ const OrganizationAssignForm = () => {
 
   const [searchedTerm, setSearchTerm] = useState<string>("");
 
-  // Mutations
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
   const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
