@@ -1,15 +1,12 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useOrganisation } from "@/connections/Organisation";
-import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { AppStore } from "@/store/store";
+import { useOrganisation, useOrganisationMediaByCollection } from "@/connections/Organisation";
 
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationHeader from "./components/OrganizationHeader";
@@ -34,18 +31,9 @@ const OrganizationPage = () => {
       "treeSpeciesHistorical"
     ]
   });
-  const coverMedia = useSelector<AppStore, MediaDto[]>(state => {
-    if (organisation?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organisation.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collectionName === "cover"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: coverMedia }] = useOrganisationMediaByCollection({
+    organisationUuid: organisation?.uuid ?? "",
+    collectionName: "cover"
   });
 
   const coverUrl = useMemo(() => coverMedia[0]?.url ?? null, [coverMedia]);

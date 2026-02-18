@@ -19,7 +19,6 @@ import {
   useRefresh,
   useShowContext
 } from "react-admin";
-import { useSelector } from "react-redux";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
@@ -31,7 +30,13 @@ import FinancialMetrics from "@/admin/components/ResourceTabs/HistoryTab/compone
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
-import { updateOrganisation } from "@/connections/Organisation";
+import {
+  updateOrganisation,
+  useOrganisationFinancialIndicators,
+  useOrganisationFundingTypes,
+  useOrganisationMedia,
+  useOrganisationTreeSpecies
+} from "@/connections/Organisation";
 import {
   getFarmersEngagementStrategyOptions,
   getWomenEngagementStrategyOptions,
@@ -39,15 +44,8 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import {
-  FinancialIndicatorDto,
-  FundingTypeDto,
-  MediaDto,
-  OrganisationUpdateAttributes,
-  TreeSpeciesDto
-} from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
-import { AppStore } from "@/store/store";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
@@ -57,10 +55,6 @@ import OrganisationFundingProgrammesTable from "./OrganisationFundingProgrammesT
 import OrganisationPitchesTable from "./OrganisationPitchesTable";
 import { OrganisationShowAside } from "./OrganisationShowAside";
 import OrganisationUserTable from "./OrganisationUserTable";
-
-type FinancialIndicator = FinancialIndicatorDto & {
-  organisationUuid?: string;
-};
 
 const OrganisationShowActions: FC = () => {
   const record = useRecordContext();
@@ -92,15 +86,8 @@ const OrganisationDataConsumer = () => {
   const { record } = useShowContext();
   if (!record) <></>;
 
-  const financialIndicators = useSelector<AppStore, Array<FinancialIndicator & { uuid: string }>>(state => {
-    if (record?.uuid == null || state.api.financialIndicators == null) return [];
-
-    return Object.entries(state.api.financialIndicators)
-      .map(([uuid, resource]) => {
-        const attrs = resource.attributes as FinancialIndicator;
-        return { ...attrs, uuid };
-      })
-      .filter(indicator => indicator.organisationUuid === record.uuid);
+  const [, { financialIndicators }] = useOrganisationFinancialIndicators({
+    organisationUuid: record?.uuid ?? ""
   });
   const financialCollection: V2FinancialIndicatorsRead = useMemo(() => {
     return financialIndicators.map(fi => ({
@@ -116,11 +103,8 @@ const OrganisationDataConsumer = () => {
     }));
   }, [financialIndicators]);
 
-  const fundingTypes = useSelector<AppStore, FundingTypeDto[]>(state => {
-    if (record?.uuid == null || state.api.fundingTypes == null) return [];
-    return Object.values(state.api.fundingTypes)
-      .filter(resource => resource.attributes.organisationUuid === record.uuid)
-      .map(resource => resource.attributes);
+  const [, { fundingTypes }] = useOrganisationFundingTypes({
+    organisationUuid: record?.uuid ?? ""
   });
 
   // Convert FundingTypeDto to V2FundingTypeRead format for FundingSourcesSection
@@ -173,30 +157,12 @@ const EnrichedOrganisationShowContent = () => {
   const { record: baseRecord } = useShowContext();
   const countryChoices = useGadmChoices({ level: 0 });
 
-  const allMediaFiles = useSelector<AppStore, MediaDto[]>(state => {
-    if (baseRecord?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === baseRecord.uuid && resource.attributes.entityType === "organisations"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: baseRecord?.uuid ?? ""
   });
 
-  const treeSpeciesHistorical = useSelector<AppStore, TreeSpeciesDto[]>(state => {
-    if (baseRecord?.uuid == null || state.api.treeSpecies == null) return [];
-
-    return Object.values(state.api.treeSpecies)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === baseRecord.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collection === "historical-tree-species"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is TreeSpeciesDto => Boolean(attrs));
+  const [, { treeSpecies: treeSpeciesHistorical }] = useOrganisationTreeSpecies({
+    organisationUuid: baseRecord?.uuid ?? ""
   });
 
   const enrichedRecord = useMemo(() => {
