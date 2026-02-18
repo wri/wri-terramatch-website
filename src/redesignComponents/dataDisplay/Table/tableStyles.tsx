@@ -109,6 +109,7 @@ export const getTableWrapperStyles = (
     "& button[aria-current='page']": {
       color: `${getThemedColor("neutral", 900)} !important`,
       fontWeight: "bold !important",
+
       "& p": {
         color: `${getThemedColor("neutral", 900)} !important`,
         fontWeight: "bold !important"
@@ -141,6 +142,11 @@ export const getTableWrapperStyles = (
     // and target its direct <p> child (the "Per Page" label)
     "& div:has(.ds-select-input-container) > p": {
       textTransform: "lowercase !important"
+    },
+
+    // Per Page select trigger button border
+    "& [data-scope='select'][data-part='trigger']": {
+      border: `1px solid ${getThemedColor("neutral", 300)} !important`
     }
   };
 };

@@ -5,7 +5,7 @@ import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
-import { Info } from "@/redesignComponents/foundations/Icons";
+import { Close, Info } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
@@ -16,9 +16,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
     <Toolbar
       className={className}
       contentLeft={
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-4">
           {search != null && (
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-4">
               <div className="mt-2.5 mb-5">
                 <Search
                   {...({
@@ -40,11 +40,16 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           {filters != null && filters.length > 0 ? (
-            <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-2">
-              {t("Filter by:")}
-              {filters.map((filter, index) => (
-                <MultiActionButton key={index} {...filter} size="small" />
-              ))}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
+                {t("Filter by:")}
+                {filters.map((filter, index) => (
+                  <MultiActionButton key={index} {...filter} size="small" />
+                ))}
+              </div>
+              <Button variant="borderless" size="small" leftIcon={<Close />}>
+                Clear All Filters
+              </Button>
             </div>
           ) : (
             <Button
