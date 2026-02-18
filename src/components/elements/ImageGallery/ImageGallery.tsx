@@ -109,6 +109,9 @@ const ImageGallery = ({
       : source;
 
   useEffect(() => {
+    // When filters change, always go back to first page
+    setPageIndex(0);
+
     setFilters({ isPublic: privacy, modelType: modelTypeForApi });
     const currentPrivacytLabel = privacy === false ? "Private" : privacy === true ? "Public" : undefined;
     setFilterLabel(
@@ -124,6 +127,8 @@ const ImageGallery = ({
   }, [privacy, source, modelTypeForApi]);
 
   useValueChanged(sortOrder, () => {
+    // Also reset to first page when changing sort order
+    setPageIndex(0);
     setSortLabel(sortOrder === "ASC" ? t("Oldest to Newest") : t("Newest to Oldest"));
   });
 
@@ -365,10 +370,10 @@ const ImageGallery = ({
             <Menu
               menu={menuSort}
               placement={isAdmin ? MENU_PLACEMENT_LEFT_HALF_TOP : MENU_PLACEMENT_BOTTOM_BOTTOM}
-              classNameContentMenu={isAdmin ? "!sticky min-h-[5.5rem]" : "!sticky"}
+              classNameContentMenu={isAdmin ? "!sticky min-h-[5.5rem] min-w-[14rem]" : "!sticky min-w-[14rem]"}
             >
               <button
-                className="text-14-bold flex min-w-[8rem] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:w-44"
+                className="text-14-bold flex min-w-[12rem] items-center justify-between gap-2 rounded-md border border-neutral-200 bg-white py-2 pl-4 pr-4 lg:min-w-[14rem]"
                 onClick={() => {
                   setOpenSort(!openSort);
                 }}

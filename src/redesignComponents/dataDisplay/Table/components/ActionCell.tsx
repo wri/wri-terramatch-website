@@ -6,7 +6,7 @@ import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButt
 import { MoreVert } from "@/redesignComponents/foundations/Icons";
 
 interface ActionCellProps {
-  button: IButtonProps;
+  button?: IButtonProps;
   buttonSecondary?: IButtonProps;
   onButtonIconClick?: () => void;
 }

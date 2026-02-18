@@ -435,7 +435,7 @@ const GOAL_YEARS: Dictionary<string> = {
 const GOAL_STRATEGY: Dictionary<string> = {
   anr: "Assisted Natural Regeneration",
   "direct-seeding": "Direct Seeding",
-  planting: "Planting"
+  "tree-planting": "Tree Planting"
 };
 
 const LAND_USE: Dictionary<string> = {
@@ -467,12 +467,16 @@ const TREES_GOAL: Dictionary<TypeMapValue> = {
   strategy: {
     title: "Strategy",
     typeMap: GOAL_STRATEGY,
-    balanced: true
+    balanced: false
   }
 };
 
 const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   ...TREES_GOAL,
+  strategy: {
+    ...TREES_GOAL.strategy,
+    balanced: true
+  },
   "land-use": {
     title: "Land Use",
     typeMap: LAND_USE,

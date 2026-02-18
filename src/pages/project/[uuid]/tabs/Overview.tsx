@@ -184,7 +184,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         >
           <KeyIndicatorsInsightsTab project={project} />
         </OverviewItem>
-        <Flex gap={7} height="570px" paddingY={2}>
+        <Flex gap={7} maxHeight="570px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
             title="Team Members"

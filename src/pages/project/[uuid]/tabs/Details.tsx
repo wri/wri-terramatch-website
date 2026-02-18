@@ -55,7 +55,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody>
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -103,7 +103,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
                     <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                      {entry.title}
+                      {entry.title}:
                     </Text>
                     {(() => {
                       const rawValue = entry.value ?? "-";
