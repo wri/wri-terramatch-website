@@ -15,6 +15,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { Edit } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 interface ProjectDetailsTabProps {
   project: ProjectFullDto;
@@ -102,9 +103,18 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
-                      {entry.title}:
-                    </Text>
+                    {entry.title === "Additional Information" ? (
+                      <Flex direction="column" gap={2} marginBottom={2}>
+                        <Text fontSize="18px" lineHeight="28px" color="neutral.700">
+                          {entry.title}:
+                        </Text>
+                        <SimpleDivider />
+                      </Flex>
+                    ) : (
+                      <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
+                        {entry.title}:
+                      </Text>
+                    )}
                     {(() => {
                       const rawValue = entry.value ?? "-";
                       if (typeof rawValue === "string" || typeof rawValue === "number") {
