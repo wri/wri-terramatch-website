@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
@@ -43,7 +42,6 @@ const COLLECTIONS = [
 ];
 
 const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
@@ -147,8 +145,6 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         const updatedOrg = await updateOrganisation(attributes, { id: uuid });
 
         if (updatedOrg?.uuid != null) {
-          await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-
           closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
           return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
         } else {
@@ -158,7 +154,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
       }
     },
-    [closeModal, openModal, provider, uuid, queryClient]
+    [closeModal, openModal, provider, uuid]
   );
 
   const error =

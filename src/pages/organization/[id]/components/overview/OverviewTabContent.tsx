@@ -120,12 +120,8 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
     const hasLegitimacyFiles = mediaFiles.some(
       media => media.collectionName === "reference" || media.collectionName === "legal_registration"
     );
-
     return {
-      pastRestorationExperience: _.some(
-        pastRestorationExperience,
-        value => value == null || (typeof value === "number" && isNaN(value))
-      ),
+      pastRestorationExperience: _.every(pastRestorationExperience, _.isFinite),
       legitimacy: !hasLegitimacyFiles
     };
   }, [organization, mediaFiles]);
