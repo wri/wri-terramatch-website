@@ -4415,58 +4415,6 @@ export const usePutV2OrganisationsUUID = (
   );
 };
 
-export type GetV2OrganisationsListingQueryParams = {
-  /**
-   * search term to use on the collection
-   */
-  search?: string;
-};
-
-export type GetV2OrganisationsListingError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2OrganisationsListingResponse = {
-  data?: {
-    uuid?: string;
-    name?: string;
-    input_type?: string;
-    model_key?: string;
-    option_list_key?: string;
-    options?: string[];
-  }[];
-};
-
-export type GetV2OrganisationsListingVariables = {
-  queryParams?: GetV2OrganisationsListingQueryParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2OrganisationsListing = (variables: GetV2OrganisationsListingVariables, signal?: AbortSignal) =>
-  apiFetch<
-    GetV2OrganisationsListingResponse,
-    GetV2OrganisationsListingError,
-    undefined,
-    {},
-    GetV2OrganisationsListingQueryParams,
-    {}
-  >({ url: "/v2/organisations/listing", method: "get", ...variables, signal });
-
-export const useGetV2OrganisationsListing = <TData = GetV2OrganisationsListingResponse>(
-  variables: GetV2OrganisationsListingVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2OrganisationsListingResponse, GetV2OrganisationsListingError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2OrganisationsListingResponse, GetV2OrganisationsListingError, TData>(
-    queryKeyFn({ path: "/v2/organisations/listing", operationId: "getV2OrganisationsListing", variables }),
-    ({ signal }) => fetchGetV2OrganisationsListing({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2OrganisationsJoinExistingError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2OrganisationsJoinExistingResponse = {
@@ -11694,11 +11642,6 @@ export type QueryOperation =
       path: "/v2/organisations/{UUID}";
       operationId: "getV2OrganisationsUUID";
       variables: GetV2OrganisationsUUIDVariables;
-    }
-  | {
-      path: "/v2/organisations/listing";
-      operationId: "getV2OrganisationsListing";
-      variables: GetV2OrganisationsListingVariables;
     }
   | {
       path: "/v2/organisations/user-requests/{UUID}";
