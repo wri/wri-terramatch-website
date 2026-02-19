@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Tag } from "@worldresources/wri-design-systems";
-import React from "react";
+import React, { FC } from "react";
 
 export type FeedbackTagProps = {
   type: "info-white" | "info-grey" | "success" | "warning" | "error";
@@ -14,7 +14,7 @@ export type FeedbackTagProps = {
   onClose?: () => void;
 };
 
-const FeedbackTag = ({
+const FeedbackTag: FC<FeedbackTagProps> = ({
   type,
   disabled = false,
   className,
