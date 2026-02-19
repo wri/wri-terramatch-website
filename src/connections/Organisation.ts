@@ -1,7 +1,12 @@
 import { createSelector } from "reselect";
 
 import { selectMe, useMyUser } from "@/connections/User";
-import { v3Resource } from "@/connections/util/apiConnectionFactory";
+import {
+  DataConnection,
+  LoadFailureConnection,
+  UpdateConnection,
+  v3Resource
+} from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
@@ -96,9 +101,7 @@ export const loadOrganisation = connectionLoader(organisationConnection);
 export const useOrganisation = connectionHook(organisationConnection);
 export const updateOrganisation = resourceUpdater(
   organisationConnection as unknown as Connection<
-    import("@/connections/util/apiConnectionFactory").DataConnection<OrganisationFullDto> &
-      import("@/connections/util/apiConnectionFactory").LoadFailureConnection &
-      import("@/connections/util/apiConnectionFactory").UpdateConnection<OrganisationUpdateAttributes>,
+    DataConnection<OrganisationFullDto> & LoadFailureConnection & UpdateConnection<OrganisationUpdateAttributes>,
     { id?: string }
   >
 );
