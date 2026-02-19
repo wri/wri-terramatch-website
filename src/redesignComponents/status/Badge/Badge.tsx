@@ -4,12 +4,24 @@ import { FC } from "react";
 
 export interface BadgeProps {
   notificationCount?: number;
+  hasNotification?: boolean;
+  label?: string;
 }
 
-const Badge: FC<BadgeProps> = ({ notificationCount }) => {
+const Badge: FC<BadgeProps> = ({ notificationCount, hasNotification, label }) => {
   return (
-    <Box>
-      <BadgeComponent notificationCount={notificationCount} />
+    <Box
+      css={{
+        "& span, & div:not([aria-hidden='true'])": {
+          padding: "2px",
+          paddingRight: "3px"
+        },
+        "& span, & p": {
+          fontSize: "8px"
+        }
+      }}
+    >
+      <BadgeComponent notificationCount={notificationCount} hasNotification={hasNotification} label={label} />
     </Box>
   );
 };
