@@ -14,7 +14,7 @@ const FinancialExchangeItem: FC<FinancialExchangeItemProps> = ({ label, exchange
         {label}
       </Text>
       <Text variant="text-16-light" className="w-full text-left text-blueCustom-900">
-        {exchangeRate ?? "None Available"}
+        {exchangeRate != 0 ? exchangeRate : "None Available"}
       </Text>
     </div>
   );

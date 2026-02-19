@@ -121,7 +121,7 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
       media => media.collectionName === "reference" || media.collectionName === "legal_registration"
     );
     return {
-      pastRestorationExperience: _.every(pastRestorationExperience, _.isFinite),
+      pastRestorationExperience: !_.every(pastRestorationExperience, _.isFinite),
       legitimacy: !hasLegitimacyFiles
     };
   }, [organization, mediaFiles]);

@@ -43,12 +43,11 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import { FinancialIndicatorDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
-import { V2FinancialIndicatorsRead, V2FundingTypeRead } from "../../../../generated/apiSchemas";
 import OrganisationApplicationsTable from "./OrganisationApplicationsTable";
 import OrganisationFundingProgrammesTable from "./OrganisationFundingProgrammesTable";
 import OrganisationPitchesTable from "./OrganisationPitchesTable";
@@ -88,36 +87,11 @@ const OrganisationDataConsumer = () => {
   const [, { financialIndicators }] = useOrganisationFinancialIndicators({
     organisationUuid: record?.uuid ?? ""
   });
-  const financialCollection: V2FinancialIndicatorsRead = useMemo(() => {
-    return financialIndicators.map(fi => ({
-      uuid: fi.uuid,
-      organisation_id: 0,
-      financial_report_id: 0,
-      collection: fi.collection,
-      amount: fi.amount,
-      year: fi.year,
-      description: fi.description,
-      documentation: fi.documentation ?? [],
-      exchangeRate: fi.exchangeRate
-    }));
-  }, [financialIndicators]);
+  const financialCollection: FinancialIndicatorDto[] = useMemo(() => financialIndicators, [financialIndicators]);
 
   const [, { fundingTypes }] = useOrganisationFundingTypes({
     organisationUuid: record?.uuid ?? ""
   });
-
-  // Convert FundingTypeDto to V2FundingTypeRead format for FundingSourcesSection
-  const fundingTypesV2: V2FundingTypeRead[] = useMemo(() => {
-    return fundingTypes.map(ft => ({
-      source: ft.source ?? undefined,
-      amount: ft.amount ?? undefined,
-      year: ft.year ?? undefined,
-      type: ft.type ?? undefined,
-      organisation_name: ft.organisationName ?? undefined,
-      organisation_uuid: ft.organisationUuid ?? undefined,
-      financial_report_id: ft.financialReportId != null ? String(ft.financialReportId) : undefined
-    })) as V2FundingTypeRead[];
-  }, [fundingTypes]);
 
   const years = Array.isArray(financialCollection)
     ? Array.from(new Set(financialCollection?.map(item => item.year).filter(Boolean))).sort()
@@ -146,7 +120,7 @@ const OrganisationDataConsumer = () => {
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FundingSourcesSection data={fundingTypesV2} currency={record?.currency ?? undefined} />
+        <FundingSourcesSection data={fundingTypes} currency={record?.currency ?? undefined} />
       </Accordion>
     </div>
   );
