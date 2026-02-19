@@ -104,6 +104,7 @@ const EntityEditDisplay = () => {
         hideSaveAndCloseButton
         orgDetails={orgDetails}
         projectDetails={projectDetails}
+        redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
       />
     </LoadingContainer>
   );

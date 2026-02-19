@@ -1,4 +1,3 @@
-import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, SetStateAction, useMemo } from "react";
@@ -12,8 +11,9 @@ import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wi
 import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
-import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 import ApiSlice from "@/store/apiSlice";
+
+import { FormFooter } from "./FormFooter";
 
 type SummaryItemProps = {
   models: FormModelsDefinition;
@@ -78,46 +78,30 @@ const SummaryItem: FC<SummaryItemProps> = ({
       >
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
-      {/* <FormFooter
-        variant="sticky"
-        backButtonProps={{
-          children: t("Back"),
-          onClick: () => setSelectedStepIndex(n => n - 1)
-        }}
-        submitButtonProps={{
-          children: t("Submit"),
-          onClick: handleSubmitClick,
-          disabled: submitButtonDisable,
-          className: "py-3"
-        }}
-      /> */}
-      <Box
+      <FormFooter
         className={classNames(
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-      >
-        <ToolbarForm
-          ButtonLeft={{
-            children: t("Cancel")
-          }}
-          ButtonPrimary={{
-            children: t("Submit"),
-            onClick: handleSubmitClick,
-            disabled: submitButtonDisable
-          }}
-          ButtonSecondary={{
-            children: t("Save and Exit"),
-            onClick: handleSubmitClick,
-            disabled: submitButtonDisable
-          }}
-          ButtonTertiary={{
-            children: t("Previous"),
-            leftIcon: <ChevronRight className="rotate-180" />,
-            onClick: () => setSelectedStepIndex(n => n - 1)
-          }}
-        />
-      </Box>
+        ButtonLeft={{
+          children: t("Cancel")
+        }}
+        ButtonPrimary={{
+          children: t("Submit"),
+          onClick: handleSubmitClick,
+          disabled: submitButtonDisable
+        }}
+        ButtonSecondary={{
+          children: t("Save and Exit"),
+          onClick: handleSubmitClick,
+          disabled: submitButtonDisable
+        }}
+        ButtonTertiary={{
+          children: t("Previous"),
+          leftIcon: <ChevronRight className="rotate-180" />,
+          onClick: () => setSelectedStepIndex(n => n - 1)
+        }}
+      />
     </div>
   );
 };

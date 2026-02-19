@@ -2,8 +2,7 @@ import { Box, Link } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { Dictionary } from "lodash";
-import { useSearchParams } from "next/navigation";
+import { Dictionary, startCase } from "lodash";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { forwardRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
@@ -12,7 +11,7 @@ import { twMerge } from "tailwind-merge";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
-import { STEP_QUERY_PARAM, useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
+import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
@@ -32,11 +31,11 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons/ChevronRight";
 import { Project } from "@/redesignComponents/foundations/Icons/Project";
-import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
+import { FormFooter } from "./FormFooter";
 import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
@@ -84,6 +83,8 @@ export interface WizardFormProps {
   initialStepIndex?: number;
   roundedCorners?: boolean;
   className?: string;
+  cancelForm?: () => void;
+  redirectEntityPage: string;
 }
 
 // Wrapper component to handle both relative routes (Next.js Link) and full URLs (window.location)
@@ -118,10 +119,7 @@ const AdminLinkWrapper = forwardRef<HTMLAnchorElement, { to?: string; children?:
 
 AdminLinkWrapper.displayName = "AdminLinkWrapper";
 
-// Helper function to map model type to React Admin route (ResourceName format)
-const getModelRoute = (model?: string): string => {
-  if (!model) return "project";
-
+const getModelRoute = (model: string): string => {
   const modelRouteMap: Record<string, string> = {
     projects: "project",
     sites: "site",
@@ -134,7 +132,12 @@ const getModelRoute = (model?: string): string => {
     srpReports: "srpReport"
   };
 
-  return modelRouteMap[model] || "project";
+  return modelRouteMap[model];
+};
+
+const mapEntityTitle = (title: string | null, model: string): string => {
+  if (title == null || title === "") return startCase(getModelRoute(model));
+  return title;
 };
 
 function WizardForm(props: WizardFormProps) {
@@ -145,8 +148,6 @@ function WizardForm(props: WizardFormProps) {
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
   const [isLoading, { data: entity }] = useFullEntity(props?.models?.model as SupportedEntity, props?.models?.uuid);
   const isAdmin = useIsAdmin();
-  const searchParams = useSearchParams();
-  const formStepId = searchParams.get(STEP_QUERY_PARAM);
 
   const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
     switch (status) {
@@ -162,31 +163,6 @@ function WizardForm(props: WizardFormProps) {
         return "nothing-reported";
       default:
         return undefined;
-    }
-  };
-
-  const mapEntityTitle = (entityName: string | null | undefined, title: string | null): string => {
-    switch (entityName) {
-      case "projects":
-        return title ?? "Project";
-      case "sites":
-        return title ?? "Site";
-      case "nurseries":
-        return title ?? "Nursery";
-      case "projectReports":
-        return title ?? "ProjectReport";
-      case "siteReports":
-        return title ?? "Site Report";
-      case "nurseryReports":
-        return title ?? "NurseryReport";
-      case "financialReports":
-        return title ?? "Financial Report";
-      case "disturbanceReports":
-        return title ?? "DisturbanceReport";
-      case "srpReports":
-        return title ?? "SrpReport";
-      default:
-        return title ?? "Entity";
     }
   };
 
@@ -305,12 +281,41 @@ function WizardForm(props: WizardFormProps) {
           </div>
         )}
         <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} className="pb-24" />
-        {/* <FormFooter
-          variant="sticky"
-          backButtonProps={
+        <FormFooter
+          className={classNames(
+            "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+            isAdmin ? "bottom-0" : "bottom-[0px]"
+          )}
+          ButtonLeft={{
+            children: "Cancel",
+            onClick: () => {
+              if (isAdmin) {
+                props.onSubmit?.(formHook.getValues());
+              } else {
+                props.cancelForm?.();
+              }
+            }
+          }}
+          ButtonPrimary={{
+            children: "Next",
+            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
+          }}
+          ButtonSecondary={{
+            children: "Save and Exit",
+            onClick: () => {
+              if (isAdmin) {
+                formHook.handleSubmit(onSubmitStep, onSubmitStep);
+                props.onSubmit?.(formHook.getValues());
+              } else {
+                onClickSaveAndClose();
+              }
+            }
+          }}
+          ButtonTertiary={
             !props.hideBackButton
               ? {
-                  children: props.backButtonText ?? t("Back"),
+                  children: "Previous",
+                  leftIcon: <ChevronRight className="rotate-180" />,
                   onClick: () => {
                     if (selectedStepIndex > 0) {
                       setSelectedStepIndex(n => n - 1);
@@ -319,49 +324,12 @@ function WizardForm(props: WizardFormProps) {
                     }
                   }
                 }
-              : undefined
+              : {}
           }
-          submitButtonProps={{
-            children:
-              selectedStepIndex < lastIndex
-                ? props.nextButtonText ?? t("Save and continue")
-                : props.submitButtonText ?? t("Submit"),
-            onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep),
-            className: "py-3",
-            disabled: selectedStepIndex === lastIndex && props.submitButtonDisable
-          }}
-        /> */}
-        <Box
-          className={classNames(
-            "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
-            isAdmin ? "bottom-0" : "bottom-[0px]"
-          )}
-        >
-          <ToolbarForm
-            ButtonLeft={{
-              children: "Cancel",
-              onClick: () => {}
-            }}
-            ButtonPrimary={{
-              children: "Next",
-              onClick: () => setSelectedStepIndex(selectedStepIndex + 1)
-            }}
-            ButtonSecondary={{
-              children: "Save and Exit",
-              onClick: () => (selectedStepIndex !== lastIndex ? setSelectedStepIndex(selectedStepIndex + 1) : undefined)
-            }}
-            {...(index !== 0 && {
-              ButtonTertiary: {
-                children: "Previous",
-                leftIcon: <ChevronRight className="rotate-180" />,
-                onClick: () => setSelectedStepIndex(selectedStepIndex - 1)
-              }
-            })}
-          />
-        </Box>
+        />
       </div>
     ),
-    [t, formHook, _onChange, selectedStepIndex, lastIndex, setSelectedStepIndex, isAdmin]
+    [t, formHook, _onChange, selectedStepIndex, setSelectedStepIndex, isAdmin, onClickSaveAndClose, props, onSubmitStep]
   );
 
   const stepsVisited = useRef<number[]>([]);
@@ -461,10 +429,8 @@ function WizardForm(props: WizardFormProps) {
                         icon: <Project className="!text-theme-primary-900" />
                       },
                       {
-                        label: mapEntityTitle(props.models?.model, entity?.title ?? entity?.name),
-                        link: `/admin?formStepId=${formStepId}#/${getModelRoute(props.models?.model)}/${
-                          props?.models?.uuid
-                        }/show`
+                        label: mapEntityTitle(entity?.title ?? entity?.name, props.models?.model),
+                        link: props.redirectEntityPage
                       },
                       {
                         label: "Edit",
@@ -477,10 +443,7 @@ function WizardForm(props: WizardFormProps) {
                   }}
                 />
                 <PageHeader
-                  title={mapEntityTitle(
-                    props.models?.model,
-                    entity?.title && entity?.title !== "" ? entity?.title : entity?.name
-                  )}
+                  title={mapEntityTitle(entity?.title ?? entity?.name, props.models?.model)}
                   label="Set Up Status:"
                   tag={
                     mapUpdateRequestStatusToTagState(entity?.updateRequestStatus)

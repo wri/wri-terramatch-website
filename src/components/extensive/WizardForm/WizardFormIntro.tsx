@@ -3,9 +3,10 @@ import classNames from "classnames";
 import Image, { StaticImageData } from "next/image";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
+import Button, { IButtonProps as IButtonPropsV2 } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
 import { useDate } from "@/hooks/useDate";
+import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 
 import { FormFooter } from "./FormFooter";
 
@@ -14,9 +15,9 @@ type WizardFormIntroProps = {
   description?: string;
   imageSrc?: string | StaticImageData;
 
-  submitButtonProps?: Omit<IButtonProps, "type" | "variant">;
-  backButtonProps?: Omit<IButtonProps, "color" | "variant">;
-  ctaProps?: IButtonProps;
+  submitButtonProps?: IButtonProps;
+  backButtonProps?: IButtonProps;
+  ctaProps?: IButtonPropsV2;
 
   deadline?: string;
 
@@ -74,8 +75,8 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
       )}
       <FormFooter
         className={footerMarginTop}
-        submitButtonProps={props.submitButtonProps}
-        backButtonProps={props.backButtonProps}
+        ButtonLeft={props.backButtonProps}
+        ButtonPrimary={props.submitButtonProps}
       />
     </div>
   );
