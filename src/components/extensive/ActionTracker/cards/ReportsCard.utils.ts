@@ -21,10 +21,10 @@ export type ReportActionTarget = {
   update_request_status?: string;
   project?: { uuid?: string; name?: string };
   projectUuid?: string;
-  site?: { name?: string; project?: { uuid?: string } };
+  site?: { name?: string; project?: { uuid?: string; name?: string } };
   task?: { uuid?: string };
   taskUuid?: string;
-  nursery?: { name?: string };
+  nursery?: { name?: string; project?: { uuid?: string; name?: string } };
   projectName?: string;
 };
 
@@ -37,7 +37,7 @@ export const getProjectUuid = (target: ReportActionTarget): string | undefined =
 export const getTaskUuid = (target: ReportActionTarget): string | undefined => target?.task?.uuid ?? target?.taskUuid;
 
 export const getProjectName = (target: ReportActionTarget): string | undefined =>
-  target?.project?.name ?? target?.projectName;
+  target?.project?.name ?? target?.projectName ?? target?.site?.project?.name ?? target?.nursery?.project?.name;
 
 /** Filters actions to only those with displayable report status */
 export function filterDisplayableReportActions(actions: ActionDto[]): ActionDto[] {
