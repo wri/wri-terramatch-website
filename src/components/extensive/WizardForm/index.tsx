@@ -36,7 +36,6 @@ import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
 import { FormFooter } from "./FormFooter";
-import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
@@ -404,17 +403,15 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
         >
-          {!props.header?.hide && !isLoading && (
-            <WizardFormHeader
-              currentStep={selectedStepIndex + 1}
-              numberOfSteps={tabItems.length}
-              formStatus={props.formStatus}
-              errorMessage={props.errors && t("Something went wrong")}
-              onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
-              title={props.title}
-              subtitle={props.subtitle}
-            />
-          )}
+          {/* <WizardFormHeader
+            currentStep={selectedStepIndex + 1}
+            numberOfSteps={tabItems.length}
+            formStatus={props.formStatus}
+            errorMessage={props.errors && t("Something went wrong")}
+            onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
+            title={props.title}
+            subtitle={props.subtitle}
+          /> */}
           <div className={twMerge("flex w-full flex-col", props.className)}>
             {isLoading && (
               <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
