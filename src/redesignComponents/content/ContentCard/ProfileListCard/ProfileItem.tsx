@@ -23,7 +23,7 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
   return (
     <>
       <Avatar name={profile.name} src={profile.image} ariaLabel={profile.name} />
-      <Text flex={1} fontSize="16px" lineHeight="24px" color="neutral.900" fontWeight="regular">
+      <Text flex={1} textStyle="400" color="neutral.900">
         {profile.name}
       </Text>
       <Button

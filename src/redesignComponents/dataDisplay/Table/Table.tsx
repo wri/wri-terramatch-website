@@ -190,9 +190,8 @@ const Table: FC<TableProps> = ({
       />
       {showItemCount && (
         <Text
-          fontSize="18px"
+          textStyle="500"
           fontWeight="400"
-          lineHeight="28px"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >

@@ -31,7 +31,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
             <Text
               as={link ? "a" : "p"}
               {...(link == null ? {} : { href: link, target: "_blank" })}
-              fontSize="16px"
+              textStyle="400"
               fontWeight="bold"
               className="text-theme-neutral-800 underline decoration-theme-primary-700 decoration-dotted underline-offset-4"
             >
@@ -41,12 +41,12 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
         </Flex>
         <Flex gap={2} items-center>
           {primaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {primaryText}
             </Text>
           )}
           {secondaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {secondaryText}
             </Text>
           )}
