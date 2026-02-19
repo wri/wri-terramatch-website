@@ -227,6 +227,12 @@ export type OrganisationIndexQueryParams = {
    * @default false
    */
   lightResource?: boolean;
+  /**
+   * Enable public listing mode: returns approved, non-private, non-test organisations. Forces status=approved.
+   *
+   * @default false
+   */
+  listing?: boolean;
 };
 
 export type OrganisationIndexError = Fetcher.ErrorWrapper<

@@ -14,6 +14,11 @@ import { useInputDelay } from "@/hooks/useInputDelay";
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
 
+const DEFAULT_ORG_FILTER = {
+  lightResource: true,
+  listing: true
+} as const;
+
 const OrganizationAssignForm = () => {
   const t = useT();
   const queryClient = useQueryClient();
@@ -30,22 +35,17 @@ const OrganizationAssignForm = () => {
       router.push(`/organization/status/pending`);
     }
   });
-  // Queries
+
   const shouldSearch = useMemo(() => searchedTerm.trim().length > 0, [searchedTerm]);
-  const [orgsLoaded, { data: organisationsData }] = useOrganisations(
-    shouldSearch
-      ? {
-          filter: {
-            search: searchedTerm,
-            lightResource: true
-          }
-        }
-      : {
-          filter: {
-            lightResource: true
-          }
-        }
+  const orgFilter = useMemo(
+    () => ({
+      ...DEFAULT_ORG_FILTER,
+      ...(shouldSearch ? { search: searchedTerm } : {})
+    }),
+    [shouldSearch, searchedTerm]
   );
+
+  const [orgsLoaded, { data: organisationsData }] = useOrganisations({ filter: orgFilter });
 
   const { isTyping } = useInputDelay({
     when: searchedTerm,
@@ -68,60 +68,55 @@ const OrganizationAssignForm = () => {
   );
 
   /**
-   * Handle creation errors
+   * Handle creation errors and clear form errors on typing
    */
   useEffect(() => {
     if (createFailure != null && !organisationCreateLoading) {
       const errorMessage = createFailure.message ?? "Failed to create organization";
       form.setError("name", { message: errorMessage });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [createFailure, organisationCreateLoading]);
-
-  /**
-   * Clear form errors on start typing
-   */
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) {
+    } else if (isTyping && Object.keys(form.formState.errors).length > 0) {
       form.clearErrors();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTyping]);
+  }, [createFailure, organisationCreateLoading, isTyping]);
 
   /**
    * Handle Join Organization Button Click
    */
-  const handleJoin = async () => {
-    if (!selectedOrganization?.uuid) return;
+  const handleJoin = useCallback(async () => {
+    if (selectedOrganization?.uuid == null) return;
     joinOrganisation({
       body: {
-        organisation_uuid: selectedOrganization?.uuid
+        organisation_uuid: selectedOrganization.uuid
       }
     });
-  };
+  }, [selectedOrganization?.uuid, joinOrganisation]);
 
   /**
    * Handle Create Organization Button Click
    */
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     if (createOrganisation != null) {
       createOrganisation({ status: "draft" });
     }
-  };
+  }, [createOrganisation]);
+
+  const handleFormSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (type === "join") {
+        handleJoin();
+      } else if (type === "create") {
+        handleCreate();
+      }
+    },
+    [type, handleJoin, handleCreate]
+  );
 
   const loading = isTyping || !orgsLoaded;
 
   return (
-    <Form
-      onSubmit={e => {
-        e.preventDefault(); //To prevent form submit default behavior which was causing page to refresh which lead to `Ns_binding_aborted` error moreInfo: https://stackoverflow.com/questions/704561/ns-binding-aborted-shown-in-firefox-with-httpfox
-        if (type === "join") {
-          handleJoin();
-        } else if (type === "create") {
-          handleCreate();
-        }
-      }}
-    >
+    <Form onSubmit={handleFormSubmit}>
       <Form.Header
         title={t("Join Or Create Organization")}
         subtitle={t(
