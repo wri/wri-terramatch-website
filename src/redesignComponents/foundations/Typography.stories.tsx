@@ -13,16 +13,16 @@ export default meta;
 type Story = StoryObj;
 
 const typographyScale = [
-  { size: "1100", category: "Headline", textAlign: "left" as const },
-  { size: "1000", category: "Headline", textAlign: "left" as const },
-  { size: "900", category: "Headline", textAlign: "center" as const },
-  { size: "800", category: "Headline", textAlign: "right" as const },
-  { size: "700", category: "Subtitle", textAlign: "right" as const },
-  { size: "600", category: "Subtitle", textAlign: "right" as const },
-  { size: "500", category: "Body", textAlign: "right" as const },
-  { size: "400", category: "Body", textAlign: "right" as const },
-  { size: "300", category: "Captions", textAlign: "right" as const },
-  { size: "200", category: "Captions", textAlign: "right" as const }
+  { size: "1100", category: "Headline" },
+  { size: "1000", category: "Headline" },
+  { size: "900", category: "Headline" },
+  { size: "800", category: "Headline" },
+  { size: "700", category: "Subtitle" },
+  { size: "600", category: "Subtitle" },
+  { size: "500", category: "Body" },
+  { size: "400", category: "Body" },
+  { size: "300", category: "Captions" },
+  { size: "200", category: "Captions" }
 ];
 
 const TypographyRow = ({ size, category, bold = false }: { size: string; category: string; bold: boolean }) => {
