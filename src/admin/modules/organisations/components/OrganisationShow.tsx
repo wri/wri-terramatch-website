@@ -22,7 +22,6 @@ import {
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
-import MapField from "@/admin/components/Fields/MapField";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
@@ -331,11 +330,6 @@ const EnrichedOrganisationShowContent = () => {
           <TextField
             source="monitoringEvaluationExperience"
             label="Monitoring and evaluation experience"
-            emptyText="Not Provided"
-          />
-          <MapField
-            label="Historic monitoring shapefile"
-            source="historic_monitoring_geojson"
             emptyText="Not Provided"
           />
           <FileArrayField

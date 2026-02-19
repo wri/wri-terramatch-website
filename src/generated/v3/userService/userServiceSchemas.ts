@@ -51,6 +51,10 @@ export type VerificationUserRequest = {
 };
 
 export type OrganisationLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
@@ -62,6 +66,10 @@ export type OrganisationLightDto = {
 };
 
 export type OrganisationFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;

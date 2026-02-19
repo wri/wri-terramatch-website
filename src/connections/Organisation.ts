@@ -72,9 +72,7 @@ export const indexOrgsConnection = v3Resource("organisations", organisationIndex
   .buildConnection();
 
 const organisationConnection = v3Resource("organisations", organisationShow)
-  .singleFullResource<OrganisationFullDto & { lightResource: boolean }>(({ id }) =>
-    id == null ? undefined : { pathParams: { uuid: id } }
-  )
+  .singleFullResource<OrganisationFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
   .sideloads()
   .isLoading()
   .loadFailure()
