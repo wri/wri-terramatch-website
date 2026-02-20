@@ -58,10 +58,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
           ctaLink,
           ctaText: t("View Report(s)"),
           title: getProjectName(target) ?? "",
-          subtitle: `${(action.text ?? "").trim()}\n${dueText}`.trim(),
-          updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
-            date: format(target?.updatedAt ?? "")
-          })
+          subtitle: dueText.trim()
         } as ActionTrackerCardRowProps
       });
     });
@@ -112,7 +109,6 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
 
         const dueText = earliestDue != null ? t("<strong>Due:</strong> {date}", { date: format(earliestDue) }) : "";
 
-        const subtitle = t("Site and nursery reports available");
         const ctaLink = `/project/${projectUuid}/reporting-task/${taskUuid}`;
 
         cardsWithSort.push({
@@ -122,10 +118,7 @@ const ReportsCard = ({ actions }: ReportsCardProps) => {
             ctaLink,
             ctaText: t("View Report(s)"),
             title: getProjectName(target) ?? "",
-            subtitle: `${subtitle}\n${dueText}`.trim(),
-            updatedAt: t(`<strong>Last Updated</strong>: {date}`, {
-              date: format(maxUpdatedAt)
-            })
+            subtitle: dueText.trim()
           } as ActionTrackerCardRowProps
         });
       }

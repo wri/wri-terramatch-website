@@ -54,26 +54,18 @@ export function groupSiteAndNurseryReportsByTask(actions: ActionDto[]) {
   const map = new Map<string, { siteReports: ActionDto[]; nurseryReports: ActionDto[] }>();
 
   actions
-    .filter((a: ActionDto) => a.targetableType === "siteReports")
+    .filter((a: ActionDto) => a.targetableType === "siteReports" || a.targetableType === "nurseryReports")
     .forEach((action: ActionDto) => {
       const target = action.target as ReportActionTarget;
       const taskUuid = getTaskUuid(target);
       if (taskUuid == null) return;
 
       const existing = map.get(taskUuid) ?? { siteReports: [] as ActionDto[], nurseryReports: [] as ActionDto[] };
-      existing.siteReports.push(action);
-      map.set(taskUuid, existing);
-    });
-
-  actions
-    .filter((a: ActionDto) => a.targetableType === "nurseryReports")
-    .forEach((action: ActionDto) => {
-      const target = action.target as ReportActionTarget;
-      const taskUuid = getTaskUuid(target);
-      if (taskUuid == null) return;
-
-      const existing = map.get(taskUuid) ?? { siteReports: [] as ActionDto[], nurseryReports: [] as ActionDto[] };
-      existing.nurseryReports.push(action);
+      if (action.targetableType === "siteReports") {
+        existing.siteReports.push(action);
+      } else if (action.targetableType === "nurseryReports") {
+        existing.nurseryReports.push(action);
+      }
       map.set(taskUuid, existing);
     });
 
