@@ -98,7 +98,6 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     sdgsImpacted: null,
     totalHectaresRestoredGoal: 2000,
     treesGrownGoal: 100000,
-    jobsCreatedGoal: 0,
     survivalRate: 85,
     lastReportedSurvivalRate: 85,
     landUseTypes: null,
