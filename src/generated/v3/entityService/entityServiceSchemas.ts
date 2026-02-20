@@ -2800,11 +2800,9 @@ export type SubmissionDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3039,11 +3037,9 @@ export type FormFullDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3170,11 +3166,9 @@ export type StoreFormAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3308,11 +3302,9 @@ export type FundingProgrammeDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3340,11 +3332,9 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
-    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
-    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
