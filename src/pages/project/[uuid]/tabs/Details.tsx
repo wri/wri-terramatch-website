@@ -221,6 +221,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                 return (
                   <UserProfileCard
                     className="h-full"
+                    // @ts-expect-error types are out of date
                     organisation={partner.organisation?.name ?? ""}
                     email={partner.email_address ?? ""}
                     username={fullName ?? ""}
