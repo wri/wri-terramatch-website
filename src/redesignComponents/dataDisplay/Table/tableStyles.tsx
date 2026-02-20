@@ -8,7 +8,8 @@ export const getTableWrapperStyles = (
   selectable?: boolean,
   scrollable?: boolean,
   scrollableWidth?: string,
-  scrollableHeight?: string
+  scrollableHeight?: string,
+  css?: any
 ) => {
   const sortedColumnIndex =
     columns != null && sortColumn.key !== "" ? columns.findIndex((col: any) => col.key === sortColumn.key) : -1;
@@ -43,8 +44,7 @@ export const getTableWrapperStyles = (
         position: "sticky",
         top: 0,
         zIndex: 10
-      },
-      "& table thead th": {}
+      }
     }),
 
     "& table tbody tr:hover": {
@@ -141,6 +141,30 @@ export const getTableWrapperStyles = (
     // and target its direct <p> child (the "Per Page" label)
     "& div:has(.ds-select-input-container) > p": {
       textTransform: "lowercase !important"
-    }
+    },
+
+    ...css
   };
+};
+
+export const NO_HEADER_TABLE_WRAPPER_STYLES = {
+  "& table": {
+    tableLayout: "fixed !important"
+  },
+  "& table thead": {
+    display: "none"
+  },
+  "& table tbody tr": {
+    borderBottom: "0px!important"
+  },
+  "& table tbody tr td": {
+    padding: "0px !important",
+    borderBottom: "0px!important"
+  }
+};
+
+export const FULL_WIDTH_TABLE_HEADER_STYLES = {
+  "& table thead tr th": {
+    backgroundColor: getThemedColor("neutral", 200)
+  }
 };

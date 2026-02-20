@@ -24,6 +24,8 @@ interface TableProps {
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
+  variant?: "default" | "full-width";
+  css?: any;
 }
 
 interface SelectableRowProps {
@@ -66,7 +68,9 @@ const Table: FC<TableProps> = ({
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
-  showItemCount = true
+  showItemCount = true,
+  variant = "default",
+  css
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
@@ -170,7 +174,9 @@ const Table: FC<TableProps> = ({
   const displayEnd = Math.min(endRange, actualTotalItems);
 
   return (
-    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
+    <Box
+      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+    >
       <WriTable
         columns={columns}
         data={dataByPage}
@@ -187,12 +193,12 @@ const Table: FC<TableProps> = ({
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
+        variant={variant}
       />
       {showItemCount && (
         <Text
-          fontSize="18px"
+          textStyle="500"
           fontWeight="400"
-          lineHeight="28px"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >
