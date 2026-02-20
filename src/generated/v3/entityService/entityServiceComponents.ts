@@ -2084,6 +2084,87 @@ export const createAuditStatus = new V3ApiEndpoint<
   {}
 >("/entities/v3/auditStatuses/{entity}/{uuid}", "POST");
 
+export type DeleteAuditStatusPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type to retrieve audit statuses for
+   */
+  entity:
+    | "projects"
+    | "sites"
+    | "nurseries"
+    | "projectReports"
+    | "nurseryReports"
+    | "siteReports"
+    | "financialReports"
+    | "disturbanceReports"
+    | "srpReports"
+    | "sitePolygons";
+  /**
+   * UUID of the audit status to delete
+   */
+  auditUuid: string;
+};
+
+export type DeleteAuditStatusError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteAuditStatusResponse = {
+  meta?: {
+    /**
+     * @example auditStatuses
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteAuditStatusVariables = {
+  pathParams: DeleteAuditStatusPathParams;
+};
+
+/**
+ * Soft deletes an audit status by UUID. The audit status must belong to the specified entity. Requires authentication and appropriate permissions.
+ */
+export const deleteAuditStatus = new V3ApiEndpoint<
+  DeleteAuditStatusResponse,
+  DeleteAuditStatusError,
+  DeleteAuditStatusVariables,
+  {}
+>("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "DELETE");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -5660,6 +5741,155 @@ export const fundingProgrammeUpdate = new V3ApiEndpoint<
   {}
 >("/fundingProgrammes/v3/fundingProgrammes/{uuid}", "PUT");
 
+export type ReportingFrameworksIndexQueryParams = {
+  /**
+   * Whether to return translated content. Defaults to true.
+   */
+  translated?: boolean;
+};
+
+export type ReportingFrameworksIndexError = Fetcher.ErrorWrapper<{
+  status: 401;
+  payload: {
+    /**
+     * @example 401
+     */
+    statusCode: number;
+    /**
+     * @example Unauthorized
+     */
+    message: string;
+  };
+}>;
+
+export type ReportingFrameworksIndexResponse = {
+  meta?: {
+    /**
+     * @example reportingFrameworks
+     */
+    resourceType?: string;
+    indices?: {
+      /**
+       * The resource type for this included index
+       */
+      resource?: string;
+      /**
+       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+       */
+      requestPath?: string;
+      /**
+       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+       */
+      ids?: string[];
+      /**
+       * The total number of records available.
+       *
+       * @example 42
+       */
+      total?: number;
+    }[];
+    deleted?: {
+      /**
+       * The resource type for this deleted resource
+       */
+      resource?: string;
+      /**
+       * The ID of the deleted resource
+       */
+      id?: string;
+    }[];
+  };
+  data?: {
+    /**
+     * @example reportingFrameworks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ReportingFrameworkDto;
+  }[];
+};
+
+export type ReportingFrameworksIndexVariables = {
+  queryParams?: ReportingFrameworksIndexQueryParams;
+};
+
+export const reportingFrameworksIndex = new V3ApiEndpoint<
+  ReportingFrameworksIndexResponse,
+  ReportingFrameworksIndexError,
+  ReportingFrameworksIndexVariables,
+  {}
+>("/reportingFrameworks/v3/reportingFrameworks", "GET");
+
+export type ReportingFrameworkGetPathParams = {
+  /**
+   * Framework slug/key
+   */
+  frameworkKey: string;
+};
+
+export type ReportingFrameworkGetError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ReportingFrameworkGetResponse = {
+  meta?: {
+    /**
+     * @example reportingFrameworks
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example reportingFrameworks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ReportingFrameworkDto;
+  };
+};
+
+export type ReportingFrameworkGetVariables = {
+  pathParams: ReportingFrameworkGetPathParams;
+};
+
+export const reportingFrameworkGet = new V3ApiEndpoint<
+  ReportingFrameworkGetResponse,
+  ReportingFrameworkGetError,
+  ReportingFrameworkGetVariables,
+  {}
+>("/reportingFrameworks/v3/reportingFrameworks/{frameworkKey}", "GET");
+
 export const operationsByTag = {
   projectPitches: { projectPitchIndex, projectPitchGet },
   impactStories: {
@@ -5674,7 +5904,7 @@ export const operationsByTag = {
   files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
-  auditStatus: { getAuditStatuses, createAuditStatus },
+  auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
@@ -5690,5 +5920,6 @@ export const operationsByTag = {
     fundingProgrammeGet,
     fundingProgrammeDelete,
     fundingProgrammeUpdate
-  }
+  },
+  reportingFrameworks: { reportingFrameworksIndex, reportingFrameworkGet }
 };

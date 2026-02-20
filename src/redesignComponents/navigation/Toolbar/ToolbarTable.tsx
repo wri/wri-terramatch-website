@@ -1,22 +1,25 @@
+import { Flex } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Search } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import { Close, Info } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
 
-const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
+const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, className, onClearFilters }) => {
   const t = useT();
   return (
     <Toolbar
+      className={className}
       contentLeft={
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-4">
           {search != null && (
-            <div className="flex flex-wrap items-center gap-2">
-              <div className="mt-2.5">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="mt-2.5 mb-5">
                 <Search
                   {...({
                     placeholder: search.placeholder,
@@ -24,23 +27,29 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
                     options: search.options,
                     resultsMaxHeight: search.resultsMaxHeight,
                     isLoading: search.isLoading,
-                    displayResults: search.displayResults,
+                    displayResults: search.displayResults ?? "none",
+                    onQueryChange: search.onQueryChange,
                     size: "default"
                   } as SearchProps)}
                 />
               </div>
               <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
-                XX {search.label}
+                {search.count != null ? `${search.count} ${search.label}` : ""}
               </span>
             </div>
           )}
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           {filters != null && filters.length > 0 ? (
-            <div className="text-14 flex flex-wrap items-center gap-2 text-theme-neutral-900">
-              {t("Filter by:")}
-              {filters.map((filter, index) => (
-                <MultiActionButton key={index} {...filter} size="small" />
-              ))}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+                {t("Filter by:")}
+                {filters.map((filter, index) => (
+                  <MultiActionButton key={index} {...filter} size="small" />
+                ))}
+              </div>
+              <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
+                {t("Clear All Filters")}
+              </Button>
             </div>
           ) : (
             <Button
@@ -60,7 +69,11 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button }) => {
           )}
         </div>
       }
-      contentRight={<Button {...button} size="small" />}
+      contentRight={
+        <Flex gap={2} alignItems="center" justifyContent="right">
+          <Button {...button} size="small" /> <Info className="text-theme-neutral-800" />
+        </Flex>
+      }
     />
   );
 };

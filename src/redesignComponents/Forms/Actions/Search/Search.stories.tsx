@@ -11,7 +11,7 @@ const mockOptions = [
 ];
 
 const meta: Meta<typeof Search> = {
-  title: "Redesign Components/Forms/Actions/Search",
+  title: "Redesign Components/Actions/Search",
   component: Search,
   tags: ["autodocs"],
   argTypes: {

@@ -165,6 +165,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
     dashboardCountries?: any[];
     isDashboard?: string;
   };
+  disabledPolygonPanel?: boolean;
 }
 
 export const MapEditingContext = createContext({
@@ -210,6 +211,7 @@ export const MapContainer = ({
   legendPosition,
   hasAccess,
   dashboardContext,
+  disabledPolygonPanel = false,
   ...props
 }: MapProps) => {
   const [sourcesAdded, setSourcesAdded] = useState<boolean>(false);
@@ -1037,7 +1039,7 @@ export const MapContainer = ({
                 {isDashboard === "dashboard" && isMapReady && map.current != null && (
                   <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
                 )}
-                {isDashboard !== "dashboard" && isDashboard !== "modal" && (
+                {isDashboard !== "dashboard" && isDashboard !== "modal" && !disabledPolygonPanel && (
                   <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />
                 )}
               </ControlGroup>
@@ -1046,7 +1048,9 @@ export const MapContainer = ({
         ) : null}
         {showLegend ? (
           <ControlGroup
-            position={siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"}
+            position={
+              disabledPolygonPanel ? "bottom-left" : siteData ? "bottom-left-site" : legendPosition ?? "bottom-left"
+            }
             isFullscreen={isFullscreen}
           >
             <FilterControl />
@@ -1057,7 +1061,7 @@ export const MapContainer = ({
             <PolygonCheck />
           </ControlGroup>
         ) : null}
-        {!polygonsExists ? <EmptyStateDisplay /> : null}
+        {!polygonsExists && !disabledPolygonPanel ? <EmptyStateDisplay /> : null}
         {(isMobile || isDashboard) && mobilePopupData !== null ? (
           <PopupMobile
             event={mobilePopupData}

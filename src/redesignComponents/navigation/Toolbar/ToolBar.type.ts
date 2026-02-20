@@ -35,7 +35,7 @@ export interface ToolbarSlot {
 
 export interface ToolbarObjectProps {
   breadcrumbs: BreadcrumbProps;
-  slots: ToolbarSlot[];
+  suffix: React.ReactNode;
 }
 
 export type ListItemVariant = "data" | "navigation" | "select";
@@ -62,12 +62,16 @@ export interface SearchProps {
   isLoading?: boolean;
   displayResults?: "none" | "text" | "list" | "custom";
   label?: string;
+  onQueryChange?: (query: string) => void;
+  count?: number;
 }
 
 export interface ToolbarTableProps {
   search: SearchProps;
   filters: IMultiActionButtonProps[];
+  onClearFilters: () => void;
   button: IButtonProps;
+  className?: string;
 }
 
 export interface ViewToolbarProps {

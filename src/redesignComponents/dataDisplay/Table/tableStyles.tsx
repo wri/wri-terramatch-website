@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 import { getThemedColor } from "@/lib/theme";
 
 import type { SortColumn } from "./tableUtils";
@@ -8,7 +10,8 @@ export const getTableWrapperStyles = (
   selectable?: boolean,
   scrollable?: boolean,
   scrollableWidth?: string,
-  scrollableHeight?: string
+  scrollableHeight?: string,
+  css?: CSSProperties
 ) => {
   const sortedColumnIndex =
     columns != null && sortColumn.key !== "" ? columns.findIndex((col: any) => col.key === sortColumn.key) : -1;
@@ -16,6 +19,7 @@ export const getTableWrapperStyles = (
   const thIndex = sortedColumnIndex >= 0 ? sortedColumnIndex + 1 + (selectable ? 1 : 0) : -1;
 
   return {
+    ...css,
     ...(scrollable && {
       "& ": {
         width: scrollableWidth,
@@ -52,7 +56,7 @@ export const getTableWrapperStyles = (
       borderBottom: `1px solid ${getThemedColor("primary", 700)}`
     },
 
-    "& table button svg path": {
+    "& table thead button svg path": {
       fill: `${getThemedColor("neutral", 500)} !important`
     },
     "& button ": {
@@ -109,6 +113,7 @@ export const getTableWrapperStyles = (
     "& button[aria-current='page']": {
       color: `${getThemedColor("neutral", 900)} !important`,
       fontWeight: "bold !important",
+
       "& p": {
         color: `${getThemedColor("neutral", 900)} !important`,
         fontWeight: "bold !important"
@@ -141,6 +146,11 @@ export const getTableWrapperStyles = (
     // and target its direct <p> child (the "Per Page" label)
     "& div:has(.ds-select-input-container) > p": {
       textTransform: "lowercase !important"
+    },
+
+    // Per Page select trigger button border
+    "& [data-scope='select'][data-part='trigger']": {
+      border: `1px solid ${getThemedColor("neutral", 300)} !important`
     }
   };
 };

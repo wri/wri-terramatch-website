@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { FC, useCallback, useEffect } from "react";
+import React, { CSSProperties, FC, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -20,7 +20,10 @@ interface TableProps {
   isScrollable?: boolean;
   scrollableWidth?: string;
   scrollableHeight?: string;
+  renderRow?: (rowData: RowData) => React.ReactNode;
+  renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
+  css?: CSSProperties;
   showItemCount?: boolean;
 }
 
@@ -61,7 +64,10 @@ const Table: FC<TableProps> = ({
   isScrollable = false,
   scrollableWidth = "100%",
   scrollableHeight = "100%",
+  renderRow: customRenderRow,
+  renderDataCell: customRenderDataCell,
   totalItems,
+  css = {},
   showItemCount = true
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
@@ -80,7 +86,7 @@ const Table: FC<TableProps> = ({
 
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
-  const renderDataCell = useCallback((rowData: RowData, columnKey: string) => {
+  const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
     if (columnKey === "actions" && rowData.actionCell != null) {
       return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
     }
@@ -110,7 +116,9 @@ const Table: FC<TableProps> = ({
     return (rowData as any)[columnKey];
   }, []);
 
-  const renderRow = useCallback(
+  const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
+
+  const defaultRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <TableRow className="group">
@@ -130,7 +138,7 @@ const Table: FC<TableProps> = ({
     [onAllItemsSelected, dataByPage]
   );
 
-  const selectableRenderRow = useCallback(
+  const defaultSelectableRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <SelectableRow
@@ -145,12 +153,32 @@ const Table: FC<TableProps> = ({
     [columns, renderDataCell, selectedRows, handleRowSelected]
   );
 
+  const finalRenderRow = useCallback(
+    (rowData: RowData) => {
+      if (customRenderRow != null) {
+        return customRenderRow(rowData);
+      }
+
+      if (selectable) {
+        return defaultSelectableRenderRow(rowData);
+      }
+
+      return defaultRenderRow(rowData);
+    },
+    [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
+  );
+
+  const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
+  const displayEnd = Math.min(endRange, actualTotalItems);
+
   return (
-    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
+    <Box
+      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+    >
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={selectable ? selectableRenderRow : renderRow}
+        renderRow={finalRenderRow}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
@@ -172,7 +200,7 @@ const Table: FC<TableProps> = ({
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >
-          Showing {`${startRange + 1} - ${endRange} of ${actualTotalItems}`}
+          Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>
       )}
     </Box>
