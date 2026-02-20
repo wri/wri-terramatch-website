@@ -9,25 +9,27 @@ import { system } from "../src/lib/theme";
 import { BLUR_DATA_URL } from "./constants";
 import { Toast as WRIToast } from "@worldresources/wri-design-systems";
 
-// On the Docs page all stories share the same DOM. The decorator runs once per
-// story, so without this guard we'd mount N <WRIToast /> containers — each
-// subscribes to the shared toaster store, causing N duplicate toasts per click.
-let _wriToastMounted = false;
+let hasMountedToast = false;
 
 const SingletonToastContainer = () => {
-  const [active] = React.useState(() => {
-    if (_wriToastMounted) return false;
-    _wriToastMounted = true;
-    return true;
-  });
+  const isFirstMount = React.useRef(false);
+
+  if (!hasMountedToast) {
+    hasMountedToast = true;
+    isFirstMount.current = true;
+  }
 
   React.useEffect(() => {
     return () => {
-      if (active) _wriToastMounted = false;
+      if (isFirstMount.current) {
+        hasMountedToast = false;
+      }
     };
-  }, [active]);
+  }, []);
 
-  return active ? <WRIToast /> : null;
+  if (!isFirstMount.current) return null;
+
+  return <WRIToast />;
 };
 
 const client = new QueryClient();
@@ -54,13 +56,7 @@ const descriptor = Object.getOwnPropertyDescriptor(NextImage, "default");
 if (!descriptor || descriptor.configurable) {
   Object.defineProperty(NextImage, "default", {
     configurable: true,
-    value: props => (
-      <OriginalNextImage
-        {...props}
-        unoptimized
-        blurDataURL={BLUR_DATA_URL}
-      />
-    )
+    value: props => <OriginalNextImage {...props} unoptimized blurDataURL={BLUR_DATA_URL} />
   });
 }
 
