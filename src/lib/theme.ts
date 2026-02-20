@@ -1,4 +1,4 @@
-import { createSystem } from "@chakra-ui/react";
+import { createSystem, defineTextStyles } from "@chakra-ui/react";
 import { designSystemStyles } from "@worldresources/wri-design-systems";
 
 const themeConfig = {
@@ -71,8 +71,104 @@ const themeConfig = {
       200: {
         value: "0 1px 3px 0 rgba(0, 0, 0, 0.10), 0 1px 2px -1px rgba(0, 0, 0, 0.10)"
       }
+    },
+    fontSizes: {
+      "1100": { value: "3.75rem" }, // 60px
+      "1000": { value: "3rem" }, // 48px
+      "900": { value: "2.25rem" }, // 36px
+      "800": { value: "1.875rem" }, // 30px
+      "700": { value: "1.5rem" }, // 24px
+      "600": { value: "1.25rem" }, // 20px
+      "500": { value: "1.125rem" }, // 18px
+      "400": { value: "1rem" }, // 16px
+      "300": { value: "0.875rem" }, // 14px
+      "200": { value: "0.75rem" } // 12px
+    },
+    lineHeights: {
+      "1200": { value: "4.5rem" }, // 72px
+      "1100": { value: "3.75rem" }, // 60px
+      "1000": { value: "2.75rem" }, // 44px
+      "900": { value: "2.25rem" }, // 36px
+      "800": { value: "2rem" }, // 32px
+      "700": { value: "1.75rem" }, // 28px
+      "600": { value: "1.5rem" }, // 24px
+      "500": { value: "1.25rem" }, // 20px
+      "400": { value: "1rem" }, // 16px
+      "300": { value: "0.75rem" } // 12px
     }
-  }
+  },
+  textStyles: defineTextStyles({
+    "1100": {
+      description: "Headline text style - (60px font, 72px line height)",
+      value: {
+        fontSize: "1100",
+        lineHeight: "1200"
+      }
+    },
+    "1000": {
+      description: "Headline text style - (48px font, 60px line height)",
+      value: {
+        fontSize: "1000",
+        lineHeight: "1100"
+      }
+    },
+    "900": {
+      description: "Headline text style - (36px font, 44px line height)",
+      value: {
+        fontSize: "900",
+        lineHeight: "1000"
+      }
+    },
+    "800": {
+      description: "Headline text style - (39px font, 36px line height)",
+      value: {
+        fontSize: "800",
+        lineHeight: "900"
+      }
+    },
+    "700": {
+      description: "Subtitle text style - (24px font, 32px line height)",
+      value: {
+        fontSize: "700",
+        lineHeight: "800"
+      }
+    },
+    "600": {
+      description: "Subtitle text style - (20px font, 28px line height)",
+      value: {
+        fontSize: "600",
+        lineHeight: "700"
+      }
+    },
+    "500": {
+      description: "Body text style - (18px font, 28px line height)",
+      value: {
+        fontSize: "500",
+        lineHeight: "700"
+      }
+    },
+    "400": {
+      description: "Body text style - (16px font, 24px line height)",
+      value: {
+        fontSize: "400",
+        lineHeight: "600"
+      }
+    },
+    "300": {
+      description: "Caption text style - (14px font, 20px line height)",
+      value: {
+        fontSize: "300",
+        lineHeight: "500"
+      }
+    },
+    "200": {
+      description: "Caption text style - (12px font, 16px line height)",
+      value: {
+        fontSize: "200",
+        lineHeight: "400"
+      }
+    }
+  })
 };
 
 export const system = createSystem(designSystemStyles._config, {

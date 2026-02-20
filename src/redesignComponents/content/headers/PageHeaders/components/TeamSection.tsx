@@ -33,7 +33,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       }}
     >
       <div className="flex w-fit flex-col gap-2" onClick={gotoTeamMembers} role="button" tabIndex={0}>
-        <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
+        <Text color="primary.900" textStyle="300" fontWeight="bold">
           {t("Team:")}
         </Text>
         <Flex className="flex-wrap">
@@ -64,8 +64,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize="12px"
-                lineHeight="16px"
+                textStyle="200"
                 fontWeight="700"
                 padding="6px 8px"
                 borderRadius="4px"
