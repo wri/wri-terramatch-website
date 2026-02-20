@@ -69,8 +69,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                textStyle="200"
-                fontWeight="700"
+                textStyle="200-bold"
                 padding="6px 8px"
                 borderRadius="4px"
                 backgroundColor="transparent"

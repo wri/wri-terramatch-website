@@ -21,7 +21,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       height="fit-content"
       backgroundColor="neutral.100"
     >
-      <Text textStyle="400" fontWeight="bold" color="neutral.900">
+      <Text textStyle="400-bold" color="neutral.900">
         {title}
       </Text>
       {metrics.map(metric => {
@@ -49,7 +49,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
               </Flex>
               {metric.goal > 0 ? (
                 <Flex gap={1} alignItems="center">
-                  <Text textStyle="400" fontWeight="bold" color="neutral.900">
+                  <Text textStyle="400-bold" color="neutral.900">
                     {metric.progress.toLocaleString()}
                   </Text>
                   <Text textStyle="300" color="neutral.800">
@@ -60,7 +60,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
                   </Text>
                 </Flex>
               ) : (
-                <Text textStyle="300" fontWeight="bold" color="neutral.600">
+                <Text textStyle="300-bold" color="neutral.600">
                   {t("N/A")}
                 </Text>
               )}

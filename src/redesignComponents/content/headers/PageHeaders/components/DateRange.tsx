@@ -31,7 +31,7 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate }) => {
         <Text textStyle="300" color="neutral.900">
           {t("End:")}
         </Text>
-        <Text textStyle="300" color="neutral.900" fontWeight="bold">
+        <Text textStyle="300-bold" color="neutral.900">
           {endDate}
         </Text>
       </Flex>

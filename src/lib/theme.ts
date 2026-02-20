@@ -105,11 +105,27 @@ const themeConfig = {
         lineHeight: "1200"
       }
     },
+    "1100-bold": {
+      description: "Headline text style - (60px font, 72px line height, bold)",
+      value: {
+        fontSize: "1100",
+        lineHeight: "1200",
+        fontWeight: "bold"
+      }
+    },
     "1000": {
       description: "Headline text style - (48px font, 60px line height)",
       value: {
         fontSize: "1000",
         lineHeight: "1100"
+      }
+    },
+    "1000-bold": {
+      description: "Headline text style - (48px font, 60px line height, bold)",
+      value: {
+        fontSize: "1000",
+        lineHeight: "1100",
+        fontWeight: "bold"
       }
     },
     "900": {
@@ -119,11 +135,27 @@ const themeConfig = {
         lineHeight: "1000"
       }
     },
+    "900-bold": {
+      description: "Headline text style - (36px font, 44px line height, bold)",
+      value: {
+        fontSize: "900",
+        lineHeight: "1000",
+        fontWeight: "bold"
+      }
+    },
     "800": {
       description: "Headline text style - (39px font, 36px line height)",
       value: {
         fontSize: "800",
         lineHeight: "900"
+      }
+    },
+    "800-bold": {
+      description: "Headline text style - (39px font, 36px line height, bold)",
+      value: {
+        fontSize: "800",
+        lineHeight: "900",
+        fontWeight: "bold"
       }
     },
     "700": {
@@ -133,11 +165,27 @@ const themeConfig = {
         lineHeight: "800"
       }
     },
+    "700-bold": {
+      description: "Subtitle text style - (24px font, 32px line height, bold)",
+      value: {
+        fontSize: "700",
+        lineHeight: "800",
+        fontWeight: "bold"
+      }
+    },
     "600": {
       description: "Subtitle text style - (20px font, 28px line height)",
       value: {
         fontSize: "600",
         lineHeight: "700"
+      }
+    },
+    "600-bold": {
+      description: "Subtitle text style - (20px font, 28px line height, bold)",
+      value: {
+        fontSize: "600",
+        lineHeight: "700",
+        fontWeight: "bold"
       }
     },
     "500": {
@@ -147,11 +195,27 @@ const themeConfig = {
         lineHeight: "700"
       }
     },
+    "500-bold": {
+      description: "Body text style - (18px font, 28px line height, bold)",
+      value: {
+        fontSize: "500",
+        lineHeight: "700",
+        fontWeight: "bold"
+      }
+    },
     "400": {
       description: "Body text style - (16px font, 24px line height)",
       value: {
         fontSize: "400",
         lineHeight: "600"
+      }
+    },
+    "400-bold": {
+      description: "Body text style - (16px font, 24px line height, bold)",
+      value: {
+        fontSize: "400",
+        lineHeight: "600",
+        fontWeight: "bold"
       }
     },
     "300": {
@@ -161,11 +225,27 @@ const themeConfig = {
         lineHeight: "500"
       }
     },
+    "300-bold": {
+      description: "Caption text style - (14px font, 20px line height, bold)",
+      value: {
+        fontSize: "300",
+        lineHeight: "500",
+        fontWeight: "bold"
+      }
+    },
     "200": {
       description: "Caption text style - (12px font, 16px line height)",
       value: {
         fontSize: "200",
         lineHeight: "400"
+      }
+    },
+    "200-bold": {
+      description: "Caption text style - (12px font, 16px line height, bold)",
+      value: {
+        fontSize: "200",
+        lineHeight: "400",
+        fontWeight: "bold"
       }
     }
   })

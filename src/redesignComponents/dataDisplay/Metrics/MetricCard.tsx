@@ -33,7 +33,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         <InformationRequired color="neutral.800" boxSize="14px" />
       </Tooltip>
     </Flex>
-    <Text textStyle="400" fontWeight="bold" color="neutral.900">
+    <Text textStyle="400-bold" color="neutral.900">
       {progress.toLocaleString()}
     </Text>
   </Flex>
@@ -57,7 +57,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
           <InformationRequired color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
-      <Text textStyle="600" fontWeight="bold" color="neutral.900">
+      <Text textStyle="600-bold" color="neutral.900">
         {progress.toLocaleString()}
       </Text>
     </Flex>
@@ -89,7 +89,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
       <Flex gap={2} alignItems="center">
         <ProgressBar progress={progressValue} color={color} />
         <Flex gap={1} alignItems="center">
-          <Text textStyle="400" fontWeight="bold" color="neutral.900">
+          <Text textStyle="400-bold" color="neutral.900">
             {progress.toLocaleString()}
           </Text>
           <Text textStyle="300" color="neutral.800">
@@ -131,13 +131,13 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         </Flex>
         {type === "jobsCreated" && progressValue > 0 ? (
           <Flex gap={1} alignItems="center">
-            <Text textStyle="600" fontWeight="bold" color="neutral.900">
+            <Text textStyle="600-bold" color="neutral.900">
               {progress.toLocaleString()}
             </Text>
           </Flex>
         ) : goal > 0 ? (
           <Flex gap={1} alignItems="center">
-            <Text textStyle="600" fontWeight="bold" color="neutral.900">
+            <Text textStyle="600-bold" color="neutral.900">
               {Math.round(progress).toLocaleString()}
             </Text>
             <Text textStyle="500" color="neutral.800">
@@ -148,7 +148,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             </Text>
           </Flex>
         ) : (
-          <Text textStyle="500" fontWeight="bold" color="neutral.600">
+          <Text textStyle="500-bold" color="neutral.600">
             {t("N/A")}
           </Text>
         )}
