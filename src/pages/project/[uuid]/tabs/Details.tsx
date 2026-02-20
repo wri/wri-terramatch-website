@@ -102,7 +102,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    <Text textStyle="300" color="primary.900" fontWeight="bold">
+                    <Text textStyle="300-bold" color="primary.900">
                       {entry.title}:
                     </Text>
                     {(() => {

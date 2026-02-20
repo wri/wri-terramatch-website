@@ -44,11 +44,10 @@ const TypographyRow = ({ size, category, bold = false }: { size: string; categor
         </Flex>
         <Box flex="1" minW="200px">
           <Text
-            textStyle={size}
+            textStyle={bold ? `${size}-bold` : size}
             color="neutral.900"
             textAlign="right"
             className="truncate whitespace-nowrap"
-            fontWeight={bold ? "bold" : "normal"}
           >
             {exampleText}
           </Text>

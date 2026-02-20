@@ -16,9 +16,8 @@ const getClassName = (variant: TextBadgeVariant) => {
 const TextBadge: FC<TextBadgeProps> = ({ children, variant = "primary", className }) => {
   return (
     <Text
-      textStyle="300"
+      textStyle="300-bold"
       color={getColor(variant)}
-      fontWeight="bold"
       className={className}
       paddingX="8px"
       paddingY="4px"
