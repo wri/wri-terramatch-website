@@ -455,7 +455,12 @@ const noHeaderData: NoHeaderRowData[] = [
     3: "Canarium Schweinfurthii",
     4: "Bigihia welkitschii"
   },
-  { id: 5, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" }
+  { id: 5, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 6, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 7, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 8, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 9, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 10, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" }
 ];
 
 export const WithNoHeader: Story = {
@@ -466,6 +471,7 @@ export const WithNoHeader: Story = {
     showItemCount: false,
     variant: "full-width",
     css: NO_HEADER_TABLE_WRAPPER_STYLES,
+    pageSize: 4,
     renderRow: (rowData: RowData) => {
       const row = rowData as NoHeaderRowData;
       return (
