@@ -102,7 +102,8 @@ const themeConfig = {
       description: "Headline text style - (60px font, 72px line height)",
       value: {
         fontSize: "1100",
-        lineHeight: "1200"
+        lineHeight: "1200",
+        fontWeight: "normal"
       }
     },
     "1100-bold": {
@@ -117,7 +118,8 @@ const themeConfig = {
       description: "Headline text style - (48px font, 60px line height)",
       value: {
         fontSize: "1000",
-        lineHeight: "1100"
+        lineHeight: "1100",
+        fontWeight: "normal"
       }
     },
     "1000-bold": {
@@ -132,7 +134,8 @@ const themeConfig = {
       description: "Headline text style - (36px font, 44px line height)",
       value: {
         fontSize: "900",
-        lineHeight: "1000"
+        lineHeight: "1000",
+        fontWeight: "normal"
       }
     },
     "900-bold": {
@@ -147,7 +150,8 @@ const themeConfig = {
       description: "Headline text style - (39px font, 36px line height)",
       value: {
         fontSize: "800",
-        lineHeight: "900"
+        lineHeight: "900",
+        fontWeight: "normal"
       }
     },
     "800-bold": {
@@ -162,7 +166,8 @@ const themeConfig = {
       description: "Subtitle text style - (24px font, 32px line height)",
       value: {
         fontSize: "700",
-        lineHeight: "800"
+        lineHeight: "800",
+        fontWeight: "normal"
       }
     },
     "700-bold": {
@@ -177,7 +182,8 @@ const themeConfig = {
       description: "Subtitle text style - (20px font, 28px line height)",
       value: {
         fontSize: "600",
-        lineHeight: "700"
+        lineHeight: "700",
+        fontWeight: "normal"
       }
     },
     "600-bold": {
@@ -192,7 +198,8 @@ const themeConfig = {
       description: "Body text style - (18px font, 28px line height)",
       value: {
         fontSize: "500",
-        lineHeight: "700"
+        lineHeight: "700",
+        fontWeight: "normal"
       }
     },
     "500-bold": {
@@ -207,7 +214,8 @@ const themeConfig = {
       description: "Body text style - (16px font, 24px line height)",
       value: {
         fontSize: "400",
-        lineHeight: "600"
+        lineHeight: "600",
+        fontWeight: "normal"
       }
     },
     "400-bold": {
@@ -222,7 +230,8 @@ const themeConfig = {
       description: "Caption text style - (14px font, 20px line height)",
       value: {
         fontSize: "300",
-        lineHeight: "500"
+        lineHeight: "500",
+        fontWeight: "normal"
       }
     },
     "300-bold": {
@@ -237,7 +246,8 @@ const themeConfig = {
       description: "Caption text style - (12px font, 16px line height)",
       value: {
         fontSize: "200",
-        lineHeight: "400"
+        lineHeight: "400",
+        fontWeight: "normal"
       }
     },
     "200-bold": {
