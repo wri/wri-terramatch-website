@@ -14,7 +14,7 @@ import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { SupportedEntity, useFullEntity } from "@/connections/Entity";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import FrameworkProvider, { Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
   FormFieldsProvider,
@@ -26,6 +26,7 @@ import { ErrorWrapper } from "@/generated/apiFetcher";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
@@ -151,6 +152,10 @@ function WizardForm(props: WizardFormProps) {
   const mapUpdateRequestStatusToTagState = (status: string | null | undefined): TagSubmissionState | undefined => {
     switch (status) {
       case "draft":
+        return "draft";
+      case "due":
+        return "due";
+      case "started":
         return "draft";
       case "awaiting-approval":
         return "pending-approval";
@@ -394,6 +399,9 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
+  const window = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt as string);
+  const taskTitle = t("Reporting Task {window}", { window });
+
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
       <FrameworkProvider frameworkKey={props.framework}>
@@ -419,10 +427,12 @@ function WizardForm(props: WizardFormProps) {
                   breadcrumbs={{
                     links: [
                       {
-                        label: getModelRoute(props.models?.model) ?? "projects",
-                        link: `/admin?formStepId=summary#/${getModelRoute(
-                          props.models?.model
-                        )}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`,
+                        label: isAdmin ? getModelRoute(props.models?.model) ?? "projects" : taskTitle,
+                        link: isAdmin
+                          ? `/admin?formStepId=summary#/${getModelRoute(
+                              props.models?.model
+                            )}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`
+                          : `/project/${entity?.projectUuid}/reporting-task/${entity?.taskUuid}`,
                         icon: <Project className="!text-theme-primary-900" />
                       },
                       {
@@ -443,8 +453,8 @@ function WizardForm(props: WizardFormProps) {
                   title={mapEntityTitle(entity?.title ?? entity?.name, props.models?.model)}
                   label="Set Up Status:"
                   tag={
-                    mapUpdateRequestStatusToTagState(entity?.updateRequestStatus)
-                      ? { state: mapUpdateRequestStatusToTagState(entity?.updateRequestStatus)! }
+                    mapUpdateRequestStatusToTagState(entity?.status)
+                      ? { state: mapUpdateRequestStatusToTagState(entity?.status)! }
                       : undefined
                   }
                 />
