@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Button, showToast } from "@worldresources/wri-design-systems";
 
-// <ToastContainer /> is mounted once globally via SingletonToastContainer in
-// .storybook/preview.js. Do NOT render it here — on the docs page all stories
-// are in the same DOM, and each extra container adds a duplicate subscription
-// to the shared toaster stores, producing duplicate toasts per click.
-
 const meta: Meta = {
   title: "Redesign Components/Status/Toast",
   parameters: {
