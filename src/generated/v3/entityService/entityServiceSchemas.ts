@@ -1312,7 +1312,6 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
-  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -3366,4 +3365,17 @@ export type UpdateFundingProgrammeData = {
 
 export type UpdateFundingProgrammeBody = {
   data: UpdateFundingProgrammeData;
+};
+
+export type ReportingFrameworkDto = {
+  uuid: string;
+  name: string;
+  slug: string | null;
+  projectFormUuid: string | null;
+  projectReportFormUuid: string | null;
+  siteFormUuid: string | null;
+  siteReportFormUuid: string | null;
+  nurseryFormUuid: string | null;
+  nurseryReportFormUuid: string | null;
+  totalProjectsCount: number;
 };

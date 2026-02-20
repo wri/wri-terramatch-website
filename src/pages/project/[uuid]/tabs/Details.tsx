@@ -214,17 +214,17 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               as="div"
               itemAs="div"
               className="grid grid-cols-3 gap-4"
-              items={partners?.data || []}
+              items={partners?.data ?? []}
               render={partner => {
-                const fullName = `${partner.first_name || ""} ${partner.last_name || ""}`.trim();
+                const fullName = `${partner.first_name ?? ""} ${partner.last_name ?? ""}`.trim();
 
                 return (
                   <UserProfileCard
                     className="h-full"
-                    //@ts-expect-error
-                    organisation={partner.organisation?.name || ""}
-                    email={partner.email_address || ""}
-                    username={fullName || ""}
+                    // @ts-expect-error types are out of date
+                    organisation={partner.organisation?.name ?? ""}
+                    email={partner.email_address ?? ""}
+                    username={fullName ?? ""}
                     status={partner.status as string}
                     project={project}
                     refetch={refetch}
