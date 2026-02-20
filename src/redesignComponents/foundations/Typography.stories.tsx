@@ -44,7 +44,7 @@ const TypographyRow = ({ size, category, bold = false }: { size: string; categor
         </Flex>
         <Box flex="1" minW="200px">
           <Text
-            textStyle={bold ? "700-bold" : "700"}
+            textStyle={bold ? `${size}-bold` : size}
             color="neutral.900"
             textAlign="right"
             className="truncate whitespace-nowrap"
