@@ -26,10 +26,8 @@ const FinancialReportDetailPage = () => {
   const { openToast } = useToastContext();
 
   useEffect(() => {
-    if (router.isReady && financialReportUUID && financialReport != null) {
-      if (financialReport.lightResource !== false) {
-        ApiSlice.pruneCache("financialReports", [financialReportUUID]);
-      }
+    if (router.isReady && financialReportUUID && financialReport != null && financialReport.lightResource !== false) {
+      ApiSlice.pruneCache("financialReports", [financialReportUUID]);
     }
   }, [router.isReady, financialReportUUID, financialReport]);
 

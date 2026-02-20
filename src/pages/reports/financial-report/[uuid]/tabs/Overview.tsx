@@ -36,9 +36,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
     );
   }
 
-  const financialCollection =
-    (report?.financialCollection as FinancialIndicatorDto[]) ??
-    (report?.financial_collection as FinancialIndicatorDto[]);
+  const financialCollection = report?.financialCollection as FinancialIndicatorDto[];
   const finStartMonth = report?.fin_start_month ?? report?.finStartMonth;
 
   const financialRatioStats = calculateFinancialRatioStats(financialCollection);

@@ -43,7 +43,7 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { FinancialIndicatorDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
@@ -87,32 +87,31 @@ const OrganisationDataConsumer = () => {
   const [, { financialIndicators }] = useOrganisationFinancialIndicators({
     organisationUuid: record?.uuid ?? ""
   });
-  const financialCollection: FinancialIndicatorDto[] = useMemo(() => financialIndicators, [financialIndicators]);
 
   const [, { fundingTypes }] = useOrganisationFundingTypes({
     organisationUuid: record?.uuid ?? ""
   });
 
-  const years = Array.isArray(financialCollection)
-    ? Array.from(new Set(financialCollection?.map(item => item.year).filter(Boolean))).sort()
+  const years = Array.isArray(financialIndicators)
+    ? Array.from(new Set(financialIndicators?.map(item => item.year).filter(Boolean))).sort()
     : [];
 
   return (
     <div className="flex flex-col gap-8 p-2">
-      <FinancialMetrics data={financialCollection} years={years} />
+      <FinancialMetrics data={financialIndicators} years={years} />
       <Accordion
         title="Financial Documents per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDocumentsSection files={formatDocumentData(financialCollection)} />
+        <FinancialDocumentsSection files={formatDocumentData(financialIndicators)} />
       </Accordion>
       <Accordion
         title="Descriptions of Financials per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDescriptionsSection items={formatDescriptionData(financialCollection)} />
+        <FinancialDescriptionsSection items={formatDescriptionData(financialIndicators)} />
       </Accordion>
 
       <Accordion
