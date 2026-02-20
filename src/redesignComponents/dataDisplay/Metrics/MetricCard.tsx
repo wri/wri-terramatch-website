@@ -114,7 +114,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   tooltipContent
 }) => {
   const t = useT();
-  const progressValue = type === "jobsCreated" ? progress : goal > 0 ? (progress / goal) * 100 : 0;
+  const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
   return (
     <Flex gap={3} alignItems="center">
       <DonutChart progress={progressValue} color={color} type={type}>
@@ -129,13 +129,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             <InformationRequired color="neutral.800" boxSize="14px" />
           </Tooltip>
         </Flex>
-        {type === "jobsCreated" && progressValue > 0 ? (
-          <Flex gap={1} alignItems="center">
-            <Text textStyle="600-bold" color="neutral.900">
-              {progress.toLocaleString()}
-            </Text>
-          </Flex>
-        ) : goal > 0 ? (
+        {goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
               {Math.round(progress).toLocaleString()}

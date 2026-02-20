@@ -43,26 +43,21 @@ export function calculateTotals(
   const total = Math.max(...balancedCounts);
   const complete = uniq(balancedCounts).length === 1;
 
-  const startedBalancedCount = balancedCounts.filter(count => count > 0).length;
-
-  return { counts, total, complete, startedBalancedCount };
+  return { counts, total, complete };
 }
 
 export function useTableStatus(
   domain: TrackingDomain,
-
   type: TrackingType,
-
   entries: TrackingEntryDto[]
-): { total: number; status: Status; counts: Dictionary<number>; startedBalancedCount: number } {
+): { total: number; status: Status; counts: Dictionary<number> } {
   const { framework } = useFrameworkContext();
   return useMemo(() => {
-    const { total, complete, counts, startedBalancedCount } = calculateTotals(entries, framework, domain, type);
+    const { total, complete, counts } = calculateTotals(entries, framework, domain, type);
     return {
       total,
       status: total === 0 ? "not-started" : complete ? "complete" : "in-progress",
-      counts,
-      startedBalancedCount
+      counts
     };
   }, [entries, framework, domain, type]);
 }

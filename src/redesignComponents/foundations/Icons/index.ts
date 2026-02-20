@@ -7,6 +7,7 @@ export { ChevronDown } from "./ChevronDown";
 export { ChevronRight } from "./ChevronRight";
 export { ChevronUp } from "./ChevronUp";
 export { CloseFullscreen } from "./CloseFullscreen";
+export { Close } from "./Close";
 export { Correct } from "./Correct";
 export { Dashboard } from "./Dashboard";
 export { Delete } from "./Delete";

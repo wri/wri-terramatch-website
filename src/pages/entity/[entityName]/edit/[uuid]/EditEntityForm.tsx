@@ -10,6 +10,8 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { EntityFullDto, pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
+import { toFramework } from "@/context/framework.provider";
+import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import {
   DisturbanceReportFullDto,
   FinancialReportFullDto,
@@ -17,9 +19,9 @@ import {
   SrpReportFullDto
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { normalizedFormData } from "@/helpers/customForms";
-import { getEntityDetailPageLink, isEntityReport } from "@/helpers/entity";
+import { getEntityDetailPageLink, isEntityReport, v3EntityName } from "@/helpers/entity";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
-import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
+import { useDefaultValues, useEntityForm } from "@/hooks/useFormGet";
 import { useFormUpdate } from "@/hooks/useFormUpdate";
 import { useOnUnmount } from "@/hooks/useOnMount";
 import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
@@ -43,26 +45,18 @@ const isTaskReport = (formEntityName: FormEntity, entity: EntityFullDto): entity
 const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
-  const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
 
-  const {
-    model,
-    formData,
-    framework,
-    feedbackFields,
-    fieldsProvider,
-    defaultValues,
-    isFormLoading: isLoading,
-    providerLoaded,
-    loadFailure,
-    formLoadFailure
-  } = useEntityFormSetup(entityName, entityUUID);
+  const model = useMemo(
+    () => ({ model: v3EntityName(entityName) as FormEntity, uuid: entityUUID }),
+    [entityName, entityUUID]
+  );
 
   const [
     entityLoaded,
     { data: entity, update: updateEntity, isUpdating: isSubmitting, updateFailure: submissionFailure }
   ] = useFullEntity(model.model, model.uuid);
   const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(model.model, entityUUID);
+  const { formData, isLoading, loadFailure, formLoadFailure } = useEntityForm(model.model, entityUUID);
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
   // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
@@ -73,7 +67,17 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     }
   });
 
+  const framework = toFramework(formData?.frameworkKey);
+
+  const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
   const isReport = isEntityReport(entityName);
+
+  const feedbackFields = useMemo(
+    () => (mode?.includes("provide-feedback") ? formData?.feedbackFields ?? [] : []),
+    [formData?.feedbackFields, mode]
+  );
+  const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid, feedbackFields);
+  const defaultValues = useDefaultValues(formData, fieldsProvider);
 
   const submitEntity = useCallback(() => {
     updateEntity({ status: "awaiting-approval" });
