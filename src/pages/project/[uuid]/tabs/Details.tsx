@@ -15,6 +15,10 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
+import {
+  FULL_WIDTH_TABLE_HEADER_STYLES,
+  NO_HEADER_TABLE_WRAPPER_STYLES
+} from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { Edit } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
@@ -42,6 +46,13 @@ const getFieldsRequiringAttentionCount = (
   }
 };
 
+const noCountTableColumns = [
+  { key: "name", label: "" },
+  { key: "name", label: "" },
+  { key: "name", label: "" },
+  { key: "name", label: "" }
+];
+
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
   const router = useRouter();
@@ -56,6 +67,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
     return null;
   }
 
+  const noGoalTableColumns = [
+    { key: "name", label: t("Species Name") },
+    { key: "amount", label: t("Number of Trees Expected") }
+  ];
   return (
     <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
       <Flex flexDirection="column" gap={2}>
@@ -104,7 +119,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    {entry.title === "Additional Information" ? (
+                    {entry.inputType === "file" ? (
                       <Flex direction="column" gap={2} marginBottom={2}>
                         <Text textStyle="500" color="neutral.700">
                           {entry.title}:
@@ -128,14 +143,33 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                         );
                       }
                       if (rawValue.props.tableType == "noCount") {
-                        console.log(formatEntryValue(rawValue));
-                        return <Table data={rawValue.props.plants} columns={[{ key: "name", title: "Name" }]} />;
+                        return (
+                          <Table
+                            data={rawValue.props.plants}
+                            columns={noCountTableColumns}
+                            variant="full-width"
+                            css={NO_HEADER_TABLE_WRAPPER_STYLES}
+                            totalItems={rawValue.props.plants.length}
+                            showItemCount={false}
+                          />
+                        );
+                      } else if (rawValue.props.tableType == "noGoal") {
+                        return (
+                          <Table
+                            data={rawValue.props.plants}
+                            columns={noGoalTableColumns}
+                            css={FULL_WIDTH_TABLE_HEADER_STYLES}
+                            totalItems={rawValue.props.plants.length}
+                            showItemCount={false}
+                          />
+                        );
+                      } else {
+                        return (
+                          <Text textStyle="400" color="neutral.900">
+                            {formatEntryValue(rawValue)}
+                          </Text>
+                        );
                       }
-                      return (
-                        <Text textStyle="400" color="neutral.900">
-                          {formatEntryValue(rawValue)}
-                        </Text>
-                      );
                     })()}
                   </Flex>
                 ))}
