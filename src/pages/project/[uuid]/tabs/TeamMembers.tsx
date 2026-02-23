@@ -199,6 +199,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         tooltipContent={t(
           "Team members who join your project as monitoring partners will have full access to your project data and reports."
         )}
+        showClearFilters={selectedRole !== null}
       />
       <Table
         data={teamMembers}

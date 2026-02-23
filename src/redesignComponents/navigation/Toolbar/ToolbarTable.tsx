@@ -17,7 +17,8 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   button,
   className,
   onClearFilters,
-  tooltipContent
+  tooltipContent,
+  showClearFilters = true
 }) => {
   const t = useT();
   return (
@@ -55,9 +56,11 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   <MultiActionButton key={index} {...filter} size="small" />
                 ))}
               </div>
-              <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
-                {t("Clear All Filters")}
-              </Button>
+              {showClearFilters && (
+                <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
+                  {t("Clear All Filters")}
+                </Button>
+              )}
             </div>
           ) : (
             <Button

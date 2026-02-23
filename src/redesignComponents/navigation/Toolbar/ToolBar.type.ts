@@ -73,6 +73,7 @@ export interface ToolbarTableProps {
   button: IButtonProps;
   className?: string;
   tooltipContent?: string;
+  showClearFilters?: boolean;
 }
 
 export interface ViewToolbarProps {
