@@ -151,7 +151,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   }, [partners?.data, managers?.data, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingY={6}>
+    <Box paddingX={8} paddingY={6} minHeight="525px">
       <ToolbarTable
         className="!px-0"
         onClearFilters={() => {
