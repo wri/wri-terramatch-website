@@ -56,7 +56,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -105,13 +105,13 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
                     {entry.title === "Additional Information" ? (
                       <Flex direction="column" gap={2} marginBottom={2}>
-                        <Text fontSize="18px" lineHeight="28px" color="neutral.700">
+                        <Text textStyle="500" color="neutral.700">
                           {entry.title}:
                         </Text>
                         <SimpleDivider />
                       </Flex>
                     ) : (
-                      <Text fontSize="14px" lineHeight="20px" color="primary.900" fontWeight="bold">
+                      <Text textStyle="300-bold" color="primary.900">
                         {entry.title}:
                       </Text>
                     )}
