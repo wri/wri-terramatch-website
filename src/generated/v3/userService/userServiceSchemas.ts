@@ -724,3 +724,30 @@ export type UserCreateData = {
 export type UserCreateBody = {
   data: UserCreateData;
 };
+
+export type UserAssociationDto = {
+  uuid: string;
+  emailAddress: string;
+  status: string;
+  isManager: boolean;
+};
+
+export type UserAssociationCreateAttributes = {
+  /**
+   * Email address to associate with the project.
+   */
+  emailAddress: string;
+  /**
+   * Flag to createa a manager or not
+   */
+  isManager: boolean;
+};
+
+export type UserAssociationCreateData = {
+  type: "userAssociations";
+  attributes: UserAssociationCreateAttributes;
+};
+
+export type UserAssociationCreateBody = {
+  data: UserAssociationCreateData;
+};

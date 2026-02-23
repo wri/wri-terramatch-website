@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { FC, useCallback, useEffect } from "react";
+import React, { CSSProperties, FC, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -23,6 +23,7 @@ interface TableProps {
   renderRow?: (rowData: RowData) => React.ReactNode;
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
+  css?: CSSProperties;
   showItemCount?: boolean;
 }
 
@@ -66,6 +67,7 @@ const Table: FC<TableProps> = ({
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
+  css = {},
   showItemCount = true
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
@@ -170,7 +172,9 @@ const Table: FC<TableProps> = ({
   const displayEnd = Math.min(endRange, actualTotalItems);
 
   return (
-    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
+    <Box
+      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+    >
       <WriTable
         columns={columns}
         data={dataByPage}
@@ -190,9 +194,7 @@ const Table: FC<TableProps> = ({
       />
       {showItemCount && (
         <Text
-          fontSize="18px"
-          fontWeight="400"
-          lineHeight="28px"
+          textStyle="500"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >

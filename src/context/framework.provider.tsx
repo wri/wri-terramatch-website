@@ -5,16 +5,20 @@ export enum Framework {
   PPC = "ppc",
   TF = "terrafund",
   TF_LANDSCAPES = "terrafund-landscapes",
+  TF_3 = "terrafund-3",
   ENTERPRISES = "enterprises",
   HBF = "hbf",
   EPA_GHANA_PILOT = "epa-ghana-pilot",
   FF = "fundo-flora",
+  FF_1 = "fundo-flora-1",
 
   UNDEFINED = "undefined"
 }
 
-export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES];
+export const ALL_TF = [Framework.TF, Framework.TF_LANDSCAPES, Framework.ENTERPRISES, Framework.TF_3];
 export const isTerrafund = (framework: Framework) => ALL_TF.includes(framework as (typeof ALL_TF)[number]);
+
+export const ALL_FF = [Framework.FF, Framework.FF_1];
 
 export const toFramework = (frameworkKey?: string | null) =>
   Object.values(Framework).includes(frameworkKey as unknown as Framework)

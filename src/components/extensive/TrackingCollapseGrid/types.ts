@@ -388,6 +388,7 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
       case Framework.HBF:
         return HBF_JOBS_DEMOGRAPHICS_TYPE_MAP;
       case Framework.FF:
+      case Framework.FF_1:
         return type === "volunteers" ? FF_VOLUNTEERS_DEMOGRAPHICS_TYPE_MAP : FF_JOBS_DEMOGRAPHICS_TYPE_MAP;
       default:
         return JOBS_DEMOGRAPHICS_TYPE_MAP;
@@ -398,6 +399,7 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
         case Framework.HBF:
           return HBF_BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
         case Framework.FF:
+        case Framework.FF_1:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
           return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
@@ -407,6 +409,7 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
         case Framework.HBF:
           return HBF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         case Framework.FF:
+        case Framework.FF_1:
           return FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
         default:
           return BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
@@ -462,7 +465,7 @@ const TREES_GOAL: Dictionary<TypeMapValue> = {
   years: {
     title: "Years",
     typeMap: GOAL_YEARS,
-    balanced: false
+    balanced: true
   },
   strategy: {
     title: "Strategy",
@@ -473,6 +476,10 @@ const TREES_GOAL: Dictionary<TypeMapValue> = {
 
 const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   ...TREES_GOAL,
+  strategy: {
+    ...TREES_GOAL.strategy,
+    balanced: true
+  },
   "land-use": {
     title: "Land Use",
     typeMap: LAND_USE,

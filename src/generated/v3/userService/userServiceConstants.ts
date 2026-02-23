@@ -13,7 +13,8 @@ import {
   LeadershipDto,
   OwnershipStakeDto,
   TreeSpeciesDto,
-  ActionDto
+  ActionDto,
+  UserAssociationDto
 } from "./userServiceSchemas";
 
 export const USER_SERVICE_RESOURCES = [
@@ -29,7 +30,8 @@ export const USER_SERVICE_RESOURCES = [
   "leaderships",
   "ownershipStakes",
   "treeSpecies",
-  "actions"
+  "actions",
+  "associatedUsers"
 ] as const;
 
 export type UserServiceApiResources = {
@@ -46,4 +48,5 @@ export type UserServiceApiResources = {
   ownershipStakes: StoreResourceMap<OwnershipStakeDto>;
   treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   actions: StoreResourceMap<ActionDto>;
+  associatedUsers: StoreResourceMap<UserAssociationDto>;
 };
