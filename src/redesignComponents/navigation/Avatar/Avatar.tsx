@@ -39,8 +39,6 @@ const Avatar: FC<AvatarProps> = props => {
 
   const finalSize = customSize ?? AVATAR_SIZE_MAP[size];
 
-  console.log("avatar:", props);
-
   if (variant === "add") {
     return (
       <StyledAvatarWrapper className={`avatar-wrapper avatar-${size} avatar-add`}>

@@ -59,8 +59,7 @@ const teamMembersFormatted = (
   teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse,
   role: string
 ) => {
-  console.log("teamMembers:", teamMembers);
-  return teamMembers?.map((member, index) => ({
+  return teamMembers?.map(member => ({
     uuid: member?.uuid,
     name: `${member.first_name} ${member.last_name}`,
     organization: (member as any)?.organisation?.name,
