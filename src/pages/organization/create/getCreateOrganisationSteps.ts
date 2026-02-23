@@ -28,40 +28,40 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         validation: { required: true }
       },
       {
-        name: "hq_street_1",
+        name: "hqStreet1",
         label: t("Headquarters Street address"),
         placeholder: t("Add Headquarters Street address"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_street_2",
+        name: "hqStreet2",
         label: t("Headquarters Street address 2"),
         placeholder: t("Add Headquarters Street address 2"),
         inputType: "text"
       },
       {
-        name: "hq_city",
+        name: "hqCity",
         label: t("Headquarters address City"),
         placeholder: t("Add Headquarters address City"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_state",
+        name: "hqState",
         label: t("Headquarters address State/Province"),
         placeholder: t("Headquarters address State/Province"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_zipcode",
+        name: "hqZipcode",
         label: t("Headquarters address Zipcode"),
         placeholder: t("Add Headquarters address Zipcode"),
         inputType: "text"
       },
       {
-        name: "hq_country",
+        name: "hqCountry",
         label: t("Headquarters address Country"),
         placeholder: t("Add Headquarters address Country"),
         inputType: "select",
@@ -108,31 +108,31 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
     ),
     fields: [
       {
-        name: "web_url",
+        name: "webUrl",
         label: t("Organization Website URL"),
         placeholder: t("Add Organization website URL"),
         inputType: "url"
       },
       {
-        name: "facebook_url",
+        name: "facebookUrl",
         label: t("Organization Facebook URL"),
         placeholder: t("Add Organization Facebook URL"),
         inputType: "url"
       },
       {
-        name: "twitter_url",
+        name: "twitterUrl",
         label: t("Organization Twitter URL"),
         placeholder: t("Add Organization  Twitter URL"),
         inputType: "url"
       },
       {
-        name: "instagram_url",
+        name: "instagramUrl",
         label: t("Organization Instagram URL"),
         placeholder: t("Add Organization Instagram URL"),
         inputType: "url"
       },
       {
-        name: "linkedin_url",
+        name: "linkedinUrl",
         label: t("Organization Linkedin URL"),
         placeholder: t("Add Organization Linkedin URL"),
         inputType: "url"
