@@ -197,6 +197,9 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           leftIcon: <UserAdd />,
           onClick: handleInvite
         }}
+        tooltipContent={t(
+          "Team members who join your project as monitoring partners will have full access to your project data and reports."
+        )}
       />
       <Table
         data={teamMembers}

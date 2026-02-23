@@ -72,6 +72,7 @@ export interface ToolbarTableProps {
   onClearFilters: () => void;
   button: IButtonProps;
   className?: string;
+  tooltipContent?: string;
 }
 
 export interface ViewToolbarProps {
