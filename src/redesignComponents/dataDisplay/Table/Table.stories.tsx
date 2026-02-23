@@ -1,8 +1,12 @@
+import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import Table from "./Table";
+import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
+import { NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
+import { type RowData } from "./tableUtils";
 
 const meta: Meta<typeof Table> = {
   title: "Redesign Components/Data Display/Table",
@@ -404,5 +408,88 @@ export const WithManyColumns: Story = {
       { key: "completion", label: "Label", sortable: true }
     ],
     selectable: false
+  }
+};
+
+const columns = [
+  { key: "speciesName", label: "Species Name" },
+  { key: "numberOfTreesExpected", label: "Number of Trees Expected" }
+];
+
+const data = Array.from({ length: 100 }, (_, index) => ({
+  speciesName: `Species Name ${index + 1}`,
+  numberOfTreesExpected: "XXXXXX"
+}));
+
+export const VariantFullWidth: Story = {
+  args: {
+    data: data,
+    columns: columns,
+    totalItems: data.length,
+    showItemCount: false,
+    variant: "full-width",
+    css: FULL_WIDTH_TABLE_HEADER_STYLES
+  }
+};
+
+const noHeaderColumns = [
+  { key: "1", label: "1" },
+  { key: "2", label: "2" },
+  { key: "3", label: "3" },
+  { key: "4", label: "4" }
+];
+
+type NoHeaderRowData = {
+  id: number;
+  [key: number]: string;
+};
+
+const noHeaderData: NoHeaderRowData[] = [
+  { id: 1, 1: "Pericopsis Elata", 2: "Senna spectabilis", 3: "Senna spectabilis", 4: "Senna spectabilis" },
+  { id: 2, 1: "Canarium Schweinfurthii", 2: "Adansenthera pavonina", 3: "Pericopsis Elata", 4: "Senna spectabilis" },
+  { id: 3, 1: "Bigihia welkitschii", 2: "Pericopsis Elata", 3: "Canarium Schweinfurthii", 4: "Bigihia welkitschii" },
+  {
+    id: 4,
+    1: "Adansenthera pavonina",
+    2: "Canarium Schweinfurthii",
+    3: "Canarium Schweinfurthii",
+    4: "Bigihia welkitschii"
+  },
+  { id: 5, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 6, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 7, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 8, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 9, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
+  { id: 10, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" }
+];
+
+export const WithNoHeader: Story = {
+  args: {
+    data: noHeaderData,
+    columns: noHeaderColumns,
+    totalItems: noHeaderData.length,
+    showItemCount: false,
+    variant: "full-width",
+    css: NO_HEADER_TABLE_WRAPPER_STYLES,
+    pageSize: 4,
+    renderRow: (rowData: RowData) => {
+      const row = rowData as NoHeaderRowData;
+      return (
+        <TableRow>
+          <TableCell>
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[1]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[2]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[3]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="border-b border-theme-neutral-300 py-4">{row[4]}</Box>
+          </TableCell>
+        </TableRow>
+      );
+    }
   }
 };

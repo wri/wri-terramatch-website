@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { CSSProperties, FC, useCallback, useEffect } from "react";
+import React, { FC, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -8,7 +8,7 @@ import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, hasCustomCellContent } from "./tableUtils";
+import { type RowData, DEFAULT_CURRENT_PAGE, hasCustomCellContent } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -23,8 +23,10 @@ interface TableProps {
   renderRow?: (rowData: RowData) => React.ReactNode;
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
-  css?: CSSProperties;
   showItemCount?: boolean;
+  variant?: "default" | "full-width";
+  css?: any;
+  pageSize?: number;
 }
 
 interface SelectableRowProps {
@@ -67,10 +69,15 @@ const Table: FC<TableProps> = ({
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
-  css = {},
-  showItemCount = true
+  showItemCount = true,
+  variant = "default",
+  css,
+  pageSize: initialPageSize
 }) => {
-  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
+  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
+    DEFAULT_CURRENT_PAGE,
+    initialPageSize
+  );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
   const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
@@ -191,10 +198,12 @@ const Table: FC<TableProps> = ({
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
+        variant={variant}
       />
       {showItemCount && (
         <Text
           textStyle="500"
+          fontWeight="400"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >

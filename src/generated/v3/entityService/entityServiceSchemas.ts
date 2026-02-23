@@ -1312,6 +1312,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -1345,6 +1346,7 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
@@ -2800,9 +2802,11 @@ export type SubmissionDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3037,9 +3041,11 @@ export type FormFullDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3166,9 +3172,11 @@ export type StoreFormAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3302,9 +3310,11 @@ export type FundingProgrammeDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3332,9 +3342,11 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
