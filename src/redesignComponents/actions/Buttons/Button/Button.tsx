@@ -1,10 +1,7 @@
 import { ButtonProps } from "@chakra-ui/react";
 import { Button as WriButton } from "@worldresources/wri-design-systems";
 import classNames from "classnames";
-import clsx from "clsx";
 import React from "react";
-
-import { secondaryTextColorClass } from "./Button.styles";
 
 export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "colorPalette" | "children"> {
   className?: string;
@@ -17,10 +14,8 @@ export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "co
 }
 
 const Button = ({ children, className, variant = "primary", ...props }: IButtonProps) => {
-  const buttonClassName = clsx(className, variant === "secondary" && secondaryTextColorClass);
-
   return (
-    <WriButton variant={variant} {...props} className={classNames("shadow-monitored", buttonClassName)}>
+    <WriButton variant={variant} {...props} className={classNames("shadow-monitored", className)}>
       {children}
     </WriButton>
   );

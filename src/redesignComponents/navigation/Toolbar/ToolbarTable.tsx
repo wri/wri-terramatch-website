@@ -5,12 +5,21 @@ import { FC } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import { Close, Info } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
 
-const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, className, onClearFilters }) => {
+const ToolbarTable: FC<ToolbarTableProps> = ({
+  search,
+  filters,
+  button,
+  className,
+  onClearFilters,
+  tooltipContent,
+  showClearFilters = true
+}) => {
   const t = useT();
   return (
     <Toolbar
@@ -47,9 +56,11 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
                   <MultiActionButton key={index} {...filter} size="small" />
                 ))}
               </div>
-              <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
-                {t("Clear All Filters")}
-              </Button>
+              {showClearFilters && (
+                <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
+                  {t("Clear All Filters")}
+                </Button>
+              )}
             </div>
           ) : (
             <Button
@@ -71,7 +82,12 @@ const ToolbarTable: FC<ToolbarTableProps> = ({ search, filters, button, classNam
       }
       contentRight={
         <Flex gap={2} alignItems="center" justifyContent="right">
-          <Button {...button} size="small" /> <Info className="text-theme-neutral-800" />
+          <Button {...button} size="small" />{" "}
+          {tooltipContent && (
+            <Tooltip content={tooltipContent} position="top">
+              <Info className="text-theme-neutral-800" />
+            </Tooltip>
+          )}
         </Flex>
       }
     />

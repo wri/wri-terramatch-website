@@ -24,6 +24,7 @@ import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import AuditLog from "./tabs/AuditLog";
 import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 import ProgressReportTab from "./tabs/ProgressReport";
+import TeamMembersTab from "./tabs/TeamMembers";
 
 type ProjectContentProps = {
   project: ProjectFullDto;
@@ -75,7 +76,8 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
             key: "audit-log",
             title: t("Audit Log"),
             body: <AuditLog project={project} refresh={refetch} />
-          }
+          },
+          { key: "team-members", title: t("Team Members"), body: <TeamMembersTab project={project} /> }
         ]}
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
       />
