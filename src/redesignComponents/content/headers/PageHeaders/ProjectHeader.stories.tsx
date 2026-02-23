@@ -80,7 +80,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-01T00:00:00Z",
     treesPlantedCount: 50000,
-    jobsCreatedGoal: 0,
+    jobsCreatedGoal: null,
     seedsGrownGoal: null,
     isTest: false,
     feedback: null,
