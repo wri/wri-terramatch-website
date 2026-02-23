@@ -42,13 +42,7 @@ export const Step: FC<StepProps> = props => {
         >
           {getStepBadgeContent(status, index)}
         </div>
-        <Text
-          title={label}
-          fontSize="16px"
-          lineHeight="24px"
-          {...getStepLabelStyle(status)}
-          className="min-w-0 truncate"
-        >
+        <Text title={label} textStyle="400" {...getStepLabelStyle(status)} className="min-w-0 truncate">
           {label}
         </Text>
       </Button>

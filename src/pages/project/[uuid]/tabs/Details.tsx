@@ -120,8 +120,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       if (typeof rawValue === "string" || typeof rawValue === "number") {
                         return (
                           <Text
-                            fontSize="16px"
-                            lineHeight="24px"
+                            textStyle="400"
                             color="neutral.900"
                             dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
                           />
@@ -129,7 +128,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       }
 
                       return (
-                        <Text fontSize="16px" lineHeight="24px" color="neutral.900">
+                        <Text textStyle="400" color="neutral.900">
                           {formatEntryValue(rawValue)}
                         </Text>
                       );

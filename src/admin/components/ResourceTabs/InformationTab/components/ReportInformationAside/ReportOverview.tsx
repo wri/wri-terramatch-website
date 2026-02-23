@@ -6,9 +6,12 @@ import { DateField, Labeled, TextField, useShowContext } from "react-admin";
 import StatusChangeModal from "@/admin/components/Dialogs/StatusChangeModal";
 import FrameworkField from "@/admin/components/Fields/FrameworkField";
 import ReadableStatusField from "@/admin/components/Fields/ReadableStatusField";
+import { DECLARED_ENV } from "@/constants/environment";
 
 const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ parent }) => {
-  const [statusModal, setStatusModal] = useState<"approved" | "needs-more-information" | "reminder" | undefined>();
+  const [statusModal, setStatusModal] = useState<
+    "approved" | "needs-more-information" | "reminder" | "due" | undefined
+  >();
 
   const { record } = useShowContext();
   const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.updateRequestStatus);
@@ -84,6 +87,11 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
             >
               Approve
             </Button>
+            {DECLARED_ENV !== "prod" && (
+              <Button variant="outlined" onClick={() => setStatusModal("due")}>
+                Reset Report
+              </Button>
+            )}
             {parent?.label !== "Disturbance Report" && (
               <Button variant="outlined" onClick={() => setStatusModal("reminder")}>
                 Reminder

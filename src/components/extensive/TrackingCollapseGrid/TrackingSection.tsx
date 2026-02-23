@@ -86,18 +86,18 @@ const TrackingSection: FC<TrackingSectionProps> = ({
     <>
       <>
         <div className="col-span-2 border-b border-theme-primary-200 bg-theme-primary-900 px-3 py-2.5">
-          <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
+          <Text textStyle="400-bold" color="neutral.100">
             {t(`By: {title}`, { title })}
           </Text>
         </div>
         {/* Column headers */}
         <div className="col-span-1 flex items-center bg-theme-neutral-200 px-3 py-2">
-          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
+          <Text textStyle="300-bold" color="neutral.800">
             {t(`${title} Definition`)}
           </Text>
         </div>
         <div className="col-span-1 flex items-center justify-center bg-theme-neutral-200 px-3 py-2 text-center">
-          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
+          <Text color="neutral.800" textStyle="300-bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
@@ -133,7 +133,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
       )}
       <>
         <div className={classNames("col-span-1 flex items-center justify-between bg-theme-neutral-100 px-3 py-2.5")}>
-          <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
+          <Text color="primary.900" textStyle="300-bold">
             {domain === "demographics" ? t("Total Created:") : t("Total:")}
           </Text>
         </div>
@@ -143,12 +143,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({
             "bg-theme-primary-100": status != "in-progress"
           })}
         >
-          <Text
-            color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"}
-            fontSize="14px"
-            lineHeight="20px"
-            fontWeight="bold"
-          >
+          <Text color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"} textStyle="300-bold">
             {total}
           </Text>
         </div>
