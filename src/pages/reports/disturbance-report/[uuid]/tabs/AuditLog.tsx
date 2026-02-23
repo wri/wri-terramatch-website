@@ -18,7 +18,8 @@ type AuditLogProps = {
 
 const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDisturbanceReport }) => {
   const {
-    mutateEntity,
+    onStatusChange,
+    onChangeRequest,
     valuesForStatus,
     statusLabels,
     entityListItem,
@@ -56,7 +57,6 @@ const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDistur
                   <SiteAuditLogEntityStatusSide
                     getValueForStatus={valuesForStatus}
                     progressBarLabels={statusLabels}
-                    mutate={mutateEntity}
                     entityType="disturbanceReports"
                     refresh={() => {
                       loadEntityList();
@@ -70,6 +70,8 @@ const AuditLog: FC<AuditLogProps> = ({ disturbanceReport, refresh: refreshDistur
                     checkPolygonsSite={checkPolygonsSite}
                     showChangeRequest={false}
                     viewPD={true}
+                    onStatusChange={onStatusChange}
+                    onChangeRequest={onChangeRequest}
                   />
                 </div>
               </div>

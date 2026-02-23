@@ -12,6 +12,8 @@ export interface IProfile {
   id: string;
   name: string;
   image: string;
+  email?: string;
+  isProjectManager?: boolean;
 }
 
 export interface IProfileListCardProps {
@@ -23,24 +25,23 @@ export interface IProfileListCardProps {
 
 interface ProfileListCardComponentProps {
   items: IProfileListCardProps[];
+  onInviteClick: () => void;
 }
 
 const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick, onInviteClick }) => {
   const t = useT();
 
   return (
-    <Box>
-      {/* Title Section */}
+    <Flex direction="column" minHeight={0}>
       <Box>
-        <Text fontSize="18px" lineHeight="28px" color="neutral.900" fontWeight="semibold">
+        <Text textStyle="500" color="neutral.900" fontWeight="semibold">
           {t(title)}
         </Text>
       </Box>
 
       <SimpleDivider marginY={2} />
 
-      {/* Profiles List */}
-      <Flex direction="column" gap={1} marginTop={3}>
+      <Flex direction="column" gap={1} marginTop={3} minHeight={0} overflowY="auto">
         {profiles != null && profiles.length > 0 ? (
           <>
             {profiles.map(profile => (
@@ -57,7 +58,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
               tabIndex={0}
               className="group cursor-pointer"
               role="button"
-              onClick={onInviteClick}
+              onClick={() => onInviteClick?.()}
               css={{
                 "&:hover .avatar-add": {
                   opacity: "0.8",
@@ -70,14 +71,12 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize={"12px"}
-                lineHeight={"16px"}
-                fontWeight={"700"}
-                padding={"6px 8px"}
-                borderRadius={"4px"}
-                backgroundColor={"transparent"}
-                color={"secondary.900"}
-                width={"auto"}
+                textStyle="200-bold"
+                padding="6px 8px"
+                borderRadius="4px"
+                backgroundColor="transparent"
+                color="secondary.900"
+                width="auto"
                 className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
               >
                 {t("Invite Team Member")}
@@ -87,14 +86,13 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
           </>
         )}
       </Flex>
-    </Box>
+    </Flex>
   );
 };
 
-const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
+const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, onInviteClick }) => {
   return (
     <Box
-      className="w-[403px]"
       paddingX={5}
       paddingY={4}
       backgroundColor="white"
@@ -102,9 +100,10 @@ const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items }) => {
       gap={6}
       display="flex"
       flexDirection="column"
+      minHeight={0}
     >
       {items.map((item, itemIndex) => (
-        <ProfileSection key={itemIndex} {...item} />
+        <ProfileSection key={itemIndex} {...item} onInviteClick={onInviteClick} />
       ))}
     </Box>
   );

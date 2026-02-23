@@ -31,6 +31,7 @@ const TableCell: React.FC<TableCellProps> = ({
 }) => {
   const visibleAvatars = avatars != null ? avatars.slice(0, 2) : [];
   const extraAvatarsCount = avatars != null && avatars.length > 2 ? avatars.length - 2 : 0;
+  const isSingleAvatar = avatars != null && avatars.length === 1;
 
   return (
     <Box className={classNames("flex items-center gap-2")}>
@@ -46,6 +47,12 @@ const TableCell: React.FC<TableCellProps> = ({
             ))}
           </Flex>
 
+          {isSingleAvatar && visibleAvatars[0]?.name != null && (
+            <Text textStyle="400-bold" className="ml-2 text-theme-neutral-800">
+              {visibleAvatars[0].name}
+            </Text>
+          )}
+
           {extraAvatarsCount > 0 && (
             <Box className="ml-2 text-xs font-semibold text-theme-neutral-800">+{extraAvatarsCount}</Box>
           )}
@@ -53,7 +60,7 @@ const TableCell: React.FC<TableCellProps> = ({
           {trees != null && (
             <Flex gap={1} items-center>
               <MetricIcon type="trees" />
-              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="leading-[28px] text-theme-neutral-800">
                 {trees}
               </Text>
             </Flex>
@@ -61,7 +68,7 @@ const TableCell: React.FC<TableCellProps> = ({
           {jobs != null && (
             <Flex gap={2}>
               <MetricIcon type="jobs" />
-              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="leading-[28px] text-theme-neutral-800">
                 {jobs}
               </Text>
             </Flex>
@@ -80,12 +87,12 @@ const TableCell: React.FC<TableCellProps> = ({
         </Flex>
         <Flex gap={2} alignItems="center">
           {primaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {primaryText}
             </Text>
           )}
           {secondaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {secondaryText}
             </Text>
           )}

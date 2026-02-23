@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import EntityStatusBar from "@/components/extensive/EntityStatusBar";
@@ -9,6 +10,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useFullFinancialReport } from "@/connections/Entity";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import FinancialReportHeader from "./components/FinancialReportHeader";
@@ -22,6 +24,13 @@ const FinancialReportDetailPage = () => {
 
   const [isLoaded, { data: financialReport, loadFailure }] = useFullFinancialReport({ id: financialReportUUID });
   const { openToast } = useToastContext();
+
+  useEffect(() => {
+    if (router.isReady && financialReportUUID && financialReport != null && financialReport.lightResource !== false) {
+      ApiSlice.pruneCache("financialReports", [financialReportUUID]);
+    }
+  }, [router.isReady, financialReportUUID, financialReport]);
+
   useValueChanged(isLoaded, () => {
     if (isLoaded && financialReport == null) {
       Log.error("Financial report not found", { financialReportUUID, loadFailure });

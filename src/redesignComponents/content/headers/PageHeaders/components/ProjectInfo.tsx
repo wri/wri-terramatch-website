@@ -1,8 +1,12 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 import { FC } from "react";
 import Twemoji from "react-twemoji";
 
+import { useMyOrg } from "@/connections/Organisation";
+import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
@@ -20,6 +24,7 @@ export interface ProjectInfoProps {
   startDate: string;
   endDate: string;
   description?: string;
+  project: ProjectFullDto;
 }
 
 const ProjectInfo: FC<ProjectInfoProps> = ({
@@ -30,22 +35,41 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   countryFlag,
   startDate,
   endDate,
-  description
+  description,
+  project
 }) => {
   const t = useT();
-
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
+  const [, myOrg] = useMyOrg();
+  const router = useRouter();
   return (
     <Box gap={2} className="flex flex-col">
-      <Text fontSize="28px" lineHeight="36px" color="primary.900" fontWeight="bold" className="flex items-center gap-3">
+      <Text
+        fontSize="28px"
+        lineHeight="36px"
+        color="primary.900"
+        fontWeight="bold"
+        className="flex items-baseline gap-3"
+      >
         {title} <ProgressTag {...tag} />
       </Text>
-      <Text fontSize="16px" lineHeight="24px" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button variant="borderless" size="small">
+      <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
+        <Button
+          variant="borderless"
+          size="small"
+          className="-mr-2"
+          onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
+        >
           {organization}
         </Button>
         <SeparatorDot />
         <Twemoji options={{ className: "h-4 w-4" }}>{countryFlag}</Twemoji>
-        <Text fontSize="14px" lineHeight="24px" color="primary.900">
+        <Text textStyle="300" color="primary.900">
           {country}
         </Text>
       </Text>
@@ -54,7 +78,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         <ProjectDescription description={description} />
       ) : (
         <div className="w-fit">
-          <Button variant="secondary" size="small" rightIcon={<ChevronRight />} className="w-auto">
+          <Button onClick={handleEdit} variant="secondary" size="small" rightIcon={<ChevronRight />} className="w-auto">
             {t("Add Project Information")}
           </Button>
         </div>

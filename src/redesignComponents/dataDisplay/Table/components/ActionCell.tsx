@@ -6,11 +6,12 @@ import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButt
 import { MoreVert } from "@/redesignComponents/foundations/Icons";
 
 interface ActionCellProps {
-  button: IButtonProps;
-  onButtonIconClick: () => void;
+  button?: IButtonProps;
+  buttonSecondary?: IButtonProps;
+  onButtonIconClick?: () => void;
 }
 
-const ActionCell: FC<ActionCellProps> = ({ button, onButtonIconClick }) => {
+const ActionCell: FC<ActionCellProps> = ({ button, buttonSecondary, onButtonIconClick }) => {
   return (
     <Box
       textAlign="right"
@@ -20,8 +21,11 @@ const ActionCell: FC<ActionCellProps> = ({ button, onButtonIconClick }) => {
       justifyContent="flex-end"
       className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
     >
-      <Button {...button} variant="secondary" size="small" />
-      <IconButton icon={<MoreVert boxSize={4} className="text-theme-neutral-700" />} onClick={onButtonIconClick} />
+      {button != null && <Button {...button} variant="secondary" size="small" />}
+      {buttonSecondary != null && <Button {...buttonSecondary} />}
+      {onButtonIconClick != null && (
+        <IconButton icon={<MoreVert boxSize={4} className="text-theme-neutral-700" />} onClick={onButtonIconClick} />
+      )}
     </Box>
   );
 };

@@ -8,7 +8,7 @@ import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, hasCustomCellContent } from "./tableUtils";
+import { type RowData, DEFAULT_CURRENT_PAGE, hasCustomCellContent } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -20,8 +20,14 @@ interface TableProps {
   isScrollable?: boolean;
   scrollableWidth?: string;
   scrollableHeight?: string;
+  renderRow?: (rowData: RowData) => React.ReactNode;
+  renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
+  variant?: "default" | "full-width";
+  css?: any;
+  pageSize?: number;
+  className?: string;
 }
 
 interface SelectableRowProps {
@@ -61,10 +67,19 @@ const Table: FC<TableProps> = ({
   isScrollable = false,
   scrollableWidth = "100%",
   scrollableHeight = "100%",
+  renderRow: customRenderRow,
+  renderDataCell: customRenderDataCell,
   totalItems,
-  showItemCount = true
+  showItemCount = true,
+  variant = "default",
+  css,
+  pageSize: initialPageSize,
+  className
 }) => {
-  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
+  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
+    DEFAULT_CURRENT_PAGE,
+    initialPageSize
+  );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
   const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
@@ -80,7 +95,7 @@ const Table: FC<TableProps> = ({
 
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
-  const renderDataCell = useCallback((rowData: RowData, columnKey: string) => {
+  const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
     if (columnKey === "actions" && rowData.actionCell != null) {
       return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
     }
@@ -110,7 +125,9 @@ const Table: FC<TableProps> = ({
     return (rowData as any)[columnKey];
   }, []);
 
-  const renderRow = useCallback(
+  const renderDataCell = customRenderDataCell ?? defaultRenderDataCell;
+
+  const defaultRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <TableRow className="group">
@@ -130,7 +147,7 @@ const Table: FC<TableProps> = ({
     [onAllItemsSelected, dataByPage]
   );
 
-  const selectableRenderRow = useCallback(
+  const defaultSelectableRenderRow = useCallback(
     (rowData: RowData) => {
       return (
         <SelectableRow
@@ -145,12 +162,33 @@ const Table: FC<TableProps> = ({
     [columns, renderDataCell, selectedRows, handleRowSelected]
   );
 
+  const finalRenderRow = useCallback(
+    (rowData: RowData) => {
+      if (customRenderRow != null) {
+        return customRenderRow(rowData);
+      }
+
+      if (selectable) {
+        return defaultSelectableRenderRow(rowData);
+      }
+
+      return defaultRenderRow(rowData);
+    },
+    [customRenderRow, selectable, defaultSelectableRenderRow, defaultRenderRow]
+  );
+
+  const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
+  const displayEnd = Math.min(endRange, actualTotalItems);
+
   return (
-    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
+    <Box
+      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+      className={className}
+    >
       <WriTable
         columns={columns}
         data={dataByPage}
-        renderRow={selectable ? selectableRenderRow : renderRow}
+        renderRow={finalRenderRow}
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
@@ -163,16 +201,16 @@ const Table: FC<TableProps> = ({
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
+        variant={variant}
       />
       {showItemCount && (
         <Text
-          fontSize="18px"
+          textStyle="500"
           fontWeight="400"
-          lineHeight="28px"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >
-          Showing {`${startRange + 1} - ${endRange} of ${actualTotalItems}`}
+          Showing {`${displayStart} - ${displayEnd} of ${actualTotalItems}`}
         </Text>
       )}
     </Box>

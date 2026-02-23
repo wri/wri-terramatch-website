@@ -1346,6 +1346,7 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
@@ -2548,7 +2549,7 @@ export type TrackingDto = {
    */
   entityUuid: string;
   uuid: string;
-  domain: "demographics";
+  domain: "demographics" | "restoration";
   type:
     | "workdays"
     | "restoration-partners"
@@ -2558,7 +2559,11 @@ export type TrackingDto = {
     | "all-beneficiaries"
     | "training-beneficiaries"
     | "indirect-beneficiaries"
-    | "associates";
+    | "associates"
+    | "hectares-goal"
+    | "hectares-historical"
+    | "trees-goal"
+    | "trees-historical";
   collection: string;
   entries: TrackingEntryDto[];
 };
@@ -2756,6 +2761,8 @@ export type LinkedFieldDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2765,6 +2772,8 @@ export type LinkedFieldDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -2793,9 +2802,11 @@ export type SubmissionDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -2931,6 +2942,8 @@ export type FormQuestionDto = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -2940,6 +2953,8 @@ export type FormQuestionDto = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -3026,9 +3041,11 @@ export type FormFullDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3079,6 +3096,8 @@ export type StoreFormQuestionAttributes = {
     | "employees"
     | "financialIndicators"
     | "fundingType"
+    | "hectaresGoal"
+    | "hectaresHistorical"
     | "indirectBeneficiaries"
     | "invasive"
     | "jobs"
@@ -3088,6 +3107,8 @@ export type StoreFormQuestionAttributes = {
     | "seedings"
     | "stratas"
     | "trainingBeneficiaries"
+    | "treesGoal"
+    | "treesHistorical"
     | "treeSpecies"
     | "volunteers"
     | "workdays"
@@ -3151,9 +3172,11 @@ export type StoreFormAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3287,9 +3310,11 @@ export type FundingProgrammeDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3317,9 +3342,11 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;

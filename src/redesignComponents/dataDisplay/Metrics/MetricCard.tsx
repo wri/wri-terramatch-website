@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
 import { getThemedColor } from "@/lib/theme";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 
 import { InformationRequired } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
@@ -15,32 +16,48 @@ import {
 } from "./types";
 import { getIconWithProgressColor } from "./utils/getIconWithProgressColor";
 
-const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title, progress, color, iconWithColor }) => (
+const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
+  title,
+  progress,
+  color,
+  iconWithColor,
+  tooltipContent
+}) => (
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
       {iconWithColor}
-      <Text fontSize="14px" color="neutral.800" lineHeight="20px" paddingLeft={1}>
+      <Text textStyle="300" color="neutral.800" paddingLeft={1}>
         {title}
       </Text>
-      <InformationRequired color="neutral.800" boxSize="14px" />
+      <Tooltip content={tooltipContent} position="top">
+        <InformationRequired color="neutral.800" boxSize="14px" />
+      </Tooltip>
     </Flex>
-    <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+    <Text textStyle="400-bold" color="neutral.900">
       {progress.toLocaleString()}
     </Text>
   </Flex>
 );
 
-const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({ title, progress, color, iconWithColor }) => (
+const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
+  title,
+  progress,
+  color,
+  iconWithColor,
+  tooltipContent
+}) => (
   <Flex gap={3} color={color} alignItems="center">
     {iconWithColor}
     <Flex direction="column" gap={0}>
       <Flex gap={1} alignItems="center">
-        <Text fontSize="16px" color="neutral.800" lineHeight="24px">
+        <Text textStyle="400" color="neutral.800">
           {title}
         </Text>
-        <InformationRequired color="neutral.800" boxSize="14px" />
+        <Tooltip content={tooltipContent} position="top">
+          <InformationRequired color="neutral.800" boxSize="14px" />
+        </Tooltip>
       </Flex>
-      <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
+      <Text textStyle="600-bold" color="neutral.900">
         {progress.toLocaleString()}
       </Text>
     </Flex>
@@ -52,7 +69,8 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   progress,
   goal,
   color,
-  iconWithColor
+  iconWithColor,
+  tooltipContent
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
@@ -61,21 +79,23 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
     <Flex direction="column" gap={2}>
       <Flex gap={2} alignItems="center">
         {iconWithColor}
-        <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+        <Text textStyle="300" color="neutral.800">
           {title}
         </Text>
-        <InformationRequired color="neutral.800" boxSize="14px" />
+        <Tooltip content={tooltipContent} position="top">
+          <InformationRequired color="neutral.800" boxSize="14px" />
+        </Tooltip>
       </Flex>
       <Flex gap={2} alignItems="center">
         <ProgressBar progress={progressValue} color={color} />
         <Flex gap={1} alignItems="center">
-          <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+          <Text textStyle="400-bold" color="neutral.900">
             {progress.toLocaleString()}
           </Text>
-          <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+          <Text textStyle="300" color="neutral.800">
             {t("of")}
           </Text>
-          <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+          <Text textStyle="300" color="neutral.800">
             {goal.toLocaleString()}
           </Text>
         </Flex>
@@ -89,37 +109,40 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   progress,
   goal,
   color,
-  iconWithColor
+  iconWithColor,
+  type,
+  tooltipContent
 }) => {
   const t = useT();
-  const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
-
+  const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
   return (
     <Flex gap={3} alignItems="center">
-      <DonutChart progress={progressValue} color={color}>
+      <DonutChart progress={progressValue} color={color} type={type}>
         {iconWithColor}
       </DonutChart>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text fontSize="16px" color="neutral.900" lineHeight="24px">
+          <Text textStyle="400" color="neutral.900">
             {title}
           </Text>
-          <InformationRequired color="neutral.800" boxSize="14px" />
+          <Tooltip content={tooltipContent} position="top">
+            <InformationRequired color="neutral.800" boxSize="14px" />
+          </Tooltip>
         </Flex>
-        {goal > 0 ? (
+        {goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
-            <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
-              {progress.toLocaleString()}
+            <Text textStyle="600-bold" color="neutral.900">
+              {Math.round(progress).toLocaleString()}
             </Text>
-            <Text fontSize="18px" color="neutral.800" lineHeight="28px">
+            <Text textStyle="500" color="neutral.800">
               {t("of")}
             </Text>
-            <Text fontSize="18px" color="neutral.800" lineHeight="28px">
+            <Text textStyle="500" color="neutral.800">
               {goal.toLocaleString()}
             </Text>
           </Flex>
         ) : (
-          <Text fontSize="18px" fontWeight="bold" color="neutral.600" lineHeight="28px">
+          <Text textStyle="500-bold" color="neutral.600">
             {t("N/A")}
           </Text>
         )}
@@ -129,7 +152,17 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
 };
 
 const MetricCard: FC<MetricCardProps> = props => {
-  const { title, progress, goal, tooltipContent, variant = "medium", icon, color = "primary.600" } = props;
+  const {
+    title,
+    progress,
+    goal,
+    tooltipContent,
+    variant = "medium",
+    icon,
+    color = "primary.600",
+    type,
+    className
+  } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
   const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
@@ -145,6 +178,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           goal={goal}
           color={color}
           iconWithColor={iconWithColor14}
+          tooltipContent={tooltipContent}
         />
       );
       break;
@@ -157,6 +191,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           tooltipContent={tooltipContent}
           color={color}
           iconWithColor={iconWithColor24}
+          type={type}
         />
       );
       break;
@@ -167,18 +202,34 @@ const MetricCard: FC<MetricCardProps> = props => {
           progress={progress}
           color={color}
           iconWithColor={iconWithColor14}
+          tooltipContent={tooltipContent}
         />
       );
       break;
     case "large":
       content = (
-        <NoGoalLargeMetricCardContent title={title} progress={progress} color={color} iconWithColor={iconWithColor50} />
+        <NoGoalLargeMetricCardContent
+          title={title}
+          progress={progress}
+          color={color}
+          iconWithColor={iconWithColor50}
+          tooltipContent={tooltipContent}
+        />
       );
       break;
   }
 
   return (
-    <Box padding={3} borderRadius={8} border={`1px solid ${getThemedColor("neutral", 300)}`} height="fit-content">
+    <Box
+      padding={3}
+      borderRadius={8}
+      border={`1px solid ${getThemedColor("neutral", 300)}`}
+      height="fit-content"
+      justifyContent="start"
+      display="flex"
+      backgroundColor="neutral.100"
+      className={className}
+    >
       {content}
     </Box>
   );

@@ -9,6 +9,7 @@ import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
+import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -29,7 +30,6 @@ import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { getSchema } from "./utils";
 
 export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
@@ -80,15 +80,7 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
-  const steps = useMemo(
-    () =>
-      props.fieldsProvider.stepIds().map(stepId => ({
-        id: stepId,
-        title: props.fieldsProvider.step(stepId)?.title,
-        validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
-      })),
-    [props.framework, props.fieldsProvider, t]
-  );
+  const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;

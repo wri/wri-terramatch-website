@@ -1,10 +1,16 @@
 import type { ReactNode } from "react";
 
-export interface ExtendableCardProps {
+export type AccordionVariant = "primary" | "secondary";
+
+export interface AccordionProps {
   children: ReactNode;
   header: ReactNode;
   actions?: ReactNode;
+  variant?: AccordionVariant;
+  className?: string;
 }
+
+export type AccordionStatus = "success" | "error" | "complete";
 
 declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemProps {
@@ -23,8 +29,9 @@ declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
 }
 
 export interface AccordionHeaderProps {
-  label: string;
-  title: string;
+  label?: string;
+  title: ReactNode;
   badge?: string;
-  status?: "success" | "error";
+  status?: AccordionStatus;
+  statusLabel?: string;
 }
