@@ -57,10 +57,10 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
 
 const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse, isProjectManager: boolean) =>
   members
-    .map((member, index) => ({
+    .map(member => ({
       id: member.uuid ?? "",
       name: `${member.first_name} ${member.last_name}`,
-      image: `https://i.pravatar.cc/300?img=${index}`,
+      image: "",
       email: member.email_address,
       isProjectManager
     }))
