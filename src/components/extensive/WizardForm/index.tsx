@@ -23,6 +23,7 @@ import WizardFormProvider, {
   ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
+import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { ApplicationDto, SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -87,7 +88,7 @@ export interface WizardFormProps {
   cancelForm?: () => void;
   redirectEntityPage: string;
 
-  entity?: EntityFullDto | SubmissionDto | ApplicationDto;
+  entity?: EntityFullDto | SubmissionDto | ApplicationDto | V2OrganisationRead;
   entityLoading?: boolean;
 }
 
@@ -373,6 +374,8 @@ function WizardForm(props: WizardFormProps) {
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
+    } else if (props?.models?.model == "organisations") {
+      return [{ label: t("Edit"), link: `/organization/create?uuid=${entity?.uuid ?? ""}` }];
     } else {
       return entityLinkHeaderMap({
         isAdmin,
