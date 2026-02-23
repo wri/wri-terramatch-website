@@ -24,8 +24,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
       <Box position="relative" display="inline-block" width="100%">
         <Text
           ref={descriptionRef}
-          fontSize="14px"
-          lineHeight="20px"
+          textStyle="300"
           color="neutral.900"
           style={{
             marginBottom: 0,
@@ -41,8 +40,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
         </Text>
         {isClamped && !isExpanded && (
           <Text
-            fontSize="14px"
-            lineHeight="20px"
+            textStyle="300"
             color="neutral.900"
             position="absolute"
             bottom="-5px"

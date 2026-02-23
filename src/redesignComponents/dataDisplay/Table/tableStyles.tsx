@@ -17,6 +17,7 @@ export const getTableWrapperStyles = (
   const thIndex = sortedColumnIndex >= 0 ? sortedColumnIndex + 1 + (selectable ? 1 : 0) : -1;
 
   return {
+    ...css,
     ...(scrollable && {
       "& ": {
         width: scrollableWidth,
@@ -109,6 +110,7 @@ export const getTableWrapperStyles = (
     "& button[aria-current='page']": {
       color: `${getThemedColor("neutral", 900)} !important`,
       fontWeight: "bold !important",
+
       "& p": {
         color: `${getThemedColor("neutral", 900)} !important`,
         fontWeight: "bold !important"

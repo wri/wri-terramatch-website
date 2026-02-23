@@ -49,13 +49,13 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
           "col-span-1 border-b border-neutral-200 bg-white"
         )}
       >
-        <Text fontSize="16px" lineHeight="24px" color="neutral.800">
+        <Text textStyle="400" color="neutral.800">
           {t(label)}
         </Text>
         {usesName && (
           <>
             {onChange == null ? (
-              <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="items-left flex w-3/5 px-2 py-1">
+              <Text textStyle="300" color="neutral.800" className="items-left flex w-3/5 px-2 py-1">
                 {userLabel}
               </Text>
             ) : (
@@ -80,7 +80,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
             {onChange != null && (
               <Button onClick={onDelete} className="flex items-center gap-1.5">
                 <Delete color="error.500" boxSize={3} className="leading-4" />
-                <Text fontSize="12px" lineHeight="16px" color="error.900" fontWeight="bold">
+                <Text textStyle="200-bold" color="error.900">
                   {t("Remove")}
                 </Text>
               </Button>
@@ -95,11 +95,11 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
         )}
       >
         {onChange == null ? (
-          <Text fontSize="14px" lineHeight="20px" color="neutral.800" className="w-full px-4 text-center">
+          <Text textStyle="300" color="neutral.800" className="w-full px-4 text-center">
             {amount}
           </Text>
         ) : (
-          <div className="flex w-16 items-center justify-center">
+          <div className="flex w-[5.625rem] items-center justify-center">
             <TextInput
               size="small"
               value={amount}
@@ -107,7 +107,6 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
               onBlur={onBlur}
               css={css`
                 width: 100%;
-                padding: 0 24px 0 16px;
                 & > div {
                   margin-bottom: 0;
                 }

@@ -23,7 +23,6 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
-import { sortByCreatedAt } from "@/utils/sort";
 
 import ModalAddImages, { FileUploadEntity } from "../Modal/ModalAddImages";
 import { ModalId } from "../Modal/ModalConst";
@@ -88,6 +87,7 @@ const EntityMapAndGalleryCard = ({
         uuid: isSiteReport ? queryUuid : entityUUID,
         pageNumber: pagination.page,
         pageSize: pagination.pageSize,
+        sortField: "createdAt",
         sortDirection: sortOrder,
         filter: queryFilter
       };
@@ -106,8 +106,6 @@ const EntityMapAndGalleryCard = ({
       sortOrder
     ])
   );
-
-  const sortedMediaList = useMemo(() => sortByCreatedAt(mediaList ?? [], sortOrder), [mediaList, sortOrder]);
 
   // Fetch site polygons using V3 endpoint
   const { data: sitePolygonData } = useAllSitePolygons({
@@ -228,7 +226,7 @@ const EntityMapAndGalleryCard = ({
             headerChildren={<Button onClick={openFormModalHandlerUploadImages}>{t("Upload Images")}</Button>}
           >
             <ImageGallery
-              data={sortedMediaList}
+              data={mediaList ?? []}
               entity={modelName}
               entityData={entityData}
               pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}

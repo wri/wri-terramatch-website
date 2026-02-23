@@ -25,7 +25,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       width="240px"
       minWidth="240px"
       height="auto"
-      className="flex flex-col gap-2 px-6 pt-8"
+      className="flex flex-col gap-2 pt-11"
       css={{
         "&": {
           alignItems: "self-end !important"
@@ -33,7 +33,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       }}
     >
       <div className="flex w-fit flex-col gap-2" onClick={gotoTeamMembers} role="button" tabIndex={0}>
-        <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
+        <Text color="primary.900" textStyle="300-bold">
           {t("Team:")}
         </Text>
         <Flex className="flex-wrap">
@@ -49,7 +49,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             <Flex
               alignItems="center"
               tabIndex={0}
-              className="group cursor-pointer gap-1"
+              className="group cursor-pointer"
               role="button"
               onClick={onAddTeamClick}
               css={{
@@ -64,15 +64,13 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize="12px"
-                lineHeight="16px"
-                fontWeight="700"
+                textStyle="200-bold"
                 padding="6px 8px"
                 borderRadius="4px"
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
+                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
               >
                 {t("Add Team Members")}
                 <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />

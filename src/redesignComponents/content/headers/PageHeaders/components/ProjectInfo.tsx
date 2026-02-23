@@ -58,17 +58,18 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       >
         {title} <ProgressTag {...tag} />
       </Text>
-      <Text fontSize="16px" lineHeight="24px" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
+      <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
         <Button
           variant="borderless"
           size="small"
+          className="-mr-2"
           onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
         >
           {organization}
         </Button>
         <SeparatorDot />
         <Twemoji options={{ className: "h-4 w-4" }}>{countryFlag}</Twemoji>
-        <Text fontSize="14px" lineHeight="24px" color="primary.900">
+        <Text textStyle="300" color="primary.900">
           {country}
         </Text>
       </Text>
