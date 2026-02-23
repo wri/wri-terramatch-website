@@ -22,9 +22,9 @@ import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
-import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
-interface BuildTeamMembersPageProps {
+interface TeamMembersTabProps {
   project: ProjectFullDto;
 }
 
@@ -59,6 +59,7 @@ const teamMembersFormatted = (
   teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse,
   role: string
 ) => {
+  console.log("teamMembers:", teamMembers);
   return teamMembers?.map((member, index) => ({
     uuid: member?.uuid,
     name: `${member.first_name} ${member.last_name}`,
@@ -66,11 +67,11 @@ const teamMembersFormatted = (
     email: member?.email_address,
     role: role,
     status: member?.role == "project-manager" ? "Accepted" : member?.status,
-    image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+    image: ``
   }));
 };
 
-const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
+const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -255,7 +256,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                         }}
                       />
                     ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100",
+                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
                     size: "small"
                   }}
                 />
@@ -301,4 +302,4 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   );
 };
 
-export default BuildTeamMembersPage;
+export default TeamMembersTab;
