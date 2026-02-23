@@ -14,6 +14,7 @@ import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
+import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { Edit } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
@@ -56,7 +57,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -126,7 +127,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                           />
                         );
                       }
-
+                      if (rawValue.props.tableType == "noCount") {
+                        console.log(formatEntryValue(rawValue));
+                        return <Table data={rawValue.props.plants} columns={[{ key: "name", title: "Name" }]} />;
+                      }
                       return (
                         <Text textStyle="400" color="neutral.900">
                           {formatEntryValue(rawValue)}
