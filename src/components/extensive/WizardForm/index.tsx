@@ -13,8 +13,8 @@ import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
-import { SupportedEntity, useFullEntity } from "@/connections/Entity";
-import FrameworkProvider, { Framework } from "@/context/framework.provider";
+import { EntityFullDto } from "@/connections/Entity";
+import FrameworkProvider, { Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
   FormFieldsProvider,
@@ -23,10 +23,12 @@ import WizardFormProvider, {
   ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
+import { ApplicationDto, SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useOnMount } from "@/hooks/useOnMount";
+import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons/ChevronRight";
@@ -84,6 +86,9 @@ export interface WizardFormProps {
   className?: string;
   cancelForm?: () => void;
   redirectEntityPage: string;
+
+  entity?: EntityFullDto | SubmissionDto | ApplicationDto;
+  entityLoading?: boolean;
 }
 
 // Wrapper component to handle both relative routes (Next.js Link) and full URLs (window.location)
@@ -119,13 +124,15 @@ const AdminLinkWrapper = forwardRef<HTMLAnchorElement, { to?: string; children?:
 AdminLinkWrapper.displayName = "AdminLinkWrapper";
 
 function WizardForm(props: WizardFormProps) {
+  const { entity, entityLoading } = props;
   const t = useT();
   const modal = useModalContext();
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
   const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
-  const [isLoading, { data: entity }] = useFullEntity(props?.models?.model as SupportedEntity, props?.models?.uuid);
   const isAdmin = useIsAdmin();
+  const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt as string);
+  const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
@@ -356,6 +363,40 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
+  const isMultiModel = props.models?.length > 1;
+
+  const linkHeaderMap = useMemo(() => {
+    if (isMultiModel) {
+      return [
+        ...(entity
+          ? [{ label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`, link: props.redirectEntityPage }]
+          : []),
+        { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
+      ];
+    } else {
+      return entityLinkHeaderMap({
+        isAdmin,
+        model: props.models?.model,
+        uuid: props.models?.uuid ?? props?.entity?.uuid,
+        redirectEntityPage: props.redirectEntityPage,
+        entity: entity,
+        firstLinkIcon: <Project className="!text-theme-primary-900" />,
+        t,
+        taskTitle
+      })[props.models?.model];
+    }
+  }, [props, t, entity, isMultiModel, taskTitle, isAdmin]);
+
+  const pageHeaderTitle = useMemo(() => {
+    if (isMultiModel) {
+      return entity?.organisationName || entity?.fundingProgrammeName
+        ? `${entity?.organisationName} - ${entity?.fundingProgrammeName}`
+        : t("Unnamed Application");
+    } else {
+      return mapEntityTitle(entity?.title ?? entity?.name, props.models?.model, t);
+    }
+  }, [props.models, t, entity, isMultiModel]);
+
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
       <FrameworkProvider frameworkKey={props.framework}>
@@ -365,33 +406,12 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
         >
-          {/* <WizardFormHeader
-            currentStep={selectedStepIndex + 1}
-            numberOfSteps={tabItems.length}
-            formStatus={props.formStatus}
-            errorMessage={props.errors && t("Something went wrong")}
-            onClickSaveAndCloseButton={!props.hideSaveAndCloseButton ? onClickSaveAndClose : undefined}
-            title={props.title}
-            subtitle={props.subtitle}
-          /> */}
           <div className={twMerge("flex w-full flex-col", props.className)}>
-            {isLoading && (
+            {entityLoading && (
               <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
-                <ToolbarObject
-                  breadcrumbs={{
-                    links: entityLinkHeaderMap({
-                      isAdmin,
-                      model: props.models?.model ?? "",
-                      uuid: props.models?.uuid,
-                      redirectEntityPage: props.redirectEntityPage,
-                      entity: entity,
-                      firstLinkIcon: <Project className="!text-theme-primary-900" />
-                    })[props.models?.model],
-                    linkRouter: Link
-                  }}
-                />
+                <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: Link }} />
                 <PageHeader
-                  title={mapEntityTitle(entity?.title ?? entity?.name, props.models?.model)}
+                  title={pageHeaderTitle}
                   label="Set Up Status:"
                   tag={
                     mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined

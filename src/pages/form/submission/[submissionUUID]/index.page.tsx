@@ -9,6 +9,7 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useApplication } from "@/connections/Application";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
@@ -87,6 +88,8 @@ const SubmissionPage = () => {
     [fieldsProvider, updateSubmission]
   );
 
+  const [applicationLoaded, { data: application }] = useApplication({ id: submission?.applicationUuid ?? "" });
+
   return (
     <BackgroundLayout>
       <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded}>
@@ -108,6 +111,9 @@ const SubmissionPage = () => {
           }}
           roundedCorners
           orgDetails={orgDetails}
+          redirectEntityPage={`/applications/${submission?.applicationUuid}`}
+          entity={application && submission && { ...application, status: submission.status }}
+          entityLoading={applicationLoaded}
         />
       </LoadingContainer>
     </BackgroundLayout>

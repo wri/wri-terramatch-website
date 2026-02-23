@@ -1,9 +1,6 @@
-import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { ReactNode } from "react";
 
-import { toFramework } from "@/context/framework.provider";
-import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import { EntityName, SingularEntityName } from "@/types/common";
 
@@ -17,9 +14,9 @@ type EntityForLinkHeader = {
   taskUuid?: string | null;
   organisationName?: string | null;
   organisationUuid?: string | null;
-  dueAt?: string | null;
-  frameworkKey?: string | null;
 };
+
+export type TFunction = (key: string, vars?: Record<string, string>) => string;
 
 export type EntityLinkHeaderParams = {
   isAdmin: boolean;
@@ -28,6 +25,8 @@ export type EntityLinkHeaderParams = {
   redirectEntityPage: string;
   entity: EntityForLinkHeader | null | undefined;
   firstLinkIcon: ReactNode;
+  t: TFunction;
+  taskTitle?: string;
 };
 
 export type EntityLinkHeaderMap = Record<string, Array<{ label: string; link: string; icon?: ReactNode }>>;
@@ -44,6 +43,8 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
       return "pending-approval";
     case "needs-more-information":
       return "information-required";
+    case "requires-more-information":
+      return "information-required";
     case "approved":
       return "approved";
     case "no-update":
@@ -53,24 +54,20 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
   }
 };
 
-export const mapEntityTitle = (title: string | null, model: string): string => {
-  if (title == null || title === "") return startCase(singularEntityName(model as EntityName | SingularEntityName));
+export const mapEntityTitle = (title: string | null, model: string, t: TFunction): string => {
+  if (title == null || title === "") return t(startCase(singularEntityName(model as EntityName | SingularEntityName)));
   return title;
 };
 
 export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkHeaderMap {
-  const t = useT();
-  const { isAdmin, model, uuid, redirectEntityPage, entity, firstLinkIcon } = params;
-
-  const window = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt as string);
-  const taskTitle = t("Reporting Task {window}", { window });
+  const { isAdmin, model, uuid, redirectEntityPage, entity, firstLinkIcon, t, taskTitle = "" } = params;
   const linkLabel = t(startCase(model));
 
   const adminListUrl = `/admin?formStepId=summary#/${singularEntityName(
     model as EntityName | SingularEntityName
   )}?filter=%7B%7D&order=ASC&page=1&perPage=10&sort=`;
   const editLink = uuid ? `/entity/${singularEntityName(model as EntityName | SingularEntityName)}/edit/${uuid}` : "#";
-  const entityTitle = mapEntityTitle(entity?.title ?? entity?.name ?? null, model);
+  const entityTitle = mapEntityTitle(entity?.title ?? entity?.name ?? null, model, t);
 
   const withFirstIcon = (
     items: Array<{ label: string; link: string }>
@@ -84,23 +81,23 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : "/my-projects"
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     sites: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : t(entity?.projectName ?? ""),
+        label: isAdmin ? linkLabel : entity?.projectName ?? "",
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}?tab=sites`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     nurseries: withFirstIcon([
       {
-        label: isAdmin ? linkLabel : t(entity?.projectName ?? ""),
+        label: isAdmin ? linkLabel : entity?.projectName ?? "",
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}?tab=nurseries`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     projectReports: withFirstIcon([
       {
@@ -108,7 +105,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     siteReports: withFirstIcon([
       {
@@ -116,7 +113,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     nurseryReports: withFirstIcon([
       {
@@ -124,7 +121,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     financialReports: withFirstIcon([
       {
@@ -132,7 +129,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : `/organization/${entity?.organisationUuid ?? ""}?tab=financial_information`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     disturbanceReports: withFirstIcon([
       {
@@ -142,7 +139,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
           : `/project/${entity?.projectUuid ?? ""}?tab=reporting-tasks&subTab=disturbance-reports`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ]),
     srpReports: withFirstIcon([
       {
@@ -150,7 +147,7 @@ export function entityLinkHeaderMap(params: EntityLinkHeaderParams): EntityLinkH
         link: isAdmin ? adminListUrl : `/project/${entity?.projectUuid ?? ""}/reporting-task/${entity?.taskUuid ?? ""}`
       },
       { label: entityTitle, link: redirectEntityPage },
-      { label: "Edit", link: editLink }
+      { label: t("Edit"), link: editLink }
     ])
   };
 }

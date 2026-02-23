@@ -48,7 +48,7 @@ const EntityEditDisplay = () => {
   const formEntity = v3EntityName(entityName) as FormEntity;
   const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(formEntity, entityUUID);
   const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
-  const [, { data: entity }] = useFullEntity(formEntity, entityUUID);
+  const [entityLoading, { data: entity }] = useFullEntity(formEntity, entityUUID);
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
   // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
@@ -105,6 +105,8 @@ const EntityEditDisplay = () => {
         orgDetails={orgDetails}
         projectDetails={projectDetails}
         redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
+        entity={entity}
+        entityLoading={entityLoading}
       />
     </LoadingContainer>
   );

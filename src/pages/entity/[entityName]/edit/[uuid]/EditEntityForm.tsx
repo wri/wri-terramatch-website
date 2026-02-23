@@ -182,6 +182,8 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
             {...initialStepProps}
             cancelForm={() => router.push(getEntityDetailPageLink(entityName, entityUUID))}
             redirectEntityPage={getEntityDetailPageLink(entityName, entityUUID)}
+            entity={entity}
+            entityLoading={entityLoaded}
           />
         )}
       </CurrencyProvider>
