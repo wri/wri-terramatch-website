@@ -27,6 +27,7 @@ interface TableProps {
   variant?: "default" | "full-width";
   css?: any;
   pageSize?: number;
+  className?: string;
 }
 
 interface SelectableRowProps {
@@ -72,7 +73,8 @@ const Table: FC<TableProps> = ({
   showItemCount = true,
   variant = "default",
   css,
-  pageSize: initialPageSize
+  pageSize: initialPageSize,
+  className
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
@@ -181,6 +183,7 @@ const Table: FC<TableProps> = ({
   return (
     <Box
       css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+      className={className}
     >
       <WriTable
         columns={columns}

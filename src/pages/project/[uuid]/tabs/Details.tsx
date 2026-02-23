@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC } from "react";
@@ -47,10 +47,10 @@ const getFieldsRequiringAttentionCount = (
 };
 
 const noCountTableColumns = [
-  { key: "name", label: "" },
-  { key: "name", label: "" },
-  { key: "name", label: "" },
-  { key: "name", label: "" }
+  { key: "1", label: "" },
+  { key: "2", label: "" },
+  { key: "3", label: "" },
+  { key: "4", label: "" }
 ];
 
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
@@ -71,8 +71,25 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
     { key: "name", label: t("Species Name") },
     { key: "amount", label: t("Number of Trees Expected") }
   ];
+
+  function plantsToNoCountRows(
+    plants: Array<{ name?: string | null }>
+  ): Array<{ id: number; 1: string; 2: string; 3: string; 4: string }> {
+    const rows: Array<{ id: number; 1: string; 2: string; 3: string; 4: string }> = [];
+    for (let i = 0; i < plants.length; i += 4) {
+      const row = {
+        id: Math.floor(i / 4) + 1,
+        1: plants[i]?.name ?? "",
+        2: plants[i + 1]?.name ?? "",
+        3: plants[i + 2]?.name ?? "",
+        4: plants[i + 3]?.name ?? ""
+      };
+      rows.push(row);
+    }
+    return rows;
+  }
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -145,12 +162,31 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       if (rawValue.props.tableType == "noCount") {
                         return (
                           <Table
-                            data={rawValue.props.plants}
+                            data={plantsToNoCountRows(rawValue.props.plants)}
                             columns={noCountTableColumns}
-                            variant="full-width"
                             css={NO_HEADER_TABLE_WRAPPER_STYLES}
-                            totalItems={rawValue.props.plants.length}
+                            variant="full-width"
+                            totalItems={rawValue.props.plants.length / 4}
                             showItemCount={false}
+                            pageSize={4}
+                            renderRow={rowData => {
+                              const row = rowData as Record<number, string> & { id: number };
+                              return (
+                                <TableRow>
+                                  {noCountTableColumns.map((col, idx) => (
+                                    <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
+                                      <Box
+                                        className={`${
+                                          idx === noCountTableColumns.length - 1 ? "" : "mr-8 "
+                                        }border-b border-theme-neutral-300 py-4`}
+                                      >
+                                        {row[idx + 1] ?? "-"}
+                                      </Box>
+                                    </TableCell>
+                                  ))}
+                                </TableRow>
+                              );
+                            }}
                           />
                         );
                       } else if (rawValue.props.tableType == "noGoal") {
@@ -158,9 +194,11 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                           <Table
                             data={rawValue.props.plants}
                             columns={noGoalTableColumns}
+                            variant="full-width"
                             css={FULL_WIDTH_TABLE_HEADER_STYLES}
                             totalItems={rawValue.props.plants.length}
                             showItemCount={false}
+                            className="!w-[725px]"
                           />
                         );
                       } else {
