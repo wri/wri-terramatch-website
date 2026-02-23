@@ -2,7 +2,7 @@ import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { groupBy } from "lodash";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -14,13 +14,16 @@ import { useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
 import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useTrackingLabels } from "./types";
 
+const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
+  complete: "complete",
+  "not-started": undefined,
+  "in-progress": "error"
+};
+
 const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
   const t = useT();
-  const { total, status, counts, startedBalancedCount } = useTableStatus(domain, type, entries);
-  const [hasBlurred, setHasBlurred] = useState(() => entries.some(entry => entry.amount > 0));
+  const { total, status, counts } = useTableStatus(domain, type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
-
-  const onBlur = useCallback(() => setHasBlurred(true), []);
 
   const onSectionChange = useCallback(
     (type: string, sectionEntries: TrackingEntryDto[]) => {
@@ -43,15 +46,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
     </Text>
   );
 
-  const statusMap: Record<Status, AccordionStatus | undefined> = {
-    complete: "complete",
-    "not-started": undefined,
-    "in-progress": "error"
-  };
-
-  const shouldShowError = status === "in-progress" && hasBlurred && startedBalancedCount > 1;
-
-  const effectiveStatusForHeader: Status = status === "in-progress" && !shouldShowError ? "not-started" : status;
+  const shouldShowError = status === "in-progress";
 
   return (
     <Accordion
@@ -60,8 +55,8 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
         <AccordionHeader
           label={prefix}
           title={boldNumber}
-          status={statusMap[effectiveStatusForHeader]}
-          statusLabel={shouldShowError ? t("Totals don't match across demographic categories") : undefined}
+          status={STATUS_MAP[status]}
+          statusLabel={shouldShowError ? t("Totals don't match across categories") : undefined}
         />
       }
     >
@@ -108,7 +103,6 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
                     domain={domain}
                     trackingType={type}
                     onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
-                    onBlur={onBlur}
                     entries={byType[entryType] ?? []}
                     {...{ entryType, variant }}
                     status={sectionStatus}
