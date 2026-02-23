@@ -12,6 +12,8 @@ export interface IProfile {
   id: string;
   name: string;
   image: string;
+  email?: string;
+  isProjectManager?: boolean;
 }
 
 export interface IProfileListCardProps {
