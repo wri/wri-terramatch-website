@@ -5,9 +5,9 @@ import modules from "@/admin/modules";
 import { ConnectionTable } from "@/components/elements/ServerSideTable/ConnectionTable";
 import { VARIANT_TABLE_AIRTABLE } from "@/components/elements/Table/TableVariants";
 import { indexOrgsConnection } from "@/connections/Organisation";
-import { OrganisationDto } from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationLightDto } from "@/generated/v3/userService/userServiceSchemas";
 
-const COLUMNS: ColumnDef<OrganisationDto>[] = [
+const COLUMNS: ColumnDef<OrganisationLightDto>[] = [
   { accessorKey: "name", header: "Name", enableSorting: false },
   {
     accessorKey: "uuid",

@@ -7,11 +7,11 @@ import {
   getWomenEngagementStrategyOptions,
   getYoungerThan35EngagementStrategyOptions
 } from "@/constants/options/engagementStrategy";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 type PastCommunityExperienceProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const PastCommunityExperience = ({ organization }: PastCommunityExperienceProps) => {
@@ -23,27 +23,33 @@ const PastCommunityExperience = ({ organization }: PastCommunityExperienceProps)
       <div className="mt-10 flex flex-col gap-4">
         <TextRow
           name={t("Engagement: Farmers")}
-          value={formatOptionsList(getFarmersEngagementStrategyOptions(t), organization?.engagement_farmers)}
+          value={formatOptionsList(
+            getFarmersEngagementStrategyOptions(t),
+            organization?.engagementFarmers ?? undefined
+          )}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Engagement: Women")}
-          value={formatOptionsList(getWomenEngagementStrategyOptions(t), organization?.engagement_women)}
+          value={formatOptionsList(getWomenEngagementStrategyOptions(t), organization?.engagementWomen ?? undefined)}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Engagement: Youth")}
-          value={formatOptionsList(getYoungerThan35EngagementStrategyOptions(t), organization?.engagement_youth)}
+          value={formatOptionsList(
+            getYoungerThan35EngagementStrategyOptions(t),
+            organization?.engagementYouth ?? undefined
+          )}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Community Engagement Experience/Approach")}
-          value={organization?.community_experience}
+          value={organization?.communityExperience ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Community Engagement Numbers")}
-          value={organization?.total_engaged_community_members_3yr}
+          value={organization?.totalEngagedCommunityMembers3Yr ?? undefined}
           nameClassName="w-1/3"
         />
       </div>

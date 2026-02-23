@@ -96,10 +96,10 @@ const ApplicationDataGrid = () => {
       </Tabs>
       <Divider />
       <Datagrid rowClick={"show"}>
-        <DateField source="created_at" label="Date Created" locales="en-GB" />
+        <DateField source="createdAt" label="Date Created" locales="en-GB" />
         <TextField source="name" label="Organisation Name" />
         <SelectField label="Organisation Type" source="type" choices={optionToChoices(getOrganisationTypeOptions())} />
-        <TextField source="readable_status" label="Organisation Status" />
+        <TextField className="capitalize" source="status" label="Organisation Status" />
         <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT}>
           <Icon name={IconNames.ELIPSES} className="h-6 w-6 rounded-full p-1 hover:bg-neutral-200"></Icon>
         </Menu>
