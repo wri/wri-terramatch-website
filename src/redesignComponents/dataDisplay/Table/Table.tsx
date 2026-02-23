@@ -1,6 +1,6 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { Checkbox, Table as WriTable } from "@worldresources/wri-design-systems";
-import React, { CSSProperties, FC, useCallback, useEffect } from "react";
+import React, { FC, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
@@ -23,7 +23,6 @@ interface TableProps {
   renderRow?: (rowData: RowData) => React.ReactNode;
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
-  css?: CSSProperties;
   showItemCount?: boolean;
   variant?: "default" | "full-width";
   css?: any;
