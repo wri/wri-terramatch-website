@@ -34,7 +34,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
   return (
     <Flex direction="column" minHeight={0}>
       <Box>
-        <Text fontSize="18px" lineHeight="28px" color="neutral.900" fontWeight="semibold">
+        <Text textStyle="500" color="neutral.900" fontWeight="semibold">
           {t(title)}
         </Text>
       </Box>
@@ -71,14 +71,12 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize={"12px"}
-                lineHeight={"16px"}
-                fontWeight={"700"}
-                padding={"6px 8px"}
-                borderRadius={"4px"}
-                backgroundColor={"transparent"}
-                color={"secondary.900"}
-                width={"auto"}
+                textStyle="200-bold"
+                padding="6px 8px"
+                borderRadius="4px"
+                backgroundColor="transparent"
+                color="secondary.900"
+                width="auto"
                 className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
               >
                 {t("Invite Team Member")}

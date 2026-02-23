@@ -43,7 +43,7 @@ interface OverviewItemProps {
 const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
-      <Text color="primary.900" fontSize="20px" lineHeight="28px">
+      <Text color="primary.900" textStyle="600">
         {title}
       </Text>
       <Flex gap={4}>
@@ -229,28 +229,28 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
             <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
-              <Text color="neutral.900" fontSize="16px" lineHeight="24px" fontWeight="bold">
+              <Text color="neutral.900" textStyle="400">
                 {t("Monitoring, Reporting, and Verification (MRV)")}
               </Text>
               <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                  <Text color="neutral.900" textStyle="300">
                     <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
                   </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                  <Text color="neutral.900" textStyle="300">
                     <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
                   </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                  <Text color="neutral.900" textStyle="300">
                     <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
                   </Text>
                 </Box>
               </Box>
               <Flex alignItems="center" flexWrap="wrap">
-                <Text color="neutral.900" fontSize="14px" lineHeight="20px">
+                <Text color="neutral.900" textStyle="300">
                   {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
                 </Text>
                 <Button
@@ -263,7 +263,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 </Button>
               </Flex>
               <Flex direction="column" gap={2} minHeight={0}>
-                <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
+                <Text color="neutral.900" textStyle="500">
                   {t("Helpful Links")}
                 </Text>
                 <Divider />

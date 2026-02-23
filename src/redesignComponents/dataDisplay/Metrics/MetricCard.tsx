@@ -26,14 +26,14 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
       {iconWithColor}
-      <Text fontSize="14px" color="neutral.800" lineHeight="20px" paddingLeft={1}>
+      <Text textStyle="300" color="neutral.800" paddingLeft={1}>
         {title}
       </Text>
       <Tooltip content={tooltipContent} position="top">
         <InformationRequired color="neutral.800" boxSize="14px" />
       </Tooltip>
     </Flex>
-    <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+    <Text textStyle="400-bold" color="neutral.900">
       {progress.toLocaleString()}
     </Text>
   </Flex>
@@ -50,14 +50,14 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
     {iconWithColor}
     <Flex direction="column" gap={0}>
       <Flex gap={1} alignItems="center">
-        <Text fontSize="16px" color="neutral.800" lineHeight="24px">
+        <Text textStyle="400" color="neutral.800">
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
           <InformationRequired color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
-      <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
+      <Text textStyle="600-bold" color="neutral.900">
         {progress.toLocaleString()}
       </Text>
     </Flex>
@@ -79,7 +79,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
     <Flex direction="column" gap={2}>
       <Flex gap={2} alignItems="center">
         {iconWithColor}
-        <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+        <Text textStyle="300" color="neutral.800">
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
@@ -89,13 +89,13 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
       <Flex gap={2} alignItems="center">
         <ProgressBar progress={progressValue} color={color} />
         <Flex gap={1} alignItems="center">
-          <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+          <Text textStyle="400-bold" color="neutral.900">
             {progress.toLocaleString()}
           </Text>
-          <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+          <Text textStyle="300" color="neutral.800">
             {t("of")}
           </Text>
-          <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+          <Text textStyle="300" color="neutral.800">
             {goal.toLocaleString()}
           </Text>
         </Flex>
@@ -122,7 +122,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
       </DonutChart>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text fontSize="16px" color="neutral.900" lineHeight="24px">
+          <Text textStyle="400" color="neutral.900">
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
@@ -131,18 +131,24 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
         </Flex>
         {goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
-            <Text fontSize="20px" fontWeight="bold" color="neutral.900" lineHeight="28px">
+            <Text textStyle="600-bold" color="neutral.900">
+              {progress.toLocaleString()}
+            </Text>
+          </Flex>
+        ) : goal > 0 ? (
+          <Flex gap={1} alignItems="center">
+            <Text textStyle="600-bold" color="neutral.900">
               {Math.round(progress).toLocaleString()}
             </Text>
-            <Text fontSize="18px" color="neutral.800" lineHeight="28px">
+            <Text textStyle="500" color="neutral.800">
               {t("of")}
             </Text>
-            <Text fontSize="18px" color="neutral.800" lineHeight="28px">
+            <Text textStyle="500" color="neutral.800">
               {goal.toLocaleString()}
             </Text>
           </Flex>
         ) : (
-          <Text fontSize="18px" fontWeight="bold" color="neutral.600" lineHeight="28px">
+          <Text textStyle="500-bold" color="neutral.600">
             {t("N/A")}
           </Text>
         )}
