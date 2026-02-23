@@ -12,28 +12,12 @@ import {
   YAxis
 } from "recharts";
 
+import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { currencyInput } from "@/utils/financialReport";
-
-type FinancialCurrentRatioChartProps = {
-  uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
-  collection: string;
-  amount: number | null;
-  year: number;
-  description: string | null;
-  documentation?: any[];
-};
 
 const BASE = 1;
 
-const FinancialCurrentRatioChart = ({
-  data,
-  currency
-}: {
-  data: FinancialCurrentRatioChartProps[];
-  currency?: string;
-}) => {
+const FinancialCurrentRatioChart = ({ data, currency }: { data: FinancialIndicatorDto[]; currency?: string }) => {
   const { chartData, xTicks } = useMemo(() => {
     const byYear: Record<
       number,
