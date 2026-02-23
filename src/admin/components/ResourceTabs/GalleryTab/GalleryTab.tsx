@@ -16,7 +16,6 @@ import { getCurrentPathEntity } from "@/helpers/entity";
 import { EntityName, FileType } from "@/types/common";
 import { HookFilters, HookProps } from "@/types/connection";
 import Log from "@/utils/log";
-import { sortByCreatedAt } from "@/utils/sort";
 
 interface IProps extends Omit<TabProps, "label" | "children"> {
   label?: string;
@@ -78,8 +77,6 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
     ])
   );
 
-  const sortedMediaList = useMemo(() => sortByCreatedAt(mediaList ?? [], sortOrder), [mediaList, sortOrder]);
-
   const openFormModalHandlerUploadImages = () => {
     openModal(
       ModalId.UPLOAD_IMAGES,
@@ -122,7 +119,7 @@ const GalleryTab: FC<IProps> = ({ label, entity, ...rest }) => {
           </Button>
         </div>
         <ImageGallery
-          data={sortedMediaList}
+          data={mediaList ?? []}
           entity={resource}
           entityData={ctx.record}
           pageCount={Math.ceil((indexTotal ?? 0) / pagination.pageSize)}

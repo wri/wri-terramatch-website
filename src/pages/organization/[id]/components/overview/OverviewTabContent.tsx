@@ -7,10 +7,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
+import { useOrganisationMedia } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FileRead, V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import PastCommunityExperience from "@/pages/organization/[id]/components/overview/PastCommunityExperience";
 import TeamAndResources from "@/pages/organization/[id]/components/overview/TeamAndResources";
+import { UploadedFile } from "@/types/common";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
@@ -19,44 +21,112 @@ import About from "./About";
 import PastRestorationExperience from "./PastRestorationExperience";
 
 type OverviewTabContentProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
   const t = useT();
   const { openModal } = useModalContext();
 
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: organization?.uuid ?? ""
+  });
+
+  const mediaFiles = useMemo(() => {
+    return allMediaFiles.filter(media =>
+      ["reference", "additional", "op_budget_2year", "legal_registration", "previous_annual_reports"].includes(
+        media.collectionName ?? ""
+      )
+    );
+  }, [allMediaFiles]);
+
+  const files: UploadedFile[] = useMemo(() => {
+    return mediaFiles
+      .filter(
+        media =>
+          media.url != null &&
+          media.uuid != null &&
+          media.fileName != null &&
+          media.size != null &&
+          ["reference", "additional", "op_budget_2year", "legal_registration"].includes(media.collectionName)
+      )
+      .map(media => {
+        const uploadedFile: UploadedFile = {
+          uuid: media.uuid,
+          url: media.url ?? "",
+          thumbUrl: media.thumbUrl ?? undefined,
+          size: media.size,
+          fileName: media.fileName,
+          mimeType: media.mimeType ?? "",
+          createdAt: media.createdAt,
+          collectionName: media.collectionName,
+          isPublic: media.isPublic ?? undefined,
+          isCover: media.isCover ?? undefined,
+          lat: media.lat ?? undefined,
+          lng: media.lng ?? undefined
+        };
+        return uploadedFile;
+      });
+  }, [mediaFiles]);
+
+  const previousAnnualReportsFiles: UploadedFile[] = useMemo(() => {
+    return mediaFiles
+      .filter(
+        media =>
+          media.url != null &&
+          media.uuid != null &&
+          media.fileName != null &&
+          media.size != null &&
+          media.collectionName === "previous_annual_reports"
+      )
+      .map(media => {
+        const uploadedFile: UploadedFile = {
+          uuid: media.uuid,
+          url: media.url ?? "",
+          thumbUrl: media.thumbUrl ?? undefined,
+          size: media.size,
+          fileName: media.fileName,
+          mimeType: media.mimeType ?? "",
+          createdAt: media.createdAt,
+          collectionName: media.collectionName,
+          isPublic: media.isPublic ?? undefined,
+          isCover: media.isCover ?? undefined,
+          lat: media.lat ?? undefined,
+          lng: media.lng ?? undefined
+        };
+        return uploadedFile;
+      });
+  }, [mediaFiles]);
+
   /**
    * Checks if there are incomplete steps (Build a Stronger Profile section).
    * @returns boolean
    */
   const incompleteSteps = useMemo(() => {
-    const pastRestorationExperience = _.pick<any, keyof V2OrganisationRead>(organization, [
-      "ha_restored_total",
-      "ha_restored_3year",
-      "trees_grown_total",
-      "trees_grown_3year"
-      // "tree_care_approach" // !Enable this in next release
-    ]);
+    if (organization == null) {
+      return {
+        pastRestorationExperience: true,
+        legitimacy: true
+      };
+    }
 
-    const legitimacy = _.pick<any, keyof V2OrganisationRead>(organization, ["reference", "legal_registration"]);
-
-    return {
-      pastRestorationExperience: _.some(pastRestorationExperience, _.isNull || _.isNaN),
-      legitimacy: _.some(legitimacy, _.isEmpty)
+    const pastRestorationExperience = {
+      haRestoredTotal: organization.haRestoredTotal,
+      haRestored3Year: organization.haRestored3Year,
+      treesGrownTotal: organization.treesGrownTotal,
+      treesGrown3Year: organization.treesGrown3Year
     };
-  }, [organization]);
+
+    const hasLegitimacyFiles = mediaFiles.some(
+      media => media.collectionName === "reference" || media.collectionName === "legal_registration"
+    );
+    return {
+      pastRestorationExperience: !_.every(pastRestorationExperience, _.isFinite),
+      legitimacy: !hasLegitimacyFiles
+    };
+  }, [organization, mediaFiles]);
 
   const showIncompleteStepsSection = _.values(incompleteSteps).includes(true);
-
-  const files: V2FileRead[] = useMemo(() => {
-    return [
-      ...(organization?.reference ?? []),
-      ...(organization?.additional ?? []),
-      ...(organization?.op_budget_2year ?? []),
-      ...(organization?.legal_registration ?? [])
-    ];
-  }, [organization]);
 
   return (
     <Container className="py-15">
@@ -70,11 +140,9 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
       <When condition={!incompleteSteps.pastRestorationExperience}>
         <PastRestorationExperience organization={organization} />
       </When>
-      <When condition={!!organization?.previous_annual_reports && organization.previous_annual_reports.length > 0}>
-        <Files
-          title={t("Monitoring reports from past projects:")}
-          files={organization?.previous_annual_reports ?? []}
-        />
+      {/* Previous Annual Reports */}
+      <When condition={previousAnnualReportsFiles.length > 0}>
+        <Files title={t("Monitoring reports from past projects:")} files={previousAnnualReportsFiles} />
       </When>
       <PastCommunityExperience organization={organization} />
       <TeamAndResources organization={organization} />

@@ -19,13 +19,12 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { Delete, Edit, UserAdd } from "@/redesignComponents/foundations/Icons";
+import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
-import Log from "@/utils/log";
 
-import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
-interface BuildTeamMembersPageProps {
+interface TeamMembersTabProps {
   project: ProjectFullDto;
 }
 
@@ -60,18 +59,18 @@ const teamMembersFormatted = (
   teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse,
   role: string
 ) => {
-  return teamMembers?.map((member, index) => ({
+  return teamMembers?.map(member => ({
     uuid: member?.uuid,
     name: `${member.first_name} ${member.last_name}`,
     organization: (member as any)?.organisation?.name,
     email: member?.email_address,
     role: role,
-    status: member?.status,
-    image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+    status: member?.role == "project-manager" ? "Accepted" : member?.status,
+    image: ``
   }));
 };
 
-const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
+const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -79,7 +78,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
 
   // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
   // will be replaced once these endpoints are migrated to V3.
-  // Related migration ticket: TM-2996
+  // Related migration ticket: TM-2880
 
   const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{
     data: GetV2ProjectsUUIDPartnersResponse;
@@ -152,9 +151,13 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   }, [partners?.data, managers?.data, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingY={6}>
+    <Box paddingX={8} paddingY={6} minHeight="525px">
       <ToolbarTable
         className="!px-0"
+        onClearFilters={() => {
+          setSelectedRole(null);
+          setSearchQuery("");
+        }}
         filters={[
           {
             mainActionLabel: t("Role"),
@@ -193,6 +196,10 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
           leftIcon: <UserAdd />,
           onClick: handleInvite
         }}
+        tooltipContent={t(
+          "Team members who join your project as monitoring partners will have full access to your project data and reports."
+        )}
+        showClearFilters={selectedRole !== null}
       />
       <Table
         data={teamMembers}
@@ -220,21 +227,23 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
               <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
-                  button={{
-                    children: t("Edit"),
-                    onClick: () => Log.debug("Edit team member click"),
-                    leftIcon: (
-                      <Edit
-                        className="!text-theme-neutral-900"
-                        css={{
-                          "& svg path": {
-                            fill: getThemedColor("neutral", 900) + " !important",
-                            color: getThemedColor("neutral", 900) + " !important"
-                          }
-                        }}
-                      />
-                    )
-                  }}
+                  // TODO: comment out for now as we don't have an edit functionality yet
+                  // button={{
+                  //   children: t("Edit"),
+                  //   onClick: () => Log.debug("Edit team member click"),
+                  //   leftIcon: (
+                  //     <Edit
+                  //       // className="!text-theme-neutral-900 hidden"
+                  //       className="hidden"
+                  //       css={{
+                  //         "& svg path": {
+                  //           fill: getThemedColor("neutral", 900) + " !important",
+                  //           color: getThemedColor("neutral", 900) + " !important"
+                  //         }
+                  //       }}
+                  //     />
+                  //   )
+                  // }}
                   buttonSecondary={{
                     children: t("Remove"),
                     variant: "secondary",
@@ -250,7 +259,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                         }}
                       />
                     ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100",
+                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
                     size: "small"
                   }}
                 />
@@ -296,4 +305,4 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   );
 };
 
-export default BuildTeamMembersPage;
+export default TeamMembersTab;

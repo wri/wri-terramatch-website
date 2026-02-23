@@ -83,6 +83,8 @@ if (!ENVIRONMENT_NAMES.includes(declaredEnv as EnvironmentName)) {
   Log.info("Booting up with target environment", { declaredEnv });
 }
 
+export const DECLARED_ENV = declaredEnv;
+
 const DEFAULTS = buildDefaults(declaredEnv as EnvironmentName);
 export const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULTS.apiBaseUrl;
 export const userServiceUrl = process.env.NEXT_PUBLIC_USER_SERVICE_URL ?? DEFAULTS.userServiceUrl;

@@ -10,17 +10,12 @@ import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useGadmOptions } from "@/connections/Gadm";
-import { useMyOrg } from "@/connections/Organisation";
+import { useMyOrg, useOrganisation } from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import {
-  useDeleteV2OrganisationsRetractMyDraft,
-  useGetV2OrganisationsUUID,
-  usePutV2OrganisationsSubmitUUID,
-  usePutV2OrganisationsUUID
-} from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { useDeleteV2OrganisationsRetractMyDraft, usePutV2OrganisationsSubmitUUID } from "@/generated/apiComponents";
+import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
 
 import { getSteps } from "./getCreateOrganisationSteps";
@@ -35,19 +30,20 @@ const CreateOrganisationForm = () => {
 
   const uuid = (organisationId || router?.query?.uuid) as string;
 
-  const { mutate: updateOrganisation, isLoading, isSuccess } = usePutV2OrganisationsUUID({});
-
-  const { data: orgData, isLoading: isFetchingOrgData } = useGetV2OrganisationsUUID<{ data: V2OrganisationRead }>(
-    { pathParams: { uuid } },
-    {
-      enabled: !!uuid
-    }
+  const [orgLoaded, { data: orgData, update, isUpdating: isLoading, updateFailure }] = useOrganisation(
+    uuid != null ? { id: uuid } : {}
   );
+
+  const isSuccess = useMemo(() => {
+    if (updateFailure != null) return false;
+    if (isLoading) return false;
+    return orgData != null;
+  }, [updateFailure, isLoading, orgData]);
 
   const {
     mutate: submitOrganisation,
     isLoading: isSubmitting,
-    error
+    error: submitError
   } = usePutV2OrganisationsSubmitUUID({
     onSuccess() {
       router.push("/organization/create/confirm");
@@ -64,7 +60,7 @@ const CreateOrganisationForm = () => {
 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
-  const defaultValues = useMemo(() => formDefaultValues(orgData?.data ?? {}, provider), [orgData?.data, provider]);
+  const defaultValues = useMemo(() => formDefaultValues(orgData ?? {}, provider), [orgData, provider]);
 
   const onBackFirstStep = () => {
     openModal(
@@ -87,21 +83,28 @@ const CreateOrganisationForm = () => {
   const models = useMemo(() => ({ model: "organisations", uuid } as const), [uuid]);
 
   const onChange = useCallback(
-    (data: Dictionary<any>) => {
-      updateOrganisation({ body: data, pathParams: { uuid } });
+    (data: Dictionary<unknown>) => {
+      if (update == null || uuid == null) return;
+      const attributes = data as unknown as OrganisationUpdateAttributes;
+      update(attributes);
     },
-    [updateOrganisation, uuid]
+    [update, uuid]
   );
+
+  const updateError =
+    updateFailure != null
+      ? { statusCode: updateFailure.statusCode, message: updateFailure.message, error: updateFailure.error }
+      : submitError;
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isFetchingOrgData}>
+      <LoadingContainer loading={!orgLoaded && uuid != null}>
         <WizardForm
           framework={Framework.UNDEFINED}
           models={models}
           fieldsProvider={provider}
           formStatus={isSuccess ? "saved" : isLoading ? "saving" : undefined}
-          errors={error}
+          errors={updateError}
           defaultValues={defaultValues}
           onChange={onChange}
           onSubmit={() => submitOrganisation({ pathParams: { uuid } })}

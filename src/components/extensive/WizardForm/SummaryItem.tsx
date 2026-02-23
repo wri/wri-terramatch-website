@@ -8,7 +8,6 @@ import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
-import { usePutV2MyActionsUUIDComplete } from "@/generated/apiComponents";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
@@ -40,7 +39,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
   const user = useIsAdmin();
 
   const fieldsProvider = useFieldsProvider();
-  const { mutate } = usePutV2MyActionsUUIDComplete();
   const [, { data: actions }] = useActions({
     enabled: !user
   });
@@ -56,7 +54,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
   const handleSubmitClick = async () => {
     await formHook.handleSubmit(onSubmitStep)();
     if (action != null) {
-      mutate({ pathParams: { uuid: action.uuid } });
       ApiSlice.pruneCache("actions", [action.uuid]);
     }
   };

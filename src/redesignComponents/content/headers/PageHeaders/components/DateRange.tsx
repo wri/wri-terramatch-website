@@ -18,20 +18,20 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate }) => {
     <Flex gap={2} className="items-center">
       <Flex gap={1} className="items-center">
         <Calendar />
-        <Text fontSize="14px" color="neutral.900">
+        <Text textStyle="300" color="neutral.900">
           {t("Start:")}
         </Text>
-        <Text fontSize="14px" color="neutral.900" fontWeight="bold">
+        <Text textStyle="300" color="neutral.900">
           {startDate}
         </Text>
       </Flex>
       <SeparatorDot />
       <Flex gap={1} className="items-center">
         <Calendar />
-        <Text fontSize="14px" color="neutral.900">
+        <Text textStyle="300" color="neutral.900">
           {t("End:")}
         </Text>
-        <Text fontSize="14px" color="neutral.900" fontWeight="bold">
+        <Text textStyle="300-bold" color="neutral.900">
           {endDate}
         </Text>
       </Flex>

@@ -37,40 +37,40 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         validation: { required: true }
       },
       {
-        name: "hq_street_1",
+        name: "hqStreet1",
         label: t("Headquarters Street address"),
         placeholder: t("Add Headquarters Street address"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_street_2",
+        name: "hqStreet2",
         label: t("Headquarters Street address 2"),
         placeholder: t("Add Headquarters Street address 2"),
         inputType: "text"
       },
       {
-        name: "hq_city",
+        name: "hqCity",
         label: t("Headquarters address City"),
         placeholder: t("Add Headquarters address City"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_state",
+        name: "hqState",
         label: t("Headquarters address State/Province"),
         placeholder: t("Headquarters address State/Province"),
         inputType: "text",
         validation: { required: true }
       },
       {
-        name: "hq_zipcode",
+        name: "hqZipcode",
         label: t("Headquarters address Zipcode"),
         placeholder: t("Add Headquarters address Zipcode"),
         inputType: "text"
       },
       {
-        name: "hq_country",
+        name: "hqCountry",
         label: t("Headquarters address Country"),
         placeholder: t("Add Headquarters address Country"),
         inputType: "select",
@@ -130,7 +130,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         placeholder: t("Add Organization Description")
       },
       {
-        name: "founding_date",
+        name: "foundingDate",
         inputType: "date",
         label: t("Date Organization Founded")
       },
@@ -172,49 +172,49 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         tableHeaders: [t("Employee Type"), t("Employee Count")],
         children: [
           {
-            name: "ft_permanent_employees",
+            name: "ftPermanentEmployees",
             label: "Number of full-time permanent employees",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "pt_permanent_employees",
+            name: "ptPermanentEmployees",
             label: "Number of part-time permanent employees",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "temp_employees",
+            name: "tempEmployees",
             label: "Number of temporary employees",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "female_employees",
+            name: "femaleEmployees",
             label: "Number of female employees",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "male_employees",
+            name: "maleEmployees",
             label: "Number of male employees",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "young_employees",
+            name: "youngEmployees",
             label: "Number of employees between and including ages 18 and 35",
             placeholder: "Enter a Value",
             inputType: "number",
             validation: { min: 0, max: 999999 }
           },
           {
-            name: "over_35_employees",
+            name: "over35Employees",
             label: "Number of employees older than 35 years of age",
             placeholder: "Enter a Value",
             inputType: "number",
@@ -233,31 +233,31 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
     ),
     fields: [
       {
-        name: "web_url",
+        name: "webUrl",
         label: t("Organization Website URL"),
         placeholder: t("Website URL"),
         inputType: "url"
       },
       {
-        name: "facebook_url",
+        name: "facebookUrl",
         label: t("Organization Facebook URL"),
         placeholder: t("Add Organization Facebook URL"),
         inputType: "url"
       },
       {
-        name: "twitter_url",
+        name: "twitterUrl",
         label: t("Organization Twitter URL"),
         placeholder: t("Add Organization  Twitter URL"),
         inputType: "url"
       },
       {
-        name: "instagram_url",
+        name: "instagramUrl",
         label: t("Organization Instagram URL"),
         placeholder: t("Add Organization Instagram URL"),
         inputType: "url"
       },
       {
-        name: "linkedin_url",
+        name: "linkedinUrl",
         label: t("Organization Linkedin URL"),
         placeholder: t("Add Organization Linkedin URL"),
         inputType: "url"
@@ -295,7 +295,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
     title: t("Financial Scope of Work (Historic)"),
     fields: [
       {
-        name: "fin_start_month",
+        name: "finStartMonth",
         label: t("Start of financial year (month)"),
         inputType: "select",
         options: getMonthOptions(t)
@@ -316,7 +316,7 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         label: t("Breakdown of Recent (past 4 years) Funding History by Funding Type and Amount")
       },
       {
-        name: "additional_funding_details",
+        name: "additionalFundingDetails",
         label: t("Additional details about funding strucuture, organisational support, etc."),
         inputType: "long-text"
       }
@@ -328,21 +328,21 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
     title: t("Past Community Engagement Experience"),
     fields: [
       {
-        name: "engagement_farmers",
+        name: "engagementFarmers",
         label: t("Enagement: Farmers"),
         inputType: "select",
         multiChoice: true,
         options: getFarmersEngagementStrategyOptions(t)
       },
       {
-        name: "engagement_women",
+        name: "engagementWomen",
         label: t("Engagement: Women"),
         inputType: "select",
         multiChoice: true,
         options: getWomenEngagementStrategyOptions(t)
       },
       {
-        name: "engagement_youth",
+        name: "engagementYouth",
         label: t("Engagement: Youth"),
         inputType: "select",
         validation: yup.array(),
@@ -350,12 +350,12 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         options: getYoungerThan35EngagementStrategyOptions(t)
       },
       {
-        name: "community_experience",
+        name: "communityExperience",
         label: t("Community Engagement Experience/Approach"),
         inputType: "long-text"
       },
       {
-        name: "total_engaged_community_members_3yr",
+        name: "totalEngagedCommunityMembers3Yr",
         label: t("Community Engagement Numbers"),
         inputType: "number"
       }
@@ -367,33 +367,33 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
     title: t("Past Restoration Experience"),
     fields: [
       {
-        name: "relevant_experience_years",
+        name: "relevantExperienceYears",
         label: t("Years of relevant restoration experience"),
         inputType: "number",
         validation: { min: 0, max: 150 }
       },
       {
-        name: "ha_restored_total",
+        name: "haRestoredTotal",
         label: t("Total Hectares Restored"),
         placeholder: t("Total Hectares Restored"),
         inputType: "number",
         validation: { min: 0, max: 9999999999999 }
       },
       {
-        name: "ha_restored_3year",
+        name: "haRestored3Year",
         label: t("Hectares Restored in the last 3 years"),
         inputType: "number",
         validation: { min: 0, max: 9999999999999 }
       },
       {
-        name: "trees_grown_total",
+        name: "treesGrownTotal",
         label: t("Total Trees Grown"),
         placeholder: t("Total Trees Grown"),
         inputType: "number",
         validation: { min: 0, max: 9999999999999 }
       },
       {
-        name: "trees_grown_3year",
+        name: "treesGrown3Year",
         label: t("Trees Grown in the last 3 years"),
         placeholder: t("Trees Grown in the last 3 years"),
         inputType: "number",
@@ -407,30 +407,30 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         additionalProps: { with_numbers: false }
       },
       {
-        name: "avg_tree_survival_rate",
+        name: "avgTreeSurvivalRate",
         label: t("Average Tree Survival Rate"),
         inputType: "number",
         validation: { min: 0, max: 100 }
       },
       {
-        name: "restoration_types_implemented",
+        name: "restorationTypesImplemented",
         label: t("Restoration Intervention Types Implemented"),
         inputType: "select",
         multiChoice: true,
         options: getRestorationInterventionTypeOptions(t)
       },
       {
-        name: "tree_maintenance_aftercare_approach",
+        name: "treeMaintenanceAftercareApproach",
         label: t("Tree Maintenance & After Care Approach"),
         inputType: "long-text"
       },
       {
-        name: "restored_areas_description",
+        name: "restoredAreasDescription",
         label: t("Description of areas restored"),
         inputType: "long-text"
       },
       {
-        name: "monitoring_evaluation_experience",
+        name: "monitoringEvaluationExperience",
         label: t("Monitoring and evaluation experience"),
         inputType: "long-text"
       },

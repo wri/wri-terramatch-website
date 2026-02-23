@@ -34,9 +34,16 @@ export const Large: Story = {
   }
 };
 
-export const NotAvailable: Story = {
+export const Unavailable: Story = {
   args: {
-    isAvailable: false,
+    src: undefined,
+    size: 164
+  }
+};
+
+export const Add: Story = {
+  args: {
+    isAdd: true,
     size: 164
   }
 };

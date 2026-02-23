@@ -1,10 +1,20 @@
-import { DateInput, Edit, SelectInput, TabbedForm, TextInput } from "react-admin";
+import { useMemo } from "react";
+import {
+  DateInput,
+  Edit,
+  RecordContextProvider,
+  SelectInput,
+  TabbedForm,
+  TextInput,
+  useEditContext
+} from "react-admin";
 import * as yup from "yup";
 
 import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import { ImageUploadInput } from "@/admin/components/Inputs/ImageUploadInput";
 import { SelectCountryInput } from "@/admin/components/Inputs/SelectCountryInput";
 import { validateForm } from "@/admin/utils/forms";
+import { useOrganisationMedia } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { FileType } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
@@ -12,10 +22,11 @@ import { optionToChoices } from "@/utils/options";
 const validationSchema = yup.object({
   name: yup.string().nullable().required(),
   type: yup.string().nullable().required(),
-  hq_street_1: yup.string().nullable().required(),
-  hq_city: yup.string().nullable().required(),
-  hq_state: yup.string().nullable().required(),
-  hq_country: yup.string().nullable().required(),
+  hqStreet1: yup.string().nullable().required(),
+  hqStreet2: yup.string().nullable(),
+  hqCity: yup.string().nullable().required(),
+  hqState: yup.string().nullable().required(),
+  hqCountry: yup.string().nullable().required(),
   phone: yup.string().nullable().required(),
   description: yup.string().nullable().required(),
   logo: yup.object().nullable(),
@@ -23,21 +34,74 @@ const validationSchema = yup.object({
   reference: yup.array(),
   additional: yup.array(),
   legal_registration: yup.array().min(1).required(),
-  web_url: yup.string().url().nullable(),
-  facebook_url: yup.string().url().nullable(),
-  instagram_url: yup.string().url().nullable(),
-  linkedin_url: yup.string().url().nullable(),
-  twitter_url: yup.string().url().nullable(),
-  fin_start_month: yup.number().nullable(),
-  ha_restored_total: yup.number().nullable(),
-  ha_restored_3year: yup.number().nullable(),
-  trees_grown_total: yup.number().nullable(),
-  trees_grown_3year: yup.number().nullable()
+  webUrl: yup.string().url().nullable(),
+  facebookUrl: yup.string().url().nullable(),
+  instagramUrl: yup.string().url().nullable(),
+  linkedinUrl: yup.string().url().nullable(),
+  twitterUrl: yup.string().url().nullable(),
+  finStartMonth: yup.number().nullable(),
+  haRestoredTotal: yup.number().nullable(),
+  haRestored3year: yup.number().nullable(),
+  treesGrownTotal: yup.number().nullable(),
+  treesGrown3year: yup.number().nullable()
 });
 
-export const OrganisationEdit = () => {
+const EnrichedOrganisationEditContent = () => {
+  const { record: baseRecord } = useEditContext();
+
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: baseRecord?.uuid ?? ""
+  });
+
+  const enrichedRecord = useMemo(() => {
+    if (!baseRecord) return baseRecord;
+
+    const mediaFilesByCollection: Record<string, any[]> = {
+      logo: [],
+      cover: [],
+      reference: [],
+      additional: [],
+      legal_registration: []
+    };
+
+    allMediaFiles.forEach(media => {
+      const collectionName = media.collectionName;
+      if (collectionName && Object.prototype.hasOwnProperty.call(mediaFilesByCollection, collectionName)) {
+        mediaFilesByCollection[collectionName].push({
+          uuid: media.uuid,
+          url: media.url ?? "",
+          thumbUrl: media.thumbUrl ?? undefined,
+          size: media.size,
+          fileName: media.fileName,
+          mimeType: media.mimeType ?? "",
+          createdAt: media.createdAt,
+          collectionName: media.collectionName,
+          isPublic: media.isPublic ?? undefined,
+          isCover: media.isCover ?? undefined,
+          lat: media.lat ?? undefined,
+          lng: media.lng ?? undefined
+        });
+      }
+    });
+
+    return {
+      ...baseRecord,
+      logo: mediaFilesByCollection.logo[0] ?? baseRecord.logo,
+      cover: mediaFilesByCollection.cover[0] ?? baseRecord.cover,
+      reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
+      additional:
+        mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,
+      legal_registration:
+        mediaFilesByCollection.legal_registration.length > 0
+          ? mediaFilesByCollection.legal_registration
+          : baseRecord.legal_registration
+    };
+  }, [baseRecord, allMediaFiles]);
+
+  if (!enrichedRecord) return null;
+
   return (
-    <Edit actions={false}>
+    <RecordContextProvider value={enrichedRecord}>
       <TabbedForm validate={validateForm(validationSchema)}>
         <TabbedForm.Tab label="Organization Details">
           <TextInput source="name" label="Legal Name" fullWidth />
@@ -47,14 +111,14 @@ export const OrganisationEdit = () => {
             choices={optionToChoices(getOrganisationTypeOptions())}
             fullWidth
           />
-          <TextInput source="hq_street_1" label="Headquarters Street address" fullWidth />
-          <TextInput source="hq_street_2" label="Headquarters Street address 2" fullWidth />
-          <TextInput source="hq_city" label="Headquarters City" fullWidth />
-          <TextInput source="hq_state" label="Headquarters address State/Province" fullWidth />
-          <TextInput source="hq_zipcode" label="Headquarters address Zipcode" fullWidth />
-          <SelectCountryInput source="hq_country" label="Headquarters address Country" fullWidth />
+          <TextInput source="hqStreet1" label="Headquarters Street address" fullWidth />
+          <TextInput source="hqStreet2" label="Headquarters Street address 2" fullWidth />
+          <TextInput source="hqCity" label="Headquarters City" fullWidth />
+          <TextInput source="hqState" label="Headquarters address State/Province" fullWidth />
+          <TextInput source="hqZipcode" label="Headquarters address Zipcode" fullWidth />
+          <SelectCountryInput source="hqCountry" label="Headquarters address Country" fullWidth />
           <TextInput source="phone" label="Organization WhatsApp Enabled Phone Number" fullWidth />
-          <DateInput source="founding_date" label="Date organization founded" fullWidth />
+          <DateInput source="foundingDate" label="Date organization founded" fullWidth />
           <TextInput source="description" label="Organization Details" fullWidth multiline />
           <ImageUploadInput source="logo" label="Logo" fullWidth />
           <ImageUploadInput source="cover" label="Cover" fullWidth />
@@ -75,21 +139,29 @@ export const OrganisationEdit = () => {
         </TabbedForm.Tab>
 
         <TabbedForm.Tab label="Social media">
-          <TextInput source="web_url" label="Website" fullWidth />
-          <TextInput source="facebook_url" label="Facebook" fullWidth />
-          <TextInput source="instagram_url" label="Instagram" fullWidth />
-          <TextInput source="linkedin_url" label="LinkedIn" fullWidth />
-          <TextInput source="twitter_url" label="Twitter" fullWidth />
+          <TextInput source="webUrl" label="Website" fullWidth />
+          <TextInput source="facebookUrl" label="Facebook" fullWidth />
+          <TextInput source="instagramUrl" label="Instagram" fullWidth />
+          <TextInput source="linkedinUrl" label="LinkedIn" fullWidth />
+          <TextInput source="twitterUrl" label="Twitter" fullWidth />
         </TabbedForm.Tab>
 
         <TabbedForm.Tab label="Financial Scope of Work (Historic)">
-          <TextInput source="fin_start_month" label="Start of financial year (month)" type="number" fullWidth />
-          <TextInput source="ha_restored_total" label="Total Hectares Restored" type="number" fullWidth />
-          <TextInput source="ha_restored_3year" label="Hecatres Restored in the last 3 years" type="number" fullWidth />
-          <TextInput source="trees_grown_total" label="Total Trees Grown" type="number" fullWidth />
-          <TextInput source="trees_grown_3year" label="Trees Grown in the last 3 years" type="number" fullWidth />
+          <TextInput source="finStartMonth" label="Start of financial year (month)" type="number" fullWidth />
+          <TextInput source="haRestoredTotal" label="Total Hectares Restored" type="number" fullWidth />
+          <TextInput source="haRestored3Year" label="Hecatres Restored in the last 3 years" type="number" fullWidth />
+          <TextInput source="treesGrownTotal" label="Total Trees Grown" type="number" fullWidth />
+          <TextInput source="treesGrown3Year" label="Trees Grown in the last 3 years" type="number" fullWidth />
         </TabbedForm.Tab>
       </TabbedForm>
+    </RecordContextProvider>
+  );
+};
+
+export const OrganisationEdit = () => {
+  return (
+    <Edit actions={false}>
+      <EnrichedOrganisationEditContent />
     </Edit>
   );
 };

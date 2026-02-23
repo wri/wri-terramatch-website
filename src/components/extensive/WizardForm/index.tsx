@@ -138,11 +138,14 @@ function WizardForm(props: WizardFormProps) {
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
-      () => ({
-        defaultValues: props.defaultValues,
-        mode: "onTouched",
-        resolved: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
-      }),
+      () =>
+        selectedSection?.validation != null
+          ? {
+              resolver: yupResolver(selectedSection?.validation),
+              defaultValues: props.defaultValues,
+              mode: "onTouched"
+            }
+          : { mode: "onTouched" },
       [props.defaultValues, selectedSection?.validation]
     )
   );
@@ -229,6 +232,14 @@ function WizardForm(props: WizardFormProps) {
     // Find the first invalid step or go straight to the last step.
     const stepIndex = steps.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
+  });
+
+  useValueChanged(props.defaultValues, () => {
+    if (props.defaultValues != null) {
+      for (const [key, value] of Object.entries(props.defaultValues)) {
+        formHook.setValue(key, value);
+      }
+    }
   });
 
   useLayoutEffect(() => {
