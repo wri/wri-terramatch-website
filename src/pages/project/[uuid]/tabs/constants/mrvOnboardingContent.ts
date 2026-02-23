@@ -89,7 +89,7 @@ export const MRV_ONBOARDING_CONTENT = [
           link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13322399098267-How-to-report-annually-on-PPC-Socioeconomic-Restoration-Partners"
         },
         {
-          title: "How to do Field Tree Monitoring for the PPC – TerraMatch Help Center",
+          title: "How to do Field Tree Monitoring",
           link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/13384531523227-How-to-do-Field-Tree-Monitoring-for-the-PPC"
         }
       ]
