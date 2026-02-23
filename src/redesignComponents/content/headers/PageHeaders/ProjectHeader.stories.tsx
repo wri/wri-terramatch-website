@@ -131,7 +131,6 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     assistedNaturalRegenerationList: [],
     goalTreesRestoredAnr: null,
     directSeedingSurvivalRate: null,
-    seedsGrownGoal: null,
     application: {
       uuid: "550e8400-e29b-41d4-a716-446655440002",
       fundingProgrammeName: "Restoration Fund",
