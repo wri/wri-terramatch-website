@@ -1,16 +1,13 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import {
-  useGetV2OrganisationsListing,
-  usePostV2Organisations,
-  usePostV2OrganisationsJoinExisting
-} from "@/generated/apiComponents";
+import { useOrganisations } from "@/connections/Organisation";
+import { usePostV2Organisations, usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
 import { V2OrganisationUpdate } from "@/generated/apiSchemas";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
@@ -41,25 +38,25 @@ const OrganizationAssignForm = () => {
     }
   });
   // Queries
-  const {
-    data,
-    isLoading,
-    isFetching,
-    refetch: fetchOrganizations
-  } = useGetV2OrganisationsListing(
-    {
-      queryParams: {
-        search: searchedTerm
-      }
-    },
-    {
-      enabled: false
-    }
+  const shouldSearch = useMemo(() => searchedTerm.trim().length > 0, [searchedTerm]);
+  const [orgsLoaded, { data: organisationsData }] = useOrganisations(
+    shouldSearch
+      ? {
+          filter: {
+            search: searchedTerm,
+            lightResource: true
+          }
+        }
+      : {
+          filter: {
+            lightResource: true
+          }
+        }
   );
 
   const { isTyping } = useInputDelay({
     when: searchedTerm,
-    callback: () => fetchOrganizations()
+    callback: () => {}
   });
 
   /**
@@ -95,7 +92,7 @@ const OrganizationAssignForm = () => {
     }
   };
 
-  const loading = isTyping || isFetching || isLoading;
+  const loading = isTyping || !orgsLoaded;
 
   return (
     <Form
@@ -126,7 +123,11 @@ const OrganizationAssignForm = () => {
           onChange={e => setSearchTerm(e.target.value)}
         />
         <When condition={!type && searchedTerm}>
-          <OrganizationAssignPanel searchedTerm={searchedTerm} organizations={data?.data ?? []} loading={loading} />
+          <OrganizationAssignPanel
+            searchedTerm={searchedTerm}
+            organizations={(organisationsData ?? []) as unknown as Array<{ uuid: string; name: string }>}
+            loading={loading}
+          />
         </When>
       </div>
       <Form.Footer

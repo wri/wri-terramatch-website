@@ -55,12 +55,14 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
   </Flex>
 );
 
-const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) =>
+const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse, isProjectManager: boolean) =>
   members
-    .map((member, index) => ({
+    .map(member => ({
       id: member.uuid ?? "",
       name: `${member.first_name} ${member.last_name}`,
-      image: `https://i.pravatar.cc/300?img=${index}`
+      image: "",
+      email: member.email_address,
+      isProjectManager
     }))
     ?.slice(0, 2) ?? [];
 
@@ -82,8 +84,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
     pathParams: { uuid: project.uuid }
   });
 
-  const dataQualityAnalysts = formatTeamMembers(partners?.data ?? []);
-  const projectManagers = formatTeamMembers(managers?.data ?? []);
+  const monitoringPartners = formatTeamMembers(partners?.data ?? [], false);
+  const projectManagers = formatTeamMembers(managers?.data ?? [], true);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -204,8 +206,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   onProfileClick: () => {}
                 },
                 {
-                  title: "Data Quality Analysts",
-                  profiles: dataQualityAnalysts,
+                  title: "Monitoring Partners",
+                  profiles: monitoringPartners,
                   onProfileClick: () => {}
                 }
               ]}

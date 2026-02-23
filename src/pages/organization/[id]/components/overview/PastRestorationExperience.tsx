@@ -5,19 +5,22 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import TextRow from "@/components/extensive/TextRow/TextRow";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
 type PastRestorationExperienceProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const PastRestorationExperience = ({ organization }: PastRestorationExperienceProps) => {
   const t = useT();
 
-  let projectBoundary: any;
+  let projectBoundary: unknown;
   try {
-    // @ts-expect-error
-    projectBoundary = JSON.parse(organization?.historic_monitoring_geojson);
+    if (organization?.historicMonitoringGeojson != null && organization.historicMonitoringGeojson !== "null") {
+      projectBoundary = JSON.parse(organization.historicMonitoringGeojson);
+    } else {
+      projectBoundary = undefined;
+    }
   } catch (e) {
     projectBoundary = undefined;
   }
@@ -28,64 +31,72 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
       <div className="mt-10 flex flex-col gap-4">
         <TextRow
           name={t("Years of relevant restoration experience:")}
-          value={organization?.relevant_experience_years}
+          value={organization?.relevantExperienceYears ?? undefined}
           nameClassName="w-1/3"
         />
-        <TextRow name={t("Total Hectares Restored:")} value={organization?.ha_restored_total} nameClassName="w-1/3" />
+        <TextRow
+          name={t("Total Hectares Restored:")}
+          value={organization?.haRestoredTotal ?? undefined}
+          nameClassName="w-1/3"
+        />
         <TextRow
           name={t("Hectares Restored in the Last 3 Years:")}
-          value={organization?.ha_restored_3year}
+          value={organization?.haRestored3Year ?? undefined}
           nameClassName="w-1/3"
         />
-        <TextRow name={t("Total Trees Grown:")} value={organization?.trees_grown_total} nameClassName="w-1/3" />
+        <TextRow
+          name={t("Total Trees Grown:")}
+          value={organization?.treesGrownTotal ?? undefined}
+          nameClassName="w-1/3"
+        />
         <TextRow
           name={t("Total Trees Grown in the Last 3 Years:")}
-          value={organization?.trees_grown_3year}
+          value={organization?.treesGrown3Year ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Tree Maintenance and After Care:")}
-          value={organization?.tree_care_approach}
+          value={organization?.treeCareApproach ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Average Tree Survival Rate:")}
-          value={organization?.avg_tree_survival_rate}
+          value={organization?.avgTreeSurvivalRate ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("What strategies have you used to maintain the trees that you have grown?:")}
-          value={organization?.tree_maintenance_aftercare_approach}
+          value={organization?.treeMaintenanceAftercareApproach ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t(
             "In which areas of this country have you worked in the past, and what are their characteristics of these landscapes?:"
           )}
-          value={organization?.restored_areas_description}
+          value={organization?.restoredAreasDescription ?? undefined}
           nameClassName="w-1/3 "
           valueClassName="h-[260px] overflow-auto"
         />
         <TextRow
           name={t("How have you monitored and evaluated the progress of your past projects?:")}
-          value={organization?.monitoring_evaluation_experience}
+          value={organization?.monitoringEvaluationExperience ?? undefined}
           nameClassName="w-1/3"
         />
         <TextRow
           name={t("Restoration Intervention Types Implemented:")}
-          // @ts-expect-error
-          value={organization?.restoration_types_implemented
-            ?.map((item: string) => {
-              const values = getRestorationInterventionTypeOptions(t);
-              return values.find(v => v.value === item)?.title;
-            })
-            .filter(Boolean)
-            .join(", ")}
+          value={
+            organization?.restorationTypesImplemented
+              ?.map((item: string) => {
+                const values = getRestorationInterventionTypeOptions(t);
+                return values.find(v => v.value === item)?.title;
+              })
+              .filter(Boolean)
+              .join(", ") ?? undefined
+          }
           nameClassName="w-1/3"
         />
         <When
-          // @ts-expect-error
-          condition={!!organization?.historic_monitoring_geojson}
+          condition={!!organization?.historicMonitoringGeojson && organization.historicMonitoringGeojson !== "null"}
         >
           <div>
             <Text variant="text-body-900" className="w-1/3">

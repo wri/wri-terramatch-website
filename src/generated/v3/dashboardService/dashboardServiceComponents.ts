@@ -12,7 +12,7 @@ export type GetTotalSectionHeadersQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -84,7 +84,7 @@ export type GetTreeRestorationGoalQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -139,7 +139,7 @@ export type GetTotalJobsCreatedQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -211,7 +211,7 @@ export type GetHectaresRestorationQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -273,7 +273,7 @@ export type DashboardEntityIndexQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
@@ -714,7 +714,7 @@ export type GetDashboardProjectsQueryParams = {
   /**
    * Filter results by programmes
    */
-  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot" | "terrafund-3")[];
+  ["programmesType[]"]?: ("terrafund" | "terrafund-landscapes" | "enterprises" | "epa-ghana-pilot")[];
   /**
    * Filter by cohorts
    */
