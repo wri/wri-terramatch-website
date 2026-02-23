@@ -114,7 +114,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="h-5 w-5 text-theme-neutral-800" />
+          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
         }
       },
       ...generateSampleData(3),
@@ -412,13 +412,13 @@ export const WithManyColumns: Story = {
 };
 
 const columns = [
-  { key: "speciesName", label: "Species Name" },
-  { key: "numberOfTreesExpected", label: "Number of Trees Expected" }
+  { key: "Column 1", label: "Label 1" },
+  { key: "Column 2", label: "Label 2" }
 ];
 
 const data = Array.from({ length: 100 }, (_, index) => ({
-  speciesName: `Species Name ${index + 1}`,
-  numberOfTreesExpected: "XXXXXX"
+  "Column 1": `Label ${index + 1}`,
+  "Column 2": `Label ${index + 1}`
 }));
 
 export const VariantFullWidth: Story = {
@@ -445,22 +445,22 @@ type NoHeaderRowData = {
 };
 
 const noHeaderData: NoHeaderRowData[] = [
-  { id: 1, 1: "Pericopsis Elata", 2: "Senna spectabilis", 3: "Senna spectabilis", 4: "Senna spectabilis" },
-  { id: 2, 1: "Canarium Schweinfurthii", 2: "Adansenthera pavonina", 3: "Pericopsis Elata", 4: "Senna spectabilis" },
-  { id: 3, 1: "Bigihia welkitschii", 2: "Pericopsis Elata", 3: "Canarium Schweinfurthii", 4: "Bigihia welkitschii" },
+  { id: 1, 1: "Label 1", 2: "Label 2", 3: "Label 3", 4: "Label 4" },
+  { id: 2, 1: "Label 5", 2: "Label 6", 3: "Label 7", 4: "Label 8" },
+  { id: 3, 1: "Label 9", 2: "Label 10", 3: "Label 11", 4: "Label 12" },
   {
     id: 4,
-    1: "Adansenthera pavonina",
-    2: "Canarium Schweinfurthii",
-    3: "Canarium Schweinfurthii",
-    4: "Bigihia welkitschii"
+    1: "Label 13",
+    2: "Label 14",
+    3: "Label 15",
+    4: "Label 16"
   },
-  { id: 5, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
-  { id: 6, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
-  { id: 7, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
-  { id: 8, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
-  { id: 9, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" },
-  { id: 10, 1: "Senna spectabilis", 2: "Bigihia welkitschii", 3: "Bigihia welkitschii", 4: "Bigihia welkitschii" }
+  { id: 5, 1: "Label 5", 2: "Label 6", 3: "Label 7", 4: "Label 8" },
+  { id: 6, 1: "Label 9", 2: "Label 10", 3: "Label 11", 4: "Label 12" },
+  { id: 7, 1: "Label 13", 2: "Label 14", 3: "Label 15", 4: "Label 16" },
+  { id: 8, 1: "Label 17", 2: "Label 18", 3: "Label 19", 4: "Label 20" },
+  { id: 9, 1: "Label 21", 2: "Label 22", 3: "Label 23", 4: "Label 24" },
+  { id: 10, 1: "Label 25", 2: "Label 26", 3: "Label 27", 4: "Label 28" }
 ];
 
 export const WithNoHeader: Story = {
@@ -477,16 +477,16 @@ export const WithNoHeader: Story = {
       return (
         <TableRow>
           <TableCell>
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[1]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[1]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[2]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[2]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[3]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[3]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="border-b border-theme-neutral-300 py-4">{row[4]}</Box>
+            <Box className="border-theme-neutral-300 border-b py-4">{row[4]}</Box>
           </TableCell>
         </TableRow>
       );
