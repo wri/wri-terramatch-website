@@ -22,6 +22,8 @@ import {
 import { Edit } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
+import { NO_COUNT_TABLE_SPECIES_PER_ROW, noCountTableColumns } from "./constants/Detail.constants";
+
 interface ProjectDetailsTabProps {
   project: ProjectFullDto;
 }
@@ -46,13 +48,6 @@ const getFieldsRequiringAttentionCount = (
   }
 };
 
-const noCountTableColumns = [
-  { key: "1", label: "" },
-  { key: "2", label: "" },
-  { key: "3", label: "" },
-  { key: "4", label: "" }
-];
-
 const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   const t = useT();
   const router = useRouter();
@@ -74,16 +69,15 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
 
   function plantsToNoCountRows(
     plants: Array<{ name?: string | null }>
-  ): Array<{ id: number; 1: string; 2: string; 3: string; 4: string }> {
-    const rows: Array<{ id: number; 1: string; 2: string; 3: string; 4: string }> = [];
-    for (let i = 0; i < plants.length; i += 4) {
-      const row = {
-        id: Math.floor(i / 4) + 1,
-        1: plants[i]?.name ?? "",
-        2: plants[i + 1]?.name ?? "",
-        3: plants[i + 2]?.name ?? "",
-        4: plants[i + 3]?.name ?? ""
+  ): Array<Record<number, string> & { id: number }> {
+    const rows: Array<Record<number, string> & { id: number }> = [];
+    for (let i = 0; i < plants.length; i += NO_COUNT_TABLE_SPECIES_PER_ROW) {
+      const row: Record<number, string> & { id: number } = {
+        id: Math.floor(i / NO_COUNT_TABLE_SPECIES_PER_ROW) + 1
       };
+      for (let j = 0; j < NO_COUNT_TABLE_SPECIES_PER_ROW; j++) {
+        row[j + 1] = plants[i + j]?.name ?? "";
+      }
       rows.push(row);
     }
     return rows;
@@ -160,15 +154,16 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                         );
                       }
                       if (rawValue.props.tableType == "noCount") {
+                        const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
                         return (
                           <Table
                             data={plantsToNoCountRows(rawValue.props.plants)}
                             columns={noCountTableColumns}
                             css={NO_HEADER_TABLE_WRAPPER_STYLES}
                             variant="full-width"
-                            totalItems={rawValue.props.plants.length / 4}
+                            totalItems={noCountTableRowCount}
                             showItemCount={false}
-                            pageSize={4}
+                            pageSize={NO_COUNT_TABLE_SPECIES_PER_ROW}
                             renderRow={rowData => {
                               const row = rowData as Record<number, string> & { id: number };
                               return (
