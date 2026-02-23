@@ -69,8 +69,11 @@ export interface SearchProps {
 export interface ToolbarTableProps {
   search: SearchProps;
   filters: IMultiActionButtonProps[];
+  onClearFilters: () => void;
   button: IButtonProps;
   className?: string;
+  tooltipContent?: string;
+  showClearFilters?: boolean;
 }
 
 export interface ViewToolbarProps {

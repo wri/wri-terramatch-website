@@ -44,7 +44,7 @@ const createColumns = (createPath: ReturnType<typeof useCreatePath>): ColumnDef<
     enableSorting: false,
     cell: props => {
       const status = props.getValue() as string;
-      return status || "<no status>";
+      return status ?? "<no status>";
     }
   },
   {
@@ -111,7 +111,7 @@ const OrganisationFundingProgrammesTable: FC = () => {
 
           if (!existing) {
             programmesMap.set(uuid, {
-              name: app.fundingProgrammeName || "",
+              name: app.fundingProgrammeName ?? "",
               createdAt: app.createdAt
             });
           } else {
@@ -130,7 +130,7 @@ const OrganisationFundingProgrammesTable: FC = () => {
           return {
             fundingProgrammeUuid: uuid,
             name: data.name,
-            status: fundingProgramme?.status || "",
+            status: fundingProgramme?.status ?? "",
             createdAt: data.createdAt
           };
         });

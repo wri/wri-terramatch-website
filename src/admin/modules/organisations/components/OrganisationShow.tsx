@@ -1,5 +1,5 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { FC, useCallback, useMemo } from "react";
 import {
   ArrayField,
@@ -19,11 +19,9 @@ import {
   useRefresh,
   useShowContext
 } from "react-admin";
-import { useSelector } from "react-redux";
 
 import ShowActions from "@/admin/components/Actions/ShowActions";
 import { FileArrayField } from "@/admin/components/Fields/FileArrayField";
-import MapField from "@/admin/components/Fields/MapField";
 import SimpleChipFieldArray from "@/admin/components/Fields/SimpleChipFieldArray";
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
@@ -31,7 +29,13 @@ import FinancialMetrics from "@/admin/components/ResourceTabs/HistoryTab/compone
 import FundingSourcesSection from "@/admin/components/ResourceTabs/HistoryTab/components/FundingSourcesSection";
 import Accordion from "@/components/elements/Accordion/Accordion";
 import { useGadmChoices } from "@/connections/Gadm";
-import { updateOrganisation } from "@/connections/Organisation";
+import {
+  updateOrganisation,
+  useOrganisationFinancialIndicators,
+  useOrganisationFundingTypes,
+  useOrganisationMedia,
+  useOrganisationTreeSpecies
+} from "@/connections/Organisation";
 import {
   getFarmersEngagementStrategyOptions,
   getWomenEngagementStrategyOptions,
@@ -39,42 +43,28 @@ import {
 } from "@/constants/options/engagementStrategy";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
-import {
-  FinancialIndicatorDto,
-  FundingTypeDto,
-  MediaDto,
-  OrganisationUpdateAttributes,
-  TreeSpeciesDto
-} from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
-import { AppStore } from "@/store/store";
 import { formatDescriptionData, formatDocumentData } from "@/utils/financialReport";
 import { optionToChoices } from "@/utils/options";
 
-import { V2FinancialIndicatorsRead, V2FundingTypeRead } from "../../../../generated/apiSchemas";
 import OrganisationApplicationsTable from "./OrganisationApplicationsTable";
 import OrganisationFundingProgrammesTable from "./OrganisationFundingProgrammesTable";
 import OrganisationPitchesTable from "./OrganisationPitchesTable";
 import { OrganisationShowAside } from "./OrganisationShowAside";
 import OrganisationUserTable from "./OrganisationUserTable";
 
-type FinancialIndicator = FinancialIndicatorDto & {
-  organisationUuid?: string;
-};
-
 const OrganisationShowActions: FC = () => {
   const record = useRecordContext();
   if (!record) return null;
   const { uuid, isTest } = record;
   const refresh = useRefresh();
-  const queryClient = useQueryClient();
   const { mutate: updateOrg } = useMutation({
     mutationFn: async (attributes: OrganisationUpdateAttributes) => {
-      if (uuid == null) throw new Error("UUID is required");
+      if (uuid == null) throw Error("UUID is required");
       return updateOrganisation(attributes, { id: uuid });
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["v3", "organisations", uuid] });
       if (uuid != null) {
         ApiSlice.pruneCache("organisations", [uuid]);
       }
@@ -94,70 +84,34 @@ const OrganisationDataConsumer = () => {
   const { record } = useShowContext();
   if (!record) <></>;
 
-  const financialIndicators = useSelector<AppStore, Array<FinancialIndicator & { uuid: string }>>(state => {
-    if (record?.uuid == null || state.api.financialIndicators == null) return [];
-
-    return Object.entries(state.api.financialIndicators)
-      .map(([uuid, resource]) => {
-        const attrs = resource.attributes as FinancialIndicator;
-        return { ...attrs, uuid };
-      })
-      .filter(indicator => indicator.organisationUuid === record.uuid);
-  });
-  const financialCollection: V2FinancialIndicatorsRead = useMemo(() => {
-    return financialIndicators.map(fi => ({
-      uuid: fi.uuid,
-      organisation_id: 0,
-      financial_report_id: 0,
-      collection: fi.collection,
-      amount: fi.amount,
-      year: fi.year,
-      description: fi.description,
-      documentation: fi.documentation ?? [],
-      exchangeRate: fi.exchangeRate
-    }));
-  }, [financialIndicators]);
-
-  const fundingTypes = useSelector<AppStore, FundingTypeDto[]>(state => {
-    if (record?.uuid == null || state.api.fundingTypes == null) return [];
-    return Object.values(state.api.fundingTypes)
-      .filter(resource => resource.attributes.organisationUuid === record.uuid)
-      .map(resource => resource.attributes);
+  const [, { financialIndicators }] = useOrganisationFinancialIndicators({
+    organisationUuid: record?.uuid ?? ""
   });
 
-  // Convert FundingTypeDto to V2FundingTypeRead format for FundingSourcesSection
-  const fundingTypesV2: V2FundingTypeRead[] = useMemo(() => {
-    return fundingTypes.map(ft => ({
-      source: ft.source ?? undefined,
-      amount: ft.amount ?? undefined,
-      year: ft.year ?? undefined,
-      type: ft.type ?? undefined,
-      organisation_name: ft.organisationName ?? undefined,
-      organisation_uuid: ft.organisationUuid ?? undefined,
-      financial_report_id: ft.financialReportId != null ? String(ft.financialReportId) : undefined
-    })) as V2FundingTypeRead[];
-  }, [fundingTypes]);
+  const [, { fundingTypes }] = useOrganisationFundingTypes({
+    organisationUuid: record?.uuid ?? ""
+  });
 
-  const years = Array.isArray(financialCollection)
-    ? Array.from(new Set(financialCollection?.map(item => item.year).filter(Boolean))).sort()
+  const years = Array.isArray(financialIndicators)
+    ? Array.from(new Set(financialIndicators?.map(item => item.year).filter(Boolean))).sort()
     : [];
 
   return (
     <div className="flex flex-col gap-8 p-2">
-      <FinancialMetrics data={financialCollection} years={years} />
+      <FinancialMetrics data={financialIndicators} years={years} />
       <Accordion
         title="Financial Documents per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDocumentsSection files={formatDocumentData(financialCollection)} />
+        <FinancialDocumentsSection files={formatDocumentData(financialIndicators)} />
       </Accordion>
       <Accordion
         title="Descriptions of Financials per Year"
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FinancialDescriptionsSection items={formatDescriptionData(financialCollection)} />
+        <FinancialDescriptionsSection items={formatDescriptionData(financialIndicators)} />
       </Accordion>
 
       <Accordion
@@ -165,7 +119,7 @@ const OrganisationDataConsumer = () => {
         variant="drawer"
         className="rounded-lg bg-white px-6 py-4 shadow-all"
       >
-        <FundingSourcesSection data={fundingTypesV2} currency={record?.currency ?? undefined} />
+        <FundingSourcesSection data={fundingTypes} currency={record?.currency ?? undefined} />
       </Accordion>
     </div>
   );
@@ -175,30 +129,12 @@ const EnrichedOrganisationShowContent = () => {
   const { record: baseRecord } = useShowContext();
   const countryChoices = useGadmChoices({ level: 0 });
 
-  const allMediaFiles = useSelector<AppStore, MediaDto[]>(state => {
-    if (baseRecord?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === baseRecord.uuid && resource.attributes.entityType === "organisations"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: baseRecord?.uuid ?? ""
   });
 
-  const treeSpeciesHistorical = useSelector<AppStore, TreeSpeciesDto[]>(state => {
-    if (baseRecord?.uuid == null || state.api.treeSpecies == null) return [];
-
-    return Object.values(state.api.treeSpecies)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === baseRecord.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collection === "historical-tree-species"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is TreeSpeciesDto => Boolean(attrs));
+  const [, { treeSpecies: treeSpeciesHistorical }] = useOrganisationTreeSpecies({
+    organisationUuid: baseRecord?.uuid ?? ""
   });
 
   const enrichedRecord = useMemo(() => {
@@ -214,21 +150,16 @@ const EnrichedOrganisationShowContent = () => {
       historicRestoration: []
     };
 
-    allMediaFiles.forEach(media => {
-      const collectionName = media.collectionName;
-      if (collectionName && Object.prototype.hasOwnProperty.call(mediaFilesByCollection, collectionName)) {
-        mediaFilesByCollection[collectionName].push({
-          url: media.url,
-          file_name: media.fileName,
-          uuid: media.uuid
-        });
+    allMediaFiles.forEach(({ collectionName, url, fileName, uuid }) => {
+      if (collectionName && mediaFilesByCollection[collectionName]) {
+        mediaFilesByCollection[collectionName].push({ url, fileName, uuid });
       }
     });
 
     return {
       ...baseRecord,
-      logo: mediaFilesByCollection.logo[0] || baseRecord.logo,
-      cover: mediaFilesByCollection.cover[0] || baseRecord.cover,
+      logo: mediaFilesByCollection.logo[0] ?? baseRecord.logo,
+      cover: mediaFilesByCollection.cover[0] ?? baseRecord.cover,
       reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
       additional:
         mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,
@@ -277,8 +208,8 @@ const EnrichedOrganisationShowContent = () => {
           <TextField source="phone" label="Organization WhatsApp Enabled Phone Number" emptyText="Not Provided" />
           <DateField source="foundingDate" label="Date organization founded" emptyText="Not Provided" locales="en-GB" />
           <TextField source="description" label="Organization Details" emptyText="Not Provided" />
-          <ImageField source="logo.url" label="Logo" title="logo.file_name" emptyText="Not Provided" />
-          <ImageField source="cover.url" label="Cover" title="cover.file_name" emptyText="Not Provided" />
+          <ImageField source="logo.url" label="Logo" title="logo.fileName" emptyText="Not Provided" />
+          <ImageField source="cover.url" label="Cover" title="cover.fileName" emptyText="Not Provided" />
 
           <FileArrayField source="reference" label="Reference Letters" />
           <FileArrayField source="additional" label="Other additional documents" />
@@ -372,11 +303,6 @@ const EnrichedOrganisationShowContent = () => {
           <TextField
             source="monitoringEvaluationExperience"
             label="Monitoring and evaluation experience"
-            emptyText="Not Provided"
-          />
-          <MapField
-            label="Historic monitoring shapefile"
-            source="historic_monitoring_geojson"
             emptyText="Not Provided"
           />
           <FileArrayField

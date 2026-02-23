@@ -1,0 +1,34 @@
+ANR Monitoring Plots – LOE (Human + AI/Cursor)
+==============================================
+
+Area: Backend
+Scope: New table keyed by site polygon UUID; store GeoJSON blob. Endpoints: POST (upload), GET by polygon UUID, DELETE. Enforce polygon belongs to site; restrict to status=approved and restoration_practice includes ANR.
+LOE: 2.5 d
+
+---
+
+Area: Admin – Upload
+Scope: In Polygon Review Tab, add "Upload ANR plot" for selected polygon. Enabled only when polygon approved + practice includes ANR. File input (GeoJSON), call API, refetch, refresh map. Includes replace (re-upload) and delete.
+LOE: 2 d
+
+---
+
+Area: Map – Layer and Toggle
+Scope: Toggle control to show/hide ANR plots. When on and polygon selected: fetch plot GeoJSON for that polygon, add GeoJSON source and fill/line layer (distinct style from site polygons), tooltip for plot ID. When off or polygon switch: clear layer. Gate on ANR + approved.
+LOE: 3 d
+
+---
+
+Area: PD – Download
+Scope: In OverviewMapArea/MapPolygonPanel: "Download plots" for selected polygon only. Reuse downloadGeoJsonFile pattern. GET plot by polygon UUID, trigger download. Visible only when polygon is ANR + approved.
+LOE: 0.5 d
+
+---
+
+Area: Testing and Edge Cases
+Scope: Empty state, large GeoJSON, polygon switch timing, upload/delete errors, regression on polygon QA workflows.
+LOE: 1 d
+
+---
+
+TOTAL: 9 d

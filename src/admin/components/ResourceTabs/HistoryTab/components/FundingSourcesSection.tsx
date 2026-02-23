@@ -6,11 +6,11 @@ import { VARIANT_TABLE_DASHBOARD_LIST } from "@/components/elements/Table/TableV
 import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
-import { V2FundingTypeRead } from "@/generated/apiSchemas";
+import { FundingTypeDto } from "@/generated/v3/userService/userServiceSchemas";
 import { currencyInput } from "@/utils/financialReport";
 
 interface IProps {
-  data?: V2FundingTypeRead[];
+  data?: FundingTypeDto[];
   currency?: string;
 }
 

@@ -8,16 +8,14 @@ import {
   TextInput,
   useEditContext
 } from "react-admin";
-import { useSelector } from "react-redux";
 import * as yup from "yup";
 
 import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import { ImageUploadInput } from "@/admin/components/Inputs/ImageUploadInput";
 import { SelectCountryInput } from "@/admin/components/Inputs/SelectCountryInput";
 import { validateForm } from "@/admin/utils/forms";
+import { useOrganisationMedia } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { MediaDto } from "@/generated/v3/userService/userServiceSchemas";
-import { AppStore } from "@/store/store";
 import { FileType } from "@/types/common";
 import { optionToChoices } from "@/utils/options";
 
@@ -51,16 +49,8 @@ const validationSchema = yup.object({
 const EnrichedOrganisationEditContent = () => {
   const { record: baseRecord } = useEditContext();
 
-  const allMediaFiles = useSelector<AppStore, MediaDto[]>(state => {
-    if (baseRecord?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === baseRecord.uuid && resource.attributes.entityType === "organisations"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: baseRecord?.uuid ?? ""
   });
 
   const enrichedRecord = useMemo(() => {
@@ -96,8 +86,8 @@ const EnrichedOrganisationEditContent = () => {
 
     return {
       ...baseRecord,
-      logo: mediaFilesByCollection.logo[0] || baseRecord.logo,
-      cover: mediaFilesByCollection.cover[0] || baseRecord.cover,
+      logo: mediaFilesByCollection.logo[0] ?? baseRecord.logo,
+      cover: mediaFilesByCollection.cover[0] ?? baseRecord.cover,
       reference: mediaFilesByCollection.reference.length > 0 ? mediaFilesByCollection.reference : baseRecord.reference,
       additional:
         mediaFilesByCollection.additional.length > 0 ? mediaFilesByCollection.additional : baseRecord.additional,

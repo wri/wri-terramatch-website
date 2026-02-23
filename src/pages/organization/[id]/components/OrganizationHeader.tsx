@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -10,10 +9,10 @@ import IconSocial from "@/components/extensive/Icon/IconSocial";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useGadmOptions } from "@/connections/Gadm";
+import { useOrganisationMediaByCollection } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
 import { useModalContext } from "@/context/modal.provider";
-import { MediaDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
-import { AppStore } from "@/store/store";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 import OrganizationEditModal from "./edit/OrganizationEditModal";
@@ -29,18 +28,9 @@ const OrganizationHeader = ({ organization }: OrganizationHeaderProps) => {
   const { openModal } = useModalContext();
   const countryOptions = useGadmOptions({ level: 0 });
 
-  const logoMedia = useSelector<AppStore, MediaDto[]>(state => {
-    if (organization?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collectionName === "logo"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: logoMedia }] = useOrganisationMediaByCollection({
+    organisationUuid: organization?.uuid ?? "",
+    collectionName: "logo"
   });
 
   const logoUrl = logoMedia[0]?.url ?? null;

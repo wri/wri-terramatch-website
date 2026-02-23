@@ -51,6 +51,10 @@ export type VerificationUserRequest = {
 };
 
 export type OrganisationLightDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
@@ -62,6 +66,10 @@ export type OrganisationLightDto = {
 };
 
 export type OrganisationFullDto = {
+  /**
+   * Indicates if this resource has the full resource definition.
+   */
+  lightResource: boolean;
   uuid: string;
   status: "draft" | "pending" | "approved" | "rejected";
   name: string | null;
@@ -506,8 +514,6 @@ export type TreeSpeciesDto = {
 export type OrganisationUpdateAttributes = {
   status?: "approved" | "pending" | "rejected" | "draft";
   type?: "non-profit-organization" | "for-profit-organization";
-  subtype?: Record<string, any> | null;
-  private?: boolean;
   /**
    * Update the isTest flag.
    */
@@ -527,48 +533,29 @@ export type OrganisationUpdateAttributes = {
   description?: Record<string, any> | null;
   countries?: string[] | null;
   languages?: string[] | null;
-  treeCareApproach?: Record<string, any> | null;
-  relevantExperienceYears?: number | null;
-  treesGrown3Year?: number | null;
-  treesGrownTotal?: number | null;
-  haRestored3Year?: number | null;
-  haRestoredTotal?: number | null;
-  finStartMonth?: number | null;
   webUrl?: Record<string, any> | null;
   facebookUrl?: Record<string, any> | null;
   instagramUrl?: Record<string, any> | null;
   linkedinUrl?: Record<string, any> | null;
   twitterUrl?: Record<string, any> | null;
-  leadershipTeamTxt?: Record<string, any> | null;
+  finStartMonth?: number | null;
+  additionalFundingDetails?: Record<string, any> | null;
   engagementFarmers?: string[] | null;
   engagementWomen?: string[] | null;
   engagementYouth?: string[] | null;
-  currency?: string;
-  states?: string[] | null;
-  district?: Record<string, any> | null;
-  accountNumber1?: Record<string, any> | null;
-  accountNumber2?: Record<string, any> | null;
-  loanStatusAmount?: Record<string, any> | null;
-  loanStatusTypes?: string[] | null;
-  approachOfMarginalizedCommunities?: Record<string, any> | null;
-  communityEngagementNumbersMarginalized?: Record<string, any> | null;
-  landSystems?: string[] | null;
-  fundUtilisation?: string[] | null;
-  detailedInterventionTypes?: string[] | null;
+  communityExperience?: Record<string, any> | null;
+  totalEngagedCommunityMembers3Yr?: number | null;
+  relevantExperienceYears?: number | null;
+  haRestoredTotal?: number | null;
+  haRestored3Year?: number | null;
+  treesGrownTotal?: number | null;
+  treesGrown3Year?: number | null;
+  avgTreeSurvivalRate?: number | null;
+  restorationTypesImplemented?: string[] | null;
   treeMaintenanceAftercareApproach?: Record<string, any> | null;
   restoredAreasDescription?: Record<string, any> | null;
-  restorationTypesImplemented?: string[] | null;
-  historicMonitoringGeojson?: Record<string, any> | null;
   monitoringEvaluationExperience?: Record<string, any> | null;
-  fundingHistory?: Record<string, any> | null;
-  totalEngagedCommunityMembers3Yr?: number | null;
-  percentEngagedWomen3Yr?: number | null;
-  percentEngagedMen3Yr?: number | null;
-  percentEngagedUnder353Yr?: number | null;
-  percentEngagedOver353Yr?: number | null;
-  percentEngagedSmallholder3Yr?: number | null;
-  totalTreesGrown?: number | null;
-  avgTreeSurvivalRate?: number | null;
+  historicMonitoringGeojson?: Record<string, any> | null;
   ftPermanentEmployees?: number | null;
   ptPermanentEmployees?: number | null;
   tempEmployees?: number | null;
@@ -576,56 +563,6 @@ export type OrganisationUpdateAttributes = {
   maleEmployees?: number | null;
   youngEmployees?: number | null;
   over35Employees?: number | null;
-  additionalFundingDetails?: Record<string, any> | null;
-  communityExperience?: Record<string, any> | null;
-  businessModel?: Record<string, any> | null;
-  fieldStaffSkills?: Record<string, any> | null;
-  fpcCompany?: "yes" | "no" | null;
-  numOfMarginalisedEmployees?: number | null;
-  benefactorsFpcCompany?: Record<string, any> | null;
-  boardRemunerationFpcCompany?: Record<string, any> | null;
-  boardEngagementFpcCompany?: Record<string, any> | null;
-  biodiversityFocus?: string[] | null;
-  globalPlanningFrameworks?: string[] | null;
-  pastGovCollaboration?: Record<string, any> | null;
-  engagementLandless?: Record<string, any> | null;
-  socioeconomicImpact?: Record<string, any> | null;
-  environmentalImpact?: Record<string, any> | null;
-  growthStage?: Record<string, any> | null;
-  totalEmployees?: number | null;
-  additionalComments?: Record<string, any> | null;
-  consortium?: Record<string, any> | null;
-  femaleYouthLeadershipExample?: Record<string, any> | null;
-  level0PastRestoration?: string[] | null;
-  level1PastRestoration?: string[] | null;
-  level2PastRestoration?: string[] | null;
-  treesNaturallyRegeneratedTotal?: number | null;
-  treesNaturallyRegenerated3Year?: number | null;
-  externalTechnicalAssistance?: Record<string, any> | null;
-  barriersToFunding?: Record<string, any> | null;
-  capacityBuildingSupportNeeded?: Record<string, any> | null;
-  associationsCooperatives?: Record<string, any> | null;
-  territoriesOfOperation?: string[] | null;
-  decisionMakingStructureDescription?: Record<string, any> | null;
-  decisionMakingStructureIndividualsInvolved?: Record<string, any> | null;
-  averageWorkerIncome?: number | null;
-  anrPracticesPast?: string[] | null;
-  anrMonitoringApproaches?: string[] | null;
-  anrMonitoringApproachesDescription?: Record<string, any> | null;
-  anrCommunicationFunders?: Record<string, any> | null;
-  bioeconomyProducts?: Record<string, any> | null;
-  bioeconomyTraditionalKnowledge?: Record<string, any> | null;
-  bioeconomyProductProcessing?: Record<string, any> | null;
-  bioeconomyBuyers?: Record<string, any> | null;
-  communityMembersEngaged3yr?: number | null;
-  communityMembersEngaged3yrWomen?: number | null;
-  communityMembersEngaged3yrMen?: number | null;
-  communityMembersEngaged3yrYouth?: number | null;
-  communityMembersEngaged3yrNonYouth?: number | null;
-  communityMembersEngaged3yrSmallholder?: number | null;
-  communityMembersEngaged3YrBackwardClass?: number | null;
-  engagementNonYouth?: Record<string, any> | null;
-  treeRestorationPractices?: string[] | null;
 };
 
 export type OrganisationUpdateData = {

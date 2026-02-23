@@ -1,8 +1,6 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
 
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { EditModalBase } from "@/components/extensive/Modal/ModalsBases";
@@ -10,21 +8,20 @@ import ConfirmationModal from "@/components/extensive/WizardForm/modals/Confirma
 import ErrorModal from "@/components/extensive/WizardForm/modals/ErrorModal";
 import WizardEditForm from "@/components/extensive/WizardForm/modals/WizardEditForm";
 import { useGadmOptions } from "@/connections/Gadm";
-import { updateOrganisation, useOrganisation } from "@/connections/Organisation";
+import {
+  updateOrganisation,
+  useOrganisation,
+  useOrganisationFundingTypes,
+  useOrganisationLeadership,
+  useOrganisationMedia,
+  useOrganisationOwnershipStakes,
+  useOrganisationTreeSpecies
+} from "@/connections/Organisation";
 import { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import {
-  FundingTypeDto,
-  LeadershipDto,
-  MediaDto,
-  OrganisationFullDto,
-  OrganisationUpdateAttributes,
-  OwnershipStakeDto,
-  TreeSpeciesDto
-} from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationFullDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { formDefaultValues, normalizedFormData } from "@/helpers/customForms";
-import { AppStore } from "@/store/store";
 import { UploadedFile } from "@/types/common";
 
 import { getSteps } from "./getEditOrganisationSteps";
@@ -45,7 +42,6 @@ const COLLECTIONS = [
 ];
 
 const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const uuid = router.query.id as string;
   const t = useT();
@@ -55,16 +51,8 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
   const formSteps = useMemo(() => getSteps(t, countryOptions ?? []), [countryOptions, t]);
   const provider = useLocalStepsProvider(formSteps);
 
-  const allMediaFiles = useSelector<AppStore, MediaDto[]>(state => {
-    if (organization?.uuid == null || state.api.media == null) return [];
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid && resource.attributes.entityType === "organisations"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: organization?.uuid ?? ""
   });
 
   const mediaFilesByCollection = useMemo(() => {
@@ -99,51 +87,20 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
     return result;
   }, [allMediaFiles]);
 
-  const leadershipTeam = useSelector<AppStore, LeadershipDto[]>(state => {
-    if (organization?.uuid == null || state.api.leaderships == null) return [];
-
-    return Object.values(state.api.leaderships)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collection === "leadership-team"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is LeadershipDto => Boolean(attrs));
+  const [, { leadership: leadershipTeam }] = useOrganisationLeadership({
+    organisationUuid: organization?.uuid ?? ""
   });
 
-  const treeSpeciesHistorical = useSelector<AppStore, TreeSpeciesDto[]>(state => {
-    if (organization?.uuid == null || state.api.treeSpecies == null) return [];
-
-    return Object.values(state.api.treeSpecies)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collection === "historical-tree-species"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is TreeSpeciesDto => Boolean(attrs));
+  const [, { treeSpecies: treeSpeciesHistorical }] = useOrganisationTreeSpecies({
+    organisationUuid: organization?.uuid ?? ""
   });
 
-  const ownershipStakes = useSelector<AppStore, OwnershipStakeDto[]>(state => {
-    if (organization?.uuid == null || state.api.ownershipStakes == null) return [];
-
-    return Object.values(state.api.ownershipStakes)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid && resource.attributes.entityType === "organisations"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is OwnershipStakeDto => Boolean(attrs));
+  const [, { ownershipStakes }] = useOrganisationOwnershipStakes({
+    organisationUuid: organization?.uuid ?? ""
   });
 
-  const fundingTypes = useSelector<AppStore, FundingTypeDto[]>(state => {
-    if (organization?.uuid == null || state.api.fundingTypes == null) return [];
-    return Object.values(state.api.fundingTypes)
-      .filter(resource => resource.attributes.organisationUuid === organization.uuid)
-      .map(resource => resource.attributes);
+  const [, { fundingTypes }] = useOrganisationFundingTypes({
+    organisationUuid: organization?.uuid ?? ""
   });
 
   const defaultValues = useMemo(() => {
@@ -188,8 +145,6 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         const updatedOrg = await updateOrganisation(attributes, { id: uuid });
 
         if (updatedOrg?.uuid != null) {
-          await queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-
           closeModal(ModalId.ORGANIZATION_EDIT_MODAL);
           return openModal(ModalId.CONFIRMATION_MODAL, <ConfirmationModal />);
         } else {
@@ -199,7 +154,7 @@ const OrganizationEditModal = ({ organization }: OrganizationEditModalProps) => 
         return openModal(ModalId.ERROR_MODAL, <ErrorModal />);
       }
     },
-    [closeModal, openModal, provider, uuid, queryClient]
+    [closeModal, openModal, provider, uuid]
   );
 
   const error =

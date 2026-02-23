@@ -2,7 +2,6 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import { useMemo } from "react";
 import { When } from "react-if";
-import { useSelector } from "react-redux";
 
 import FinancialDescriptionsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDescriptionsSection";
 import FinancialDocumentsSection from "@/admin/components/ResourceTabs/HistoryTab/components/FinancialDocumentsSection";
@@ -15,20 +14,22 @@ import ActionTrackerCardRow from "@/components/extensive/ActionTracker/ActionTra
 import List from "@/components/extensive/List/List";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
+import {
+  useOrganisationFinancialIndicators,
+  useOrganisationFinancialReports,
+  useOrganisationFundingTypes
+} from "@/connections/Organisation";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useModalContext } from "@/context/modal.provider";
-import { V2FundingTypeRead } from "@/generated/apiSchemas";
 import {
   FinancialIndicatorDto,
   FinancialReportLightDto,
-  FundingTypeDto
+  OrganisationFullDto
 } from "@/generated/v3/userService/userServiceSchemas";
-import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import FinancialBudgetStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "@/pages/reports/financial-report/[uuid]/components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "@/pages/reports/financial-report/[uuid]/components/FinancialStackedBarChart";
-import { AppStore } from "@/store/store";
 import { UploadedFile } from "@/types/common";
 import {
   calculateFinancialRatioStats,
@@ -46,48 +47,22 @@ type FinancialTabContentProps = {
   organization?: OrganisationFullDto;
 };
 
-type FinancialIndicator = FinancialIndicatorDto & {
-  organisationUuid?: string;
-};
-
-type FinancialStackedBarChartProps = {
-  uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
-  collection: string;
-  amount: number | null;
-  year: number;
-  description: string | null;
-  documentation: any[];
-};
+type FinancialIndicatorWithUuid = FinancialIndicatorDto & { uuid: string };
 
 const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
   const t = useT();
   const { openModal } = useModalContext();
 
-  const financialIndicators = useSelector<AppStore, Array<FinancialIndicator & { uuid: string }>>(state => {
-    if (organization?.uuid == null || state.api.financialIndicators == null) return [];
-
-    return Object.entries(state.api.financialIndicators)
-      .map(([uuid, resource]) => {
-        const attrs = resource.attributes as FinancialIndicator;
-        return { ...attrs, uuid };
-      })
-      .filter(indicator => indicator.organisationUuid === organization.uuid);
+  const [, { financialIndicators }] = useOrganisationFinancialIndicators({
+    organisationUuid: organization?.uuid ?? ""
   });
 
-  const financialReports = useSelector<AppStore, FinancialReportLightDto[]>(state => {
-    if (organization?.uuid == null || state.api.financialReports == null) return [];
-    return Object.values(state.api.financialReports)
-      .filter(resource => resource.attributes.organisationUuid === organization.uuid)
-      .map(resource => resource.attributes);
+  const [, { financialReports }] = useOrganisationFinancialReports({
+    organisationUuid: organization?.uuid ?? ""
   });
 
-  const fundingTypes = useSelector<AppStore, FundingTypeDto[]>(state => {
-    if (organization?.uuid == null || state.api.fundingTypes == null) return [];
-    return Object.values(state.api.fundingTypes)
-      .filter(resource => resource.attributes.organisationUuid === organization.uuid)
-      .map(resource => resource.attributes);
+  const [, { fundingTypes }] = useOrganisationFundingTypes({
+    organisationUuid: organization?.uuid ?? ""
   });
 
   const budgetFiles = useMemo(() => {
@@ -124,32 +99,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
     })
   );
 
-  // Convert FundingTypeDto to V2FundingTypeRead format for compatibility
-  const fundingTypesV2: V2FundingTypeRead[] = fundingTypes.map(ft => ({
-    source: ft.source ?? undefined,
-    amount: ft.amount ?? undefined,
-    year: ft.year ?? undefined,
-    type: ft.type ?? undefined,
-    organisation_name: ft.organisationName ?? undefined,
-    organisation_uuid: ft.organisationUuid ?? undefined,
-    financial_report_id: ft.financialReportId ?? undefined
-  })) as V2FundingTypeRead[];
-
-  // Convert FinancialIndicatorDto to the format expected by financial utilities
-  const financialData = useMemo(
-    () =>
-      financialIndicators.map(fi => ({
-        uuid: fi.uuid,
-        organisation_id: 0,
-        financial_report_id: 0,
-        collection: fi.collection,
-        amount: fi.amount,
-        year: fi.year,
-        description: fi.description,
-        documentation: fi.documentation ?? []
-      })),
-    [financialIndicators]
-  );
+  const financialData = useMemo(() => financialIndicators, [financialIndicators]);
   const financialRatioStats = calculateFinancialRatioStats(financialData);
   const hasNetProfitData =
     Array.isArray(financialData) &&
@@ -213,8 +163,8 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorWithUuid) => item.collection === "profit")
+                .map((item: FinancialIndicatorWithUuid) => (
                   <CardFinancial
                     key={item.uuid}
                     title={t(item.year.toString())}
@@ -267,10 +217,10 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialData
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorWithUuid) => item.collection === "budget")
+                .map((item: FinancialIndicatorWithUuid) => (
                   <CardFinancial
-                    key={item.uuid}
+                    key={item.uuid ?? item.entityUuid}
                     title={t(item.year.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Budget")}
@@ -307,7 +257,7 @@ const FinancialTabContent = ({ organization }: FinancialTabContentProps) => {
         <Text variant="text-24-bold" className="mb-2">
           {t("Major Funding Sources by Year")}
         </Text>
-        <FundingSourcesSection data={fundingTypesV2} currency={organization?.currency ?? undefined} />
+        <FundingSourcesSection data={fundingTypes} currency={organization?.currency ?? undefined} />
       </Container>
       {/* {previous design} */}
       <Container className="hidden py-15">

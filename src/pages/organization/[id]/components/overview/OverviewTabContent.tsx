@@ -2,17 +2,16 @@ import { useT } from "@transifex/react";
 import _ from "lodash";
 import { useMemo } from "react";
 import { When } from "react-if";
-import { useSelector } from "react-redux";
 
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
+import { useOrganisationMedia } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
-import { MediaDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import PastCommunityExperience from "@/pages/organization/[id]/components/overview/PastCommunityExperience";
 import TeamAndResources from "@/pages/organization/[id]/components/overview/TeamAndResources";
-import { AppStore } from "@/store/store";
 import { UploadedFile } from "@/types/common";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
@@ -29,23 +28,17 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
   const t = useT();
   const { openModal } = useModalContext();
 
-  const mediaFiles = useSelector<AppStore, MediaDto[]>(state => {
-    if (organization?.uuid == null || state.api.media == null) {
-      return [];
-    }
-
-    return Object.values(state.api.media)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          ["reference", "additional", "op_budget_2year", "legal_registration", "previous_annual_reports"].includes(
-            resource.attributes.collectionName ?? ""
-          )
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is MediaDto => Boolean(attrs));
+  const [, { media: allMediaFiles }] = useOrganisationMedia({
+    organisationUuid: organization?.uuid ?? ""
   });
+
+  const mediaFiles = useMemo(() => {
+    return allMediaFiles.filter(media =>
+      ["reference", "additional", "op_budget_2year", "legal_registration", "previous_annual_reports"].includes(
+        media.collectionName ?? ""
+      )
+    );
+  }, [allMediaFiles]);
 
   const files: UploadedFile[] = useMemo(() => {
     return mediaFiles
@@ -127,12 +120,8 @@ const OverviewTabContent = ({ organization }: OverviewTabContentProps) => {
     const hasLegitimacyFiles = mediaFiles.some(
       media => media.collectionName === "reference" || media.collectionName === "legal_registration"
     );
-
     return {
-      pastRestorationExperience: _.some(
-        pastRestorationExperience,
-        value => value == null || (typeof value === "number" && isNaN(value))
-      ),
+      pastRestorationExperience: !_.every(pastRestorationExperience, _.isFinite),
       legitimacy: !hasLegitimacyFiles
     };
   }, [organization, mediaFiles]);

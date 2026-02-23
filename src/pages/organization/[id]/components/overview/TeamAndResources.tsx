@@ -1,14 +1,13 @@
 import { useT } from "@transifex/react";
 import React from "react";
 import { When } from "react-if";
-import { useSelector } from "react-redux";
 
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_BORDER_ALL } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { useGadmOptions } from "@/connections/Gadm";
-import { LeadershipDto, OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
-import { AppStore } from "@/store/store";
+import { useOrganisationLeadership } from "@/connections/Organisation";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 type TeamAndResourcesProps = {
@@ -19,18 +18,8 @@ const TeamAndResources = ({ organization }: TeamAndResourcesProps) => {
   const t = useT();
   const countryOptions = useGadmOptions({ level: 0 });
 
-  const leadershipTeam = useSelector<AppStore, LeadershipDto[]>(state => {
-    if (organization?.uuid == null || state.api.leaderships == null) return [];
-
-    return Object.values(state.api.leaderships)
-      .filter(
-        resource =>
-          resource.attributes.entityUuid === organization.uuid &&
-          resource.attributes.entityType === "organisations" &&
-          resource.attributes.collection === "leadership-team"
-      )
-      .map(resource => resource.attributes)
-      .filter((attrs): attrs is LeadershipDto => Boolean(attrs));
+  const [, { leadership: leadershipTeam }] = useOrganisationLeadership({
+    organisationUuid: organization?.uuid ?? ""
   });
 
   return (

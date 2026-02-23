@@ -46,6 +46,7 @@ import {
   TaskReportDto
 } from "@/pages/project/[uuid]/reporting-task/types";
 import useGetReportingTasksTourSteps from "@/pages/project/[uuid]/reporting-task/useGetReportingTasksTourSteps";
+import ApiSlice from "@/store/apiSlice";
 import { Status } from "@/types/common";
 
 const StatusMapping: { [index: string]: Status } = {
@@ -234,6 +235,7 @@ const ReportingTaskPage = () => {
 
         const handleClick = useCallback(() => {
           nothingToReportHandler(v3Name as NothingToReportEntity, uuid);
+          ApiSlice.pruneCache("actions");
         }, [uuid, v3Name]);
 
         return (

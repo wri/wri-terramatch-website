@@ -28,22 +28,6 @@ export interface OrganisationDataProvider extends Partial<DataProvider> {
 // TODO: Ask BED to provide sortable fields list.
 export const organisationSortableList: string[] = ["name", "created_at", "type"];
 
-const normalizeOrganisationObject = (organisation: OrganisationFullDto) => {
-  // Extract enrolled funding programmes from project pitches if available
-  // Note: This might need to be adjusted based on v3 data structure
-  const enrolled_funding_programmes: string[] = [];
-  // TODO: Check if project_pitches or similar data is available in v3 OrganisationFullDto
-  // For now, we'll return an empty array and can update when we know the v3 structure
-
-  return {
-    data: {
-      ...organisation,
-      id: organisation.uuid,
-      enrolled_funding_programmes
-    }
-  };
-};
-
 export const organisationDataProvider: OrganisationDataProvider = {
   // @ts-ignore
   async create(__, params) {
@@ -80,12 +64,8 @@ export const organisationDataProvider: OrganisationDataProvider = {
       if (loadFailure != null) {
         throw v3ErrorForRA("Organisation get fetch failed", loadFailure);
       }
-
-      if (organisation == null) {
-        throw v3ErrorForRA("Organisation get fetch failed", new Error("Organisation not found"));
-      }
-
-      return { data: normalizeOrganisationObject(organisation).data as RecordType };
+      const org = organisation as OrganisationFullDto;
+      return { data: { ...org, id: org.uuid } as RecordType };
     } catch (err) {
       throw v3ErrorForRA("Organisation get fetch failed", err);
     }

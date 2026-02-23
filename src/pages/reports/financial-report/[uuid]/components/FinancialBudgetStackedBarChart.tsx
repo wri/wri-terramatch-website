@@ -12,26 +12,10 @@ import {
   YAxis
 } from "recharts";
 
+import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { currencyInput, formatProfitValue, formatYAxisNumber } from "@/utils/financialReport";
 
-type FinancialBudgetStackedBarChartProps = {
-  uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
-  collection: string;
-  amount: number | null;
-  year: number;
-  description: string | null;
-  documentation?: any[];
-};
-
-const FinancialBudgetStackedBarChart = ({
-  data,
-  currency
-}: {
-  data: FinancialBudgetStackedBarChartProps[];
-  currency?: string;
-}) => {
+const FinancialBudgetStackedBarChart = ({ data, currency }: { data: FinancialIndicatorDto[]; currency?: string }) => {
   const currencySymbol = useMemo(() => {
     return currency ? currencyInput[currency] ?? "" : "";
   }, [currency]);
