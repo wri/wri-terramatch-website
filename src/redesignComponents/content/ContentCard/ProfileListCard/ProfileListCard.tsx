@@ -2,11 +2,10 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
+import ProfileItem from "@/redesignComponents/dataDisplay/List/ListItem/ProfileItem";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
-
-import ProfileItem from "./ProfileItem";
 
 export interface IProfile {
   id: string;
@@ -77,7 +76,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Invite Team Member")}
                 <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
