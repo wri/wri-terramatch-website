@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
@@ -13,12 +13,15 @@ import { useInputDelay } from "@/hooks/useInputDelay";
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
 
+const ORG_LIST_FILTER_BASE = { lightResource: true, view: "public" } as const;
+
 const OrganizationAssignForm = () => {
   const t = useT();
   const router = useRouter();
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
 
-  const [searchedTerm, setSearchTerm] = useState<string>("");
+  const searchedTerm = (form.watch("name") ?? "") as string;
+  const shouldSearch = searchedTerm.trim().length > 0;
 
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
@@ -27,27 +30,14 @@ const OrganizationAssignForm = () => {
       router.push(`/organization/status/pending`);
     }
   });
-  // Queries
-  const shouldSearch = useMemo(() => searchedTerm.trim().length > 0, [searchedTerm]);
-  const [orgsLoaded, { data: organisationsData }] = useOrganisations(
-    shouldSearch
-      ? {
-          filter: {
-            search: searchedTerm,
-            lightResource: true
-          }
-        }
-      : {
-          filter: {
-            lightResource: true
-          }
-        }
-  );
 
-  const { isTyping } = useInputDelay({
-    when: searchedTerm,
-    callback: () => {}
-  });
+  const orgFilter = useMemo(
+    () => (shouldSearch ? { ...ORG_LIST_FILTER_BASE, search: searchedTerm } : ORG_LIST_FILTER_BASE),
+    [shouldSearch, searchedTerm]
+  );
+  const [orgsLoaded, { data: organisationsData }] = useOrganisations({ filter: orgFilter });
+
+  const { isTyping } = useInputDelay({ when: searchedTerm, callback: () => {} });
 
   /**
    * Handle successful organization creation
@@ -84,40 +74,54 @@ const OrganizationAssignForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTyping]);
 
-  /**
-   * Handle Join Organization Button Click
-   */
-  const handleJoin = async () => {
-    if (!selectedOrganization?.uuid) return;
+  const handleJoin = useCallback(() => {
+    if (selectedOrganization?.uuid == null) return;
     joinOrganisation({
       body: {
-        organisation_uuid: selectedOrganization?.uuid
+        organisation_uuid: selectedOrganization.uuid
       }
     });
-  };
+  }, [selectedOrganization?.uuid, joinOrganisation]);
 
-  /**
-   * Handle Create Organization Button Click
-   */
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     if (createOrganisation != null) {
       createOrganisation({ status: "draft" });
     }
-  };
+  }, [createOrganisation]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (type === "join") {
+        handleJoin();
+      } else if (type === "create") {
+        handleCreate();
+      }
+    },
+    [type, handleJoin, handleCreate]
+  );
 
   const loading = isTyping || !orgsLoaded;
+  const primaryButtonProps = useMemo(
+    () =>
+      type === "join"
+        ? {
+            type: "submit" as const,
+            className: "!w-auto px-8",
+            disabled: joinOrganisationLoading,
+            children: t("Apply to join organization")
+          }
+        : {
+            type: "button" as const,
+            disabled: organisationCreateLoading,
+            children: t("Create Organization"),
+            onClick: handleCreate
+          },
+    [type, joinOrganisationLoading, organisationCreateLoading, t, handleCreate]
+  );
 
   return (
-    <Form
-      onSubmit={e => {
-        e.preventDefault(); //To prevent form submit default behavior which was causing page to refresh which lead to `Ns_binding_aborted` error moreInfo: https://stackoverflow.com/questions/704561/ns-binding-aborted-shown-in-firefox-with-httpfox
-        if (type === "join") {
-          handleJoin();
-        } else if (type === "create") {
-          handleCreate();
-        }
-      }}
-    >
+    <Form onSubmit={handleSubmit}>
       <Form.Header
         title={t("Join Or Create Organization")}
         subtitle={t(
@@ -133,7 +137,6 @@ const OrganizationAssignForm = () => {
           placeholder={t("Type Organization Name")}
           error={form.formState.errors.name}
           clearable
-          onChange={e => setSearchTerm(e.target.value)}
         />
         <When condition={!type && searchedTerm}>
           <OrganizationAssignPanel
@@ -148,21 +151,7 @@ const OrganizationAssignForm = () => {
           children: "Back",
           onClick: () => router.back()
         }}
-        primaryButtonProps={
-          type === "join"
-            ? {
-                type: "submit",
-                className: "!w-auto px-8",
-                disabled: joinOrganisationLoading,
-                children: t("Apply to join organization")
-              }
-            : {
-                type: "button",
-                disabled: organisationCreateLoading,
-                children: t("Create Organization"),
-                onClick: handleCreate
-              }
-        }
+        primaryButtonProps={primaryButtonProps}
       />
     </Form>
   );
