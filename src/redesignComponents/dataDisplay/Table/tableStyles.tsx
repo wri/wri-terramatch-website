@@ -10,6 +10,8 @@ export const getTableWrapperStyles = (
   scrollableWidth?: string,
   scrollableHeight?: string,
   dataByPage?: any[],
+  pageSize?: number,
+  actualTotalItems?: number,
   css?: any
 ) => {
   const sortedColumnIndex =
@@ -17,16 +19,18 @@ export const getTableWrapperStyles = (
 
   const thIndex = sortedColumnIndex >= 0 ? sortedColumnIndex + 1 + (selectable ? 1 : 0) : -1;
 
+  const shouldHidePagination =
+    actualTotalItems != null ? actualTotalItems <= (pageSize ?? 0) : dataByPage?.length === 0;
+
   return {
-    ...(dataByPage != null &&
-      dataByPage.length === 0 && {
-        "& [data-scope='pagination']": {
-          display: "none"
-        },
-        "& [data-scope='select'][data-part='root']": {
-          display: "none"
-        }
-      }),
+    ...(shouldHidePagination && {
+      "& [data-scope='pagination']": {
+        display: "none"
+      },
+      "& [data-scope='select'][data-part='root']": {
+        display: "none"
+      }
+    }),
     ...(scrollable && {
       "& ": {
         width: scrollableWidth,

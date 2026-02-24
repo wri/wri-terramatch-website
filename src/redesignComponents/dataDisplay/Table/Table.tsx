@@ -182,6 +182,8 @@ const Table: FC<TableProps> = ({
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
   const displayEnd = Math.min(endRange, actualTotalItems);
 
+  const shouldShowPagination = actualTotalItems > 0 && (pageSize == null || actualTotalItems >= pageSize);
+
   return (
     <Box
       css={getTableWrapperStyles(
@@ -192,6 +194,8 @@ const Table: FC<TableProps> = ({
         scrollableWidth,
         scrollableHeight,
         dataByPage,
+        pageSize,
+        actualTotalItems,
         css
       )}
       className={className}
@@ -204,12 +208,12 @@ const Table: FC<TableProps> = ({
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
         pagination={
-          showPagination
+          showPagination && shouldShowPagination
             ? {
                 totalItems: actualTotalItems,
                 currentPage,
                 pageSize,
-                showItemCount: actualTotalItems > 0 ? showItemCount : false
+                showItemCount
               }
             : undefined
         }
@@ -218,7 +222,7 @@ const Table: FC<TableProps> = ({
         selectable={selectable}
         variant={variant}
       />
-      {showItemCount && actualTotalItems > 0 && (
+      {showItemCount && shouldShowPagination && (
         <Text
           textStyle="500"
           fontWeight="400"
