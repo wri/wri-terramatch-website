@@ -13,7 +13,6 @@ import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
-import { EntityFullDto } from "@/connections/Entity";
 import FrameworkProvider, { Framework, toFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -23,8 +22,6 @@ import WizardFormProvider, {
   ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
-import { ApplicationDto, SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -88,7 +85,7 @@ export interface WizardFormProps {
   cancelEditForm?: () => void;
   redirectEntityPage: string;
 
-  entity?: EntityFullDto | SubmissionDto | ApplicationDto | OrganisationFullDto;
+  entity?: any;
   entityLoading?: boolean;
 }
 
