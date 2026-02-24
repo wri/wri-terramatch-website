@@ -227,6 +227,10 @@ export type OrganisationIndexQueryParams = {
    * @default false
    */
   lightResource?: boolean;
+  /**
+   * Public view: returns approved, non-private, non-test organisations. Forces status=approved. Use view=public.
+   */
+  view?: string;
 };
 
 export type OrganisationIndexError = Fetcher.ErrorWrapper<
@@ -454,7 +458,7 @@ export type OrganisationCreationVariables = {
 };
 
 /**
- * Create a new organisation, and the first user for it.
+ * Create an organisation. Pending status creates the first user and onboarding records.
  */
 export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationResponse,

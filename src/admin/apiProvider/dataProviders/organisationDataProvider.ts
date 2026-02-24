@@ -64,7 +64,6 @@ export const organisationDataProvider: OrganisationDataProvider = {
       if (loadFailure != null) {
         throw v3ErrorForRA("Organisation get fetch failed", loadFailure);
       }
-
       const org = organisation as OrganisationFullDto;
       return { data: { ...org, id: org.uuid } as RecordType };
     } catch (err) {

@@ -124,13 +124,3 @@ export const SmallDataset: Story = {
     showItemCount: true
   }
 };
-
-export const EmptyTable: Story = {
-  name: "Empty Table",
-  args: {
-    data: [],
-    columns: defaultColumns,
-    selectable: false,
-    showItemCount: true
-  }
-};

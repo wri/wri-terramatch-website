@@ -47,7 +47,7 @@ const tableMenu = [
 const ApplicationDataGrid: FC = () => (
   <Datagrid rowClick={"show"}>
     <ReferenceField source="organisationUuid" reference={modules.organisation.ResourceName} label="Organization">
-      <FunctionField render={(record: OrganisationFullDto) => `${record?.name ?? ""}`} />
+      <FunctionField render={(record?: OrganisationFullDto) => `${record?.name ?? ""}`} />
     </ReferenceField>
     <ReferenceField
       source="fundingProgrammeUuid"
