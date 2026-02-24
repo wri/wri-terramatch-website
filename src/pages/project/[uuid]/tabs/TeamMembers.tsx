@@ -160,7 +160,13 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         }}
         filters={[
           {
-            mainActionLabel: t("Role"),
+            mainActionLabel: t(
+              selectedRole !== null
+                ? selectedRole === "monitoring-partner"
+                  ? "Monitoring Partner"
+                  : "Project Manager"
+                : "Role"
+            ),
             variant: "secondary",
             mainActionOnClick: () =>
               setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),

@@ -9,6 +9,7 @@ export const getTableWrapperStyles = (
   scrollable?: boolean,
   scrollableWidth?: string,
   scrollableHeight?: string,
+  dataByPage?: any[],
   css?: any
 ) => {
   const sortedColumnIndex =
@@ -18,6 +19,15 @@ export const getTableWrapperStyles = (
 
   return {
     ...css,
+    ...(dataByPage != null &&
+      dataByPage.length === 0 && {
+        "& [data-scope='pagination']": {
+          display: "none"
+        },
+        "& [data-scope='select'][data-part='root']": {
+          display: "none"
+        }
+      }),
     ...(scrollable && {
       "& ": {
         width: scrollableWidth,
@@ -143,6 +153,11 @@ export const getTableWrapperStyles = (
     // and target its direct <p> child (the "Per Page" label)
     "& div:has(.ds-select-input-container) > p": {
       textTransform: "lowercase !important"
+    },
+
+    // Per Page select trigger button border
+    "& [data-scope='select'][data-part='trigger']": {
+      border: `1px solid ${getThemedColor("neutral", 400)} !important`
     },
 
     ...css
