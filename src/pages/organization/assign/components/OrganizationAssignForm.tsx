@@ -2,13 +2,15 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
 import { When } from "react-if";
+import { useSelector } from "react-redux";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import { useOrganisations, useOrgCreate } from "@/connections/Organisation";
-import { usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
+import { joinOrganisation, useOrganisations, useOrgCreate } from "@/connections/Organisation";
+import { organisationJoinRequest } from "@/generated/v3/userService/userServiceComponents";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
+import { AppStore } from "@/store/store";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
@@ -25,11 +27,17 @@ const OrganizationAssignForm = () => {
 
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
-  const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
-    onSuccess: () => {
-      router.push(`/organization/status/pending`);
-    }
-  });
+
+  const joinVariables = useMemo(
+    () => (selectedOrganization?.uuid != null ? { pathParams: { uuid: selectedOrganization.uuid } } : null),
+    [selectedOrganization?.uuid]
+  );
+  const joinOrganisationLoading = useSelector((store: AppStore) =>
+    joinVariables != null ? organisationJoinRequest.isFetchingSelector(joinVariables)(store.api) : false
+  );
+  const joinOrganisationFailure = useSelector((store: AppStore) =>
+    joinVariables != null ? organisationJoinRequest.fetchFailedSelector(joinVariables)(store.api) : undefined
+  );
 
   const orgFilter = useMemo(
     () => (shouldSearch ? { ...ORG_LIST_FILTER_BASE, search: searchedTerm } : ORG_LIST_FILTER_BASE),
@@ -51,6 +59,18 @@ const OrganizationAssignForm = () => {
       }
     }, [createdOrg?.uuid, router]),
     "Failed to create organization"
+  );
+
+  /**
+   * Handle successful organization join request
+   */
+  useRequestSuccess(
+    joinOrganisationLoading,
+    joinOrganisationFailure,
+    useCallback(() => {
+      router.push(`/organization/status/pending`);
+    }, [router]),
+    "Failed to join organization"
   );
 
   /**
@@ -76,12 +96,8 @@ const OrganizationAssignForm = () => {
 
   const handleJoin = useCallback(() => {
     if (selectedOrganization?.uuid == null) return;
-    joinOrganisation({
-      body: {
-        organisation_uuid: selectedOrganization.uuid
-      }
-    });
-  }, [selectedOrganization?.uuid, joinOrganisation]);
+    joinOrganisation(selectedOrganization.uuid);
+  }, [selectedOrganization?.uuid]);
 
   const handleCreate = useCallback(() => {
     if (createOrganisation != null) {

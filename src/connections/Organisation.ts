@@ -15,6 +15,7 @@ import {
   organisationDelete,
   organisationIndex,
   OrganisationIndexQueryParams,
+  organisationJoinRequest,
   organisationShow,
   organisationUpdate
 } from "@/generated/v3/userService/userServiceComponents";
@@ -89,6 +90,10 @@ const organisationConnection = v3Resource("organisations", organisationShow)
 const orgCreationConnection = v3Resource("organisations", organisationCreation)
   .create<OrganisationLightDto>()
   .buildConnection();
+
+export const joinOrganisation = (uuid: string) => {
+  organisationJoinRequest.fetch({ pathParams: { uuid } });
+};
 
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs

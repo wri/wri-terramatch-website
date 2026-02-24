@@ -761,6 +761,83 @@ export const organisationDelete = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations/{uuid}", "DELETE");
 
+export type OrganisationJoinRequestPathParams = {
+  uuid: string;
+};
+
+export type OrganisationJoinRequestError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationJoinRequestResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationLightDto;
+  };
+};
+
+export type OrganisationJoinRequestVariables = {
+  pathParams: OrganisationJoinRequestPathParams;
+};
+
+export const organisationJoinRequest = new V3ApiEndpoint<
+  OrganisationJoinRequestResponse,
+  OrganisationJoinRequestError,
+  OrganisationJoinRequestVariables,
+  {}
+>("/organisations/v3/organisations/{uuid}/join-request", "POST");
+
 export type ActionsIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -1327,7 +1404,14 @@ export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
+  organisations: {
+    organisationIndex,
+    organisationCreation,
+    organisationShow,
+    organisationUpdate,
+    organisationDelete,
+    organisationJoinRequest
+  },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
   userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
