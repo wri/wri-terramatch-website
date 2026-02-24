@@ -33,7 +33,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         </Text>
       </div>
       <Image
-        src="/images/modal-story.png"
+        src="./images/modal-story.png"
         alt="Modal Example"
         width={100}
         height={100}
