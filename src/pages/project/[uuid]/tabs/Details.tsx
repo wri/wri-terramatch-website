@@ -24,6 +24,7 @@ import {
 import { Edit } from "@/redesignComponents/foundations/Icons";
 
 import {
+  COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
   NO_COUNT_TABLE_SPECIES_PER_ROW,
   noCountTableColumns
@@ -153,10 +154,11 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       }
                       if (rawValue.props.tableType == "noCount") {
                         const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-                        console.log(rawValue.props.plants.length);
+                        const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+
                         return (
                           <Table
-                            data={plantsToNoCountRows(rawValue.props.plants)}
+                            data={dataPlants}
                             columns={noCountTableColumns}
                             css={NO_HEADER_TABLE_WRAPPER_STYLES}
                             variant="full-width"
@@ -164,7 +166,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                             showItemCount={false}
                             pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
                             showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-                            className="mt-[2px]"
+                            className={classNames(
+                              "mt-[2px]",
+                              dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE ? "mb-3" : "aaaaaaa"
+                            )}
                             renderRow={rowData => {
                               const row = rowData as Record<number, string> & { id: number };
                               return (
@@ -197,7 +202,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                             css={FULL_WIDTH_TABLE_HEADER_STYLES}
                             totalItems={rawValue.props.plants.length}
                             showItemCount={false}
-                            className="mt-[2px] !w-[725px]"
+                            className={classNames(
+                              "mt-[2px] !w-[725px]",
+                              rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN ? "mb-3" : ""
+                            )}
                           />
                         );
                       } else {
