@@ -17,6 +17,7 @@ import FrameworkProvider, { Framework, toFramework } from "@/context/framework.p
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
   FormFieldsProvider,
+  FormModel,
   FormModelsDefinition,
   OrgFormDetails,
   ProjectFormDetails
@@ -372,7 +373,9 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
-  const isSubmissionModel = props.models?.[0]?.model == "organisations" && props.models?.[1]?.model == "projectPitches";
+  const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
+  const modelType = props?.models as FormModel;
+  const modelUuid = props?.models as FormModel;
 
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
@@ -382,21 +385,21 @@ function WizardForm(props: WizardFormProps) {
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
-    } else if (props?.models?.model == "organisations") {
+    } else if (modelType?.model == "organisations") {
       return [{ label: t("Edit"), link: `/organization/create?uuid=${entity?.uuid ?? ""}` }];
     } else {
       return entityLinkHeaderMap({
         isAdmin,
-        model: props.models?.model,
-        uuid: props.models?.uuid ?? props?.entity?.uuid,
+        model: modelType?.model,
+        uuid: modelUuid?.uuid ?? props?.entity?.uuid,
         redirectEntityPage: props.redirectEntityPage,
         entity: entity,
         firstLinkIcon: <Project className="!text-theme-primary-900" />,
         t,
         taskTitle
-      })[props.models?.model];
+      })[modelType?.model];
     }
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin]);
+  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, modelType?.model, modelUuid?.uuid]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {
@@ -404,9 +407,9 @@ function WizardForm(props: WizardFormProps) {
         ? `${entity?.organisationName} - ${entity?.fundingProgrammeName}`
         : t("Unnamed Application");
     } else {
-      return mapEntityTitle(entity?.title ?? entity?.name, props.models?.model, t);
+      return mapEntityTitle(entity?.title ?? entity?.name, modelType?.model, t);
     }
-  }, [props.models, t, entity, isSubmissionModel]);
+  }, [modelType?.model, t, entity, isSubmissionModel]);
 
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
