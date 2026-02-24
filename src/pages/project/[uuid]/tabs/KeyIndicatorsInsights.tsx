@@ -22,6 +22,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
+  const isTf3Project = project.treesGrownGoal != null;
 
   return (
     <Flex gap={isSmallResolution ? 10 : 3} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
@@ -59,6 +60,49 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           </Box>
         }
       />
+      {isTf3Project && (
+        <MetricCard
+          title="Trees Grown"
+          progress={0}
+          goal={treesGrownGoal}
+          variant="donutChart"
+          icon={<Tree />}
+          color="secondary.700"
+          type="treesGrown"
+          className={metricClassName}
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t("Trees Grown")}</b>
+              <br />
+              {t(
+                "Final contract figure for this TerraFund Cohort 3 project: (Trees Planted Goal × Project Survival Rate) + Trees Regenerated Goal."
+              )}
+            </Box>
+          }
+        />
+      )}
+      {!isTf3Project && (
+        <MetricCard
+          title="Trees Regenerated"
+          progress={project.regeneratedTreesCount ?? 0}
+          goal={project.regeneratedTreesGoal ?? 0}
+          variant="donutChart"
+          icon={<Tree />}
+          color="secondary.600"
+          type="treesRegenerated"
+        />
+      )}
+      {!isTf3Project && (
+        <MetricCard
+          title="Seeds Planted"
+          progress={project.seedsPlantedCount ?? 0}
+          goal={project.seedsGrownGoal ?? 0}
+          variant="donutChart"
+          icon={<Seeds />}
+          color="secondary.600"
+          type="seedsPlanted"
+        />
+      )}
       <MetricCard
         title={t("Area Restored (ha)")}
         progress={totalHectaresRestored}
