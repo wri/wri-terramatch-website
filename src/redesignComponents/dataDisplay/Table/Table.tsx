@@ -184,7 +184,16 @@ const Table: FC<TableProps> = ({
 
   return (
     <Box
-      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+      css={getTableWrapperStyles(
+        sortColumn,
+        columns,
+        selectable,
+        isScrollable,
+        scrollableWidth,
+        scrollableHeight,
+        dataByPage,
+        css
+      )}
       className={className}
     >
       <WriTable
@@ -200,7 +209,7 @@ const Table: FC<TableProps> = ({
                 totalItems: actualTotalItems,
                 currentPage,
                 pageSize,
-                showItemCount
+                showItemCount: actualTotalItems > 0 ? showItemCount : false
               }
             : undefined
         }
@@ -209,7 +218,7 @@ const Table: FC<TableProps> = ({
         selectable={selectable}
         variant={variant}
       />
-      {showItemCount && (
+      {showItemCount && actualTotalItems > 0 && (
         <Text
           textStyle="500"
           fontWeight="400"
