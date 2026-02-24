@@ -454,7 +454,7 @@ export type OrganisationCreationVariables = {
 };
 
 /**
- * Create a new organisation, and the first user for it.
+ * Create an organisation. Pending status creates the first user and onboarding records.
  */
 export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationResponse,

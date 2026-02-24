@@ -611,17 +611,21 @@ export type UserDto = {
 };
 
 export type OrganisationCreateAttributes = {
-  name: string;
-  type: "non-profit-organization" | "for-profit-organization";
-  hqStreet1: string;
+  /**
+   * @default pending
+   */
+  status?: "draft" | "pending";
+  name?: string;
+  type?: "non-profit-organization" | "for-profit-organization";
+  hqStreet1?: string;
   hqStreet2?: string;
-  hqCity: string;
-  hqState: string;
+  hqCity?: string;
+  hqState?: string;
   hqZipcode?: string;
-  hqCountry: string;
-  phone: string;
-  countries: string[];
-  fundingProgrammeUuid: string;
+  hqCountry?: string;
+  phone?: string;
+  countries?: string[];
+  fundingProgrammeUuid?: string;
   /**
    * @default USD
    */
@@ -630,11 +634,11 @@ export type OrganisationCreateAttributes = {
   level1Proposed?: string[];
   level0PastRestoration?: string[];
   level1PastRestoration?: string[];
-  userFirstName: string;
-  userLastName: string;
-  userEmailAddress: string;
-  userRole: string;
-  userLocale: "en-US" | "es-MX" | "fr-FR" | "pt-BR";
+  userFirstName?: string;
+  userLastName?: string;
+  userEmailAddress?: string;
+  userRole?: string;
+  userLocale?: "en-US" | "es-MX" | "fr-FR" | "pt-BR";
 };
 
 export type OrganisationCreateData = {

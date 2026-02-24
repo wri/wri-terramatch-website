@@ -1,14 +1,13 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import { useOrganisations } from "@/connections/Organisation";
-import { usePostV2Organisations, usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
-import { V2OrganisationUpdate } from "@/generated/apiSchemas";
+import { useOrganisations, useOrgCreate } from "@/connections/Organisation";
+import { usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
@@ -16,24 +15,15 @@ import OrganizationAssignPanel from "./OrganizationCreatePanel";
 
 const OrganizationAssignForm = () => {
   const t = useT();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
 
   const [searchedTerm, setSearchTerm] = useState<string>("");
 
-  const { mutate: createOrganisation, isLoading: organisationCreateLoading } = usePostV2Organisations({
-    onSuccess: async (data: any) => {
-      const orgUUID = data.data.uuid;
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-      router.push(`/organization/create?uuid=${orgUUID}`);
-    }
-  });
-
-  // Mutations
+  const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
+    useOrgCreate({});
   const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
-    onSuccess: async () => {
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
+    onSuccess: () => {
       router.push(`/organization/status/pending`);
     }
   });
@@ -60,6 +50,31 @@ const OrganizationAssignForm = () => {
   });
 
   /**
+   * Handle successful organization creation
+   */
+  useRequestSuccess(
+    organisationCreateLoading,
+    createFailure,
+    useCallback(() => {
+      if (createdOrg?.uuid != null) {
+        router.push(`/organization/create?uuid=${createdOrg.uuid}`);
+      }
+    }, [createdOrg?.uuid, router]),
+    "Failed to create organization"
+  );
+
+  /**
+   * Handle creation errors
+   */
+  useEffect(() => {
+    if (createFailure != null && !organisationCreateLoading) {
+      const errorMessage = createFailure.message ?? "Failed to create organization";
+      form.setError("name", { message: errorMessage });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createFailure, organisationCreateLoading]);
+
+  /**
    * Clear form errors on start typing
    */
   useEffect(() => {
@@ -84,11 +99,9 @@ const OrganizationAssignForm = () => {
   /**
    * Handle Create Organization Button Click
    */
-  const handleCreate = async () => {
-    try {
-      await createOrganisation({ body: {} as V2OrganisationUpdate });
-    } catch (err: any) {
-      form.setError("name", { message: err.message });
+  const handleCreate = () => {
+    if (createOrganisation != null) {
+      createOrganisation({ status: "draft" });
     }
   };
 
@@ -144,7 +157,7 @@ const OrganizationAssignForm = () => {
                 children: t("Apply to join organization")
               }
             : {
-                type: "submit",
+                type: "button",
                 disabled: organisationCreateLoading,
                 children: t("Create Organization"),
                 onClick: handleCreate
