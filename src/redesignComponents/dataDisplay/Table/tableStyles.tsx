@@ -180,6 +180,9 @@ export const NO_HEADER_TABLE_WRAPPER_STYLES = {
   "& table tbody tr td": {
     padding: "0px !important",
     borderBottom: "0px!important"
+  },
+  "& table tbody tr:hover": {
+    backgroundColor: getThemedColor("neutral", 100)
   }
 };
 
@@ -196,5 +199,9 @@ export const FULL_WIDTH_TABLE_HEADER_STYLES = {
   "& table tbody tr td:not(:last-child)": {
     marginRight: "2px",
     borderRight: `2px solid ${getThemedColor("neutral", 100)}`
+  },
+
+  "& table tbody tr:hover": {
+    backgroundColor: getThemedColor("neutral", 100)
   }
 };
