@@ -168,7 +168,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                             showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
                             className={classNames(
                               "mt-[2px]",
-                              dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE ? "mb-3" : "aaaaaaa"
+                              dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3"
                             )}
                             renderRow={rowData => {
                               const row = rowData as Record<number, string> & { id: number };
@@ -204,7 +204,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                             showItemCount={false}
                             className={classNames(
                               "mt-[2px] !w-[725px]",
-                              rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN ? "mb-3" : ""
+                              rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
                             )}
                           />
                         );
