@@ -9,6 +9,7 @@ export const getTableWrapperStyles = (
   scrollable?: boolean,
   scrollableWidth?: string,
   scrollableHeight?: string,
+  dataByPage?: any[],
   css?: any
 ) => {
   const sortedColumnIndex =
@@ -17,7 +18,15 @@ export const getTableWrapperStyles = (
   const thIndex = sortedColumnIndex >= 0 ? sortedColumnIndex + 1 + (selectable ? 1 : 0) : -1;
 
   return {
-    ...css,
+    ...(dataByPage != null &&
+      dataByPage.length === 0 && {
+        "& [data-scope='pagination']": {
+          display: "none"
+        },
+        "& [data-scope='select'][data-part='root']": {
+          display: "none"
+        }
+      }),
     ...(scrollable && {
       "& ": {
         width: scrollableWidth,
@@ -145,6 +154,11 @@ export const getTableWrapperStyles = (
       textTransform: "lowercase !important"
     },
 
+    // Per Page select trigger button border
+    "& [data-scope='select'][data-part='trigger']": {
+      border: `1px solid ${getThemedColor("neutral", 400)} !important`
+    },
+
     ...css
   };
 };
@@ -168,5 +182,15 @@ export const NO_HEADER_TABLE_WRAPPER_STYLES = {
 export const FULL_WIDTH_TABLE_HEADER_STYLES = {
   "& table thead tr th": {
     backgroundColor: getThemedColor("neutral", 200)
+  },
+
+  "& table thead tr th:not(:last-child)": {
+    marginRight: "2px",
+    borderRight: `2px solid ${getThemedColor("neutral", 100)}`
+  },
+
+  "& table tbody tr td:not(:last-child)": {
+    marginRight: "2px",
+    borderRight: `2px solid ${getThemedColor("neutral", 100)}`
   }
 };

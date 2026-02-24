@@ -28,6 +28,7 @@ interface TableProps {
   css?: any;
   pageSize?: number;
   className?: string;
+  showPagination?: boolean;
 }
 
 interface SelectableRowProps {
@@ -74,7 +75,8 @@ const Table: FC<TableProps> = ({
   variant = "default",
   css,
   pageSize: initialPageSize,
-  className
+  className,
+  showPagination = true
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
@@ -182,7 +184,16 @@ const Table: FC<TableProps> = ({
 
   return (
     <Box
-      css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight, css)}
+      css={getTableWrapperStyles(
+        sortColumn,
+        columns,
+        selectable,
+        isScrollable,
+        scrollableWidth,
+        scrollableHeight,
+        dataByPage,
+        css
+      )}
       className={className}
     >
       <WriTable
@@ -192,18 +203,22 @@ const Table: FC<TableProps> = ({
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
-        pagination={{
-          totalItems: actualTotalItems,
-          currentPage,
-          pageSize,
-          showItemCount
-        }}
+        pagination={
+          showPagination
+            ? {
+                totalItems: actualTotalItems,
+                currentPage,
+                pageSize,
+                showItemCount: actualTotalItems > 0 ? showItemCount : false
+              }
+            : undefined
+        }
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
         variant={variant}
       />
-      {showItemCount && (
+      {showItemCount && actualTotalItems > 0 && (
         <Text
           textStyle="500"
           fontWeight="400"

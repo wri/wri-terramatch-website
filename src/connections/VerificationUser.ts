@@ -22,7 +22,8 @@ type VerificationUserProps = {
 // later refactor.
 const verificationUserConnection: Connection<VerificationUserConnection, VerificationUserProps> = {
   load: ({ isSuccess, requestFailed }, { token }) => {
-    if (isSuccess == null && requestFailed == null) verifyUser.fetch({ body: { token } });
+    if (token != null && token !== "" && isSuccess == null && requestFailed == null)
+      verifyUser.fetch({ body: { token } });
   },
 
   isLoaded: ({ isSuccess }) => isSuccess !== null,

@@ -77,7 +77,9 @@ export const indexOrgsConnection = v3Resource("organisations", organisationIndex
   .buildConnection();
 
 const organisationConnection = v3Resource("organisations", organisationShow)
-  .singleFullResource<OrganisationFullDto>(({ id }) => (id == null ? undefined : { pathParams: { uuid: id } }))
+  .singleFullResource<OrganisationFullDto & { lightResource: boolean }>(({ id }) =>
+    id == null ? undefined : { pathParams: { uuid: id } }
+  )
   .sideloads()
   .isLoading()
   .loadFailure()
@@ -113,6 +115,7 @@ export const loadOrganisations = connectionLoader(indexOrgsConnection);
 export const useOrganisations = connectionHook(indexOrgsConnection);
 
 export const createOrg = resourceCreator(orgCreationConnection);
+export const useOrgCreate = connectionHook(orgCreationConnection);
 
 // Connections for organisation-related resources filtered by organisationUuid
 type OrganisationFinancialIndicatorsConnection = {
