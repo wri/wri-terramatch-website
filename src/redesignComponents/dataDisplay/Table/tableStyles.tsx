@@ -23,7 +23,6 @@ export const getTableWrapperStyles = (
     actualTotalItems != null ? actualTotalItems <= (pageSize ?? 0) : dataByPage?.length === 0;
 
   return {
-    ...css,
     ...(shouldHidePagination && {
       "& [data-scope='pagination']": {
         display: "none"
