@@ -28,6 +28,7 @@ interface TableProps {
   css?: any;
   pageSize?: number;
   className?: string;
+  showPagination?: boolean;
 }
 
 interface SelectableRowProps {
@@ -74,7 +75,8 @@ const Table: FC<TableProps> = ({
   variant = "default",
   css,
   pageSize: initialPageSize,
-  className
+  className,
+  showPagination = true
 }) => {
   const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
     DEFAULT_CURRENT_PAGE,
@@ -201,12 +203,16 @@ const Table: FC<TableProps> = ({
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
-        pagination={{
-          totalItems: actualTotalItems,
-          currentPage,
-          pageSize,
-          showItemCount: actualTotalItems > 0 ? showItemCount : false
-        }}
+        pagination={
+          showPagination
+            ? {
+                totalItems: actualTotalItems,
+                currentPage,
+                pageSize,
+                showItemCount: actualTotalItems > 0 ? showItemCount : false
+              }
+            : undefined
+        }
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}

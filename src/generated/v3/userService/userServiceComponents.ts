@@ -227,6 +227,10 @@ export type OrganisationIndexQueryParams = {
    * @default false
    */
   lightResource?: boolean;
+  /**
+   * Public view: returns approved, non-private, non-test organisations. Forces status=approved. Use view=public.
+   */
+  view?: string;
 };
 
 export type OrganisationIndexError = Fetcher.ErrorWrapper<
