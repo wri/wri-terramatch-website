@@ -23,8 +23,8 @@ import WizardFormProvider, {
   ProjectFormDetails
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
 import { ApplicationDto, SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -85,10 +85,10 @@ export interface WizardFormProps {
   initialStepIndex?: number;
   roundedCorners?: boolean;
   className?: string;
-  cancelForm?: () => void;
+  cancelEditForm?: () => void;
   redirectEntityPage: string;
 
-  entity?: EntityFullDto | SubmissionDto | ApplicationDto | V2OrganisationRead;
+  entity?: EntityFullDto | SubmissionDto | ApplicationDto | OrganisationFullDto;
   entityLoading?: boolean;
 }
 
@@ -272,7 +272,7 @@ function WizardForm(props: WizardFormProps) {
               if (isAdmin) {
                 props.onSubmit?.(formHook.getValues());
               } else {
-                props.cancelForm?.();
+                props.cancelEditForm?.();
               }
             }
           }}
@@ -375,10 +375,10 @@ function WizardForm(props: WizardFormProps) {
     [props.orgDetails, props.title]
   );
 
-  const isMultiModel = props.models?.length > 1;
+  const isSubmissionModel = props.models?.[0]?.model == "organisations" && props.models?.[1]?.model == "projectPitches";
 
   const linkHeaderMap = useMemo(() => {
-    if (isMultiModel) {
+    if (isSubmissionModel) {
       return [
         ...(entity
           ? [{ label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`, link: props.redirectEntityPage }]
@@ -399,17 +399,17 @@ function WizardForm(props: WizardFormProps) {
         taskTitle
       })[props.models?.model];
     }
-  }, [props, t, entity, isMultiModel, taskTitle, isAdmin]);
+  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin]);
 
   const pageHeaderTitle = useMemo(() => {
-    if (isMultiModel) {
+    if (isSubmissionModel) {
       return entity?.organisationName || entity?.fundingProgrammeName
         ? `${entity?.organisationName} - ${entity?.fundingProgrammeName}`
         : t("Unnamed Application");
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name, props.models?.model, t);
     }
-  }, [props.models, t, entity, isMultiModel]);
+  }, [props.models, t, entity, isSubmissionModel]);
 
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
