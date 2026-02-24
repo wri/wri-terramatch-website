@@ -20,9 +20,12 @@ import {
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
 import { Edit } from "@/redesignComponents/foundations/Icons";
-import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
-import { NO_COUNT_TABLE_SPECIES_PER_ROW, noCountTableColumns } from "./constants/Detail.constants";
+import {
+  NO_COUNT_TABLE_SPECIES_COLUMNS,
+  NO_COUNT_TABLE_SPECIES_PER_ROW,
+  noCountTableColumns
+} from "./constants/Detail.constants";
 
 interface ProjectDetailsTabProps {
   project: ProjectFullDto;
@@ -71,11 +74,11 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
     plants: Array<{ name?: string | null }>
   ): Array<Record<number, string> & { id: number }> {
     const rows: Array<Record<number, string> & { id: number }> = [];
-    for (let i = 0; i < plants.length; i += NO_COUNT_TABLE_SPECIES_PER_ROW) {
+    for (let i = 0; i < plants.length; i += NO_COUNT_TABLE_SPECIES_COLUMNS) {
       const row: Record<number, string> & { id: number } = {
-        id: Math.floor(i / NO_COUNT_TABLE_SPECIES_PER_ROW) + 1
+        id: Math.floor(i / NO_COUNT_TABLE_SPECIES_COLUMNS) + 1
       };
-      for (let j = 0; j < NO_COUNT_TABLE_SPECIES_PER_ROW; j++) {
+      for (let j = 0; j < NO_COUNT_TABLE_SPECIES_COLUMNS; j++) {
         row[j + 1] = plants[i + j]?.name ?? "";
       }
       rows.push(row);
@@ -130,18 +133,9 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    {entry.inputType === "file" ? (
-                      <Flex direction="column" gap={2} marginBottom={2}>
-                        <Text textStyle="500" color="neutral.700">
-                          {entry.title}:
-                        </Text>
-                        <SimpleDivider />
-                      </Flex>
-                    ) : (
-                      <Text textStyle="300-bold" color="primary.900">
-                        {entry.title}:
-                      </Text>
-                    )}
+                    <Text textStyle="300-bold" color="primary.900">
+                      {entry.title}:
+                    </Text>
                     {(() => {
                       const rawValue = entry.value ?? "-";
                       if (typeof rawValue === "string" || typeof rawValue === "number") {
