@@ -43,8 +43,6 @@ const baseItems = [
   { id: "4", label: "Label", caption: "Caption" }
 ];
 
-// ─── variant ─────────────────────────────────────────────────────────────────
-
 export const VariantData: Story = {
   args: {
     items: baseItems.map(item => ({ ...item, variant: "data" as const, value: "XXX,XXX" }))
@@ -70,8 +68,6 @@ export const VariantSelect: Story = {
   }
 };
 
-// ─── noBorder ────────────────────────────────────────────────────────────────
-
 export const WithBorder: Story = {
   args: {
     noBorder: false,
@@ -86,16 +82,12 @@ export const NoBorder: Story = {
   }
 };
 
-// ─── highlightedIndex ────────────────────────────────────────────────────────
-
 export const HighlightedIndex: Story = {
   args: {
     highlightedIndex: 1,
     items: baseItems.map(item => ({ ...item, variant: "select" as const }))
   }
 };
-
-// ─── isHighlighted (per-item) ────────────────────────────────────────────────
 
 export const ItemIsHighlighted: Story = {
   args: {
@@ -108,8 +100,6 @@ export const ItemIsHighlighted: Story = {
   }
 };
 
-// ─── disabled ────────────────────────────────────────────────────────────────
-
 export const WithDisabledItems: Story = {
   args: {
     items: [
@@ -120,8 +110,6 @@ export const WithDisabledItems: Story = {
     ]
   }
 };
-
-// ─── icon ─────────────────────────────────────────────────────────────────────
 
 export const WithIcons: Story = {
   args: {
@@ -158,8 +146,6 @@ export const WithIcons: Story = {
   }
 };
 
-// ─── value ────────────────────────────────────────────────────────────────────
-
 export const WithValue: Story = {
   args: {
     items: [
@@ -170,8 +156,6 @@ export const WithValue: Story = {
     ]
   }
 };
-
-// ─── onItemClick ──────────────────────────────────────────────────────────────
 
 export const WithOnItemClick: Story = {
   args: {
@@ -206,8 +190,6 @@ export const WithOnItemClick: Story = {
     ]
   }
 };
-
-// ─── isExpanded ───────────────────────────────────────────────────────────────
 
 export const WithExpandedItem: Story = {
   args: {
