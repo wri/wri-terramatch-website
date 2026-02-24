@@ -1,10 +1,12 @@
 import { useT } from "@transifex/react";
-import React from "react";
+import React, { useMemo } from "react";
 
 import ProgressGoalsDoughnutChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressGoalsDoughnutChart";
 import GoalProgressCard from "@/components/elements/Cards/GoalProgressCard/GoalProgressCard";
 import { IconNames } from "@/components/extensive/Icon/Icon";
+import { useTrackings } from "@/connections/EntityAssociation";
 import { Framework, isTerrafund } from "@/context/framework.provider";
+import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import {
   TOOLTIP_HECTARES_RESTORED_PROJECT,
@@ -15,6 +17,7 @@ import {
   TOOLTIP_SEEDS_PLANTED_SITE,
   TOOLTIP_TREE_RESTORED_PROJECT,
   TOOLTIP_TREE_RESTORED_SITE,
+  TOOLTIP_TREES_GROWN_PROJECT,
   TOOLTIP_TREES_PLANTED_PROJECT,
   TOOLTIP_TREES_PLANTED_SITE,
   TOOLTIP_TREES_REGENERATING_PROJECT,
@@ -63,8 +66,35 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
   );
 };
 
+function computeTreesGrownFromTrackings(entries: TrackingEntryDto[], survivalRate: number | null | undefined): number {
+  let treesPlanted = 0;
+  let treesRegenerated = 0;
+  for (const e of entries) {
+    if (e.type === "years") treesPlanted += e.amount;
+    if (e.type === "strategy" && e.subtype === "anr") treesRegenerated += e.amount;
+  }
+  const rate = survivalRate ?? 0;
+  return Math.round(treesPlanted * (rate / 100) + treesRegenerated);
+}
+
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
+  const frameworkKey = (entity?.framework_key ?? entity?.frameworkKey) as Framework;
+  const isTf3Project = Boolean(project && frameworkKey === Framework.TF_3);
+  const [, { data: trackings }] = useTrackings({
+    entity: "projects",
+    uuid: entity?.uuid ?? "",
+    enabled: isTf3Project
+  });
+  const treesGrownTf3 = useMemo(() => {
+    if (!isTf3Project || !trackings) return null;
+    const survivalRate = entity?.survivalRate ?? entity?.survival_rate;
+    const treesGoalTrackings = trackings.filter(
+      t => t.domain === "restoration" && t.type === "trees-goal" && t.collection === "all"
+    );
+    const allEntries = treesGoalTrackings.flatMap(t => t.entries ?? []);
+    return computeTreesGrownFromTrackings(allEntries, survivalRate);
+  }, [isTf3Project, trackings, entity?.survivalRate, entity?.survival_rate]);
   const totalTreesRestoredCount =
     (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
     (entity?.approved_regenerated_trees_count ?? entity?.regeneratedTreesCount) +
@@ -144,6 +174,19 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       totalValue: parseFloat(attribMapping[keyAttribute].trees_grown_goal)
     }
   };
+  const chartDataTreesGrownTf3 = useMemo(
+    () =>
+      treesGrownTf3 != null
+        ? {
+            chartData: [{ name: t("TREES GROWN"), value: treesGrownTf3 }],
+            cardValues: {
+              label: t("Trees Grown"),
+              value: treesGrownTf3
+            }
+          }
+        : null,
+    [treesGrownTf3, t]
+  );
   const chartDataWorkdays = {
     chartData: [
       {
@@ -199,7 +242,18 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
         chartData={chartDataTreesRestored}
         graph={project}
         tooltipContent={project ? TOOLTIP_TREE_RESTORED_PROJECT : TOOLTIP_TREE_RESTORED_SITE}
-      />
+      />,
+      ...(chartDataTreesGrownTf3
+        ? [
+            <ProgressDataCard
+              key={"terrafund-trees-grown"}
+              cardValues={chartDataTreesGrownTf3.cardValues}
+              chartData={chartDataTreesGrownTf3}
+              graph={false}
+              tooltipContent={TOOLTIP_TREES_GROWN_PROJECT}
+            />
+          ]
+        : [])
     ],
     ppc: [
       <ProgressDataCard
@@ -247,7 +301,6 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       />
     ]
   };
-  const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
   const framework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
