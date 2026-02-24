@@ -66,23 +66,21 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
   );
 };
 
-function computeTreesGrownTf3(
-  entries: TrackingEntryDto[],
-  survivalRate: number | null | undefined,
-  treesRegeneratedGoal: number | null | undefined
-): number {
-  const treesPlantedGoal = entries.filter(e => e.type === "years").reduce((sum, e) => sum + e.amount, 0);
-  const treesRegenerated =
-    treesRegeneratedGoal ??
-    entries.filter(e => e.type === "strategy" && e.subtype === "anr").reduce((sum, e) => sum + e.amount, 0);
+function computeTreesGrownFromTrackings(entries: TrackingEntryDto[], survivalRate: number | null | undefined): number {
+  let treesPlanted = 0;
+  let treesRegenerated = 0;
+  for (const e of entries) {
+    if (e.type === "years") treesPlanted += e.amount;
+    if (e.type === "strategy" && e.subtype === "anr") treesRegenerated += e.amount;
+  }
   const rate = survivalRate ?? 0;
-  return Math.round(treesPlantedGoal * (rate / 100) + treesRegenerated);
+  return Math.round(treesPlanted * (rate / 100) + treesRegenerated);
 }
 
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
   const frameworkKey = (entity?.framework_key ?? entity?.frameworkKey) as Framework;
-  const isTf3Project = project && frameworkKey === Framework.TF_3;
+  const isTf3Project = Boolean(project && frameworkKey === Framework.TF_3);
   const [, { data: trackings }] = useTrackings({
     entity: "projects",
     uuid: entity?.uuid ?? "",
@@ -91,20 +89,12 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
   const treesGrownTf3 = useMemo(() => {
     if (!isTf3Project || !trackings) return null;
     const survivalRate = entity?.survivalRate ?? entity?.survival_rate;
-    const treesRegeneratedGoal = entity?.goalTreesRestoredAnr ?? entity?.goal_trees_restored_anr ?? null;
     const treesGoalTrackings = trackings.filter(
       t => t.domain === "restoration" && t.type === "trees-goal" && t.collection === "all"
     );
     const allEntries = treesGoalTrackings.flatMap(t => t.entries ?? []);
-    return computeTreesGrownTf3(allEntries, survivalRate, treesRegeneratedGoal);
-  }, [
-    isTf3Project,
-    trackings,
-    entity?.survivalRate,
-    entity?.survival_rate,
-    entity?.goalTreesRestoredAnr,
-    entity?.goal_trees_restored_anr
-  ]);
+    return computeTreesGrownFromTrackings(allEntries, survivalRate);
+  }, [isTf3Project, trackings, entity?.survivalRate, entity?.survival_rate]);
   const totalTreesRestoredCount =
     (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
     (entity?.approved_regenerated_trees_count ?? entity?.regeneratedTreesCount) +
