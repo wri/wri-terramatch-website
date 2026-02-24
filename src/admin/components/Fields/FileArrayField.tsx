@@ -12,7 +12,7 @@ export const FileArrayField = (props: Omit<ArrayFieldProps, "children">) => {
           </Typography>
         }
       >
-        <TextField source="file_name" label="File Name" />
+        <TextField source="fileName" label="File Name" />
         <UrlField source="url" target="_blank" label="URL" />
       </Datagrid>
     </ArrayField>

@@ -9,6 +9,7 @@ import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
+import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import FrameworkProvider, { Framework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import WizardFormProvider, {
@@ -29,7 +30,6 @@ import { WizardFormHeader } from "./FormHeader";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
-import { getSchema } from "./utils";
 
 export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
@@ -80,25 +80,20 @@ function WizardForm(props: WizardFormProps) {
   const t = useT();
   const modal = useModalContext();
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
-  const steps = useMemo(
-    () =>
-      props.fieldsProvider.stepIds().map(stepId => ({
-        id: stepId,
-        title: props.fieldsProvider.step(stepId)?.title,
-        validation: getSchema(props.fieldsProvider, t, props.framework, props.fieldsProvider.fieldNames(stepId))
-      })),
-    [props.framework, props.fieldsProvider, t]
-  );
+  const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
-      () => ({
-        defaultValues: props.defaultValues,
-        mode: "onTouched",
-        resolved: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
-      }),
+      () =>
+        selectedSection?.validation != null
+          ? {
+              resolver: yupResolver(selectedSection?.validation),
+              defaultValues: props.defaultValues,
+              mode: "onTouched"
+            }
+          : { mode: "onTouched" },
       [props.defaultValues, selectedSection?.validation]
     )
   );
@@ -185,6 +180,14 @@ function WizardForm(props: WizardFormProps) {
     // Find the first invalid step or go straight to the last step.
     const stepIndex = steps.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
+  });
+
+  useValueChanged(props.defaultValues, () => {
+    if (props.defaultValues != null) {
+      for (const [key, value] of Object.entries(props.defaultValues)) {
+        formHook.setValue(key, value);
+      }
+    }
   });
 
   useLayoutEffect(() => {
