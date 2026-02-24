@@ -2,10 +2,11 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import ProfileItem from "@/redesignComponents/dataDisplay/List/ListItem/ProfileItem";
 import { ChevronRight } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
+
+import ProfileItem from "./ProfileItem";
 
 export interface IProfile {
   id: string;

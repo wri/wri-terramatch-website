@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Dashboard, Edit, Info, Landscape, Nursery, Project, Reports, Site } from "../../foundations/Icons";
+import { TreeCircle } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -47,19 +47,19 @@ const baseItems = [
 
 export const VariantData: Story = {
   args: {
-    items: baseItems.map(item => ({ ...item, variant: "data" as const, value: "Value" }))
+    items: baseItems.map(item => ({ ...item, variant: "data" as const, value: "XXX,XXX" }))
   }
 };
 
 export const VariantNavigation: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", icon: <Dashboard className="h-5 w-5" />, variant: "navigation" as const },
-      { id: "2", label: "Label", icon: <Project className="h-5 w-5" />, variant: "navigation" as const },
-      { id: "3", label: "Label", icon: <Landscape className="h-5 w-5" />, variant: "navigation" as const },
-      { id: "4", label: "Label", icon: <Nursery className="h-5 w-5" />, variant: "navigation" as const },
-      { id: "5", label: "Label", icon: <Reports className="h-5 w-5" />, variant: "navigation" as const },
-      { id: "6", label: "Label", icon: <Site className="h-5 w-5" />, variant: "navigation" as const }
+      { id: "1", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "2", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "3", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "4", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "5", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "6", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const }
     ]
   }
 };
@@ -126,10 +126,34 @@ export const WithDisabledItems: Story = {
 export const WithIcons: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", caption: "Caption", icon: <Project className="h-5 w-5" />, variant: "data" as const },
-      { id: "2", label: "Label", caption: "Caption", icon: <Edit className="h-5 w-5" />, variant: "data" as const },
-      { id: "3", label: "Label", caption: "Caption", icon: <Info className="h-5 w-5" />, variant: "data" as const },
-      { id: "4", label: "Label", caption: "Caption", icon: <Dashboard className="h-5 w-5" />, variant: "data" as const }
+      {
+        id: "1",
+        label: "Label",
+        caption: "Caption",
+        icon: <TreeCircle className="h-6 w-6" />,
+        variant: "data" as const
+      },
+      {
+        id: "2",
+        label: "Label",
+        caption: "Caption",
+        icon: <TreeCircle className="h-6 w-6" />,
+        variant: "data" as const
+      },
+      {
+        id: "3",
+        label: "Label",
+        caption: "Caption",
+        icon: <TreeCircle className="h-6 w-6" />,
+        variant: "data" as const
+      },
+      {
+        id: "4",
+        label: "Label",
+        caption: "Caption",
+        icon: <TreeCircle className="h-6 w-6" />,
+        variant: "data" as const
+      }
     ]
   }
 };
@@ -139,10 +163,10 @@ export const WithIcons: Story = {
 export const WithValue: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", caption: "Caption", variant: "data" as const, value: "Value" },
-      { id: "2", label: "Label", caption: "Caption", variant: "data" as const, value: "Value" },
-      { id: "3", label: "Label", caption: "Caption", variant: "data" as const, value: "Value" },
-      { id: "4", label: "Label", caption: "Caption", variant: "data" as const, value: "Value" }
+      { id: "1", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
+      { id: "2", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
+      { id: "3", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
+      { id: "4", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" }
     ]
   }
 };
@@ -158,6 +182,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 1",
+        icon: <TreeCircle className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 1")
       },
       {
@@ -166,6 +191,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 2",
+        icon: <TreeCircle className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 2")
       },
       {
@@ -174,6 +200,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 3",
+        icon: <TreeCircle className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3")
       }
     ]
