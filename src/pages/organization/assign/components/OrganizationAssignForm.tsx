@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,7 +15,6 @@ import OrganizationAssignPanel from "./OrganizationCreatePanel";
 
 const OrganizationAssignForm = () => {
   const t = useT();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
 
@@ -25,8 +23,7 @@ const OrganizationAssignForm = () => {
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
   const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
-    onSuccess: async () => {
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
+    onSuccess: () => {
       router.push(`/organization/status/pending`);
     }
   });
@@ -60,10 +57,9 @@ const OrganizationAssignForm = () => {
     createFailure,
     useCallback(() => {
       if (createdOrg?.uuid != null) {
-        queryClient.refetchQueries({ queryKey: ["auth", "me"] });
         router.push(`/organization/create?uuid=${createdOrg.uuid}`);
       }
-    }, [createdOrg?.uuid, queryClient, router]),
+    }, [createdOrg?.uuid, router]),
     "Failed to create organization"
   );
 
