@@ -23,7 +23,10 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
-  const isTf3Project = project.frameworkKey === Framework.TF_3;
+  const isTf3Project =
+    project.frameworkKey === Framework.TF_3 ||
+    (project.cohort ?? []).includes("terrafund-3") ||
+    project.treesGrownGoal != null;
 
   return (
     <Flex gap={isSmallResolution ? 10 : 3} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
@@ -91,6 +94,14 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<Tree />}
           color="secondary.600"
           type="treesRegenerated"
+          className={metricClassName}
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t("Trees Regenerated")}</b>
+              <br />
+              {t("Number of trees regenerated for this project")}
+            </Box>
+          }
         />
       )}
       {!isTf3Project && (
