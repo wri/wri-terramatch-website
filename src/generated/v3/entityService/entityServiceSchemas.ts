@@ -3391,3 +3391,92 @@ export type ReportingFrameworkDto = {
   nurseryReportFormUuid: string | null;
   totalProjectsCount: number;
 };
+
+export type CreateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  /**
+   * Framework name; used to generate slug
+   */
+  name: string;
+};
+
+export type CreateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  attributes: CreateReportingFrameworkAttributes;
+};
+
+export type CreateReportingFrameworkBody = {
+  data: CreateReportingFrameworkData;
+};
+
+export type UpdateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  name?: string | null;
+};
+
+export type UpdateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  /**
+   * @format uuid
+   */
+  id: string;
+  attributes: UpdateReportingFrameworkAttributes;
+};
+
+export type UpdateReportingFrameworkBody = {
+  data: UpdateReportingFrameworkData;
+};

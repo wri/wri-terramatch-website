@@ -9,10 +9,10 @@ export const ReportingFrameworkShow: FC = () => {
       <SimpleShowLayout>
         <TextField source="name" label="Name" emptyText="Not provided" />
 
-        <TextField source="access_code" label="Access Code" emptyText="Not provided" />
+        <TextField source="accessCode" label="Access Code" emptyText="Not provided" />
 
         <ReferenceField
-          source="project_form_uuid"
+          source="projectFormUuid"
           reference={modules.form.ResourceName}
           label="Project establishment flow"
           emptyText="Not provided"
@@ -21,7 +21,7 @@ export const ReportingFrameworkShow: FC = () => {
         </ReferenceField>
 
         <ReferenceField
-          source="site_form_uuid"
+          source="siteFormUuid"
           reference={modules.form.ResourceName}
           label="Site establishment flow"
           emptyText="Not provided"
@@ -30,7 +30,7 @@ export const ReportingFrameworkShow: FC = () => {
         </ReferenceField>
 
         <ReferenceField
-          source="nursery_form_uuid"
+          source="nurseryFormUuid"
           reference={modules.form.ResourceName}
           label="Nursery establishment flow"
           emptyText="Not provided"
@@ -39,7 +39,7 @@ export const ReportingFrameworkShow: FC = () => {
         </ReferenceField>
 
         <ReferenceField
-          source="project_report_form_uuid"
+          source="projectReportFormUuid"
           reference={modules.form.ResourceName}
           label="Project reporting flow"
           emptyText="Not provided"
@@ -48,7 +48,7 @@ export const ReportingFrameworkShow: FC = () => {
         </ReferenceField>
 
         <ReferenceField
-          source="site_report_form_uuid"
+          source="siteReportFormUuid"
           reference={modules.form.ResourceName}
           label="Site reporting flow"
           emptyText="Not provided"
@@ -57,7 +57,7 @@ export const ReportingFrameworkShow: FC = () => {
         </ReferenceField>
 
         <ReferenceField
-          source="nursery_report_form_uuid"
+          source="nurseryReportFormUuid"
           reference={modules.form.ResourceName}
           label="Nursery reporting flow"
           emptyText="Not provided"

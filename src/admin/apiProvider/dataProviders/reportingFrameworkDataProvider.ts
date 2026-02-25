@@ -1,17 +1,74 @@
 import { DataProvider, GetListParams, GetListResult, GetOneParams } from "react-admin";
 
-import { loadReportingFramework, loadReportingFrameworks } from "@/connections/ReportingFramework";
 import {
-  fetchDeleteV2AdminReportingFrameworksUUID,
-  fetchPostV2AdminReportingFrameworks,
-  fetchPutV2AdminReportingFrameworksUUID,
-  GetV2AdminReportingFrameworksError
-} from "@/generated/apiComponents";
+  createReportingFramework,
+  deleteReportingFramework,
+  loadReportingFramework,
+  loadReportingFrameworks,
+  updateReportingFramework
+} from "@/connections/ReportingFramework";
+import type { UpdateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { CreateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
-import { getFormattedErrorForRA } from "../utils/error";
+
+type ReportingFrameworkRecord = {
+  id?: string;
+  uuid?: string;
+  name?: string;
+  accessCode?: string | null;
+  projectFormUuid?: string | null;
+  siteFormUuid?: string | null;
+  nurseryFormUuid?: string | null;
+  projectReportFormUuid?: string | null;
+  siteReportFormUuid?: string | null;
+  nurseryReportFormUuid?: string | null;
+  totalProjectsCount?: number;
+};
+
+function toRARecord(dto: ReportingFrameworkDto): ReportingFrameworkRecord {
+  return {
+    id: dto.slug ?? dto.uuid,
+    uuid: dto.uuid,
+    name: dto.name,
+    accessCode: dto.slug ?? null,
+    projectFormUuid: dto.projectFormUuid,
+    siteFormUuid: dto.siteFormUuid,
+    nurseryFormUuid: dto.nurseryFormUuid,
+    projectReportFormUuid: dto.projectReportFormUuid,
+    siteReportFormUuid: dto.siteReportFormUuid,
+    nurseryReportFormUuid: dto.nurseryReportFormUuid,
+    totalProjectsCount: dto.totalProjectsCount
+  };
+}
+
+function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateReportingFrameworkAttributes {
+  return {
+    name: data.name ?? "",
+    accessCode: data.accessCode ?? null,
+    projectFormUuid: data.projectFormUuid ?? null,
+    projectReportFormUuid: data.projectReportFormUuid ?? null,
+    siteFormUuid: data.siteFormUuid ?? null,
+    siteReportFormUuid: data.siteReportFormUuid ?? null,
+    nurseryFormUuid: data.nurseryFormUuid ?? null,
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? null
+  };
+}
+
+function formDataToUpdateAttributes(data: ReportingFrameworkRecord): UpdateReportingFrameworkAttributes {
+  return {
+    name: data.name ?? undefined,
+    accessCode: data.accessCode ?? undefined,
+    projectFormUuid: data.projectFormUuid ?? undefined,
+    projectReportFormUuid: data.projectReportFormUuid ?? undefined,
+    siteFormUuid: data.siteFormUuid ?? undefined,
+    siteReportFormUuid: data.siteReportFormUuid ?? undefined,
+    nurseryFormUuid: data.nurseryFormUuid ?? undefined,
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? undefined
+  };
+}
 
 export const reportingFrameworkDataProvider: DataProvider = {
   async getList(_: string, params: GetListParams): Promise<GetListResult> {
@@ -21,19 +78,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
         throw v3ErrorForRA("Reporting frameworks index fetch failed", connected.loadFailure);
       }
 
-      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => ({
-        ...framework,
-        id: framework.slug,
-        uuid: framework.uuid,
-        access_code: framework.slug,
-        project_form_uuid: framework.projectFormUuid,
-        site_form_uuid: framework.siteFormUuid,
-        nursery_form_uuid: framework.nurseryFormUuid,
-        project_report_form_uuid: framework.projectReportFormUuid,
-        site_report_form_uuid: framework.siteReportFormUuid,
-        nursery_report_form_uuid: framework.nurseryReportFormUuid,
-        total_projects_count: framework.totalProjectsCount
-      }));
+      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => toRARecord(framework));
 
       return {
         data,
@@ -68,21 +113,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
         throw v3ErrorForRA("Reporting framework not found", { statusCode: 404, message: "Not found" });
       }
 
-      return {
-        data: {
-          ...connected.data,
-          id: connected.data.slug,
-          uuid: connected.data.uuid,
-          access_code: connected.data.slug,
-          project_form_uuid: connected.data.projectFormUuid,
-          site_form_uuid: connected.data.siteFormUuid,
-          nursery_form_uuid: connected.data.nurseryFormUuid,
-          project_report_form_uuid: connected.data.projectReportFormUuid,
-          site_report_form_uuid: connected.data.siteReportFormUuid,
-          nursery_report_form_uuid: connected.data.nurseryReportFormUuid,
-          total_projects_count: connected.data.totalProjectsCount
-        }
-      };
+      return { data: toRARecord(connected.data) };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework fetch failed", err);
     }
@@ -90,52 +121,45 @@ export const reportingFrameworkDataProvider: DataProvider = {
   //@ts-ignore
   async create(__, params) {
     try {
-      const response = await fetchPostV2AdminReportingFrameworks({
-        body: params.data
-      });
-
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.data?.slug ?? response.id } };
+      const attributes = formDataToCreateAttributes(params.data as ReportingFrameworkRecord);
+      const created = await createReportingFramework(attributes);
+      ApiSlice.pruneCache("reportingFrameworks");
+      return { data: toRARecord(created) };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework create failed", err);
     }
   },
+
   //@ts-ignore
   async update(__, params) {
     try {
-      const uuid = (params.data?.uuid as string | undefined) ?? null;
+      const frameworkKey = params.id as string;
+      let uuid = (params.data?.uuid as string | undefined) ?? null;
 
       if (uuid == null) {
-        const frameworkKey = params.id as string;
         const connected = await loadReportingFramework({ frameworkKey, enabled: true });
         if (connected.loadFailure != null || connected.data == null) {
-          throw getFormattedErrorForRA({
+          throw v3ErrorForRA("Reporting framework not found", {
             statusCode: 404,
             message: `Reporting framework with slug "${frameworkKey}" not found`
-          } as GetV2AdminReportingFrameworksError);
+          });
         }
-        const frameworkUuid = connected.data.uuid;
-
-        const response = await fetchPutV2AdminReportingFrameworksUUID({
-          body: params.data,
-          pathParams: { uuid: frameworkUuid }
-        });
-
-        // @ts-expect-error
-        return { data: { ...response.data, id: response.data?.slug ?? response.id } };
-      } else {
-        const response = await fetchPutV2AdminReportingFrameworksUUID({
-          body: params.data,
-          pathParams: { uuid }
-        });
-
-        // @ts-expect-error
-        return { data: { ...response.data, id: response.data?.slug ?? response.id } };
+        uuid = connected.data.uuid;
       }
+
+      const attributes = formDataToUpdateAttributes(params.data as ReportingFrameworkRecord);
+      await updateReportingFramework(uuid, attributes);
+
+      const connected = await loadReportingFramework({ frameworkKey, enabled: true });
+      if (connected.loadFailure != null || connected.data == null) {
+        throw v3ErrorForRA("Reporting framework fetch after update failed", connected.loadFailure);
+      }
+      return { data: toRARecord(connected.data) };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework update failed", err);
     }
   },
+
   //@ts-ignore
   async delete(__, params) {
     try {
@@ -143,20 +167,16 @@ export const reportingFrameworkDataProvider: DataProvider = {
       const connected = await loadReportingFramework({ frameworkKey, enabled: true });
 
       if (connected.loadFailure != null || connected.data == null) {
-        throw getFormattedErrorForRA({
+        throw v3ErrorForRA("Reporting framework not found", {
           statusCode: 404,
           message: `Reporting framework with slug "${frameworkKey}" not found`
-        } as GetV2AdminReportingFrameworksError);
+        });
       }
 
-      const uuid = connected.data.uuid;
-
-      await fetchDeleteV2AdminReportingFrameworksUUID({
-        pathParams: { uuid }
-      });
+      await deleteReportingFramework(connected.data.uuid);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework delete failed", err);
     }
   }
 };
