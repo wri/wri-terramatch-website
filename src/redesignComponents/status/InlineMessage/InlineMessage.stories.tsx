@@ -1,6 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import type { Meta, StoryObj } from "@storybook/react";
+
+import { CheckApproved } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
 
@@ -11,49 +12,7 @@ const meta = {
     layout: "centered"
   },
   tags: ["autodocs"],
-  decorators: [
-    Story => (
-      <div style={{ display: "flex", justifyContent: "center", width: "600px" }}>
-        <Story />
-      </div>
-    )
-  ],
-  argTypes: {
-    variant: {
-      control: "select",
-      options: ["info-white", "info-grey", "success", "warning", "error"],
-      description: "Visual style variant of the message"
-    },
-    size: {
-      control: "select",
-      options: ["small", "large"],
-      description: "Size of the inline message"
-    },
-    label: {
-      control: "text",
-      description: "Primary message text"
-    },
-    caption: {
-      control: "text",
-      description: "Optional secondary descriptive text"
-    },
-    actionLabel: {
-      control: "text",
-      description: "Label for the optional action button"
-    },
-    isButtonRight: {
-      control: "boolean",
-      description: "When true, positions the action button to the right"
-    },
-    widthFull: {
-      control: "boolean",
-      description: "When true, stretches the message container to full width"
-    },
-    icon: {
-      control: false,
-      description: "Custom icon node rendered inside the message"
-    }
-  }
+  args: { onActionClick: () => {} }
 } satisfies Meta<typeof InlineMessage>;
 
 export default meta;
@@ -61,78 +20,102 @@ type Story = StoryObj<typeof meta>;
 
 export const InfoWhite: Story = {
   args: {
+    label: "Info White",
+    caption: "caption",
     variant: "info-white",
-    label: "This is an informational message",
-    caption: "Additional context about this information.",
-    size: "large"
+    actionLabel: "Label"
   }
 };
 
 export const InfoGrey: Story = {
   args: {
+    label: "Info Grey",
+    caption: "caption",
     variant: "info-grey",
-    label: "This is an informational message",
-    caption: "Additional context about this information.",
-    size: "large"
+    actionLabel: "Label"
+  }
+};
+
+export const FullWidth: Story = {
+  args: {
+    label: "Full Width",
+    caption:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent ultrices, nisi vel congue imperdiet, risus felis iaculis metus, sit amet accumsan justo nibh eu odio. Fusce velit augue, bibendum vestibulum elit vel, placerat iaculis dolor. Aliquam tincidunt nunc blandit, consequat magna ut, mollis mi. Morbi ac dictum nisi. Quisque leo neque, vehicula eu lorem ac, convallis pellentesque sem. Proin commodo libero quis nulla tristique, a vehicula sem consectetur. Donec id luctus orci.",
+    variant: "info-grey",
+    actionLabel: "Label",
+    size: "full-width"
   }
 };
 
 export const Success: Story = {
   args: {
+    label: "Success",
+    caption: "caption",
     variant: "success",
-    label: "Action completed successfully",
-    caption: "Your changes have been saved.",
-    size: "large"
+    actionLabel: "Label"
   }
 };
 
 export const Warning: Story = {
   args: {
+    label: "Warning",
+    caption: "caption",
     variant: "warning",
-    label: "Proceed with caution",
-    caption: "This action may have unintended consequences.",
-    size: "large"
+    actionLabel: "Label"
   }
 };
 
 export const Error: Story = {
   args: {
+    label: "Error",
+    caption: "caption",
     variant: "error",
-    label: "Something went wrong",
-    caption: "Please try again or contact support.",
-    size: "large"
+    actionLabel: "Label"
+  }
+};
+
+export const ButtonRight: Story = {
+  args: {
+    label: "Info White",
+    caption: "caption",
+    variant: "info-white",
+    actionLabel: "Label",
+    isButtonRight: true
   }
 };
 
 export const Small: Story = {
   args: {
+    label: "Info White",
+    caption: "caption",
     variant: "info-white",
-    label: "Small inline message",
-    caption: "Compact size variant.",
-    size: "small"
+    actionLabel: "Label",
+    size: "small",
+    isButtonRight: true
   }
 };
 
-export const WithAction: Story = {
+export const SmallButtonRight: Story = {
   args: {
-    variant: "warning",
-    label: "Your session is about to expire",
-    caption: "You will be logged out in 5 minutes.",
-    size: "large",
-    actionLabel: "Stay logged in",
-    onActionClick: () => alert("Action clicked!")
+    label: "Info White",
+    caption: "caption",
+    variant: "info-white",
+    actionLabel: "Label",
+    size: "small",
+    isButtonRight: true
   }
 };
 
-export const WithActionRight: Story = {
+export const NoIconWithButtonIcon: Story = {
   args: {
+    label: "Ready to finish this factor?",
+    caption: "Mark this factor as complete when you've finished reviewing the response, rationale, and strategies.",
     variant: "info-grey",
-    label: "New update available",
-    caption: "A new version is ready to install.",
-    size: "large",
-    actionLabel: "Update now",
+    size: "full-width",
+    icon: null,
+    actionLabel: "Mark complete",
     isButtonRight: true,
-    onActionClick: () => alert("Update clicked!")
+    buttonLeftIcon: <CheckApproved height="16px" width="16px" />
   }
 };
 
@@ -144,33 +127,12 @@ export const LabelOnly: Story = {
   }
 };
 
-export const WithCustomIcon: Story = {
-  args: {
-    variant: "warning",
-    label: "Custom icon message",
-    caption: "This message uses a custom icon node.",
-    size: "large",
-    icon: <WarningAmberIcon fontSize="small" />
-  }
-};
-
-export const FullWidth: Story = {
-  args: {
-    variant: "info-grey",
-    label: "Full-width message",
-    caption: "This message stretches to fill its container.",
-    size: "large",
-    widthFull: true
-  }
-};
-
 export const AllVariants: Story = {
   args: {
     variant: "info-white",
     label: "Info White",
     caption: "Informational message on white background.",
-    size: "large",
-    widthFull: true
+    size: "large"
   },
   render: () => (
     <SimpleGrid columns={1} gap={4} width="600px">

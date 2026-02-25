@@ -6685,10 +6685,10 @@
     "@webassemblyjs/ast" "1.12.1"
     "@xtuc/long" "4.2.2"
 
-"@worldresources/wri-design-systems@^2.183.1":
-  version "2.183.1"
-  resolved "https://registry.yarnpkg.com/@worldresources/wri-design-systems/-/wri-design-systems-2.183.1.tgz#5a87152bbf8e41ca229a5d88e1a437d740b94b08"
-  integrity sha512-PamhGH5ElL5uAbq3P4rlWkCFsSleBOIVOs1sCeV1Pheqr7gM63JW29ZROP9kpbU0laTRpx7aTgMAUBO0DcnM+w==
+"@worldresources/wri-design-systems@^2.184.2":
+  version "2.184.2"
+  resolved "https://registry.npmjs.org/@worldresources/wri-design-systems/-/wri-design-systems-2.184.2.tgz#7964a25451130814606e15c3dbcd69b7f9c31c4e"
+  integrity sha512-Bh66pE2rRgEz9eEHCEas4Z9O0pmoHHgENqTGzr+4rvqVuRdpz7KFVDJjGC8Pp+b4g5JI7e8cgj4hccbUB4AhHA==
 
 "@wry/context@^0.7.0":
   version "0.7.0"
