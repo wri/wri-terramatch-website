@@ -3,10 +3,43 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
+import ActionCell from "./components/ActionCell";
+import CustomTableCell from "./components/TableCell";
+import TitleCell from "./components/TitleCell";
 import Table from "./Table";
 import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
 import { NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
-import { type RowData } from "./tableUtils";
+import { type RowData, hasCustomCellContent } from "./tableUtils";
+
+const defaultRenderDataCell = (rowData: RowData, columnKey: string) => {
+  if (columnKey === "actions" && rowData.actionCell != null) {
+    return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
+  }
+
+  if (columnKey === "name") {
+    if (rowData.title != null) {
+      return <TitleCell {...rowData.title} />;
+    }
+
+    if (hasCustomCellContent(rowData)) {
+      return (
+        <CustomTableCell
+          avatars={rowData.avatars}
+          primaryText={rowData.primaryText}
+          secondaryText={rowData.secondaryText}
+          progressTag={rowData.progressTag}
+          trees={rowData.trees}
+          jobs={rowData.jobs}
+          multiActionButton={rowData.multiActionButton}
+        />
+      );
+    }
+
+    return rowData.fullName ?? (rowData as any)[columnKey];
+  }
+
+  return (rowData as any)[columnKey];
+};
 
 const meta: Meta<typeof Table> = {
   title: "Redesign Components/Data Display/Table",
@@ -14,6 +47,9 @@ const meta: Meta<typeof Table> = {
   tags: ["autodocs"],
   parameters: {
     layout: "padded"
+  },
+  args: {
+    renderDataCell: defaultRenderDataCell
   },
   argTypes: {
     data: {
@@ -114,7 +150,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="h-5 w-5 text-theme-neutral-800" />
+          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
         }
       },
       ...generateSampleData(3),
@@ -477,16 +513,16 @@ export const WithNoHeader: Story = {
       return (
         <TableRow>
           <TableCell>
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[1]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[1]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[2]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[2]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[3]}</Box>
+            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[3]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="border-b border-theme-neutral-300 py-4">{row[4]}</Box>
+            <Box className="border-theme-neutral-300 border-b py-4">{row[4]}</Box>
           </TableCell>
         </TableRow>
       );
