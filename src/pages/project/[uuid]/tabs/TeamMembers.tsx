@@ -185,7 +185,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           }
         ]}
         search={{
-          label: t("Members"),
+          label: t(teamMembers.length === 1 ? "Member" : "Members"),
           placeholder: t("Search"),
           options: [
             { label: t("Name"), value: "name" },
