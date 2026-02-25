@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
+import { Framework } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
@@ -22,7 +23,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
-  const isTf3Project = project.treesGrownGoal != null;
+  const isTf3Project = project.frameworkKey === Framework.TF_3;
 
   return (
     <Flex gap={isSmallResolution ? 10 : 3} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
