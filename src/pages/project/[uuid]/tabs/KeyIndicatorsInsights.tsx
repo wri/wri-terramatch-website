@@ -43,6 +43,23 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         }
       />
       <MetricCard
+        title="Trees Regenerated"
+        progress={project.regeneratedTreesCount ?? 0}
+        goal={project.goalTreesRestoredAnr ?? 0}
+        variant="donutChart"
+        icon={<Tree />}
+        color="secondary.600"
+        type="treesRestored"
+        className={metricClassName}
+        tooltipContent={
+          <Box fontSize="14px" lineHeight="20px">
+            <b>{t("Trees Regenerated")}</b>
+            <br />
+            {t("Number of trees regenerated for this project")}
+          </Box>
+        }
+      />
+      <MetricCard
         title="Seedlings Grown"
         progress={project.seedsPlantedCount ?? 0}
         goal={project.seedsGrownGoal ?? 0}
