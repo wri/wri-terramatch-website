@@ -40,7 +40,7 @@ export const WithStatusComplete: Story = {
 export const WithStatusError: Story = {
   args: {
     title: "Header Title",
-    badge: "label",
+    badge: "Label",
     status: "error"
   }
 };
@@ -49,7 +49,7 @@ export const WithStatusLabel: Story = {
   args: {
     title: "Header Title",
     status: "error",
-    badge: "label",
-    statusLabel: "3 requires attention"
+    badge: "Label",
+    statusLabel: "Label"
   }
 };
