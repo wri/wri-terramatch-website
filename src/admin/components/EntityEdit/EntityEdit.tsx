@@ -106,6 +106,7 @@ const EntityEditDisplay = () => {
         projectDetails={projectDetails}
         redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
         adminListPath={"admin#" + createPath({ resource, type: "list" })}
+        cancelEditForm={() => navigate(createPath({ resource, id, type: "show" }))}
         entity={entity ?? undefined}
       />
     </LoadingContainer>

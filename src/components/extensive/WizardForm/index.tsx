@@ -250,13 +250,7 @@ function WizardForm(props: WizardFormProps) {
           )}
           cancelButtonProps={{
             children: "Cancel",
-            onClick: () => {
-              if (isAdmin) {
-                props.onSubmit?.(formHook.getValues());
-              } else {
-                props.cancelEditForm?.();
-              }
-            }
+            onClick: () => props.cancelEditForm?.()
           }}
           primaryButtonProps={{
             children: "Next",
