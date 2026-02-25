@@ -85,7 +85,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         <MetricCard
           title="Trees Regenerated"
           progress={project.regeneratedTreesCount ?? 0}
-          goal={project.regeneratedTreesGoal ?? 0}
+          goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<Tree />}
           color="secondary.600"
