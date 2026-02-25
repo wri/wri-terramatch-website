@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import CheckboxListInput from "./CheckboxListInput";
 
 const meta = {
-  title: "Redesign Components/Forms/Input/CheckboxListInput",
+  title: "Redesign Components/Forms/Input/Checkbox List Input",
   component: CheckboxListInput,
   parameters: {
     layout: "centered"
