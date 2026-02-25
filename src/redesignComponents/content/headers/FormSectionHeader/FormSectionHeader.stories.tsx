@@ -33,12 +33,6 @@ export const Default: Story = {
   }
 };
 
-export const WithLabel: Story = {
-  args: {
-    title: "Header Title"
-  }
-};
-
 export const WithStatusComplete: Story = {
   args: {
     title: "Header Title",
@@ -54,7 +48,7 @@ export const WithStatusError: Story = {
   }
 };
 
-export const WithStatusLabel: Story = {
+export const WithStatusErrorLabel: Story = {
   args: {
     title: "Header Title",
     status: "error",
