@@ -116,8 +116,7 @@ const CreateOrganisationForm = () => {
           title={t("Create Organization")}
           hideSaveAndCloseButton
           roundedCorners
-          entity={orgData}
-          entityLoading={isLoading}
+          entity={orgData ?? undefined}
           redirectEntityPage={""}
         />
       </LoadingContainer>

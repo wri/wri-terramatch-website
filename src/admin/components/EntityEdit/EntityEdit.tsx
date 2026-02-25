@@ -85,7 +85,7 @@ const EntityEditDisplay = () => {
   }
 
   return (
-    <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
+    <LoadingContainer loading={orgLoading || isLoading || !providerLoaded || !entityLoading}>
       <WizardForm
         models={model}
         fieldsProvider={fieldsProvider}
@@ -105,8 +105,8 @@ const EntityEditDisplay = () => {
         orgDetails={orgDetails}
         projectDetails={projectDetails}
         redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
-        entity={entity}
-        entityLoading={entityLoading}
+        adminListPath={"admin#" + createPath({ resource, type: "list" })}
+        entity={entity ?? undefined}
       />
     </LoadingContainer>
   );

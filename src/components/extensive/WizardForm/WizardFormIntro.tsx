@@ -75,8 +75,8 @@ const WizardFormIntro = (props: WizardFormIntroProps) => {
       )}
       <FormFooter
         className={footerMarginTop}
-        ButtonLeft={props.backButtonProps}
-        ButtonPrimary={props.submitButtonProps}
+        cancelButtonProps={props.backButtonProps}
+        primaryButtonProps={props.submitButtonProps}
       />
     </div>
   );

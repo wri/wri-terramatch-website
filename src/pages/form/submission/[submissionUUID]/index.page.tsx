@@ -92,7 +92,7 @@ const SubmissionPage = () => {
 
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded}>
+      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded || !applicationLoaded}>
         <WizardForm
           models={formModels}
           framework={framework}
@@ -112,8 +112,7 @@ const SubmissionPage = () => {
           roundedCorners
           orgDetails={orgDetails}
           redirectEntityPage={`/applications/${submission?.applicationUuid}`}
-          entity={application && submission && { ...application, status: submission.status }}
-          entityLoading={applicationLoaded}
+          entity={application && submission ? { ...application, status: submission.status } : undefined}
         />
       </LoadingContainer>
     </BackgroundLayout>

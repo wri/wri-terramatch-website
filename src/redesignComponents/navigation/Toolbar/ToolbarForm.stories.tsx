@@ -17,16 +17,16 @@ const meta: Meta<typeof ToolbarForm> = {
     )
   ],
   argTypes: {
-    ButtonLeft: {
+    cancelButtonProps: {
       description: "Configuration for the left button (rendered with variant='borderless')"
     },
-    ButtonPrimary: {
+    primaryButtonProps: {
       description: "Configuration for the primary button (rendered with variant='primary')"
     },
-    ButtonSecondary: {
+    secondaryButtonProps: {
       description: "Configuration for the secondary button (rendered with variant='secondary')"
     },
-    ButtonTertiary: {
+    tertiaryButtonProps: {
       description: "Configuration for the tertiary button (rendered with variant='borderless')"
     }
   }
@@ -37,19 +37,19 @@ type Story = StoryObj<typeof ToolbarForm>;
 
 export const Default: Story = {
   args: {
-    ButtonLeft: {
+    cancelButtonProps: {
       children: "Label",
       onClick: () => console.log("Back clicked")
     },
-    ButtonPrimary: {
+    primaryButtonProps: {
       children: "Label",
       onClick: () => console.log("Save clicked")
     },
-    ButtonSecondary: {
+    secondaryButtonProps: {
       children: "Label",
       onClick: () => console.log("Cancel clicked")
     },
-    ButtonTertiary: {
+    tertiaryButtonProps: {
       children: "Label",
       onClick: () => console.log("Delete clicked")
     }

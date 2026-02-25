@@ -6,10 +6,10 @@ import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 
 interface FormFooterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   className?: string;
-  ButtonLeft?: IButtonProps;
-  ButtonPrimary?: IButtonProps;
-  ButtonSecondary?: IButtonProps;
-  ButtonTertiary?: IButtonProps;
+  cancelButtonProps?: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
 }
 
 export const FormFooter = (props: FormFooterProps) => {

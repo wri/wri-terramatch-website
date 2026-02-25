@@ -13,19 +13,19 @@ export interface ToolbarProps {
 }
 
 export interface BulkActionToolbarProps {
-  ButtonPrimary: IButtonProps;
-  ButtonSecondary: IButtonProps;
-  ButtonTertiary: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
   ButtonMenu: IMultiActionButtonProps;
 }
 
 export interface ToolbarFormProps {
-  ButtonLeft?: IButtonProps;
-  ButtonPrimary?: IButtonProps;
-  ButtonSecondary?: IButtonProps;
-  ButtonTertiary?: IButtonProps;
+  cancelButtonProps?: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
 }
 
 export interface ToolbarSlot {

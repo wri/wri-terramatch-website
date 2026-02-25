@@ -1,13 +1,13 @@
-import { Box, Link } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { forwardRef } from "react";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
+import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
 import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
@@ -40,6 +40,22 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
+
+export type WizardFormEntity = {
+  uuid?: string | null;
+  frameworkKey?: string | null;
+  dueAt?: string | null;
+  status?: string | null;
+  title?: string | null;
+  name?: string | null;
+  organisationName?: string | null;
+  organisationUuid?: string | null;
+  fundingProgrammeName?: string | null;
+  projectName?: string | null;
+  projectUuid?: string | null;
+  taskUuid?: string | null;
+};
+
 export interface WizardFormProps {
   fieldsProvider: FormFieldsProvider;
   models: FormModelsDefinition;
@@ -86,51 +102,19 @@ export interface WizardFormProps {
   cancelEditForm?: () => void;
   redirectEntityPage: string;
 
-  entity?: any;
-  entityLoading?: boolean;
+  adminListPath?: string;
+  entity?: WizardFormEntity;
 }
 
-// Wrapper component to handle both relative routes (Next.js Link) and full URLs (window.location)
-const AdminLinkWrapper = forwardRef<HTMLAnchorElement, { to?: string; children?: React.ReactNode; className?: string }>(
-  ({ to, children, className, ...props }, ref) => {
-    const isFullUrl = to?.startsWith("http://") || to?.startsWith("https://");
-
-    if (isFullUrl) {
-      return (
-        <a
-          ref={ref}
-          href={to}
-          className={className}
-          onClick={e => {
-            e.preventDefault();
-            if (to) window.location.href = to;
-          }}
-          {...props}
-        >
-          {children}
-        </a>
-      );
-    }
-
-    return (
-      <Link ref={ref} href={to || "#"} className={className} {...props}>
-        {children}
-      </Link>
-    );
-  }
-);
-
-AdminLinkWrapper.displayName = "AdminLinkWrapper";
-
 function WizardForm(props: WizardFormProps) {
-  const { entity, entityLoading } = props;
+  const { entity } = props;
   const t = useT();
   const modal = useModalContext();
   const { selectedStepIndex, setSelectedStepIndex } = useFormNavigation(props.fieldsProvider);
   const steps = useFormStepsWithValidation(props.fieldsProvider, props.framework);
   const selectedSection = selectedStepIndex < 0 ? undefined : steps[selectedStepIndex];
   const isAdmin = useIsAdmin();
-  const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt as string);
+  const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
@@ -264,7 +248,7 @@ function WizardForm(props: WizardFormProps) {
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          ButtonLeft={{
+          cancelButtonProps={{
             children: "Cancel",
             onClick: () => {
               if (isAdmin) {
@@ -274,11 +258,11 @@ function WizardForm(props: WizardFormProps) {
               }
             }
           }}
-          ButtonPrimary={{
+          primaryButtonProps={{
             children: "Next",
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
-          ButtonSecondary={{
+          secondaryButtonProps={{
             children: "Save and Exit",
             onClick: () => {
               if (isAdmin) {
@@ -289,7 +273,7 @@ function WizardForm(props: WizardFormProps) {
               }
             }
           }}
-          ButtonTertiary={
+          tertiaryButtonProps={
             !props.hideBackButton
               ? {
                   children: "Previous",
@@ -374,8 +358,7 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
-  const modelType = props?.models as FormModel;
-  const modelUuid = props?.models as FormModel;
+  const formModel = props?.models as FormModel;
 
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
@@ -385,21 +368,23 @@ function WizardForm(props: WizardFormProps) {
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
-    } else if (modelType?.model == "organisations") {
+    } else if (formModel?.model == "organisations") {
       return [{ label: t("Edit"), link: `/organization/create?uuid=${entity?.uuid ?? ""}` }];
-    } else {
+    } else if (formModel?.model) {
       return entityLinkHeaderMap({
         isAdmin,
-        model: modelType?.model,
-        uuid: modelUuid?.uuid ?? props?.entity?.uuid,
+        model: formModel.model,
+        uuid: formModel.uuid ?? props?.entity?.uuid,
         redirectEntityPage: props.redirectEntityPage,
+        adminListPath: props.adminListPath,
         entity: entity,
         firstLinkIcon: <Project className="!text-theme-primary-900" />,
         t,
         taskTitle
-      })[modelType?.model];
+      })[formModel.model];
     }
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, modelType?.model, modelUuid?.uuid]);
+    return [];
+  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {
@@ -407,9 +392,9 @@ function WizardForm(props: WizardFormProps) {
         ? `${entity?.organisationName} - ${entity?.fundingProgrammeName}`
         : t("Unnamed Application");
     } else {
-      return mapEntityTitle(entity?.title ?? entity?.name, modelType?.model, t);
+      return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
     }
-  }, [modelType?.model, t, entity, isSubmissionModel]);
+  }, [formModel?.model, t, entity, isSubmissionModel]);
 
   return selectedStepIndex < 0 ? null : (
     <div className="relative">
@@ -421,12 +406,12 @@ function WizardForm(props: WizardFormProps) {
           projectDetails={props.projectDetails}
         >
           <div className={twMerge("flex w-full flex-col", props.className)}>
-            {entityLoading && (
+            {entity && (
               <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
-                <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: Link }} />
+                <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />
                 <PageHeader
                   title={pageHeaderTitle}
-                  label="Set Up Status:"
+                  label={t("Set Up Status:")}
                   tag={
                     mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined
                   }
