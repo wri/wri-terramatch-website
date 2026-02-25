@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -8,9 +9,11 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
+import { useUserAssociationCreation } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
-import { usePostV2ProjectsUUIDInvite } from "@/generated/apiComponents";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import ApiSlice from "@/store/apiSlice";
 
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
@@ -36,33 +39,39 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
     handleSubmit
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
-  const { mutate: invitePartner } = usePostV2ProjectsUUIDInvite({
-    onSuccess() {
-      onSuccess?.();
-      openToast(t("Invitation sent successfully"));
-      hideModal();
-    },
-    onError() {
-      setError("email", {
-        message: t("This user is already a monitoring partner for this project, please try a different email address."),
-        type: "validate"
-      });
-    }
+  const [, { isCreating, createFailure, create: invitePartner }] = useUserAssociationCreation({
+    uuid: projectUUID
   });
+
+  const hideModal = useCallback(() => {
+    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
+    reset();
+  }, [closeModal, reset]);
+
+  useRequestComplete(
+    isCreating,
+    useCallback(() => {
+      if (createFailure != null) {
+        setError("email", {
+          message: t(
+            "This user is already a monitoring partner for this project, please try a different email address."
+          ),
+          type: "validate"
+        });
+      } else {
+        ApiSlice.pruneCache("associatedUsers");
+        onSuccess?.();
+        openToast(t("Invitation sent successfully"));
+        hideModal();
+      }
+    }, [createFailure, setError, onSuccess, openToast, hideModal, t])
+  );
 
   const onSubmit = (data: FormValues) => {
     invitePartner({
-      pathParams: { uuid: projectUUID },
-      queryParams: {
-        email_address: data.email,
-        callback_url: `${window.location.origin}/auth/reset-password`
-      }
+      emailAddress: data.email,
+      isManager: false
     });
-  };
-
-  const hideModal = () => {
-    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
-    reset();
   };
 
   return (

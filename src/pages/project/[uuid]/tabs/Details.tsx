@@ -88,6 +88,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
     }
     return rows;
   }
+
   return (
     <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
       <Flex flexDirection="column" gap={2}>
@@ -105,7 +106,6 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             },
             t
           );
-
           return (
             <Accordion
               key={step.id}
@@ -136,7 +136,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    {entry.title === "Additional Information" ? null : (
+                    {entry.title === "Additional Information" ||
+                    (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
                       <Text textStyle="300-bold" color="primary.900">
                         {entry.title}:
                       </Text>

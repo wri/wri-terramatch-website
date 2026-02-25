@@ -13,10 +13,10 @@ export type ActionCellProps = {
 export type RowData = {
   id: string | number;
   uuid?: string;
-  name: string;
-  email: string;
-  organization: string;
-  role: string;
+  fullName: string;
+  emailAddress: string;
+  organisationName: string;
+  roleName: string;
   status: string;
   title?: TitleCellProps;
   avatars?: AvatarProps[];
