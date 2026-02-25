@@ -12,6 +12,15 @@ const meta: Meta<typeof FormSectionHeader> = {
         component: "Form Section Header displays a section title with optional label, badge, and status indicator."
       }
     }
+  },
+  argTypes: {
+    status: {
+      control: {
+        type: "select"
+      },
+      options: ["error", "complete"],
+      description: "Status of the form section header"
+    }
   }
 };
 
