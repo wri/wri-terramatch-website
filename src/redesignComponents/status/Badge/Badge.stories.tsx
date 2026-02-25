@@ -53,7 +53,7 @@ export const WithHighCount: Story = {
   }
 };
 
-export const NotificationCountWitLabel: Story = {
+export const NotificationCountWithLabel: Story = {
   args: {
     label: "Label",
     hasNotification: true,
