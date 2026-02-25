@@ -4,11 +4,8 @@ import React, { FC, useCallback, useEffect } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import ActionCell from "./components/ActionCell";
-import CustomTableCell from "./components/TableCell";
-import TitleCell from "./components/TitleCell";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, DEFAULT_CURRENT_PAGE, hasCustomCellContent } from "./tableUtils";
+import { type RowData, DEFAULT_CURRENT_PAGE } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -98,32 +95,6 @@ const Table: FC<TableProps> = ({
   const dataByPage = sortedData.slice(startRange, endRange) as RowData[];
 
   const defaultRenderDataCell = useCallback((rowData: RowData, columnKey: string) => {
-    if (columnKey === "actions" && rowData.actionCell != null) {
-      return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
-    }
-
-    if (columnKey === "name") {
-      if (rowData.title != null) {
-        return <TitleCell {...rowData.title} />;
-      }
-
-      if (hasCustomCellContent(rowData)) {
-        return (
-          <CustomTableCell
-            avatars={rowData.avatars}
-            primaryText={rowData.primaryText}
-            secondaryText={rowData.secondaryText}
-            progressTag={rowData.progressTag}
-            trees={rowData.trees}
-            jobs={rowData.jobs}
-            multiActionButton={rowData.multiActionButton}
-          />
-        );
-      }
-
-      return rowData.fullName;
-    }
-
     return (rowData as any)[columnKey];
   }, []);
 
