@@ -3,13 +3,13 @@ import { Meta, StoryObj } from "@storybook/react";
 import FormSectionHeader from "./FormSectionHeader";
 
 const meta: Meta<typeof FormSectionHeader> = {
-  title: "Redesign Components/Content/Headers/FormSectionHeader",
+  title: "Redesign Components/Content/Headers/Form Section Header",
   component: FormSectionHeader,
   parameters: {
     layout: "padded",
     docs: {
       description: {
-        component: "FormSectionHeader displays a section title with optional label, badge, and status indicator."
+        component: "Form Section Header displays a section title with optional label, badge, and status indicator."
       }
     }
   }
