@@ -4,6 +4,7 @@ export { CalendarIcon } from "./CalendarIcon";
 export { CheckIcon } from "./CheckIcon";
 export { CheckApprovedIcon } from "./CheckApprovedIcon";
 export { ChevronDownIcon } from "./ChevronDownIcon";
+export { ChevronDownAltIcon } from "./ChevronDownAltIcon";
 export { ChevronRightIcon } from "./ChevronRightIcon";
 export { ChevronUpIcon } from "./ChevronUpIcon";
 export { CloseFullscreenIcon } from "./CloseFullscreenIcon";
