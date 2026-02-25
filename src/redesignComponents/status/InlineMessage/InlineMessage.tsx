@@ -3,15 +3,16 @@ import { InlineMessage as InlineMessageComponent } from "@worldresources/wri-des
 import { FC } from "react";
 
 export interface InlineMessageProps {
-  label?: string;
+  label: string;
   caption?: string;
   variant: "info-white" | "info-grey" | "success" | "warning" | "error";
-  size?: "small" | "large";
+  size?: "small" | "large" | "full-width";
   icon?: React.ReactNode;
   onActionClick?: VoidFunction;
   actionLabel?: string;
   isButtonRight?: boolean;
-  widthFull?: boolean;
+  buttonLeftIcon?: React.ReactNode;
+  buttonRightIcon?: React.ReactNode;
 }
 
 const InlineMessage: FC<InlineMessageProps> = ({
@@ -22,16 +23,17 @@ const InlineMessage: FC<InlineMessageProps> = ({
   icon,
   onActionClick,
   actionLabel,
-  isButtonRight,
-  widthFull
+  isButtonRight
 }) => {
   return (
     <Box
-      width={widthFull ? "100%" : undefined}
+      className="w-auto"
       css={{
-        "& > *": {
-          width: widthFull ? "100%" : undefined,
-          maxWidth: widthFull ? "100%" : undefined
+        "& [aria-roledescription] > div > div:first-of-type": {
+          alignItems: "center"
+        },
+        "& [aria-roledescription] > div > div:first-of-type > svg": {
+          marginTop: 0
         }
       }}
     >
