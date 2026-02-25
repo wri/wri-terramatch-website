@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 import { useParams } from "react-router-dom";
 
@@ -13,15 +13,12 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useOrganisationUserUpdate } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import {
-  useGetV2AdminUsersUsersOrganisationListUUID,
-  usePutV2OrganisationsApproveUser,
-  usePutV2OrganisationsRejectUser
-} from "@/generated/apiComponents";
-import { V2PostOrganisationsApproveUserBody } from "@/generated/apiRequestBodies";
+import { useGetV2AdminUsersUsersOrganisationListUUID } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 const statusMap: { [key: string]: string } = {
   requested: "pending",
@@ -37,6 +34,8 @@ const OrganisationUserTable = () => {
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const [tableKey, setTableKey] = useState(0);
+  const [selectedUserUuid, setSelectedUserUuid] = useState<string>("");
+  const [updateType, setUpdateType] = useState<"approve" | "reject" | null>(null);
   const {
     data: usersList,
     refetch,
@@ -47,20 +46,27 @@ const OrganisationUserTable = () => {
     }
   }) as any;
 
-  const { mutate: approveUser } = usePutV2OrganisationsApproveUser({
-    onSuccess: () => {
-      refetch();
-      closeModal(ModalId.CONFIRM_USER);
-      openNotification("success", "Success!", "User approved successfully");
-    }
+  const [, { update, isUpdating, updateFailure }] = useOrganisationUserUpdate({
+    organisationUuid: orgId,
+    userUuid: selectedUserUuid,
+    enabled: false
   });
-  const { mutate: rejectUser } = usePutV2OrganisationsRejectUser({
-    onSuccess: () => {
-      refetch();
-      closeModal(ModalId.CONFIRM_USER);
+  const updateRef = useRef(update);
+  updateRef.current = update;
+
+  const handleUpdateSuccess = useCallback(() => {
+    refetch();
+    closeModal(ModalId.CONFIRM_USER);
+    if (updateType === "approve") {
+      openNotification("success", "Success!", "User approved successfully");
+    } else if (updateType === "reject") {
       openNotification("success", "Success!", "User rejected successfully");
     }
-  });
+    setSelectedUserUuid("");
+    setUpdateType(null);
+  }, [refetch, closeModal, openNotification, updateType]);
+
+  useRequestSuccess(isUpdating, updateFailure, handleUpdateSuccess);
 
   const tableItemMenu = (user: V2AdminUserRead) => [
     {
@@ -93,6 +99,11 @@ const OrganisationUserTable = () => {
   ];
 
   const handleOpenModal = (type: "approve" | "reject", userUuid?: string) => {
+    if (userUuid == null) return;
+
+    setSelectedUserUuid(userUuid);
+    setUpdateType(type);
+
     const title = type === "approve" ? t("Confirm User Approval") : t("Confirm User Rejection");
     const content =
       type === "approve"
@@ -111,18 +122,18 @@ const OrganisationUserTable = () => {
         primaryButtonProps={{
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
-            const actionBody = {
-              organisation_uuid: orgId,
-              user_uuid: userUuid
-            } as V2PostOrganisationsApproveUserBody;
-
-            if (type === "approve") approveUser({ body: actionBody });
-            else rejectUser({ body: actionBody });
+            (updateRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
+              status: type === "approve" ? "approved" : "rejected"
+            });
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: () => closeModal(ModalId.CONFIRM_USER)
+          onClick: () => {
+            closeModal(ModalId.CONFIRM_USER);
+            setSelectedUserUuid("");
+            setUpdateType(null);
+          }
         }}
       />
     );

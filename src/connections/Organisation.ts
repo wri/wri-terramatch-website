@@ -17,7 +17,8 @@ import {
   organisationIndex,
   OrganisationIndexQueryParams,
   organisationShow,
-  organisationUpdate
+  organisationUpdate,
+  updateUserAssociation
 } from "@/generated/v3/userService/userServiceComponents";
 import {
   FinancialIndicatorDto,
@@ -52,6 +53,11 @@ export type MyOrganisationConnection = OrganisationConnection & {
 
 type OrgJoinProps = {
   organisationUuid?: string;
+};
+
+type OrganisationUserUpdateProps = {
+  organisationUuid: string;
+  userUuid: string;
 };
 
 type OrganisationFinancialIndicatorsConnection = {
@@ -135,6 +141,20 @@ const orgJoinConnection = v3Resource("associatedUsers", createUserAssociation)
   )
   .buildConnection();
 
+const orgUserAssociationUpdateConnection = v3Resource("associatedUsers", updateUserAssociation)
+  .create<UserAssociationDto, OrganisationUserUpdateProps>(({ organisationUuid, userUuid }) =>
+    organisationUuid == null || userUuid == null
+      ? undefined
+      : {
+          pathParams: {
+            model: "organisations",
+            uuid: organisationUuid,
+            userUuid
+          }
+        }
+  )
+  .buildConnection();
+
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
 // from the store.
@@ -163,6 +183,7 @@ export const createOrg = resourceCreator(orgCreationConnection);
 export const useOrgCreate = connectionHook(orgCreationConnection);
 
 export const useOrgJoin = connectionHook(orgJoinConnection);
+export const useOrgUserAssociationUpdate = connectionHook(orgUserAssociationUpdateConnection);
 
 const organisationFinancialIndicatorsConnection: Connection<
   OrganisationFinancialIndicatorsConnection,

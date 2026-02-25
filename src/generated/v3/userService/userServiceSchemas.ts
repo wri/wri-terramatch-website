@@ -759,3 +759,19 @@ export type UserAssociationCreateData = {
 export type UserAssociationCreateBody = {
   data: UserAssociationCreateData;
 };
+
+export type UserAssociationUpdateAttributes = {
+  /**
+   * Status to set for the user association
+   */
+  status: "approved" | "rejected";
+};
+
+export type UserAssociationUpdateData = {
+  type: "associatedUsers";
+  attributes: UserAssociationUpdateAttributes;
+};
+
+export type UserAssociationUpdateBody = {
+  data: UserAssociationUpdateData;
+};

@@ -1355,6 +1355,92 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   {}
 >("/userAssociations/v3/{model}/{uuid}", "DELETE");
 
+export type UpdateUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
+  userUuid: string;
+};
+
+export type UpdateUserAssociationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateUserAssociationResponse = {
+  meta?: {
+    /**
+     * @example associatedUsers
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example associatedUsers
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserAssociationDto;
+  };
+};
+
+export type UpdateUserAssociationVariables = {
+  body: Schemas.UserAssociationUpdateBody;
+  pathParams: UpdateUserAssociationPathParams;
+};
+
+export const updateUserAssociation = new V3ApiEndpoint<
+  UpdateUserAssociationResponse,
+  UpdateUserAssociationError,
+  UpdateUserAssociationVariables,
+  {}
+>("/userAssociations/v3/{model}/{uuid}/{userUuid}", "PATCH");
+
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
@@ -1362,5 +1448,5 @@ export const operationsByTag = {
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
-  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
+  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation, updateUserAssociation }
 };
