@@ -90,7 +90,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -181,7 +181,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                                         <Box
                                           className={classNames(
                                             idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                            "border-theme-neutral-300 border-b py-4"
+                                            "border-b border-theme-neutral-300 py-4"
                                           )}
                                         >
                                           {row[idx + 1]}

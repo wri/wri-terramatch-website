@@ -7,33 +7,33 @@ import { Else, If, Then } from "react-if";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDPartners } from "@/generated/apiComponents";
-import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 export const MonitoringPartnersTable = ({ project }: { project: any }) => {
   const t = useT();
-  const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
+
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid,
+    filter: { isManager: false }
   });
 
   const { openModal, closeModal } = useModalContext();
-  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
-  const ModalConfirmDeletePartner = (email_address: string) => {
+  const ModalConfirmDeletePartner = (uuid: string, emailAddress: string) => {
     openModal(
       ModalId.MODAL_CONFIRM_DELETE_PARTNER,
       <Modal
         iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
         title={""}
         content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
-          email_address,
+          email_address: emailAddress,
           project_name: project?.name
         })}
         primaryButtonProps={{
           children: t("Confirm"),
           onClick: () => {
-            deletePartner(email_address as string);
+            bulkDeleteUserAssociations(project.uuid, [uuid]);
             closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
           }
         }}
@@ -55,7 +55,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
 
           <Divider />
 
-          <If condition={partners?.data.length === 0}>
+          <If condition={associatedUsers?.length === 0}>
             <Then>
               <Box padding={3}>
                 <Typography>This project doesn’t have monitoring partners</Typography>
@@ -63,25 +63,26 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
             </Then>
             <Else>
               <DataGrid
-                rows={partners?.data || []}
+                rows={associatedUsers ?? []}
                 rowSelection={false}
                 columns={[
                   {
-                    field: "first_name",
+                    field: "fullName",
                     headerName: "Name",
-                    renderCell: params => `${params.row.first_name || ""} ${params.row.last_name || ""}`,
                     flex: 1,
                     sortable: false,
                     filterable: false
                   },
-                  { field: "email_address", headerName: "Email", flex: 1, sortable: false, filterable: false },
+                  { field: "emailAddress", headerName: "Email", flex: 1, sortable: false, filterable: false },
                   { field: "status", headerName: "Status", sortable: false, filterable: false },
                   {
                     field: "''",
                     headerName: "",
                     renderCell: params => {
                       return (
-                        <div onClick={() => ModalConfirmDeletePartner(params.row.email_address as string)}>
+                        <div
+                          onClick={() => ModalConfirmDeletePartner(params.row.uuid, params.row.emailAddress as string)}
+                        >
                           <DeleteOutlineIcon className="cursor-pointer" />
                         </div>
                       );
@@ -93,7 +94,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
                     disableColumnMenu: true
                   }
                 ]}
-                getRowId={item => item.uuid || item.email_address || ""}
+                getRowId={item => item.uuid || item.emailAddress || ""}
               />
             </Else>
           </If>

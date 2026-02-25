@@ -8,12 +8,8 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDPartnersResponse,
-  useGetV2ProjectsUUIDManagers,
-  useGetV2ProjectsUUIDPartners
-} from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -55,17 +51,6 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
   </Flex>
 );
 
-const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse, isProjectManager: boolean) =>
-  members
-    .map(member => ({
-      id: member.uuid ?? "",
-      name: `${member.first_name} ${member.last_name}`,
-      image: "",
-      email: member.email_address,
-      isProjectManager
-    }))
-    ?.slice(0, 2) ?? [];
-
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
@@ -74,18 +59,28 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
-  const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
-    data: GetV2ProjectsUUIDPartnersResponse;
-  }>({
-    pathParams: { uuid: project?.uuid }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid
   });
 
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
-  });
-
-  const monitoringPartners = formatTeamMembers(partners?.data ?? [], false);
-  const projectManagers = formatTeamMembers(managers?.data ?? [], true);
+  const monitoringPartners = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "monitoring-partner")
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
+  const projectManagers = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-manager")
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -104,11 +99,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }, [project.frameworkKey]);
 
   const handleInviteClick = useCallback(() => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetchPartners} />
-    );
-  }, [openModal, project.uuid, refetchPartners]);
+    openModal(ModalId.INVITE_MONITORING_PARTNER_MODAL, <InviteMonitoringPartnerModal projectUUID={project.uuid} />);
+  }, [openModal, project.uuid]);
 
   const handleDownloadPolygons = async () => {
     if (!project?.uuid || !project?.name) return;
