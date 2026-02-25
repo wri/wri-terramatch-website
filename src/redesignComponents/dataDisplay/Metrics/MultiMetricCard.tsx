@@ -21,7 +21,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       height="fit-content"
       backgroundColor="neutral.100"
     >
-      <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+      <Text textStyle="400-bold" color="neutral.900">
         {title}
       </Text>
       {metrics.map(metric => {
@@ -42,25 +42,25 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
             </DonutChart>
             <Flex direction="column" gap={1}>
               <Flex gap={1} alignItems="center">
-                <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+                <Text textStyle="300" color="neutral.800">
                   {metric.title}
                 </Text>
                 <InformationRequired color="neutral.800" boxSize="12px" />
               </Flex>
               {metric.goal > 0 ? (
                 <Flex gap={1} alignItems="center">
-                  <Text fontSize="16px" fontWeight="bold" color="neutral.900" lineHeight="24px">
+                  <Text textStyle="400-bold" color="neutral.900">
                     {metric.progress.toLocaleString()}
                   </Text>
-                  <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+                  <Text textStyle="300" color="neutral.800">
                     {t("of")}
                   </Text>
-                  <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+                  <Text textStyle="300" color="neutral.800">
                     {metric.goal.toLocaleString()}
                   </Text>
                 </Flex>
               ) : (
-                <Text fontSize="14px" fontWeight="bold" color="neutral.600" lineHeight="20px">
+                <Text textStyle="300-bold" color="neutral.600">
                   {t("N/A")}
                 </Text>
               )}
@@ -70,7 +70,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
       })}
       <SimpleDivider />
       <Flex gap={2} alignItems="center">
-        <Text fontSize="14px" color="neutral.800" lineHeight="20px">
+        <Text textStyle="300" color="neutral.800">
           {labelStatus}:
         </Text>
         <ProgressTag state={status} />

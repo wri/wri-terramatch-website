@@ -1346,6 +1346,7 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
@@ -2801,9 +2802,11 @@ export type SubmissionDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3038,9 +3041,11 @@ export type FormFullDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3167,9 +3172,11 @@ export type StoreFormAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3303,9 +3310,11 @@ export type FundingProgrammeDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3333,9 +3342,11 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3366,4 +3377,17 @@ export type UpdateFundingProgrammeData = {
 
 export type UpdateFundingProgrammeBody = {
   data: UpdateFundingProgrammeData;
+};
+
+export type ReportingFrameworkDto = {
+  uuid: string;
+  name: string;
+  slug: string | null;
+  projectFormUuid: string | null;
+  projectReportFormUuid: string | null;
+  siteFormUuid: string | null;
+  siteReportFormUuid: string | null;
+  nurseryFormUuid: string | null;
+  nurseryReportFormUuid: string | null;
+  totalProjectsCount: number;
 };

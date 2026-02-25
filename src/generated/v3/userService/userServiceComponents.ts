@@ -217,6 +217,20 @@ export type OrganisationIndexQueryParams = {
    */
   ["page[number]"]?: number;
   fundingProgrammeUuid?: string;
+  search?: string;
+  status?: string;
+  type?: string;
+  hqCountry?: string;
+  /**
+   * Return light resource instead of full resource
+   *
+   * @default false
+   */
+  lightResource?: boolean;
+  /**
+   * Public view: returns approved, non-private, non-test organisations. Forces status=approved. Use view=public.
+   */
+  view?: string;
 };
 
 export type OrganisationIndexError = Fetcher.ErrorWrapper<
@@ -248,62 +262,117 @@ export type OrganisationIndexError = Fetcher.ErrorWrapper<
     }
 >;
 
-export type OrganisationIndexResponse = {
-  meta?: {
-    /**
-     * @example organisations
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationDto;
-  }[];
-};
-
 export type OrganisationIndexVariables = {
   queryParams?: OrganisationIndexQueryParams;
 };
 
 export const organisationIndex = new V3ApiEndpoint<
-  OrganisationIndexResponse,
+  | {
+      meta?: {
+        /**
+         * @example organisations
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.OrganisationLightDto;
+      }[];
+    }
+  | {
+      meta?: {
+        /**
+         * @example organisations
+         */
+        resourceType?: string;
+        indices?: {
+          /**
+           * The resource type for this included index
+           */
+          resource?: string;
+          /**
+           * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
+           */
+          requestPath?: string;
+          /**
+           * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
+           */
+          ids?: string[];
+          /**
+           * The current page number.
+           */
+          pageNumber?: number;
+          /**
+           * The total number of records available.
+           *
+           * @example 42
+           */
+          total?: number;
+        }[];
+        deleted?: {
+          /**
+           * The resource type for this deleted resource
+           */
+          resource?: string;
+          /**
+           * The ID of the deleted resource
+           */
+          id?: string;
+        }[];
+      };
+      data?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.OrganisationFullDto;
+      }[];
+    },
   OrganisationIndexError,
   OrganisationIndexVariables,
   {}
@@ -354,7 +423,7 @@ export type OrganisationCreationResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.OrganisationDto;
+    attributes?: Schemas.OrganisationLightDto;
   };
   included?: {
     /**
@@ -389,7 +458,7 @@ export type OrganisationCreationVariables = {
 };
 
 /**
- * Create a new organisation, and the first user for it.
+ * Create an organisation. Pending status creates the first user and onboarding records.
  */
 export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationResponse,
@@ -397,6 +466,300 @@ export const organisationCreation = new V3ApiEndpoint<
   OrganisationCreationVariables,
   {}
 >("/organisations/v3/organisations", "POST");
+
+export type OrganisationShowPathParams = {
+  uuid: string;
+};
+
+export type OrganisationShowQueryParams = {
+  /**
+   * sideloads to include
+   */
+  sideloads?: (
+    | "financialCollection"
+    | "financialReport"
+    | "media"
+    | "fundingTypes"
+    | "leadership"
+    | "ownershipStakes"
+    | "treeSpeciesHistorical"
+  )[];
+};
+
+export type OrganisationShowError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationShowResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationFullDto;
+  };
+  included?: (
+    | {
+        /**
+         * @example financialIndicators
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialIndicatorDto;
+      }
+    | {
+        /**
+         * @example financialReports
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FinancialReportLightDto;
+      }
+    | {
+        /**
+         * @example media
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.MediaDto;
+      }
+    | {
+        /**
+         * @example fundingTypes
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.FundingTypeDto;
+      }
+    | {
+        /**
+         * @example leaderships
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.LeadershipDto;
+      }
+    | {
+        /**
+         * @example ownershipStakes
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.OwnershipStakeDto;
+      }
+    | {
+        /**
+         * @example treeSpecies
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        attributes?: Schemas.TreeSpeciesDto;
+      }
+  )[];
+};
+
+export type OrganisationShowVariables = {
+  pathParams: OrganisationShowPathParams;
+  queryParams?: OrganisationShowQueryParams;
+};
+
+export const organisationShow = new V3ApiEndpoint<
+  OrganisationShowResponse,
+  OrganisationShowError,
+  OrganisationShowVariables,
+  {}
+>("/organisations/v3/organisations/{uuid}", "GET");
+
+export type OrganisationUpdatePathParams = {
+  uuid: string;
+};
+
+export type OrganisationUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationUpdateResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationFullDto;
+  };
+};
+
+export type OrganisationUpdateVariables = {
+  body: Schemas.OrganisationUpdateBody;
+  pathParams: OrganisationUpdatePathParams;
+};
+
+export const organisationUpdate = new V3ApiEndpoint<
+  OrganisationUpdateResponse,
+  OrganisationUpdateError,
+  OrganisationUpdateVariables,
+  {}
+>("/organisations/v3/organisations/{uuid}", "PATCH");
+
+export type OrganisationDeletePathParams = {
+  uuid: string;
+};
+
+export type OrganisationDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type OrganisationDeleteResponse = {
+  meta?: {
+    /**
+     * @example organisations
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type OrganisationDeleteVariables = {
+  pathParams: OrganisationDeletePathParams;
+};
+
+export const organisationDelete = new V3ApiEndpoint<
+  OrganisationDeleteResponse,
+  OrganisationDeleteError,
+  OrganisationDeleteVariables,
+  {}
+>("/organisations/v3/organisations/{uuid}", "DELETE");
 
 export type ActionsIndexError = Fetcher.ErrorWrapper<
   | {
@@ -535,7 +898,7 @@ export type UsersFindResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.OrganisationDto;
+    attributes?: Schemas.OrganisationLightDto;
   }[];
 };
 
@@ -642,7 +1005,7 @@ export type UserUpdateResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.OrganisationDto;
+    attributes?: Schemas.OrganisationLightDto;
   }[];
 };
 
@@ -715,7 +1078,7 @@ export type UserCreationResponse = {
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.OrganisationDto;
+    attributes?: Schemas.OrganisationLightDto;
   }[];
 };
 
@@ -975,7 +1338,7 @@ export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: { organisationIndex, organisationCreation },
+  organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
   userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }

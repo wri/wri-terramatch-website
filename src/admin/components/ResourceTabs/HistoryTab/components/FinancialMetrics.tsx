@@ -6,9 +6,8 @@ import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/TableVariants";
 import Text from "@/components/elements/Text/Text";
 import { getMonthOptions } from "@/constants/options/months";
+import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import { currencyInput } from "@/utils/financialReport";
-
-import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
 
 const COLLECTION_LABELS: Record<string, string> = {
   revenue: "Revenue",
@@ -21,7 +20,7 @@ const COLLECTION_LABELS: Record<string, string> = {
   "description-documents": "Description Documents"
 };
 
-const FinancialMetrics = ({ data, years }: { data: V2FinancialIndicatorsRead; years?: number[] }) => {
+const FinancialMetrics = ({ data, years }: { data: FinancialIndicatorDto[]; years?: number[] }) => {
   const ctx = useShowContext();
   const t = useT();
   const fincialReportData = ctx.record;

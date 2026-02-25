@@ -1,4 +1,5 @@
 import { Box, Button, Divider, Grid, Stack } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
 import {
   Button as AdminButton,
   Labeled,
@@ -13,28 +14,34 @@ import {
 import { When } from "react-if";
 
 import Aside from "@/admin/components/Aside/Aside";
+import { updateOrganisation } from "@/connections/Organisation";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { usePutV2AdminOrganisationsApprove, usePutV2AdminOrganisationsReject } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 import { optionToChoices } from "@/utils/options";
 
 import modules from "../..";
 
 export const OrganisationShowAside = ({ financialReportTab }: { financialReportTab?: boolean }) => {
   const refresh = useRefresh();
-  const { record } = useShowContext<V2OrganisationRead & RaRecord>();
+  const { record } = useShowContext<OrganisationFullDto & RaRecord>();
   const hasOrganisationAttrib = !!record?.organisationUuid;
   const uuid = hasOrganisationAttrib ? record?.organisationUuid : (record?.uuid as string);
   const status = hasOrganisationAttrib ? record?.organisationStatus : record?.status;
   const createPath = useCreatePath();
 
-  const { mutate: approve } = usePutV2AdminOrganisationsApprove({
+  const { mutate: approve } = useMutation({
+    mutationFn: async (organisationUuid: string) => {
+      return updateOrganisation({ status: "approved" }, { id: organisationUuid });
+    },
     onSuccess() {
       refresh();
     }
   });
 
-  const { mutate: reject } = usePutV2AdminOrganisationsReject({
+  const { mutate: reject } = useMutation({
+    mutationFn: async (organisationUuid: string) => {
+      return updateOrganisation({ status: "rejected" }, { id: organisationUuid });
+    },
     onSuccess() {
       refresh();
     }
@@ -59,7 +66,7 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
         </Grid>
         <Grid item xs={6}>
           <Labeled label="Status">
-            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "readable_status"} />
+            <TextField source={hasOrganisationAttrib ? "organisationStatus" : "status"} />
           </Labeled>
         </Grid>
       </Grid>
@@ -81,10 +88,12 @@ export const OrganisationShowAside = ({ financialReportTab }: { financialReportT
               />
             ) : (
               <>
-                <Button variant="contained" onClick={() => approve({ body: { uuid } })}>
+                <Button variant="contained" onClick={() => approve(uuid)}>
+                  {" "}
                   Approve
                 </Button>
-                <Button variant="outlined" onClick={() => reject({ body: { uuid } })}>
+                <Button variant="outlined" onClick={() => reject(uuid)}>
+                  {" "}
                   Reject
                 </Button>
               </>

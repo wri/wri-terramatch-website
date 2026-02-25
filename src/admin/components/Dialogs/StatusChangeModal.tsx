@@ -23,6 +23,7 @@ import { FormEntity } from "@/connections/Form";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
+import { ReportUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { pluralEntityName, v3EntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -33,7 +34,7 @@ interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
   // During the transition, this is supporting both the actions that v2 expects and the status to
   // update to that v3 expects
-  status?: "approved" | "needs-more-information" | "reminder";
+  status?: "approved" | "needs-more-information" | "reminder" | "due";
 }
 
 const moreInfoValidationSchema = yup.object({
@@ -99,6 +100,9 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
 
       case "reminder":
         return `Send a reminder for ${name}`;
+
+      case "due":
+        return `Are you sure you want to reset this ${name}`;
     }
   }, [record, resource, status]);
 
@@ -135,17 +139,37 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
           },
           body: { feedback: feedbackValue }
         });
+        setFeedbackValue("");
+        handleClose();
       } else {
-        update({
-          status,
-          feedback: feedbackValue,
-          feedbackFields: data.feedback_fields
-        });
+        if (status === "due") {
+          (update as (a: ReportUpdateAttributes) => void)({ status });
+        } else {
+          update({
+            status,
+            feedback: feedbackValue,
+            feedbackFields: data.feedback_fields
+          });
+        }
       }
-      setFeedbackValue("");
-      handleClose();
     },
     [feedbackValue, handleClose, mutateAsyncReminder, record, resourceName, status, update]
+  );
+
+  useRequestComplete(
+    isUpdating,
+    useCallback(() => {
+      if (status === "due") {
+        // When we reset a report, there are potentially many cached resources in the FE that have
+        // been deleted. Since this is a testing utility only, the extra work of having the
+        // BE return the set of deleted resources to properly update the FE cache is not worth
+        // the effort; we'll just do a hard refresh instead.
+        location.reload();
+      } else {
+        setFeedbackValue("");
+        handleClose();
+      }
+    }, [handleClose, status])
   );
 
   return !providerLoaded ? null : (
@@ -159,15 +183,17 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
         <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent>
-          <TextField
-            value={feedbackValue}
-            onChange={e => setFeedbackValue(e.target.value)}
-            label="Feedback"
-            fullWidth
-            multiline
-            margin="dense"
-            helperText={false}
-          />
+          {status !== "due" && (
+            <TextField
+              value={feedbackValue}
+              onChange={e => setFeedbackValue(e.target.value)}
+              label="Feedback"
+              fullWidth
+              multiline
+              margin="dense"
+              helperText={false}
+            />
+          )}
           {status === "needs-more-information" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
               source="feedback_fields"

@@ -1,8 +1,12 @@
+import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Placeholder } from "@/redesignComponents/foundations/Icons";
 
 import Table from "./Table";
+import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
+import { NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
+import { type RowData } from "./tableUtils";
 
 const meta: Meta<typeof Table> = {
   title: "Redesign Components/Data Display/Table",
@@ -404,5 +408,88 @@ export const WithManyColumns: Story = {
       { key: "completion", label: "Label", sortable: true }
     ],
     selectable: false
+  }
+};
+
+const columns = [
+  { key: "Column 1", label: "Label 1" },
+  { key: "Column 2", label: "Label 2" }
+];
+
+const data = Array.from({ length: 100 }, (_, index) => ({
+  "Column 1": `Label ${index + 1}`,
+  "Column 2": `Label ${index + 1}`
+}));
+
+export const VariantFullWidth: Story = {
+  args: {
+    data: data,
+    columns: columns,
+    totalItems: data.length,
+    showItemCount: false,
+    variant: "full-width",
+    css: FULL_WIDTH_TABLE_HEADER_STYLES
+  }
+};
+
+const noHeaderColumns = [
+  { key: "1", label: "1" },
+  { key: "2", label: "2" },
+  { key: "3", label: "3" },
+  { key: "4", label: "4" }
+];
+
+type NoHeaderRowData = {
+  id: number;
+  [key: number]: string;
+};
+
+const noHeaderData: NoHeaderRowData[] = [
+  { id: 1, 1: "Label 1", 2: "Label 2", 3: "Label 3", 4: "Label 4" },
+  { id: 2, 1: "Label 5", 2: "Label 6", 3: "Label 7", 4: "Label 8" },
+  { id: 3, 1: "Label 9", 2: "Label 10", 3: "Label 11", 4: "Label 12" },
+  {
+    id: 4,
+    1: "Label 13",
+    2: "Label 14",
+    3: "Label 15",
+    4: "Label 16"
+  },
+  { id: 5, 1: "Label 5", 2: "Label 6", 3: "Label 7", 4: "Label 8" },
+  { id: 6, 1: "Label 9", 2: "Label 10", 3: "Label 11", 4: "Label 12" },
+  { id: 7, 1: "Label 13", 2: "Label 14", 3: "Label 15", 4: "Label 16" },
+  { id: 8, 1: "Label 17", 2: "Label 18", 3: "Label 19", 4: "Label 20" },
+  { id: 9, 1: "Label 21", 2: "Label 22", 3: "Label 23", 4: "Label 24" },
+  { id: 10, 1: "Label 25", 2: "Label 26", 3: "Label 27", 4: "Label 28" }
+];
+
+export const WithNoHeader: Story = {
+  args: {
+    data: noHeaderData,
+    columns: noHeaderColumns,
+    totalItems: noHeaderData.length,
+    showItemCount: false,
+    variant: "full-width",
+    css: NO_HEADER_TABLE_WRAPPER_STYLES,
+    pageSize: 4,
+    renderRow: (rowData: RowData) => {
+      const row = rowData as NoHeaderRowData;
+      return (
+        <TableRow>
+          <TableCell>
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[1]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[2]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[3]}</Box>
+          </TableCell>
+          <TableCell className="px-0! py-4">
+            <Box className="border-b border-theme-neutral-300 py-4">{row[4]}</Box>
+          </TableCell>
+        </TableRow>
+      );
+    }
   }
 };

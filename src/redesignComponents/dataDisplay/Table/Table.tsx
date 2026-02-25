@@ -8,7 +8,7 @@ import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
 import TitleCell from "./components/TitleCell";
 import { getTableWrapperStyles } from "./tableStyles";
-import { type RowData, hasCustomCellContent } from "./tableUtils";
+import { type RowData, DEFAULT_CURRENT_PAGE, hasCustomCellContent } from "./tableUtils";
 import { useTablePagination, useTablePaginationState } from "./useTablePagination";
 import { useTableSelection } from "./useTableSelection";
 import { useTableSorting } from "./useTableSorting";
@@ -24,6 +24,11 @@ interface TableProps {
   renderDataCell?: (rowData: RowData, columnKey: string) => React.ReactNode;
   totalItems?: number;
   showItemCount?: boolean;
+  variant?: "default" | "full-width";
+  css?: any;
+  pageSize?: number;
+  className?: string;
+  showPagination?: boolean;
 }
 
 interface SelectableRowProps {
@@ -66,9 +71,17 @@ const Table: FC<TableProps> = ({
   renderRow: customRenderRow,
   renderDataCell: customRenderDataCell,
   totalItems,
-  showItemCount = true
+  showItemCount = true,
+  variant = "default",
+  css,
+  pageSize: initialPageSize,
+  className,
+  showPagination = true
 }) => {
-  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState();
+  const { currentPage, setCurrentPage, pageSize, setPageSize } = useTablePaginationState(
+    DEFAULT_CURRENT_PAGE,
+    initialPageSize
+  );
   const { startRange, endRange } = useTablePagination(currentPage, pageSize);
   const { sortColumn, setSortColumn, sortedData } = useTableSorting(data);
   const { selectedRows, handleRowSelected, onAllItemsSelected } = useTableSelection(selectable, sortedData);
@@ -169,8 +182,24 @@ const Table: FC<TableProps> = ({
   const displayStart = actualTotalItems === 0 ? 0 : startRange + 1;
   const displayEnd = Math.min(endRange, actualTotalItems);
 
+  const shouldShowPagination = actualTotalItems > 0 && (pageSize == null || actualTotalItems >= pageSize);
+
   return (
-    <Box css={getTableWrapperStyles(sortColumn, columns, selectable, isScrollable, scrollableWidth, scrollableHeight)}>
+    <Box
+      css={getTableWrapperStyles(
+        sortColumn,
+        columns,
+        selectable,
+        isScrollable,
+        scrollableWidth,
+        scrollableHeight,
+        dataByPage,
+        pageSize,
+        actualTotalItems,
+        css
+      )}
+      className={className}
+    >
       <WriTable
         columns={columns}
         data={dataByPage}
@@ -178,21 +207,25 @@ const Table: FC<TableProps> = ({
         onSortColumn={setSortColumn}
         onPageSizeChange={setPageSize}
         onPageChange={setCurrentPage}
-        pagination={{
-          totalItems: actualTotalItems,
-          currentPage,
-          pageSize,
-          showItemCount
-        }}
+        pagination={
+          showPagination && shouldShowPagination
+            ? {
+                totalItems: actualTotalItems,
+                currentPage,
+                pageSize,
+                showItemCount
+              }
+            : undefined
+        }
         onAllItemsSelected={selectable ? handleAllItemsSelected : undefined}
         selectedRows={selectedRows}
         selectable={selectable}
+        variant={variant}
       />
-      {showItemCount && (
+      {showItemCount && shouldShowPagination && (
         <Text
-          fontSize="18px"
+          textStyle="500"
           fontWeight="400"
-          lineHeight="28px"
           color={getThemedColor("neutral", 700)}
           className="absolute bottom-[30px] left-1/2 w-fit -translate-x-1/2 text-center"
         >

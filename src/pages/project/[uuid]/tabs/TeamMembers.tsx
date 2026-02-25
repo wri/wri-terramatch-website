@@ -17,9 +17,9 @@ import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
-import InviteMonitoringPartnerModal from "../project/[uuid]/components/InviteMonitoringPartnerModal";
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
-interface BuildTeamMembersPageProps {
+interface TeamMembersTabProps {
   project: ProjectFullDto;
 }
 
@@ -50,7 +50,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
   }
 ];
 
-const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
+const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -118,12 +118,22 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   }, [associatedUsers, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingY={6}>
+    <Box paddingX={8} paddingY={6} minHeight="525px">
       <ToolbarTable
         className="!px-0"
+        onClearFilters={() => {
+          setSelectedRole(null);
+          setSearchQuery("");
+        }}
         filters={[
           {
-            mainActionLabel: t("Role"),
+            mainActionLabel: t(
+              selectedRole !== null
+                ? selectedRole === "monitoring-partner"
+                  ? "Monitoring Partner"
+                  : "Project Manager"
+                : "Role"
+            ),
             variant: "secondary",
             mainActionOnClick: () =>
               setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
@@ -137,11 +147,6 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                 label: t("Project Manager"),
                 value: "project-manager",
                 onClick: () => setSelectedRole("project-manager")
-              },
-              {
-                label: t("Clear Filter"),
-                value: "clear-filter",
-                onClick: () => setSelectedRole("")
               }
             ]
           }
@@ -164,6 +169,10 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
           leftIcon: <UserAdd />,
           onClick: handleInvite
         }}
+        tooltipContent={t(
+          "Team members who join your project as monitoring partners will have full access to your project data and reports."
+        )}
+        showClearFilters={selectedRole !== null}
       />
       <Table
         data={teamMembers ?? []}
@@ -223,7 +232,7 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
                         }}
                       />
                     ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100",
+                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
                     size: "small"
                   }}
                 />
@@ -269,4 +278,4 @@ const BuildTeamMembersPage: FC<BuildTeamMembersPageProps> = ({ project }) => {
   );
 };
 
-export default BuildTeamMembersPage;
+export default TeamMembersTab;
