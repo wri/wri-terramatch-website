@@ -2,7 +2,7 @@ import { CollapsibleRoot, CollapsibleTrigger } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { ChevronDown, ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronDownIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 interface SidebarToggleProps {
   isHidden: boolean;
@@ -21,7 +21,7 @@ export const SidebarToggle: FC<SidebarToggleProps> = ({ isHidden, onToggle }) =>
     <CollapsibleRoot onOpenChange={onToggle}>
       <CollapsibleTriggerAsChild asChild>
         <button type="button" className="flex items-center gap-2">
-          <div>{isHidden ? <ChevronRight /> : <ChevronDown />}</div>
+          <div>{isHidden ? <ChevronRightIcon /> : <ChevronDownIcon />}</div>
           <div className="ds-tab-label">
             <p>{isHidden ? t("Show") : t("Hide")}</p>
             <p>{t("Sidebar")}</p>

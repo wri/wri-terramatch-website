@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Project } from "@/redesignComponents/foundations/Icons";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import { TabBarWriProps } from "@/redesignComponents/navigation/TabBar/TabBar";
 
 import ProjectBanner, { ProjectBannerProps } from "./ProjectBanner";
@@ -30,7 +30,7 @@ const mockTabBar: TabBarWriProps = {
 };
 
 const mockBreadcrumbs = [
-  { label: "Projects", link: "/", icon: <Project className="!text-theme-primary-900" /> },
+  { label: "Projects", link: "/", icon: <ProjectIcon className="!text-theme-primary-900" /> },
   { label: "Restoration project in the Congo Basin", link: "/projects/1" }
 ];
 

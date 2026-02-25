@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import React, { ReactNode } from "react";
 
-import { Check, InformationRequiredSimple } from "@/redesignComponents/foundations/Icons";
+import { CheckIcon, InformationRequiredSimpleIcon } from "@/redesignComponents/foundations/Icons";
 
 import { BadgeStatus, NAVIGATION_CLASSES, TabType } from "./formNavigation.constants";
 
@@ -65,7 +65,7 @@ export const getBadgeContent = (
   showNumberForActive: boolean = false
 ): ReactNode => {
   if (type === "error") {
-    return React.createElement(InformationRequiredSimple, { className: "max-w-4 w-4" });
+    return React.createElement(InformationRequiredSimpleIcon, { className: "max-w-4 w-4" });
   }
 
   if (showNumberForActive) {
@@ -73,7 +73,7 @@ export const getBadgeContent = (
   }
 
   if (type === "complete") {
-    return React.createElement(Check, { className: "max-w-4 w-4" });
+    return React.createElement(CheckIcon, { className: "max-w-4 w-4" });
   }
 
   if (shouldShowNumber(type, isSelected)) {

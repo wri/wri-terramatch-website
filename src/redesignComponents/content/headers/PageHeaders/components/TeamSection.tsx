@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -70,10 +70,10 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Add Team Members")}
-                <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
+                <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
               </Text>
             </Flex>
           )}

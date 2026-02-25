@@ -21,7 +21,7 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
@@ -35,7 +35,7 @@ interface ProjectDetailsTabProps {
 }
 
 const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
-  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={onClick}>
+  <Button variant="secondary" size="small" leftIcon={<EditIcon boxSize={4} />} onClick={onClick}>
     {text}
   </Button>
 );

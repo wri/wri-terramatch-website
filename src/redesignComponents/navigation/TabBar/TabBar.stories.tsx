@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Dashboard } from "@/redesignComponents/foundations/Icons";
+import { DashboardIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import TabBar, { TabBarWriProps } from "./TabBar";
@@ -41,14 +41,14 @@ export default meta;
 type Story = StoryObj<typeof TabBar>;
 
 const defaultTabs = [
-  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
-  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
-  { label: "Three", value: "three", icon: <Dashboard boxSize={4} /> }
+  { label: "One", value: "one", icon: <DashboardIcon boxSize={4} /> },
+  { label: "Two", value: "two", icon: <DashboardIcon boxSize={4} /> },
+  { label: "Three", value: "three", icon: <DashboardIcon boxSize={4} /> }
 ];
 
 const defaultTabsTransparent = [
-  { label: "One", value: "one", icon: <Dashboard boxSize={4} /> },
-  { label: "Two", value: "two", icon: <Dashboard boxSize={4} /> },
+  { label: "One", value: "one", icon: <DashboardIcon boxSize={4} /> },
+  { label: "Two", value: "two", icon: <DashboardIcon boxSize={4} /> },
   {
     label: (
       <div className="flex items-center gap-2">
@@ -56,7 +56,7 @@ const defaultTabsTransparent = [
       </div>
     ),
     value: "three",
-    icon: <Dashboard boxSize={4} />
+    icon: <DashboardIcon boxSize={4} />
   }
 ];
 

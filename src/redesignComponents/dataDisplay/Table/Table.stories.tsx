@@ -1,7 +1,7 @@
 import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Placeholder } from "@/redesignComponents/foundations/Icons";
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
 import Table from "./Table";
 import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
@@ -114,7 +114,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
+          icon: <PlaceholderIcon className="text-theme-neutral-800 h-5 w-5" />
         }
       },
       ...generateSampleData(3),
