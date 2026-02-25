@@ -41,7 +41,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
     name: "EPA Ghana Pilot Admin"
   },
   {
-    id: "monitoring-partner",
+    id: "project-developer",
     name: "Monitoring Partner"
   },
   {
@@ -100,7 +100,12 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const teamMembers = useMemo(() => {
     const all =
       associatedUsers
-        ?.filter(member => (selectedRole ? member?.roleName?.toLowerCase() === selectedRole.toLowerCase() : true))
+        ?.filter(member => {
+          const role = member?.roleName?.toLowerCase();
+          const isValidRole = role && ["project-manager", "project-developer"].includes(role);
+          const matchesSelectedRole = !selectedRole || role === selectedRole.toLowerCase();
+          return isValidRole && matchesSelectedRole;
+        })
         .map((member, index) => ({
           ...member,
           //TODO: replace with actual image once it is implemented
@@ -129,19 +134,19 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           {
             mainActionLabel: t(
               selectedRole !== null
-                ? selectedRole === "monitoring-partner"
+                ? selectedRole === "project-developer"
                   ? "Monitoring Partner"
                   : "Project Manager"
                 : "Role"
             ),
             variant: "secondary",
             mainActionOnClick: () =>
-              setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
+              setSelectedRole(selectedRole === "project-developer" ? "project-manager" : "project-developer"),
             otherActions: [
               {
                 label: t("Monitoring Partner"),
-                value: "monitoring-partner",
-                onClick: () => setSelectedRole("monitoring-partner")
+                value: "project-developer",
+                onClick: () => setSelectedRole("project-developer")
               },
               {
                 label: t("Project Manager"),
