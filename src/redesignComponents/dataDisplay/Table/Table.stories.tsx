@@ -3,10 +3,43 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
+import ActionCell from "./components/ActionCell";
+import CustomTableCell from "./components/TableCell";
+import TitleCell from "./components/TitleCell";
 import Table from "./Table";
 import { FULL_WIDTH_TABLE_HEADER_STYLES } from "./tableStyles";
 import { NO_HEADER_TABLE_WRAPPER_STYLES } from "./tableStyles";
-import { type RowData } from "./tableUtils";
+import { type RowData, hasCustomCellContent } from "./tableUtils";
+
+const defaultRenderDataCell = (rowData: RowData, columnKey: string) => {
+  if (columnKey === "actions" && rowData.actionCell != null) {
+    return <ActionCell button={rowData.actionCell.button} onButtonIconClick={rowData.actionCell.onButtonIconClick} />;
+  }
+
+  if (columnKey === "name") {
+    if (rowData.title != null) {
+      return <TitleCell {...rowData.title} />;
+    }
+
+    if (hasCustomCellContent(rowData)) {
+      return (
+        <CustomTableCell
+          avatars={rowData.avatars}
+          primaryText={rowData.primaryText}
+          secondaryText={rowData.secondaryText}
+          progressTag={rowData.progressTag}
+          trees={rowData.trees}
+          jobs={rowData.jobs}
+          multiActionButton={rowData.multiActionButton}
+        />
+      );
+    }
+
+    return rowData.fullName ?? (rowData as any)[columnKey];
+  }
+
+  return (rowData as any)[columnKey];
+};
 
 const meta: Meta<typeof Table> = {
   title: "Redesign Components/Data Display/Table",
@@ -14,6 +47,9 @@ const meta: Meta<typeof Table> = {
   tags: ["autodocs"],
   parameters: {
     layout: "padded"
+  },
+  args: {
+    renderDataCell: defaultRenderDataCell
   },
   argTypes: {
     data: {

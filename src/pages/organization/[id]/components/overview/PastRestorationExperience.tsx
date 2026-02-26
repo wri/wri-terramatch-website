@@ -1,7 +1,5 @@
 import { useT } from "@transifex/react";
-import { When } from "react-if";
 
-import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import Text from "@/components/elements/Text/Text";
 import TextRow from "@/components/extensive/TextRow/TextRow";
 import { getRestorationInterventionTypeOptions } from "@/constants/options/restorationInterventionTypes";
@@ -13,17 +11,6 @@ type PastRestorationExperienceProps = {
 
 const PastRestorationExperience = ({ organization }: PastRestorationExperienceProps) => {
   const t = useT();
-
-  let projectBoundary: unknown;
-  try {
-    if (organization?.historicMonitoringGeojson != null && organization.historicMonitoringGeojson !== "null") {
-      projectBoundary = JSON.parse(organization.historicMonitoringGeojson);
-    } else {
-      projectBoundary = undefined;
-    }
-  } catch (e) {
-    projectBoundary = undefined;
-  }
 
   return (
     <section className="my-10 rounded-lg bg-neutral-150 p-8">
@@ -95,20 +82,6 @@ const PastRestorationExperience = ({ organization }: PastRestorationExperiencePr
           }
           nameClassName="w-1/3"
         />
-        <When
-          condition={!!organization?.historicMonitoringGeojson && organization.historicMonitoringGeojson !== "null"}
-        >
-          <div>
-            <Text variant="text-body-900" className="w-1/3">
-              <>
-                {t("Historic Monitoring Shapefile Upload:")}
-                <br />
-                <br />
-              </>
-            </Text>
-            <MapContainer geojson={projectBoundary} />
-          </div>
-        </When>
       </div>
     </section>
   );
