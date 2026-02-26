@@ -202,7 +202,9 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   ? TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name
                   : "-"}
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
+              <ChakraTableCell>
+                {rowData?.status ? t((rowData.status as string) === "active" ? "Approved" : "Pending") : t("Pending")}
+              </ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   // TODO: comment out for now as we don't have an edit functionality yet
