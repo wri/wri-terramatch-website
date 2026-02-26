@@ -390,10 +390,6 @@ export const getNewRestorationGoalDataForChart = (data?: AggregateReportsDto | n
   return chartData;
 };
 
-/**
- * Returns true when aggregate reports data is missing or has no meaningful values
- * (all categories empty or all amounts zero). Used to decide when to blur the chart.
- */
 export function isAggregateReportsEmpty(data: AggregateReportsDto | null | undefined): boolean {
   if (data == null) return true;
   for (const category of AGGREGATE_REPORT_CATEGORIES) {
