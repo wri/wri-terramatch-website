@@ -8,7 +8,6 @@ export const ReportingFrameworkEdit: FC = () => {
     <Edit mutationMode="pessimistic">
       <SimpleForm>
         <TextInput source="name" label="Name" fullWidth />
-        <TextInput source="accessCode" label="Access Code" fullWidth validate={required()} />
         <ReferenceInput source="projectFormUuid" reference={modules.form.ResourceName} filter={{ type: "project" }}>
           <AutocompleteInput optionText="title" label="Project Establishment Form" fullWidth validate={required()} />
         </ReferenceInput>

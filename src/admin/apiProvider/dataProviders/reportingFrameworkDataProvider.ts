@@ -10,44 +10,14 @@ import {
 import type { UpdateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { CreateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import ApiSlice from "@/store/apiSlice";
 
 import { v3ErrorForRA } from "../utils/error";
 
-type ReportingFrameworkRecord = {
-  id?: string;
-  uuid?: string;
-  name?: string;
-  accessCode?: string | null;
-  projectFormUuid?: string | null;
-  siteFormUuid?: string | null;
-  nurseryFormUuid?: string | null;
-  projectReportFormUuid?: string | null;
-  siteReportFormUuid?: string | null;
-  nurseryReportFormUuid?: string | null;
-  totalProjectsCount?: number;
-};
-
-function toRARecord(dto: ReportingFrameworkDto): ReportingFrameworkRecord {
-  return {
-    id: dto.slug ?? dto.uuid,
-    uuid: dto.uuid,
-    name: dto.name,
-    accessCode: dto.slug ?? null,
-    projectFormUuid: dto.projectFormUuid,
-    siteFormUuid: dto.siteFormUuid,
-    nurseryFormUuid: dto.nurseryFormUuid,
-    projectReportFormUuid: dto.projectReportFormUuid,
-    siteReportFormUuid: dto.siteReportFormUuid,
-    nurseryReportFormUuid: dto.nurseryReportFormUuid,
-    totalProjectsCount: dto.totalProjectsCount
-  };
-}
+type ReportingFrameworkRecord = ReportingFrameworkDto & { id: string };
 
 function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateReportingFrameworkAttributes {
   return {
     name: data.name ?? "",
-    accessCode: data.accessCode ?? null,
     projectFormUuid: data.projectFormUuid ?? null,
     projectReportFormUuid: data.projectReportFormUuid ?? null,
     siteFormUuid: data.siteFormUuid ?? null,
@@ -60,7 +30,6 @@ function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateRepor
 function formDataToUpdateAttributes(data: ReportingFrameworkRecord): UpdateReportingFrameworkAttributes {
   return {
     name: data.name ?? undefined,
-    accessCode: data.accessCode ?? undefined,
     projectFormUuid: data.projectFormUuid ?? undefined,
     projectReportFormUuid: data.projectReportFormUuid ?? undefined,
     siteFormUuid: data.siteFormUuid ?? undefined,
@@ -78,7 +47,10 @@ export const reportingFrameworkDataProvider: DataProvider = {
         throw v3ErrorForRA("Reporting frameworks index fetch failed", connected.loadFailure);
       }
 
-      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => toRARecord(framework));
+      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => ({
+        ...framework,
+        id: framework.slug ?? framework.uuid
+      }));
 
       return {
         data,
@@ -107,7 +79,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
         throw v3ErrorForRA("Reporting framework fetch failed", connected.loadFailure);
       }
 
-      return { data: toRARecord(connected.data!) };
+      return { data: { ...connected.data!, id: connected.data!.slug ?? connected.data!.uuid } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework fetch failed", err);
     }
@@ -117,8 +89,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
     try {
       const attributes = formDataToCreateAttributes(params.data as ReportingFrameworkRecord);
       const created = await createReportingFramework(attributes);
-      ApiSlice.pruneCache("reportingFrameworks");
-      return { data: toRARecord(created) };
+      return { data: { ...created, id: created.slug ?? created.uuid } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework create failed", err);
     }
@@ -148,7 +119,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
       if (connected.loadFailure != null) {
         throw v3ErrorForRA("Reporting framework fetch after update failed", connected.loadFailure);
       }
-      return { data: toRARecord(connected.data!) };
+      return { data: { ...connected.data!, id: connected.data!.slug ?? connected.data!.uuid } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework update failed", err);
     }

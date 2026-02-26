@@ -9,7 +9,7 @@ export const ReportingFrameworkShow: FC = () => {
       <SimpleShowLayout>
         <TextField source="name" label="Name" emptyText="Not provided" />
 
-        <TextField source="accessCode" label="Access Code" emptyText="Not provided" />
+        <TextField source="slug" label="Access Code" emptyText="Not provided" />
 
         <ReferenceField
           source="projectFormUuid"
