@@ -12,11 +12,8 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useSubmission, useSubmissionCreate } from "@/connections/FormSubmission";
 import { useFundingProgramme } from "@/connections/FundingProgramme";
+import { useReportingFramework } from "@/connections/ReportingFramework";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ReportingFrameworksAccessCodeACCESSCODEResponse,
-  useGetV2ReportingFrameworksAccessCodeACCESSCODE
-} from "@/generated/apiComponents";
 import { ApplicationDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { Colors } from "@/types/common";
@@ -48,22 +45,10 @@ const ApplicationStatus = ({ application }: ApplicationStatusProps) => {
   const router = useRouter();
   const uuid = router.query.id as string;
   const { openModal, closeModal } = useModalContext();
-  const { data } = useGetV2ReportingFrameworksAccessCodeACCESSCODE(
-    {
-      // Note: it's odd that we're using the framework key as access code. They have been made consistent
-      // in the database, and when implementing this pattern in v3, the framework should be fetched
-      // by framework key instead.
-      pathParams: { accessCode: fundingProgramme?.frameworkKey ?? "" }
-    },
-    {
-      enabled: fundingProgramme?.frameworkKey != null,
-      onError() {
-        // override error toast
-      }
-    }
-  );
-  // @ts-ignore
-  const reportingFramework = (data?.data ?? {}) as GetV2ReportingFrameworksAccessCodeACCESSCODEResponse;
+  const [, { data: reportingFramework }] = useReportingFramework({
+    frameworkKey: fundingProgramme?.frameworkKey ?? undefined,
+    enabled: fundingProgramme?.frameworkKey != null
+  });
   const stageIndex = stages?.findIndex(({ uuid }) => uuid === currentSubmission?.stageUuid);
   const nextStage =
     stageIndex != null && stages != null && stageIndex < stages.length - 1 ? stages[stageIndex + 1] : undefined;

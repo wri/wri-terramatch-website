@@ -1,78 +1,120 @@
-import { DataProvider } from "react-admin";
+import { DataProvider, GetListParams, GetListResult, GetOneParams } from "react-admin";
 
 import {
-  fetchDeleteV2AdminReportingFrameworksUUID,
-  fetchGetV2AdminReportingFrameworks,
-  fetchPostV2AdminReportingFrameworks,
-  fetchPutV2AdminReportingFrameworksUUID,
-  GetV2AdminReportingFrameworksError
-} from "@/generated/apiComponents";
+  createReportingFramework,
+  deleteReportingFramework,
+  loadReportingFramework,
+  loadReportingFrameworks,
+  updateReportingFramework
+} from "@/connections/ReportingFramework";
+import type { UpdateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { CreateReportingFrameworkAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { v3ErrorForRA } from "../utils/error";
 
-// @ts-ignore
+type ReportingFrameworkRecord = ReportingFrameworkDto & { id: string };
+
+function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateReportingFrameworkAttributes {
+  return {
+    name: data.name ?? "",
+    projectFormUuid: data.projectFormUuid ?? null,
+    projectReportFormUuid: data.projectReportFormUuid ?? null,
+    siteFormUuid: data.siteFormUuid ?? null,
+    siteReportFormUuid: data.siteReportFormUuid ?? null,
+    nurseryFormUuid: data.nurseryFormUuid ?? null,
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? null
+  };
+}
+
+function formDataToUpdateAttributes(data: ReportingFrameworkRecord): UpdateReportingFrameworkAttributes {
+  return {
+    name: data.name ?? undefined,
+    projectFormUuid: data.projectFormUuid ?? undefined,
+    projectReportFormUuid: data.projectReportFormUuid ?? undefined,
+    siteFormUuid: data.siteFormUuid ?? undefined,
+    siteReportFormUuid: data.siteReportFormUuid ?? undefined,
+    nurseryFormUuid: data.nurseryFormUuid ?? undefined,
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? undefined
+  };
+}
+
 export const reportingFrameworkDataProvider: DataProvider = {
-  async getList(_, params) {
+  async getList(_: string, params: GetListParams): Promise<GetListResult> {
     try {
-      const response = await fetchGetV2AdminReportingFrameworks({
-        queryParams: raListParamsToQueryParams(params, [])
-      });
+      const connected = await loadReportingFrameworks({});
+      if (connected.loadFailure != null) {
+        throw v3ErrorForRA("Reporting frameworks index fetch failed", connected.loadFailure);
+      }
 
-      return apiListResponseToRAListResult(response);
+      const data = (connected.data ?? []).map((framework: ReportingFrameworkDto) => ({
+        ...framework,
+        id: framework.slug ?? framework.uuid
+      }));
+
+      return {
+        data,
+        total: connected.indexTotal ?? data.length
+      };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting frameworks fetch failed", err);
     }
   },
-  //@ts-ignore
-  async getOne(_, params) {
-    try {
-      //To be replaced with fetchGetV2AdminReportingFrameworksUUID When implemented
-      const list = await fetchGetV2AdminReportingFrameworks({});
-      const response = { data: list.data?.find(item => item.uuid === params.id) };
 
-      //@ts-ignore
-      return { data: { ...response.data, id: response.data.uuid } };
+  //@ts-ignore
+  async getOne(_: string, params: GetOneParams) {
+    try {
+      const frameworkKey = params.id as string;
+
+      if (frameworkKey == null || frameworkKey === "") {
+        throw v3ErrorForRA("Reporting framework ID is required", {
+          statusCode: 400,
+          message: "Framework key is required"
+        });
+      }
+
+      const connected = await loadReportingFramework({ frameworkKey });
+
+      if (connected.loadFailure != null) {
+        throw v3ErrorForRA("Reporting framework fetch failed", connected.loadFailure);
+      }
+
+      return { data: { ...connected.data!, id: connected.data!.slug ?? connected.data!.uuid } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework fetch failed", err);
     }
   },
   //@ts-ignore
   async create(__, params) {
     try {
-      const response = await fetchPostV2AdminReportingFrameworks({
-        body: params.data
-      });
-
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.id } };
+      const attributes = formDataToCreateAttributes(params.data as ReportingFrameworkRecord);
+      const created = await createReportingFramework(attributes);
+      return { data: { ...created, id: created.slug ?? created.uuid } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework create failed", err);
     }
   },
+
   //@ts-ignore
   async update(__, params) {
     try {
-      const response = await fetchPutV2AdminReportingFrameworksUUID({
-        body: params.data,
-        pathParams: { uuid: params.id as string }
-      });
-
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.id } };
+      const frameworkKey = params.id as string;
+      const attributes = formDataToUpdateAttributes(params.data as ReportingFrameworkRecord);
+      const data = await updateReportingFramework(attributes, { frameworkKey });
+      return { data: { ...data, id: data.slug ?? data.uuid } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework update failed", err);
     }
   },
+
   //@ts-ignore
   async delete(__, params) {
     try {
-      await fetchDeleteV2AdminReportingFrameworksUUID({
-        pathParams: { uuid: params.id as string }
-      });
+      const frameworkKey = params.id as string;
+      await deleteReportingFramework(frameworkKey);
       return { data: { id: params.id } };
     } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminReportingFrameworksError);
+      throw v3ErrorForRA("Reporting framework delete failed", err);
     }
   }
 };
