@@ -11,6 +11,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
@@ -37,7 +38,7 @@ interface OverviewItemProps {
 
 const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
-    <Flex alignItems="center" justifyContent="space-between" width="100%">
+    <Flex alignItems="center" justifyContent="space-between">
       <Text color="primary.900" textStyle="600">
         {title}
       </Text>
@@ -54,9 +55,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
+  const { isLargerResolution } = useResolutions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
-  const [keyIndicatorsLastCardRight, setKeyIndicatorsLastCardRight] = useState<number | undefined>(undefined);
 
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid
@@ -64,8 +65,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "project-developer")
-      ?.slice(0, 3)
+      ?.filter(user => user.roleName === "monitoring-partner")
       .map((user, index) => ({
         id: user.uuid,
         name: user.fullName,
@@ -165,21 +165,19 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             </Box>
           </OverviewItem>
         </Flex>
-        <Flex direction="column" gap={4} paddingY={2} alignSelf="flex-start">
-          <Flex
-            alignItems="center"
-            justifyContent="space-between"
-            width={keyIndicatorsLastCardRight ? `${keyIndicatorsLastCardRight}px` : "max-content"}
-          >
-            <Text color="primary.900" textStyle="600">
-              Key Indicators & Insights
-            </Text>
-            <Button variant="secondary" size="small" rightIcon={<ChevronRight />} onClick={() => goToTab("goals")}>
-              View Progress & Goals
-            </Button>
-          </Flex>
-          <KeyIndicatorsInsightsTab project={project} onLastCardRightChange={setKeyIndicatorsLastCardRight} />
-        </Flex>
+        <OverviewItem
+          title="Key Indicators & Insights"
+          flexProps={{ paddingY: 2, width: isLargerResolution ? "fit-content" : "100%" }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "View Progress & Goals",
+            rightIcon: <ChevronRight />,
+            onClick: () => goToTab("goals")
+          }}
+        >
+          <KeyIndicatorsInsightsTab project={project} />
+        </OverviewItem>
         <Flex gap={7} maxHeight="570px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
