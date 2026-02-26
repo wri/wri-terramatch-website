@@ -2,6 +2,6 @@ import { CheckboxList as WriCheckboxList } from "@worldresources/wri-design-syst
 import type { ComponentProps } from "react";
 import { FC } from "react";
 
-const CheckboxListInput: FC<ComponentProps<typeof WriCheckboxList>> = props => <WriCheckboxList {...props} />;
+const CheckboxList: FC<ComponentProps<typeof WriCheckboxList>> = props => <WriCheckboxList {...props} />;
 
-export default CheckboxListInput;
+export default CheckboxList;

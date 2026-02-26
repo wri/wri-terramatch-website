@@ -76,7 +76,7 @@ export const MRV_ONBOARDING_CONTENT = [
         "refers to your team’s work, filling out project, site, socioeconomic restoration partners, and disturbance reports on TerraMatch.",
       verification: "refers to remote or field-based measurement of project progress.",
       mrvLinkPrefix: "Learn more about project tracking in the",
-      mrvLinkText: "PPC’s Monitoring Framework",
+      mrvLinkText: "PPC Monitoring Framework",
       mrvFrameworkLink:
         "https://terramatchsupport.zendesk.com/hc/en-us/articles/13319985438363-What-is-the-Tree-Restoration-Monitoring-Framework",
       helpfulLinks: [

@@ -111,7 +111,8 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   color,
   iconWithColor,
   type,
-  tooltipContent
+  tooltipContent,
+  classNameTitle
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
@@ -122,7 +123,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
       </DonutChart>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text textStyle="400" color="neutral.900">
+          <Text textStyle="400" color="neutral.900" className={classNameTitle}>
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
@@ -161,7 +162,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     icon,
     color = "primary.600",
     type,
-    className
+    className,
+    classNameTitle
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -192,6 +194,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           color={color}
           iconWithColor={iconWithColor24}
           type={type}
+          classNameTitle={classNameTitle}
         />
       );
       break;

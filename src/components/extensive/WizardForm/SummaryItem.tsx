@@ -1,15 +1,18 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, SetStateAction, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { FormFooter } from "@/components/extensive/WizardForm/FormFooter";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
+
+import { FormFooter } from "./FormFooter";
 
 type SummaryItemProps = {
   models: FormModelsDefinition;
@@ -56,7 +59,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   };
 
   return (
-    <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+    <div className="mb-20 overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
       <FormStepHeader
         id="step"
         title={title}
@@ -73,16 +76,27 @@ const SummaryItem: FC<SummaryItemProps> = ({
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
       <FormFooter
-        variant="sticky"
-        backButtonProps={{
-          children: t("Back"),
-          onClick: () => setSelectedStepIndex(n => n - 1)
+        className={classNames(
+          "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+          user ? "bottom-0" : "bottom-[0px]"
+        )}
+        cancelButtonProps={{
+          children: t("Cancel")
         }}
-        submitButtonProps={{
+        primaryButtonProps={{
           children: t("Submit"),
           onClick: handleSubmitClick,
-          disabled: submitButtonDisable,
-          className: "py-3"
+          disabled: submitButtonDisable
+        }}
+        secondaryButtonProps={{
+          children: t("Save and Exit"),
+          onClick: handleSubmitClick,
+          disabled: submitButtonDisable
+        }}
+        tertiaryButtonProps={{
+          children: t("Previous"),
+          leftIcon: <ChevronRightIcon className="rotate-180" />,
+          onClick: () => setSelectedStepIndex(n => n - 1)
         }}
       />
     </div>

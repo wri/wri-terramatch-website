@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       screens: {
         sx: "460px",
+        "ws-1100": "1100px",
         small: "1350px",
         "screen-height-sm": { raw: "(max-height: 768px)" },
         md: "1400px",

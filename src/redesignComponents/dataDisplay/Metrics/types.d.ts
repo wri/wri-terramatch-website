@@ -32,11 +32,13 @@ export interface MetricCardProps {
   color?: string;
   type?: string;
   className?: string;
+  classNameTitle?: string;
 }
 
 export interface MetricCardCommonVariantProps
   extends Pick<MetricCardProps, "title" | "progress" | "goal" | "tooltipContent" | "color" | "type"> {
   iconWithColor: ReactNode;
+  classNameTitle?: string;
 }
 
 export type NoGoalMetricCardContentProps = Pick<

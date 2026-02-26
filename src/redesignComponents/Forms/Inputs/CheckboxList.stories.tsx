@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import CheckboxListInput from "./CheckboxListInput";
+import CheckboxList from "./CheckboxList";
 
 const meta = {
-  title: "Redesign Components/Forms/Input/Checkbox List Input",
-  component: CheckboxListInput,
+  title: "Redesign Components/Forms/Input/Checkbox List",
+  component: CheckboxList,
   parameters: {
     layout: "centered"
   },
@@ -39,7 +39,7 @@ const meta = {
       </div>
     )
   ]
-} satisfies Meta<typeof CheckboxListInput>;
+} satisfies Meta<typeof CheckboxList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
