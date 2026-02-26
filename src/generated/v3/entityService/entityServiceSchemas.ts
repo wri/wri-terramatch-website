@@ -881,6 +881,36 @@ export type CreateAuditStatusBody = {
   data: CreateAuditStatusData;
 };
 
+export type AggregateReportSeriesItemDto = {
+  /**
+   * Reporting task due date (ISO 8601).
+   *
+   * @example 2024-06-30T23:59:59.000Z
+   */
+  dueDate: string;
+  /**
+   * Sum for that reporting period (V2 compatible).
+   *
+   * @example 1500
+   */
+  aggregateAmount: number;
+};
+
+export type AggregateReportsDto = {
+  /**
+   * Trees planted by reporting period (when framework supports it).
+   */
+  treePlanted?: AggregateReportSeriesItemDto[];
+  /**
+   * Seeds planted by reporting period (when framework supports it).
+   */
+  seedingRecords?: AggregateReportSeriesItemDto[];
+  /**
+   * Trees regenerating (ANR) by reporting period (when framework supports it).
+   */
+  treesRegenerating?: AggregateReportSeriesItemDto[];
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -1348,6 +1378,7 @@ export type ProjectFullDto = {
   goalTreesRestoredAnr: number | null;
   seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
+  nurserySeedlingsGoal: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
@@ -1849,6 +1880,7 @@ export type SiteReportFullDto = {
   technicalNarrative: string | null;
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
+  anrPractices: string[] | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];

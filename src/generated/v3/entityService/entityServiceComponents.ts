@@ -2165,6 +2165,87 @@ export const deleteAuditStatus = new V3ApiEndpoint<
   {}
 >("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "DELETE");
 
+export type GetAggregateReportsPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type (project or site) for aggregate reports.
+   */
+  entity: "projects" | "sites";
+};
+
+export type GetAggregateReportsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAggregateReportsResponse = {
+  meta?: {
+    /**
+     * @example aggregateReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aggregateReports
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.AggregateReportsDto;
+  };
+};
+
+export type GetAggregateReportsVariables = {
+  pathParams: GetAggregateReportsPathParams;
+};
+
+export const getAggregateReports = new V3ApiEndpoint<
+  GetAggregateReportsResponse,
+  GetAggregateReportsError,
+  GetAggregateReportsVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/aggregateReports", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -6093,6 +6174,7 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
+  aggregateReports: { getAggregateReports },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
