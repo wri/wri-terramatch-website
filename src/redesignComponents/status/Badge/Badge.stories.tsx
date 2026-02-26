@@ -30,21 +30,17 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: {
-    label: "Badge"
-  }
+  args: {}
 };
 
 export const WithNotification: Story = {
   args: {
-    label: "Inbox",
     hasNotification: true
   }
 };
 
 export const WithNotificationCount: Story = {
   args: {
-    label: "Notifications",
     notificationCount: 5,
     hasNotification: true
   }
@@ -52,26 +48,26 @@ export const WithNotificationCount: Story = {
 
 export const WithHighCount: Story = {
   args: {
-    label: "Messages",
     notificationCount: 9999,
     hasNotification: true
   }
 };
 
-export const NoNotification: Story = {
+export const NotificationCountWithLabel: Story = {
   args: {
-    label: "Inbox",
-    hasNotification: false
+    label: "Label",
+    hasNotification: true,
+    notificationCount: 5
   }
 };
 
 export const AllVariants: Story = {
   render: () => (
     <HStack gap={4} flexWrap="wrap">
-      <Badge label="Default" />
-      <Badge label="Active" hasNotification={true} notificationCount={3} />
-      <Badge label="Many" hasNotification={true} notificationCount={42} />
-      <Badge label="Inactive" hasNotification={false} />
+      <Badge />
+      <Badge hasNotification={true} notificationCount={3} />
+      <Badge hasNotification={true} notificationCount={42} />
+      <Badge hasNotification={false} />
     </HStack>
   )
 };
