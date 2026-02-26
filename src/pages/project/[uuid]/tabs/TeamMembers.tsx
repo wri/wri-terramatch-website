@@ -74,12 +74,10 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
           title={t("REMOVE MONITORING PARTNER?")}
-          content={t(
-            "Remove {email_address} as Monitoring Partner to Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County International Tree Foundation??",
-            {
-              email_address: rowData?.emailAddress
-            }
-          )}
+          content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
+            email_address: rowData?.emailAddress,
+            project_name: project?.name
+          })}
           primaryButtonProps={{
             children: t("Confirm"),
             onClick: () => {
@@ -94,7 +92,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         />
       );
     },
-    [closeModal, openModal, t, project.uuid]
+    [closeModal, openModal, t, project.uuid, project?.name]
   );
 
   const teamMembers = useMemo(() => {
@@ -203,7 +201,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   : "-"}
               </ChakraTableCell>
               <ChakraTableCell>
-                {rowData?.status == "active" || rowData?.isManager ? t("Approved") : t("Pending")}
+                {rowData?.status == "active" || rowData?.isManager ? t("Accepted") : t("Pending")}
               </ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
@@ -224,24 +222,28 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   //     />
                   //   )
                   // }}
-                  buttonSecondary={{
-                    children: t("Remove"),
-                    variant: "secondary",
-                    onClick: () => ModalConfirmDeletePartner(rowData),
-                    leftIcon: (
-                      <DeleteIcon
-                        className="!text-theme-error-500"
-                        css={{
-                          "& svg path": {
-                            fill: getThemedColor("error", 500) + " !important",
-                            color: getThemedColor("error", 500) + " !important"
-                          }
-                        }}
-                      />
-                    ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
-                    size: "small"
-                  }}
+                  buttonSecondary={
+                    rowData?.isManager
+                      ? undefined
+                      : {
+                          children: t("Remove"),
+                          variant: "secondary",
+                          onClick: () => ModalConfirmDeletePartner(rowData),
+                          leftIcon: (
+                            <DeleteIcon
+                              className="!text-theme-error-500"
+                              css={{
+                                "& svg path": {
+                                  fill: getThemedColor("error", 500) + " !important",
+                                  color: getThemedColor("error", 500) + " !important"
+                                }
+                              }}
+                            />
+                          ),
+                          className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
+                          size: "small"
+                        }
+                  }
                 />
               </ChakraTableCell>
             </TableRow>
