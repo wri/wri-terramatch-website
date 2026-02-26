@@ -1378,6 +1378,7 @@ export type ProjectFullDto = {
   goalTreesRestoredAnr: number | null;
   seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
+  nurserySeedlingsGoal: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
@@ -1879,6 +1880,7 @@ export type SiteReportFullDto = {
   technicalNarrative: string | null;
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
+  anrPractices: string[] | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
@@ -3420,4 +3422,90 @@ export type ReportingFrameworkDto = {
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
   totalProjectsCount: number;
+};
+
+export type CreateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  /**
+   * Framework name; used to generate slug
+   */
+  name: string;
+};
+
+export type CreateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  attributes: CreateReportingFrameworkAttributes;
+};
+
+export type CreateReportingFrameworkBody = {
+  data: CreateReportingFrameworkData;
+};
+
+export type UpdateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  name?: string | null;
+};
+
+export type UpdateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  id: string;
+  attributes: UpdateReportingFrameworkAttributes;
+};
+
+export type UpdateReportingFrameworkBody = {
+  data: UpdateReportingFrameworkData;
 };
