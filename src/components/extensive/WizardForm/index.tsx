@@ -140,6 +140,8 @@ function WizardForm(props: WizardFormProps) {
   const formHasError = useRef(false);
   formHasError.current = Object.values(formHook.formState.errors ?? {}).length > 0;
 
+  const hasErrorInAnyStep = steps.some(({ validation }) => !validation.isValidSync(formHook.getValues()));
+
   Log.debug("Form Values", formHook.watch());
   Log.debug("Form Errors", formHook.formState.errors);
 
@@ -254,7 +256,7 @@ function WizardForm(props: WizardFormProps) {
           }}
           primaryButtonProps={{
             children: "Next",
-            disabled: formHasError.current,
+            disabled: hasErrorInAnyStep,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={{
@@ -286,7 +288,18 @@ function WizardForm(props: WizardFormProps) {
         />
       </div>
     ),
-    [t, formHook, _onChange, selectedStepIndex, setSelectedStepIndex, isAdmin, onClickSaveAndClose, props, onSubmitStep]
+    [
+      t,
+      formHook,
+      _onChange,
+      selectedStepIndex,
+      setSelectedStepIndex,
+      isAdmin,
+      onClickSaveAndClose,
+      props,
+      onSubmitStep,
+      hasErrorInAnyStep
+    ]
   );
 
   const stepsVisited = useRef<number[]>([]);
@@ -355,13 +368,16 @@ function WizardForm(props: WizardFormProps) {
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
   const formModel = props?.models as FormModel;
 
-  const redirectEntityPage = props.redirectEntityPage ?? "";
-
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
       return [
         ...(entity
-          ? [{ label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`, link: redirectEntityPage }]
+          ? [
+              {
+                label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`,
+                link: props.redirectEntityPage ?? "/my-projects"
+              }
+            ]
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
@@ -372,7 +388,7 @@ function WizardForm(props: WizardFormProps) {
         isAdmin,
         model: formModel.model,
         uuid: formModel.uuid ?? props?.entity?.uuid,
-        redirectEntityPage,
+        redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
         firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
@@ -381,7 +397,7 @@ function WizardForm(props: WizardFormProps) {
       })[formModel.model];
     }
     return [];
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid, redirectEntityPage]);
+  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {

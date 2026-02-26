@@ -1,4 +1,4 @@
-﻿import styled from "@emotion/styled";
+import styled from "@emotion/styled";
 import { Breadcrumb as WriBreadcrumb } from "@worldresources/wri-design-systems";
 import { FC } from "react";
 
