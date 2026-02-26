@@ -203,7 +203,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   : "-"}
               </ChakraTableCell>
               <ChakraTableCell>
-                {rowData?.status ? t((rowData.status as string) === "active" ? "Approved" : "Pending") : t("Pending")}
+                {rowData?.status == "active" || rowData?.isManager ? t("Approved") : t("Pending")}
               </ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
