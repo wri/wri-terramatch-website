@@ -23,9 +23,8 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const { isLargerResolution, isSmallResolution } = useResolutions();
-  const metricClassName = classNames("flex-1", {
-    "w-[350px]": isLargerResolution,
-    "max-w-[calc((100%/4)-1rem)]": isSmallResolution
+  const metricClassName = classNames("flex-1 max-w-[calc((100%/4)-1rem)]", {
+    "w-[350px]": isLargerResolution
   });
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
