@@ -30,13 +30,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
 
   return (
-    <Flex
-      // gap={isSmallResolution ? 8 : 3}
-      flex={1}
-      flexWrap="wrap"
-      className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8"
-      justify={"flex-start"}
-    >
+    <Flex flex={1} flexWrap="wrap" className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8" justify={"flex-start"}>
       <MetricCard
         title="Trees Planted"
         progress={totalTreesRestoredCount}
