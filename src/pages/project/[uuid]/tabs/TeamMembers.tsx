@@ -116,7 +116,13 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
       const includes = (key: keyof UserAssociationDto) =>
         typeof member?.[key] === "string" && (member?.[key] as string).toLowerCase().includes(q);
 
-      return includes("fullName") || includes("organisationName") || includes("emailAddress") || includes("roleName");
+      return (
+        includes("fullName") ||
+        includes("organisationName") ||
+        includes("emailAddress") ||
+        includes("roleName") ||
+        includes("status")
+      );
     });
   }, [associatedUsers, selectedRole, searchQuery]);
 
@@ -252,22 +258,22 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         )}
         columns={[
           {
-            key: "name",
+            key: "fullName",
             label: t("Name"),
             sortable: true
           },
           {
-            key: "organization",
+            key: "organisationName",
             label: t("Organization"),
             sortable: true
           },
           {
-            key: "email",
+            key: "emailAddress",
             label: t("Email"),
             sortable: true
           },
           {
-            key: "role",
+            key: "roleName",
             label: t("Role"),
             sortable: true
           },
