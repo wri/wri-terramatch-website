@@ -5885,9 +5885,9 @@ export const reportingFrameworkCreate = new V3ApiEndpoint<
 
 export type ReportingFrameworkUpdatePathParams = {
   /**
-   * UUID of the resource.
+   * Framework slug/key
    */
-  uuid: string;
+  frameworkKey: string;
 };
 
 export type ReportingFrameworkUpdateError = Fetcher.ErrorWrapper<
@@ -5962,13 +5962,13 @@ export const reportingFrameworkUpdate = new V3ApiEndpoint<
   ReportingFrameworkUpdateError,
   ReportingFrameworkUpdateVariables,
   {}
->("/reportingFrameworks/v3/reportingFrameworks/{uuid}", "PUT");
+>("/reportingFrameworks/v3/reportingFrameworks/{frameworkKey}", "PUT");
 
 export type ReportingFrameworkDeletePathParams = {
   /**
-   * UUID of the resource.
+   * Framework slug/key
    */
-  uuid: string;
+  frameworkKey: string;
 };
 
 export type ReportingFrameworkDeleteError = Fetcher.ErrorWrapper<
@@ -6009,7 +6009,7 @@ export const reportingFrameworkDelete = new V3ApiEndpoint<
   ReportingFrameworkDeleteError,
   ReportingFrameworkDeleteVariables,
   {}
->("/reportingFrameworks/v3/reportingFrameworks/{uuid}", "DELETE");
+>("/reportingFrameworks/v3/reportingFrameworks/{frameworkKey}", "DELETE");
 
 export type ReportingFrameworkGetPathParams = {
   /**

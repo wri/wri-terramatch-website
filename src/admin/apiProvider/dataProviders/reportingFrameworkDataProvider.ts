@@ -99,27 +99,9 @@ export const reportingFrameworkDataProvider: DataProvider = {
   async update(__, params) {
     try {
       const frameworkKey = params.id as string;
-      let uuid = (params.data?.uuid as string | undefined) ?? null;
-
-      if (uuid == null) {
-        const connected = await loadReportingFramework({ frameworkKey });
-        if (connected.loadFailure != null) {
-          throw v3ErrorForRA("Reporting framework not found", {
-            statusCode: 404,
-            message: `Reporting framework with slug "${frameworkKey}" not found`
-          });
-        }
-        uuid = connected.data!.uuid;
-      }
-
       const attributes = formDataToUpdateAttributes(params.data as ReportingFrameworkRecord);
-      await updateReportingFramework(uuid, attributes);
-
-      const connected = await loadReportingFramework({ frameworkKey });
-      if (connected.loadFailure != null) {
-        throw v3ErrorForRA("Reporting framework fetch after update failed", connected.loadFailure);
-      }
-      return { data: { ...connected.data!, id: connected.data!.slug ?? connected.data!.uuid } };
+      const data = await updateReportingFramework(attributes, { frameworkKey });
+      return { data: { ...data, id: data.slug ?? data.uuid } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework update failed", err);
     }
@@ -129,16 +111,7 @@ export const reportingFrameworkDataProvider: DataProvider = {
   async delete(__, params) {
     try {
       const frameworkKey = params.id as string;
-      const connected = await loadReportingFramework({ frameworkKey });
-
-      if (connected.loadFailure != null) {
-        throw v3ErrorForRA("Reporting framework not found", {
-          statusCode: 404,
-          message: `Reporting framework with slug "${frameworkKey}" not found`
-        });
-      }
-
-      await deleteReportingFramework(connected.data!.uuid);
+      await deleteReportingFramework(frameworkKey);
       return { data: { id: params.id } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework delete failed", err);

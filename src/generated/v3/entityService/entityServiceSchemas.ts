@@ -3470,9 +3470,6 @@ export type UpdateReportingFrameworkAttributes = {
 
 export type UpdateReportingFrameworkData = {
   type: "reportingFrameworks";
-  /**
-   * @format uuid
-   */
   id: string;
   attributes: UpdateReportingFrameworkAttributes;
 };
