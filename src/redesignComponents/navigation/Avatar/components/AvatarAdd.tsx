@@ -1,4 +1,4 @@
-import { UserAdd } from "@/redesignComponents/foundations/Icons/UserAdd";
+import { UserAddIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AVATAR_ICON_SIZE_MAP } from "../constants";
 import { StyledAvatarWrapper } from "../styled";
@@ -25,7 +25,7 @@ export const AvatarAdd = ({ size, finalSize, onClick, ariaLabel, customBackgroun
         backgroundColor: customBackgroundColor ?? "#E5E7EB"
       }}
     >
-      <UserAdd boxSize={AVATAR_ICON_SIZE_MAP[size]} className="text-theme-neutral-700" />
+      <UserAddIcon boxSize={AVATAR_ICON_SIZE_MAP[size]} className="text-theme-neutral-700" />
     </StyledAvatarWrapper>
   );
 };

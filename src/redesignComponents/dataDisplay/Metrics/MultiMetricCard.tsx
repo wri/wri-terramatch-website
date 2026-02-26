@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { FC } from "react";
 
 import { ProgressTag } from "../../actions/Tags/ProgressTag/ProgressTag";
-import { InformationRequired } from "../../foundations/Icons";
+import { InformationRequiredIcon } from "../../foundations/Icons";
 import SimpleDivider from "../../miscellaneous/Dividers/SimpleDivider";
 import DonutChart from "./DonutChart";
 import { MultiMetricCardProps } from "./types";
@@ -45,7 +45,7 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
                 <Text textStyle="300" color="neutral.800">
                   {metric.title}
                 </Text>
-                <InformationRequired color="neutral.800" boxSize="12px" />
+                <InformationRequiredIcon color="neutral.800" boxSize="12px" />
               </Flex>
               {metric.goal > 0 ? (
                 <Flex gap={1} alignItems="center">

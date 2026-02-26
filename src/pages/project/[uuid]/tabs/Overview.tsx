@@ -8,18 +8,14 @@ import OverviewMapArea from "@/components/elements/Map-mapbox/components/Overvie
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDPartnersResponse,
-  useGetV2ProjectsUUIDManagers,
-  useGetV2ProjectsUUIDPartners
-} from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRight, Download } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -55,17 +51,6 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
   </Flex>
 );
 
-const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse, isProjectManager: boolean) =>
-  members
-    .map(member => ({
-      id: member.uuid ?? "",
-      name: `${member.first_name} ${member.last_name}`,
-      image: "",
-      email: member.email_address,
-      isProjectManager
-    }))
-    ?.slice(0, 2) ?? [];
-
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
@@ -74,18 +59,29 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
-  const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
-    data: GetV2ProjectsUUIDPartnersResponse;
-  }>({
-    pathParams: { uuid: project?.uuid }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid
   });
 
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
-  });
-
-  const monitoringPartners = formatTeamMembers(partners?.data ?? [], false);
-  const projectManagers = formatTeamMembers(managers?.data ?? [], true);
+  const monitoringPartners = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-developer")
+      ?.slice(0, 3)
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
+  const projectManagers = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-manager")
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -104,11 +100,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }, [project.frameworkKey]);
 
   const handleInviteClick = useCallback(() => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetchPartners} />
-    );
-  }, [openModal, project.uuid, refetchPartners]);
+    openModal(ModalId.INVITE_MONITORING_PARTNER_MODAL, <InviteMonitoringPartnerModal projectUUID={project.uuid} />);
+  }, [openModal, project.uuid]);
 
   const handleDownloadPolygons = async () => {
     if (!project?.uuid || !project?.name) return;
@@ -136,14 +129,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Sites",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("sites")
             }}
             downloadButtonProps={{
               variant: "secondary",
               size: "small",
               children: "Download Project Polygons",
-              leftIcon: <Download />,
+              leftIcon: <DownloadIcon />,
               onClick: handleDownloadPolygons,
               loading: isDownloading
             }}
@@ -164,7 +157,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "primary",
               size: "small",
               children: isProjectSetupComplete ? "Edit" : "Continue Editing",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
           >
@@ -180,7 +173,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             variant: "secondary",
             size: "small",
             children: "View Progress & Goals",
-            rightIcon: <ChevronRight />,
+            rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("goals")
           }}
         >
@@ -194,7 +187,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "Manage Team",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("team-members")
             }}
           >
@@ -221,7 +214,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Gallery",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("gallery")
             }}
           >
@@ -256,7 +249,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 <Button
                   variant="borderless"
                   size="small"
-                  rightIcon={<ChevronRight />}
+                  rightIcon={<ChevronRightIcon />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
                   {t(mrvOnboardingContentItem?.content.mrvLinkText)}
@@ -272,7 +265,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                     <Button
                       variant="borderless"
                       size="small"
-                      rightIcon={<ChevronRight />}
+                      rightIcon={<ChevronRightIcon />}
                       key={link.title}
                       onClick={() => window.open(link.link, "_blank")}
                     >

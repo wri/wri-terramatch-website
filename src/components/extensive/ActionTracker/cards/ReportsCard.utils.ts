@@ -1,0 +1,73 @@
+/**
+ * Utils for ReportsCard transformation logic (TM-2947).
+ * Extracted for testability and separation of concerns.
+ */
+import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
+import { getEntityCombinedStatus } from "@/helpers/entity";
+
+/** Statuses that qualify a report for display on the homepage (TM-2947) */
+export const DISPLAYABLE_REPORT_STATUSES = [
+  "due",
+  "started",
+  "needs-more-information",
+  "requires-more-information"
+] as const;
+
+export type ReportActionTarget = {
+  uuid?: string;
+  dueAt?: string | null;
+  updatedAt?: string;
+  status?: string;
+  update_request_status?: string;
+  project?: { uuid?: string; name?: string };
+  projectUuid?: string;
+  site?: { name?: string; project?: { uuid?: string; name?: string } };
+  task?: { uuid?: string };
+  taskUuid?: string;
+  nursery?: { name?: string; project?: { uuid?: string; name?: string } };
+  projectName?: string;
+};
+
+export const isDisplayableStatus = (status: string | null | undefined): boolean =>
+  status == null ? false : DISPLAYABLE_REPORT_STATUSES.some(s => status.includes(s));
+
+export const getProjectUuid = (target: ReportActionTarget): string | undefined =>
+  target?.project?.uuid ?? target?.projectUuid ?? target?.site?.project?.uuid;
+
+export const getTaskUuid = (target: ReportActionTarget): string | undefined => target?.task?.uuid ?? target?.taskUuid;
+
+export const getProjectName = (target: ReportActionTarget): string | undefined =>
+  target?.project?.name ?? target?.projectName ?? target?.site?.project?.name ?? target?.nursery?.project?.name;
+
+/** Filters actions to only those with displayable report status */
+export function filterDisplayableReportActions(actions: ActionDto[]): ActionDto[] {
+  return actions.filter((action: ActionDto) => {
+    if (action.target == null) return false;
+    const target = action.target as ReportActionTarget;
+    const status = getEntityCombinedStatus(target);
+    return isDisplayableStatus(status);
+  });
+}
+
+/** Groups site and nursery report actions by task UUID. Keys are task UUIDs. */
+export function groupSiteAndNurseryReportsByTask(actions: ActionDto[]) {
+  const map = new Map<string, { siteReports: ActionDto[]; nurseryReports: ActionDto[] }>();
+
+  actions
+    .filter((a: ActionDto) => a.targetableType === "siteReports" || a.targetableType === "nurseryReports")
+    .forEach((action: ActionDto) => {
+      const target = action.target as ReportActionTarget;
+      const taskUuid = getTaskUuid(target);
+      if (taskUuid == null) return;
+
+      const existing = map.get(taskUuid) ?? { siteReports: [] as ActionDto[], nurseryReports: [] as ActionDto[] };
+      if (action.targetableType === "siteReports") {
+        existing.siteReports.push(action);
+      } else if (action.targetableType === "nurseryReports") {
+        existing.nurseryReports.push(action);
+      }
+      map.set(taskUuid, existing);
+    });
+
+  return map;
+}

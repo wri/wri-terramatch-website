@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Info } from "@/redesignComponents/foundations/Icons";
+import { InfoIcon } from "@/redesignComponents/foundations/Icons";
 
 import FeedbackTag from "./FeedbackTag";
 
@@ -18,7 +18,7 @@ const meta: Meta<typeof FeedbackTag> = {
     label: "Feedback",
     disabled: false,
     size: "default",
-    icon: <Info />
+    icon: <InfoIcon />
   }
 };
 
@@ -88,19 +88,19 @@ export const SizeVariations: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
-        <FeedbackTag type="success" label="Small" size="small" icon={<Info />} />
-        <FeedbackTag type="success" label="Default" size="default" icon={<Info />} />
-        <FeedbackTag type="success" label="Large" size="large" icon={<Info />} />
+        <FeedbackTag type="success" label="Small" size="small" icon={<InfoIcon />} />
+        <FeedbackTag type="success" label="Default" size="default" icon={<InfoIcon />} />
+        <FeedbackTag type="success" label="Large" size="large" icon={<InfoIcon />} />
       </div>
       <div className="flex items-center gap-4">
-        <FeedbackTag type="warning" label="Small" size="small" icon={<Info />} />
-        <FeedbackTag type="warning" label="Default" size="default" icon={<Info />} />
-        <FeedbackTag type="warning" label="Large" size="large" icon={<Info />} />
+        <FeedbackTag type="warning" label="Small" size="small" icon={<InfoIcon />} />
+        <FeedbackTag type="warning" label="Default" size="default" icon={<InfoIcon />} />
+        <FeedbackTag type="warning" label="Large" size="large" icon={<InfoIcon />} />
       </div>
       <div className="flex items-center gap-4">
-        <FeedbackTag type="error" label="Small" size="small" icon={<Info />} />
-        <FeedbackTag type="error" label="Default" size="default" icon={<Info />} />
-        <FeedbackTag type="error" label="Large" size="large" icon={<Info />} />
+        <FeedbackTag type="error" label="Small" size="small" icon={<InfoIcon />} />
+        <FeedbackTag type="error" label="Default" size="default" icon={<InfoIcon />} />
+        <FeedbackTag type="error" label="Large" size="large" icon={<InfoIcon />} />
       </div>
     </div>
   )
@@ -109,13 +109,13 @@ export const SizeVariations: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-4">
-      <FeedbackTag type="info-white" label="Info White" icon={<Info />} />
-      <FeedbackTag type="info-grey" label="Info Grey" icon={<Info />} />
-      <FeedbackTag type="success" label="Success" icon={<Info />} />
-      <FeedbackTag type="warning" label="Warning" icon={<Info />} />
-      <FeedbackTag type="error" label="Error" icon={<Info />} />
-      <FeedbackTag type="success" label="Disabled" icon={<Info />} disabled />
-      <FeedbackTag type="info-grey" label="Closable" icon={<Info />} closable />
+      <FeedbackTag type="info-white" label="Info White" icon={<InfoIcon />} />
+      <FeedbackTag type="info-grey" label="Info Grey" icon={<InfoIcon />} />
+      <FeedbackTag type="success" label="Success" icon={<InfoIcon />} />
+      <FeedbackTag type="warning" label="Warning" icon={<InfoIcon />} />
+      <FeedbackTag type="error" label="Error" icon={<InfoIcon />} />
+      <FeedbackTag type="success" label="Disabled" icon={<InfoIcon />} disabled />
+      <FeedbackTag type="info-grey" label="Closable" icon={<InfoIcon />} closable />
     </div>
   )
 };

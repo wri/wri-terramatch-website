@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import Button from "./Button";
 
@@ -44,7 +44,7 @@ export const PrimaryDisabled: Story = {
 
 export const PrimaryWithLeftIcon: Story = {
   render: () => (
-    <Button variant="primary" leftIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="primary" leftIcon={<EditIcon className="h-4 w-4" />}>
       Primary with Icon
     </Button>
   )
@@ -52,7 +52,7 @@ export const PrimaryWithLeftIcon: Story = {
 
 export const PrimaryWithRightIcon: Story = {
   render: () => (
-    <Button variant="primary" rightIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="primary" rightIcon={<EditIcon className="h-4 w-4" />}>
       Primary with Icon
     </Button>
   )
@@ -84,7 +84,7 @@ export const SecondaryDisabled: Story = {
 
 export const SecondaryWithLeftIcon: Story = {
   render: () => (
-    <Button variant="secondary" leftIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="secondary" leftIcon={<EditIcon className="h-4 w-4" />}>
       Secondary with Icon
     </Button>
   )
@@ -92,7 +92,7 @@ export const SecondaryWithLeftIcon: Story = {
 
 export const SecondaryWithRightIcon: Story = {
   render: () => (
-    <Button variant="secondary" rightIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="secondary" rightIcon={<EditIcon className="h-4 w-4" />}>
       Secondary with Icon
     </Button>
   )
@@ -124,7 +124,7 @@ export const BorderlessDisabled: Story = {
 
 export const BorderlessWithLeftIcon: Story = {
   render: () => (
-    <Button variant="borderless" leftIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="borderless" leftIcon={<EditIcon className="h-4 w-4" />}>
       Borderless with Icon
     </Button>
   )
@@ -132,7 +132,7 @@ export const BorderlessWithLeftIcon: Story = {
 
 export const BorderlessWithRightIcon: Story = {
   render: () => (
-    <Button variant="borderless" rightIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="borderless" rightIcon={<EditIcon className="h-4 w-4" />}>
       Borderless with Icon
     </Button>
   )
@@ -164,7 +164,7 @@ export const OutlineDisabled: Story = {
 
 export const OutlineWithLeftIcon: Story = {
   render: () => (
-    <Button variant="outline" leftIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="outline" leftIcon={<EditIcon className="h-4 w-4" />}>
       Outline with Icon
     </Button>
   )
@@ -172,7 +172,7 @@ export const OutlineWithLeftIcon: Story = {
 
 export const OutlineWithRightIcon: Story = {
   render: () => (
-    <Button variant="outline" rightIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="outline" rightIcon={<EditIcon className="h-4 w-4" />}>
       Outline with Icon
     </Button>
   )
@@ -206,7 +206,7 @@ export const SecondaryLoading: Story = {
 // Combination Examples
 export const SmallWithIcon: Story = {
   render: () => (
-    <Button variant="primary" size="small" leftIcon={<Edit className="h-4 w-4" />}>
+    <Button variant="primary" size="small" leftIcon={<EditIcon className="h-4 w-4" />}>
       Small with Icon
     </Button>
   )

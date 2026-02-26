@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import Accordion from "./Accordion";
 import AccordionHeader from "./AccordionHeader";
@@ -30,13 +30,23 @@ export const Default: Story = {
 };
 
 const actionsSuccess = (
-  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+  <Button
+    variant="secondary"
+    size="small"
+    leftIcon={<EditIcon boxSize={4} />}
+    onClick={() => console.log("Edit clicked")}
+  >
     Edit
   </Button>
 );
 
 const actionsError = (
-  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={() => console.log("Edit clicked")}>
+  <Button
+    variant="secondary"
+    size="small"
+    leftIcon={<EditIcon boxSize={4} />}
+    onClick={() => console.log("Edit clicked")}
+  >
     Edit
   </Button>
 );

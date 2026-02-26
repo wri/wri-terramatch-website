@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { Info as InfoIcon } from "../../foundations/Icons";
+import { InfoIcon } from "../../foundations/Icons";
 import TooltipStory from "./Tooltip";
 
 const meta = {
