@@ -50,6 +50,8 @@ export type MyOrganisationConnection = OrganisationConnection & {
   userStatus?: UserStatus;
 };
 
+type OrgJoinProps = { organisationUuid?: string };
+
 const selectOrganisations = (store: ApiDataStore) => store.organisations;
 const selectFinancialIndicators = (store: ApiDataStore) => store.financialIndicators;
 const selectFundingTypes = (store: ApiDataStore) => store.fundingTypes;
@@ -91,8 +93,6 @@ const organisationConnection = v3Resource("organisations", organisationShow)
 const orgCreationConnection = v3Resource("organisations", organisationCreation)
   .create<OrganisationLightDto>()
   .buildConnection();
-
-type OrgJoinProps = { organisationUuid?: string };
 
 const orgJoinConnection = v3Resource("associatedUsers", createOrgUserAssociation)
   .create<UserAssociationDto, OrgJoinProps>(({ organisationUuid }) =>
