@@ -6,7 +6,7 @@ import { FC } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import { Close, Info } from "@/redesignComponents/foundations/Icons";
+import { CloseIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
@@ -57,7 +57,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                 ))}
               </div>
               {showClearFilters && (
-                <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
+                <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
                   {t("Clear All Filters")}
                 </Button>
               )}
@@ -85,7 +85,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
           <Button {...button} size="small" />{" "}
           {tooltipContent && (
             <Tooltip content={tooltipContent} position="top">
-              <Info className="text-theme-neutral-800" />
+              <InfoIcon className="text-theme-neutral-800" />
             </Tooltip>
           )}
         </Flex>

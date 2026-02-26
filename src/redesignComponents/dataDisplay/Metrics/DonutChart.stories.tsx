@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Placeholder } from "../../foundations/Icons";
+import { PlaceholderIcon } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
 
 const meta: Meta<typeof DonutChart> = {
@@ -86,6 +86,6 @@ export const DifferentSizes: Story = {
 export const WithChildren: Story = {
   args: {
     progress: 100,
-    children: <Placeholder boxSize={6} color="primary.600" />
+    children: <PlaceholderIcon boxSize={6} color="primary.600" />
   }
 };

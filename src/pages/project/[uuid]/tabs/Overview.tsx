@@ -14,7 +14,7 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRight, Download } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -126,14 +126,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Sites",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("sites")
             }}
             downloadButtonProps={{
               variant: "secondary",
               size: "small",
               children: "Download Project Polygons",
-              leftIcon: <Download />,
+              leftIcon: <DownloadIcon />,
               onClick: handleDownloadPolygons,
               loading: isDownloading
             }}
@@ -154,7 +154,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "primary",
               size: "small",
               children: isProjectSetupComplete ? "Edit" : "Continue Editing",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
           >
@@ -170,7 +170,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             variant: "secondary",
             size: "small",
             children: "View Progress & Goals",
-            rightIcon: <ChevronRight />,
+            rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("goals")
           }}
         >
@@ -184,7 +184,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "Manage Team",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("team-members")
             }}
           >
@@ -211,7 +211,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Gallery",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("gallery")
             }}
           >
@@ -246,7 +246,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 <Button
                   variant="borderless"
                   size="small"
-                  rightIcon={<ChevronRight />}
+                  rightIcon={<ChevronRightIcon />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
                   {t(mrvOnboardingContentItem?.content.mrvLinkText)}
@@ -262,7 +262,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                     <Button
                       variant="borderless"
                       size="small"
-                      rightIcon={<ChevronRight />}
+                      rightIcon={<ChevronRightIcon />}
                       key={link.title}
                       onClick={() => window.open(link.link, "_blank")}
                     >

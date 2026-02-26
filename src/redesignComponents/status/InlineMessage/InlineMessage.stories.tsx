@@ -1,7 +1,7 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { CheckApproved } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon } from "@/redesignComponents/foundations/Icons";
 
 import InlineMessage from "./InlineMessage";
 
@@ -115,7 +115,7 @@ export const NoIconWithButtonIcon: Story = {
     icon: null,
     actionLabel: "Mark complete",
     isButtonRight: true,
-    buttonLeftIcon: <CheckApproved height="16px" width="16px" />
+    buttonLeftIcon: <CheckApprovedIcon height="16px" width="16px" />
   }
 };
 

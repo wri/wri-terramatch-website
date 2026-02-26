@@ -6,7 +6,13 @@ import { FC } from "react";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { AreaHectares, Jobs, Regeneration, Seedlings, Tree } from "@/redesignComponents/foundations/Icons";
+import {
+  AreaHectaresIcon,
+  JobsIcon,
+  RegenerationIcon,
+  SeedlingsIcon,
+  TreeIcon
+} from "@/redesignComponents/foundations/Icons";
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
 }
@@ -38,7 +44,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={totalTreesRestoredCount}
         goal={treesGrownGoal}
         variant="donutChart"
-        icon={<Tree />}
+        icon={<TreeIcon />}
         color="secondary.600"
         type="treesRestored"
         className={metricClassName}
@@ -55,7 +61,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={project.regeneratedTreesCount ?? 0}
         goal={project.goalTreesRestoredAnr ?? 0}
         variant="donutChart"
-        icon={<Regeneration />}
+        icon={<RegenerationIcon />}
         color="secondary.600"
         type="treesRestored"
         className={metricClassName}
@@ -72,7 +78,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={project.seedsPlantedCount ?? 0}
         goal={project.seedsGrownGoal ?? 0}
         variant="donutChart"
-        icon={<Seedlings />}
+        icon={<SeedlingsIcon />}
         color="secondary.600"
         type="saplingsRestored"
         className={metricClassName}
@@ -89,7 +95,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={totalHectaresRestored}
         goal={totalHectaresRestoredGoal}
         variant="donutChart"
-        icon={<AreaHectares />}
+        icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
         className={metricClassName}
@@ -112,7 +118,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={project.totalJobsCreated}
         goal={project.jobsCreatedGoal ?? 0}
         variant="donutChart"
-        icon={<Jobs />}
+        icon={<JobsIcon />}
         type="jobsCreated"
         className={metricClassName}
         tooltipContent={
