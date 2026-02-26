@@ -34,6 +34,9 @@ const InlineMessage: FC<InlineMessageProps> = ({
         },
         "& [aria-roledescription] > div > div:first-of-type > svg": {
           marginTop: 0
+        },
+        "& [aria-roledescription]": {
+          gap: "16px"
         }
       }}
     >
