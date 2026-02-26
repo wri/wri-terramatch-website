@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Placeholder } from "@/redesignComponents/foundations/Icons";
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
 import ViewToolbar from "./ViewToolbar";
 
@@ -29,9 +29,9 @@ export default meta;
 type Story = StoryObj<typeof ViewToolbar>;
 
 const defaultTabs = [
-  { label: "Overview", value: "overview", icon: <Placeholder boxSize={4} /> },
-  { label: "Details", value: "details", icon: <Placeholder boxSize={4} /> },
-  { label: "Settings", value: "settings", icon: <Placeholder boxSize={4} /> }
+  { label: "Overview", value: "overview", icon: <PlaceholderIcon boxSize={4} /> },
+  { label: "Details", value: "details", icon: <PlaceholderIcon boxSize={4} /> },
+  { label: "Settings", value: "settings", icon: <PlaceholderIcon boxSize={4} /> }
 ];
 
 export const Default: Story = {

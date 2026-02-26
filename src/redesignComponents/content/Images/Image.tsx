@@ -6,7 +6,7 @@ import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "reac
 
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Edit, PhotoAdd, Rejected } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
 
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
@@ -66,7 +66,7 @@ const BaseImage: FC<BaseImageProps> = ({
               borderRadius
             )}
           >
-            <PhotoAdd className="h-6 w-6" />
+            <PhotoAddIcon className="h-6 w-6" />
             <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
               {t("Add Image")}
             </Button>
@@ -76,7 +76,7 @@ const BaseImage: FC<BaseImageProps> = ({
             className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <Rejected className="h-5 w-5 text-theme-neutral-500" />
+              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
               <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
                 {t("Image unavailable")}
               </Text>
@@ -103,7 +103,7 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              <Edit className="h-4 w-4" />
+              <EditIcon className="h-4 w-4" />
               {t("Edit")}
             </Text>
           </div>

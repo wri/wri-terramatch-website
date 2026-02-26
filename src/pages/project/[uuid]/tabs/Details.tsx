@@ -1,7 +1,9 @@
 import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { useRouter } from "next/router";
 import { FC } from "react";
+import { When } from "react-if";
 import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -19,17 +21,21 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { Edit } from "@/redesignComponents/foundations/Icons";
-import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
-import { NO_COUNT_TABLE_SPECIES_PER_ROW, noCountTableColumns } from "./constants/Detail.constants";
+import {
+  COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  NO_COUNT_TABLE_SPECIES_PER_PAGE,
+  NO_COUNT_TABLE_SPECIES_PER_ROW,
+  noCountTableColumns
+} from "./constants/Detail.constants";
 
 interface ProjectDetailsTabProps {
   project: ProjectFullDto;
 }
 
 const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
-  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={onClick}>
+  <Button variant="secondary" size="small" leftIcon={<EditIcon boxSize={4} />} onClick={onClick}>
     {text}
   </Button>
 );
@@ -82,6 +88,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
     }
     return rows;
   }
+
   return (
     <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
       <Flex flexDirection="column" gap={2}>
@@ -99,7 +106,6 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
             },
             t
           );
-
           return (
             <Accordion
               key={step.id}
@@ -130,14 +136,8 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
               <Flex flexDirection="column" gap={3}>
                 {entries.map((entry, index) => (
                   <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-                    {entry.inputType === "file" ? (
-                      <Flex direction="column" gap={2} marginBottom={2}>
-                        <Text textStyle="500" color="neutral.700">
-                          {entry.title}:
-                        </Text>
-                        <SimpleDivider />
-                      </Flex>
-                    ) : (
+                    {entry.title === "Additional Information" ||
+                    (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
                       <Text textStyle="300-bold" color="primary.900">
                         {entry.title}:
                       </Text>
@@ -155,28 +155,38 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                       }
                       if (rawValue.props.tableType == "noCount") {
                         const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
+                        const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+
                         return (
                           <Table
-                            data={plantsToNoCountRows(rawValue.props.plants)}
+                            data={dataPlants}
                             columns={noCountTableColumns}
                             css={NO_HEADER_TABLE_WRAPPER_STYLES}
                             variant="full-width"
                             totalItems={noCountTableRowCount}
                             showItemCount={false}
-                            pageSize={NO_COUNT_TABLE_SPECIES_PER_ROW}
+                            pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
+                            showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
+                            className={classNames(
+                              "mt-[2px]",
+                              dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3"
+                            )}
                             renderRow={rowData => {
                               const row = rowData as Record<number, string> & { id: number };
                               return (
                                 <TableRow>
                                   {noCountTableColumns.map((col, idx) => (
                                     <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                                      <Box
-                                        className={`${
-                                          idx === noCountTableColumns.length - 1 ? "" : "mr-8 "
-                                        }border-b border-theme-neutral-300 py-4`}
-                                      >
-                                        {row[idx + 1] ?? "-"}
-                                      </Box>
+                                      <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                                        <Box
+                                          className={classNames(
+                                            idx === noCountTableColumns.length - 1 ? "" : "mr-8",
+                                            "border-b border-theme-neutral-300 py-4"
+                                          )}
+                                        >
+                                          {row[idx + 1]}
+                                        </Box>
+                                      </When>
                                     </TableCell>
                                   ))}
                                 </TableRow>
@@ -193,7 +203,10 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                             css={FULL_WIDTH_TABLE_HEADER_STYLES}
                             totalItems={rawValue.props.plants.length}
                             showItemCount={false}
-                            className="!w-[725px]"
+                            className={classNames(
+                              "mt-[2px] !w-[725px]",
+                              rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+                            )}
                           />
                         );
                       } else {

@@ -1,7 +1,7 @@
 import { Box, TabsTrigger } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 import { TabType } from "./formNavigation.constants";
 import { getLabelClasses, getTabClasses } from "./formNavigation.utils";
@@ -49,7 +49,7 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
 
           {label != null && <p className={getLabelClasses(isSelected)}>{label}</p>}
         </span>
-        <ChevronRight />
+        <ChevronRightIcon />
       </Box>
     </TabsTriggerTyped>
   );

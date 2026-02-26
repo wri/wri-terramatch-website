@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { FC, FormEvent, useCallback } from "react";
 
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
-import { Delete } from "@/redesignComponents/foundations/Icons";
+import { DeleteIcon } from "@/redesignComponents/foundations/Icons";
 
 export interface TrackingRowProps {
   entryType: string;
@@ -79,7 +79,7 @@ const TrackingRow: FC<TrackingRowProps> = ({ usesName, label, userLabel, amount,
             )}
             {onChange != null && (
               <Button onClick={onDelete} className="flex items-center gap-1.5">
-                <Delete color="error.500" boxSize={3} className="leading-4" />
+                <DeleteIcon color="error.500" boxSize={3} className="leading-4" />
                 <Text textStyle="200-bold" color="error.900">
                   {t("Remove")}
                 </Text>
