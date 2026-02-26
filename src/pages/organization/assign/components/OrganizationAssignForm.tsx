@@ -2,15 +2,12 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo } from "react";
 import { When } from "react-if";
-import { useSelector } from "react-redux";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import { joinOrganisation, useOrganisations, useOrgCreate } from "@/connections/Organisation";
-import { organisationJoinRequest } from "@/generated/v3/userService/userServiceComponents";
+import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organisation";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
-import { AppStore } from "@/store/store";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
@@ -28,16 +25,8 @@ const OrganizationAssignForm = () => {
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
 
-  const joinVariables = useMemo(
-    () => (selectedOrganization?.uuid != null ? { pathParams: { uuid: selectedOrganization.uuid } } : null),
-    [selectedOrganization?.uuid]
-  );
-  const joinOrganisationLoading = useSelector((store: AppStore) =>
-    joinVariables != null ? organisationJoinRequest.isFetchingSelector(joinVariables)(store.api) : false
-  );
-  const joinOrganisationFailure = useSelector((store: AppStore) =>
-    joinVariables != null ? organisationJoinRequest.fetchFailedSelector(joinVariables)(store.api) : undefined
-  );
+  const [, { create: joinOrg, isCreating: joinOrganisationLoading, createFailure: joinOrganisationFailure }] =
+    useOrgJoin({ organisationUuid: selectedOrganization?.uuid });
 
   const orgFilter = useMemo(
     () => (shouldSearch ? { ...ORG_LIST_FILTER_BASE, search: searchedTerm } : ORG_LIST_FILTER_BASE),
@@ -95,9 +84,8 @@ const OrganizationAssignForm = () => {
   }, [isTyping]);
 
   const handleJoin = useCallback(() => {
-    if (selectedOrganization?.uuid == null) return;
-    joinOrganisation(selectedOrganization.uuid);
-  }, [selectedOrganization?.uuid]);
+    joinOrg(undefined as never);
+  }, [joinOrg]);
 
   const handleCreate = useCallback(() => {
     if (createOrganisation != null) {

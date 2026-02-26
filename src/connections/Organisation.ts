@@ -11,11 +11,11 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
+  createOrgUserAssociation,
   organisationCreation,
   organisationDelete,
   organisationIndex,
   OrganisationIndexQueryParams,
-  organisationJoinRequest,
   organisationShow,
   organisationUpdate
 } from "@/generated/v3/userService/userServiceComponents";
@@ -29,7 +29,8 @@ import {
   OrganisationLightDto,
   OrganisationUpdateAttributes,
   OwnershipStakeDto,
-  TreeSpeciesDto
+  TreeSpeciesDto,
+  UserAssociationDto
 } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
@@ -91,9 +92,15 @@ const orgCreationConnection = v3Resource("organisations", organisationCreation)
   .create<OrganisationLightDto>()
   .buildConnection();
 
-export const joinOrganisation = (uuid: string) => {
-  organisationJoinRequest.fetch({ pathParams: { uuid } });
-};
+type OrgJoinProps = { organisationUuid?: string };
+
+const orgJoinConnection = v3Resource("associatedUsers", createOrgUserAssociation)
+  .create<UserAssociationDto, OrgJoinProps>(({ organisationUuid }) =>
+    organisationUuid != null ? { pathParams: { uuid: organisationUuid } } : undefined
+  )
+  .buildConnection();
+
+export const useOrgJoin = connectionHook(orgJoinConnection);
 
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs

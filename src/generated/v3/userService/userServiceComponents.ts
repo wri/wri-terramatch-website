@@ -761,83 +761,6 @@ export const organisationDelete = new V3ApiEndpoint<
   {}
 >("/organisations/v3/organisations/{uuid}", "DELETE");
 
-export type OrganisationJoinRequestPathParams = {
-  uuid: string;
-};
-
-export type OrganisationJoinRequestError = Fetcher.ErrorWrapper<
-  | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type OrganisationJoinRequestResponse = {
-  meta?: {
-    /**
-     * @example organisations
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example organisations
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.OrganisationLightDto;
-  };
-};
-
-export type OrganisationJoinRequestVariables = {
-  pathParams: OrganisationJoinRequestPathParams;
-};
-
-export const organisationJoinRequest = new V3ApiEndpoint<
-  OrganisationJoinRequestResponse,
-  OrganisationJoinRequestError,
-  OrganisationJoinRequestVariables,
-  {}
->("/organisations/v3/organisations/{uuid}/join-request", "POST");
-
 export type ActionsIndexError = Fetcher.ErrorWrapper<
   | {
       status: 400;
@@ -1400,19 +1323,76 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   {}
 >("/userAssociations/v3/projects/{uuid}", "DELETE");
 
+export type CreateOrgUserAssociationPathParams = {
+  uuid: string;
+};
+
+export type CreateOrgUserAssociationError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type CreateOrgUserAssociationResponse = {
+  meta?: {
+    /**
+     * @example associatedUsers
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example associatedUsers
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserAssociationDto;
+  };
+};
+
+export type CreateOrgUserAssociationVariables = {
+  pathParams: CreateOrgUserAssociationPathParams;
+};
+
+export const createOrgUserAssociation = new V3ApiEndpoint<
+  CreateOrgUserAssociationResponse,
+  CreateOrgUserAssociationError,
+  CreateOrgUserAssociationVariables,
+  {}
+>("/userAssociations/v3/organisations/{uuid}", "POST");
+
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
   verificationUser: { verifyUser },
-  organisations: {
-    organisationIndex,
-    organisationCreation,
-    organisationShow,
-    organisationUpdate,
-    organisationDelete,
-    organisationJoinRequest
-  },
+  organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
-  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
+  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation, createOrgUserAssociation }
 };
