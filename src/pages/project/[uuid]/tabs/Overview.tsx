@@ -64,6 +64,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const monitoringPartners = useMemo(() => {
     return associatedUsers
       ?.filter(user => user.roleName === "monitoring-partner")
+      ?.slice(0, 3)
       .map((user, index) => ({
         id: user.uuid,
         name: user.fullName,
