@@ -21,7 +21,7 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
@@ -35,7 +35,7 @@ interface ProjectDetailsTabProps {
 }
 
 const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
-  <Button variant="secondary" size="small" leftIcon={<Edit boxSize={4} />} onClick={onClick}>
+  <Button variant="secondary" size="small" leftIcon={<EditIcon boxSize={4} />} onClick={onClick}>
     {text}
   </Button>
 );
@@ -90,7 +90,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-2">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
@@ -181,7 +181,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
                                         <Box
                                           className={classNames(
                                             idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                            "border-b border-theme-neutral-300 py-4"
+                                            "border-theme-neutral-300 border-b py-4"
                                           )}
                                         >
                                           {row[idx + 1]}

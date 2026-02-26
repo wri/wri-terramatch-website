@@ -1,7 +1,7 @@
 import { Box, TableCell, TableRow } from "@mui/material";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Placeholder } from "@/redesignComponents/foundations/Icons";
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
 import ActionCell from "./components/ActionCell";
 import CustomTableCell from "./components/TableCell";
@@ -150,7 +150,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <Placeholder className="text-theme-neutral-800 h-5 w-5" />
+          icon: <PlaceholderIcon className="text-theme-neutral-800 h-5 w-5" />
         }
       },
       ...generateSampleData(3),

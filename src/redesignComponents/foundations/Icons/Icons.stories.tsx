@@ -2,61 +2,61 @@ import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import {
-  Applications,
-  AreaHectares,
-  Calendar,
-  Check,
-  CheckApproved,
-  ChevronDown,
-  ChevronRight,
-  ChevronUp,
-  CloseFullscreen,
-  Correct,
-  Dashboard,
-  Delete,
-  Download,
-  Draft,
-  Drag,
-  Due,
-  Edit,
-  Expand,
-  Incorrect,
-  Indeterminate,
-  Info,
-  InformationRequired,
-  InformationRequiredSimple,
-  Jobs,
-  JobsCircle,
-  Landscape,
-  Language,
-  Messages,
-  MoreVert,
-  NewTab,
-  NothingReported,
-  Notification,
-  Nursery,
-  Opportunities,
-  Organisation,
-  Pending,
-  PhotoAdd,
-  Placeholder,
-  Programme,
-  Project,
-  Regeneration,
-  Rejected,
-  Reports,
-  Search,
-  Seedlings,
-  SeedlingsCircle,
-  Site,
-  Species,
-  SpeciesNative,
-  SurvivalRate,
-  Tree,
-  TreeCircle,
-  UserAdd,
-  Visibility,
-  VisibilityOff
+  ApplicationsIcon,
+  AreaHectaresIcon,
+  CalendarIcon,
+  CheckApprovedIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  CloseFullscreenIcon,
+  CorrectIcon,
+  DashboardIcon,
+  DeleteIcon,
+  DownloadIcon,
+  DraftIcon,
+  DragIcon,
+  DueIcon,
+  EditIcon,
+  ExpandIcon,
+  IncorrectIcon,
+  IndeterminateIcon,
+  InfoIcon,
+  InformationRequiredIcon,
+  InformationRequiredSimpleIcon,
+  JobsCircleIcon,
+  JobsIcon,
+  LandscapeIcon,
+  LanguageIcon,
+  MessagesIcon,
+  MoreVertIcon,
+  NewTabIcon,
+  NothingReportedIcon,
+  NotificationIcon,
+  NurseryIcon,
+  OpportunitiesIcon,
+  OrganizationIcon,
+  PendingIcon,
+  PhotoAddIcon,
+  PlaceholderIcon,
+  ProgrammeIcon,
+  ProjectIcon,
+  RegenerationIcon,
+  RejectedIcon,
+  ReportsIcon,
+  SearchIcon,
+  SeedlingsCircleIcon,
+  SeedlingsIcon,
+  SiteIcon,
+  SpeciesIcon,
+  SpeciesNativeIcon,
+  SurvivalRateIcon,
+  TreeCircleIcon,
+  TreeIcon,
+  UserAddIcon,
+  VisibilityIcon,
+  VisibilityOffIcon
 } from ".";
 
 const meta: Meta = {
@@ -95,40 +95,40 @@ export const AllIcons: Story = {
         <CategoryHeader title="Data Visualisation" />
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Area / Hectares">
-            <AreaHectares boxSize={8} />
+            <AreaHectaresIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Jobs">
-            <Jobs boxSize={8} />
+            <JobsIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Jobs Circle">
-            <JobsCircle boxSize={8} />
+            <JobsCircleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Landscape">
-            <Landscape boxSize={8} />
+            <LandscapeIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Regeneration">
-            <Regeneration boxSize={8} />
+            <RegenerationIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Seedlings">
-            <Seedlings boxSize={8} />
+            <SeedlingsIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Seedlings Circle">
-            <SeedlingsCircle boxSize={8} />
+            <SeedlingsCircleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Species">
-            <Species boxSize={8} />
+            <SpeciesIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Species Native">
-            <SpeciesNative boxSize={8} />
+            <SpeciesNativeIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Survival Rate">
-            <SurvivalRate boxSize={8} />
+            <SurvivalRateIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Tree">
-            <Tree boxSize={8} />
+            <TreeIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Tree Circle">
-            <TreeCircle boxSize={8} />
+            <TreeCircleIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -137,76 +137,76 @@ export const AllIcons: Story = {
         <CategoryHeader title="Function" />
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Check">
-            <Check boxSize={8} />
+            <CheckIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Chevron Down">
-            <ChevronDown boxSize={8} />
+            <ChevronDownIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Chevron Right">
-            <ChevronRight boxSize={8} />
+            <ChevronRightIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Chevron Up">
-            <ChevronUp boxSize={8} />
+            <ChevronUpIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Close Fullscreen">
-            <CloseFullscreen boxSize={8} />
+            <CloseFullscreenIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Correct">
-            <Correct boxSize={8} />
+            <CorrectIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Delete">
-            <Delete boxSize={8} />
+            <DeleteIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Drag">
-            <Drag boxSize={8} />
+            <DragIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Edit">
-            <Edit boxSize={8} />
+            <EditIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Expand">
-            <Expand boxSize={8} />
+            <ExpandIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Incorrect">
-            <Incorrect boxSize={8} />
+            <IncorrectIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Indeterminate">
-            <Indeterminate boxSize={8} />
+            <IndeterminateIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Information">
-            <Info boxSize={8} />
+            <InfoIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="More Vert">
-            <MoreVert boxSize={8} />
+            <MoreVertIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="New Tab">
-            <NewTab boxSize={8} />
+            <NewTabIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Placeholder">
-            <Placeholder boxSize={8} />
+            <PlaceholderIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Photo Add">
-            <PhotoAdd boxSize={8} />
+            <PhotoAddIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Search">
-            <Search boxSize={8} />
+            <SearchIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="User Add">
-            <UserAdd boxSize={8} />
+            <UserAddIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Visibility">
-            <Visibility boxSize={8} />
+            <VisibilityIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Visibility Off">
-            <VisibilityOff boxSize={8} />
+            <VisibilityOffIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Information Required Simple">
-            <InformationRequiredSimple boxSize={8} />
+            <InformationRequiredSimpleIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Calendar">
-            <Calendar boxSize={8} />
+            <CalendarIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Download">
-            <Download boxSize={8} />
+            <DownloadIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -215,40 +215,40 @@ export const AllIcons: Story = {
         <CategoryHeader title="Navigation / Sections" />
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Applications">
-            <Applications boxSize={8} />
+            <ApplicationsIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Dashboard">
-            <Dashboard boxSize={8} />
+            <DashboardIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Language">
-            <Language boxSize={8} />
+            <LanguageIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Messages">
-            <Messages boxSize={8} />
+            <MessagesIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Notification">
-            <Notification boxSize={8} />
+            <NotificationIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Nursery">
-            <Nursery boxSize={8} />
+            <NurseryIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Opportunities">
-            <Opportunities boxSize={8} />
+            <OpportunitiesIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Organisation">
-            <Organisation boxSize={8} />
+            <OrganizationIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Programme">
-            <Programme boxSize={8} />
+            <ProgrammeIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Project">
-            <Project boxSize={8} />
+            <ProjectIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Report">
-            <Reports boxSize={8} />
+            <ReportsIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Site">
-            <Site boxSize={8} />
+            <SiteIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -257,25 +257,25 @@ export const AllIcons: Story = {
         <CategoryHeader title="Status" />
         <VStack align="stretch" gap={4}>
           <IconWrapper name="Check / Approved">
-            <CheckApproved boxSize={8} />
+            <CheckApprovedIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Draft">
-            <Draft boxSize={8} />
+            <DraftIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Due">
-            <Due boxSize={8} />
+            <DueIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Information Required">
-            <InformationRequired boxSize={8} />
+            <InformationRequiredIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Nothing Reported">
-            <NothingReported boxSize={8} />
+            <NothingReportedIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Pending">
-            <Pending boxSize={8} />
+            <PendingIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Rejected">
-            <Rejected boxSize={8} />
+            <RejectedIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -289,40 +289,40 @@ export const DataVisualisation: Story = {
       <CategoryHeader title="Data Visualisation" />
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
         <IconWrapper name="Area / Hectares">
-          <AreaHectares boxSize={8} />
+          <AreaHectaresIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Jobs">
-          <Jobs boxSize={8} />
+          <JobsIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Jobs Circle">
-          <JobsCircle boxSize={8} />
+          <JobsCircleIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Landscape">
-          <Landscape boxSize={8} />
+          <LandscapeIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Regeneration">
-          <Regeneration boxSize={8} />
+          <RegenerationIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Seedlings">
-          <Seedlings boxSize={8} />
+          <SeedlingsIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Seedlings Circle">
-          <SeedlingsCircle boxSize={8} />
+          <SeedlingsCircleIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Species">
-          <Species boxSize={8} />
+          <SpeciesIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Species Native">
-          <SpeciesNative boxSize={8} />
+          <SpeciesNativeIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Survival Rate">
-          <SurvivalRate boxSize={8} />
+          <SurvivalRateIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Tree">
-          <Tree boxSize={8} />
+          <TreeIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Tree Circle">
-          <TreeCircle boxSize={8} />
+          <TreeCircleIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
@@ -335,76 +335,76 @@ export const Function: Story = {
       <CategoryHeader title="Function" />
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
         <IconWrapper name="Check">
-          <Check boxSize={8} />
+          <CheckIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Chevron Down">
-          <ChevronDown boxSize={8} />
+          <ChevronDownIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Chevron Right">
-          <ChevronRight boxSize={8} />
+          <ChevronRightIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Chevron Up">
-          <ChevronUp boxSize={8} />
+          <ChevronUpIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Close Fullscreen">
-          <CloseFullscreen boxSize={8} />
+          <CloseFullscreenIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Correct">
-          <Correct boxSize={8} />
+          <CorrectIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Delete">
-          <Delete boxSize={8} />
+          <DeleteIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Drag">
-          <Drag boxSize={8} />
+          <DragIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Edit">
-          <Edit boxSize={8} />
+          <EditIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Expand">
-          <Expand boxSize={8} />
+          <ExpandIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Incorrect">
-          <Incorrect boxSize={8} />
+          <IncorrectIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Indeterminate">
-          <Indeterminate boxSize={8} />
+          <IndeterminateIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Information">
-          <Info boxSize={8} />
+          <InfoIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="More Vert">
-          <MoreVert boxSize={8} />
+          <MoreVertIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="New Tab">
-          <NewTab boxSize={8} />
+          <NewTabIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Placeholder">
-          <Placeholder boxSize={8} />
+          <PlaceholderIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Photo Add">
-          <PhotoAdd boxSize={8} />
+          <PhotoAddIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Search">
-          <Search boxSize={8} />
+          <SearchIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="User Add">
-          <UserAdd boxSize={8} />
+          <UserAddIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Visibility">
-          <Visibility boxSize={8} />
+          <VisibilityIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Visibility Off">
-          <VisibilityOff boxSize={8} />
+          <VisibilityOffIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Information Required Simple">
-          <InformationRequiredSimple boxSize={8} />
+          <InformationRequiredSimpleIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Calendar">
-          <Calendar boxSize={8} />
+          <CalendarIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Download">
-          <Download boxSize={8} />
+          <DownloadIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
@@ -417,40 +417,40 @@ export const NavigationSections: Story = {
       <CategoryHeader title="Navigation / Sections" />
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
         <IconWrapper name="Applications">
-          <Applications boxSize={8} />
+          <ApplicationsIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Dashboard">
-          <Dashboard boxSize={8} />
+          <DashboardIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Language">
-          <Language boxSize={8} />
+          <LanguageIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Messages">
-          <Messages boxSize={8} />
+          <MessagesIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Notification">
-          <Notification boxSize={8} />
+          <NotificationIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Nursery">
-          <Nursery boxSize={8} />
+          <NurseryIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Opportunities">
-          <Opportunities boxSize={8} />
+          <OpportunitiesIcon boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Organisation">
-          <Organisation boxSize={8} />
+        <IconWrapper name="Organization">
+          <OrganizationIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Programme">
-          <Programme boxSize={8} />
+          <ProgrammeIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Project">
-          <Project boxSize={8} />
+          <ProjectIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Report">
-          <Reports boxSize={8} />
+          <ReportsIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Site">
-          <Site boxSize={8} />
+          <SiteIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
@@ -463,25 +463,25 @@ export const Status: Story = {
       <CategoryHeader title="Status" />
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
         <IconWrapper name="Check / Approved">
-          <CheckApproved boxSize={8} />
+          <CheckApprovedIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Draft">
-          <Draft boxSize={8} />
+          <DraftIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Due">
-          <Due boxSize={8} />
+          <DueIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Information Required">
-          <InformationRequired boxSize={8} />
+          <InformationRequiredIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Nothing Reported">
-          <NothingReported boxSize={8} />
+          <NothingReportedIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Pending">
-          <Pending boxSize={8} />
+          <PendingIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Rejected">
-          <Rejected boxSize={8} />
+          <RejectedIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>

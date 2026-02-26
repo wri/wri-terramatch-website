@@ -2,7 +2,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Fragment } from "react";
 import { BrowserRouter, Link } from "react-router-dom";
 
-import { Placeholder } from "@/redesignComponents/foundations/Icons";
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
 import { ToolbarSlot } from "./ToolBar.type";
 import ToolbarObject from "./ToolbarObject";
@@ -33,11 +33,11 @@ const meta: Meta<typeof ToolbarObject> = {
 const renderSuffix = (slots: ToolbarSlot[]) => {
   return slots.map((slot, index) => (
     <Fragment key={`${slot.title}-${index}`}>
-      <div className="flex flex-col rounded border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-1">
-        <p className="text-10-bold leading-[normal] text-theme-neutral-800">{slot.title}</p>
-        <p className="text-10 leading-[normal] text-theme-neutral-700">{slot.description}</p>
+      <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col rounded border border-dashed p-1">
+        <p className="text-10-bold text-theme-neutral-800 leading-[normal]">{slot.title}</p>
+        <p className="text-10 text-theme-neutral-700 leading-[normal]">{slot.description}</p>
       </div>
-      {index < slots.length - 1 && <div className="h-3.5 w-[1px] bg-theme-neutral-300" />}
+      {index < slots.length - 1 && <div className="bg-theme-neutral-300 h-3.5 w-[1px]" />}
     </Fragment>
   ));
 };
@@ -49,7 +49,7 @@ export const Default: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
         { label: "Page level 2", link: "#" },
         { label: "Page level 3", link: "#" }
       ],
@@ -66,7 +66,7 @@ export const MultipleSlots: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
         { label: "Page level 2", link: "#" }
       ],
       linkRouter: Link
@@ -84,7 +84,7 @@ export const WithBreadcrumbIcons: Story = {
   args: {
     breadcrumbs: {
       links: [
-        { label: "Page level 1", link: "#", icon: <Placeholder /> },
+        { label: "Page level 1", link: "#", icon: <PlaceholderIcon /> },
         { label: "Page level 2", link: "#" },
         { label: "Page level 3", link: "#" }
       ],
@@ -100,7 +100,7 @@ export const WithBreadcrumbIcons: Story = {
 export const PageTitle: Story = {
   args: {
     breadcrumbs: {
-      links: [{ label: "Title", link: "#", icon: <Placeholder /> }],
+      links: [{ label: "Title", link: "#", icon: <PlaceholderIcon /> }],
       linkRouter: Link
     },
     suffix: renderSuffix([

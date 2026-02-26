@@ -14,7 +14,7 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
+import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -171,7 +171,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         }}
         button={{
           children: t("Add Team Member"),
-          leftIcon: <UserAdd />,
+          leftIcon: <UserAddIcon />,
           onClick: handleInvite
         }}
         tooltipContent={t(
@@ -227,7 +227,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                     variant: "secondary",
                     onClick: () => ModalConfirmDeletePartner(rowData),
                     leftIcon: (
-                      <Delete
+                      <DeleteIcon
                         className="!text-theme-error-500"
                         css={{
                           "& svg path": {

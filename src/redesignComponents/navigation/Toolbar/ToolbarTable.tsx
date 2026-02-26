@@ -6,7 +6,7 @@ import { FC } from "react";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
-import { Close, Info } from "@/redesignComponents/foundations/Icons";
+import { CloseIcon, InfoIcon } from "@/redesignComponents/foundations/Icons";
 
 import Toolbar from "./Toolbar";
 import { SearchProps, ToolbarTableProps } from "./ToolBar.type";
@@ -42,7 +42,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
                   } as SearchProps)}
                 />
               </div>
-              <span className="text-14-bold flex min-w-fit items-center gap-0.5 text-theme-neutral-900">
+              <span className="text-14-bold text-theme-neutral-900 flex min-w-fit items-center gap-0.5">
                 {search.count != null ? `${search.count} ${search.label}` : ""}
               </span>
             </div>
@@ -50,14 +50,14 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
           {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
           {filters != null && filters.length > 0 ? (
             <div className="flex flex-wrap items-center gap-4">
-              <div className="text-14 flex flex-wrap items-center gap-3 text-theme-neutral-900">
+              <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">
                 {t("Filter by:")}
                 {filters.map((filter, index) => (
                   <MultiActionButton key={index} {...filter} size="small" />
                 ))}
               </div>
               {showClearFilters && (
-                <Button variant="borderless" size="small" leftIcon={<Close />} onClick={onClearFilters}>
+                <Button variant="borderless" size="small" leftIcon={<CloseIcon />} onClick={onClearFilters}>
                   {t("Clear All Filters")}
                 </Button>
               )}
@@ -85,7 +85,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
           <Button {...button} size="small" />{" "}
           {tooltipContent && (
             <Tooltip content={tooltipContent} position="top">
-              <Info className="text-theme-neutral-800" />
+              <InfoIcon className="text-theme-neutral-800" />
             </Tooltip>
           )}
         </Flex>

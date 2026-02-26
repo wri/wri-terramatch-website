@@ -6,7 +6,7 @@ import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavig
 import { v3EntityName } from "@/helpers/entity";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
@@ -35,7 +35,7 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entityUuid, onStatu
             type="button"
             variant="borderless"
             size="small"
-            leftIcon={<Edit boxSize={3} />}
+            leftIcon={<EditIcon boxSize={3} />}
             onClick={() => router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`)}
           >
             Edit
