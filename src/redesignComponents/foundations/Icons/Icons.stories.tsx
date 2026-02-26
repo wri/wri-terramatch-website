@@ -46,8 +46,8 @@ import {
   Rejected,
   Reports,
   Search,
-  Seeds,
-  SeedsCircle,
+  Seedlings,
+  SeedlingsCircle,
   Site,
   Species,
   SpeciesNative,
@@ -109,11 +109,11 @@ export const AllIcons: Story = {
           <IconWrapper name="Regeneration">
             <Regeneration boxSize={8} />
           </IconWrapper>
-          <IconWrapper name="Seeds">
-            <Seeds boxSize={8} />
+          <IconWrapper name="Seedlings">
+            <Seedlings boxSize={8} />
           </IconWrapper>
-          <IconWrapper name="Seeds Circle">
-            <SeedsCircle boxSize={8} />
+          <IconWrapper name="Seedlings Circle">
+            <SeedlingsCircle boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Species">
             <Species boxSize={8} />
@@ -303,11 +303,11 @@ export const DataVisualisation: Story = {
         <IconWrapper name="Regeneration">
           <Regeneration boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Seeds">
-          <Seeds boxSize={8} />
+        <IconWrapper name="Seedlings">
+          <Seedlings boxSize={8} />
         </IconWrapper>
-        <IconWrapper name="Seeds Circle">
-          <SeedsCircle boxSize={8} />
+        <IconWrapper name="Seedlings Circle">
+          <SeedlingsCircle boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Species">
           <Species boxSize={8} />

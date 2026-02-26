@@ -10,7 +10,7 @@ export interface SeedsCircleProps extends IconProps {
   borderColor?: string;
 }
 
-export const SeedsCircle = (props: SeedsCircleProps) => {
+export const SeedlingsCircle = (props: SeedsCircleProps) => {
   const {
     color = getThemedColor("secondary", 800),
     innerBgColor = getThemedColor("secondary", 300),

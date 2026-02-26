@@ -6,7 +6,7 @@ import { FC } from "react";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { AreaHectares, Jobs, Seeds, Tree } from "@/redesignComponents/foundations/Icons";
+import { AreaHectares, Jobs, Seedlings, Tree } from "@/redesignComponents/foundations/Icons";
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
 }
@@ -47,7 +47,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={project.seedsPlantedCount ?? 0}
         goal={project.seedsGrownGoal ?? 0}
         variant="donutChart"
-        icon={<Seeds />}
+        icon={<Seedlings />}
         color="secondary.600"
         type="saplingsRestored"
         className={metricClassName}
