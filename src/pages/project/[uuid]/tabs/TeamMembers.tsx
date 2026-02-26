@@ -107,6 +107,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         .map((member, index) => ({
           ...member,
           //TODO: replace with actual image once it is implemented
+          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending",
           image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
         })) ?? [];
 
@@ -199,16 +200,14 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   ]}
                 />
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.organisationName}</ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
               <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
               <ChakraTableCell>
                 {rowData?.roleName != null
-                  ? TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name
+                  ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
                   : "-"}
               </ChakraTableCell>
-              <ChakraTableCell>
-                {rowData?.status == "active" || rowData?.isManager ? t("Accepted") : t("Pending")}
-              </ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   // TODO: comment out for now as we don't have an edit functionality yet
