@@ -90,7 +90,7 @@ const ProjectDetailTab = ({ project }: ProjectDetailsTabProps) => {
   }
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-2">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         {steps.map(step => {
           const isValid = step.validation.isValidSync(formValues);
