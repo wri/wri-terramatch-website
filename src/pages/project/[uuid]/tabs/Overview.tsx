@@ -11,11 +11,10 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRight, Download } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -55,7 +54,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const { isLargerResolution } = useResolutions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
@@ -66,6 +64,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const monitoringPartners = useMemo(() => {
     return associatedUsers
       ?.filter(user => user.roleName === "monitoring-partner")
+      ?.slice(0, 3)
       .map((user, index) => ({
         id: user.uuid,
         name: user.fullName,
@@ -128,14 +127,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Sites",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("sites")
             }}
             downloadButtonProps={{
               variant: "secondary",
               size: "small",
               children: "Download Project Polygons",
-              leftIcon: <Download />,
+              leftIcon: <DownloadIcon />,
               onClick: handleDownloadPolygons,
               loading: isDownloading
             }}
@@ -156,7 +155,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "primary",
               size: "small",
               children: isProjectSetupComplete ? "Edit" : "Continue Editing",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
           >
@@ -167,12 +166,12 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         </Flex>
         <OverviewItem
           title="Key Indicators & Insights"
-          flexProps={{ paddingY: 2, width: isLargerResolution ? "fit-content" : "100%" }}
+          flexProps={{ paddingY: 2, width: "100%" }}
           buttonProps={{
             variant: "secondary",
             size: "small",
             children: "View Progress & Goals",
-            rightIcon: <ChevronRight />,
+            rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("goals")
           }}
         >
@@ -186,7 +185,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "Manage Team",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("team-members")
             }}
           >
@@ -213,7 +212,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Gallery",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("gallery")
             }}
           >
@@ -248,7 +247,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 <Button
                   variant="borderless"
                   size="small"
-                  rightIcon={<ChevronRight />}
+                  rightIcon={<ChevronRightIcon />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
                   {t(mrvOnboardingContentItem?.content.mrvLinkText)}
@@ -264,7 +263,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                     <Button
                       variant="borderless"
                       size="small"
-                      rightIcon={<ChevronRight />}
+                      rightIcon={<ChevronRightIcon />}
                       key={link.title}
                       onClick={() => window.open(link.link, "_blank")}
                     >

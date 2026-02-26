@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRight, Edit } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useClampedText } from "../hooks/useClampedText";
 
@@ -55,7 +55,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
             }}
           >
             {"..."}
-            <Button variant="borderless" size="small" rightIcon={<ChevronRight />} onClick={handleToggleExpand}>
+            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={handleToggleExpand}>
               {t("Read More")}
             </Button>
           </Text>
@@ -76,7 +76,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
         )}
       </Box>
       <div className="w-fit">
-        <Button variant="secondary" size="small" leftIcon={<Edit />} className="w-auto">
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto">
           {t("Edit")}
         </Button>
       </div>

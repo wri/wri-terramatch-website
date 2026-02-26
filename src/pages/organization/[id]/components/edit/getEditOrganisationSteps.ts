@@ -435,12 +435,6 @@ export const getSteps = (t: typeof useT, countryOptions: Option[]): LocalStep[] 
         inputType: "long-text"
       },
       {
-        name: "historic_monitoring_geojson",
-        label: t("Historic monitoring shapefile upload"),
-        inputType: "mapInput",
-        model: "organisations"
-      },
-      {
         name: "previous_annual_reports",
         inputType: "file",
         label: t("Previous Annual Reports for Monitored Restoration Projects"),

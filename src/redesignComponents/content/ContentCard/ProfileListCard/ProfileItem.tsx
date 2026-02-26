@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Messages } from "@/redesignComponents/foundations/Icons";
+import { MessagesIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import { IProfile } from "./ProfileListCard";
@@ -36,7 +36,7 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
         variant="borderless"
         size="small"
         onClick={handleClick}
-        leftIcon={<Messages boxSize={3} color="neutral.800" />}
+        leftIcon={<MessagesIcon boxSize={3} color="neutral.800" />}
         className={canMessage ? undefined : "hidden"}
       >
         {t("Message")}

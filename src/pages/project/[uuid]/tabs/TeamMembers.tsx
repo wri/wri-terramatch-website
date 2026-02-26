@@ -14,7 +14,7 @@ import ActionCell from "@/redesignComponents/dataDisplay/Table/components/Action
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
+import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -41,7 +41,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
     name: "EPA Ghana Pilot Admin"
   },
   {
-    id: "monitoring-partner",
+    id: "project-developer",
     name: "Monitoring Partner"
   },
   {
@@ -74,12 +74,10 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
           title={t("REMOVE MONITORING PARTNER?")}
-          content={t(
-            "Remove {email_address} as Monitoring Partner to Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County International Tree Foundation??",
-            {
-              email_address: rowData?.emailAddress
-            }
-          )}
+          content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
+            email_address: rowData?.emailAddress,
+            project_name: project?.name
+          })}
           primaryButtonProps={{
             children: t("Confirm"),
             onClick: () => {
@@ -94,16 +92,22 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         />
       );
     },
-    [closeModal, openModal, t, project.uuid]
+    [closeModal, openModal, t, project.uuid, project?.name]
   );
 
   const teamMembers = useMemo(() => {
     const all =
       associatedUsers
-        ?.filter(member => (selectedRole ? member?.roleName?.toLowerCase() === selectedRole.toLowerCase() : true))
+        ?.filter(member => {
+          const role = member?.roleName?.toLowerCase();
+          const isValidRole = role && ["project-manager", "project-developer"].includes(role);
+          const matchesSelectedRole = !selectedRole || role === selectedRole.toLowerCase();
+          return isValidRole && matchesSelectedRole;
+        })
         .map((member, index) => ({
           ...member,
           //TODO: replace with actual image once it is implemented
+          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending",
           image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
         })) ?? [];
 
@@ -113,7 +117,13 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
       const includes = (key: keyof UserAssociationDto) =>
         typeof member?.[key] === "string" && (member?.[key] as string).toLowerCase().includes(q);
 
-      return includes("fullName") || includes("organisationName") || includes("emailAddress") || includes("roleName");
+      return (
+        includes("fullName") ||
+        includes("organisationName") ||
+        includes("emailAddress") ||
+        includes("roleName") ||
+        includes("status")
+      );
     });
   }, [associatedUsers, selectedRole, searchQuery]);
 
@@ -129,19 +139,19 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           {
             mainActionLabel: t(
               selectedRole !== null
-                ? selectedRole === "monitoring-partner"
+                ? selectedRole === "project-developer"
                   ? "Monitoring Partner"
                   : "Project Manager"
                 : "Role"
             ),
             variant: "secondary",
             mainActionOnClick: () =>
-              setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
+              setSelectedRole(selectedRole === "project-developer" ? "project-manager" : "project-developer"),
             otherActions: [
               {
                 label: t("Monitoring Partner"),
-                value: "monitoring-partner",
-                onClick: () => setSelectedRole("monitoring-partner")
+                value: "project-developer",
+                onClick: () => setSelectedRole("project-developer")
               },
               {
                 label: t("Project Manager"),
@@ -166,7 +176,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         }}
         button={{
           children: t("Add Team Member"),
-          leftIcon: <UserAdd />,
+          leftIcon: <UserAddIcon />,
           onClick: handleInvite
         }}
         tooltipContent={t(
@@ -190,14 +200,14 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   ]}
                 />
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.organisationName}</ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
               <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
               <ChakraTableCell>
                 {rowData?.roleName != null
-                  ? TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name
+                  ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
                   : "-"}
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   // TODO: comment out for now as we don't have an edit functionality yet
@@ -217,24 +227,28 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   //     />
                   //   )
                   // }}
-                  buttonSecondary={{
-                    children: t("Remove"),
-                    variant: "secondary",
-                    onClick: () => ModalConfirmDeletePartner(rowData),
-                    leftIcon: (
-                      <Delete
-                        className="!text-theme-error-500"
-                        css={{
-                          "& svg path": {
-                            fill: getThemedColor("error", 500) + " !important",
-                            color: getThemedColor("error", 500) + " !important"
-                          }
-                        }}
-                      />
-                    ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
-                    size: "small"
-                  }}
+                  buttonSecondary={
+                    rowData?.isManager
+                      ? undefined
+                      : {
+                          children: t("Remove"),
+                          variant: "secondary",
+                          onClick: () => ModalConfirmDeletePartner(rowData),
+                          leftIcon: (
+                            <DeleteIcon
+                              className="!text-theme-error-500"
+                              css={{
+                                "& svg path": {
+                                  fill: getThemedColor("error", 500) + " !important",
+                                  color: getThemedColor("error", 500) + " !important"
+                                }
+                              }}
+                            />
+                          ),
+                          className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
+                          size: "small"
+                        }
+                  }
                 />
               </ChakraTableCell>
             </TableRow>
@@ -243,22 +257,22 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         )}
         columns={[
           {
-            key: "name",
+            key: "fullName",
             label: t("Name"),
             sortable: true
           },
           {
-            key: "organization",
+            key: "organisationName",
             label: t("Organization"),
             sortable: true
           },
           {
-            key: "email",
+            key: "emailAddress",
             label: t("Email"),
             sortable: true
           },
           {
-            key: "role",
+            key: "roleName",
             label: t("Role"),
             sortable: true
           },
