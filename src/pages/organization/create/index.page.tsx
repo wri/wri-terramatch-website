@@ -117,7 +117,6 @@ const CreateOrganisationForm = () => {
           hideSaveAndCloseButton
           roundedCorners
           entity={orgData ?? undefined}
-          redirectEntityPage={""}
         />
       </LoadingContainer>
     </BackgroundLayout>

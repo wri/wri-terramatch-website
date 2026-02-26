@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { ReactElement, useMemo, useState } from "react";
+import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { CarouselBreakPoints } from "@/components/extensive/Carousel/Carousel";
@@ -38,7 +38,19 @@ export interface TabItem {
   key?: string;
 }
 
-const Tabs = (props: TabsProps) => {
+function mapStateToType(state?: TabItem["state"]): TabType {
+  switch (state) {
+    case "complete":
+      return "complete";
+    case "error":
+      return "error";
+    case "unstarted":
+    default:
+      return "available";
+  }
+}
+
+const Tabs: FC<TabsProps> = props => {
   const [selectedIndex, setSelectedIndex] = useState<number>(() =>
     props.selectedTabKey != null
       ? props.tabItems.findIndex(item => item.key === props.selectedTabKey)
@@ -48,18 +60,6 @@ const Tabs = (props: TabsProps) => {
   useValueChanged(props.selectedIndex, () => {
     if (typeof props.selectedIndex === "number") setSelectedIndex(props.selectedIndex);
   });
-
-  const mapStateToType = (state?: TabItem["state"]): TabType => {
-    switch (state) {
-      case "complete":
-        return "complete";
-      case "error":
-        return "error";
-      case "unstarted":
-      default:
-        return "available";
-    }
-  };
 
   const formNavigationTabs = useMemo(
     () =>
@@ -72,13 +72,16 @@ const Tabs = (props: TabsProps) => {
     [props.tabItems]
   );
 
-  const handleTabClick = (value: string) => {
-    const index = props.tabItems.findIndex((item, idx) => (item.key ?? `tab-${idx}`) === value);
-    if (index >= 0) {
-      setSelectedIndex(index);
-      props.onChangeSelected?.(index);
-    }
-  };
+  const handleTabClick = useCallback(
+    (value: string) => {
+      const index = props.tabItems.findIndex((item, idx) => (item.key ?? `tab-${idx}`) === value);
+      if (index >= 0) {
+        setSelectedIndex(index);
+        props.onChangeSelected?.(index);
+      }
+    },
+    [props]
+  );
 
   const currentTabValue = props.tabItems[selectedIndex]?.key ?? `tab-${selectedIndex}`;
 

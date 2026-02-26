@@ -20,7 +20,7 @@ const PageHeader: FC<PageHeaderProps> = ({ title, tag, label }) => {
         <Text fontSize="14px" lineHeight="20px" fontWeight="bold" className="text-theme-neutral-900">
           {label}
         </Text>
-        {tag && <TagSubmission {...tag} />}
+        {tag != null && <TagSubmission {...tag} />}
       </Flex>
     </Box>
   );

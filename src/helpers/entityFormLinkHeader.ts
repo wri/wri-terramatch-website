@@ -1,3 +1,4 @@
+import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { ReactNode } from "react";
 
@@ -16,8 +17,6 @@ type EntityForLinkHeader = {
   organisationUuid?: string | null;
 };
 
-export type TFunction = (key: string, vars?: Record<string, string>) => string;
-
 export type EntityLinkHeaderParams = {
   isAdmin: boolean;
   model: string;
@@ -26,7 +25,7 @@ export type EntityLinkHeaderParams = {
   adminListPath?: string;
   entity: EntityForLinkHeader | null | undefined;
   firstLinkIcon: ReactNode;
-  t: TFunction;
+  t: typeof useT;
   taskTitle?: string;
 };
 
@@ -55,7 +54,7 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
   }
 };
 
-export const mapEntityTitle = (title: string | null, model: string, t: TFunction): string => {
+export const mapEntityTitle = (title: string | null, model: string, t: typeof useT): string => {
   if (title == null || title === "") return t(startCase(singularEntityName(model as EntityName | SingularEntityName)));
   return title;
 };

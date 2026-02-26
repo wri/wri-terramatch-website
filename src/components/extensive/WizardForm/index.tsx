@@ -100,7 +100,7 @@ export interface WizardFormProps {
   roundedCorners?: boolean;
   className?: string;
   cancelEditForm?: () => void;
-  redirectEntityPage: string;
+  redirectEntityPage?: string;
 
   adminListPath?: string;
   entity?: WizardFormEntity;
@@ -254,6 +254,7 @@ function WizardForm(props: WizardFormProps) {
           }}
           primaryButtonProps={{
             children: "Next",
+            disabled: formHasError.current,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={{
@@ -354,11 +355,13 @@ function WizardForm(props: WizardFormProps) {
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
   const formModel = props?.models as FormModel;
 
+  const redirectEntityPage = props.redirectEntityPage ?? "";
+
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
       return [
         ...(entity
-          ? [{ label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`, link: props.redirectEntityPage }]
+          ? [{ label: `${entity?.organisationName} - ${entity?.fundingProgrammeName}`, link: redirectEntityPage }]
           : []),
         { label: t("Edit"), link: `/form/submission/${entity?.uuid ?? ""}` }
       ];
@@ -369,7 +372,7 @@ function WizardForm(props: WizardFormProps) {
         isAdmin,
         model: formModel.model,
         uuid: formModel.uuid ?? props?.entity?.uuid,
-        redirectEntityPage: props.redirectEntityPage,
+        redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
         firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
@@ -378,12 +381,12 @@ function WizardForm(props: WizardFormProps) {
       })[formModel.model];
     }
     return [];
-  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid]);
+  }, [props, t, entity, isSubmissionModel, taskTitle, isAdmin, formModel?.model, formModel?.uuid, redirectEntityPage]);
 
   const pageHeaderTitle = useMemo(() => {
     if (isSubmissionModel) {
-      return entity?.organisationName || entity?.fundingProgrammeName
-        ? `${entity?.organisationName} - ${entity?.fundingProgrammeName}`
+      return entity?.organisationName != null || entity?.fundingProgrammeName != null
+        ? `${entity?.organisationName ?? ""} - ${entity?.fundingProgrammeName ?? ""}`
         : t("Unnamed Application");
     } else {
       return mapEntityTitle(entity?.title ?? entity?.name ?? null, formModel?.model ?? "", t);
@@ -400,7 +403,7 @@ function WizardForm(props: WizardFormProps) {
           projectDetails={props.projectDetails}
         >
           <div className={twMerge("flex w-full flex-col", props.className)}>
-            {entity && (
+            {entity != null && (
               <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
                 <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />
                 <PageHeader

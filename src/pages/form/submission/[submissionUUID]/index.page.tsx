@@ -112,7 +112,7 @@ const SubmissionPage = () => {
           roundedCorners
           orgDetails={orgDetails}
           redirectEntityPage={`/applications/${submission?.applicationUuid}`}
-          entity={application && submission ? { ...application, status: submission.status } : undefined}
+          entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
         />
       </LoadingContainer>
     </BackgroundLayout>

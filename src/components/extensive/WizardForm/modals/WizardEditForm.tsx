@@ -60,7 +60,6 @@ const WizardEditForm = ({
         onBackFirstStep={() => null}
         hideSaveAndCloseButton
         className="max-w-none p-0"
-        redirectEntityPage={""}
       />
     </div>
   );
