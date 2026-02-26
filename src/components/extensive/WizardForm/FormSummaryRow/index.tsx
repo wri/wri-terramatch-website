@@ -12,7 +12,7 @@ import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provide
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
-import { Edit } from "@/redesignComponents/foundations/Icons";
+import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
@@ -68,7 +68,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       }
       actions={
         props.onEdit ? (
-          <Button variant="secondary" size="small" leftIcon={<Edit />} onClick={() => props.onEdit?.(index)}>
+          <Button variant="secondary" size="small" leftIcon={<EditIcon />} onClick={() => props.onEdit?.(index)}>
             {t("Edit")}
           </Button>
         ) : undefined

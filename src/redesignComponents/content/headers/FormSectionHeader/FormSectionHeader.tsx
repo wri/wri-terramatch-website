@@ -1,16 +1,16 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { CheckApproved, InformationRequired } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { FormSectionHeaderProps, FormSectionStatus } from "./types.d";
 
 const getStatusIcon = (status: FormSectionStatus, boxSize: number = 4) =>
   status === "complete" ? (
-    <CheckApproved boxSize={boxSize} color="success.500" />
+    <CheckApprovedIcon boxSize={boxSize} color="success.500" />
   ) : (
-    <InformationRequired boxSize={boxSize} color="error.500" />
+    <InformationRequiredIcon boxSize={boxSize} color="error.500" />
   );
 
 interface StatusLabelTagProps {

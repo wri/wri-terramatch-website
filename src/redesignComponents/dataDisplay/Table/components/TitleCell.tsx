@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
 
-import { ChevronDownAlt } from "@/redesignComponents/foundations/Icons/ChevronDownAlt";
+import { ChevronDownAltIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
 export interface TitleCellProps {
@@ -21,7 +21,7 @@ const TitleCell: React.FC<TitleCellProps> = ({ label, image, icon, avatar, prima
         "!items-center": image != null || icon != null
       })}
     >
-      <ChevronDownAlt />
+      <ChevronDownAltIcon />
       <Box>
         <Flex gap={2} items-center>
           {image != null && <img src={image} alt={label} className="h-6 w-6 rounded border border-theme-neutral-300" />}

@@ -3,7 +3,7 @@ import { FC } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import IconButton from "@/redesignComponents/actions/Buttons/IconButton/IconButton";
-import { MoreVert } from "@/redesignComponents/foundations/Icons";
+import { MoreVertIcon } from "@/redesignComponents/foundations/Icons";
 
 interface ActionCellProps {
   button?: IButtonProps;
@@ -24,7 +24,10 @@ const ActionCell: FC<ActionCellProps> = ({ button, buttonSecondary, onButtonIcon
       {button != null && <Button {...button} variant="secondary" size="small" />}
       {buttonSecondary != null && <Button {...buttonSecondary} />}
       {onButtonIconClick != null && (
-        <IconButton icon={<MoreVert boxSize={4} className="text-theme-neutral-700" />} onClick={onButtonIconClick} />
+        <IconButton
+          icon={<MoreVertIcon boxSize={4} className="text-theme-neutral-700" />}
+          onClick={onButtonIconClick}
+        />
       )}
     </Box>
   );
