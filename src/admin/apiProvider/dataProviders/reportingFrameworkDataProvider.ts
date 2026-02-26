@@ -101,19 +101,13 @@ export const reportingFrameworkDataProvider: DataProvider = {
         });
       }
 
-      ApiSlice.pruneCache("reportingFrameworks", [frameworkKey]);
-
-      const connected = await loadReportingFramework({ frameworkKey, enabled: true });
+      const connected = await loadReportingFramework({ frameworkKey });
 
       if (connected.loadFailure != null) {
         throw v3ErrorForRA("Reporting framework fetch failed", connected.loadFailure);
       }
 
-      if (connected.data == null) {
-        throw v3ErrorForRA("Reporting framework not found", { statusCode: 404, message: "Not found" });
-      }
-
-      return { data: toRARecord(connected.data) };
+      return { data: toRARecord(connected.data!) };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework fetch failed", err);
     }
@@ -137,24 +131,24 @@ export const reportingFrameworkDataProvider: DataProvider = {
       let uuid = (params.data?.uuid as string | undefined) ?? null;
 
       if (uuid == null) {
-        const connected = await loadReportingFramework({ frameworkKey, enabled: true });
-        if (connected.loadFailure != null || connected.data == null) {
+        const connected = await loadReportingFramework({ frameworkKey });
+        if (connected.loadFailure != null) {
           throw v3ErrorForRA("Reporting framework not found", {
             statusCode: 404,
             message: `Reporting framework with slug "${frameworkKey}" not found`
           });
         }
-        uuid = connected.data.uuid;
+        uuid = connected.data!.uuid;
       }
 
       const attributes = formDataToUpdateAttributes(params.data as ReportingFrameworkRecord);
       await updateReportingFramework(uuid, attributes);
 
-      const connected = await loadReportingFramework({ frameworkKey, enabled: true });
-      if (connected.loadFailure != null || connected.data == null) {
+      const connected = await loadReportingFramework({ frameworkKey });
+      if (connected.loadFailure != null) {
         throw v3ErrorForRA("Reporting framework fetch after update failed", connected.loadFailure);
       }
-      return { data: toRARecord(connected.data) };
+      return { data: toRARecord(connected.data!) };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework update failed", err);
     }
@@ -164,16 +158,16 @@ export const reportingFrameworkDataProvider: DataProvider = {
   async delete(__, params) {
     try {
       const frameworkKey = params.id as string;
-      const connected = await loadReportingFramework({ frameworkKey, enabled: true });
+      const connected = await loadReportingFramework({ frameworkKey });
 
-      if (connected.loadFailure != null || connected.data == null) {
+      if (connected.loadFailure != null) {
         throw v3ErrorForRA("Reporting framework not found", {
           statusCode: 404,
           message: `Reporting framework with slug "${frameworkKey}" not found`
         });
       }
 
-      await deleteReportingFramework(connected.data.uuid);
+      await deleteReportingFramework(connected.data!.uuid);
       return { data: { id: params.id } };
     } catch (err) {
       throw v3ErrorForRA("Reporting framework delete failed", err);
