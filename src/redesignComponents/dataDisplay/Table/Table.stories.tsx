@@ -150,7 +150,7 @@ export const WithTitleRows: Story = {
         age: 0,
         title: {
           label: "Label",
-          icon: <PlaceholderIcon className="text-theme-neutral-800 h-5 w-5" />
+          icon: <PlaceholderIcon className="h-5 w-5 text-theme-neutral-800" />
         }
       },
       ...generateSampleData(3),
@@ -513,16 +513,16 @@ export const WithNoHeader: Story = {
       return (
         <TableRow>
           <TableCell>
-            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[1]}</Box>
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[1]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[2]}</Box>
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[2]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="border-theme-neutral-300 mr-8 border-b py-4">{row[3]}</Box>
+            <Box className="mr-8 border-b border-theme-neutral-300 py-4">{row[3]}</Box>
           </TableCell>
           <TableCell className="px-0! py-4">
-            <Box className="border-theme-neutral-300 border-b py-4">{row[4]}</Box>
+            <Box className="border-b border-theme-neutral-300 py-4">{row[4]}</Box>
           </TableCell>
         </TableRow>
       );

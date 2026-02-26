@@ -6,7 +6,13 @@ import { FC } from "react";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useResolutions } from "@/hooks/useResolutions";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { AreaHectaresIcon, JobsIcon, SeedlingsIcon, TreeIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  AreaHectaresIcon,
+  JobsIcon,
+  RegenerationIcon,
+  SeedlingsIcon,
+  TreeIcon
+} from "@/redesignComponents/foundations/Icons";
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
 }
@@ -17,14 +23,22 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const { isLargerResolution, isSmallResolution } = useResolutions();
-  const metricClassName = classNames("flex-1", { "w-[350px]": isLargerResolution });
+  const metricClassName = classNames("flex-1", {
+    "w-[350px]": isLargerResolution,
+    "max-w-[calc((100%/4)-1rem)]": isSmallResolution
+  });
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
   const hectaresTargetPercentage =
     totalHectaresRestoredGoal > 0 ? Math.round((totalHectaresRestored / totalHectaresRestoredGoal) * 100) : undefined;
 
   return (
-    <Flex gap={isSmallResolution ? 10 : 3} flex={1} justify={isLargerResolution ? "flex-start" : "space-between"}>
+    <Flex
+      gap={isSmallResolution ? 8 : 3}
+      flex={1}
+      flexWrap="wrap"
+      justify={isLargerResolution ? "flex-start" : "space-between"}
+    >
       <MetricCard
         title="Trees Planted"
         progress={totalTreesRestoredCount}
@@ -39,6 +53,23 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
             <b>{t("Trees Planted")}</b>
             <br />
             {t("Number of trees planted for this project")}
+          </Box>
+        }
+      />
+      <MetricCard
+        title="Trees Regenerated"
+        progress={project.regeneratedTreesCount ?? 0}
+        goal={project.goalTreesRestoredAnr ?? 0}
+        variant="donutChart"
+        icon={<RegenerationIcon />}
+        color="secondary.600"
+        type="treesRestored"
+        className={metricClassName}
+        tooltipContent={
+          <Box fontSize="14px" lineHeight="20px">
+            <b>{t("Trees Regenerated")}</b>
+            <br />
+            {t("Number of trees regenerated for this project")}
           </Box>
         }
       />
