@@ -11,7 +11,6 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useResolutions } from "@/hooks/useResolutions";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
@@ -55,7 +54,6 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const { isLargerResolution } = useResolutions();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
@@ -167,7 +165,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
         </Flex>
         <OverviewItem
           title="Key Indicators & Insights"
-          flexProps={{ paddingY: 2, width: isLargerResolution ? "fit-content" : "100%" }}
+          flexProps={{ paddingY: 2, width: "100%" }}
           buttonProps={{
             variant: "secondary",
             size: "small",
