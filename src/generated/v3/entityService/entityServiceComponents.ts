@@ -2165,6 +2165,87 @@ export const deleteAuditStatus = new V3ApiEndpoint<
   {}
 >("/entities/v3/auditStatuses/{entity}/{uuid}/{auditUuid}", "DELETE");
 
+export type GetAggregateReportsPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * Entity type (project or site) for aggregate reports.
+   */
+  entity: "projects" | "sites";
+};
+
+export type GetAggregateReportsError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAggregateReportsResponse = {
+  meta?: {
+    /**
+     * @example aggregateReports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example aggregateReports
+     */
+    type?: string;
+    id?: string;
+    attributes?: Schemas.AggregateReportsDto;
+  };
+};
+
+export type GetAggregateReportsVariables = {
+  pathParams: GetAggregateReportsPathParams;
+};
+
+export const getAggregateReports = new V3ApiEndpoint<
+  GetAggregateReportsResponse,
+  GetAggregateReportsError,
+  GetAggregateReportsVariables,
+  {}
+>("/entities/v3/{entity}/{uuid}/aggregateReports", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -5823,6 +5904,194 @@ export const reportingFrameworksIndex = new V3ApiEndpoint<
   {}
 >("/reportingFrameworks/v3/reportingFrameworks", "GET");
 
+export type ReportingFrameworkCreateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ReportingFrameworkCreateResponse = {
+  meta?: {
+    /**
+     * @example reportingFrameworks
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example reportingFrameworks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ReportingFrameworkDto;
+  };
+};
+
+export type ReportingFrameworkCreateVariables = {
+  body: Schemas.CreateReportingFrameworkBody;
+};
+
+export const reportingFrameworkCreate = new V3ApiEndpoint<
+  ReportingFrameworkCreateResponse,
+  ReportingFrameworkCreateError,
+  ReportingFrameworkCreateVariables,
+  {}
+>("/reportingFrameworks/v3/reportingFrameworks", "POST");
+
+export type ReportingFrameworkUpdatePathParams = {
+  /**
+   * Framework slug/key
+   */
+  frameworkKey: string;
+};
+
+export type ReportingFrameworkUpdateError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ReportingFrameworkUpdateResponse = {
+  meta?: {
+    /**
+     * @example reportingFrameworks
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example reportingFrameworks
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ReportingFrameworkDto;
+  };
+};
+
+export type ReportingFrameworkUpdateVariables = {
+  body: Schemas.UpdateReportingFrameworkBody;
+  pathParams: ReportingFrameworkUpdatePathParams;
+};
+
+export const reportingFrameworkUpdate = new V3ApiEndpoint<
+  ReportingFrameworkUpdateResponse,
+  ReportingFrameworkUpdateError,
+  ReportingFrameworkUpdateVariables,
+  {}
+>("/reportingFrameworks/v3/reportingFrameworks/{frameworkKey}", "PUT");
+
+export type ReportingFrameworkDeletePathParams = {
+  /**
+   * Framework slug/key
+   */
+  frameworkKey: string;
+};
+
+export type ReportingFrameworkDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ReportingFrameworkDeleteVariables = {
+  pathParams: ReportingFrameworkDeletePathParams;
+};
+
+export const reportingFrameworkDelete = new V3ApiEndpoint<
+  undefined,
+  ReportingFrameworkDeleteError,
+  ReportingFrameworkDeleteVariables,
+  {}
+>("/reportingFrameworks/v3/reportingFrameworks/{frameworkKey}", "DELETE");
+
 export type ReportingFrameworkGetPathParams = {
   /**
    * Framework slug/key
@@ -5905,6 +6174,7 @@ export const operationsByTag = {
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
+  aggregateReports: { getAggregateReports },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
@@ -5921,5 +6191,11 @@ export const operationsByTag = {
     fundingProgrammeDelete,
     fundingProgrammeUpdate
   },
-  reportingFrameworks: { reportingFrameworksIndex, reportingFrameworkGet }
+  reportingFrameworks: {
+    reportingFrameworksIndex,
+    reportingFrameworkCreate,
+    reportingFrameworkUpdate,
+    reportingFrameworkDelete,
+    reportingFrameworkGet
+  }
 };
