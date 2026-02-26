@@ -9,7 +9,7 @@ import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormFooter } from "./FormFooter";
@@ -95,7 +95,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         }}
         tertiaryButtonProps={{
           children: t("Previous"),
-          leftIcon: <ChevronRight className="rotate-180" />,
+          leftIcon: <ChevronRightIcon className="rotate-180" />,
           onClick: () => setSelectedStepIndex(n => n - 1)
         }}
       />

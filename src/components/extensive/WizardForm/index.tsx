@@ -30,8 +30,8 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons/ChevronRight";
-import { Project } from "@/redesignComponents/foundations/Icons/Project";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
@@ -271,7 +271,7 @@ function WizardForm(props: WizardFormProps) {
             !props.hideBackButton
               ? {
                   children: "Previous",
-                  leftIcon: <ChevronRight className="rotate-180" />,
+                  leftIcon: <ChevronRightIcon className="rotate-180" />,
                   onClick: () => {
                     if (selectedStepIndex > 0) {
                       setSelectedStepIndex(n => n - 1);
@@ -372,7 +372,7 @@ function WizardForm(props: WizardFormProps) {
         redirectEntityPage: props.redirectEntityPage,
         adminListPath: props.adminListPath,
         entity: entity,
-        firstLinkIcon: <Project className="!text-theme-primary-900" />,
+        firstLinkIcon: <ProjectIcon className="!text-theme-primary-900" />,
         t,
         taskTitle
       })[formModel.model];
