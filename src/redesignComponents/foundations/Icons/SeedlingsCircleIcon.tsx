@@ -3,14 +3,14 @@ import React, { FC } from "react";
 
 import { getThemedColor } from "@/lib/theme";
 
-export interface SeedsCircleProps extends IconProps {
+export interface SeedlingsCircleProps extends IconProps {
   color?: string;
   innerBgColor?: string;
   outerBgColor?: string;
   borderColor?: string;
 }
 
-export const SeedsCircleIcon: FC<SeedsCircleProps> = (props: SeedsCircleProps) => {
+export const SeedlingsCircleIcon: FC<SeedlingsCircleProps> = (props: SeedlingsCircleProps) => {
   const {
     color = getThemedColor("secondary", 800),
     innerBgColor = getThemedColor("secondary", 300),
@@ -49,4 +49,4 @@ export const SeedsCircleIcon: FC<SeedsCircleProps> = (props: SeedsCircleProps) =
   );
 };
 
-export default SeedsCircleIcon;
+export default SeedlingsCircleIcon;

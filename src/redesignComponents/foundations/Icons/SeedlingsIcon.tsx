@@ -1,7 +1,7 @@
 import { Icon, IconProps } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-export const SeedsIcon: FC<IconProps> = (props: IconProps) => (
+export const SeedlingsIcon: FC<IconProps> = (props: IconProps) => (
   <Icon {...props}>
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_12964_15719)">
@@ -32,4 +32,4 @@ export const SeedsIcon: FC<IconProps> = (props: IconProps) => (
   </Icon>
 );
 
-export default SeedsIcon;
+export default SeedlingsIcon;
