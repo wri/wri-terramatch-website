@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 
-import { TreeCircle } from "../../foundations/Icons";
+import { TreeCircleIcon } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -52,12 +52,12 @@ export const VariantData: Story = {
 export const VariantNavigation: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "2", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "3", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "4", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "5", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "6", label: "Label", icon: <TreeCircle className="h-6 w-6" />, variant: "navigation" as const }
+      { id: "1", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "2", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "3", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "4", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "5", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
+      { id: "6", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const }
     ]
   }
 };
@@ -118,28 +118,28 @@ export const WithIcons: Story = {
         id: "1",
         label: "Label",
         caption: "Caption",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         variant: "data" as const
       },
       {
         id: "2",
         label: "Label",
         caption: "Caption",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         variant: "data" as const
       },
       {
         id: "3",
         label: "Label",
         caption: "Caption",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         variant: "data" as const
       },
       {
         id: "4",
         label: "Label",
         caption: "Caption",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         variant: "data" as const
       }
     ]
@@ -166,7 +166,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 1",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 1")
       },
       {
@@ -175,7 +175,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 2",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 2")
       },
       {
@@ -184,7 +184,7 @@ export const WithOnItemClick: Story = {
         caption: "Caption",
         variant: "navigation" as const,
         ariaLabel: "Item 3",
-        icon: <TreeCircle className="h-6 w-6" />,
+        icon: <TreeCircleIcon className="h-6 w-6" />,
         onItemClick: () => console.log("Clicked item 3")
       }
     ]
