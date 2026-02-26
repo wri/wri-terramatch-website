@@ -18,6 +18,7 @@ export type RowData = {
   organisationName: string;
   roleName: string;
   status: string;
+  isManager: boolean;
   title?: TitleCellProps;
   avatars?: AvatarProps[];
   primaryText?: string;
