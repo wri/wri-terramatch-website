@@ -3,13 +3,13 @@ import type { Meta, StoryObj } from "@storybook/react";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 
-import RadioListInput from "./RadioListInput";
+import RadioList from "./RadioList";
 
-type RadioOption = ComponentProps<typeof RadioListInput>["radios"][number] & { children: React.ReactNode };
+type RadioOption = ComponentProps<typeof RadioList>["radios"][number] & { children: React.ReactNode };
 
 const meta = {
-  title: "Redesign Components/Forms/Input/Radio List Input",
-  component: RadioListInput,
+  title: "Redesign Components/Forms/Input/Radio List",
+  component: RadioList,
   parameters: {
     layout: "centered"
   },
@@ -44,7 +44,7 @@ const meta = {
       setValue(selectedValue);
       args.onCheckedChange?.(name, selectedValue);
     };
-    return <RadioListInput {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />;
+    return <RadioList {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />;
   },
   decorators: [
     (Story: React.ComponentType) => (
@@ -53,7 +53,7 @@ const meta = {
       </div>
     )
   ]
-} satisfies Meta<typeof RadioListInput>;
+} satisfies Meta<typeof RadioList>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -135,5 +135,54 @@ export const WithDisabledOption: Story = {
       ...defaultRadios.slice(0, 2),
       { value: "option-3", children: "Option 3 (Coming soon)", disabled: true }
     ] as RadioOption[]
+  }
+};
+
+export const CardVariant: Story = {
+  args: {
+    label: "Card Variant",
+    caption: "Card variant of the radio list",
+    name: "radio-list-card",
+    defaultValue: "radio-2",
+    radios: defaultRadios,
+    variant: "card",
+    required: true
+  },
+  render: args => {
+    const [value, setValue] = useState<string | undefined>(args.defaultValue);
+    const handleCheckedChange = (name: string, selectedValue: string) => {
+      setValue(selectedValue);
+      args.onCheckedChange?.(name, selectedValue);
+    };
+    return (
+      <div style={{ width: "366px" }}>
+        <RadioList {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />
+      </div>
+    );
+  }
+};
+
+export const CardVariantWithErrorMessage: Story = {
+  args: {
+    label: "Card Variant With Error Message",
+    caption: "Card variant of the radio list with error message",
+    name: "radio-list-card-error",
+    defaultValue: "radio-2",
+    errorMessage: "Error Message",
+    radios: defaultRadios,
+    variant: "card",
+    required: true
+  },
+  render: args => {
+    const [value, setValue] = useState<string | undefined>(args.defaultValue);
+    const handleCheckedChange = (name: string, selectedValue: string) => {
+      setValue(selectedValue);
+      args.onCheckedChange?.(name, selectedValue);
+    };
+    return (
+      <div style={{ width: "366px" }}>
+        <RadioList {...args} defaultValue={value} onCheckedChange={handleCheckedChange} />
+      </div>
+    );
   }
 };
