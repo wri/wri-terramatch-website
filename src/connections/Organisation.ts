@@ -46,6 +46,7 @@ type FinancialIndicator = FinancialIndicatorDto & {
 };
 
 type UserStatus = "approved" | "rejected" | "requested";
+
 export type MyOrganisationConnection = OrganisationConnection & {
   organisationId?: string;
   userStatus?: UserStatus;

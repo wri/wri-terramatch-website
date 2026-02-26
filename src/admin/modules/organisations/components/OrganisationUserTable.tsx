@@ -13,7 +13,7 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useOrganisationUserUpdate } from "@/connections/Organisation";
+import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useGetV2AdminUsersUsersOrganisationListUUID } from "@/generated/apiComponents";
@@ -46,13 +46,13 @@ const OrganisationUserTable = () => {
     }
   }) as any;
 
-  const [, { update, isUpdating, updateFailure }] = useOrganisationUserUpdate({
+  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
     organisationUuid: orgId,
-    userUuid: selectedUserUuid,
-    enabled: false
+    userUuid: selectedUserUuid
   });
-  const updateRef = useRef(update);
-  updateRef.current = update;
+
+  const createRef = useRef(create);
+  createRef.current = create;
 
   const handleUpdateSuccess = useCallback(() => {
     refetch();
@@ -66,7 +66,7 @@ const OrganisationUserTable = () => {
     setUpdateType(null);
   }, [refetch, closeModal, openNotification, updateType]);
 
-  useRequestSuccess(isUpdating, updateFailure, handleUpdateSuccess);
+  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
 
   const tableItemMenu = (user: V2AdminUserRead) => [
     {
@@ -122,8 +122,11 @@ const OrganisationUserTable = () => {
         primaryButtonProps={{
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
-            (updateRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
-              status: type === "approve" ? "approved" : "rejected"
+            // createRef.current is always the latest create fn (updated each render)
+            const status = type === "approve" ? "approved" : "rejected";
+            console.log("[DEBUG] Sending user association update:", { type, status, userUuid: selectedUserUuid });
+            (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
+              status
             });
           }
         }}

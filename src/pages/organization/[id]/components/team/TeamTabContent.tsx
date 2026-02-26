@@ -10,7 +10,7 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useOrganisationUserUpdate } from "@/connections/Organisation";
+import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import {
   useGetV2OrganisationsApprovedUsersUUID,
@@ -44,13 +44,12 @@ const TeamTabContent = () => {
       uuid: String(query.id)
     }
   });
-  const [, { update, isUpdating, updateFailure }] = useOrganisationUserUpdate({
+  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
     organisationUuid: query.id as string,
-    userUuid: selectedUserUuid,
-    enabled: false
+    userUuid: selectedUserUuid
   });
-  const updateRef = useRef(update);
-  updateRef.current = update;
+  const createRef = useRef(create);
+  createRef.current = create;
 
   const handleUpdateSuccess = useCallback(() => {
     refetchApprovedUsers();
@@ -59,7 +58,7 @@ const TeamTabContent = () => {
     setSelectedUserUuid("");
   }, [refetchApprovedUsers, refetchPendingUsers, closeModal]);
 
-  useRequestSuccess(isUpdating, updateFailure, handleUpdateSuccess);
+  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
 
   /**
    * Conditionally render Approve or Reject Modal Content
@@ -90,8 +89,11 @@ const TeamTabContent = () => {
         primaryButtonProps={{
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
-            (updateRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
-              status: type === "approve" ? "approved" : "rejected"
+            // createRef.current is always the latest create fn (updated each render)
+            const status = type === "approve" ? "approved" : "rejected";
+            console.log("[DEBUG] Sending user association update:", { type, status, userUuid: user?.uuid });
+            (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
+              status
             });
           }
         }}
