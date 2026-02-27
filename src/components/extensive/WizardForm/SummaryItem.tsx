@@ -59,7 +59,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   };
 
   return (
-    <div className="mb-20 overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+    <div className="h-[calc(100vh-218px)] overflow-auto pb-20 md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
       <FormStepHeader
         id="step"
         title={title}

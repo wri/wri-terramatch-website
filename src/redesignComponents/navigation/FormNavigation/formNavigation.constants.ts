@@ -44,7 +44,7 @@ export const NAVIGATION_CLASSES = {
   },
   label: {
     default: "text-16-light text-theme-neutral-700",
-    selected: "text-16-bold text-theme-primary-900"
+    selected: "text-16-bold text-theme-primary-900 font-bold"
   },
   number: {
     base: "text-18-bold leading-[normal]",
