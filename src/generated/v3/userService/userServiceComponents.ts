@@ -1095,7 +1095,14 @@ export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreation
 );
 
 export type GetUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type GetUserAssociationQueryParams = {
@@ -1179,10 +1186,17 @@ export const getUserAssociation = new V3ApiEndpoint<
   GetUserAssociationError,
   GetUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "GET");
+>("/userAssociations/v3/{model}/{uuid}", "GET");
 
 export type CreateUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type CreateUserAssociationError = Fetcher.ErrorWrapper<
@@ -1257,10 +1271,17 @@ export const createUserAssociation = new V3ApiEndpoint<
   CreateUserAssociationError,
   CreateUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "POST");
+>("/userAssociations/v3/{model}/{uuid}", "POST");
 
 export type DeleteUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type DeleteUserAssociationQueryParams = {
@@ -1332,233 +1353,7 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   DeleteUserAssociationError,
   DeleteUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "DELETE");
-
-export type GetOrgUserAssociationPathParams = {
-  uuid: string;
-};
-
-export type GetOrgUserAssociationQueryParams = {
-  /**
-   * Flag to filter by manager
-   */
-  isManager?: boolean;
-};
-
-export type GetOrgUserAssociationError = Fetcher.ErrorWrapper<{
-  status: 404;
-  payload: {
-    /**
-     * @example 404
-     */
-    statusCode: number;
-    /**
-     * @example Not Found
-     */
-    message: string;
-  };
-}>;
-
-export type GetOrgUserAssociationResponse = {
-  meta?: {
-    /**
-     * @example associatedUsers
-     */
-    resourceType?: string;
-    indices?: {
-      /**
-       * The resource type for this included index
-       */
-      resource?: string;
-      /**
-       * The full stable (sorted query param) request path for this request, suitable for use as a store key in the FE React app
-       */
-      requestPath?: string;
-      /**
-       * The ordered set of resource IDs for this index. If this is omitted, the ids in the main `data` object of the response should be used.
-       */
-      ids?: string[];
-      /**
-       * The total number of records available.
-       *
-       * @example 42
-       */
-      total?: number;
-    }[];
-    deleted?: {
-      /**
-       * The resource type for this deleted resource
-       */
-      resource?: string;
-      /**
-       * The ID of the deleted resource
-       */
-      id?: string;
-    }[];
-  };
-  data?: {
-    /**
-     * @example associatedUsers
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserAssociationDto;
-  }[];
-};
-
-export type GetOrgUserAssociationVariables = {
-  pathParams: GetOrgUserAssociationPathParams;
-  queryParams?: GetOrgUserAssociationQueryParams;
-};
-
-export const getOrgUserAssociation = new V3ApiEndpoint<
-  GetOrgUserAssociationResponse,
-  GetOrgUserAssociationError,
-  GetOrgUserAssociationVariables,
-  {}
->("/userAssociations/v3/organisations/{uuid}", "GET");
-
-export type CreateOrgUserAssociationPathParams = {
-  uuid: string;
-};
-
-export type CreateOrgUserAssociationError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type CreateOrgUserAssociationResponse = {
-  meta?: {
-    /**
-     * @example associatedUsers
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example associatedUsers
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserAssociationDto;
-  };
-};
-
-export type CreateOrgUserAssociationVariables = {
-  pathParams: CreateOrgUserAssociationPathParams;
-};
-
-export const createOrgUserAssociation = new V3ApiEndpoint<
-  CreateOrgUserAssociationResponse,
-  CreateOrgUserAssociationError,
-  CreateOrgUserAssociationVariables,
-  {}
->("/userAssociations/v3/organisations/{uuid}", "POST");
-
-export type DeleteOrgUserAssociationPathParams = {
-  uuid: string;
-};
-
-export type DeleteOrgUserAssociationQueryParams = {
-  /**
-   * The UUIDs of the users to delete
-   *
-   * @example 123e4567-e89b-12d3-a456-426614174000
-   * @example 123e4567-e89b-12d3-a456-426614174001
-   */
-  uuids: string[];
-};
-
-export type DeleteOrgUserAssociationError = Fetcher.ErrorWrapper<
-  | {
-      status: 401;
-      payload: {
-        /**
-         * @example 401
-         */
-        statusCode: number;
-        /**
-         * @example Unauthorized
-         */
-        message: string;
-      };
-    }
-  | {
-      status: 404;
-      payload: {
-        /**
-         * @example 404
-         */
-        statusCode: number;
-        /**
-         * @example Not Found
-         */
-        message: string;
-      };
-    }
->;
-
-export type DeleteOrgUserAssociationResponse = {
-  meta?: {
-    /**
-     * @example associatedUsers
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example associatedUsers
-     */
-    type?: string;
-    /**
-     * @format uuid
-     */
-    id?: string;
-    attributes?: Schemas.UserAssociationDto;
-  };
-};
-
-export type DeleteOrgUserAssociationVariables = {
-  pathParams: DeleteOrgUserAssociationPathParams;
-  queryParams: DeleteOrgUserAssociationQueryParams;
-};
-
-export const deleteOrgUserAssociation = new V3ApiEndpoint<
-  DeleteOrgUserAssociationResponse,
-  DeleteOrgUserAssociationError,
-  DeleteOrgUserAssociationVariables,
-  {}
->("/userAssociations/v3/organisations/{uuid}", "DELETE");
+>("/userAssociations/v3/{model}/{uuid}", "DELETE");
 
 export const operationsByTag = {
   login: { authLogin },
@@ -1567,12 +1362,5 @@ export const operationsByTag = {
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
-  userAssociation: {
-    getUserAssociation,
-    createUserAssociation,
-    deleteUserAssociation,
-    getOrgUserAssociation,
-    createOrgUserAssociation,
-    deleteOrgUserAssociation
-  }
+  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
 };

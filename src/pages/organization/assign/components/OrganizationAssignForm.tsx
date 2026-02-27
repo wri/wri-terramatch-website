@@ -6,6 +6,7 @@ import { When } from "react-if";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
 import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
@@ -21,6 +22,8 @@ const OrganizationAssignForm = () => {
 
   const searchedTerm = (form.watch("name") ?? "") as string;
   const shouldSearch = searchedTerm.trim().length > 0;
+
+  const [myUserLoaded, { user }] = useMyUser();
 
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
@@ -84,8 +87,18 @@ const OrganizationAssignForm = () => {
   }, [isTyping]);
 
   const handleJoin = useCallback(() => {
-    joinOrg(undefined as never);
-  }, [joinOrg]);
+    if (user?.emailAddress == null) {
+      // User email not available - cannot join organization
+      console.error("Cannot join organization: user email not available");
+      return;
+    }
+
+    // Pass the required attributes for the unified createUserAssociation endpoint
+    joinOrg({
+      emailAddress: user.emailAddress,
+      isManager: false // Self-join is typically not a manager
+    });
+  }, [joinOrg, user?.emailAddress]);
 
   const handleCreate = useCallback(() => {
     if (createOrganisation != null) {
@@ -112,7 +125,7 @@ const OrganizationAssignForm = () => {
         ? {
             type: "submit" as const,
             className: "!w-auto px-8",
-            disabled: joinOrganisationLoading,
+            disabled: joinOrganisationLoading || !myUserLoaded || user?.emailAddress == null,
             children: t("Apply to join organization")
           }
         : {
@@ -121,7 +134,7 @@ const OrganizationAssignForm = () => {
             children: t("Create Organization"),
             onClick: handleCreate
           },
-    [type, joinOrganisationLoading, organisationCreateLoading, t, handleCreate]
+    [type, joinOrganisationLoading, organisationCreateLoading, myUserLoaded, user?.emailAddress, t, handleCreate]
   );
 
   return (
