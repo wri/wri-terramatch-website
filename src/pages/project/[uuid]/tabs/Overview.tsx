@@ -11,6 +11,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { mapStatusToTagStateProject } from "@/helpers/entityFormLinkHeader";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
@@ -157,7 +158,12 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
-            tag={<FeedbackTag type="success" label="Project Set Up" />}
+            tag={
+              <FeedbackTag
+                type={mapStatusToTagStateProject(project?.status)!.type}
+                label={mapStatusToTagStateProject(project?.status)!.label}
+              />
+            }
             buttonProps={{
               variant: "primary",
               size: "small",
