@@ -190,6 +190,19 @@ function WizardForm(props: WizardFormProps) {
     );
   }, [formHook, modal, props]);
 
+  const onClickSaveChanges = useCallback(() => {
+    if (isAdmin) {
+      formHook.handleSubmit(onSubmitStep)();
+      return;
+    }
+    let values = formHook.getValues();
+    values = { ...values };
+
+    props.onChange?.(values, true);
+    formHook.reset(values);
+    props.saveAndCloseModal?.onConfirm?.();
+  }, [formHook, props, isAdmin, onSubmitStep]);
+
   useEffect(() => {
     if (props.errors != null) {
       formHook.clearErrors();
@@ -230,6 +243,7 @@ function WizardForm(props: WizardFormProps) {
     document.getElementById("step")?.scrollTo({ top: 0 });
   }, [selectedStepIndex]);
 
+  const isEntityApproved = entity?.status == "approved";
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
       <div className="h-[calc(100vh-218px)] overflow-auto pb-20 md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
@@ -250,30 +264,31 @@ function WizardForm(props: WizardFormProps) {
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
             isAdmin ? "bottom-0" : "bottom-[0px]"
           )}
-          cancelButtonProps={{
-            children: "Cancel",
-            onClick: () => props.cancelEditForm?.()
-          }}
+          cancelButtonProps={undefined}
           primaryButtonProps={{
-            children: "Next",
+            children: t(`${isEntityApproved ? "Save changes" : "Next"}`),
             disabled: hasErrorInAnyStep,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
-          secondaryButtonProps={{
-            children: "Save and Exit",
-            onClick: () => {
-              if (isAdmin) {
-                formHook.handleSubmit(onSubmitStep, onSubmitStep);
-                props.onSubmit?.(formHook.getValues());
-              } else {
-                onClickSaveAndClose();
-              }
-            }
-          }}
-          tertiaryButtonProps={
-            !props.hideBackButton
+          secondaryButtonProps={
+            !isEntityApproved
               ? {
-                  children: "Previous",
+                  children: "Save and Exit",
+                  onClick: () => {
+                    if (isAdmin) {
+                      formHook.handleSubmit(onSubmitStep, onSubmitStep);
+                      props.onSubmit?.(formHook.getValues());
+                    } else {
+                      onClickSaveAndClose();
+                    }
+                  }
+                }
+              : undefined
+          }
+          tertiaryButtonProps={
+            !props.hideBackButton && !isEntityApproved
+              ? {
+                  children: t("Previous"),
                   leftIcon: <ChevronRightIcon className="rotate-180" />,
                   onClick: () => {
                     if (selectedStepIndex > 0) {
@@ -283,7 +298,7 @@ function WizardForm(props: WizardFormProps) {
                     }
                   }
                 }
-              : {}
+              : undefined
           }
         />
       </div>
@@ -298,7 +313,8 @@ function WizardForm(props: WizardFormProps) {
       onClickSaveAndClose,
       props,
       onSubmitStep,
-      hasErrorInAnyStep
+      hasErrorInAnyStep,
+      isEntityApproved
     ]
   );
 
@@ -340,6 +356,8 @@ function WizardForm(props: WizardFormProps) {
             onSubmitStep={onSubmitStep}
             submitButtonDisable={submitButtonDisable}
             models={props.models}
+            enableSaveChangesButton={isEntityApproved}
+            saveChanges={() => onClickSaveChanges()}
           />
         );
       }
@@ -354,7 +372,9 @@ function WizardForm(props: WizardFormProps) {
       steps,
       formHook,
       setSelectedStepIndex,
-      onSubmitStep
+      onSubmitStep,
+      isEntityApproved,
+      onClickSaveChanges
     ]
   );
 
@@ -422,7 +442,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
+                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >

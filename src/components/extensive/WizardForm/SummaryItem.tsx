@@ -23,6 +23,8 @@ type SummaryItemProps = {
   setSelectedStepIndex: (value: SetStateAction<number>) => void;
   onSubmitStep: (data: any) => void;
   submitButtonDisable?: boolean;
+  enableSaveChangesButton?: boolean;
+  saveChanges: () => void;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -33,7 +35,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
   downloadButtonText,
   setSelectedStepIndex,
   onSubmitStep,
-  submitButtonDisable
+  submitButtonDisable,
+  enableSaveChangesButton,
+  saveChanges
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -80,24 +84,30 @@ const SummaryItem: FC<SummaryItemProps> = ({
           "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
           user ? "bottom-0" : "bottom-[0px]"
         )}
-        cancelButtonProps={{
-          children: t("Cancel")
-        }}
+        cancelButtonProps={undefined}
         primaryButtonProps={{
-          children: t("Submit"),
-          onClick: handleSubmitClick,
+          children: t(`${enableSaveChangesButton ? "Save changes" : "Submit"}`),
+          onClick: enableSaveChangesButton ? saveChanges : handleSubmitClick,
           disabled: submitButtonDisable
         }}
-        secondaryButtonProps={{
-          children: t("Save and Exit"),
-          onClick: handleSubmitClick,
-          disabled: submitButtonDisable
-        }}
-        tertiaryButtonProps={{
-          children: t("Previous"),
-          leftIcon: <ChevronRightIcon className="rotate-180" />,
-          onClick: () => setSelectedStepIndex(n => n - 1)
-        }}
+        secondaryButtonProps={
+          !enableSaveChangesButton
+            ? {
+                children: t("Save and Exit"),
+                onClick: handleSubmitClick,
+                disabled: submitButtonDisable
+              }
+            : undefined
+        }
+        tertiaryButtonProps={
+          !enableSaveChangesButton
+            ? {
+                children: t("Previous"),
+                leftIcon: <ChevronRightIcon className="rotate-180" />,
+                onClick: () => setSelectedStepIndex(n => n - 1)
+              }
+            : undefined
+        }
       />
     </div>
   );
