@@ -38,14 +38,22 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
   );
 };
 
-const FormSectionHeader: FC<FormSectionHeaderProps> = ({ label, title, badge, status, statusLabel }) => {
+const FormSectionHeader: FC<FormSectionHeaderProps> = ({
+  label,
+  title,
+  badge,
+  status,
+  statusLabel,
+  actions,
+  showBorder = true
+}) => {
   return (
     <Flex
       alignItems="center"
       justifyContent="space-between"
-      borderBottom="1px solid"
+      borderBottom={showBorder ? "1px solid" : "none"}
       borderColor="neutral.300"
-      paddingBottom={4}
+      paddingBottom={showBorder ? 4 : 0}
       paddingTop={2}
       marginBottom={2}
     >
@@ -65,6 +73,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({ label, title, badge, st
       ) : (
         status != null && getStatusIcon(status)
       )}
+      {actions}
     </Flex>
   );
 };

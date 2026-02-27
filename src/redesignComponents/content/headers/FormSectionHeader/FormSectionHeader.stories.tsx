@@ -1,5 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+
 import FormSectionHeader from "./FormSectionHeader";
 
 const meta: Meta<typeof FormSectionHeader> = {
@@ -48,11 +50,14 @@ export const WithStatusError: Story = {
   }
 };
 
-export const WithStatusErrorLabel: Story = {
+export const Review: Story = {
   args: {
     title: "Header Title",
-    status: "error",
-    badge: "Label",
-    statusLabel: "Label"
+    showBorder: false,
+    actions: (
+      <Button variant="secondary" onClick={() => console.log("Edit clicked")}>
+        Label
+      </Button>
+    )
   }
 };
