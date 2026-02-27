@@ -77,7 +77,7 @@ const mapStatusToTagStateProject = (
       };
     case "started":
       return {
-        label: "Draft",
+        label: "Started",
         type: "info-white",
         icon: <DraftIcon />
       };
@@ -207,7 +207,9 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             title="Project Set Up"
             tag={(() => {
               const tagState = mapStatusToTagStateProject(project?.status);
-              return tagState ? <FeedbackTag type={tagState.type} label={tagState.label} icon={tagState.icon} /> : null;
+              return tagState != null ? (
+                <FeedbackTag type={tagState.type} label={tagState.label} icon={tagState.icon} />
+              ) : null;
             })()}
             buttonProps={{
               variant: "primary",
