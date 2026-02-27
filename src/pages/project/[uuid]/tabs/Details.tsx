@@ -8,6 +8,7 @@ import { When } from "react-if";
 import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
+import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -154,11 +155,16 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                           {t("Project Stage")}:
                         </Text>
                         <div className="flex items-center gap-2">
-                          <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus!)} />
-                          <ArrowForward boxSize={4} color="neutral.900" />
-                          <Text textStyle="400" color="neutral.900">
-                            {t("Replacement Planting")}
-                          </Text>
+                          <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
+                          {(project.plantingStatus == "replacement-planting" ||
+                            project.plantingStatus == "no-restoration-expected") && (
+                            <>
+                              <ArrowForward boxSize={4} color="neutral.900" />
+                              <Text textStyle="400" color="neutral.900">
+                                {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                              </Text>
+                            </>
+                          )}
                         </div>
                       </>
                     )}
