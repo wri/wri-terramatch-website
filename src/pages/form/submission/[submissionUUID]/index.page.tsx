@@ -6,6 +6,7 @@ import { useCallback, useMemo } from "react";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -115,6 +116,7 @@ const SubmissionPage = () => {
           entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
         />
       </LoadingContainer>
+      <PageFooter />
     </BackgroundLayout>
   );
 };
