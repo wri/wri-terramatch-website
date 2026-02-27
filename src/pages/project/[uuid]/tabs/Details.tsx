@@ -17,6 +17,7 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { v3EntityName } from "@/helpers/entity";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
@@ -24,7 +25,7 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
@@ -82,13 +83,30 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
   const router = useRouter();
   const isValid = step.validation.isValidSync(formValues);
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
-  const entries = useGetFormEntries({
+  // const entries = useGetFormEntries({
+  //   stepId: step.id,
+  //   values: formValues,
+  //   nullText: "Answer Not Provided",
+  //   entity: { entityName: "projects", entityUUID: project.uuid },
+  //   type: "projects"
+  // });
+
+  //removing the useGetFormEntries hook and using a custom hook to add the Project Stage field
+  const rawEntries = useGetFormEntries({
     stepId: step.id,
     values: formValues,
     nullText: "Answer Not Provided",
     entity: { entityName: "projects", entityUUID: project.uuid },
     type: "projects"
   });
+
+  const entries = useMemo(() => {
+    if (step.title !== "Project Information" || rawEntries.length === 0) return rawEntries;
+    const [first, ...rest] = rawEntries;
+    return [first, { inputType: "text", title: "Project Stage", value: "Replacement Planting" }, ...rest];
+  }, [rawEntries, step.title]);
+
+  //removing the useGetFormEntries hook and using a custom hook to add the Project Stage field
 
   const noGoalTableColumns = useMemo(
     () => [
@@ -136,6 +154,17 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
             )}
             {(() => {
               const rawValue = entry.value ?? "-";
+              if (entry.title === "Project Stage") {
+                return (
+                  <div className="flex items-center gap-2">
+                    <TagSubmission state="draft" />
+                    <ArrowForward boxSize={4} color="neutral.900" />
+                    <Text textStyle="400" color="neutral.900">
+                      Replacement Planting
+                    </Text>
+                  </div>
+                );
+              }
               if (typeof rawValue === "string" || typeof rawValue === "number") {
                 return (
                   <Text
