@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
 
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA } from "@/constants/dashboardConsts";
-import { GetV2EntityUUIDAggregateReportsResponse } from "@/generated/apiComponents";
 import {
   DashboardProjectsLightDto,
   TotalJobsCreatedDto,
   TreeRestorationGoalDto
 } from "@/generated/v3/dashboardService/dashboardServiceSchemas";
+import { AggregateReportsDto, AggregateReportSeriesItemDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 type DataPoint = {
   time: string;
@@ -309,43 +309,55 @@ export const getRestorationGoalDataForChart = (
 };
 
 export type AggregateReportData = {
-  dueDate?: string | null;
-  aggregateAmount?: number;
+  dueDate: string;
+  aggregateAmount: number;
 };
 
-export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregateReportsResponse): ChartCategory[] => {
-  if (!data) return [];
+const AGGREGATE_REPORT_CATEGORIES: ReadonlyArray<keyof AggregateReportsDto> = [
+  "treePlanted",
+  "seedingRecords",
+  "treesRegenerating"
+] as const;
+
+const CATEGORY_DISPLAY_NAMES: Record<(typeof AGGREGATE_REPORT_CATEGORIES)[number], string> = {
+  treePlanted: "Tree Planted",
+  seedingRecords: "Seeding Records",
+  treesRegenerating: "Trees Regenerating"
+};
+
+export const getNewRestorationGoalDataForChart = (data?: AggregateReportsDto | null): ChartCategory[] => {
+  if (data == null) return [];
 
   const allDates = new Set<string>();
-  const categories = ["tree-planted", "seeding-records", "trees-regenerating"] as const;
-
-  categories.forEach(category => {
-    data[category]?.forEach((item: AggregateReportData) => {
-      if (item.dueDate) {
+  for (const category of AGGREGATE_REPORT_CATEGORIES) {
+    const series = data[category];
+    if (series == null) continue;
+    for (const item of series) {
+      if (item.dueDate != null && item.dueDate !== "") {
         allDates.add(new Date(item.dueDate).toISOString().split("T")[0]);
       }
-    });
-  });
+    }
+  }
 
   const sortedDates = Array.from(allDates).sort();
 
   const createChartPoints = (
-    sourceData: AggregateReportData[],
+    sourceData: AggregateReportSeriesItemDto[],
     categoryName: string
   ): { sum: number; values: ChartDataPoint[] } => {
     const nullSum = sourceData
-      .filter(item => item.dueDate === null)
-      .reduce((acc, item) => acc + (item.aggregateAmount ?? 0), 0);
+      .filter(item => item.dueDate == null || item.dueDate === "")
+      .reduce((acc, item) => acc + item.aggregateAmount, 0);
 
     let sum = nullSum;
 
     const dateAmountMap = sourceData.reduce((acc, item) => {
-      if (item.dueDate) {
+      if (item.dueDate != null && item.dueDate !== "") {
         const dateKey = new Date(item.dueDate).toISOString().split("T")[0];
         if (!acc[dateKey]) {
           acc[dateKey] = 0;
         }
-        acc[dateKey] += item.aggregateAmount ?? 0;
+        acc[dateKey] += item.aggregateAmount;
       }
       return acc;
     }, {} as Record<string, number>);
@@ -364,28 +376,31 @@ export const getNewRestorationGoalDataForChart = (data?: GetV2EntityUUIDAggregat
 
   const chartData: ChartCategory[] = [];
 
-  categories.forEach(category => {
+  for (const category of AGGREGATE_REPORT_CATEGORIES) {
     const categoryData = data[category];
-    if (categoryData) {
-      const { values } = createChartPoints(
-        categoryData,
-        category
-          .split("-")
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ")
-      );
-      chartData.push({
-        name: category
-          .split("-")
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" "),
-        values
-      });
-    }
-  });
+    if (categoryData == null) continue;
+    const displayName = CATEGORY_DISPLAY_NAMES[category];
+    const { values } = createChartPoints(categoryData, displayName);
+    chartData.push({
+      name: displayName,
+      values
+    });
+  }
 
   return chartData;
 };
+
+export function isAggregateReportsEmpty(data: AggregateReportsDto | null | undefined): boolean {
+  if (data == null) return true;
+  for (const category of AGGREGATE_REPORT_CATEGORIES) {
+    const series = data[category];
+    if (series == null) continue;
+    if (series.length === 0) continue;
+    const hasNonZero = series.some(item => item.aggregateAmount !== 0);
+    if (hasNonZero) return false;
+  }
+  return true;
+}
 
 export const formatNumberLocaleString = (value: number): string => {
   return value.toLocaleString();
