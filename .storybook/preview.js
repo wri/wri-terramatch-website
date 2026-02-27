@@ -33,8 +33,6 @@ const SingletonToastContainer = () => {
 };
 
 const client = new QueryClient();
-
-const client = new QueryClient();
 // Initialize Transifex (same as in _app.tsx)
 tx.init({
   token: process.env.NEXT_PUBLIC_TRANSIFEX_TOKEN
