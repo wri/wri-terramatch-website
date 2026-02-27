@@ -10,8 +10,8 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { bulkDeleteUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 import { MENU_PLACEMENT_RIGHT_TOP } from "../../Menu/MenuVariant";
 
@@ -49,7 +49,6 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
 
   const statusProps = STATUS_MAPPING[status as keyof typeof STATUS_MAPPING];
   const { openModal, closeModal } = useModalContext();
-  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
 
   const ModalConfirmDeletePartner = (email_address: string) => {
     openModal(
@@ -63,8 +62,9 @@ const UserProfileCard: FC<UserProfileCardProps> = ({
         })}
         primaryButtonProps={{
           children: t("Confirm"),
-          onClick: () => {
-            deletePartner(email_address as string);
+          onClick: async () => {
+            await bulkDeleteUserAssociations(project?.uuid, [email_address]);
+            refetch();
             closeModal(ModalId.MONITORING_PARTNER);
           }
         }}

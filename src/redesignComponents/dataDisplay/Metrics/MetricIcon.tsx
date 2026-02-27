@@ -1,5 +1,5 @@
 import { getThemedColor } from "@/lib/theme";
-import { JobsCircle, SeedsCircle, TreeCircle } from "@/redesignComponents/foundations/Icons";
+import { JobsCircleIcon, SeedlingsCircleIcon, TreeCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 export interface MetricIconProps {
   type: "trees" | "saplings" | "jobs";
@@ -10,7 +10,7 @@ const MetricIcon: React.FC<MetricIconProps> = ({ type, disabled }) => {
   switch (type) {
     case "trees":
       return (
-        <TreeCircle
+        <TreeCircleIcon
           className="h-6 w-6"
           {...(disabled && {
             color: getThemedColor("neutral", 400),
@@ -21,7 +21,7 @@ const MetricIcon: React.FC<MetricIconProps> = ({ type, disabled }) => {
       );
     case "saplings":
       return (
-        <SeedsCircle
+        <SeedlingsCircleIcon
           className="h-6 w-6"
           {...(disabled && {
             color: getThemedColor("neutral", 400),
@@ -32,7 +32,7 @@ const MetricIcon: React.FC<MetricIconProps> = ({ type, disabled }) => {
       );
     case "jobs":
       return (
-        <JobsCircle
+        <JobsCircleIcon
           className="h-6 w-6"
           {...(disabled && {
             color: getThemedColor("neutral", 400),

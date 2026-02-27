@@ -1,23 +1,21 @@
-import { Box, Flex, FlexProps, Text, useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, ReactNode, useCallback, useMemo } from "react";
+import { FC, ReactNode, useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDPartnersResponse,
-  useGetV2ProjectsUUIDManagers,
-  useGetV2ProjectsUUIDPartners
-} from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
@@ -32,49 +30,56 @@ interface ProjectOverviewTabProps {
 interface OverviewItemProps {
   title: string;
   buttonProps?: IButtonProps;
+  downloadButtonProps?: IButtonProps;
   children?: ReactNode;
   flexProps?: FlexProps;
 }
 
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, children, flexProps }) => (
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
-      <Text color="primary.900" fontSize="20px" lineHeight="28px">
+      <Text color="primary.900" textStyle="600">
         {title}
       </Text>
-      {buttonProps ? <Button {...buttonProps} /> : null}
+      <Flex gap={4}>
+        {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
+        {buttonProps ? <Button {...buttonProps} /> : null}
+      </Flex>
     </Flex>
     {children}
   </Flex>
 );
 
-const formatTeamMembers = (members: GetV2ProjectsUUIDPartnersResponse) =>
-  members
-    .map((member, index) => ({
-      id: member.uuid ?? "",
-      name: `${member.first_name} ${member.last_name}`,
-      image: `https://i.pravatar.cc/300?img=${index}`
-    }))
-    ?.slice(0, 2) ?? [];
-
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
-  const [isLargerResolution] = useMediaQuery(["(min-width: 1500px)"]);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
-  const { data: partners, refetch: refetchPartners } = useGetV2ProjectsUUIDPartners<{
-    data: GetV2ProjectsUUIDPartnersResponse;
-  }>({
-    pathParams: { uuid: project?.uuid }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid
   });
 
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
-  });
-
-  const dataQualityAnalysts = formatTeamMembers(partners?.data ?? []);
-  const projectManagers = formatTeamMembers(managers?.data ?? []);
+  const monitoringPartners = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "monitoring-partner")
+      ?.slice(0, 3)
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
+  const projectManagers = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-manager")
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
     router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
@@ -93,14 +98,26 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }, [project.frameworkKey]);
 
   const handleInviteClick = useCallback(() => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={refetchPartners} />
-    );
-  }, [openModal, project.uuid, refetchPartners]);
+    openModal(ModalId.INVITE_MONITORING_PARTNER_MODAL, <InviteMonitoringPartnerModal projectUUID={project.uuid} />);
+  }, [openModal, project.uuid]);
+
+  const handleDownloadPolygons = async () => {
+    if (!project?.uuid || !project?.name) return;
+
+    setIsDownloading(true);
+    try {
+      await downloadProjectSitePolygonsGeoJson(project.uuid, project.name, {
+        includeExtendedData: true
+      });
+    } catch (error) {
+      Log.error("Failed to download project polygons:", error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   return (
-    <PageBody className="bg-theme-neutral-200 pt-5">
+    <PageBody className="bg-theme-neutral-200">
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
           <OverviewItem
@@ -110,8 +127,16 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Sites",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("sites")
+            }}
+            downloadButtonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "Download Project Polygons",
+              leftIcon: <DownloadIcon />,
+              onClick: handleDownloadPolygons,
+              loading: isDownloading
             }}
           >
             <Box className="relative h-auto">
@@ -129,28 +154,30 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: "Continue Editing",
-              rightIcon: <ChevronRight />,
+              children: isProjectSetupComplete ? "Edit" : "Continue Editing",
+              rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
           >
-            <ProjectSetUpSection entityUuid={project.uuid} />
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <ProjectSetUpSection entityUuid={project.uuid} onStatusChange={setIsProjectSetupComplete} />
+            </Box>
           </OverviewItem>
         </Flex>
         <OverviewItem
           title="Key Indicators & Insights"
-          flexProps={{ paddingY: 2 }}
+          flexProps={{ paddingY: 2, width: "100%" }}
           buttonProps={{
             variant: "secondary",
             size: "small",
             children: "View Progress & Goals",
-            rightIcon: <ChevronRight />,
+            rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("goals")
           }}
         >
-          <KeyIndicatorsInsightsTab project={project} isLargerResolution={isLargerResolution} />
+          <KeyIndicatorsInsightsTab project={project} />
         </OverviewItem>
-        <Flex gap={7} height="550px" paddingY={2}>
+        <Flex gap={7} maxHeight="570px" paddingY={2}>
           <OverviewItem
             flexProps={{ flex: 1 }}
             title="Team Members"
@@ -158,7 +185,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "Manage Team",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("team-members")
             }}
           >
@@ -170,8 +197,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                   onProfileClick: () => {}
                 },
                 {
-                  title: "Data Quality Analysts",
-                  profiles: dataQualityAnalysts,
+                  title: "Monitoring Partners",
+                  profiles: monitoringPartners,
                   onProfileClick: () => {}
                 }
               ]}
@@ -185,7 +212,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               variant: "secondary",
               size: "small",
               children: "View Gallery",
-              rightIcon: <ChevronRight />,
+              rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("gallery")
             }}
           >
@@ -193,50 +220,50 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           </OverviewItem>
           <OverviewItem title="Project Onboarding">
             <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
-              <Text color="neutral.900" fontSize="16px" lineHeight="24px" fontWeight="bold">
+              <Text color="neutral.900" textStyle="400">
                 {t("Monitoring, Reporting, and Verification (MRV)")}
               </Text>
               <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring ?? "")}
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
                   </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting ?? "")}
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
                   </Text>
                 </Box>
                 <Box as="li">
-                  <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification ?? "")}
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
                   </Text>
                 </Box>
               </Box>
-              <Flex alignItems="center">
-                <Text color="neutral.900" fontSize="14px" lineHeight="20px">
-                  {t("Learn more in the full")}
+              <Flex alignItems="center" flexWrap="wrap">
+                <Text color="neutral.900" textStyle="300">
+                  {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
                 </Text>
                 <Button
                   variant="borderless"
                   size="small"
-                  rightIcon={<ChevronRight />}
+                  rightIcon={<ChevronRightIcon />}
                   onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                 >
-                  {t("MRV Framework")}
+                  {t(mrvOnboardingContentItem?.content.mrvLinkText)}
                 </Button>
               </Flex>
               <Flex direction="column" gap={2} minHeight={0}>
-                <Text color="neutral.900" fontSize="18px" lineHeight="28px" fontWeight="bold">
+                <Text color="neutral.900" textStyle="500">
                   {t("Helpful Links")}
                 </Text>
                 <Divider />
-                <Flex direction="column" paddingTop={1.5} alignItems="flex-start" className="overflow-y-auto">
+                <Flex direction="column" paddingTop={1.5} alignItems="flex-start">
                   {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
                     <Button
                       variant="borderless"
                       size="small"
-                      rightIcon={<ChevronRight />}
+                      rightIcon={<ChevronRightIcon />}
                       key={link.title}
                       onClick={() => window.open(link.link, "_blank")}
                     >

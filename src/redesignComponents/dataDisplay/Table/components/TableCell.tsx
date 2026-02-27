@@ -48,19 +48,19 @@ const TableCell: React.FC<TableCellProps> = ({
           </Flex>
 
           {isSingleAvatar && visibleAvatars[0]?.name != null && (
-            <Text fontSize="16px" fontWeight="bold" className="ml-2 text-theme-neutral-800">
+            <Text textStyle="400-bold" className="text-theme-neutral-800 ml-2">
               {visibleAvatars[0].name}
             </Text>
           )}
 
           {extraAvatarsCount > 0 && (
-            <Box className="ml-2 text-xs font-semibold text-theme-neutral-800">+{extraAvatarsCount}</Box>
+            <Box className="text-theme-neutral-800 ml-2 text-xs font-semibold">+{extraAvatarsCount}</Box>
           )}
           {progressTag != null && <ProgressTag {...progressTag} />}
           {trees != null && (
             <Flex gap={1} items-center>
               <MetricIcon type="trees" />
-              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="text-theme-neutral-800 leading-[28px]">
                 {trees}
               </Text>
             </Flex>
@@ -68,7 +68,7 @@ const TableCell: React.FC<TableCellProps> = ({
           {jobs != null && (
             <Flex gap={2}>
               <MetricIcon type="jobs" />
-              <Text fontSize="16px" className="leading-[28px] text-theme-neutral-800">
+              <Text textStyle="400" className="text-theme-neutral-800 leading-[28px]">
                 {jobs}
               </Text>
             </Flex>
@@ -87,12 +87,12 @@ const TableCell: React.FC<TableCellProps> = ({
         </Flex>
         <Flex gap={2} alignItems="center">
           {primaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {primaryText}
             </Text>
           )}
           {secondaryText != null && (
-            <Text fontSize="12px" className="text-theme-neutral-700">
+            <Text textStyle="200" className="text-theme-neutral-700">
               {secondaryText}
             </Text>
           )}

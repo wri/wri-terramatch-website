@@ -6,12 +6,11 @@ export const convertToFlagEmoji = (isoCode: string): string =>
   isoCode.toUpperCase().replace(/./g, char => String.fromCodePoint(FLAG_OFFSET + char.charCodeAt(0)));
 
 export const countryCodeToFlag = (code: string | string[] | null | undefined): string => {
-  if (!code) return "";
+  if (code == null) return "";
 
   const value = Array.isArray(code) ? code[0] : code;
-  if (!value) return "";
-
   const upper = value.trim().toUpperCase();
+  if (upper.length === 0) return "";
 
   if (/^[A-Z]{2}$/.test(upper)) {
     return convertToFlagEmoji(upper);
@@ -25,8 +24,12 @@ export const countryCodeToFlag = (code: string | string[] | null | undefined): s
 };
 
 export const formatMonthYear = (date?: string | null): string => {
-  if (!date) return "-";
-  const parsed = new Date(date);
+  if (date == null) return "-";
+
+  const trimmed = date.trim();
+  if (trimmed.length === 0) return "-";
+
+  const parsed = new Date(trimmed);
   if (Number.isNaN(parsed.getTime())) return "-";
 
   return `${String(parsed.getUTCMonth() + 1).padStart(2, "0")}/${parsed.getUTCFullYear()}`;

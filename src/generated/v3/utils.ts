@@ -41,10 +41,12 @@ const V3_NAMESPACES: Dictionary<string> = {
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
   polygonClipping: researchServiceUrl,
+  reportingFrameworks: entityServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
   users: userServiceUrl,
-  validations: researchServiceUrl
+  validations: researchServiceUrl,
+  userAssociations: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
@@ -170,6 +172,27 @@ export class V3ApiEndpoint<
     return await this.executeRequest(variables, headers);
   }
 
+  /**
+   * Fetch the raw payload from this endpoint. This is meant to be used for non-JSON endpoints
+   * *only*, and should only be needed for downloading blobs for saving on the client filesystem
+   * (like a CSV download).
+   */
+  async fetchBlob(variables: TVariables, headers?: THeaders): Promise<Blob> {
+    const { url, body, requestHeaders } = this.prepareRequest(variables, headers);
+    const response = await fetch(url, { method: this.method, body, headers: requestHeaders });
+
+    if (!response.ok) {
+      throw await response.json();
+    }
+
+    if (response.headers.get("content-type")?.includes("json")) {
+      // this API integration only supports JSON type responses.
+      throw new Error(`fetchBlob is only to be used for non-JSON endpoints [${response.headers.get("content-type")}]`);
+    }
+
+    return await response.blob();
+  }
+
   isFetchingSelector(variables: Omit<RequestVariables, "body">) {
     const fullUrl = resolveUrl(this.url, variables);
     return (store: ApiDataStore) => isInProgress(store.meta.pending[this.method.toUpperCase() as Method][fullUrl]);
@@ -196,8 +219,8 @@ export class V3ApiEndpoint<
     };
   }
 
-  private async executeRequest(variables: TVariables, headers?: THeaders) {
-    const fullUrl = resolveUrl(this.url, variables);
+  private prepareRequest(variables: TVariables, headers?: THeaders) {
+    const url = resolveUrl(this.url, variables);
 
     // If the attributes of the request body includes a FormData member, stuff the rest of the attributes
     // into the FormData and replace the body with the form data instance.
@@ -227,16 +250,19 @@ export class V3ApiEndpoint<
       requestHeaders.Authorization = `Bearer ${token}`;
     }
 
-    return await dispatchRequest<TResponse>(fullUrl, {
-      method: this.method,
-      body:
-        variables.body == null
-          ? undefined
-          : variables.body instanceof FormData
-          ? variables.body
-          : JSON.stringify(variables.body),
-      headers: requestHeaders
-    });
+    const body =
+      variables.body == null
+        ? undefined
+        : variables.body instanceof FormData
+        ? variables.body
+        : JSON.stringify(variables.body);
+
+    return { url, body, requestHeaders };
+  }
+
+  private async executeRequest(variables: TVariables, headers?: THeaders) {
+    const { url, body, requestHeaders } = this.prepareRequest(variables, headers);
+    return await dispatchRequest<TResponse>(url, { method: this.method, body, headers: requestHeaders });
   }
 }
 

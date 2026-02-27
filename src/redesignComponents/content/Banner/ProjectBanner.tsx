@@ -1,4 +1,5 @@
 import { Box } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { FC, forwardRef } from "react";
@@ -9,6 +10,22 @@ import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject
 import ViewToolbar from "@/redesignComponents/navigation/Toolbar/ViewToolbar";
 
 import ProjectHeader from "../headers/PageHeaders/ProjectHeader";
+
+interface NextLinkAdapterProps {
+  to: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const NextLinkAdapter = forwardRef<HTMLAnchorElement, NextLinkAdapterProps>(
+  ({ to, children, className, ...props }, ref) => (
+    <Link href={to} ref={ref} className={className} {...props}>
+      {children}
+    </Link>
+  )
+);
+
+NextLinkAdapter.displayName = "NextLinkAdapter";
 
 export interface ProjectBannerProps {
   breadcrumbs: { label: string; link: string; icon?: React.ReactNode }[];
@@ -29,21 +46,15 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
   onAddTeamClick,
   gotoTeamMembers
 }) => {
-  const NextLinkAdapter = forwardRef<HTMLAnchorElement, { to: string; children: React.ReactNode; className?: string }>(
-    ({ to, children, className, ...props }, ref) => (
-      <Link href={to} ref={ref} className={className} {...props}>
-        {children}
-      </Link>
-    )
-  );
-  NextLinkAdapter.displayName = "NextLinkAdapter";
+  const t = useT();
+
   return (
     <>
       <Box className={classNames("border-theme-neutral-300 sticky z-20 border-b px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
             links: breadcrumbs.map(link => ({
-              label: link.label,
+              label: t(link.label),
               link: link.link,
               icon: link.icon
             })),

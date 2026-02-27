@@ -1,11 +1,38 @@
 import "src/styles/globals.css";
 import * as NextImage from "next/image";
+import React from "react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { tx } from "@transifex/native";
 import { StoreProvider } from "../src/utils/testStore";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { system } from "../src/lib/theme";
 import { BLUR_DATA_URL } from "./constants";
+import { Toast as WRIToast } from "@worldresources/wri-design-systems";
+
+let hasMountedToast = false;
+
+const SingletonToastContainer = () => {
+  const isFirstMount = React.useRef(false);
+
+  if (!hasMountedToast) {
+    hasMountedToast = true;
+    isFirstMount.current = true;
+  }
+
+  React.useEffect(() => {
+    return () => {
+      if (isFirstMount.current) {
+        hasMountedToast = false;
+      }
+    };
+  }, []);
+
+  if (!isFirstMount.current) return null;
+
+  return <WRIToast />;
+};
+
+const client = new QueryClient();
 
 const client = new QueryClient();
 // Initialize Transifex (same as in _app.tsx)
@@ -30,13 +57,7 @@ const descriptor = Object.getOwnPropertyDescriptor(NextImage, "default");
 if (!descriptor || descriptor.configurable) {
   Object.defineProperty(NextImage, "default", {
     configurable: true,
-    value: props => (
-      <OriginalNextImage
-        {...props}
-        unoptimized
-        blurDataURL={BLUR_DATA_URL}
-      />
-    )
+    value: props => <OriginalNextImage {...props} unoptimized blurDataURL={BLUR_DATA_URL} />
   });
 }
 
@@ -48,6 +69,7 @@ export const decorators = [
       <ChakraProvider value={system}>
         <QueryClientProvider client={client}>
           <StoreProvider storeBuilder={parameters.storeBuilder}>
+            <SingletonToastContainer />
             <Story {...options} />
           </StoreProvider>
         </QueryClientProvider>

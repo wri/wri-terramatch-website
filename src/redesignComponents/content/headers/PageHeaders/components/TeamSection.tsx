@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC } from "react";
 
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -20,16 +20,12 @@ export interface TeamSectionProps {
 const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers }) => {
   const t = useT();
 
-  const handleAddTeamClick = useCallback(() => {
-    onAddTeamClick();
-  }, [onAddTeamClick]);
-
   return (
     <Box
       width="240px"
       minWidth="240px"
       height="auto"
-      className="flex flex-col gap-2 px-6 pt-8"
+      className="flex flex-col gap-2 pt-11"
       css={{
         "&": {
           alignItems: "self-end !important"
@@ -37,7 +33,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       }}
     >
       <div className="flex w-fit flex-col gap-2" onClick={gotoTeamMembers} role="button" tabIndex={0}>
-        <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
+        <Text color="primary.900" textStyle="300-bold">
           {t("Team:")}
         </Text>
         <Flex className="flex-wrap">
@@ -53,9 +49,9 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             <Flex
               alignItems="center"
               tabIndex={0}
-              className="group cursor-pointer gap-1"
+              className="group cursor-pointer"
               role="button"
-              onClick={handleAddTeamClick}
+              onClick={onAddTeamClick}
               css={{
                 "&:hover .avatar-add": {
                   opacity: "0.8",
@@ -68,9 +64,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize="12px"
-                lineHeight="16px"
-                fontWeight="700"
+                textStyle="200-bold"
                 padding="6px 8px"
                 borderRadius="4px"
                 backgroundColor="transparent"
@@ -79,7 +73,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
                 className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Add Team Members")}
-                <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
+                <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
               </Text>
             </Flex>
           )}

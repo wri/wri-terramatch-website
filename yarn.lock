@@ -6685,10 +6685,10 @@
     "@webassemblyjs/ast" "1.12.1"
     "@xtuc/long" "4.2.2"
 
-"@worldresources/wri-design-systems@^2.183.0":
-  version "2.183.0"
-  resolved "https://registry.yarnpkg.com/@worldresources/wri-design-systems/-/wri-design-systems-2.183.0.tgz#7ecc28ce0c1b9819ce53110e19c97f9c4dac7147"
-  integrity sha512-ezh0CIVGD78DxUnkoWmN2y/7kAs7MRkYwHzJug7HAFflSRFTnSbknpvFIUlSZPwqAuae3OZo+3owpvdCGzkn0A==
+"@worldresources/wri-design-systems@^2.184.2":
+  version "2.184.2"
+  resolved "https://registry.npmjs.org/@worldresources/wri-design-systems/-/wri-design-systems-2.184.2.tgz#7964a25451130814606e15c3dbcd69b7f9c31c4e"
+  integrity sha512-Bh66pE2rRgEz9eEHCEas4Z9O0pmoHHgENqTGzr+4rvqVuRdpz7KFVDJjGC8Pp+b4g5JI7e8cgj4hccbUB4AhHA==
 
 "@wry/context@^0.7.0":
   version "0.7.0"
@@ -16589,11 +16589,6 @@ react-twemoji@^0.7.2:
   dependencies:
     "@twemoji/api" "17.0.2"
     dequal "^2.0.3"
-
-react-use-gesture@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/react-use-gesture/-/react-use-gesture-8.0.1.tgz#4360c0f7c9e26baf9fbe58f63fc9de7ef699c17f"
-  integrity sha512-CXzUNkulUdgouaAlvAsC5ZVo0fi9KGSBSk81WrE4kOIcJccpANe9zZkAYr5YZZhqpicIFxitsrGVS4wmoMun9A==
 
 react@18.3.1:
   version "18.3.1"

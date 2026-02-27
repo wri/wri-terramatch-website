@@ -20,7 +20,7 @@ import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
-import { Project } from "@/redesignComponents/foundations/Icons";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
 import AuditLog from "./tabs/AuditLog";
@@ -196,7 +196,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => handleTabClick("team-members")}
         breadcrumbs={[
-          { label: t("Projects"), link: "/my-projects", icon: <Project className="!text-theme-primary-900" /> },
+          { label: t("Projects"), link: "/my-projects", icon: <ProjectIcon className="!text-theme-primary-900" /> },
           { label: project?.name ?? "", link: `/project/${project?.uuid}` }
         ]}
         suffix={

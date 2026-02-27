@@ -1,24 +1,33 @@
-import { V2FinancialIndicatorsRead } from "@/generated/apiSchemas";
+import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 
-export const formatDocumentData = (documents: V2FinancialIndicatorsRead) => {
+export const formatDocumentData = (documents: FinancialIndicatorDto[]) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ year: financial?.year, files: financial?.documentation }))
-    .sort((a, b) => b.year - a.year);
+    .filter(financial => financial?.collection == "description-documents")
+    .map(financial => ({ year: String(financial?.year), files: financial?.documentation ?? [] }))
+    .sort((a, b) => Number(b.year) - Number(a.year));
 };
 
-export const formatDescriptionData = (documents: V2FinancialIndicatorsRead) => {
+export const formatDescriptionData = (documents: FinancialIndicatorDto[]) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ label: financial?.year, description: financial?.description }))
-    .sort((a, b) => b.label - a.label);
+    .filter(financial => financial?.collection == "description-documents")
+    .map(financial => ({ label: String(financial?.year), description: financial?.description ?? "" }))
+    .sort((a, b) => Number(b.label) - Number(a.label));
 };
 
-export const formatExchangeData = (documents: V2FinancialIndicatorsRead) => {
+export const formatExchangeData = (documents: FinancialIndicatorDto[]) => {
+  if (documents == null || !Array.isArray(documents)) {
+    return [];
+  }
   return documents
-    ?.filter(financial => financial?.collection == "description-documents")
-    .map(financial => ({ label: financial?.year, exchangeRate: financial?.exchangeRate }))
-    .sort((a, b) => b.label - a.label);
+    .filter(financial => financial?.collection == "description-documents")
+    .map(financial => ({ label: String(financial?.year), exchangeRate: financial?.exchangeRate ?? 0 }))
+    .sort((a, b) => Number(b.label) - Number(a.label));
 };
 
 export const currencyInput = {
@@ -26,17 +35,6 @@ export const currencyInput = {
   EUR: "€",
   GBP: "£"
 } as any;
-
-type FinancialDataItem = {
-  uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
-  collection: string;
-  amount: number | null;
-  year: number;
-  description: string | null;
-  documentation: any[];
-};
 
 type FinancialRatioStats = {
   latestRatio: number;
@@ -46,7 +44,17 @@ type FinancialRatioStats = {
   yearCount: number;
 };
 
-export const calculateFinancialRatioStats = (financialData: FinancialDataItem[]): FinancialRatioStats => {
+export const calculateFinancialRatioStats = (financialData: FinancialIndicatorDto[]): FinancialRatioStats => {
+  if (financialData == null || !Array.isArray(financialData)) {
+    return {
+      latestRatio: 0,
+      latestYear: new Date().getFullYear(),
+      averageRatio: 0,
+      yearRange: "",
+      yearCount: 0
+    };
+  }
+
   const currentRatioData = financialData
     .filter(item => item.collection === "current-ratio")
     .sort((a, b) => a.year - b.year);
@@ -62,12 +70,12 @@ export const calculateFinancialRatioStats = (financialData: FinancialDataItem[])
   }
 
   const latestEntry = currentRatioData[currentRatioData.length - 1];
-  const latestRatio = latestEntry.amount || 0;
+  const latestRatio = latestEntry.amount ?? 0;
   const latestYear = latestEntry.year;
 
-  const validRatios = currentRatioData.filter(item => item.amount !== null);
+  const validRatios = currentRatioData.filter(item => item.amount != null);
   const averageRatio =
-    validRatios.length > 0 ? validRatios.reduce((sum, item) => sum + (item.amount || 0), 0) / validRatios.length : 0;
+    validRatios.length > 0 ? validRatios.reduce((sum, item) => sum + (item.amount ?? 0), 0) / validRatios.length : 0;
 
   const minYear = currentRatioData[0].year;
   const maxYear = currentRatioData[currentRatioData.length - 1].year;

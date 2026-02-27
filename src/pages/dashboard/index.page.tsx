@@ -451,6 +451,7 @@ const Dashboard = () => {
           textType={user !== undefined ? TEXT_TYPES.LOGGED_USER : TEXT_TYPES.NOT_LOGGED_USER}
           logout={logout}
           projectFrameworkKey={singleDashboardProject?.frameworkKey}
+          backendHasAccess={isUserAllowed?.allowed}
         >
           <div
             className={classNames(

@@ -9,7 +9,7 @@ import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { fetchGetV2ReportingFrameworksAccessCodeACCESSCODE } from "@/generated/apiComponents";
+import { loadReportingFramework } from "@/connections/ReportingFramework";
 
 const schema = yup.object({
   accessCode: yup.string().label("Access Code").required()
@@ -25,17 +25,23 @@ const ReportingFrameworkSelect = () => {
     resolver: yupResolver(schema)
   });
 
-  const onSubmitForm = ({ accessCode }: FormData) => {
-    fetchGetV2ReportingFrameworksAccessCodeACCESSCODE({
-      pathParams: { accessCode }
-    })
-      .then(data =>
-        //@ts-ignore
-        router.push(`/project/create/${data.data.project_form_uuid}`)
-      )
-      .catch(() => {
+  const onSubmitForm = async ({ accessCode }: FormData) => {
+    try {
+      const connected = await loadReportingFramework({ frameworkKey: accessCode });
+
+      if (connected.loadFailure != null || connected.data == null) {
         setError("accessCode", { message: t("Invalid access code, please try again"), type: "validate" });
-      });
+        return;
+      }
+
+      if (connected.data.projectFormUuid != null) {
+        router.push(`/project/create/${connected.data.projectFormUuid}`);
+      } else {
+        setError("accessCode", { message: t("Invalid access code, please try again"), type: "validate" });
+      }
+    } catch {
+      setError("accessCode", { message: t("Invalid access code, please try again"), type: "validate" });
+    }
   };
 
   return (

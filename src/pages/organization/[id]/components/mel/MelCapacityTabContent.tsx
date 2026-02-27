@@ -4,13 +4,13 @@ import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import { useModalContext } from "@/context/modal.provider";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { OrganisationFullDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import BuildStrongerProfile from "../BuildStrongerProfile";
 import OrganizationEditModal from "../edit/OrganizationEditModal";
 
 type MelCapacityTabContentProps = {
-  organization?: V2OrganisationRead;
+  organization?: OrganisationFullDto;
 };
 
 const MelCapacityTabContent = ({ organization }: MelCapacityTabContentProps) => {

@@ -2,7 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -12,6 +12,8 @@ export interface IProfile {
   id: string;
   name: string;
   image: string;
+  email?: string;
+  isProjectManager?: boolean;
 }
 
 export interface IProfileListCardProps {
@@ -32,7 +34,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
   return (
     <Flex direction="column" minHeight={0}>
       <Box>
-        <Text fontSize="18px" lineHeight="28px" color="neutral.900" fontWeight="semibold">
+        <Text textStyle="500" color="neutral.900" fontWeight="semibold">
           {t(title)}
         </Text>
       </Box>
@@ -69,18 +71,16 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
             >
               <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
               <Text
-                fontSize={"12px"}
-                lineHeight={"16px"}
-                fontWeight={"700"}
-                padding={"6px 8px"}
-                borderRadius={"4px"}
-                backgroundColor={"transparent"}
-                color={"secondary.900"}
-                width={"auto"}
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                textStyle="200-bold"
+                padding="6px 8px"
+                borderRadius="4px"
+                backgroundColor="transparent"
+                color="secondary.900"
+                width="auto"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1 px-2 py-1.5"
               >
                 {t("Invite Team Member")}
-                <ChevronRight color="neutral.800" className="h-2.5 w-2.5" />
+                <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
               </Text>
             </Flex>
           </>

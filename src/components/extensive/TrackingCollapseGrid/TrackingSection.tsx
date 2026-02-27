@@ -9,21 +9,30 @@ import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSche
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
 import { useSectionData } from "./hooks";
-import { Status, TrackingGridVariantProps, TrackingType, useEntryTypeDefinition } from "./types";
+import { Status, TrackingDomain, TrackingType, useEntryTypeDefinition } from "./types";
 
 export interface TrackingSectionProps {
+  domain: TrackingDomain;
   trackingType: TrackingType;
   entryType: string;
   entries: TrackingEntryDto[];
-  variant: TrackingGridVariantProps;
   onChange?: (entries: TrackingEntryDto[]) => void;
+  onBlur?: () => void;
   status?: Status;
 }
 
-const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, entries, variant, onChange, status }) => {
+const TrackingSection: FC<TrackingSectionProps> = ({
+  domain,
+  trackingType,
+  entryType,
+  entries,
+  onBlur,
+  onChange,
+  status
+}) => {
   const t = useT();
-  const { title, rows, total } = useSectionData(trackingType, entryType, entries);
-  const { addNameLabel, typeMap } = useEntryTypeDefinition(trackingType, entryType);
+  const { title, rows, total } = useSectionData(domain, trackingType, entryType, entries);
+  const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
   const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
@@ -77,18 +86,18 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
     <>
       <>
         <div className="border-theme-primary-200 bg-theme-primary-900 col-span-2 border-b px-3 py-2.5">
-          <Text color="neutral.100" fontSize="16px" lineHeight="24px" fontWeight="bold">
-            {t("By: " + title)}
+          <Text textStyle="400-bold" color="neutral.100">
+            {t(`By: {title}`, { title })}
           </Text>
         </div>
         {/* Column headers */}
         <div className="bg-theme-neutral-200 col-span-1 flex items-center px-3 py-2">
-          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
+          <Text textStyle="300-bold" color="neutral.800">
             {t(`${title} Definition`)}
           </Text>
         </div>
-        <div className="col-span-1 flex items-center justify-center bg-theme-neutral-200 px-3 py-2 text-center">
-          <Text color="neutral.800" fontSize="14px" lineHeight="20px" fontWeight="bold">
+        <div className="bg-theme-neutral-200 col-span-1 flex items-center justify-center px-3 py-2 text-center">
+          <Text color="neutral.800" textStyle="300-bold">
             {t(`Number of ${displayTrackingType}`)}
           </Text>
         </div>
@@ -99,6 +108,7 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
           onChange={
             onChange == null ? undefined : (amount, userLabel) => onRowChange(entryIndex, typeName, amount, userLabel)
           }
+          onBlur={onBlur}
           onDelete={onChange == null ? undefined : () => removeRow(entryIndex)}
           usesName={addNameLabel != null}
           {...{ entryType, label, userLabel, amount }}
@@ -123,23 +133,18 @@ const TrackingSection: FC<TrackingSectionProps> = ({ trackingType, entryType, en
       )}
       <>
         <div className={classNames("bg-theme-neutral-100 col-span-1 flex items-center justify-between px-3 py-2.5")}>
-          <Text color="primary.900" fontSize="14px" lineHeight="20px" fontWeight="bold">
-            {t(`Total Created:`)}
+          <Text color="primary.900" textStyle="300-bold">
+            {domain === "demographics" ? t("Total Created:") : t("Total:")}
           </Text>
         </div>
         <div
-          className={classNames("flex items-center justify-center px-3 py-2.5", "bg-theme-primary-100 col-span-1", {
+          className={classNames("flex items-center justify-center px-3 py-2.5", "col-span-1", {
             "bg-theme-error-100": status === "in-progress",
             "bg-theme-primary-100": status != "in-progress"
           })}
         >
-          <Text
-            color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"}
-            fontSize="14px"
-            lineHeight="20px"
-            fontWeight="bold"
-          >
-            {t(`{total}`, { total })}
+          <Text color={status === "in-progress" ? "theme.error.900" : "theme.primary.800"} textStyle="300-bold">
+            {total}
           </Text>
         </div>
       </>

@@ -48,7 +48,7 @@ const EntityEditDisplay = () => {
   const formEntity = v3EntityName(entityName) as FormEntity;
   const { updateEntityAnswers, entityAnswersUpdating } = useFormUpdate(formEntity, entityUUID);
   const { formData, form, isLoading, loadFailure, formLoadFailure } = useEntityForm(formEntity, entityUUID);
-  const [, { data: entity }] = useFullEntity(formEntity, entityUUID);
+  const [entityLoading, { data: entity }] = useFullEntity(formEntity, entityUUID);
   const { isLoading: orgLoading, orgDetails, projectDetails } = useProjectOrgFormData(entityName, entity);
 
   // When we unmount, clear the cache of the base entity so it gets fetched again when needed.
@@ -85,7 +85,7 @@ const EntityEditDisplay = () => {
   }
 
   return (
-    <LoadingContainer loading={orgLoading || isLoading || !providerLoaded}>
+    <LoadingContainer loading={orgLoading || isLoading || !providerLoaded || !entityLoading}>
       <WizardForm
         models={model}
         fieldsProvider={fieldsProvider}
@@ -104,6 +104,10 @@ const EntityEditDisplay = () => {
         hideSaveAndCloseButton
         orgDetails={orgDetails}
         projectDetails={projectDetails}
+        redirectEntityPage={"admin#" + createPath({ resource, id, type: "show" })}
+        adminListPath={"admin#" + createPath({ resource, type: "list" })}
+        cancelEditForm={() => navigate(createPath({ resource, id, type: "show" }))}
+        entity={entity ?? undefined}
       />
     </LoadingContainer>
   );

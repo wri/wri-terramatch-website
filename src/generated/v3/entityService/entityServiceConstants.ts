@@ -20,6 +20,7 @@ import {
   TreeReportCountsDto,
   DisturbanceDto,
   AuditStatusDto,
+  AggregateReportsDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -45,7 +46,8 @@ import {
   FormTranslationDto,
   ApplicationDto,
   ApplicationHistoryDto,
-  FundingProgrammeDto
+  FundingProgrammeDto,
+  ReportingFrameworkDto
 } from "./entityServiceSchemas";
 
 export const ENTITY_SERVICE_RESOURCES = [
@@ -63,6 +65,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "treeReportCounts",
   "disturbances",
   "auditStatuses",
+  "aggregateReports",
   "projects",
   "sites",
   "nurseries",
@@ -82,7 +85,8 @@ export const ENTITY_SERVICE_RESOURCES = [
   "formTranslations",
   "applications",
   "applicationHistories",
-  "fundingProgrammes"
+  "fundingProgrammes",
+  "reportingFrameworks"
 ] as const;
 
 export type EntityServiceApiResources = {
@@ -100,6 +104,7 @@ export type EntityServiceApiResources = {
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   auditStatuses: StoreResourceMap<AuditStatusDto>;
+  aggregateReports: StoreResourceMap<AggregateReportsDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;
@@ -120,6 +125,7 @@ export type EntityServiceApiResources = {
   applications: StoreResourceMap<ApplicationDto>;
   applicationHistories: StoreResourceMap<ApplicationHistoryDto>;
   fundingProgrammes: StoreResourceMap<FundingProgrammeDto>;
+  reportingFrameworks: StoreResourceMap<ReportingFrameworkDto>;
 };
 
 export const TreeEntityTypes = {

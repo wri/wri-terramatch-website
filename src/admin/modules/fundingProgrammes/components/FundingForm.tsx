@@ -16,15 +16,16 @@ import { AccordionFormIterator } from "@/admin/components/AccordionFormIterator/
 import { AddItemButton, RemoveItemButton } from "@/admin/components/AccordionFormIterator/AccordionFormIteratorButtons";
 import { FileUploadInput } from "@/admin/components/Inputs/FileUploadInput";
 import modules from "@/admin/modules";
+import { useReportingFrameworks } from "@/connections/ReportingFramework";
 import { getOrganisationTypeOptions } from "@/constants/options/organisations";
-import { useGetV2AdminReportingFrameworks } from "@/generated/apiComponents";
 import { optionToChoices } from "@/utils/options";
 
 import statusChoices from "../constants/statusChoices";
 
 const FundingForm = () => {
-  const { data: reportingFrameworksData, isLoading: reportingFrameworksLoading } = useGetV2AdminReportingFrameworks({});
-  const frameworkChoices: any = reportingFrameworksData?.data?.map(framework => ({
+  const [reportingFrameworksLoaded, { data: reportingFrameworksData }] = useReportingFrameworks({});
+  const reportingFrameworksLoading = !reportingFrameworksLoaded;
+  const frameworkChoices = (reportingFrameworksData ?? []).map(framework => ({
     id: framework.slug,
     name: framework.name
   }));

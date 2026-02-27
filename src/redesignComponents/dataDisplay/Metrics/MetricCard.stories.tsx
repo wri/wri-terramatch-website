@@ -3,13 +3,21 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { Placeholder } from "../../foundations/Icons";
+import { PlaceholderIcon } from "../../foundations/Icons";
 import MetricCard from "./MetricCard";
 
 const meta: Meta<typeof MetricCard> = {
   title: "Redesign Components/Data Display/Metric Card",
   component: MetricCard,
   tags: ["autodocs"],
+  parameters: {},
+  decorators: [
+    Story => (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Story />
+      </div>
+    )
+  ],
   argTypes: {
     variant: {
       control: "select",
@@ -28,7 +36,9 @@ export const Medium: Story = {
     progress: 1234,
     goal: 10000,
     variant: "medium",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
@@ -38,7 +48,9 @@ export const Large: Story = {
     progress: 1234,
     goal: 10000,
     variant: "large",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
@@ -48,7 +60,9 @@ export const ProgressBar: Story = {
     progress: 750,
     goal: 1000,
     variant: "progressBar",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
@@ -58,21 +72,38 @@ export const DonutChart: Story = {
     progress: 5000,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
 export const AllVariants: Story = {
   render: () => (
     <SimpleGrid columns={3} gap={4} width="100%">
-      <MetricCard title="Stat label" progress={1234} goal={10000} variant="medium" icon={<Placeholder />} />
-      <MetricCard title="Stat label" progress={1234} goal={10000} variant="large" icon={<Placeholder />} />
+      <MetricCard
+        title="Stat label"
+        progress={1234}
+        goal={10000}
+        variant="medium"
+        icon={<PlaceholderIcon />}
+        tooltipContent="This is a tooltip"
+      />
+      <MetricCard
+        title="Stat label"
+        progress={1234}
+        goal={10000}
+        variant="large"
+        icon={<PlaceholderIcon />}
+        tooltipContent="This is a tooltip"
+      />
       <MetricCard
         title="Stat label"
         progress={750}
         goal={1000}
         variant="progressBar"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
+        tooltipContent="This is a tooltip"
         color="secondary.600"
       />
       <MetricCard
@@ -80,8 +111,9 @@ export const AllVariants: Story = {
         progress={5000}
         goal={10000}
         variant="donutChart"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
         color={getThemedColor("secondary", 700)}
+        tooltipContent="This is a tooltip"
       />
     </SimpleGrid>
   )
@@ -93,7 +125,9 @@ export const HighProgress: Story = {
     progress: 9500,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
@@ -103,7 +137,9 @@ export const LowProgress: Story = {
     progress: 250,
     goal: 10000,
     variant: "progressBar",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };
 
@@ -113,6 +149,8 @@ export const ZeroProgress: Story = {
     progress: 0,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />
+    icon: <PlaceholderIcon />,
+    tooltipContent: "This is a tooltip",
+    className: "w-fit"
   }
 };

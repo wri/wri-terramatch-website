@@ -7,22 +7,22 @@ import Toolbar from "./Toolbar";
 import { BulkActionToolbarProps } from "./ToolBar.type";
 
 const BulkActionToolbar: FC<BulkActionToolbarProps> = ({
-  ButtonPrimary,
-  ButtonSecondary,
-  ButtonTertiary,
+  primaryButtonProps,
+  secondaryButtonProps,
+  tertiaryButtonProps,
   ButtonCancel,
   ButtonDelete,
   ButtonMenu
 }: BulkActionToolbarProps) => {
   return (
     <Toolbar
-      className="rounded-lg !bg-theme-primary-900 px-6 py-3"
+      className="!bg-theme-primary-900 rounded-lg px-6 py-3"
       contentLeft={<Button {...ButtonCancel} variant="borderless" />}
       contentRight={
         <div className="flex items-center gap-4">
-          <Button {...ButtonPrimary} variant="primary" />
-          <Button {...ButtonSecondary} variant="secondary" />
-          <Button {...ButtonTertiary} variant="secondary" />
+          <Button {...primaryButtonProps} variant="primary" />
+          <Button {...secondaryButtonProps} variant="secondary" />
+          <Button {...tertiaryButtonProps} variant="secondary" />
           <MultiActionButton {...ButtonMenu} variant="secondary" />
           <Button
             {...ButtonDelete}

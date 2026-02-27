@@ -1,14 +1,9 @@
 import { Accordion as AccordionChakra, Box, Flex, useAccordionItemContext } from "@chakra-ui/react";
-import type { ComponentType, FC } from "react";
+import type { FC } from "react";
 
-import { ChevronDown, Minus, Plus } from "@/redesignComponents/foundations/Icons";
+import { ChevronDownIcon, MinusIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AccordionProps, AccordionVariant } from "./types";
-
-const ICON_PROPS = {
-  boxSize: 4,
-  color: "neutral.900" as const
-};
 
 const variantStyles = {
   primary: {
@@ -25,10 +20,6 @@ const variantStyles = {
     },
     header: {
       gap: 5
-    },
-    icon: {
-      component: ChevronDown as ComponentType<{ boxSize: number; color: string }>,
-      props: ICON_PROPS
     }
   },
   secondary: {
@@ -51,12 +42,11 @@ const variantStyles = {
 const AccordionIconInner: FC<{ variant: AccordionVariant }> = ({ variant }) => {
   const { expanded } = useAccordionItemContext();
   if (variant === "secondary") {
-    const IconComponent = expanded ? Minus : Plus;
-    return <IconComponent boxSize={6} color={ICON_PROPS.color} />;
+    const IconComponent = expanded ? MinusIcon : PlusIcon;
+    return <IconComponent boxSize={4} color="neutral.900" />;
   }
 
-  const { component: IconComponent, props } = variantStyles.primary.icon;
-  return <IconComponent {...props} />;
+  return <ChevronDownIcon boxSize={4} color="neutral.900" />;
 };
 
 const AccordionIcon: FC<{ variant: AccordionVariant }> = ({ variant }) => (

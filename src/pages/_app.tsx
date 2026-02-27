@@ -4,6 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { tx } from "@transifex/native";
 import { useT } from "@transifex/react";
+import { Toast as WRIToast } from "@worldresources/wri-design-systems";
 import { AppProps } from "next/app";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -45,6 +46,7 @@ const DashboardStack = ({ children }: PropsWithChildren) => (
     <NavbarProvider>
       <ModalRoot />
       <Toast />
+      <WRIToast />
       <DashboardAnalyticsWrapper>
         <DashboardLayout>{children}</DashboardLayout>
       </DashboardAnalyticsWrapper>
@@ -69,6 +71,7 @@ const PDStack = ({ children }: PropsWithChildren) => (
       <NavbarProvider>
         <ModalRoot />
         <Toast />
+        <WRIToast />
         <MainLayout>
           {children}
           <CookieBanner />

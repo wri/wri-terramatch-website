@@ -12,11 +12,17 @@ import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types
 
 import { useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
-import { Status, TrackingCollapseGridProps, useEntryTypes, useTrackingLabels } from "./types";
+import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useTrackingLabels } from "./types";
 
-const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entries, variant, onChange }) => {
+const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
+  complete: "complete",
+  "not-started": undefined,
+  "in-progress": "error"
+};
+
+const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, type, entries, variant, onChange }) => {
   const t = useT();
-  const { total, status } = useTableStatus(type, entries);
+  const { total, status, counts } = useTableStatus(domain, type, entries);
   const byType = useMemo(() => groupBy(entries, "type"), [entries]);
 
   const onSectionChange = useCallback(
@@ -26,8 +32,8 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
     [onChange, entries]
   );
 
-  const entryTypes = useEntryTypes(type);
-
+  const entryTypes = useEntryTypes(domain, type);
+  const entryTypeMap = useEntryTypeMap(domain, type);
   const { sectionLabel, rowLabelSingular, rowLabelPlural } = useTrackingLabels(type);
   const rowLabel = total === 1 ? rowLabelSingular : rowLabelPlural;
   const user = useIsAdmin();
@@ -35,16 +41,12 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
   const prefix = title == null ? `${t(sectionLabel)} ${t(rowLabel)}` : `${title} - ${t(sectionLabel)} ${t(rowLabel)}`;
 
   const boldNumber = (
-    <Text as="span" fontSize="20px" lineHeight="28px" fontWeight="bold" color="primary.900">
+    <Text as="span" textStyle="600" color="primary.900">
       {total}
     </Text>
   );
 
-  const statusMap: Record<Status, AccordionStatus | undefined> = {
-    complete: "complete",
-    "not-started": undefined,
-    "in-progress": "error"
-  };
+  const shouldShowError = status === "in-progress";
 
   return (
     <Accordion
@@ -53,44 +55,62 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, type, entr
         <AccordionHeader
           label={prefix}
           title={boldNumber}
-          status={statusMap[status]}
-          statusLabel={status === "in-progress" ? t("Totals don't match across demographic categories") : undefined}
+          status={STATUS_MAP[status]}
+          statusLabel={shouldShowError ? t("Totals don't match across categories") : undefined}
         />
       }
     >
       <div>
-        {status === "in-progress" && (
-          <p className="text-14-light mb-4 text-theme-error-900">
+        {shouldShowError && (
+          <Text textStyle="300" color="error.900" marginBottom={4}>
             {t("The total number of entries must be the same for each category.")}{" "}
-            <b>{t("Please review your entries.")}</b>
-          </p>
+            <strong>{t("Please review your entries.")}</strong>
+          </Text>
         )}
 
         <div className={classNames("flex flex-wrap gap-x-16 gap-y-6", { "justify-between": user })}>
-          {entryTypes.map(entryType => (
-            <div
-              key={entryType}
-              className={classNames("flex flex-col", {
-                "w-full": entryType === "ethnicity",
-                "min-w-80 flex-auto": entryType !== "ethnicity"
-              })}
-            >
+          {entryTypes.map(entryType => {
+            const typeDefinition = entryTypeMap[entryType];
+            const sectionTotal = counts?.[entryType] ?? 0;
+
+            let sectionStatus: Status = "not-started";
+
+            if (sectionTotal === 0) {
+              sectionStatus = "not-started";
+            } else if (!typeDefinition?.balanced) {
+              sectionStatus = "complete";
+            } else if (sectionTotal === total) {
+              sectionStatus = "complete";
+            } else if (shouldShowError) {
+              sectionStatus = "in-progress";
+            }
+
+            return (
               <div
-                className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
-                  "grid-cols-[auto_minmax(10rem,11rem)]": entryType === "ethnicity",
-                  "grid-cols-2": entryType !== "ethnicity"
+                key={entryType}
+                className={classNames("flex flex-col", {
+                  "w-full": entryType === "ethnicity",
+                  "min-w-80 flex-auto": entryType !== "ethnicity"
                 })}
               >
-                <TrackingSection
-                  trackingType={type}
-                  onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
-                  entries={byType[entryType] ?? []}
-                  {...{ entryType, variant }}
-                  status={status}
-                />
+                <div
+                  className={classNames("shadow-sm grid grid-cols-2 bg-white leading-normal", {
+                    "grid-cols-[auto_minmax(10rem,11rem)]": entryType === "ethnicity",
+                    "grid-cols-2": entryType !== "ethnicity"
+                  })}
+                >
+                  <TrackingSection
+                    domain={domain}
+                    trackingType={type}
+                    onChange={onChange == null ? undefined : entries => onSectionChange(entryType, entries)}
+                    entries={byType[entryType] ?? []}
+                    {...{ entryType, variant }}
+                    status={sectionStatus}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </Accordion>
