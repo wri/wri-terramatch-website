@@ -420,15 +420,22 @@ function WizardForm(props: WizardFormProps) {
         >
           <div className={twMerge("flex w-full flex-col", props.className)}>
             {entity != null && (
-              <Box className={classNames("sticky z-20 px-1", isAdmin ? "top-0" : "top-[70px]")}>
+              <Box
+                className={classNames(
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
+                  isAdmin ? "top-0" : "sm:!top-[70px]"
+                )}
+              >
                 <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />
-                <PageHeader
-                  title={pageHeaderTitle}
-                  label={t("Set Up Status:")}
-                  tag={
-                    mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined
-                  }
-                />
+                <div className="bg-theme-neutral-300 pt-[1px]">
+                  <PageHeader
+                    title={pageHeaderTitle}
+                    label={t("Set Up Status:")}
+                    tag={
+                      mapStatusToTagState(entity?.status) ? { state: mapStatusToTagState(entity?.status)! } : undefined
+                    }
+                  />
+                </div>
               </Box>
             )}
             <Tabs
