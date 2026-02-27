@@ -205,13 +205,10 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
-            tag={
-              <FeedbackTag
-                type={mapStatusToTagStateProject(project?.status)!.type}
-                label={mapStatusToTagStateProject(project?.status)!.label}
-                icon={mapStatusToTagStateProject(project?.status)!.icon}
-              />
-            }
+            tag={(() => {
+              const tagState = mapStatusToTagStateProject(project?.status);
+              return tagState ? <FeedbackTag type={tagState.type} label={tagState.label} icon={tagState.icon} /> : null;
+            })()}
             buttonProps={{
               variant: "primary",
               size: "small",
