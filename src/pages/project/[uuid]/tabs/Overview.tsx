@@ -13,6 +13,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
@@ -33,14 +34,19 @@ interface OverviewItemProps {
   downloadButtonProps?: IButtonProps;
   children?: ReactNode;
   flexProps?: FlexProps;
+  tag?: ReactNode;
 }
 
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
-      <Text color="primary.900" textStyle="600">
-        {title}
-      </Text>
+      <div className="flex items-center gap-2">
+        <Text color="primary.900" textStyle="600">
+          {title}
+        </Text>
+        {tag ? tag : null}
+      </div>
+
       <Flex gap={4}>
         {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
         {buttonProps ? <Button {...buttonProps} /> : null}
@@ -151,6 +157,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
+            tag={<FeedbackTag type="success" label="Project Set Up" />}
             buttonProps={{
               variant: "primary",
               size: "small",
