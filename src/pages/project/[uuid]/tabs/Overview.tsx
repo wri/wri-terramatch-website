@@ -167,7 +167,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: isProjectSetupComplete ? "Edit" : "Continue Editing",
+              children: isProjectSetupComplete ? "Edit" : "Continue",
               rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
