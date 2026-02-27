@@ -54,40 +54,6 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
   }
 };
 
-export const mapStatusToTagStateProject = (
-  status: string | null | undefined
-): { label: string; type: "info-white" | "info-grey" | "success" | "warning" | "error" } | undefined => {
-  switch (status) {
-    case "draft":
-      return {
-        label: "Draft",
-        type: "info-white"
-      };
-    case "started":
-      return {
-        label: "Draft",
-        type: "info-white"
-      };
-    case "awaiting-approval":
-      return {
-        label: "Pending Approval",
-        type: "info-white"
-      };
-    case "needs-more-information":
-      return {
-        label: "Information Required",
-        type: "warning"
-      };
-    case "approved":
-      return {
-        label: "Approved",
-        type: "success"
-      };
-    default:
-      return undefined;
-  }
-};
-
 export const mapEntityTitle = (title: string | null, model: string, t: typeof useT): string => {
   if (title == null || title === "") return t(startCase(singularEntityName(model as EntityName | SingularEntityName)));
   return title;

@@ -11,12 +11,18 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { mapStatusToTagStateProject } from "@/helpers/entityFormLinkHeader";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  CheckApprovedIcon,
+  ChevronRightIcon,
+  DownloadIcon,
+  DraftIcon,
+  InformationRequiredIcon,
+  PendingIcon
+} from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -56,6 +62,47 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
     {children}
   </Flex>
 );
+
+const mapStatusToTagStateProject = (
+  status: string | null | undefined
+):
+  | { label: string; type: "info-white" | "info-grey" | "success" | "warning" | "error"; icon?: ReactNode }
+  | undefined => {
+  switch (status) {
+    case "draft":
+      return {
+        label: "Draft",
+        type: "info-white",
+        icon: <DraftIcon />
+      };
+    case "started":
+      return {
+        label: "Draft",
+        type: "info-white",
+        icon: <DraftIcon />
+      };
+    case "awaiting-approval":
+      return {
+        label: "Pending Approval",
+        type: "info-white",
+        icon: <PendingIcon />
+      };
+    case "needs-more-information":
+      return {
+        label: "Information Required",
+        type: "warning",
+        icon: <InformationRequiredIcon />
+      };
+    case "approved":
+      return {
+        label: "Approved",
+        type: "success",
+        icon: <CheckApprovedIcon />
+      };
+    default:
+      return undefined;
+  }
+};
 
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
@@ -162,6 +209,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               <FeedbackTag
                 type={mapStatusToTagStateProject(project?.status)!.type}
                 label={mapStatusToTagStateProject(project?.status)!.label}
+                icon={mapStatusToTagStateProject(project?.status)!.icon}
               />
             }
             buttonProps={{
