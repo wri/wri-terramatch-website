@@ -883,11 +883,11 @@ export type CreateAuditStatusBody = {
 
 export type AggregateReportSeriesItemDto = {
   /**
-   * Reporting task due date (ISO 8601).
+   * Reporting task due date (ISO 8601), or null when the report has no due date.
    *
    * @example 2024-06-30T23:59:59.000Z
    */
-  dueDate: string;
+  dueDate: Record<string, any> | null;
   /**
    * Sum for that reporting period (V2 compatible).
    *
