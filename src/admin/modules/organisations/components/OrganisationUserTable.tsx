@@ -122,9 +122,7 @@ const OrganisationUserTable = () => {
         primaryButtonProps={{
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
-            // createRef.current is always the latest create fn (updated each render)
             const status = type === "approve" ? "approved" : "rejected";
-            console.log("[DEBUG] Sending user association update:", { type, status, userUuid: selectedUserUuid });
             (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
               status
             });
