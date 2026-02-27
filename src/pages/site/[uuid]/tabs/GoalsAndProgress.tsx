@@ -13,13 +13,13 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
+import { useAggregateReports } from "@/connections/AggregateReports";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
-import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { TextVariants } from "@/types/common";
-import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
+import { getNewRestorationGoalDataForChart, isAggregateReportsEmpty } from "@/utils/dashboardUtils";
 
 import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
 
@@ -45,10 +45,6 @@ export const LABEL_LEGEND = [
   }
 ];
 
-const isEmptyArray = (obj: any) => {
-  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
-};
-
 const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
   const t = useT();
 
@@ -69,12 +65,11 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
     collection: "tree-planted"
   });
 
-  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
-    pathParams: {
-      uuid: site.uuid,
-      entity: "site"
-    }
+  const [aggregateLoaded, aggregateState] = useAggregateReports({
+    entity: "sites",
+    uuid: site.uuid
   });
+  const dataAggregated = aggregateState != null ? aggregateState.data : undefined;
   return (
     <PageBody>
       <PageRow>
@@ -142,10 +137,10 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
                     ))}
                   </div>
                 </div>
-                {dataAggregated ? (
+                {aggregateLoaded && dataAggregated != null ? (
                   <BlurContainer
                     className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
-                    isBlur={isEmptyArray(dataAggregated)}
+                    isBlur={isAggregateReportsEmpty(dataAggregated)}
                     textType={TEXT_TYPES.NO_GRAPH}
                   >
                     <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />

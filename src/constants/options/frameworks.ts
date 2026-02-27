@@ -1,31 +1,30 @@
 import { useEffect, useState } from "react";
-import { GetListParams } from "react-admin";
 
-import { reportingFrameworkDataProvider } from "@/admin/apiProvider/dataProviders/reportingFrameworkDataProvider";
+import { loadReportingFrameworks } from "@/connections/ReportingFramework";
+import { ReportingFrameworkDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Log from "@/utils/log";
 
-async function getFrameworkChoices() {
-  const params: GetListParams = {
-    pagination: {
-      page: 0,
-      perPage: 0
-    },
-    sort: {
-      field: "",
-      order: ""
-    },
-    filter: {}
-  };
-  const data = await reportingFrameworkDataProvider.getList("", params);
+interface FrameworkChoice {
+  id: string | null;
+  name: string;
+}
 
-  return (data as any)?.data.map((framework: any) => ({
+async function getFrameworkChoices(): Promise<FrameworkChoice[]> {
+  const connected = await loadReportingFrameworks({});
+
+  if (connected.loadFailure != null || connected.data == null) {
+    return [];
+  }
+
+  return connected.data.map((framework: ReportingFrameworkDto) => ({
     id: framework.slug,
     name: framework.name
   }));
 }
 
-export function useFrameworkChoices() {
-  const [frameworkChoices, setFrameworkChoices] = useState<any>([]);
+export function useFrameworkChoices(): FrameworkChoice[] {
+  const [frameworkChoices, setFrameworkChoices] = useState<FrameworkChoice[]>([]);
+
   const fetchFrameworkChoices = async function () {
     try {
       setFrameworkChoices(await getFrameworkChoices());

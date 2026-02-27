@@ -1,5 +1,6 @@
 import { Box, TabsTrigger } from "@chakra-ui/react";
 import { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -47,7 +48,9 @@ export const NavigationTabItem: FC<NavigationTabItemProps> = ({
         <span className="flex items-center text-left text-theme-primary-900">
           <NavigationTabBadge type={type} isSelected={isSelected} index={index} />
 
-          {label != null && <p className={getLabelClasses(isSelected)}>{label}</p>}
+          {label != null && (
+            <p className={twMerge("truncate whitespace-nowrap", getLabelClasses(isSelected))}>{label}</p>
+          )}
         </span>
         <ChevronRightIcon />
       </Box>

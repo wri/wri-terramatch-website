@@ -1,27 +1,21 @@
-import classNames from "classnames";
+import { Box } from "@chakra-ui/react";
 import { DetailedHTMLProps, HTMLAttributes } from "react";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
+import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import ToolbarForm from "@/redesignComponents/navigation/Toolbar/ToolbarForm";
 
 interface FormFooterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  submitButtonProps?: Omit<IButtonProps, "type" | "variant">;
-  backButtonProps?: Omit<IButtonProps, "color" | "variant">;
-  variant?: "default" | "sticky";
+  className?: string;
+  cancelButtonProps?: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
 }
-const footerVariants = {
-  sticky: "sticky bottom-0 w-full bg-white py-4 px-16 shadow-top",
-  default: "w-full"
-} as const;
 
 export const FormFooter = (props: FormFooterProps) => {
-  const { className, submitButtonProps, backButtonProps, ...rest } = props;
-
   return (
-    <div className={classNames(footerVariants[props.variant ?? "default"], className)}>
-      <div {...rest} className={classNames("flex w-full items-center justify-between", className)}>
-        {backButtonProps != null ? <Button {...backButtonProps!} variant="secondary" /> : null}
-        {submitButtonProps != null ? <Button {...submitButtonProps!} /> : null}
-      </div>
-    </div>
+    <Box className={props.className}>
+      <ToolbarForm {...props} />
+    </Box>
   );
 };

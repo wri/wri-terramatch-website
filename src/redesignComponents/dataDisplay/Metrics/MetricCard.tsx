@@ -2,6 +2,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
+import { Framework } from "@/context/framework.provider";
 import { getThemedColor } from "@/lib/theme";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 
@@ -112,7 +113,8 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   iconWithColor,
   type,
   tooltipContent,
-  classNameTitle
+  classNameTitle,
+  frameworkKey
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
@@ -130,7 +132,13 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             <InformationRequiredIcon color="neutral.800" boxSize="14px" />
           </Tooltip>
         </Flex>
-        {goal > 0 || progress > 0 ? (
+        {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
+          <Flex gap={1} alignItems="center">
+            <Text textStyle="600-bold" color="neutral.900">
+              {progress.toLocaleString()}
+            </Text>
+          </Flex>
+        ) : goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
               {Math.round(progress).toLocaleString()}
@@ -163,7 +171,8 @@ const MetricCard: FC<MetricCardProps> = props => {
     color = "primary.600",
     type,
     className,
-    classNameTitle
+    classNameTitle,
+    frameworkKey
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -195,6 +204,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           iconWithColor={iconWithColor24}
           type={type}
           classNameTitle={classNameTitle}
+          frameworkKey={frameworkKey}
         />
       );
       break;

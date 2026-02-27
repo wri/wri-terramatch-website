@@ -5,4 +5,6 @@ export interface FormSectionHeaderProps {
   badge?: string;
   status?: AccordionStatus;
   statusLabel?: string;
+  actions?: ReactNode;
+  showBorder?: boolean;
 }
