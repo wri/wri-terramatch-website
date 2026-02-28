@@ -57,7 +57,8 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [, { data: associatedUsers }] = useUserAssociations({
-    uuid: project.uuid
+    uuid: project.uuid,
+    model: "projects"
   });
 
   const handleInvite = () => {

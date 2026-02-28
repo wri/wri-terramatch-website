@@ -124,58 +124,6 @@ export type V2PostOrganisationsBody = {
   tags?: string[];
 };
 
-export type PostV2GeometryValidateBody = {
-  geometries?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-        est_area?: number;
-      };
-      geometry?: {
-        type?: "Polygon" | "Point";
-        coordinates?: any[];
-      };
-    }[];
-  }[];
-};
-
-export type PutV2GeometryBody = {
-  geometry?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-        est_area?: number;
-      };
-      geometry?: {
-        type?: "Polygon" | "Point";
-        coordinates?: any[];
-      };
-    }[];
-  };
-};
-
 export type Body = {
   id?: number;
   uuid?: string;
