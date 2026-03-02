@@ -11,6 +11,7 @@ import { connectionHook, connectionLoader } from "@/connections/util/connectionS
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
 import {
+  createUserAssociation,
   organisationCreation,
   organisationDelete,
   organisationIndex,
@@ -28,7 +29,8 @@ import {
   OrganisationLightDto,
   OrganisationUpdateAttributes,
   OwnershipStakeDto,
-  TreeSpeciesDto
+  TreeSpeciesDto,
+  UserAssociationDto
 } from "@/generated/v3/userService/userServiceSchemas";
 import { useConnection } from "@/hooks/useConnection";
 import { ApiDataStore } from "@/store/apiSlice";
@@ -46,6 +48,42 @@ type UserStatus = "approved" | "rejected" | "requested";
 export type MyOrganisationConnection = OrganisationConnection & {
   organisationId?: string;
   userStatus?: UserStatus;
+};
+
+type OrgJoinProps = {
+  organisationUuid?: string;
+};
+
+type OrganisationFinancialIndicatorsConnection = {
+  financialIndicators: Array<FinancialIndicatorDto & { uuid: string }>;
+};
+
+type OrganisationFundingTypesConnection = {
+  fundingTypes: FundingTypeDto[];
+};
+
+type OrganisationMediaConnection = {
+  media: MediaDto[];
+};
+
+type OrganisationMediaByCollectionConnection = {
+  media: MediaDto[];
+};
+
+type OrganisationTreeSpeciesConnection = {
+  treeSpecies: TreeSpeciesDto[];
+};
+
+type OrganisationLeadershipConnection = {
+  leadership: LeadershipDto[];
+};
+
+type OrganisationOwnershipStakesConnection = {
+  ownershipStakes: OwnershipStakeDto[];
+};
+
+type OrganisationFinancialReportsConnection = {
+  financialReports: FinancialReportLightDto[];
 };
 
 const selectOrganisations = (store: ApiDataStore) => store.organisations;
@@ -90,6 +128,13 @@ const orgCreationConnection = v3Resource("organisations", organisationCreation)
   .create<OrganisationLightDto>()
   .buildConnection();
 
+const orgJoinConnection = v3Resource("associatedUsers", createUserAssociation)
+  .create<UserAssociationDto, OrgJoinProps>(({ organisationUuid }) =>
+    // model: "organisations" is required by the unified route /userAssociations/v3/{model}/{uuid}
+    organisationUuid != null ? { pathParams: { model: "organisations", uuid: organisationUuid } } : undefined
+  )
+  .buildConnection();
+
 // The "myOrganisationConnection" is only valid once the users/me response has been loaded, so
 // this hook depends on the myUserConnection to fetch users/me and then loads the data it needs
 // from the store.
@@ -117,38 +162,7 @@ export const useOrganisations = connectionHook(indexOrgsConnection);
 export const createOrg = resourceCreator(orgCreationConnection);
 export const useOrgCreate = connectionHook(orgCreationConnection);
 
-// Connections for organisation-related resources filtered by organisationUuid
-type OrganisationFinancialIndicatorsConnection = {
-  financialIndicators: Array<FinancialIndicatorDto & { uuid: string }>;
-};
-
-type OrganisationFundingTypesConnection = {
-  fundingTypes: FundingTypeDto[];
-};
-
-type OrganisationMediaConnection = {
-  media: MediaDto[];
-};
-
-type OrganisationMediaByCollectionConnection = {
-  media: MediaDto[];
-};
-
-type OrganisationTreeSpeciesConnection = {
-  treeSpecies: TreeSpeciesDto[];
-};
-
-type OrganisationLeadershipConnection = {
-  leadership: LeadershipDto[];
-};
-
-type OrganisationOwnershipStakesConnection = {
-  ownershipStakes: OwnershipStakeDto[];
-};
-
-type OrganisationFinancialReportsConnection = {
-  financialReports: FinancialReportLightDto[];
-};
+export const useOrgJoin = connectionHook(orgJoinConnection);
 
 const organisationFinancialIndicatorsConnection: Connection<
   OrganisationFinancialIndicatorsConnection,
