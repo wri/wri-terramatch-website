@@ -75,17 +75,17 @@ const mapStatusToTagStateProject = (
         type: "info-white",
         icon: <DraftIcon />
       };
-    case "started":
-      return {
-        label: "Started",
-        type: "info-white",
-        icon: <DraftIcon />
-      };
     case "awaiting-approval":
       return {
         label: "Pending Approval",
         type: "info-white",
         icon: <PendingIcon />
+      };
+    case "started":
+      return {
+        label: "Started",
+        type: "info-white",
+        icon: <DraftIcon />
       };
     case "needs-more-information":
       return {
