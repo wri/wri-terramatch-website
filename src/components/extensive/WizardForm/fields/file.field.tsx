@@ -4,9 +4,16 @@ import * as yup from "yup";
 import RHFFileInput from "@/components/elements/Inputs/FileInput/RHFFileInput";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getAnswer } from "@/components/extensive/WizardForm/utils";
-import { UploadedFile } from "@/types/common";
+import { FileType, UploadedFile } from "@/types/common";
 import { isNotNull } from "@/utils/array";
 import { addValidationWith } from "@/utils/yup";
+
+/** Collections validated as general-documents (max 5MB, standard file types) */
+const isGeneralDocumentCollection = (c: string | null | undefined): boolean =>
+  c === "management_accounts_upload" || c === "consortium_partnership_agreements";
+
+const GENERAL_DOCUMENTS_MAX_MB = 5;
+const DEFAULT_MAX_FILE_SIZE_MB = 10;
 
 export const FileField: FormFieldFactory = {
   addValidation: addValidationWith(({ validation, multiChoice }) => {
@@ -18,18 +25,25 @@ export const FileField: FormFieldFactory = {
     }
   }),
 
-  renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => (
-    <RHFFileInput
-      {...sharedProps}
-      model={model!}
-      isPhotosAndVideo={["photos", "videos"].includes(collection ?? "")}
-      allowMultiple={multiChoice}
-      collection={collection ?? ""}
-      accept={additionalProps?.accept}
-      maxFileSize={additionalProps?.max ?? 10}
-      showPrivateCheckbox={additionalProps?.with_private_checkbox}
-    />
-  ),
+  renderInput: ({ additionalProps, collection, multiChoice, model }, sharedProps) => {
+    const isGeneralDocuments = isGeneralDocumentCollection(collection);
+    const maxFileSize =
+      additionalProps?.max ?? (isGeneralDocuments ? GENERAL_DOCUMENTS_MAX_MB : DEFAULT_MAX_FILE_SIZE_MB);
+    const accept = additionalProps?.accept ?? (isGeneralDocuments ? [FileType.GeneralDocuments] : undefined);
+
+    return (
+      <RHFFileInput
+        {...sharedProps}
+        model={model!}
+        isPhotosAndVideo={["photos", "videos"].includes(collection ?? "")}
+        allowMultiple={multiChoice}
+        collection={collection ?? ""}
+        accept={accept}
+        maxFileSize={maxFileSize}
+        showPrivateCheckbox={additionalProps?.with_private_checkbox}
+      />
+    );
+  },
 
   getAnswer: ({ name }, formValues) => formValues[name],
 

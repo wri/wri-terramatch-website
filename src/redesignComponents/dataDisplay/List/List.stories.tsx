@@ -1,4 +1,7 @@
+import { Flex } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
+
+import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
 
 import { TreeCircleIcon } from "../../foundations/Icons";
 import List from "./List";
@@ -52,12 +55,42 @@ export const VariantData: Story = {
 export const VariantNavigation: Story = {
   args: {
     items: [
-      { id: "1", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "2", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "3", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "4", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "5", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const },
-      { id: "6", label: "Label", icon: <TreeCircleIcon className="h-6 w-6" />, variant: "navigation" as const }
+      {
+        id: "1",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="tras" />,
+        variant: "navigation" as const
+      },
+      {
+        id: "2",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
+        variant: "navigation" as const
+      },
+      {
+        id: "3",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
+        variant: "navigation" as const
+      },
+      {
+        id: "4",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
+        variant: "navigation" as const
+      },
+      {
+        id: "5",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
+        variant: "navigation" as const
+      },
+      {
+        id: "6",
+        label: "Label",
+        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
+        variant: "navigation" as const
+      }
     ]
   }
 };
@@ -198,5 +231,35 @@ export const WithExpandedItem: Story = {
       { id: "2", label: "Label", caption: "Caption", variant: "navigation" as const, isExpanded: true },
       { id: "3", label: "Label", caption: "Caption", variant: "navigation" as const, isExpanded: false }
     ]
+  }
+};
+
+export const CardList: Story = {
+  args: {
+    items: [
+      { id: "1", label: "Label", caption: "Caption" },
+      { id: "2", label: "Label", caption: "Caption" },
+      { id: "3", label: "Label", caption: "Caption" }
+    ]
+  },
+  render: args => {
+    return (
+      <Flex gap={4} flexDirection="column" padding={4}>
+        {args.items.map((item, index) => (
+          <ProfileItem
+            key={item.id ?? index}
+            profile={{
+              id: item.id ?? String(index),
+              name: item.label,
+              image: index === 1 ? "https://i.pravatar.cc/300?img=1" : "",
+              email: "name.surname@email.org",
+              isProjectManager: index <= 1 ? true : false,
+              messageText: "Label"
+            }}
+            onProfileClick={() => console.log("Clicked item 1")}
+          />
+        ))}
+      </Flex>
+    );
   }
 };

@@ -14,7 +14,7 @@ import { v3Resource } from "./util/apiConnectionFactory";
 import { connectionHook } from "./util/connectionShortcuts";
 
 const userAssociationConnection = v3Resource("associatedUsers", getUserAssociation)
-  .index<UserAssociationDto, GetUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid } }))
+  .index<UserAssociationDto, GetUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid, model: "projects" } }))
   .filter<GetUserAssociationQueryParams>()
   .buildConnection();
 
@@ -27,7 +27,7 @@ export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: str
     ApiSlice.clearPending(resolveUrl(deleteUserAssociation.url, {}), deleteUserAssociation.method);
   }
 
-  deleteUserAssociation.fetch({ pathParams: { uuid: projectUuid }, queryParams: { uuids } });
+  deleteUserAssociation.fetch({ pathParams: { uuid: projectUuid, model: "projects" }, queryParams: { uuids } });
 
   await new Promise<void>((resolve, reject) => {
     const unsubscribe = ApiSlice.redux.subscribe(() => {
@@ -51,7 +51,9 @@ export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: str
 };
 
 const userAssociationCreationConnection = v3Resource("associatedUsers", createUserAssociation)
-  .create<UserAssociationDto, CreateUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid } }))
+  .create<UserAssociationDto, CreateUserAssociationPathParams>(({ uuid }) => ({
+    pathParams: { uuid, model: "projects" }
+  }))
   .buildConnection();
 
 export const useUserAssociationCreation = connectionHook(userAssociationCreationConnection);

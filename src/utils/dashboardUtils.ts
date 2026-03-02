@@ -325,6 +325,16 @@ const CATEGORY_DISPLAY_NAMES: Record<(typeof AGGREGATE_REPORT_CATEGORIES)[number
   treesRegenerating: "Trees Regenerating"
 };
 
+function getDueDateString(dueDate: Record<string, any> | null): string | null {
+  if (dueDate == null) return null;
+  if (typeof dueDate === "string") return dueDate === "" ? null : dueDate;
+  if (typeof dueDate === "object" && dueDate !== null) {
+    const s = (dueDate as any).date ?? (dueDate as any).value ?? (dueDate as any).iso;
+    if (typeof s === "string" && s !== "") return s;
+  }
+  return null;
+}
+
 export const getNewRestorationGoalDataForChart = (data?: AggregateReportsDto | null): ChartCategory[] => {
   if (data == null) return [];
 
@@ -333,8 +343,9 @@ export const getNewRestorationGoalDataForChart = (data?: AggregateReportsDto | n
     const series = data[category];
     if (series == null) continue;
     for (const item of series) {
-      if (item.dueDate != null && item.dueDate !== "") {
-        allDates.add(new Date(item.dueDate).toISOString().split("T")[0]);
+      const dateStr = getDueDateString(item.dueDate);
+      if (dateStr != null) {
+        allDates.add(new Date(dateStr).toISOString().split("T")[0]);
       }
     }
   }
@@ -346,14 +357,15 @@ export const getNewRestorationGoalDataForChart = (data?: AggregateReportsDto | n
     categoryName: string
   ): { sum: number; values: ChartDataPoint[] } => {
     const nullSum = sourceData
-      .filter(item => item.dueDate == null || item.dueDate === "")
+      .filter(item => getDueDateString(item.dueDate) == null)
       .reduce((acc, item) => acc + item.aggregateAmount, 0);
 
     let sum = nullSum;
 
     const dateAmountMap = sourceData.reduce((acc, item) => {
-      if (item.dueDate != null && item.dueDate !== "") {
-        const dateKey = new Date(item.dueDate).toISOString().split("T")[0];
+      const dateStr = getDueDateString(item.dueDate);
+      if (dateStr != null) {
+        const dateKey = new Date(dateStr).toISOString().split("T")[0];
         if (!acc[dateKey]) {
           acc[dateKey] = 0;
         }

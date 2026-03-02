@@ -28,7 +28,8 @@ export interface ProjectHeaderProps {
 const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
-    filter: { isManager: false }
+    filter: { isManager: false },
+    model: "projects"
   });
 
   const teamMembers = useMemo(
