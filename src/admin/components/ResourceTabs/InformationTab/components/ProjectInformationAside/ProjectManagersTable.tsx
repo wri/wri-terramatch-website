@@ -14,7 +14,8 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
   const t = useT();
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
-    filter: { isManager: true }
+    filter: { isManager: true },
+    model: "projects"
   });
 
   const { openModal, closeModal } = useModalContext();

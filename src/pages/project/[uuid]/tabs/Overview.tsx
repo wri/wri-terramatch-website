@@ -58,7 +58,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
 
   const [, { data: associatedUsers }] = useUserAssociations({
-    uuid: project.uuid
+    uuid: project.uuid,
+    model: "projects"
   });
 
   const monitoringPartners = useMemo(() => {
