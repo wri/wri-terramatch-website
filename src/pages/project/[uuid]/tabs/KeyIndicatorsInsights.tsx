@@ -116,28 +116,49 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           </Box>
         }
       />
-      <MetricCard
-        title={t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}
-        progress={framework === Framework.PPC ? project.combinedWorkdayCount : project.totalJobsCreated}
-        goal={project.jobsCreatedGoal ?? 0}
-        variant="donutChart"
-        icon={<JobsIcon />}
-        type="jobsCreated"
-        className={metricClassName}
-        classNameTitle="whitespace-nowrap"
-        tooltipContent={
-          <Box fontSize="14px" lineHeight="20px">
-            <b>{t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}</b>
-            <br />
-            {t(
-              framework === Framework.PPC
-                ? "Number of workdays created for this project"
-                : "Number of jobs created for this project"
-            )}
-          </Box>
-        }
-        frameworkKey={framework!}
-      />
+      {framework === Framework.PPC ? (
+        <MetricCard
+          title={t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}
+          progress={framework === Framework.PPC ? project.combinedWorkdayCount : project.totalJobsCreated}
+          goal={project.jobsCreatedGoal ?? 0}
+          variant="large"
+          icon={<JobsIcon />}
+          type="jobsCreated"
+          className={metricClassName}
+          classNameTitle="whitespace-nowrap"
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}</b>
+              <br />
+              {t(
+                framework === Framework.PPC
+                  ? "Number of workdays created for this project"
+                  : "Number of jobs created for this project"
+              )}
+            </Box>
+          }
+          frameworkKey={framework!}
+        />
+      ) : (
+        <MetricCard
+          title={t("Jobs Created")}
+          progress={project.totalJobsCreated}
+          goal={project.jobsCreatedGoal ?? 0}
+          variant="donutChart"
+          icon={<JobsIcon />}
+          type="jobsCreated"
+          className={metricClassName}
+          classNameTitle="whitespace-nowrap"
+          tooltipContent={
+            <Box fontSize="14px" lineHeight="20px">
+              <b>{t("Jobs Created")}</b>
+              <br />
+              {t("Number of jobs created for this project")}
+            </Box>
+          }
+          frameworkKey={framework!}
+        />
+      )}
     </Flex>
   );
 };
