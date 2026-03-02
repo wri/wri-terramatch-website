@@ -13,11 +13,14 @@ import {
   Stack,
   Typography
 } from "@mui/material";
+import { useCallback } from "react";
 import { useNotify, useRecordContext, useRefresh } from "react-admin";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { usePostV2ProjectsUUIDManagers } from "@/generated/apiComponents";
+import { useUserAssociationCreation } from "@/connections/UserAssociation";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import ApiSlice from "@/store/apiSlice";
 
 interface AddManagerDialogProps extends DialogProps {
   handleClose: () => void;
@@ -41,28 +44,33 @@ export const AddManagerDialog = ({ handleClose, ...props }: AddManagerDialogProp
     handleSubmit
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
-  const { mutate: addManager } = usePostV2ProjectsUUIDManagers({
-    onSuccess() {
-      notify("Manager was added successfully");
-      refresh();
-      reset();
-      handleClose();
-    },
-    onError(error) {
-      setError("email", {
-        // @ts-ignore
-        message: error.errors[0]?.detail as string,
-        type: "validate"
-      });
-    }
+  const [, { isCreating, createFailure, create: createUserAssociation }] = useUserAssociationCreation({
+    uuid: record.id as string,
+    model: "projects"
   });
 
-  const onSubmit = (data: FormValues) => {
-    addManager({
-      pathParams: { uuid: record.id as string },
-      body: {
-        email_address: data.email
+  useRequestComplete(
+    isCreating,
+    useCallback(() => {
+      if (createFailure != null) {
+        setError("email", {
+          message: createFailure.message as string,
+          type: "validate"
+        });
+      } else {
+        notify("Manager was added successfully");
+        ApiSlice.pruneCache("associatedUsers");
+        refresh();
+        reset();
+        handleClose();
       }
+    }, [createFailure, notify, reset, refresh, handleClose, setError])
+  );
+
+  const onSubmit = (data: FormValues) => {
+    createUserAssociation({
+      emailAddress: data.email,
+      isManager: true
     });
   };
 

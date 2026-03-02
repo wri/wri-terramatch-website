@@ -3,6 +3,7 @@ import { Dictionary, last } from "lodash";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -105,8 +106,11 @@ const RequestMoreInformationPage = () => {
           title={form?.title}
           roundedCorners
           orgDetails={orgDetails}
+          redirectEntityPage={`/applications/${uuid}`}
+          entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
         />
       </LoadingContainer>
+      <PageFooter />
     </BackgroundLayout>
   );
 };

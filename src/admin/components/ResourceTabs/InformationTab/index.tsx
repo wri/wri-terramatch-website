@@ -12,7 +12,7 @@ import List from "@/components/extensive/List/List";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { SupportedEntity } from "@/connections/EntityAssociation";
-import { FormEntity, FormModelType } from "@/connections/Form";
+import { FormEntity, FormModelType, useUpdateRequest } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
@@ -77,6 +77,11 @@ const InformationTab: FC<IProps> = props => {
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
 
   const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(props.type) as FormEntity, record?.uuid);
+  const [updateRequestLoaded, { data: updateRequest }] = useUpdateRequest({
+    entity: v3EntityName(props.type) as FormEntity,
+    uuid: record?.uuid,
+    enabled: record?.uuid != null
+  });
   const [providerLoaded, fieldsProvider] = useApiFieldsProvider(formData?.formUuid);
 
   const model = useMemo<FormModel>(
@@ -84,10 +89,14 @@ const InformationTab: FC<IProps> = props => {
     [props.type, record?.uuid]
   );
 
-  const values = useMemo(
-    () => (formData?.answers == null ? {} : formDefaultValues(formData?.answers!, fieldsProvider)),
-    [fieldsProvider, formData?.answers]
-  );
+  const values = useMemo(() => {
+    if (formData?.answers == null || !updateRequestLoaded) return {};
+
+    // If there's an update request, use the base entity answers instead because in that case,
+    // formData.answers holds the update request data.
+    const answers = updateRequest?.entityAnswers ?? formData?.answers;
+    return formDefaultValues(answers, fieldsProvider);
+  }, [fieldsProvider, formData?.answers, updateRequest?.entityAnswers, updateRequestLoaded]);
 
   const fields = useMemo(
     () => fieldsProvider.stepIds().flatMap(fieldsProvider.fieldNames).map(fieldsProvider.fieldByName).filter(isNotNull),

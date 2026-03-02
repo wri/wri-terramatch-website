@@ -1,5 +1,5 @@
 import lo from "lodash";
-import { DataProvider, GetListParams, GetOneParams, UpdateParams } from "react-admin";
+import { DataProvider, GetListParams, GetManyParams, GetManyResult, GetOneParams, UpdateParams } from "react-admin";
 
 import {
   createOrg,
@@ -8,12 +8,7 @@ import {
   loadOrganisations,
   updateOrganisation
 } from "@/connections/Organisation";
-import {
-  fetchGetV2AdminOrganisationsExport,
-  fetchGetV2AdminOrganisationsMulti,
-  GetV2AdminOrganisationsExportError,
-  GetV2AdminOrganisationsMultiError
-} from "@/generated/apiComponents";
+import { fetchGetV2AdminOrganisationsExport, GetV2AdminOrganisationsExportError } from "@/generated/apiComponents";
 import { OrganisationFullDto, OrganisationUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
 
@@ -71,14 +66,18 @@ export const organisationDataProvider: OrganisationDataProvider = {
     }
   },
 
-  async getMany(_, params) {
-    try {
-      const response = await fetchGetV2AdminOrganisationsMulti({ queryParams: { ids: params.ids.join(",") } });
-      //@ts-ignore
-      return { data: response.data?.map(item => ({ ...item, id: item.uuid })) };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminOrganisationsMultiError);
+  async getMany(_: string, params: GetManyParams): Promise<GetManyResult> {
+    const results = await Promise.all(params.ids.map(id => loadOrganisation({ id: id as string })));
+    const failed = results.find(r => r.loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Organisation get fetch failed", failed.loadFailure);
     }
+
+    const data = results
+      .map(r => (r.data != null ? { ...r.data, id: r.data.uuid } : null))
+      .filter((item): item is OrganisationFullDto & { id: string } => item != null);
+
+    return { data } as GetManyResult;
   },
 
   //@ts-ignore

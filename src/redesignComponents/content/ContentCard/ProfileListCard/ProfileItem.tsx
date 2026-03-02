@@ -1,9 +1,9 @@
-import { Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Messages } from "@/redesignComponents/foundations/Icons";
+import { MessagesIcon } from "@/redesignComponents/foundations/Icons";
 import Avatar from "@/redesignComponents/navigation/Avatar/Avatar";
 
 import { IProfile } from "./ProfileListCard";
@@ -13,7 +13,7 @@ interface ProfileProps {
   onProfileClick: (profile: IProfile) => void;
 }
 
-const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
+const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick, ...props }) => {
   const t = useT();
 
   const canMessage = profile.isProjectManager && !!profile.email;
@@ -27,7 +27,7 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
   }, [canMessage, onProfileClick, profile]);
 
   return (
-    <>
+    <Flex alignItems="center" gap={2} tabIndex={0} {...props}>
       <Avatar name={profile.name} src={profile.image} ariaLabel={profile.name} />
       <Text flex={1} textStyle="400" color="neutral.900">
         {profile.name}
@@ -36,12 +36,12 @@ const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick }) => {
         variant="borderless"
         size="small"
         onClick={handleClick}
-        leftIcon={<Messages boxSize={3} color="neutral.800" />}
+        leftIcon={<MessagesIcon boxSize={3} color="neutral.800" />}
         className={canMessage ? undefined : "hidden"}
       >
-        {t("Message")}
+        {profile.messageText ?? t("Message")}
       </Button>
-    </>
+    </Flex>
   );
 };
 

@@ -17,8 +17,8 @@ export const Info: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Info notification",
-          caption: "Something happened in the app.",
+          label: "Label",
+          caption: "Caption",
           type: "info",
           placement: "top-end",
           closableLabel: "Close"
@@ -36,13 +36,13 @@ export const Success: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Changes saved",
-          caption: "Your project has been updated.",
+          label: "Label",
+          caption: "Caption",
           type: "success",
           placement: "top-end",
           duration: 3000,
           closable: true,
-          closableLabel: "Close"
+          closableLabel: "Dismiss"
         })
       }
     >
@@ -57,13 +57,13 @@ export const Warning: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Proceed with caution",
-          caption: "This action may have unintended effects.",
+          label: "Label",
+          caption: "Caption",
           type: "warning",
           placement: "top-end",
           duration: 4000,
           closable: true,
-          closableLabel: "Close"
+          closableLabel: "Dismiss"
         })
       }
     >
@@ -78,13 +78,13 @@ export const Error: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Something went wrong",
-          caption: "Please try again or contact support.",
+          label: "Label",
+          caption: "Caption",
           type: "error",
           placement: "top-end",
           duration: 5000,
           closable: true,
-          closableLabel: "Close"
+          closableLabel: "Dismiss"
         })
       }
     >
@@ -99,12 +99,12 @@ export const Loading: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Uploading files…",
-          caption: "Please wait while we process your request.",
+          label: "Label",
+          caption: "Caption",
           type: "loading",
           placement: "top-end",
           closable: true,
-          closableLabel: "Close"
+          closableLabel: "Dismiss"
         })
       }
     >
@@ -119,16 +119,16 @@ export const WithAction: Story = {
       variant="primary"
       onClick={() =>
         showToast({
-          label: "Report submitted",
-          caption: "Your report has been queued for review.",
+          label: "Label",
+          caption: "Caption",
           type: "success",
           placement: "top-end",
           duration: 6000,
           closable: true,
-          closableLabel: "Close",
+          closableLabel: "Dismiss",
           action: {
-            label: "View report",
-            onClick: () => alert("Navigating to report…")
+            label: "Label",
+            onClick: () => alert("Caption")
           }
         })
       }
@@ -143,25 +143,33 @@ export const AllPlacements: Story = {
     <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
       <Button
         variant="primary"
-        onClick={() => showToast({ label: "Top Start", type: "info", placement: "top-start", duration: 3000 })}
+        onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "top-start", duration: 3000 })
+        }
       >
         Top Start
       </Button>
       <Button
         variant="primary"
-        onClick={() => showToast({ label: "Top End", type: "info", placement: "top-end", duration: 3000 })}
+        onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "top-end", duration: 3000 })
+        }
       >
         Top End
       </Button>
       <Button
         variant="primary"
-        onClick={() => showToast({ label: "Bottom Start", type: "info", placement: "bottom-start", duration: 3000 })}
+        onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "bottom-start", duration: 3000 })
+        }
       >
         Bottom Start
       </Button>
       <Button
         variant="primary"
-        onClick={() => showToast({ label: "Bottom End", type: "info", placement: "bottom-end", duration: 3000 })}
+        onClick={() =>
+          showToast({ label: "Label", caption: "Caption", type: "info", placement: "bottom-end", duration: 3000 })
+        }
       >
         Bottom End
       </Button>

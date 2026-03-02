@@ -5,21 +5,16 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  GetV2ProjectsUUIDManagersResponse,
-  GetV2ProjectsUUIDPartnersResponse,
-  useGetV2ProjectsUUIDManagers,
-  useGetV2ProjectsUUIDPartners
-} from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
+import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
-import { Delete, UserAdd } from "@/redesignComponents/foundations/Icons";
+import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -46,7 +41,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
     name: "EPA Ghana Pilot Admin"
   },
   {
-    id: "monitoring-partner",
+    id: "project-developer",
     name: "Monitoring Partner"
   },
   {
@@ -55,43 +50,16 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
   }
 ];
 
-const teamMembersFormatted = (
-  teamMembers: GetV2ProjectsUUIDPartnersResponse | GetV2ProjectsUUIDManagersResponse,
-  role: string
-) => {
-  return teamMembers?.map(member => ({
-    uuid: member?.uuid,
-    name: `${member.first_name} ${member.last_name}`,
-    organization: (member as any)?.organisation?.name,
-    email: member?.email_address,
-    role: role,
-    status: member?.role == "project-manager" ? "Accepted" : member?.status,
-    image: ``
-  }));
-};
-
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // TODO: The current pagination logic and data fetching for Monitoring Parts and Manager
-  // will be replaced once these endpoints are migrated to V3.
-  // Related migration ticket: TM-2880
-
-  const { data: partners, refetch } = useGetV2ProjectsUUIDPartners<{
-    data: GetV2ProjectsUUIDPartnersResponse;
-  }>({
-    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid,
+    model: "projects"
   });
-
-  const { data: managers } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDManagersResponse }>({
-    pathParams: { uuid: project?.uuid ?? "d2c2a1fe-c5e8-435a-b865-00dce7a9809f" }
-  });
-
-  const { deletePartner } = useDeleteAssociate("partner", project, refetch);
-  const { deletePartner: deleteManager } = useDeleteAssociate("manager", project, refetch);
 
   const handleInvite = () => {
     openModal(
@@ -107,20 +75,14 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         <Modal
           iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
           title={t("REMOVE MONITORING PARTNER?")}
-          content={t(
-            "Remove {email_address} as Monitoring Partner to Ecosystem and livelihoods enhancement for People, Nature and Climate in Marsabit County International Tree Foundation??",
-            {
-              email_address: rowData?.email
-            }
-          )}
+          content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
+            email_address: rowData?.emailAddress,
+            project_name: project?.name
+          })}
           primaryButtonProps={{
             children: t("Confirm"),
             onClick: () => {
-              if (rowData.role === "monitoring-partner") {
-                deletePartner(rowData?.email);
-              } else if (rowData.role === "project-manager") {
-                deleteManager(rowData?.uuid ?? "");
-              }
+              bulkDeleteUserAssociations(project.uuid, [rowData?.uuid ?? ""]);
               closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
             }
           }}
@@ -131,24 +93,40 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         />
       );
     },
-    [closeModal, deleteManager, deletePartner, openModal, t]
+    [closeModal, openModal, t, project.uuid, project?.name]
   );
 
   const teamMembers = useMemo(() => {
-    const all = [
-      ...teamMembersFormatted(partners?.data ?? [], "monitoring-partner"),
-      ...teamMembersFormatted(managers?.data ?? [], "project-manager")
-    ].filter(member => (selectedRole ? member.role === selectedRole : true));
+    const all =
+      associatedUsers
+        ?.filter(member => {
+          const role = member?.roleName?.toLowerCase();
+          const isValidRole = role && ["project-manager", "project-developer"].includes(role);
+          const matchesSelectedRole = !selectedRole || role === selectedRole.toLowerCase();
+          return isValidRole && matchesSelectedRole;
+        })
+        .map((member, index) => ({
+          ...member,
+          //TODO: replace with actual image once it is implemented
+          status: member?.status == "active" || member?.isManager ? "Accepted" : "Pending",
+          image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+        })) ?? [];
 
     const q = searchQuery.trim().toLowerCase();
     if (q.length === 0) return all;
-    return all.filter(member => {
-      const includes = (key: "name" | "organization" | "email" | "role") =>
-        typeof member[key] === "string" && (member[key] as string).toLowerCase().includes(q);
+    return all?.filter(member => {
+      const includes = (key: keyof UserAssociationDto) =>
+        typeof member?.[key] === "string" && (member?.[key] as string).toLowerCase().includes(q);
 
-      return includes("name") || includes("organization") || includes("email") || includes("role");
+      return (
+        includes("fullName") ||
+        includes("organisationName") ||
+        includes("emailAddress") ||
+        includes("roleName") ||
+        includes("status")
+      );
     });
-  }, [partners?.data, managers?.data, selectedRole, searchQuery]);
+  }, [associatedUsers, selectedRole, searchQuery]);
 
   return (
     <Box paddingX={8} paddingY={6} minHeight="525px">
@@ -162,19 +140,19 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           {
             mainActionLabel: t(
               selectedRole !== null
-                ? selectedRole === "monitoring-partner"
+                ? selectedRole === "project-developer"
                   ? "Monitoring Partner"
                   : "Project Manager"
                 : "Role"
             ),
             variant: "secondary",
             mainActionOnClick: () =>
-              setSelectedRole(selectedRole === "monitoring-partner" ? "project-manager" : "monitoring-partner"),
+              setSelectedRole(selectedRole === "project-developer" ? "project-manager" : "project-developer"),
             otherActions: [
               {
                 label: t("Monitoring Partner"),
-                value: "monitoring-partner",
-                onClick: () => setSelectedRole("monitoring-partner")
+                value: "project-developer",
+                onClick: () => setSelectedRole("project-developer")
               },
               {
                 label: t("Project Manager"),
@@ -185,7 +163,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           }
         ]}
         search={{
-          label: t("Members"),
+          label: t(teamMembers.length === 1 ? "Member" : "Members"),
           placeholder: t("Search"),
           options: [
             { label: t("Name"), value: "name" },
@@ -195,11 +173,11 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           ],
           displayResults: "none",
           onQueryChange: setSearchQuery,
-          count: teamMembers.length
+          count: teamMembers?.length ?? 0
         }}
         button={{
           children: t("Add Team Member"),
-          leftIcon: <UserAdd />,
+          leftIcon: <UserAddIcon />,
           onClick: handleInvite
         }}
         tooltipContent={t(
@@ -208,7 +186,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         showClearFilters={selectedRole !== null}
       />
       <Table
-        data={teamMembers}
+        data={teamMembers ?? []}
         renderRow={useCallback(
           (rowData: RowData) => (
             <TableRow className="group">
@@ -216,21 +194,21 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                 <CustomTableCell
                   avatars={[
                     {
-                      name: rowData.name,
+                      name: rowData.fullName,
                       src: (rowData as any).image,
-                      ariaLabel: rowData.name
+                      ariaLabel: rowData.fullName
                     }
                   ]}
                 />
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.organization}</ChakraTableCell>
-              <ChakraTableCell>{rowData?.email}</ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
+              <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
               <ChakraTableCell>
-                {rowData?.role != null
-                  ? TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.role)?.name
+                {rowData?.roleName != null
+                  ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
                   : "-"}
               </ChakraTableCell>
-              <ChakraTableCell>{rowData?.status ? t(rowData.status as string) : "-"}</ChakraTableCell>
+              <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
               <ChakraTableCell>
                 <ActionCell
                   // TODO: comment out for now as we don't have an edit functionality yet
@@ -250,24 +228,28 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                   //     />
                   //   )
                   // }}
-                  buttonSecondary={{
-                    children: t("Remove"),
-                    variant: "secondary",
-                    onClick: () => ModalConfirmDeletePartner(rowData),
-                    leftIcon: (
-                      <Delete
-                        className="!text-theme-error-500"
-                        css={{
-                          "& svg path": {
-                            fill: getThemedColor("error", 500) + " !important",
-                            color: getThemedColor("error", 500) + " !important"
-                          }
-                        }}
-                      />
-                    ),
-                    className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
-                    size: "small"
-                  }}
+                  buttonSecondary={
+                    rowData?.isManager
+                      ? undefined
+                      : {
+                          children: t("Remove"),
+                          variant: "secondary",
+                          onClick: () => ModalConfirmDeletePartner(rowData),
+                          leftIcon: (
+                            <DeleteIcon
+                              className="!text-theme-error-500"
+                              css={{
+                                "& svg path": {
+                                  fill: getThemedColor("error", 500) + " !important",
+                                  color: getThemedColor("error", 500) + " !important"
+                                }
+                              }}
+                            />
+                          ),
+                          className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
+                          size: "small"
+                        }
+                  }
                 />
               </ChakraTableCell>
             </TableRow>
@@ -276,22 +258,22 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         )}
         columns={[
           {
-            key: "name",
+            key: "fullName",
             label: t("Name"),
             sortable: true
           },
           {
-            key: "organization",
+            key: "organisationName",
             label: t("Organization"),
             sortable: true
           },
           {
-            key: "email",
+            key: "emailAddress",
             label: t("Email"),
             sortable: true
           },
           {
-            key: "role",
+            key: "roleName",
             label: t("Role"),
             sortable: true
           },

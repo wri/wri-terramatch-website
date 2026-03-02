@@ -16,7 +16,7 @@ const Badge: FC<BadgeProps> = ({ notificationCount, hasNotification, label }) =>
           padding: "2px",
           paddingRight: "3px"
         },
-        "& span, & p": {
+        "& p[aria-label]": {
           fontSize: "8px"
         }
       }}

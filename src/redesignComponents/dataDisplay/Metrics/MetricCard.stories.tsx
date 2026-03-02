@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { getThemedColor } from "@/lib/theme";
 
-import { Placeholder } from "../../foundations/Icons";
+import { PlaceholderIcon } from "../../foundations/Icons";
 import MetricCard from "./MetricCard";
 
 const meta: Meta<typeof MetricCard> = {
@@ -36,7 +36,7 @@ export const Medium: Story = {
     progress: 1234,
     goal: 10000,
     variant: "medium",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -48,7 +48,7 @@ export const Large: Story = {
     progress: 1234,
     goal: 10000,
     variant: "large",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -60,7 +60,7 @@ export const ProgressBar: Story = {
     progress: 750,
     goal: 1000,
     variant: "progressBar",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -72,7 +72,7 @@ export const DonutChart: Story = {
     progress: 5000,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -86,7 +86,7 @@ export const AllVariants: Story = {
         progress={1234}
         goal={10000}
         variant="medium"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
         tooltipContent="This is a tooltip"
       />
       <MetricCard
@@ -94,7 +94,7 @@ export const AllVariants: Story = {
         progress={1234}
         goal={10000}
         variant="large"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
         tooltipContent="This is a tooltip"
       />
       <MetricCard
@@ -102,7 +102,7 @@ export const AllVariants: Story = {
         progress={750}
         goal={1000}
         variant="progressBar"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
         tooltipContent="This is a tooltip"
         color="secondary.600"
       />
@@ -111,7 +111,7 @@ export const AllVariants: Story = {
         progress={5000}
         goal={10000}
         variant="donutChart"
-        icon={<Placeholder />}
+        icon={<PlaceholderIcon />}
         color={getThemedColor("secondary", 700)}
         tooltipContent="This is a tooltip"
       />
@@ -125,7 +125,7 @@ export const HighProgress: Story = {
     progress: 9500,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -137,7 +137,7 @@ export const LowProgress: Story = {
     progress: 250,
     goal: 10000,
     variant: "progressBar",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }
@@ -149,7 +149,7 @@ export const ZeroProgress: Story = {
     progress: 0,
     goal: 10000,
     variant: "donutChart",
-    icon: <Placeholder />,
+    icon: <PlaceholderIcon />,
     tooltipContent: "This is a tooltip",
     className: "w-fit"
   }

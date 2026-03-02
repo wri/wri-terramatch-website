@@ -41,11 +41,13 @@ const V3_NAMESPACES: Dictionary<string> = {
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
   polygonClipping: researchServiceUrl,
+  reportingFrameworks: entityServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
   userAssociations: userServiceUrl,
   users: userServiceUrl,
-  validations: researchServiceUrl
+  validations: researchServiceUrl,
+  userAssociations: userServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {

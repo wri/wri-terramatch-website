@@ -1,14 +1,12 @@
-import { Tab as HTab } from "@headlessui/react";
 import classNames from "classnames";
-import { Fragment, ReactElement, useState } from "react";
+import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
 import { CarouselBreakPoints } from "@/components/extensive/Carousel/Carousel";
-import List from "@/components/extensive/List/List";
 import { useValueChanged } from "@/hooks/useValueChanged";
+import FormNavigation from "@/redesignComponents/navigation/FormNavigation/FormNavigation";
+import type { TabType } from "@/redesignComponents/navigation/FormNavigation/formNavigation.constants";
 import { TextVariants } from "@/types/common";
-
-import { TabButton } from "./TabButton";
 
 export interface TabsProps {
   tabItems: TabItem[];
@@ -40,7 +38,19 @@ export interface TabItem {
   key?: string;
 }
 
-const Tabs = (props: TabsProps) => {
+function mapStateToType(state?: TabItem["state"]): TabType {
+  switch (state) {
+    case "complete":
+      return "complete";
+    case "error":
+      return "error";
+    case "unstarted":
+    default:
+      return "available";
+  }
+}
+
+const Tabs: FC<TabsProps> = props => {
   const [selectedIndex, setSelectedIndex] = useState<number>(() =>
     props.selectedTabKey != null
       ? props.tabItems.findIndex(item => item.key === props.selectedTabKey)
@@ -51,55 +61,39 @@ const Tabs = (props: TabsProps) => {
     if (typeof props.selectedIndex === "number") setSelectedIndex(props.selectedIndex);
   });
 
+  const formNavigationTabs = useMemo(
+    () =>
+      props.tabItems.map((item, index) => ({
+        label: item.title,
+        value: item.key ?? `tab-${index}`,
+        type: mapStateToType(item.state),
+        disabled: item.disabled
+      })),
+    [props.tabItems]
+  );
+
+  const handleTabClick = useCallback(
+    (value: string) => {
+      const index = props.tabItems.findIndex((item, idx) => (item.key ?? `tab-${idx}`) === value);
+      if (index >= 0) {
+        setSelectedIndex(index);
+        props.onChangeSelected?.(index);
+      }
+    },
+    [props]
+  );
+
+  const currentTabValue = props.tabItems[selectedIndex]?.key ?? `tab-${selectedIndex}`;
+
   return (
-    <HTab.Group
-      as="div"
-      vertical
-      className={twMerge("flex h-full w-full rounded-2xl shadow", props.className)}
-      selectedIndex={selectedIndex}
-      //@ts-ignore
-      onChange={v => {
-        setSelectedIndex(v);
-        props.onChangeSelected?.(v);
-      }}
-    >
-      <HTab.List
-        className={twMerge("flex w-full max-w-[86px] flex-grow flex-col md:max-w-[280px]", props.tabListClassName)}
-      >
-        <List
-          as={Fragment}
-          itemAs={Fragment}
-          items={props.tabItems}
-          render={(item, index, array) => (
-            <HTab as={Fragment}>
-              {({ selected }) => (
-                <TabButton
-                  index={index}
-                  className={classNames(
-                    "flex min-h-[70px] w-full items-center justify-start py-4 px-6",
-                    props.rounded && "first:rounded-tl-2xl"
-                  )}
-                  item={item}
-                  selected={selected}
-                  lastItem={array.length - 1 === index}
-                  textVariant="text-14-bold"
-                  disabled={item.disabled}
-                />
-              )}
-            </HTab>
-          )}
-        />
-        <div className={classNames("flex-1 border border-neutral-100 bg-white", props.rounded && "rounded-bl-lg ")} />
-      </HTab.List>
-      <HTab.Panels
-        className={classNames(
-          "w-full overflow-hidden border border-l-0 border-neutral-100",
-          props.rounded && "rounded-r-lg"
-        )}
-      >
+    <div className={twMerge("bg-theme-neutral-100 flex h-full w-full pl-6 pr-2.5 pt-2 pb-10 shadow", props.className)}>
+      <div className={twMerge("flex flex-col", props.tabListClassName)}>
+        <FormNavigation tabs={formNavigationTabs} defaultValue={currentTabValue} onTabClick={handleTabClick} />
+      </div>
+      <div className={classNames("w-full overflow-hidden", props.rounded && "rounded-r-lg")}>
         {props.tabItems?.[selectedIndex]?.renderBody()}
-      </HTab.Panels>
-    </HTab.Group>
+      </div>
+    </div>
   );
 };
 

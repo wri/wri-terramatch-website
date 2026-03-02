@@ -14,8 +14,8 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 const GalleryTab = (props: EntityMapAndGalleryCardProps & { sharedDriveLink?: string }) => {
   const t = useT();
   return (
-    <PageBody>
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 pt-5">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageColumn>
           <EntityMapAndGalleryCard {...props} />
 

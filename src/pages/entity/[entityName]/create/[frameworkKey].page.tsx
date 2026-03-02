@@ -66,7 +66,7 @@ const EntityIntroPage = () => {
   const entityUUID = router.query.entity_uuid as string | undefined;
 
   const formUUID = entityUUID == null ? useGetReportingFrameworkFormKey(frameworkKey, entityName) : undefined;
-  const [, { data: frameworkForm }] = useForm({ id: formUUID, enabled: formUUID != null });
+  const [, { data: frameworkForm }] = useForm({ id: formUUID ?? undefined, enabled: formUUID != null });
   const { form: entityForm } = useEntityForm(v3EntityName(entityName) as FormEntity, entityUUID);
   const form = frameworkForm ?? entityForm;
   const { createEntity, isCreating } = useCreateEntity(

@@ -7,18 +7,18 @@ import { Else, If, Then } from "react-if";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import { GetV2ProjectsUUIDPartnersResponse, useGetV2ProjectsUUIDManagers } from "@/generated/apiComponents";
-import { useDeleteAssociate } from "@/hooks/useDeleteAssociate";
 
 export const ProjectManagersTable = ({ project }: { project: any }) => {
   const t = useT();
-  const { data: managers, refetch } = useGetV2ProjectsUUIDManagers<{ data: GetV2ProjectsUUIDPartnersResponse }>({
-    pathParams: { uuid: project.uuid }
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid,
+    filter: { isManager: true },
+    model: "projects"
   });
 
   const { openModal, closeModal } = useModalContext();
-  const { deletePartner } = useDeleteAssociate("manager", project, refetch);
 
   const confirmDelete = (email_address: string, uuid: string) => {
     openModal(
@@ -33,7 +33,7 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
         primaryButtonProps={{
           children: t("Confirm"),
           onClick: () => {
-            deletePartner(uuid);
+            bulkDeleteUserAssociations(project.uuid, [uuid]);
             closeModal(ModalId.CONFIRM_DELETE);
           }
         }}
@@ -55,7 +55,7 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
 
           <Divider />
 
-          <If condition={managers?.data == null || managers.data.length === 0}>
+          <If condition={associatedUsers == null || associatedUsers.length === 0}>
             <Then>
               <Box padding={3}>
                 <Typography>This project doesn’t have any project managers.</Typography>
@@ -63,25 +63,24 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
             </Then>
             <Else>
               <DataGrid
-                rows={managers?.data ?? []}
+                rows={associatedUsers ?? []}
                 rowSelection={false}
                 columns={[
                   {
-                    field: "first_name",
+                    field: "fullName",
                     headerName: "Name",
-                    renderCell: params => `${params.row.first_name || ""} ${params.row.last_name || ""}`,
                     flex: 1,
                     sortable: false,
                     filterable: false
                   },
-                  { field: "email_address", headerName: "Email", flex: 1, sortable: false, filterable: false },
+                  { field: "emailAddress", headerName: "Email", flex: 1, sortable: false, filterable: false },
                   {
                     field: "''",
                     headerName: "",
                     renderCell: params => {
                       return (
                         <div
-                          onClick={() => confirmDelete(params.row.email_address as string, params.row.uuid as string)}
+                          onClick={() => confirmDelete(params.row.emailAddress as string, params.row.uuid as string)}
                         >
                           <DeleteOutlineIcon className="cursor-pointer" />
                         </div>
@@ -94,7 +93,7 @@ export const ProjectManagersTable = ({ project }: { project: any }) => {
                     disableColumnMenu: true
                   }
                 ]}
-                getRowId={item => item.uuid || item.email_address || ""}
+                getRowId={item => item.uuid || item.emailAddress || ""}
               />
             </Else>
           </If>
