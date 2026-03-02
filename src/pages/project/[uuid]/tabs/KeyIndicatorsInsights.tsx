@@ -124,7 +124,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="large"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={metricClassName}
+          className={metricClassName + " !h-auto"}
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
