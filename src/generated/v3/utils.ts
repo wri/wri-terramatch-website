@@ -46,8 +46,7 @@ const V3_NAMESPACES: Dictionary<string> = {
   trees: entityServiceUrl,
   userAssociations: userServiceUrl,
   users: userServiceUrl,
-  validations: researchServiceUrl,
-  userAssociations: userServiceUrl
+  validations: researchServiceUrl
 } as const;
 
 const getBaseUrl = (url: string) => {
