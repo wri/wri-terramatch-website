@@ -27,6 +27,7 @@ export { JobsIcon } from "./JobsIcon";
 export { JobsCircleIcon } from "./JobsCircleIcon";
 export { LandscapeIcon } from "./LandscapeIcon";
 export { LanguageIcon } from "./LanguageIcon";
+export { LeadingIcon } from "./LeadingIcon";
 export { MessagesIcon } from "./MessagesIcon";
 export { MinusIcon } from "./MinusIcon";
 export { MoreVertIcon } from "./MoreVertIcon";
