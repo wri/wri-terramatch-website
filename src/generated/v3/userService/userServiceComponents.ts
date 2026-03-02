@@ -1095,7 +1095,14 @@ export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreation
 );
 
 export type GetUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type GetUserAssociationQueryParams = {
@@ -1179,10 +1186,17 @@ export const getUserAssociation = new V3ApiEndpoint<
   GetUserAssociationError,
   GetUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "GET");
+>("/userAssociations/v3/{model}/{uuid}", "GET");
 
 export type CreateUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type CreateUserAssociationError = Fetcher.ErrorWrapper<
@@ -1257,10 +1271,17 @@ export const createUserAssociation = new V3ApiEndpoint<
   CreateUserAssociationError,
   CreateUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "POST");
+>("/userAssociations/v3/{model}/{uuid}", "POST");
 
 export type DeleteUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type DeleteUserAssociationQueryParams = {
@@ -1332,7 +1353,7 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   DeleteUserAssociationError,
   DeleteUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "DELETE");
+>("/userAssociations/v3/{model}/{uuid}", "DELETE");
 
 export const operationsByTag = {
   login: { authLogin },
