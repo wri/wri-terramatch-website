@@ -13,8 +13,16 @@ import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  CheckApprovedIcon,
+  ChevronRightIcon,
+  DownloadIcon,
+  DraftIcon,
+  InformationRequiredIcon,
+  PendingIcon
+} from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -33,14 +41,19 @@ interface OverviewItemProps {
   downloadButtonProps?: IButtonProps;
   children?: ReactNode;
   flexProps?: FlexProps;
+  tag?: ReactNode;
 }
 
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
-      <Text color="primary.900" textStyle="600">
-        {title}
-      </Text>
+      <div className="flex items-center gap-2">
+        <Text color="primary.900" textStyle="600">
+          {title}
+        </Text>
+        {tag ? tag : null}
+      </div>
+
       <Flex gap={4}>
         {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
         {buttonProps ? <Button {...buttonProps} /> : null}
@@ -49,6 +62,47 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
     {children}
   </Flex>
 );
+
+const mapStatusToTagStateProject = (
+  status: string | null | undefined
+):
+  | { label: string; type: "info-white" | "info-grey" | "success" | "warning" | "error"; icon?: ReactNode }
+  | undefined => {
+  switch (status) {
+    case "draft":
+      return {
+        label: "Draft",
+        type: "info-white",
+        icon: <DraftIcon />
+      };
+    case "awaiting-approval":
+      return {
+        label: "Pending Approval",
+        type: "info-white",
+        icon: <PendingIcon />
+      };
+    case "started":
+      return {
+        label: "Started",
+        type: "info-white",
+        icon: <DraftIcon />
+      };
+    case "needs-more-information":
+      return {
+        label: "Information Required",
+        type: "warning",
+        icon: <InformationRequiredIcon />
+      };
+    case "approved":
+      return {
+        label: "Approved",
+        type: "success",
+        icon: <CheckApprovedIcon />
+      };
+    default:
+      return undefined;
+  }
+};
 
 const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   const router = useRouter();
@@ -152,10 +206,16 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
+            tag={(() => {
+              const tagState = mapStatusToTagStateProject(project?.status);
+              return tagState != null ? (
+                <FeedbackTag type={tagState.type} label={tagState.label} icon={tagState.icon} />
+              ) : null;
+            })()}
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: isProjectSetupComplete ? "Edit" : "Continue Editing",
+              children: isProjectSetupComplete ? "Edit" : "Continue",
               rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}

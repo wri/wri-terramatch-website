@@ -75,7 +75,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} />
+        <ProjectDescription description={description} handleEdit={handleEdit} />
       ) : (
         <div className="w-fit">
           <Button
