@@ -1388,6 +1388,7 @@ export type ProjectFullDto = {
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
   proofOfLandTenureMou: MediaDto[];
+  consortiumPartnershipAgreements: MediaDto[];
   detailedProjectBudget: MediaDto;
 };
 
@@ -1701,6 +1702,7 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  managementAccountsUpload: MediaDto[];
   treePlantingUpload: MediaDto[];
   soilWaterConservationUpload: MediaDto[];
   soilWaterConservationPhotos: MediaDto[];

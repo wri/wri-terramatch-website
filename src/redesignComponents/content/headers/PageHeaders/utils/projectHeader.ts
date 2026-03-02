@@ -40,8 +40,10 @@ export const mapPlantingStatusToProgressState = (status?: string | null): Progre
     case "in-progress":
       return "in-progress";
     case "completed":
-      return "complete";
-    default:
+      return "completed";
+    case "not-started":
       return "not-started";
+    default:
+      return "in-progress";
   }
 };

@@ -28,7 +28,8 @@ export interface ProjectHeaderProps {
 const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
-    filter: { isManager: false }
+    filter: { isManager: false },
+    model: "projects"
   });
 
   const teamMembers = useMemo(
@@ -45,7 +46,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" background="secondary.neutral">
       <Flex gap={5}>
         <div className={IMAGE_CONTAINER_CLASSES}>
-          <ProfileImage size={IMAGE_SIZE} alt={project.name ?? ""} />
+          <ProfileImage size={IMAGE_SIZE} alt={project.name ?? ""} isAdd />
         </div>
 
         <ProjectInfo

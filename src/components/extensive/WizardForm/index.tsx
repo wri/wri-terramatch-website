@@ -267,7 +267,7 @@ function WizardForm(props: WizardFormProps) {
           cancelButtonProps={undefined}
           primaryButtonProps={{
             children: t(`${isEntityApproved ? "Save changes" : "Next"}`),
-            disabled: hasErrorInAnyStep,
+            disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={
@@ -308,6 +308,7 @@ function WizardForm(props: WizardFormProps) {
       formHook,
       _onChange,
       selectedStepIndex,
+      lastIndex,
       setSelectedStepIndex,
       isAdmin,
       onClickSaveAndClose,

@@ -28,7 +28,7 @@ export const STATE_PROGRESS_TAG = {
       </svg>
     )
   },
-  complete: {
+  completed: {
     label: "Complete",
     icon: (
       <svg

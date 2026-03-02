@@ -8,6 +8,7 @@ import { When } from "react-if";
 import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
+import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
@@ -17,14 +18,16 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { v3EntityName } from "@/helpers/entity";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
+import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
@@ -75,9 +78,10 @@ type DetailStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<any>;
   project: ProjectFullDto;
+  stepIndex: number;
 };
 
-const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
+const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex }) => {
   const t = useT();
   const router = useRouter();
   const isValid = step.validation.isValidSync(formValues);
@@ -138,11 +142,33 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
               const rawValue = entry.value ?? "-";
               if (typeof rawValue === "string" || typeof rawValue === "number") {
                 return (
-                  <Text
-                    textStyle="400"
-                    color="neutral.900"
-                    dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
-                  />
+                  <>
+                    <Text
+                      textStyle="400"
+                      color="neutral.900"
+                      dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
+                    />
+
+                    {stepIndex == 0 && index == 0 && (
+                      <>
+                        <Text textStyle="300-bold" color="primary.900">
+                          {t("Project Stage")}:
+                        </Text>
+                        <div className="flex items-center gap-2">
+                          <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
+                          {(project.plantingStatus == "replacement-planting" ||
+                            project.plantingStatus == "no-restoration-expected") && (
+                            <>
+                              <ArrowForward boxSize={4} color="neutral.900" />
+                              <Text textStyle="400" color="neutral.900">
+                                {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                              </Text>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </>
                 );
               }
               if (rawValue.props.tableType == "noCount") {
@@ -170,7 +196,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
                                 <Box
                                   className={classNames(
                                     idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                    "border-theme-neutral-300 border-b py-4"
+                                    "border-b border-theme-neutral-300 py-4"
                                   )}
                                 >
                                   {row[idx + 1]}
@@ -226,11 +252,11 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
-          {steps.map(step => (
-            <DetailStep key={step.id} step={step} formValues={formValues} project={project} />
+          {steps.map((step, index) => (
+            <DetailStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
           ))}
         </WizardFormProvider>
       </Flex>

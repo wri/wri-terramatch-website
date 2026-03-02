@@ -40,7 +40,8 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
   const [, { isCreating, createFailure, create: invitePartner }] = useUserAssociationCreation({
-    uuid: projectUUID
+    uuid: projectUUID,
+    model: "projects"
   });
 
   const hideModal = useCallback(() => {
