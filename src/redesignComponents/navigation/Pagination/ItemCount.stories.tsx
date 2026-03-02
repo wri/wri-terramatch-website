@@ -5,9 +5,6 @@ import ItemCount from "./ItemCount";
 const meta = {
   title: "Redesign Components/Navigation/Pagination/Item Count",
   component: ItemCount,
-  parameters: {
-    layout: "centered"
-  },
   tags: ["autodocs"],
   argTypes: {
     pageSize: {
