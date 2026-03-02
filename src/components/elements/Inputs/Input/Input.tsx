@@ -176,6 +176,7 @@ const Input = forwardRef(
     const clearInput = useCallback(() => formHook?.setValue(name, ""), [formHook, name]);
     if (clearable && formHook?.getValues(name) != null) {
       iconButtonProps = {
+        type: "button",
         iconProps: clearableIconProps,
         onClick: clearInput
       };
