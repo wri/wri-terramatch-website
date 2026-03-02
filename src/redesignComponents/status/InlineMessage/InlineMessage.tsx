@@ -36,7 +36,7 @@ const InlineMessage: FC<InlineMessageProps> = ({
           marginTop: 0
         },
         "& [aria-roledescription]": {
-          gap: "16px"
+          columnGap: "16px"
         }
       }}
     >
