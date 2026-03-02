@@ -29,7 +29,7 @@ export const STEP_STATUS_PRESSED_STYLE_MAP = {
 
 export const NAVIGATION_CLASSES = {
   tab: {
-    base: "group h-13 w-72 gap-0 rounded-sm border-b border-theme-neutral-300 px-2 text-theme-primary-900 before:!h-0 hover:bg-theme-primary-100 focus-visible:outline focus-visible:outline-theme-primary-900"
+    base: "group h-13 w-full gap-0 rounded-sm border-b border-theme-neutral-300 px-2 text-theme-primary-900 before:!h-0 hover:bg-theme-primary-100 focus-visible:outline focus-visible:outline-theme-primary-900"
   },
   badge: {
     base: "text-18-bold mr-2 flex h-8 w-8 items-center justify-center rounded-full border shadow-monitored",
@@ -44,7 +44,7 @@ export const NAVIGATION_CLASSES = {
   },
   label: {
     default: "text-16-light text-theme-neutral-700",
-    selected: "text-16-bold text-theme-primary-900"
+    selected: "text-16-bold text-theme-primary-900 font-bold"
   },
   number: {
     base: "text-18-bold leading-[normal]",

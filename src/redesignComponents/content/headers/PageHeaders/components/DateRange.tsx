@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC } from "react";
 
-import { Calendar } from "@/redesignComponents/foundations/Icons/Calendar";
+import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 
 import SeparatorDot from "./SeparatorDot";
 
@@ -17,17 +17,17 @@ const DateRange: FC<DateRangeProps> = ({ startDate, endDate }) => {
   return (
     <Flex gap={2} className="items-center">
       <Flex gap={1} className="items-center">
-        <Calendar />
+        <CalendarIcon />
         <Text textStyle="300" color="neutral.900">
           {t("Start:")}
         </Text>
-        <Text textStyle="300" color="neutral.900">
+        <Text textStyle="300-bold" color="neutral.900">
           {startDate}
         </Text>
       </Flex>
       <SeparatorDot />
       <Flex gap={1} className="items-center">
-        <Calendar />
+        <CalendarIcon />
         <Text textStyle="300" color="neutral.900">
           {t("End:")}
         </Text>

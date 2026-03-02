@@ -15,14 +15,14 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantSpeciesCount, usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import Loader from "@/components/generic/Loading/Loader";
+import { useAggregateReports } from "@/connections/AggregateReports";
 import { SupportedEntity } from "@/connections/EntityAssociation";
 import { TEXT_TYPES } from "@/constants/dashboardConsts";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, isTerrafund as frameworkIsTerrafund } from "@/context/framework.provider";
-import { useGetV2EntityUUIDAggregateReports } from "@/generated/apiComponents";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
-import { getNewRestorationGoalDataForChart } from "@/utils/dashboardUtils";
+import { getNewRestorationGoalDataForChart, isAggregateReportsEmpty } from "@/utils/dashboardUtils";
 
 /** Extended so component compiles when API/OpenAPI schema does not yet expose lastReportedSurvivalRate on ProjectFullDto (e.g. before yarn generate:entityService). */
 type ProjectWithLastReportedSurvivalRate = ProjectFullDto & { lastReportedSurvivalRate?: number | null };
@@ -30,10 +30,6 @@ type ProjectWithLastReportedSurvivalRate = ProjectFullDto & { lastReportedSurviv
 interface GoalsAndProgressProps {
   project: ProjectWithLastReportedSurvivalRate;
 }
-
-const isEmptyArray = (obj: any) => {
-  return Object.keys(obj).every(key => Array.isArray(obj[key]) && obj[key].length === 0);
-};
 
 const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   const t = useT();
@@ -55,12 +51,11 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     collection: "non-tree"
   });
 
-  const { data: dataAggregated } = useGetV2EntityUUIDAggregateReports({
-    pathParams: {
-      uuid: project.uuid,
-      entity: "project"
-    }
+  const [aggregateLoaded, aggregateState] = useAggregateReports({
+    entity: "projects",
+    uuid: project.uuid
   });
+  const dataAggregated = aggregateState != null ? aggregateState.data : undefined;
 
   const naturalGenerationData = useMemo(
     () =>
@@ -99,14 +94,14 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   );
 
   return (
-    <PageBody className="text-darkCustom">
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Project Progress & Goals")}>
           <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
 
-      <PageRow>
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard
           title={t(project.frameworkKey == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
@@ -205,10 +200,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     ))}
                   </div>
                 </div>
-                {dataAggregated ? (
+                {aggregateLoaded && dataAggregated != null ? (
                   <BlurContainer
                     className="min-w-[196px] lg:min-w-[216px] wide:min-w-[236px]"
-                    isBlur={isEmptyArray(dataAggregated)}
+                    isBlur={isAggregateReportsEmpty(dataAggregated)}
                     textType={TEXT_TYPES.NO_GRAPH}
                   >
                     <TreePlantingChart data={getNewRestorationGoalDataForChart(dataAggregated)} />
@@ -248,7 +243,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow className="gap-8">
+      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
         <PageColumn>
           <PageCard
             title={isTerrafund ? t("Non-Tree Planting Progress") : t("Seed Planting Progress")}

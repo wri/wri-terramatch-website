@@ -16,7 +16,7 @@ export const SELECT_FILTER_QUESTION: Dictionary<string> = {
   "pro-pit-level-1-proposed": "pro-pit-level-0-proposed",
   "pro-pit-level-2-proposed": "pro-pit-level-1-proposed",
   "pro-states": "pro-country",
-  "pro-level-1-project": "pro-country",
+  "pro-level-1-project": "pro-level-0-project",
   "pro-level-2-project": "pro-level-1-project"
 };
 

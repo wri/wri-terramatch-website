@@ -8,6 +8,9 @@ export const TOOLTIP_SEEDS_PLANTED_PROJECT = "Number of seeds planted for this p
 export const TOOLTIP_TREES_REGENERATING_PROJECT =
   "Number of trees estimated to be naturally regenerating due to this project’s interventions";
 
+export const TOOLTIP_TREES_GROWN_PROJECT =
+  "Final contract figure: (Trees Planted Goal × Project Survival Rate) + Trees Regenerated Goal (TerraFund Cohort 3 only).";
+
 // SITE
 
 export const TOOLTIP_HECTARES_RESTORED_SITE = "Number of hectares within approved polygons for this site";

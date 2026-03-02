@@ -2,10 +2,11 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
+import { Framework } from "@/context/framework.provider";
 import { getThemedColor } from "@/lib/theme";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 
-import { InformationRequired } from "../../foundations/Icons";
+import { InformationRequiredIcon } from "../../foundations/Icons";
 import DonutChart from "./DonutChart";
 import ProgressBar from "./ProgressBar";
 import {
@@ -30,7 +31,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         {title}
       </Text>
       <Tooltip content={tooltipContent} position="top">
-        <InformationRequired color="neutral.800" boxSize="14px" />
+        <InformationRequiredIcon color="neutral.800" boxSize="14px" />
       </Tooltip>
     </Flex>
     <Text textStyle="400-bold" color="neutral.900">
@@ -54,7 +55,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequired color="neutral.800" boxSize="14px" />
+          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
       <Text textStyle="600-bold" color="neutral.900">
@@ -83,7 +84,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequired color="neutral.800" boxSize="14px" />
+          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
         </Tooltip>
       </Flex>
       <Flex gap={2} alignItems="center">
@@ -111,7 +112,9 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
   color,
   iconWithColor,
   type,
-  tooltipContent
+  tooltipContent,
+  classNameTitle,
+  frameworkKey
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : progress;
@@ -122,14 +125,20 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
       </DonutChart>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text textStyle="400" color="neutral.900">
+          <Text textStyle="400" color="neutral.900" className={classNameTitle}>
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
-            <InformationRequired color="neutral.800" boxSize="14px" />
+            <InformationRequiredIcon color="neutral.800" boxSize="14px" />
           </Tooltip>
         </Flex>
-        {goal > 0 || progress > 0 ? (
+        {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
+          <Flex gap={1} alignItems="center">
+            <Text textStyle="600-bold" color="neutral.900">
+              {progress.toLocaleString()}
+            </Text>
+          </Flex>
+        ) : goal > 0 || progress > 0 ? (
           <Flex gap={1} alignItems="center">
             <Text textStyle="600-bold" color="neutral.900">
               {Math.round(progress).toLocaleString()}
@@ -161,7 +170,9 @@ const MetricCard: FC<MetricCardProps> = props => {
     icon,
     color = "primary.600",
     type,
-    className
+    className,
+    classNameTitle,
+    frameworkKey
   } = props;
   const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
   const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
@@ -192,6 +203,8 @@ const MetricCard: FC<MetricCardProps> = props => {
           color={color}
           iconWithColor={iconWithColor24}
           type={type}
+          classNameTitle={classNameTitle}
+          frameworkKey={frameworkKey}
         />
       );
       break;

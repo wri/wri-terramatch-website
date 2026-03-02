@@ -77,6 +77,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
 
   const submitEntity = useCallback(() => {
     updateEntity({ status: "awaiting-approval" });
+    ApiSlice.pruneCache("actions");
   }, [updateEntity]);
   useRequestSuccess(
     isSubmitting,
@@ -180,6 +181,9 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
               }
             }}
             {...initialStepProps}
+            cancelEditForm={() => router.push(getEntityDetailPageLink(entityName, entityUUID))}
+            redirectEntityPage={getEntityDetailPageLink(entityName, entityUUID)}
+            entity={entity}
           />
         )}
       </CurrencyProvider>

@@ -6,9 +6,11 @@ import { useCallback, useMemo } from "react";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useApplication } from "@/connections/Application";
 import { useFramework } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { FormModel, useApiFieldsProvider, useV2OrgFormDetails } from "@/context/wizardForm.provider";
@@ -87,9 +89,11 @@ const SubmissionPage = () => {
     [fieldsProvider, updateSubmission]
   );
 
+  const [applicationLoaded, { data: application }] = useApplication({ id: submission?.applicationUuid ?? "" });
+
   return (
     <BackgroundLayout>
-      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded}>
+      <LoadingContainer loading={isLoading || !orgDetailsLoaded || !providerLoaded || !applicationLoaded}>
         <WizardForm
           models={formModels}
           framework={framework}
@@ -108,8 +112,11 @@ const SubmissionPage = () => {
           }}
           roundedCorners
           orgDetails={orgDetails}
+          redirectEntityPage={`/applications/${submission?.applicationUuid}`}
+          entity={application != null && submission != null ? { ...application, status: submission.status } : undefined}
         />
       </LoadingContainer>
+      <PageFooter />
     </BackgroundLayout>
   );
 };

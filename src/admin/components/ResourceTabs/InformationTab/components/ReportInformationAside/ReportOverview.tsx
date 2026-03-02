@@ -14,7 +14,7 @@ const ReportOverview: FC<{ parent?: { label: string; source: string } }> = ({ pa
   >();
 
   const { record } = useShowContext();
-  const reportActionDisabled = ["awaiting-approval", "needs-more-information"].includes(record.updateRequestStatus);
+  const reportActionDisabled = record?.updateRequestStatus === "needs-more-information";
 
   return (
     <>

@@ -21,7 +21,7 @@ type Story = StoryObj<typeof meta>;
 
 const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
   return (
-    <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col gap-3 rounded-lg border border-dashed p-3">
+    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-3">
       <div className="flex flex-col">
         <Text textStyle={isLarge ? "600-bold" : "400-bold"} color="neutral.800">
           Detach this instance
@@ -33,11 +33,11 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         </Text>
       </div>
       <Image
-        src="/images/modal-story.png"
+        src="./images/modal-story.png"
         alt="Modal Example"
         width={100}
         height={100}
-        className="border-theme-neutral-300 h-full w-full max-w-[292px] rounded-lg border object-cover"
+        className="h-full w-full max-w-[292px] rounded-lg border border-theme-neutral-300 object-cover"
       />
     </div>
   );
@@ -190,9 +190,6 @@ export const CustomSize: Story = {
       </p>
     ),
     content: <ModalContent />,
-    width: "550px",
-    height: "300px",
-    maxHeight: "450px",
     open: false
   },
   render: args => {

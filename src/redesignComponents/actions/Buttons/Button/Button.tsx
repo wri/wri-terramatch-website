@@ -11,6 +11,8 @@ export interface IButtonProps extends Omit<ButtonProps, "size" | "variant" | "co
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  as?: React.ElementType;
+  href?: string;
 }
 
 const Button = ({ children, className, variant = "primary", ...props }: IButtonProps) => {

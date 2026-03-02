@@ -8,16 +8,16 @@ export const ReportingFrameworkCreate: FC = () => {
     <Create>
       <SimpleForm>
         <TextInput source="name" label="Name" fullWidth validate={required()} />
-        <TextInput source="access_code" label="Access Code" fullWidth validate={required()} />
-        <ReferenceInput source="project_form_uuid" reference={modules.form.ResourceName} filter={{ type: "project" }}>
+        <TextInput source="accessCode" label="Access Code" fullWidth validate={required()} />
+        <ReferenceInput source="projectFormUuid" reference={modules.form.ResourceName} filter={{ type: "project" }}>
           <AutocompleteInput optionText="title" label="Project Establishment Form" fullWidth validate={required()} />
         </ReferenceInput>
 
-        <ReferenceInput source="site_form_uuid" reference={modules.form.ResourceName} filter={{ type: "site" }}>
+        <ReferenceInput source="siteFormUuid" reference={modules.form.ResourceName} filter={{ type: "site" }}>
           <AutocompleteInput optionText="title" label="Site Establishment Form" fullWidth validate={required()} />
         </ReferenceInput>
 
-        <ReferenceInput source="nursery_form_uuid" reference={modules.form.ResourceName} filter={{ type: "nursery" }}>
+        <ReferenceInput source="nurseryFormUuid" reference={modules.form.ResourceName} filter={{ type: "nursery" }}>
           <AutocompleteInput
             optionText="title"
             label="Nursery Establishment Form"
@@ -27,7 +27,7 @@ export const ReportingFrameworkCreate: FC = () => {
         </ReferenceInput>
 
         <ReferenceInput
-          source="project_report_form_uuid"
+          source="projectReportFormUuid"
           reference={modules.form.ResourceName}
           filter={{ type: "project-report" }}
         >
@@ -35,7 +35,7 @@ export const ReportingFrameworkCreate: FC = () => {
         </ReferenceInput>
 
         <ReferenceInput
-          source="site_report_form_uuid"
+          source="siteReportFormUuid"
           reference={modules.form.ResourceName}
           filter={{ type: "site-report" }}
         >
@@ -43,7 +43,7 @@ export const ReportingFrameworkCreate: FC = () => {
         </ReferenceInput>
 
         <ReferenceInput
-          source="nursery_report_form_uuid"
+          source="nurseryReportFormUuid"
           reference={modules.form.ResourceName}
           filter={{ type: "nursery-report" }}
         >
@@ -55,7 +55,7 @@ export const ReportingFrameworkCreate: FC = () => {
           />
         </ReferenceInput>
         <ReferenceInput
-          source="financial_report_form_uuid"
+          source="financialReportFormUuid"
           reference={modules.form.ResourceName}
           filter={{ type: "financial-report" }}
         >

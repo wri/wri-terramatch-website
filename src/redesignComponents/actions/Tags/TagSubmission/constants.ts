@@ -1,6 +1,14 @@
+import { IconProps } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { CheckApproved, Draft, Due, Info, NothingReported, Pending } from "@/redesignComponents/foundations/Icons";
+import {
+  CheckApprovedIcon,
+  DraftIcon,
+  DueIcon,
+  InfoIcon,
+  NothingReportedIcon,
+  PendingIcon
+} from "@/redesignComponents/foundations/Icons";
 
 import type { TagSubmissionState } from "./TagSubmission.type";
 
@@ -24,7 +32,7 @@ export const NEUTRAL_TEXT_STATES: TagSubmissionState[] = ["draft", "pending-appr
 export const WARNING_TEXT_STATES: TagSubmissionState[] = ["pending-approval", "information-required"];
 
 export interface IconConfig {
-  component: FC<{ color: string; className?: string; boxSize?: number }>;
+  component: FC<IconProps>;
   color: string;
   className?: string;
   boxSize?: number;
@@ -33,38 +41,38 @@ export interface IconConfig {
 
 export const ICON_MAP: Record<TagSubmissionState, IconConfig> = {
   draft: {
-    component: Draft,
+    component: DraftIcon,
     color: "neutral.600",
     boxSize: 3,
     useDynamicSize: true
   },
   "nothing-reported": {
-    component: NothingReported,
+    component: NothingReportedIcon,
     color: "neutral.900",
     className: "min-h-3 min-w-3 h-3 w-3"
   },
   "pending-approval-neutral": {
-    component: Pending,
+    component: PendingIcon,
     color: "neutral.700",
     className: "min-h-3 min-w-3 h-3 w-3"
   },
   "pending-approval": {
-    component: Pending,
+    component: PendingIcon,
     color: "warning.500",
     className: "min-h-3 min-w-3 h-3 w-3"
   },
   "information-required": {
-    component: Info,
+    component: InfoIcon,
     color: "warning.500",
     className: "min-h-3 min-w-3 h-3 w-3"
   },
   approved: {
-    component: CheckApproved,
+    component: CheckApprovedIcon,
     color: "success.500",
     className: "min-h-3 min-w-3 h-3 w-3"
   },
   due: {
-    component: Due,
+    component: DueIcon,
     color: "error.500",
     className: "min-h-3 min-w-3 h-3 w-3"
   }

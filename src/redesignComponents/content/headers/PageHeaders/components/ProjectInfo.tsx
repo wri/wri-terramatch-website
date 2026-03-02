@@ -9,7 +9,7 @@ import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchema
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
-import { ChevronRight } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
 import ProjectDescription from "./ProjectDescription";
@@ -75,10 +75,16 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} />
+        <ProjectDescription description={description} handleEdit={handleEdit} />
       ) : (
         <div className="w-fit">
-          <Button onClick={handleEdit} variant="secondary" size="small" rightIcon={<ChevronRight />} className="w-auto">
+          <Button
+            onClick={handleEdit}
+            variant="secondary"
+            size="small"
+            rightIcon={<ChevronRightIcon />}
+            className="w-auto"
+          >
             {t("Add Project Information")}
           </Button>
         </div>
