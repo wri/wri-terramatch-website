@@ -759,3 +759,39 @@ export type UserAssociationCreateData = {
 export type UserAssociationCreateBody = {
   data: UserAssociationCreateData;
 };
+
+export type OrganisationInviteDto = {
+  /**
+   * Primary key of the organisation invite.
+   */
+  id: number;
+  /**
+   * UUID of the organisation invite.
+   */
+  uuid: string;
+  /**
+   * ID of the organisation this invite belongs to.
+   */
+  organisationId: number;
+  /**
+   * Email address this invite was sent to.
+   */
+  emailAddress: string;
+  /**
+   * Timestamp when the invite was accepted.
+   */
+  acceptedAt: string | null;
+};
+
+export type OrganisationInviteRequestDto = {
+  /**
+   * Email address to invite to the organisation.
+   *
+   * @maxLength 255
+   */
+  emailAddress: string;
+  /**
+   * Optional callback URL base for the signup link in the email.
+   */
+  callbackUrl?: Record<string, any>;
+};

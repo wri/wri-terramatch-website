@@ -1355,6 +1355,104 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   {}
 >("/userAssociations/v3/{model}/{uuid}", "DELETE");
 
+export type InviteOrganisationUserPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * The model type (organisations only for invite)
+   */
+  model: "organisations";
+};
+
+export type InviteOrganisationUserError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 422;
+      payload: {
+        /**
+         * @example 422
+         */
+        statusCode: number;
+        /**
+         * @example Unprocessable Entity
+         */
+        message: string;
+      };
+    }
+>;
+
+export type InviteOrganisationUserResponse = {
+  meta?: {
+    /**
+     * @example organisationInvites
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisationInvites
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationInviteDto;
+  };
+};
+
+export type InviteOrganisationUserVariables = {
+  body: Schemas.OrganisationInviteRequestDto;
+  pathParams: InviteOrganisationUserPathParams;
+};
+
+export const inviteOrganisationUser = new V3ApiEndpoint<
+  InviteOrganisationUserResponse,
+  InviteOrganisationUserError,
+  InviteOrganisationUserVariables,
+  {}
+>("/userAssociations/v3/{model}/{uuid}/invite", "POST");
+
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
@@ -1362,5 +1460,5 @@ export const operationsByTag = {
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
-  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
+  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation, inviteOrganisationUser }
 };
