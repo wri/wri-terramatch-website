@@ -76,7 +76,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
-                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
+                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
                 variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }

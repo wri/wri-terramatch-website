@@ -29,7 +29,7 @@ const FormStepHeader: FC<PropsWithChildren<FormStepHeaderProps>> = ({
         {subtitle}
       </Text>
     )}
-    <div className="bg-theme-neutral-300 my-2 h-[1px] w-full" />
+    <div className="my-2 h-[1px] w-full bg-theme-neutral-300" />
     {children}
   </div>
 );
