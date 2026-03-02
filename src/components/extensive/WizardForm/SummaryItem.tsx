@@ -9,7 +9,7 @@ import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormFooter } from "./FormFooter";
@@ -76,6 +76,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
+                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
+                variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
         }
