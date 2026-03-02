@@ -1,8 +1,8 @@
 import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 
 type FormStepHeaderProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   subtitle?: string;
