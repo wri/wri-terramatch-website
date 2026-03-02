@@ -77,6 +77,7 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
 
   const submitEntity = useCallback(() => {
     updateEntity({ status: "awaiting-approval" });
+    ApiSlice.pruneCache("actions");
   }, [updateEntity]);
   useRequestSuccess(
     isSubmitting,
