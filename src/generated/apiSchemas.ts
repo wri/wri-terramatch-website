@@ -3,30 +3,6 @@
  *
  * @version 1.0.0
  */
-export type TreeSpeciesAggregated = {
-  ["tree-planted"]?: {
-    /**
-     * @format date-time
-     */
-    dueDate?: string | null;
-    aggregateAmount?: number;
-  }[];
-  ["seeding-records"]?: {
-    /**
-     * @format date-time
-     */
-    dueDate?: string;
-    aggregateAmount?: number;
-  }[];
-  ["trees-regenerating"]?: {
-    /**
-     * @format date-time
-     */
-    dueDate?: string | null;
-    aggregateAmount?: number;
-  }[];
-};
-
 export type TreeSpeciesRead = {
   uuid?: string;
   name?: string;
@@ -42,19 +18,6 @@ export type TreeSpeciesReadAll = {
   type?: string;
   collection?: string;
 }[];
-
-export type AssociatedUserRead = {
-  uuid?: string;
-  role?: string;
-  job_role?: string;
-  first_name?: string;
-  last_name?: string;
-  email_address?: string;
-  /**
-   * allowed values Pending|Accepted
-   */
-  status?: string;
-};
 
 export type UserRead = {
   id?: number;
@@ -3649,10 +3612,6 @@ export type V2ProjectInviteRead = {
    * @format datetime
    */
   created_at?: string;
-};
-
-export type V2ProjectInviteCreate = {
-  email_address?: string;
 };
 
 export type Demographic = {
