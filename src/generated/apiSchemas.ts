@@ -614,19 +614,6 @@ export type UserReadAll = {
   created_at?: string;
 }[];
 
-export type ReportingFrameworkRead = {
-  uuid?: string;
-  name?: string;
-  slug?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
 export type V2PaginationLinks = {
   first?: string;
   last?: string;
