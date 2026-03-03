@@ -1837,23 +1837,10 @@ export type V2OwnershipStakeUpdate = {
   percent_ownership?: number;
 };
 
-export type V2FundingTypeCreate = {
-  organisation_id?: string;
-  amount?: number;
-  year?: number;
-  type?: string;
-};
-
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
   financial_report_id?: string;
-  amount?: number;
-  year?: number;
-  type?: string;
-};
-
-export type V2FundingTypeUpdate = {
   amount?: number;
   year?: number;
   type?: string;
