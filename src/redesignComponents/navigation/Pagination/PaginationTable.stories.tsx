@@ -80,12 +80,3 @@ export const LargePageSize: Story = {
     showItemCountText: true
   }
 };
-
-export const SmallDataset: Story = {
-  args: {
-    pageSize: 10,
-    currentPage: 1,
-    totalItems: 3,
-    showItemCountText: true
-  }
-};
