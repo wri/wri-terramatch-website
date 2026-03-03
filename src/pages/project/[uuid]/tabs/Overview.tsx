@@ -13,16 +13,10 @@ import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import FeedbackTag from "@/redesignComponents/actions/Tags/FeedbackTag/FeedbackTag";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import {
-  CheckApprovedIcon,
-  ChevronRightIcon,
-  DownloadIcon,
-  DraftIcon,
-  InformationRequiredIcon,
-  PendingIcon
-} from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
@@ -63,41 +57,25 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
   </Flex>
 );
 
-const mapStatusToTagStateProject = (
-  status: string | null | undefined
-):
-  | { label: string; type: "info-white" | "info-grey" | "success" | "warning" | "error"; icon?: ReactNode }
-  | undefined => {
+const mapStatusToTagStateProject = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
   switch (status) {
     case "draft":
       return {
-        label: "Draft",
-        type: "info-white",
-        icon: <DraftIcon />
+        type: "draft"
       };
     case "awaiting-approval":
-      return {
-        label: "Pending Approval",
-        type: "info-white",
-        icon: <PendingIcon />
-      };
+      return { type: "pending-approval" };
     case "started":
       return {
-        label: "Started",
-        type: "info-white",
-        icon: <DraftIcon />
+        type: "information-required"
       };
     case "needs-more-information":
       return {
-        label: "Information Required",
-        type: "warning",
-        icon: <InformationRequiredIcon />
+        type: "information-required"
       };
     case "approved":
       return {
-        label: "Approved",
-        type: "success",
-        icon: <CheckApprovedIcon />
+        type: "approved"
       };
     default:
       return undefined;
@@ -208,9 +186,8 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
             title="Project Set Up"
             tag={(() => {
               const tagState = mapStatusToTagStateProject(project?.status);
-              return tagState != null ? (
-                <FeedbackTag type={tagState.type} label={tagState.label} icon={tagState.icon} />
-              ) : null;
+
+              return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
             })()}
             buttonProps={{
               variant: "primary",

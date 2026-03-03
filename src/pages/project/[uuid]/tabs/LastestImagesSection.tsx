@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { FC, useMemo } from "react";
 
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
@@ -8,6 +9,12 @@ const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnt
   entityUuid,
   entityName
 }) => {
+  const router = useRouter();
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
   const [, { data: mediaList }] = useMedias(
     useMemo<HookProps<typeof useMedias>>(() => {
       return {
@@ -21,7 +28,7 @@ const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnt
   );
 
   const images = mediaList?.map(media => media.url) ?? [];
-  return <ImageGalleryCard images={images as string[]} />;
+  return <ImageGalleryCard images={images as string[]} onClickAdd={() => goToTab("gallery")} />;
 };
 
 export default LastestImagesSectionTab;
