@@ -627,28 +627,6 @@ export type ReportingFrameworkRead = {
   nursery_report_form_uuid?: string;
 };
 
-export type ReportingFrameworkUpdate = {
-  name?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
-export type ReportingFrameworkCreate = {
-  name?: string;
-  access_code?: string;
-  project_form_uuid?: string;
-  project_report_form_uuid?: string;
-  site_form_uuid?: string;
-  site_report_form_uuid?: string;
-  nursery_form_uuid?: string;
-  nursery_report_form_uuid?: string;
-};
-
 export type V2PaginationLinks = {
   first?: string;
   last?: string;
