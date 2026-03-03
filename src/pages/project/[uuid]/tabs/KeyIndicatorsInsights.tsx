@@ -11,9 +11,9 @@ import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import {
   AreaHectaresIcon,
   JobsIcon,
+  ProjectIcon,
   RegenerationIcon,
   SeedlingsIcon,
-  SpeciesIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 interface KeyIndicatorsInsightsProps {
@@ -73,7 +73,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         progress={totalTreesRestoredCount}
         goal={treesGrownGoal}
         variant="donutChart"
-        icon={<SpeciesIcon />}
+        icon={<ProjectIcon />}
         color="secondary.600"
         type="treesRestored"
         className={metricClassName}
