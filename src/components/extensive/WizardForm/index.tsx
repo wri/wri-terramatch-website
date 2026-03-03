@@ -446,11 +446,11 @@ lg:h-[calc(100vh-355px)]"
             {entity != null && (
               <Box
                 className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
-                <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />
+                {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
                     title={pageHeaderTitle}
