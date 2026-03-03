@@ -45,7 +45,8 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
   status,
   statusLabel,
   actions,
-  showBorder = true
+  showBorder = true,
+  className
 }) => {
   return (
     <Flex
@@ -56,6 +57,7 @@ const FormSectionHeader: FC<FormSectionHeaderProps> = ({
       paddingBottom={showBorder ? 4 : 0}
       paddingTop={2}
       marginBottom={2}
+      className={className}
     >
       <div className="flex items-center gap-3">
         <Flex alignItems="center" gap={2} textStyle="700-bold" color={"neutral.900"}>
