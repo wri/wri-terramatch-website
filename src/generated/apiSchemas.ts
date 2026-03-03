@@ -3627,30 +3627,6 @@ export type UpdateRequestLiteRead = {
   readable_status?: string;
 };
 
-export type ActionRead = {
-  uuid?: string;
-  status?: string;
-  type?: string;
-  subtype?: string;
-  title?: string;
-  sub_title?: string;
-  text?: string;
-  key?: string;
-  /**
-   * one of Project|ProjectReport|Site|SiteReport|Nursery|NurseryReport|UpdateRequest
-   */
-  targetable_type?: string;
-  targetable_id?: number;
-  /**
-   * contains the “Lite” objects for the model involved with the Action
-   */
-  target?: Record<string, any>;
-  organisation_id?: number;
-  deleted_at?: string;
-  created_at?: string;
-  updated_at?: string;
-};
-
 export type StatusUpdate = {
   feedback?: string;
   feedback_fields?: string[];
