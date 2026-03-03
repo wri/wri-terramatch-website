@@ -44,6 +44,6 @@ export const mapPlantingStatusToProgressState = (status?: string | null): Progre
     case "not-started":
       return "not-started";
     default:
-      return "in-progress";
+      return "not-started";
   }
 };
