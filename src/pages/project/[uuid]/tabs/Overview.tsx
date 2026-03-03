@@ -63,12 +63,12 @@ const mapStatusToTagStateProject = (status: string | null | undefined): { type: 
       return {
         type: "draft"
       };
-    case "awaiting-approval":
-      return { type: "pending-approval" };
     case "started":
       return {
-        type: "information-required"
+        type: "draft"
       };
+    case "awaiting-approval":
+      return { type: "pending-approval" };
     case "needs-more-information":
       return {
         type: "information-required"
