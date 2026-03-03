@@ -3751,73 +3751,6 @@ export type PolygonBboxResponse = {
   bbox?: number[];
 };
 
-export type DashboardPolygonData = {
-  data?: {
-    /**
-     * Title of the data field
-     */
-    title?: string;
-    /**
-     * Value of the data field
-     */
-    value?: string;
-    /**
-     * Key of the data field
-     */
-    key?: string;
-  }[];
-};
-
-export type DashboardProjectProfileResponse = {
-  data?: {
-    name?: string;
-    descriptionObjetive?: string;
-    country?: string;
-    organisation?: string;
-    survivalRate?: number;
-    countrySlug?: string;
-    restorationStrategy?: {
-      data?: string[];
-    };
-    targetLandUse?: {
-      data?: string[];
-    };
-    landTenure?: {
-      data?: string[];
-    };
-  };
-};
-
-export type DashboardProjectProfileData = {
-  name?: string;
-  descriptionObjetive?: string;
-  country?: string;
-  organisation?: string;
-  survivalRate?: number;
-  countrySlug?: string;
-  restorationStrategy?: {
-    data?: string[];
-  };
-  targetLandUse?: {
-    data?: string[];
-  };
-  landTenure?: {
-    data?: string[];
-  };
-};
-
-export type DashboardTopPlantedTree = {
-  organization?: string;
-  project?: string;
-  uuid?: string;
-  trees_planted?: number;
-};
-
-export type DashboardTopTreeSpecies = {
-  name?: string;
-  amount?: number;
-};
-
 export type ProjectPipeline = {
   data?: {
     name?: {
@@ -3978,12 +3911,6 @@ export type AuditStatusUpdateRequest = {
   status?: string;
   is_active?: boolean;
   request_removed?: boolean;
-};
-
-export type DashboardProjectViewResponse = {
-  data?: {
-    allowed?: boolean;
-  };
 };
 
 export type SitePolygonsLoadedDataResponse = {

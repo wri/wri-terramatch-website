@@ -6388,67 +6388,6 @@ export const useGetV2ENTITYUUIDExport = <TData = Blob>(
   );
 };
 
-export type GetV2DashboardPolygonDataUuidPathParams = {
-  /**
-   * UUID of the polygon
-   */
-  uuid: string;
-};
-
-export type GetV2DashboardPolygonDataUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardPolygonDataUuidResponse = {
-  data?: {
-    /**
-     * Title of the data field
-     */
-    title?: string;
-    /**
-     * Value of the data field
-     */
-    value?: string;
-    /**
-     * Key of the data field
-     */
-    key?: string;
-  }[];
-};
-
-export type GetV2DashboardPolygonDataUuidVariables = {
-  pathParams: GetV2DashboardPolygonDataUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardPolygonDataUuid = (
-  variables: GetV2DashboardPolygonDataUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardPolygonDataUuidResponse,
-    GetV2DashboardPolygonDataUuidError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardPolygonDataUuidPathParams
-  >({ url: "/v2/dashboard/polygon-data/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2DashboardPolygonDataUuid = <TData = GetV2DashboardPolygonDataUuidResponse>(
-  variables: GetV2DashboardPolygonDataUuidVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardPolygonDataUuidResponse, GetV2DashboardPolygonDataUuidError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardPolygonDataUuidResponse, GetV2DashboardPolygonDataUuidError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/polygon-data/{uuid}", operationId: "getV2DashboardPolygonDataUuid", variables }),
-    ({ signal }) => fetchGetV2DashboardPolygonDataUuid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2ProjectPipelineQueryParams = {
   /**
    * Optional. Filter counts and metrics by country.
@@ -6728,56 +6667,6 @@ export const useDeleteV2ProjectPipelineId = (
     (variables: DeleteV2ProjectPipelineIdVariables) =>
       fetchDeleteV2ProjectPipelineId({ ...fetcherOptions, ...variables }),
     options
-  );
-};
-
-export type GetV2DashboardViewProjectUuidPathParams = {
-  /**
-   * UUID of the project
-   */
-  uuid: string;
-};
-
-export type GetV2DashboardViewProjectUuidError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2DashboardViewProjectUuidResponse = {
-  data?: {
-    allowed?: boolean;
-  };
-};
-
-export type GetV2DashboardViewProjectUuidVariables = {
-  pathParams: GetV2DashboardViewProjectUuidPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2DashboardViewProjectUuid = (
-  variables: GetV2DashboardViewProjectUuidVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2DashboardViewProjectUuidResponse,
-    GetV2DashboardViewProjectUuidError,
-    undefined,
-    {},
-    {},
-    GetV2DashboardViewProjectUuidPathParams
-  >({ url: "/v2/dashboard/view-project/{uuid}", method: "get", ...variables, signal });
-
-export const useGetV2DashboardViewProjectUuid = <TData = GetV2DashboardViewProjectUuidResponse>(
-  variables: GetV2DashboardViewProjectUuidVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2DashboardViewProjectUuidResponse, GetV2DashboardViewProjectUuidError, TData>(
-    queryKeyFn({ path: "/v2/dashboard/view-project/{uuid}", operationId: "getV2DashboardViewProjectUuid", variables }),
-    ({ signal }) => fetchGetV2DashboardViewProjectUuid({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
   );
 };
 
@@ -7184,11 +7073,6 @@ export type QueryOperation =
       variables: GetV2ENTITYUUIDExportVariables;
     }
   | {
-      path: "/v2/dashboard/polygon-data/{uuid}";
-      operationId: "getV2DashboardPolygonDataUuid";
-      variables: GetV2DashboardPolygonDataUuidVariables;
-    }
-  | {
       path: "/v2/project-pipeline";
       operationId: "getV2ProjectPipeline";
       variables: GetV2ProjectPipelineVariables;
@@ -7197,11 +7081,6 @@ export type QueryOperation =
       path: "/v2/project-pipeline/{id}";
       operationId: "getV2ProjectPipelineId";
       variables: GetV2ProjectPipelineIdVariables;
-    }
-  | {
-      path: "/v2/dashboard/view-project/{uuid}";
-      operationId: "getV2DashboardViewProjectUuid";
-      variables: GetV2DashboardViewProjectUuidVariables;
     }
   | {
       path: "/v2/indicators/{entity}/{uuid}/{slug}/export";
