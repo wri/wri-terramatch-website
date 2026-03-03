@@ -3698,94 +3698,6 @@ export type AuditStatusResponse = {
   }[];
 };
 
-export type V2TerrafundCriteriaData = {
-  /**
-   * The ID of the polygon
-   */
-  polygon_id?: string;
-  /**
-   * List of validation criteria
-   */
-  criteria_list?: {
-    /**
-     * The ID of the criteria
-     */
-    criteria_id?: number;
-    /**
-     * The latest created at timestamp of the criteria
-     *
-     * @format date-time
-     */
-    latest_created_at?: string;
-    /**
-     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
-     */
-    valid?: number;
-    /**
-     * Extra information about the polygon validation
-     */
-    extra_info?: Record<string, any>;
-  }[];
-};
-
-export type V2TerrafundCriteriaDataMultiple = {
-  [key: string]:
-    | {
-        /**
-         * The ID of the polygon
-         */
-        polygon_id: string;
-        /**
-         * List of validation criteria
-         */
-        criteria_list: {
-          /**
-           * The ID of the criteria
-           */
-          criteria_id?: number;
-          /**
-           * The latest created at timestamp of the criteria
-           *
-           * @format date-time
-           */
-          latest_created_at?: string;
-          /**
-           * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
-           */
-          valid?: number;
-          /**
-           * Extra information about the polygon validation
-           */
-          extra_info?: Record<string, any>;
-        }[];
-      }
-    | {
-        /**
-         * Error message if the polygon or criteria data is not found
-         */
-        error: string;
-      };
-};
-
-export type V2TerrafundCriteriaSite = {
-  /**
-   * The UUID of the polygon.
-   */
-  uuid?: string;
-  /**
-   * Indicates if the polygon is valid or not.
-   */
-  valid?: boolean;
-  /**
-   * Indicates if the polygon has been checked before or not.
-   */
-  checked?: boolean;
-  /**
-   * List of criteria that are not valid.
-   */
-  nonValidCriteria?: Record<string, any>[];
-}[];
-
 export type SitePolygon = {
   id?: number;
   uuid?: string;
@@ -3831,79 +3743,12 @@ export type SitePolygon = {
   validation_status?: boolean;
 };
 
-export type GeometryString = {
-  geometry?: string;
-};
-
 export type SitePolygonsBboxResponse = {
   bbox?: number[];
 };
 
-export type SitePolygonResponse = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
-};
-
-export type SitePolygonCreateResponse = {
-  /**
-   * @example Site polygon created successfully
-   */
-  message?: string;
-  /**
-   * UUID of the created site polygon
-   */
-  uuid?: string;
-  /**
-   * Calculated area in hectares
-   *
-   * @format double
-   */
-  area?: number;
-};
-
-export type GeoJSONResponse = {
-  type?: string;
-  features?: {
-    type?: string;
-    geometry?: {
-      type?: string;
-      coordinates?: any[];
-    };
-    properties?: {
-      poly_name?: string;
-      plantstart?: string;
-      practice?: string;
-      target_sys?: string;
-      distr?: string;
-      num_trees?: number;
-    };
-  }[];
-};
-
-export type FeatureCollection = {
-  type?: string;
-};
-
 export type PolygonBboxResponse = {
   bbox?: number[];
-};
-
-export type DashboardPolygonResponse = {
-  uuid?: string;
 };
 
 export type DashboardPolygonData = {
@@ -4011,13 +3856,6 @@ export type ProjectPipelinePost = {
   cohort?: string[];
   publish_for?: string;
   url?: string;
-};
-
-export type GeojsonData = {
-  /**
-   * The GeoJSON representation of the polygon geometry.
-   */
-  geojson?: Record<string, any>;
 };
 
 export type EntityTypeResponse = {
@@ -4146,17 +3984,6 @@ export type DashboardProjectViewResponse = {
   data?: {
     allowed?: boolean;
   };
-};
-
-export type ProjectPolygonResponse = {
-  /**
-   * @example Project polygon created successfully
-   */
-  message?: string;
-  /**
-   * UUID of the created project polygon
-   */
-  uuid?: string;
 };
 
 export type SitePolygonsLoadedDataResponse = {

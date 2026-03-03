@@ -1,10 +1,9 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
-import { Else, If, Then } from "react-if";
+import { Dictionary } from "lodash";
+import { FC, useEffect, useRef, useState } from "react";
 
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { shouldShowAsWarning } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useMessageValidators } from "@/hooks/useMessageValidations";
@@ -12,6 +11,16 @@ import { ICriteriaCheckItem } from "@/types/validation";
 import Log from "@/utils/log";
 
 import Text from "../Text/Text";
+
+export type CriteriaData = {
+  polygonId: string;
+  criteriaList: {
+    criteriaId: number;
+    valid: number;
+    latestCreatedAt?: string;
+    extraInfo?: Dictionary<any>;
+  }[];
+};
 
 export const validationLabels: any = {
   3: "No Overlapping Polygon",
@@ -25,11 +34,17 @@ export const validationLabels: any = {
   14: "Data Completed",
   15: "Plant Start Date"
 };
+
 function useRenderCounter() {
   const ref = useRef(0);
   Log.debug(`Render count: ${++ref.current}`);
 }
-const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCriteriaData }) => {
+
+type ChecklistInformationProps = {
+  criteriaData: CriteriaData;
+};
+
+const ChecklistInformation: FC<ChecklistInformationProps> = ({ criteriaData }) => {
   useRenderCounter();
   const [polygonValidationData, setPolygonValidationData] = useState<ICriteriaCheckItem[]>([]);
   const [validationStatus, setValidationStatus] = useState<boolean>(false);
@@ -39,16 +54,16 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
   const { getFormatedExtraInfo } = useMessageValidators();
 
   useEffect(() => {
-    if (criteriaData?.criteria_list && criteriaData.criteria_list.length > 0) {
+    if (criteriaData.criteriaList != null && criteriaData.criteriaList.length > 0) {
       const existingValidations = new Map(
-        criteriaData.criteria_list.map((criteria: any) => [
-          criteria.criteria_id,
+        criteriaData.criteriaList.map(criteria => [
+          criteria.criteriaId,
           {
-            id: criteria.criteria_id,
-            date: criteria.latest_created_at,
+            id: criteria.criteriaId,
+            date: criteria.latestCreatedAt,
             status: criteria.valid === 1,
-            label: validationLabels[criteria.criteria_id],
-            extra_info: criteria.extra_info
+            label: validationLabels[criteria.criteriaId],
+            extra_info: criteria.extraInfo
           }
         ])
       );
@@ -72,9 +87,9 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
         return (
           existingValidation ?? {
             id: Number(id),
-            date: null,
+            date: undefined,
             status: true,
-            label: label,
+            label: label as string,
             extra_info: null
           }
         );
@@ -103,44 +118,41 @@ const ChecklistInformation = ({ criteriaData }: { criteriaData: V2TerrafundCrite
       </Text>
       <Text variant="text-14-light">{t("Validation criteria are not met")}</Text>
       <div className="mt-3 grid gap-3">
-        <If condition={validationStatus}>
-          <Then>
-            {polygonValidationData.map(item => (
-              <div key={item.id}>
-                <Text variant="text-14-light" className="flex items-center gap-2">
-                  <Icon
-                    name={
-                      item.status
-                        ? IconNames.CHECK_PROGRESSBAR
-                        : shouldShowAsWarning(item)
-                        ? IconNames.EXCLAMATION_CIRCLE_FILL
-                        : IconNames.IC_ERROR_PANEL
-                    }
-                    className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
-                      "text-green-400": item.status,
-                      "text-yellow-700": !item.status && shouldShowAsWarning(item)
-                    })}
-                  />
-                  {t(item.label)}
-                </Text>
-                {item.extra_info != null &&
-                  getFormatedExtraInfo(item.extra_info, item.id).map(info => (
-                    <div className="flex items-start gap-[6px] pl-6" key={`${info}-${item.id}`}>
-                      <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
-                        <span className="text-[7px] text-white">&#9679;</span>
-                      </div>
-                      <Text variant="text-10-light" className="text-white ">
-                        {t(info)}
-                      </Text>
+        {validationStatus ? (
+          polygonValidationData.map(item => (
+            <div key={item.id}>
+              <Text variant="text-14-light" className="flex items-center gap-2">
+                <Icon
+                  name={
+                    item.status
+                      ? IconNames.CHECK_PROGRESSBAR
+                      : shouldShowAsWarning(item)
+                      ? IconNames.EXCLAMATION_CIRCLE_FILL
+                      : IconNames.IC_ERROR_PANEL
+                  }
+                  className={classNames("h-4 w-4 lg:h-5 lg:w-5", {
+                    "text-green-400": item.status,
+                    "text-yellow-700": !item.status && shouldShowAsWarning(item)
+                  })}
+                />
+                {t(item.label)}
+              </Text>
+              {item.extra_info != null &&
+                getFormatedExtraInfo(item.extra_info, item.id).map(info => (
+                  <div className="flex items-start gap-[6px] pl-6" key={`${info}-${item.id}`}>
+                    <div className="mt-[3px] flex items-start lg:mt-[4px] wide:mt-[6px]">
+                      <span className="text-[7px] text-white">&#9679;</span>
                     </div>
-                  ))}
-              </div>
-            ))}
-          </Then>
-          <Else>
-            <Text variant="text-14-light">{t("No criteria checked yet")}</Text>
-          </Else>
-        </If>
+                    <Text variant="text-10-light" className="text-white ">
+                      {t(info)}
+                    </Text>
+                  </div>
+                ))}
+            </div>
+          ))
+        ) : (
+          <Text variant="text-14-light">{t("No criteria checked yet")}</Text>
+        )}
       </div>
     </div>
   );
