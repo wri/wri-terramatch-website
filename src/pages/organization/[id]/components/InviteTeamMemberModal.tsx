@@ -1,5 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
+import { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -9,9 +10,10 @@ import Text from "@/components/elements/Text/Text";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { useInviteOrganisationUser } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
-import { usePostV2OrganisationsUUIDInvite } from "@/generated/apiComponents";
+import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 
 interface InviteTeamMemberModalProps {
   organisationUUID: string;
@@ -37,33 +39,37 @@ const InviteTeamMemberModal = ({ organisationUUID, onSuccess }: InviteTeamMember
     handleSubmit
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
-  const { mutate: inviteTeamMember, isLoading } = usePostV2OrganisationsUUIDInvite({
-    onSuccess() {
-      onSuccess?.();
+  const [, { invite: inviteTeamMember, isLoading, inviteFailure }] = useInviteOrganisationUser({
+    organisationUuid: organisationUUID
+  });
+
+  const hideModal = useCallback(() => {
+    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
+    reset();
+  }, [closeModal, reset]);
+
+  const handleInviteComplete = useCallback(() => {
+    if (inviteFailure == null) {
+      if (onSuccess != null) {
+        onSuccess();
+      }
       openToast(t("Invitation sent successfully"));
       hideModal();
-    },
-    onError() {
+    } else {
       setError("email", {
         message: t("This user already has a TerraMatch account, please try a different email address."),
         type: "validate"
       });
     }
-  });
+  }, [inviteFailure, onSuccess, openToast, t, setError, hideModal]);
+
+  useRequestComplete(isLoading, handleInviteComplete);
 
   const onSubmit = (data: FormValues) => {
     inviteTeamMember({
-      pathParams: { uuid: organisationUUID },
-      queryParams: {
-        email_address: data.email,
-        callback_url: `${window.location.origin}/auth/signup`
-      }
+      emailAddress: data.email,
+      callbackUrl: `${window.location.origin}/auth/signup`
     });
-  };
-
-  const hideModal = () => {
-    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
-    reset();
   };
 
   return (

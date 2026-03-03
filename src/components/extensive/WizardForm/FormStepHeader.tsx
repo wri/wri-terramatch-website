@@ -1,8 +1,8 @@
 import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren } from "react";
 import { twMerge } from "tailwind-merge";
 
-import Button, { IButtonProps } from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 
 type FormStepHeaderProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
   subtitle?: string;
@@ -29,7 +29,7 @@ const FormStepHeader: FC<PropsWithChildren<FormStepHeaderProps>> = ({
         {subtitle}
       </Text>
     )}
-    <div className="bg-theme-neutral-300 my-2 h-[1px] w-full" />
+    <div className="my-2 h-[1px] w-full bg-theme-neutral-300" />
     {children}
   </div>
 );

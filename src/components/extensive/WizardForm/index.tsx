@@ -246,7 +246,10 @@ function WizardForm(props: WizardFormProps) {
   const isEntityApproved = entity?.status == "approved";
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
-      <div className="h-[calc(100vh-218px)] overflow-auto pb-20 md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+      <div
+        className="mb-[20px] h-[calc(100vh-354px)] overflow-auto  pb-20 pr-[12px] md:h-[calc(100vh-355px)]
+lg:h-[calc(100vh-355px)]"
+      >
         {index === 0 && title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="rounded-lg bg-tertiary-80 p-6">
@@ -431,7 +434,7 @@ function WizardForm(props: WizardFormProps) {
   }, [formModel?.model, t, entity, isSubmissionModel]);
 
   return selectedStepIndex < 0 ? null : (
-    <div className={classNames("relative", { "h-[calc(100%-108px)]": !isAdmin })}>
+    <div className={classNames("relative", { "h-[calc(100%-112px)]": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
           models={props.models}
@@ -463,7 +466,6 @@ function WizardForm(props: WizardFormProps) {
               onChangeSelected={setSelectedStepIndex}
               selectedIndex={selectedStepIndex}
               tabItems={tabItems}
-              rounded={props.roundedCorners}
               itemOption={{}}
               carouselOptions={{
                 slidesPerView: 3

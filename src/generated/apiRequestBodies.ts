@@ -8,11 +8,6 @@ export type PatchAuthChangeBody = {
   password?: string;
 };
 
-export type V2PostOrganisationsApproveUserBody = {
-  organisation_uuid: string;
-  user_uuid: string;
-};
-
 export type PatchV2AuthVerifyBody = {
   token?: string;
 };

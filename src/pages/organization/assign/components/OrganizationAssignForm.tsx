@@ -5,8 +5,8 @@ import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import { useOrganisations, useOrgCreate } from "@/connections/Organisation";
-import { usePostV2OrganisationsJoinExisting } from "@/generated/apiComponents";
+import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
@@ -23,13 +23,13 @@ const OrganizationAssignForm = () => {
   const searchedTerm = (form.watch("name") ?? "") as string;
   const shouldSearch = searchedTerm.trim().length > 0;
 
+  const [myUserLoaded, { user }] = useMyUser();
+
   const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
     useOrgCreate({});
-  const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
-    onSuccess: () => {
-      router.push(`/organization/status/pending`);
-    }
-  });
+
+  const [, { create: joinOrg, isCreating: joinOrganisationLoading, createFailure: joinOrganisationFailure }] =
+    useOrgJoin({ organisationUuid: selectedOrganization?.uuid });
 
   const orgFilter = useMemo(
     () => (shouldSearch ? { ...ORG_LIST_FILTER_BASE, search: searchedTerm } : ORG_LIST_FILTER_BASE),
@@ -54,6 +54,18 @@ const OrganizationAssignForm = () => {
   );
 
   /**
+   * Handle successful organization join request
+   */
+  useRequestSuccess(
+    joinOrganisationLoading,
+    joinOrganisationFailure,
+    useCallback(() => {
+      router.push(`/organization/status/pending`);
+    }, [router]),
+    "Failed to join organization"
+  );
+
+  /**
    * Handle creation errors
    */
   useEffect(() => {
@@ -75,13 +87,18 @@ const OrganizationAssignForm = () => {
   }, [isTyping]);
 
   const handleJoin = useCallback(() => {
-    if (selectedOrganization?.uuid == null) return;
-    joinOrganisation({
-      body: {
-        organisation_uuid: selectedOrganization.uuid
-      }
+    if (user?.emailAddress == null) {
+      // User email not available - cannot join organization
+      console.error("Cannot join organization: user email not available");
+      return;
+    }
+
+    // Pass the required attributes for the unified createUserAssociation endpoint
+    joinOrg({
+      emailAddress: user.emailAddress,
+      isManager: false // Self-join is typically not a manager
     });
-  }, [selectedOrganization?.uuid, joinOrganisation]);
+  }, [joinOrg, user?.emailAddress]);
 
   const handleCreate = useCallback(() => {
     if (createOrganisation != null) {
@@ -108,7 +125,7 @@ const OrganizationAssignForm = () => {
         ? {
             type: "submit" as const,
             className: "!w-auto px-8",
-            disabled: joinOrganisationLoading,
+            disabled: joinOrganisationLoading || !myUserLoaded || user?.emailAddress == null,
             children: t("Apply to join organization")
           }
         : {
@@ -117,7 +134,7 @@ const OrganizationAssignForm = () => {
             children: t("Create Organization"),
             onClick: handleCreate
           },
-    [type, joinOrganisationLoading, organisationCreateLoading, t, handleCreate]
+    [type, joinOrganisationLoading, organisationCreateLoading, myUserLoaded, user?.emailAddress, t, handleCreate]
   );
 
   return (

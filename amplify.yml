@@ -8,6 +8,7 @@ frontend:
         - yarn install
     build:
       commands:
+        - export NODE_OPTIONS=--max-old-space-size=6144
         - yarn run build
   artifacts:
     baseDirectory: .next
