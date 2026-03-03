@@ -123,16 +123,3 @@ export type V2PostOrganisationsBody = {
   }[];
   tags?: string[];
 };
-
-export type PostV2FprojectPipelineBody = {
-  /**
-   * @format date
-   */
-  date?: string;
-  id?: number;
-  submitted_by?: string;
-  program?: string;
-  cohort?: string[];
-  publish_for?: string;
-  url?: string;
-};

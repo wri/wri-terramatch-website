@@ -3751,46 +3751,6 @@ export type PolygonBboxResponse = {
   bbox?: number[];
 };
 
-export type ProjectPipeline = {
-  data?: {
-    name?: {
-      name?: string;
-      description?: string;
-    };
-    /**
-     * @format date
-     */
-    date?: string;
-    id?: number;
-    submitted_by?: string;
-    program?: string;
-    cohort?: string[];
-    publish_for?: string;
-    url?: string;
-    /**
-     * @format date
-     */
-    created_at?: string;
-    /**
-     * @format date
-     */
-    updated_at?: string;
-  };
-};
-
-export type ProjectPipelinePost = {
-  /**
-   * @format date
-   */
-  date?: string;
-  id?: number;
-  submitted_by?: string;
-  program?: string;
-  cohort?: string[];
-  publish_for?: string;
-  url?: string;
-};
-
 export type EntityTypeResponse = {
   /**
    * Type of the entity ('project', 'site', 'unknown')
