@@ -1776,15 +1776,6 @@ export type V2FileGallery = {
   collection_name?: string;
 };
 
-export type V2FileGalleryLite = {
-  uuid?: string;
-  thumb_url?: string;
-  location?: {
-    lat?: number;
-    lng?: number;
-  };
-};
-
 export type V2TreeSpeciesRead = {
   uuid?: string;
   name?: string;

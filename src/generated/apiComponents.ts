@@ -4662,62 +4662,6 @@ export const usePatchV2AdminUsersVerifyUUID = (
   );
 };
 
-export type GetV2MODELUUIDImageLocationsPathParams = {
-  /**
-   * Currently only projects, sites, nurseries, project-reports, nursery-reports and site-reports are set up
-   */
-  model: string;
-  uuid: string;
-};
-
-export type GetV2MODELUUIDImageLocationsError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2MODELUUIDImageLocationsResponse = {
-  data?: {
-    uuid?: string;
-    thumb_url?: string;
-    location?: {
-      lat?: number;
-      lng?: number;
-    };
-  }[];
-};
-
-export type GetV2MODELUUIDImageLocationsVariables = {
-  pathParams: GetV2MODELUUIDImageLocationsPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2MODELUUIDImageLocations = (
-  variables: GetV2MODELUUIDImageLocationsVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    GetV2MODELUUIDImageLocationsResponse,
-    GetV2MODELUUIDImageLocationsError,
-    undefined,
-    {},
-    {},
-    GetV2MODELUUIDImageLocationsPathParams
-  >({ url: "/v2/{model}/{uuid}/image/locations", method: "get", ...variables, signal });
-
-export const useGetV2MODELUUIDImageLocations = <TData = GetV2MODELUUIDImageLocationsResponse>(
-  variables: GetV2MODELUUIDImageLocationsVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<GetV2MODELUUIDImageLocationsResponse, GetV2MODELUUIDImageLocationsError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<GetV2MODELUUIDImageLocationsResponse, GetV2MODELUUIDImageLocationsError, TData>(
-    queryKeyFn({ path: "/v2/{MODEL}/{UUID}/image/locations", operationId: "getV2MODELUUIDImageLocations", variables }),
-    ({ signal }) => fetchGetV2MODELUUIDImageLocations({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2FundingTypeError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2FundingTypeResponse = {
@@ -8429,11 +8373,6 @@ export type QueryOperation =
       path: "/v2/admin/users/multi";
       operationId: "getV2AdminUsersMulti";
       variables: GetV2AdminUsersMultiVariables;
-    }
-  | {
-      path: "/v2/{MODEL}/{UUID}/image/locations";
-      operationId: "getV2MODELUUIDImageLocations";
-      variables: GetV2MODELUUIDImageLocationsVariables;
     }
   | {
       path: "/v2/admin/project-pitches/export";
