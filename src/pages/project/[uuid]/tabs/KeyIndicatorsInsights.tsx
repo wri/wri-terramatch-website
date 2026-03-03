@@ -36,7 +36,11 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     <Flex flex={1} flexWrap="wrap" className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8" justify={"flex-start"}>
       <MetricCard
         title={t(
-          framework === Framework.PPC ? "Trees Grown" : framework === Framework.HBF ? "Saplings Grown" : "Trees Planted"
+          framework === Framework.PPC
+            ? "Trees Growing"
+            : framework === Framework.HBF
+            ? "Saplings Growing"
+            : "Trees Planted"
         )}
         progress={totalTreesRestoredCount}
         goal={treesGrownGoal}
