@@ -8,7 +8,7 @@ import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
 import PasswordStrength from "@/components/extensive/PasswordStrength/PasswordStrength";
-import { PostAuthLoginError } from "@/generated/apiComponents";
+import { PostAuthStoreError } from "@/generated/apiComponents";
 
 import { ResetPasswordData } from "../[token].page";
 
@@ -18,7 +18,7 @@ type SetPasswordFormProps = {
   tokenUsed?: boolean;
   handleSave: (data: ResetPasswordData) => Promise<void>;
   loading?: boolean;
-  apiError?: PostAuthLoginError | null;
+  apiError?: PostAuthStoreError | null;
   success?: boolean;
 };
 
