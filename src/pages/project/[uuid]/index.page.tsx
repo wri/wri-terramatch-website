@@ -133,19 +133,12 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [router]
   );
 
-  const handleSuffixButtonClick = useCallback(
-    (viewKey: string) => {
-      setActiveSuffixView(prev => {
-        const next = prev === viewKey ? null : viewKey;
-        if (next === "sites") {
-          handleTabClick("sites");
-        }
-
-        return next;
-      });
-    },
-    [handleTabClick]
-  );
+  const handleSuffixButtonClick = useCallback((viewKey: string) => {
+    setActiveSuffixView(prev => {
+      const next = prev === viewKey ? null : viewKey;
+      return next;
+    });
+  }, []);
 
   const shouldHideNurseries = framework === Framework.PPC;
 
@@ -171,7 +164,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   );
 
   const tabBarDefaultValue = useMemo(() => {
-    if (activeSuffixView === "reports" || activeSuffixView === "nurseries") {
+    if (activeSuffixView === "reports" || activeSuffixView === "nurseries" || activeSuffixView === "sites") {
       return "__none__";
     }
     return activeTab;
