@@ -32,8 +32,6 @@ type TabItem = {
   key: string;
   title: string;
   body: ReactElement;
-  show?: Framework[];
-  hide?: Framework[];
 };
 
 type ProjectContentProps = {
@@ -55,7 +53,8 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const initialTab = (router.query.tab as string) || "overview";
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
-  const allTabItems = useMemo<TabItem[]>(
+
+  const tabItems = useMemo<TabItem[]>(
     () => [
       { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
@@ -85,43 +84,27 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [project, t, refetch]
   );
 
-  const filteredTabItems = useMemo(
-    () =>
-      allTabItems.filter(item => {
-        if (item.show != null) {
-          return item.show.includes(framework);
-        } else if (item.hide != null) {
-          return !item.hide.includes(framework);
-        }
-        return true;
-      }),
-    [allTabItems, framework]
-  );
-
   const tabBarTabs = useMemo(
     () =>
-      filteredTabItems.map(item => ({
+      tabItems.map(item => ({
         value: item.key,
         label: item.title
       })),
-    [filteredTabItems]
+    [tabItems]
   );
 
   useEffect(() => {
     const queryTab = router.query.tab as string;
-    const isValidTab = (tab: string) => filteredTabItems.some(item => item.key === tab);
+    const isValidTab = (tab: string) => tabItems.some(item => item.key === tab);
 
     if (queryTab && queryTab !== activeTab && isValidTab(queryTab)) {
       setActiveTab(queryTab);
-    } else if (!isValidTab(activeTab) && filteredTabItems.length > 0) {
-      setActiveTab(filteredTabItems[0].key);
+    } else if (!isValidTab(activeTab) && tabItems.length > 0) {
+      setActiveTab(tabItems[0].key);
     }
-  }, [router.query.tab, filteredTabItems, activeTab]);
+  }, [router.query.tab, tabItems, activeTab]);
 
-  const activeTabContent = useMemo(
-    () => filteredTabItems.find(item => item.key === activeTab)?.body,
-    [filteredTabItems, activeTab]
-  );
+  const activeTabContent = useMemo(() => tabItems.find(item => item.key === activeTab)?.body, [tabItems, activeTab]);
 
   const handleTabClick = useCallback(
     (tabValue: string) => {
@@ -134,10 +117,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   );
 
   const handleSuffixButtonClick = useCallback((viewKey: string) => {
-    setActiveSuffixView(prev => {
-      const next = prev === viewKey ? null : viewKey;
-      return next;
-    });
+    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
   }, []);
 
   const shouldHideNurseries = framework === Framework.PPC;
@@ -163,12 +143,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [shouldHideNurseries]
   );
 
-  const tabBarDefaultValue = useMemo(() => {
-    if (activeSuffixView === "reports" || activeSuffixView === "nurseries" || activeSuffixView === "sites") {
-      return "__none__";
-    }
-    return activeTab;
-  }, [activeSuffixView, activeTab]);
+  const tabBarDefaultValue = useMemo(
+    () => (activeSuffixView != null ? "__none__" : activeTab),
+    [activeSuffixView, activeTab]
+  );
 
   const handleInvite = () => {
     openModal(
