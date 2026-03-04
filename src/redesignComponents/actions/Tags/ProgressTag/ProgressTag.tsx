@@ -13,7 +13,7 @@ export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLD
 }
 
 export function ProgressTag({ state = null, className }: ProgressTagProps) {
-  if (state === null) {
+  if (state == null) {
     return null;
   }
 
@@ -34,7 +34,7 @@ export function ProgressTag({ state = null, className }: ProgressTagProps) {
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-nowrap whitespace-nowrap text-sm font-bold text-theme-neutral-900">
+        <span className="text-nowrap text-theme-neutral-900 whitespace-nowrap text-sm font-bold">
           {t(config.label)}
         </span>
       </Tag.Label>

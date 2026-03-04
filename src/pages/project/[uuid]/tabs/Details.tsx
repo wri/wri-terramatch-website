@@ -175,7 +175,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-b border-theme-neutral-300 py-4"
+                                      "border-theme-neutral-300 border-b py-4"
                                     )}
                                   >
                                     {row[idx + 1]}
@@ -250,8 +250,6 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
     project?.uuid
   );
 
-  console.log("project", project);
-
   const formValues = defaultValues ?? {};
 
   if (isFormLoading || !providerLoaded) {
@@ -259,7 +257,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
+    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
           {steps.map((step, index) => (
