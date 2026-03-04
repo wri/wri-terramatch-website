@@ -11,12 +11,9 @@ import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
+import { useOrganisationUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
-import {
-  useGetV2OrganisationsApprovedUsersUUID,
-  useGetV2OrganisationsUserRequestsUUID
-} from "@/generated/apiComponents";
-import { UserRead } from "@/generated/apiSchemas";
+import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
@@ -29,21 +26,16 @@ const TeamTabContent = () => {
   const { openModal, closeModal } = useModalContext();
   const [selectedUserUuid, setSelectedUserUuid] = useState<string>("");
 
-  // Queries
-  const { data: approvedUsers, refetch: refetchApprovedUsers } = useGetV2OrganisationsApprovedUsersUUID<{
-    data: UserRead[];
-  }>({
-    pathParams: {
-      uuid: String(query.id)
-    }
+  const [, { data: approvedUsers, refetch: refetchApproved }] = useOrganisationUserAssociations({
+    organisationUuid: String(query.id),
+    status: "approved"
   });
-  const { data: pendingUsers, refetch: refetchPendingUsers } = useGetV2OrganisationsUserRequestsUUID<{
-    data: UserRead[];
-  }>({
-    pathParams: {
-      uuid: String(query.id)
-    }
+
+  const [, { data: pendingUsers, refetch: refetchPending }] = useOrganisationUserAssociations({
+    organisationUuid: String(query.id),
+    status: "requested"
   });
+
   const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
     organisationUuid: query.id as string,
     userUuid: selectedUserUuid
@@ -52,21 +44,20 @@ const TeamTabContent = () => {
   createRef.current = create;
 
   const handleUpdateSuccess = useCallback(() => {
-    refetchApprovedUsers();
-    refetchPendingUsers();
+    refetchApproved();
+    refetchPending();
     closeModal(ModalId.CONFIRM_USER);
     setSelectedUserUuid("");
-  }, [refetchApprovedUsers, refetchPendingUsers, closeModal]);
+  }, [refetchApproved, refetchPending, closeModal]);
 
   useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
 
   /**
    * Conditionally render Approve or Reject Modal Content
    * @param type approve | reject
-   * @param user UserRead
-   * @returns openModal func
+   * @param user UserAssociationDto
    */
-  const handleOpenModal = (type: "approve" | "reject", user?: UserRead) => {
+  const handleOpenModal = (type: "approve" | "reject", user?: UserAssociationDto) => {
     if (user?.uuid == null) return;
 
     setSelectedUserUuid(user.uuid);
@@ -91,7 +82,6 @@ const TeamTabContent = () => {
           onClick: () => {
             // createRef.current is always the latest create fn (updated each render)
             const status = type === "approve" ? "approved" : "rejected";
-            console.log("[DEBUG] Sending user association update:", { type, status, userUuid: user?.uuid });
             (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
               status
             });
@@ -120,30 +110,31 @@ const TeamTabContent = () => {
       <LoadingContainer loading={false}>
         <Text variant="text-heading-2000">{t("Meet the Team")}</Text>
 
-        <When condition={!!approvedUsers?.data.length}>
+        <When condition={(approvedUsers?.length ?? 0) > 0}>
           <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <div className="flex items-center justify-between">
               <Text variant="text-heading-200">
-                {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.data.length })}
+                {t("Your Organizations' TerraMatch Users ({n})", { n: approvedUsers?.length })}
               </Text>
               <Button onClick={handleInvite}>{t("add Team Member")}</Button>
             </div>
 
             <List
               className="mt-10 grid grid-cols-4 gap-6"
-              items={approvedUsers?.data ?? []}
+              items={approvedUsers ?? []}
               render={user => <TeamMemberCard user={user} />}
             />
           </div>
         </When>
-        <When condition={!!pendingUsers?.data.length}>
+
+        <When condition={(pendingUsers?.length ?? 0) > 0}>
           <div className="mt-12 rounded-lg bg-neutral-150 py-8 px-14">
             <Text variant="text-heading-200">
-              {t("Requests to Join Organization ({n})", { n: pendingUsers?.data.length })}
+              {t("Requests to Join Organization ({n})", { n: pendingUsers?.length })}
             </Text>
             <List
               className="mt-10 grid grid-cols-3 gap-6"
-              items={pendingUsers?.data ?? []}
+              items={pendingUsers ?? []}
               render={user => (
                 <TeamMemberCard
                   type="pending"
