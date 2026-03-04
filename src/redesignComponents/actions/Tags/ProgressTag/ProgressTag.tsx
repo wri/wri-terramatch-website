@@ -8,11 +8,15 @@ import { STATE_PROGRESS_TAG } from "./constants/stateProgressTag";
 export type ProgressState = "not-started" | "in-progress" | "completed";
 
 export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  state?: ProgressState;
+  state?: ProgressState | null;
   className?: string;
 }
 
-export function ProgressTag({ state = "not-started", className }: ProgressTagProps) {
+export function ProgressTag({ state = null, className }: ProgressTagProps) {
+  if (state === null) {
+    return null;
+  }
+
   const t = useT();
   const config = STATE_PROGRESS_TAG[state];
 
