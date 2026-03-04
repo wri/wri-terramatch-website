@@ -232,12 +232,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 {
                   title: "Project Managers",
                   profiles: projectManagers,
-                  onProfileClick: () => {}
+                  onProfileClick: () => {},
+                  type: "project-manager"
                 },
                 {
                   title: "Monitoring Partners",
                   profiles: monitoringPartners,
-                  onProfileClick: () => {}
+                  onProfileClick: () => {},
+                  type: "monitoring-partner"
                 }
               ]}
               onInviteClick={handleInviteClick}
