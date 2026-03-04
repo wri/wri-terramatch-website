@@ -217,18 +217,24 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                 <Text textStyle="300-bold" color="primary.900">
                   {t("Project Stage")}:
                 </Text>
-                <div className="flex items-center gap-2">
-                  <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
-                  {(project.plantingStatus === "replacement-planting" ||
-                    project.plantingStatus === "no-restoration-expected") && (
-                    <>
-                      <ArrowForward boxSize={4} color="neutral.900" />
-                      <Text textStyle="400" color="neutral.900">
-                        {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
-                      </Text>
-                    </>
-                  )}
-                </div>
+                {project.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
+                      {(project.plantingStatus === "replacement-planting" ||
+                        project.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForward boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
               </Flex>
             )}
           </Fragment>
