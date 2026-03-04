@@ -1156,6 +1156,11 @@ export type FinancialReportLightDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2012,6 +2017,11 @@ export type FinancialReportFullDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2030,11 +2040,6 @@ export type FinancialReportFullDto = {
    */
   approvedAt: string | null;
   completion: number | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  frameworkKey: string | null;
   nothingToReport: boolean | null;
   feedback: string | null;
   feedbackFields: string[] | null;

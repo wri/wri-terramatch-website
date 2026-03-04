@@ -98,6 +98,7 @@ const FinancialReportsDataGrid: FC = () => {
 
 export const FinancialReportsList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   const handleExport = async () => {
     setExporting(true);
@@ -139,6 +140,13 @@ export const FinancialReportsList: FC = () => {
       label="Change Request Status"
       source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="frameworkKey"
+      label="Framework"
+      source="frameworkKey"
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />
   ];
