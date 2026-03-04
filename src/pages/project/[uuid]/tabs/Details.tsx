@@ -175,7 +175,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-theme-neutral-300 border-b py-4"
+                                      "border-b border-theme-neutral-300 py-4"
                                     )}
                                   >
                                     {row[idx + 1]}
@@ -217,18 +217,24 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                 <Text textStyle="300-bold" color="primary.900">
                   {t("Project Stage")}:
                 </Text>
-                <div className="flex items-center gap-2">
-                  <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
-                  {(project.plantingStatus === "replacement-planting" ||
-                    project.plantingStatus === "no-restoration-expected") && (
-                    <>
-                      <ArrowForward boxSize={4} color="neutral.900" />
-                      <Text textStyle="400" color="neutral.900">
-                        {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
-                      </Text>
-                    </>
-                  )}
-                </div>
+                {project.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
+                      {(project.plantingStatus === "replacement-planting" ||
+                        project.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForward boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
               </Flex>
             )}
           </Fragment>
@@ -244,6 +250,8 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
     project?.uuid
   );
 
+  console.log("project", project);
+
   const formValues = defaultValues ?? {};
 
   if (isFormLoading || !providerLoaded) {
@@ -251,7 +259,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
           {steps.map((step, index) => (
