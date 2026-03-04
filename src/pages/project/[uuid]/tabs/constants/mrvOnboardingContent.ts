@@ -1,6 +1,6 @@
 export const MRV_ONBOARDING_CONTENT = [
   {
-    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot"],
+    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3"],
     content: {
       introText:
         "Monitoring, Reporting, and Verification refers to the set of processes used to track your project's progress over time. ",
