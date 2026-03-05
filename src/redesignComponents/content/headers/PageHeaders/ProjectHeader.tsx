@@ -4,10 +4,10 @@ import { FC, useMemo } from "react";
 import { useGadmOptions } from "@/connections/Gadm";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import {
   countryCodeToFlag,
-  formatMonthYear,
-  mapPlantingStatusToProgressState
+  formatMonthYear
 } from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
 import { formatOptionsList } from "@/utils/options";
 
@@ -49,7 +49,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
         <ProjectInfo
           project={project}
           title={project.name ?? "-"}
-          tag={{ state: mapPlantingStatusToProgressState(project.plantingStatus) }}
+          tag={{ state: getPlantingStatus(project?.plantingStatus!) }}
           organization={project.organisationName ?? "-"}
           country={formatOptionsList(countryOptions ?? [], project.country ?? [])}
           startDate={formatMonthYear(project.plantingStartDate)}
