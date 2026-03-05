@@ -73,6 +73,7 @@ const Navbar = (): JSX.Element => {
       </header>
       <When condition={isOpenMessage}>
         <InlineMessage
+          className="!w-full"
           variant="warning"
           label="We are Improving TerraMatch"
           caption="You may notice some pages look different while we update the design to make your experience better. "
