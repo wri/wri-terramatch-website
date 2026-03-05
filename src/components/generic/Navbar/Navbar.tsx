@@ -74,7 +74,8 @@ const Navbar = (): JSX.Element => {
       <When condition={isOpenMessage}>
         <InlineMessage
           variant="warning"
-          label="Project profiles are being updated, some sections may look different as we roll out improvements."
+          label="We are Improving TerraMatch"
+          caption="You may notice some pages look different while we update the design to make your experience better. "
           size="full-width"
           actionLabel="Close"
           onActionClick={() => setIsOpenMessage(false)}

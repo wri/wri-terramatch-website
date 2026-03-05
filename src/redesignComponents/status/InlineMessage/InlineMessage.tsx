@@ -28,6 +28,9 @@ const BASE_CSS: Record<string, any> = {
   },
   "& [aria-roledescription] > div > div:first-of-type > p": {
     maxWidth: "100%"
+  },
+  "& [aria-roledescription] > div > p": {
+    maxWidth: "100%"
   }
 };
 
