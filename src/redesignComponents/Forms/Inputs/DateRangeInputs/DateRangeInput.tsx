@@ -2,7 +2,7 @@ import { DatePicker, Portal, useDatePickerContext } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 
-import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
 import { calendarGlobalStyles, dateRangePickerStyles } from "./styled";
 
@@ -15,17 +15,21 @@ const DayView = () => {
   return (
     <DatePicker.View view="day">
       <DatePicker.ViewControl>
-        <DatePicker.PrevTrigger>&larr;</DatePicker.PrevTrigger>
+        <DatePicker.PrevTrigger>
+          <ChevronRightIcon />
+        </DatePicker.PrevTrigger>
         <DatePicker.ViewTrigger>
           <DatePicker.RangeText />
         </DatePicker.ViewTrigger>
-        <DatePicker.NextTrigger>&rarr;</DatePicker.NextTrigger>
+        <DatePicker.NextTrigger>
+          <ChevronRightIcon />
+        </DatePicker.NextTrigger>
       </DatePicker.ViewControl>
       <DatePicker.Table>
         <DatePicker.TableHead>
           <DatePicker.TableRow>
             {context.weekDays.map((weekDay, i) => (
-              <DatePicker.TableHeader key={i}>{weekDay.short}</DatePicker.TableHeader>
+              <DatePicker.TableHeader key={i}>{weekDay.narrow}</DatePicker.TableHeader>
             ))}
           </DatePicker.TableRow>
         </DatePicker.TableHead>

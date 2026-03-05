@@ -1,26 +1,6 @@
 import { css } from "@emotion/react";
 
-import { getThemedColor } from "../../../../lib/theme";
-
-/**
- * Colors used by the portaled calendar popup.
- * These MUST be raw hex values because Portal renders outside
- * ChakraProvider's DOM tree, so CSS variables are unavailable.
- */
-const colors = {
-  neutral100: "#FFFFFF",
-  neutral200: "#F6F6F6",
-  neutral300: "#E7E6E6",
-  neutral400: "#C9C9C9",
-  neutral600: "#A1A1A1",
-  neutral700: "#5C5959",
-  neutral900: "#1A1919",
-  primary200: "#E7F7FD",
-  primary300: "#CCECFA",
-  primary500: "#78CAED",
-  primary600: "#50B6E2",
-  primary700: "#11688D"
-};
+import { getThemedColor, getThemedFontSize, getThemedLineHeight } from "../../../../lib/theme";
 
 export const dateRangePickerStyles = css`
   font-family: inherit;
@@ -28,7 +8,7 @@ export const dateRangePickerStyles = css`
 
   [data-part="label"] {
     display: block;
-    font-size: 0.875rem;
+    font-size: ${getThemedFontSize("300")};
     font-weight: 600;
     color: ${getThemedColor("neutral", 900)};
     margin-bottom: 0.375rem;
@@ -54,7 +34,7 @@ export const dateRangePickerStyles = css`
     border: none;
     outline: none;
     background: transparent;
-    font-size: 0.875rem;
+    font-size: ${getThemedFontSize("300")};
     color: ${getThemedColor("neutral", 900)};
     width: 100%;
     padding: 0.25rem 0;
@@ -88,8 +68,8 @@ export const calendarGlobalStyles = css`
   }
 
   [data-scope="date-picker"][data-part="content"] {
-    background: ${colors.neutral100};
-    border: 1px solid ${colors.neutral300};
+    background: ${getThemedColor("neutral", 100)};
+    border: 1px solid ${getThemedColor("neutral", 300)};
     border-radius: 0.75rem;
     padding: 1rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -101,7 +81,7 @@ export const calendarGlobalStyles = css`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 0.75rem;
+    margin-bottom: 6px;
   }
 
   [data-scope="date-picker"] [data-part="prev-trigger"],
@@ -109,29 +89,45 @@ export const calendarGlobalStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
+    padding: 0;
+    width: fit-content;
+    height: fit-content;
     border: none;
     background: transparent;
     border-radius: 0.375rem;
     cursor: pointer;
-    font-size: 1rem;
-    color: ${colors.neutral700};
+    font-size: ${getThemedFontSize("400")};
+    color: ${getThemedColor("neutral", 700)};
     transition: background 0.15s, color 0.15s;
   }
 
   [data-scope="date-picker"] [data-part="prev-trigger"]:hover,
   [data-scope="date-picker"] [data-part="next-trigger"]:hover {
-    background: ${colors.neutral200};
-    color: ${colors.neutral900};
+    background: transparent;
+  }
+
+  [data-scope="date-picker"] [data-part="prev-trigger"] svg,
+  [data-scope="date-picker"] [data-part="next-trigger"] svg {
+    width: 1rem;
+    height: 1rem;
+    transition: color 0.15s;
+  }
+
+  [data-scope="date-picker"] [data-part="prev-trigger"] svg {
+    transform: rotate(180deg);
+  }
+
+  [data-scope="date-picker"] [data-part="prev-trigger"]:hover svg,
+  [data-scope="date-picker"] [data-part="next-trigger"]:hover svg {
+    color: ${getThemedColor("primary", 500)};
   }
 
   [data-scope="date-picker"] [data-part="view-trigger"] {
     border: none;
     background: transparent;
     font-weight: 600;
-    font-size: 0.875rem;
-    color: ${colors.neutral900};
+    font-size: ${getThemedFontSize("300")};
+    color: ${getThemedColor("neutral", 900)};
     cursor: pointer;
     padding: 0.25rem 0.5rem;
     border-radius: 0.375rem;
@@ -139,7 +135,14 @@ export const calendarGlobalStyles = css`
   }
 
   [data-scope="date-picker"] [data-part="view-trigger"]:hover {
-    background: ${colors.neutral200};
+    background: ${getThemedColor("neutral", 200)};
+  }
+
+  [data-scope="date-picker"] [data-part="range-text"] {
+    color: ${getThemedColor("neutral", 900)};
+    font-size: ${getThemedFontSize("300")};
+    line-height: ${getThemedLineHeight("500")};
+    font-weight: normal;
   }
 
   [data-scope="date-picker"] [data-part="table"] {
@@ -149,11 +152,14 @@ export const calendarGlobalStyles = css`
   }
 
   [data-scope="date-picker"] [data-part="table-header"] {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: ${colors.neutral600};
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: ${getThemedFontSize("300")};
+    line-height: ${getThemedLineHeight("500")};
+    font-weight: normal;
+    color: ${getThemedColor("neutral", 700)};
     text-align: center;
-    padding: 0.5rem 0.25rem;
+    padding: 0;
   }
 
   [data-scope="date-picker"] [data-part="table-cell"] {
@@ -165,15 +171,15 @@ export const calendarGlobalStyles = css`
   }
 
   [data-scope="date-picker"] [data-part="table-cell"]:has([data-in-range]) {
-    background: ${colors.primary200};
+    background: ${getThemedColor("primary", 200)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell"]:has([data-range-start]) {
-    background: linear-gradient(to right, transparent 50%, ${colors.primary200} 50%);
+    background: linear-gradient(to right, transparent 50%, ${getThemedColor("primary", 200)} 50%);
   }
 
   [data-scope="date-picker"] [data-part="table-cell"]:has([data-range-end]) {
-    background: linear-gradient(to left, transparent 50%, ${colors.primary200} 50%);
+    background: linear-gradient(to left, transparent 50%, ${getThemedColor("primary", 200)} 50%);
   }
 
   [data-scope="date-picker"] [data-part="table-cell"]:has([data-range-start][data-range-end]) {
@@ -184,65 +190,64 @@ export const calendarGlobalStyles = css`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.125rem;
-    height: 2.125rem;
+    width: 2.25rem;
+    height: 2.25rem;
     margin: 0 auto;
     border: none;
     background: transparent;
     border-radius: 50%;
-    font-size: 0.8125rem;
-    color: ${colors.neutral900};
+    font-size: ${getThemedFontSize("300")};
+    color: ${getThemedColor("neutral", 900)};
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
     position: relative;
+    lineHeight: "500",
+    fontWeight: "normal"
     z-index: 1;
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"]:hover {
-    background: ${colors.primary200};
+    background: ${getThemedColor("primary", 200)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today] {
-    font-weight: 700;
-    border: 1.5px solid ${colors.primary500};
+    color: ${getThemedColor("accessible", "controls-on-neutral-lights")};
+    border: 2px solid ${getThemedColor("primary", 500)};
     border-radius: 50%;
-    background: ${colors.neutral100};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today][data-in-range] {
-    background: ${colors.neutral100};
-    border: 1.5px solid ${colors.primary500};
-    color: ${colors.neutral900};
+    color: ${getThemedColor("accessible", "controls-on-neutral-lights")};
+    border: 2px solid ${getThemedColor("primary", 500)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-in-range] {
     background: transparent;
     border-radius: 50%;
-    color: ${colors.neutral900};
+    color: ${getThemedColor("neutral", 900)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-in-range]:hover {
-    background: ${colors.primary300};
+    background: ${getThemedColor("primary", 300)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-selected] {
-    background: ${colors.primary500};
-    color: ${colors.neutral100};
-    font-weight: 600;
+    background: ${getThemedColor("primary", 500)};
+    color: ${getThemedColor("neutral", 100)};
     border: none;
     border-radius: 50%;
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-selected]:hover {
-    background: ${colors.primary600};
+    background: ${getThemedColor("primary", 600)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-outside-range] {
-    color: ${colors.neutral400};
+    color: ${getThemedColor("neutral", 400)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-disabled] {
-    color: ${colors.neutral400};
+    color: ${getThemedColor("neutral", 400)};
     cursor: not-allowed;
   }
 
@@ -257,8 +262,8 @@ export const calendarGlobalStyles = css`
 
   [data-scope="date-picker"] [data-part="view"][data-view="month"] [data-part="table-cell-trigger"][data-selected],
   [data-scope="date-picker"] [data-part="view"][data-view="year"] [data-part="table-cell-trigger"][data-selected] {
-    background: ${colors.primary600};
-    color: ${colors.neutral100};
+    background: ${getThemedColor("primary", 600)};
+    color: ${getThemedColor("neutral", 100)};
     font-weight: 600;
   }
 
@@ -268,6 +273,6 @@ export const calendarGlobalStyles = css`
   [data-scope="date-picker"]
     [data-part="view"][data-view="year"]
     [data-part="table-cell-trigger"][data-selected]:hover {
-    background: ${colors.primary700};
+    background: ${getThemedColor("primary", 700)};
   }
 `;
