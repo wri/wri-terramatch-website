@@ -15,6 +15,22 @@ export interface InlineMessageProps {
   buttonRightIcon?: React.ReactNode;
 }
 
+const BASE_CSS: Record<string, any> = {
+  "& [aria-roledescription] > div > div:first-of-type": {
+    alignItems: "center"
+  },
+  "& [aria-roledescription] > div > div:first-of-type > svg": {
+    marginTop: 0
+  },
+  "& [aria-roledescription]": {
+    columnGap: "16px",
+    marginBottom: "0 !important"
+  },
+  "& [aria-roledescription] > div > div:first-of-type > p": {
+    maxWidth: "100%"
+  }
+};
+
 const InlineMessage: FC<InlineMessageProps> = ({
   label,
   variant,
@@ -26,20 +42,7 @@ const InlineMessage: FC<InlineMessageProps> = ({
   isButtonRight
 }) => {
   return (
-    <Box
-      className="w-auto"
-      css={{
-        "& [aria-roledescription] > div > div:first-of-type": {
-          alignItems: "center"
-        },
-        "& [aria-roledescription] > div > div:first-of-type > svg": {
-          marginTop: 0
-        },
-        "& [aria-roledescription]": {
-          columnGap: "16px"
-        }
-      }}
-    >
+    <Box className="w-auto" css={BASE_CSS}>
       <InlineMessageComponent
         label={label ?? ""}
         variant={variant}
