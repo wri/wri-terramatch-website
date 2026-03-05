@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { InlineMessage as InlineMessageComponent } from "@worldresources/wri-design-systems";
+import classNames from "classnames";
 import { FC } from "react";
-
 export interface InlineMessageProps {
   label: string;
   caption?: string;
@@ -13,6 +13,7 @@ export interface InlineMessageProps {
   isButtonRight?: boolean;
   buttonLeftIcon?: React.ReactNode;
   buttonRightIcon?: React.ReactNode;
+  className?: string;
 }
 
 const BASE_CSS: Record<string, any> = {
@@ -42,10 +43,11 @@ const InlineMessage: FC<InlineMessageProps> = ({
   icon,
   onActionClick,
   actionLabel,
-  isButtonRight
+  isButtonRight,
+  className
 }) => {
   return (
-    <Box className="w-auto" css={BASE_CSS}>
+    <Box className={classNames("w-auto", className)} css={BASE_CSS}>
       <InlineMessageComponent
         label={label ?? ""}
         variant={variant}
