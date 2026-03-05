@@ -8,10 +8,7 @@ export interface PageBodyProps
 
 const PageBody = ({ children, className, ...props }: PageBodyProps) => {
   return (
-    <div
-      {...props}
-      className={twMerge(classNames("min-h-[calc(100vh-70px)] w-full space-y-15 bg-neutral-50 pt-10"), className)}
-    >
+    <div {...props} className={twMerge(classNames("w-full space-y-15 bg-neutral-50 pt-10"), className)}>
       {children}
     </div>
   );
