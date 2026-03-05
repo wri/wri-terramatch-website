@@ -6,7 +6,6 @@ import { useCallback, useMemo } from "react";
 
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import WizardForm from "@/components/extensive/WizardForm";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -120,7 +119,6 @@ const CreateOrganisationForm = () => {
           entity={orgData ?? undefined}
         />
       </LoadingContainer>
-      <PageFooter />
     </BackgroundLayout>
   );
 };
