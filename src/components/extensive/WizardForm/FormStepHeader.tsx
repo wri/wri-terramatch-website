@@ -18,7 +18,7 @@ const FormStepHeader: FC<PropsWithChildren<FormStepHeaderProps>> = ({
   className,
   ...divProps
 }) => (
-  <div {...divProps} className={twMerge("flex-1 bg-white pt-4 pb-11 pl-20", className)}>
+  <div {...divProps} className={twMerge("flex-1 bg-white py-4 pl-20", className)}>
     <FormSectionHeader
       actions={actionButtonProps != null && <Button variant="secondary" {...actionButtonProps} />}
       title={title}
