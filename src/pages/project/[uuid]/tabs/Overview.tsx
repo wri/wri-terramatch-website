@@ -27,6 +27,7 @@ import ProjectSetUpSection from "./ProjectSetUpSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
+  onViewSites?: () => void;
 }
 
 interface OverviewItemProps {
@@ -82,7 +83,7 @@ const mapStatusToTagStateProject = (status: string | null | undefined): { type: 
   }
 };
 
-const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
+const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
@@ -161,7 +162,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               size: "small",
               children: "View Sites",
               rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("sites")
+              onClick: onViewSites ?? (() => goToTab("sites"))
             }}
             downloadButtonProps={{
               variant: "secondary",
