@@ -21,7 +21,6 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
-import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
@@ -31,6 +30,7 @@ import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  getPlantingStatus,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
   NO_COUNT_TABLE_SPECIES_PER_ROW,
   noCountTableColumns
@@ -175,7 +175,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-theme-neutral-300 border-b py-4"
+                                      "border-b border-theme-neutral-300 py-4"
                                     )}
                                   >
                                     {row[idx + 1]}
@@ -220,7 +220,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                 {project.plantingStatus !== null ? (
                   <>
                     <div className="flex items-center gap-2">
-                      <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
+                      <ProgressTag state={getPlantingStatus(project.plantingStatus)} />
                       {(project.plantingStatus === "replacement-planting" ||
                         project.plantingStatus === "no-restoration-expected") && (
                         <>
@@ -257,7 +257,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
           {steps.map((step, index) => (
