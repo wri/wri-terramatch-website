@@ -54,9 +54,17 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
 
+  const handleSuffixButtonClick = useCallback((viewKey: string) => {
+    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
+  }, []);
+
   const tabItems = useMemo<TabItem[]>(
     () => [
-      { key: "overview", title: t("Overview"), body: <ProjectOverviewTab project={project} /> },
+      {
+        key: "overview",
+        title: t("Overview"),
+        body: <ProjectOverviewTab project={project} onViewSites={() => handleSuffixButtonClick("sites")} />
+      },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
       {
         key: "gallery",
@@ -81,7 +89,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         body: <AuditLog project={project} refresh={refetch} />
       }
     ],
-    [project, t, refetch]
+    [project, t, refetch, handleSuffixButtonClick]
   );
 
   const tabBarTabs = useMemo(
@@ -115,10 +123,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     },
     [router]
   );
-
-  const handleSuffixButtonClick = useCallback((viewKey: string) => {
-    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
-  }, []);
 
   const shouldHideNurseries = framework === Framework.PPC;
 
@@ -173,7 +177,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
