@@ -15,7 +15,8 @@ import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavig
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
@@ -94,6 +95,13 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
     type: "projects"
   });
 
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
+
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
@@ -118,13 +126,17 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
       }
       actions={
         <EditButton
-          onClick={() =>
-            router.push(
-              `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                step.id
-              )}`
-            )
-          }
+          onClick={() => {
+            if (isEntityAwaitingApproval(project.status, project.updateRequestStatus)) {
+              handleEdit();
+            } else {
+              router.push(
+                `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                  step.id
+                )}`
+              );
+            }
+          }}
           text={t("Edit")}
         />
       }
