@@ -739,6 +739,7 @@ export type UserAssociationDto = {
   roleName: string | null;
   phoneNumber: string | null;
   jobRole: string | null;
+  lastLoggedInAt: string | null;
   associatedType: string;
 };
 
