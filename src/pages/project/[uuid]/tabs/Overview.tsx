@@ -11,6 +11,8 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -89,6 +91,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const { openModal } = useModalContext();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
 
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
@@ -116,9 +124,13 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
-    router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
-      shallow: true
-    });
+    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
+      handleEdit();
+    } else {
+      router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
+        shallow: true
+      });
+    }
   };
 
   const goToTab = (tab: string) => {
@@ -199,7 +211,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProjectSetUpSection entityUuid={project.uuid} onStatusChange={setIsProjectSetupComplete} />
+              <ProjectSetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} />
             </Box>
           </OverviewItem>
         </Flex>
