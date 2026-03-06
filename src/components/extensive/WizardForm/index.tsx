@@ -244,6 +244,7 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const isEntityApproved = entity?.status == "approved";
+  const formModel = props?.models as FormModel;
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
       <div
@@ -270,12 +271,12 @@ function WizardForm(props: WizardFormProps) {
           )}
           cancelButtonProps={undefined}
           primaryButtonProps={{
-            children: t(`${isEntityApproved ? "Save changes" : "Next"}`),
+            children: t(`${isEntityApproved ? "Save changes" : selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={
-            !isEntityApproved
+            !isEntityApproved && formModel?.model != "organisations"
               ? {
                   children: "Save and Exit",
                   onClick: () => {
@@ -319,7 +320,8 @@ function WizardForm(props: WizardFormProps) {
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      isEntityApproved
+      isEntityApproved,
+      formModel?.model
     ]
   );
 
@@ -391,7 +393,6 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
-  const formModel = props?.models as FormModel;
 
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
@@ -447,7 +448,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
+                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
