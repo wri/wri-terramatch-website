@@ -3,9 +3,13 @@
  *
  * @version 1.0.0
  */
-export type V2PostOrganisationsApproveUserBody = {
-  organisation_uuid: string;
-  user_uuid: string;
+export type PatchAuthChangeBody = {
+  token?: string;
+  password?: string;
+};
+
+export type PatchV2AuthVerifyBody = {
+  token?: string;
 };
 
 export type PostAuthResetBody = {
@@ -13,104 +17,34 @@ export type PostAuthResetBody = {
   callback_url?: string;
 };
 
-export type V2AdminOrganisationApproveBody = {
-  uuid: string;
+export type Body = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
 };
 
-export type V2PostOrganisationsBody = {
+export type PostV2FprojectPipelineBody = {
   /**
-   * Available type are for-profit-organization, non-profit-organization, government-agency
+   * @format date
    */
-  type?: string;
-  private?: boolean;
-  name?: string;
-  phone?: string;
-  currency?: string;
-  states?: string[];
-  loan_status_types?: string[];
-  land_systems?: string[];
-  fund_utilisation?: string[];
-  detailed_intervention_types?: string[];
-  community_members_engaged_3yr?: number;
-  community_members_engaged_3yr_women?: number;
-  community_members_engaged_3yr_men?: number;
-  community_members_engaged_3yr_youth?: number;
-  community_members_engaged_3yr_non_youth?: number;
-  community_members_engaged_3yr_smallholder?: number;
-  community_members_engaged_3yr_backward_class?: number;
-  total_board_members?: number;
-  pct_board_women?: number;
-  pct_board_men?: number;
-  pct_board_youth?: number;
-  pct_board_non_youth?: number;
-  account_number_1?: string;
-  account_number_2?: string;
-  approach_of_marginalized_communities?: string;
-  community_engagement_numbers_marginalized?: string;
-  founding_date?: string;
-  description?: string;
-  leadership_team?: string;
-  countries?: string[];
-  engagement_farmers?: string[];
-  engagement_women?: string[];
-  engagement_youth?: string[];
-  engagement_non_youth?: string[];
-  tree_restoration_practices?: string[];
-  business_model?: string;
-  subtype?: string;
-  languages?: string[];
-  web_url?: string;
-  facebook_url?: string;
-  instagram_url?: string;
-  linkedin_url?: string;
-  twitter_url?: string;
-  hq_street_1?: string;
-  hq_street_2?: string;
-  hq_city?: string;
-  hq_state?: string;
-  hq_zipcode?: string;
-  hq_country?: string;
-  fin_start_month?: number;
-  /**
-   * @format float
-   */
-  ha_restored_total?: number;
-  /**
-   * @format float
-   */
-  ha_restored_3year?: number;
-  relevant_experience_years?: number;
-  trees_grown_total?: number;
-  trees_grown_3year?: number;
-  tree_care_approach?: string;
-  ft_permanent_employees?: number;
-  pt_permanent_employees?: number;
-  temp_employees?: number;
-  female_employees?: number;
-  male_employees?: number;
-  young_employees?: number;
-  additional_funding_details?: string;
-  community_experience?: string;
-  total_engaged_community_members_3yr?: number;
-  percent_engaged_women_3yr?: number;
-  percent_engaged_men_3yr?: number;
-  percent_engaged_under_35_3yr?: number;
-  percent_engaged_over_35_3yr?: number;
-  percent_engaged_smallholder_3yr?: number;
-  total_trees_grown?: number;
-  avg_tree_survival_rate?: number;
-  tree_maintenance_aftercare_approach?: string;
-  restored_areas_description?: string;
-  monitoring_evaluation_experience?: string;
-  funding_history?: string;
-  shapefiles?: {
-    uuid?: string;
-    shapefileable_type?: string;
-    shapefileable_id?: number;
-    geojson?: string;
-    created_at?: string;
-    updated_at?: string;
-    deleted_at?: string;
-  }[];
-  tags?: string[];
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string[];
+  publish_for?: string;
+  url?: string;
 };

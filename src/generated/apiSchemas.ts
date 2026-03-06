@@ -3,6 +3,59 @@
  *
  * @version 1.0.0
  */
+export type TreeSpeciesAggregated = {
+  ["tree-planted"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+  ["seeding-records"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string;
+    aggregateAmount?: number;
+  }[];
+  ["trees-regenerating"]?: {
+    /**
+     * @format date-time
+     */
+    dueDate?: string | null;
+    aggregateAmount?: number;
+  }[];
+};
+
+export type TreeSpeciesRead = {
+  uuid?: string;
+  name?: string;
+  amount?: number;
+  type?: string;
+  collection?: string;
+};
+
+export type TreeSpeciesReadAll = {
+  uuid?: string;
+  name?: string;
+  amount?: number;
+  type?: string;
+  collection?: string;
+}[];
+
+export type AssociatedUserRead = {
+  uuid?: string;
+  role?: string;
+  job_role?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * allowed values Pending|Accepted
+   */
+  status?: string;
+};
+
 export type UserRead = {
   id?: number;
   uuid?: string;
@@ -561,6 +614,41 @@ export type UserReadAll = {
   created_at?: string;
 }[];
 
+export type ReportingFrameworkRead = {
+  uuid?: string;
+  name?: string;
+  slug?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type ReportingFrameworkUpdate = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
+export type ReportingFrameworkCreate = {
+  name?: string;
+  access_code?: string;
+  project_form_uuid?: string;
+  project_report_form_uuid?: string;
+  site_form_uuid?: string;
+  site_report_form_uuid?: string;
+  nursery_form_uuid?: string;
+  nursery_report_form_uuid?: string;
+};
+
 export type V2PaginationLinks = {
   first?: string;
   last?: string;
@@ -587,6 +675,29 @@ export type V2PaginationMeta = {
     label?: string;
     active?: boolean;
   }[];
+};
+
+export type V2SearchFilterSort = {
+  /**
+   * search term to use on the collection
+   */
+  search?: string;
+  /**
+   * multiple filters can be applied. syntax is ?filter[foo]=value1,value2$filter[bar]=value3
+   */
+  filter?: string;
+  /**
+   * sorting can be applied, default is ascending or use - for descending. For Example ?sort=-name
+   */
+  sort?: string;
+  /**
+   * number of results (per page) to return
+   */
+  per_page?: number;
+  /**
+   * page number you want results from
+   */
+  page?: number;
 };
 
 export type V2AdminOrganisationRead = {
@@ -1737,6 +1848,15 @@ export type V2FileGallery = {
   collection_name?: string;
 };
 
+export type V2FileGalleryLite = {
+  uuid?: string;
+  thumb_url?: string;
+  location?: {
+    lat?: number;
+    lng?: number;
+  };
+};
+
 export type V2TreeSpeciesRead = {
   uuid?: string;
   name?: string;
@@ -1798,6 +1918,13 @@ export type V2OwnershipStakeUpdate = {
   percent_ownership?: number;
 };
 
+export type V2FundingTypeCreate = {
+  organisation_id?: string;
+  amount?: number;
+  year?: number;
+  type?: string;
+};
+
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
@@ -1807,7 +1934,1454 @@ export type V2FundingTypeRead = {
   type?: string;
 };
 
+export type V2FundingTypeUpdate = {
+  amount?: number;
+  year?: number;
+  type?: string;
+};
+
+export type V2SiteRead = {
+  id?: number;
+  site_id?: number;
+  terrafund_site_id?: number;
+  programme_id?: number;
+  terrafund_programme_id?: number;
+  control_site?: boolean;
+  name?: string;
+  country?: string;
+  project_country?: string;
+  continent?: string;
+  description?: string;
+  planting_pattern?: string;
+  stratification_for_heterogeneity?: string;
+  history?: string;
+  workdays_paid?: number;
+  workdays_volunteer?: number;
+  total_workdays?: number;
+  /**
+   * @format date
+   */
+  establishment_date?: string;
+  /**
+   * @format date
+   */
+  start_date?: string;
+  /**
+   * @format date
+   */
+  end_date?: string;
+  technical_narrative?: string;
+  public_narrative?: string;
+  aim_survival_rate?: number;
+  aim_year_five_crown_cover?: number;
+  aim_direct_seeding_survival_rate?: number;
+  aim_natural_regeneration_trees_per_hectare?: number;
+  aim_natural_regeneration_hectares?: number;
+  aim_soil_condition?: string;
+  aim_number_of_mature_trees?: number;
+  anr_practices?: string[];
+  hectares_to_restore?: number;
+  landscape_community_contribution?: string;
+  disturbances?: string;
+  boundary_geojson?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+};
+
+export type V2SiteMonitoringCreate = {
+  site_uuid?: string;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  /**
+   * @format date
+   */
+  measurement_date?: string;
+};
+
+export type V2SiteMonitoringUpdate = {
+  status?: string;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  /**
+   * @format date
+   */
+  measurement_date?: string;
+};
+
+export type V2SiteMonitoringRead = {
+  uuid?: string;
+  status?: string;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  /**
+   * @format date
+   */
+  measurement_date?: string;
+  /**
+   * @format date-time
+   */
+  last_updated?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+};
+
+export type V2ProjectMonitoringCreate = {
+  project_uuid?: string;
+  total_hectares?: number;
+  ha_mangrove?: number;
+  ha_assisted?: number;
+  ha_agroforestry?: number;
+  ha_reforestation?: number;
+  ha_peatland?: number;
+  ha_riparian?: number;
+  ha_enrichment?: number;
+  ha_nucleation?: number;
+  ha_silvopasture?: number;
+  ha_direct?: number;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  tree_cover_loss?: number;
+  carbon_benefits?: number;
+  number_of_esrp?: number;
+  field_tree_regenerated?: number;
+  field_tree_survival_percent?: number;
+  /**
+   * @format date
+   */
+  start_date?: string;
+  /**
+   * @format date
+   */
+  end_date?: string;
+};
+
+export type V2ProjectMonitoringUpdate = {
+  status?: string;
+  total_hectares?: number;
+  ha_mangrove?: number;
+  ha_assisted?: number;
+  ha_agroforestry?: number;
+  ha_reforestation?: number;
+  ha_peatland?: number;
+  ha_riparian?: number;
+  ha_enrichment?: number;
+  ha_nucleation?: number;
+  ha_silvopasture?: number;
+  ha_direct?: number;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  tree_cover_loss?: number;
+  carbon_benefits?: number;
+  number_of_esrp?: number;
+  field_tree_regenerated?: number;
+  field_tree_survival_percent?: number;
+  /**
+   * @format date
+   */
+  start_date?: string;
+  /**
+   * @format date
+   */
+  end_date?: string;
+};
+
+export type V2ProjectMonitoringRead = {
+  uuid?: string;
+  status?: string;
+  total_hectares?: number;
+  ha_mangrove?: number;
+  ha_assisted?: number;
+  ha_agroforestry?: number;
+  ha_reforestation?: number;
+  ha_peatland?: number;
+  ha_riparian?: number;
+  ha_enrichment?: number;
+  ha_nucleation?: number;
+  ha_silvopasture?: number;
+  ha_direct?: number;
+  tree_count?: number;
+  tree_cover?: number;
+  field_tree_count?: number;
+  tree_cover_loss?: number;
+  carbon_benefits?: number;
+  number_of_esrp?: number;
+  field_tree_regenerated?: number;
+  field_tree_survival_percent?: number;
+  /**
+   * @format date
+   */
+  start_date?: string;
+  /**
+   * @format date
+   */
+  end_date?: string;
+  /**
+   * @format date-time
+   */
+  last_updated?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+};
+
+export type V2StrataRead = {
+  uuid?: string;
+  description?: string;
+  extent?: number;
+};
+
+export type V2StrataPaginated = {
+  data?: {
+    uuid?: string;
+    description?: string;
+    extent?: number;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+    unfiltered_total?: number;
+  };
+};
+
+export type V2DisturbanceRead = {
+  uuid?: string;
+  description?: string;
+  intensity?: string;
+  extent?: string;
+};
+
+export type V2DisturbancePaginated = {
+  data?: {
+    uuid?: string;
+    description?: string;
+    intensity?: string;
+    extent?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+    unfiltered_total?: number;
+  };
+};
+
+export type V2InvasiveRead = {
+  uuid?: string;
+  name?: string;
+  type?: number;
+};
+
+export type V2InvasivePaginated = {
+  data?: {
+    uuid?: string;
+    name?: string;
+    type?: number;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+    unfiltered_total?: number;
+  };
+};
+
+export type ProjectLiteRead = {
+  id?: string;
+  uuid?: string;
+  is_test?: boolean;
+  status?: string;
+  name?: string;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+  planting_start_date?: string;
+  framework_key?: string;
+  framework_uuid?: string;
+  has_monitoring_data?: boolean;
+};
+
+export type SiteFullRead = {
+  id?: string;
+  uuid?: string;
+  status?: string;
+  framework_key?: string;
+  framework_uuid?: string;
+  has_monitoring_data?: boolean;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+};
+
+export type AuditRead = {
+  id?: number;
+  event?: string;
+  user_id?: number;
+  old_values?: Record<string, any>;
+  new_values?: Record<string, any>;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type AuditReadAll = {
+  data?: {
+    id?: number;
+    event?: string;
+    user_id?: number;
+    old_values?: Record<string, any>;
+    new_values?: Record<string, any>;
+    created_at?: string;
+    updated_at?: string;
+  }[];
+};
+
+export type AuditsPaginated = {
+  data?: {
+    id?: number;
+    event?: string;
+    user_id?: number;
+    old_values?: Record<string, any>;
+    new_values?: Record<string, any>;
+    created_at?: string;
+    updated_at?: string;
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+    unfiltered_total?: number;
+  };
+};
+
+export type NurseryPaginated = {
+  data?: {
+    uuid?: string;
+    framework_key?: string;
+    framework_uuid?: string;
+    status?: number;
+    readable_status?: string;
+    type?: string;
+    establishment_date?: string;
+    start_date?: string;
+    seedling_grown?: number;
+    planting_contribution?: string;
+    organisation?: {
+      uuid?: string;
+      type?: string;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      currency?: string;
+      states?: string[];
+      loan_status_types?: string[];
+      land_systems?: string[];
+      fund_utilisation?: string[];
+      detailed_intervention_types?: string[];
+      account_number_1?: string;
+      account_number_2?: string;
+      approach_of_marginalized_communities?: string;
+      community_engagement_numbers_marginalized?: string;
+      founding_date?: string;
+      description?: string;
+      leadership_team?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      engagement_farmers?: string[];
+      engagement_women?: string[];
+      engagement_youth?: string[];
+      engagement_non_youth?: string[];
+      tree_restoration_practices?: string[];
+      business_model?: string;
+      subtype?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg slug: name
+       */
+      tags?: string[];
+    };
+  }[];
+  links?: {
+    first?: string;
+    last?: string;
+    prev?: string;
+    next?: string;
+  };
+  meta?: {
+    current_page?: number;
+    from?: number;
+    last_page?: number;
+    next?: number;
+  };
+};
+
+export type NurseryRead = {
+  uuid?: string;
+  framework_key?: string;
+  framework_uuid?: string;
+  status?: number;
+  readable_status?: string;
+  type?: string;
+  establishment_date?: string;
+  start_date?: string;
+  seedling_grown?: number;
+  planting_contribution?: string;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+};
+
 export type Empty = Record<string, any>;
+
+export type AuthLogIn = {
+  /**
+   * @format email
+   */
+  email_address?: string;
+  password?: string;
+};
+
+export type TokenRead = {
+  token?: string;
+};
 
 export type AuthChange = {
   token?: string;
@@ -1817,6 +3391,3513 @@ export type AuthChange = {
 export type AuthReset = {
   email_address?: string;
   callback_url?: string;
+};
+
+export type AuthVerify = {
+  token?: string;
+};
+
+export type NurseryLiteRead = {
+  uuid?: string;
+  name?: string;
+  project?: {
+    id?: string;
+    uuid?: string;
+    is_test?: boolean;
+    status?: string;
+    name?: string;
+    organisation?: {
+      uuid?: string;
+      type?: string;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      currency?: string;
+      states?: string[];
+      loan_status_types?: string[];
+      land_systems?: string[];
+      fund_utilisation?: string[];
+      detailed_intervention_types?: string[];
+      account_number_1?: string;
+      account_number_2?: string;
+      approach_of_marginalized_communities?: string;
+      community_engagement_numbers_marginalized?: string;
+      founding_date?: string;
+      description?: string;
+      leadership_team?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      engagement_farmers?: string[];
+      engagement_women?: string[];
+      engagement_youth?: string[];
+      engagement_non_youth?: string[];
+      tree_restoration_practices?: string[];
+      business_model?: string;
+      subtype?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg slug: name
+       */
+      tags?: string[];
+    };
+    planting_start_date?: string;
+    framework_key?: string;
+    framework_uuid?: string;
+    has_monitoring_data?: boolean;
+  };
+  framework_key?: string;
+  framework_uuid?: string;
+  status?: string;
+  readable_status?: string;
+};
+
+export type SiteLiteRead = {
+  uuid?: string;
+  name?: string;
+  project?: {
+    id?: string;
+    uuid?: string;
+    is_test?: boolean;
+    status?: string;
+    name?: string;
+    organisation?: {
+      uuid?: string;
+      type?: string;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      currency?: string;
+      states?: string[];
+      loan_status_types?: string[];
+      land_systems?: string[];
+      fund_utilisation?: string[];
+      detailed_intervention_types?: string[];
+      account_number_1?: string;
+      account_number_2?: string;
+      approach_of_marginalized_communities?: string;
+      community_engagement_numbers_marginalized?: string;
+      founding_date?: string;
+      description?: string;
+      leadership_team?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      engagement_farmers?: string[];
+      engagement_women?: string[];
+      engagement_youth?: string[];
+      engagement_non_youth?: string[];
+      tree_restoration_practices?: string[];
+      business_model?: string;
+      subtype?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg slug: name
+       */
+      tags?: string[];
+    };
+    planting_start_date?: string;
+    framework_key?: string;
+    framework_uuid?: string;
+    has_monitoring_data?: boolean;
+  };
+  framework_key?: string;
+  framework_uuid?: string;
+  status?: string;
+  readable_status?: string;
+  has_monitoring_data?: boolean;
+};
+
+export type NurseryReportRead = {
+  uuid?: string;
+  framework_key?: string;
+  framework_uuid?: string;
+  nursery?: {
+    uuid?: string;
+    name?: string;
+    project?: {
+      id?: string;
+      uuid?: string;
+      is_test?: boolean;
+      status?: string;
+      name?: string;
+      organisation?: {
+        uuid?: string;
+        type?: string;
+        private?: boolean;
+        name?: string;
+        phone?: string;
+        currency?: string;
+        states?: string[];
+        loan_status_types?: string[];
+        land_systems?: string[];
+        fund_utilisation?: string[];
+        detailed_intervention_types?: string[];
+        account_number_1?: string;
+        account_number_2?: string;
+        approach_of_marginalized_communities?: string;
+        community_engagement_numbers_marginalized?: string;
+        founding_date?: string;
+        description?: string;
+        leadership_team?: string;
+        countries?: string[];
+        languages?: string[];
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        web_url?: string;
+        facebook_url?: string;
+        instagram_url?: string;
+        linkedin_url?: string;
+        twitter_url?: string;
+        hq_street_1?: string;
+        hq_street_2?: string;
+        hq_city?: string;
+        hq_state?: string;
+        hq_zipcode?: string;
+        hq_country?: string;
+        fin_start_month?: number;
+        /**
+         * @format float
+         */
+        ha_restored_total?: number;
+        /**
+         * @format float
+         */
+        ha_restored_3year?: number;
+        relevant_experience_years?: number;
+        trees_grown_total?: number;
+        trees_grown_3year?: number;
+        tree_care_approach?: string;
+        ft_permanent_employees?: number;
+        pt_permanent_employees?: number;
+        temp_employees?: number;
+        female_employees?: number;
+        male_employees?: number;
+        young_employees?: number;
+        additional_funding_details?: string;
+        community_experience?: string;
+        total_engaged_community_members_3yr?: number;
+        percent_engaged_women_3yr?: number;
+        percent_engaged_men_3yr?: number;
+        percent_engaged_under_35_3yr?: number;
+        percent_engaged_over_35_3yr?: number;
+        percent_engaged_smallholder_3yr?: number;
+        total_trees_grown?: number;
+        avg_tree_survival_rate?: number;
+        tree_maintenance_aftercare_approach?: string;
+        restored_areas_description?: string;
+        monitoring_evaluation_experience?: string;
+        funding_history?: string;
+        engagement_farmers?: string[];
+        engagement_women?: string[];
+        engagement_youth?: string[];
+        engagement_non_youth?: string[];
+        tree_restoration_practices?: string[];
+        business_model?: string;
+        subtype?: string;
+        shapefiles?: {
+          uuid?: string;
+          shapefileable_type?: string;
+          shapefileable_id?: number;
+          geojson?: string;
+          created_at?: string;
+          updated_at?: string;
+          deleted_at?: string;
+        }[];
+        bank_statements?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        previous_annual_reports?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        logo?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        reference?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_2year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_last_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_this_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_next_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        legal_registration?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        /**
+         * this is a list of key value pairs eg slug: name
+         */
+        tags?: string[];
+      };
+      planting_start_date?: string;
+      framework_key?: string;
+      framework_uuid?: string;
+      has_monitoring_data?: boolean;
+    };
+    framework_key?: string;
+    framework_uuid?: string;
+    status?: string;
+    readable_status?: string;
+  };
+  due_at?: string;
+  status?: string;
+  readable_status?: string;
+  title?: string;
+  seedlings_young_trees?: number;
+  interesting_facts?: string;
+  site_prep?: string;
+  shared_drive_link?: string;
+  created_by?: {
+    id?: number;
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      type?: string;
+      is_test?: boolean;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      founding_date?: string;
+      description?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      created_at?: string;
+      updated_at?: string;
+    };
+    /**
+     * @format date-time
+     */
+    last_logged_in_at?: string;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+  };
+  approved_by?: {
+    id?: number;
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      type?: string;
+      is_test?: boolean;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      founding_date?: string;
+      description?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      created_at?: string;
+      updated_at?: string;
+    };
+    /**
+     * @format date-time
+     */
+    last_logged_in_at?: string;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+  };
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+  task_uuid?: string;
+};
+
+export type SiteReportRead = {
+  uuid?: string;
+  framework_key?: string;
+  framework_uuid?: string;
+  title?: string;
+  site?: {
+    uuid?: string;
+    name?: string;
+    project?: {
+      id?: string;
+      uuid?: string;
+      is_test?: boolean;
+      status?: string;
+      name?: string;
+      organisation?: {
+        uuid?: string;
+        type?: string;
+        private?: boolean;
+        name?: string;
+        phone?: string;
+        currency?: string;
+        states?: string[];
+        loan_status_types?: string[];
+        land_systems?: string[];
+        fund_utilisation?: string[];
+        detailed_intervention_types?: string[];
+        account_number_1?: string;
+        account_number_2?: string;
+        approach_of_marginalized_communities?: string;
+        community_engagement_numbers_marginalized?: string;
+        founding_date?: string;
+        description?: string;
+        leadership_team?: string;
+        countries?: string[];
+        languages?: string[];
+        tree_species?: {
+          uuid?: string;
+          name?: string;
+          amount?: number;
+          type?: string;
+          collection?: string;
+        }[];
+        web_url?: string;
+        facebook_url?: string;
+        instagram_url?: string;
+        linkedin_url?: string;
+        twitter_url?: string;
+        hq_street_1?: string;
+        hq_street_2?: string;
+        hq_city?: string;
+        hq_state?: string;
+        hq_zipcode?: string;
+        hq_country?: string;
+        fin_start_month?: number;
+        /**
+         * @format float
+         */
+        ha_restored_total?: number;
+        /**
+         * @format float
+         */
+        ha_restored_3year?: number;
+        relevant_experience_years?: number;
+        trees_grown_total?: number;
+        trees_grown_3year?: number;
+        tree_care_approach?: string;
+        ft_permanent_employees?: number;
+        pt_permanent_employees?: number;
+        temp_employees?: number;
+        female_employees?: number;
+        male_employees?: number;
+        young_employees?: number;
+        additional_funding_details?: string;
+        community_experience?: string;
+        total_engaged_community_members_3yr?: number;
+        percent_engaged_women_3yr?: number;
+        percent_engaged_men_3yr?: number;
+        percent_engaged_under_35_3yr?: number;
+        percent_engaged_over_35_3yr?: number;
+        percent_engaged_smallholder_3yr?: number;
+        total_trees_grown?: number;
+        avg_tree_survival_rate?: number;
+        tree_maintenance_aftercare_approach?: string;
+        restored_areas_description?: string;
+        monitoring_evaluation_experience?: string;
+        funding_history?: string;
+        engagement_farmers?: string[];
+        engagement_women?: string[];
+        engagement_youth?: string[];
+        engagement_non_youth?: string[];
+        tree_restoration_practices?: string[];
+        business_model?: string;
+        subtype?: string;
+        shapefiles?: {
+          uuid?: string;
+          shapefileable_type?: string;
+          shapefileable_id?: number;
+          geojson?: string;
+          created_at?: string;
+          updated_at?: string;
+          deleted_at?: string;
+        }[];
+        bank_statements?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        previous_annual_reports?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        logo?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        cover?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        };
+        reference?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        additional?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_2year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_last_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_this_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        op_budget_next_year?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        legal_registration?: {
+          uuid?: string;
+          url?: string;
+          thumb_url?: string;
+          collection_name?: string;
+          title?: string;
+          file_name?: string;
+          mime_type?: string;
+          size?: number;
+          lat?: number;
+          lng?: number;
+          is_public?: boolean;
+          is_cover?: boolean;
+          created_at?: string;
+        }[];
+        /**
+         * this is a list of key value pairs eg slug: name
+         */
+        tags?: string[];
+      };
+      planting_start_date?: string;
+      framework_key?: string;
+      framework_uuid?: string;
+      has_monitoring_data?: boolean;
+    };
+    framework_key?: string;
+    framework_uuid?: string;
+    status?: string;
+    readable_status?: string;
+    has_monitoring_data?: boolean;
+  };
+  status?: string;
+  planting_status?: string;
+  readable_status?: string;
+  approved_at?: string;
+  created_by?: {
+    id?: number;
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      type?: string;
+      is_test?: boolean;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      founding_date?: string;
+      description?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      created_at?: string;
+      updated_at?: string;
+    };
+    /**
+     * @format date-time
+     */
+    last_logged_in_at?: string;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+  };
+  approved_by?: {
+    id?: number;
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      type?: string;
+      is_test?: boolean;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      founding_date?: string;
+      description?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      created_at?: string;
+      updated_at?: string;
+    };
+    /**
+     * @format date-time
+     */
+    last_logged_in_at?: string;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+  };
+  technical_narrative?: string;
+  public_narrative?: string;
+  shared_drive_link?: string;
+  due_at?: string;
+  se_gender_female?: number;
+  se_gender_male?: number;
+  se_gender_undefined?: number;
+  se_age_youth?: number;
+  se_age_adult?: number;
+  se_age_elder?: number;
+  se_age_undefined?: number;
+  se_ethnicity_indigenous_1?: number;
+  se_ethnicity_indigenous_2?: number;
+  se_ethnicity_other_1?: number;
+  se_ethnicity_other_2?: number;
+  se_ethnicity_other_3?: number;
+  se_ethnicity_undefined?: number;
+  p_gender_female?: number;
+  p_gender_male?: number;
+  p_gender_undefined?: number;
+  p_age_youth?: number;
+  p_age_adult?: number;
+  p_age_elder?: number;
+  p_age_undefined?: number;
+  p_ethnicity_indigenous_1?: number;
+  p_ethnicity_indigenous_2?: number;
+  p_ethnicity_other_1?: number;
+  p_ethnicity_other_2?: number;
+  p_ethnicity_other_3?: number;
+  p_ethnicity_undefined?: number;
+  sma_gender_female?: number;
+  sma_gender_male?: number;
+  sma_gender_undefined?: number;
+  sma_age_youth?: number;
+  sma_age_adult?: number;
+  sma_age_elder?: number;
+  sma_age_undefined?: number;
+  sma_ethnicity_indigenous_1?: number;
+  sma_ethnicity_indigenous_2?: number;
+  sma_ethnicity_other_1?: number;
+  sma_ethnicity_other_2?: number;
+  sma_ethnicity_other_3?: number;
+  sma_ethnicity_undefined?: number;
+  smo_gender_female?: number;
+  smo_gender_male?: number;
+  smo_gender_undefined?: number;
+  smo_age_youth?: number;
+  smo_age_adult?: number;
+  smo_age_elder?: number;
+  smo_age_undefined?: number;
+  smo_ethnicity_indigenous_1?: number;
+  smo_ethnicity_indigenous_2?: number;
+  smo_ethnicity_other_1?: number;
+  smo_ethnicity_other_2?: number;
+  smo_ethnicity_other_3?: number;
+  smo_ethnicity_undefined?: number;
+  o_gender_female?: number;
+  o_gender_male?: number;
+  o_gender_undefined?: number;
+  o_age_youth?: number;
+  o_age_adult?: number;
+  o_age_elder?: number;
+  o_age_undefined?: number;
+  o_ethnicity_indigenous_1?: number;
+  o_ethnicity_indigenous_2?: number;
+  o_ethnicity_other_1?: number;
+  o_ethnicity_other_2?: number;
+  o_ethnicity_other_3?: number;
+  o_ethnicity_undefined?: number;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+  task_uuid?: string;
+};
+
+export type ProjectReportRead = {
+  uuid?: string;
+  title?: string;
+  framework_key?: string;
+  status?: string;
+  planting_status?: string;
+  readable_status?: string;
+  workdays_paid?: number;
+  workdays_volunteer?: number;
+  technical_narrative?: string;
+  public_narrative?: string;
+  landscape_community_contribution?: string;
+  top_three_successes?: string;
+  challenges_faced?: string;
+  lessons_learned?: string;
+  maintenance_and_monitoring_activities?: string;
+  significant_change?: string;
+  pct_survival_to_date?: number;
+  survival_calculation?: string;
+  survival_comparison?: string;
+  seasonal_women?: number;
+  seasonal_men?: number;
+  seasonal_youth?: number;
+  seasonal_total?: number;
+  shared_drive_link?: string;
+  planted_trees?: number;
+  new_jobs_created?: number;
+  new_jobs_description?: string;
+  new_volunteers?: number;
+  volunteers_work_description?: string;
+  beneficiaries_description?: string;
+  beneficiaries_income_increase_description?: string;
+  beneficiaries_skills_knowledge_increase_description?: string;
+  ethnic_indigenous_1?: number;
+  ethnic_indigenous_2?: number;
+  ethnic_indigenous_3?: number;
+  ethnic_indigenous_4?: number;
+  ethnic_indigenous_5?: number;
+  ethnic_other_1?: number;
+  ethnic_other_2?: number;
+  ethnic_other_3?: number;
+  ethnic_other_4?: number;
+  ethnic_other_5?: number;
+  pe_gender_female?: number;
+  pe_gender_male?: number;
+  pe_gender_undefined?: number;
+  pe_age_youth?: number;
+  pe_age_adult?: number;
+  pe_age_elder?: number;
+  pe_age_undefined?: number;
+  pe_ethnicity_indigenous_1?: number;
+  pe_ethnicity_indigenous_2?: number;
+  pe_ethnicity_other_1?: number;
+  pe_ethnicity_other_2?: number;
+  pe_ethnicity_other_3?: number;
+  pe_ethnicity_undefined?: number;
+  no_gender_female?: number;
+  no_gender_male?: number;
+  no_gender_undefined?: number;
+  no_age_youth?: number;
+  no_age_adult?: number;
+  no_age_elder?: number;
+  no_age_undefined?: number;
+  no_ethnicity_indigenous_1?: number;
+  no_ethnicity_indigenous_2?: number;
+  no_ethnicity_other_1?: number;
+  no_ethnicity_other_2?: number;
+  no_ethnicity_other_3?: number;
+  no_ethnicity_undefined?: number;
+  pm_gender_female?: number;
+  pm_gender_male?: number;
+  pm_gender_undefined?: number;
+  pm_age_youth?: number;
+  pm_age_adult?: number;
+  pm_age_elder?: number;
+  pm_age_undefined?: number;
+  pm_ethnicity_indigenous_1?: number;
+  pm_ethnicity_indigenous_2?: number;
+  pm_ethnicity_other_1?: number;
+  pm_ethnicity_other_2?: number;
+  pm_ethnicity_other_3?: number;
+  pm_ethnicity_undefined?: number;
+  sc_gender_female?: number;
+  sc_gender_male?: number;
+  sc_gender_undefined?: number;
+  sc_age_youth?: number;
+  sc_age_adult?: number;
+  sc_age_elder?: number;
+  sc_age_undefined?: number;
+  sc_ethnicity_indigenous_1?: number;
+  sc_ethnicity_indigenous_2?: number;
+  sc_ethnicity_other_1?: number;
+  sc_ethnicity_other_2?: number;
+  sc_ethnicity_other_3?: number;
+  sc_ethnicity_undefined?: number;
+  o_gender_female?: number;
+  o_gender_male?: number;
+  o_gender_undefined?: number;
+  o_age_youth?: number;
+  o_age_adult?: number;
+  o_age_elder?: number;
+  o_age_undefined?: number;
+  o_ethnicity_indigenous_1?: number;
+  o_ethnicity_indigenous_2?: number;
+  o_ethnicity_other_1?: number;
+  o_ethnicity_other_2?: number;
+  o_ethnicity_other_3?: number;
+  o_ethnicity_undefined?: number;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+  task_uuid?: string;
+  submitted_at?: string;
+  created_by?: {
+    id?: number;
+    uuid?: string;
+    role?: string;
+    job_role?: string;
+    first_name?: string;
+    last_name?: string;
+    email_address?: string;
+    phone_number?: string;
+    whatsapp_phone?: string;
+    organisation?: {
+      uuid?: string;
+      status?: string;
+      readable_status?: string;
+      type?: string;
+      is_test?: boolean;
+      private?: boolean;
+      name?: string;
+      phone?: string;
+      founding_date?: string;
+      description?: string;
+      countries?: string[];
+      languages?: string[];
+      tree_species?: {
+        uuid?: string;
+        name?: string;
+        amount?: number;
+        type?: string;
+        collection?: string;
+      }[];
+      web_url?: string;
+      facebook_url?: string;
+      instagram_url?: string;
+      linkedin_url?: string;
+      twitter_url?: string;
+      hq_street_1?: string;
+      hq_street_2?: string;
+      hq_city?: string;
+      hq_state?: string;
+      hq_zipcode?: string;
+      hq_country?: string;
+      fin_start_month?: number;
+      /**
+       * @format float
+       */
+      ha_restored_total?: number;
+      /**
+       * @format float
+       */
+      ha_restored_3year?: number;
+      relevant_experience_years?: number;
+      trees_grown_total?: number;
+      trees_grown_3year?: number;
+      tree_care_approach?: string;
+      ft_permanent_employees?: number;
+      pt_permanent_employees?: number;
+      temp_employees?: number;
+      female_employees?: number;
+      male_employees?: number;
+      young_employees?: number;
+      additional_funding_details?: string;
+      community_experience?: string;
+      total_engaged_community_members_3yr?: number;
+      percent_engaged_women_3yr?: number;
+      percent_engaged_men_3yr?: number;
+      percent_engaged_under_35_3yr?: number;
+      percent_engaged_over_35_3yr?: number;
+      percent_engaged_smallholder_3yr?: number;
+      total_trees_grown?: number;
+      avg_tree_survival_rate?: number;
+      tree_maintenance_aftercare_approach?: string;
+      restored_areas_description?: string;
+      monitoring_evaluation_experience?: string;
+      funding_history?: string;
+      shapefiles?: {
+        uuid?: string;
+        shapefileable_type?: string;
+        shapefileable_id?: number;
+        geojson?: string;
+        created_at?: string;
+        updated_at?: string;
+        deleted_at?: string;
+      }[];
+      bank_statements?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      previous_annual_reports?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      logo?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      cover?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      };
+      reference?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      additional?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_2year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_last_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_this_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      op_budget_next_year?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      legal_registration?: {
+        uuid?: string;
+        url?: string;
+        thumb_url?: string;
+        collection_name?: string;
+        title?: string;
+        file_name?: string;
+        mime_type?: string;
+        size?: number;
+        lat?: number;
+        lng?: number;
+        is_public?: boolean;
+        is_cover?: boolean;
+        created_at?: string;
+      }[];
+      /**
+       * this is a list of key value pairs eg. slug: name
+       */
+      tags?: string[];
+      created_at?: string;
+      updated_at?: string;
+    };
+    /**
+     * @format date-time
+     */
+    last_logged_in_at?: string;
+    /**
+     * @format date-time
+     */
+    email_address_verified_at?: string;
+    verified?: boolean;
+    /**
+     * @format date-time
+     */
+    date_added?: string;
+    banners?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+  };
+  seedlings_grown?: number;
+};
+
+export type UserCreate = {
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  password?: string;
+  job_role?: string;
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  phone_number?: string;
+  whatsapp_phone?: string;
+  callback_url?: string;
+  role?: string;
+  country?: string;
+  program?: string;
 };
 
 export type AdminUserCreate = {
@@ -1830,6 +6911,42 @@ export type AdminUserCreate = {
   country?: string;
   program?: string;
   direct_frameworks?: boolean;
+};
+
+export type UpdateRequestLiteRead = {
+  uuid?: string;
+  framework_key?: string;
+  status?: string;
+  readable_status?: string;
+};
+
+export type ActionRead = {
+  uuid?: string;
+  status?: string;
+  type?: string;
+  subtype?: string;
+  title?: string;
+  sub_title?: string;
+  text?: string;
+  key?: string;
+  /**
+   * one of Project|ProjectReport|Site|SiteReport|Nursery|NurseryReport|UpdateRequest
+   */
+  targetable_type?: string;
+  targetable_id?: number;
+  /**
+   * contains the “Lite” objects for the model involved with the Action
+   */
+  target?: Record<string, any>;
+  organisation_id?: number;
+  deleted_at?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type StatusUpdate = {
+  feedback?: string;
+  feedback_fields?: string[];
 };
 
 export type EntityReportReminder = {
@@ -1850,6 +6967,204 @@ export type V2ProjectInviteRead = {
    */
   created_at?: string;
 };
+
+export type V2ProjectInviteCreate = {
+  email_address?: string;
+};
+
+export type Demographic = {
+  type?: "gender" | "age" | "ethnicity" | "caste";
+  subtype?: string;
+  name?: string;
+  amount?: number;
+};
+
+export type GeoJSON = {
+  type?: "FeatureCollection";
+  features?: {
+    type?: "Feature";
+    properties?: {
+      poly_name?: string;
+      /**
+       * @format date
+       */
+      plantstart?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+      site_id?: string;
+      est_area?: number;
+    };
+    geometry?: {
+      type?: "Polygon" | "Point";
+      coordinates?: any[];
+    };
+  }[];
+};
+
+export type GeometryPost = {
+  /**
+   * For each geometry feature in the request (in order), this array contains the UUID assigned to that feature.
+   * If the feature was newly created, it will contain the new UUID; if it was detected as a duplicate, it will
+   * contain the UUID of the existing polygon in the database.
+   * For Point geometry, there will be one UUID per point and the order is preserved.
+   */
+  polygon_uuids?: string[];
+  /**
+   * Mapping of existing polygon UUID to the errors associated with the polygon. Currently, only duplicate detection errors are returned during create operations.
+   */
+  errors?: {
+    [key: string]: {
+      key?:
+        | "DUPLICATE_GEOMETRY"
+        | "OVERLAPPING_POLYGON"
+        | "SELF_INTERSECTION"
+        | "COORDINATE_SYSTEM"
+        | "SIZE_LIMIT"
+        | "WITHIN_COUNTRY"
+        | "SPIKE"
+        | "GEOMETRY_TYPE"
+        | "TOTAL_AREA_EXPECTED"
+        | "TABLE_SCHEMA"
+        | "DATA_COMPLETED";
+      /**
+       * Human readable string in English to describe the error.
+       */
+      message?: string;
+    }[];
+  };
+}[];
+
+export type AuditStatusCreateRequest = {
+  status?: string;
+  comment?: string;
+  type?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type AuditStatusResponse = {
+  id?: string;
+  uuid?: string;
+  entity_name?: string;
+  status?: string;
+  comment?: string;
+  first_name?: string;
+  last_name?: string;
+  type?: string;
+  is_submitted?: boolean;
+  is_active?: boolean;
+  request_removed?: boolean;
+  /**
+   * @format date
+   */
+  date_created?: string;
+  created_by?: string;
+  attachments?: {
+    uuid?: string;
+    url?: string;
+    thumb_url?: string;
+    collection_name?: string;
+    title?: string;
+    file_name?: string;
+    mime_type?: string;
+    size?: number;
+    lat?: number;
+    lng?: number;
+    is_public?: boolean;
+    is_cover?: boolean;
+    created_at?: string;
+  }[];
+};
+
+export type V2TerrafundCriteriaData = {
+  /**
+   * The ID of the polygon
+   */
+  polygon_id?: string;
+  /**
+   * List of validation criteria
+   */
+  criteria_list?: {
+    /**
+     * The ID of the criteria
+     */
+    criteria_id?: number;
+    /**
+     * The latest created at timestamp of the criteria
+     *
+     * @format date-time
+     */
+    latest_created_at?: string;
+    /**
+     * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+     */
+    valid?: number;
+    /**
+     * Extra information about the polygon validation
+     */
+    extra_info?: Record<string, any>;
+  }[];
+};
+
+export type V2TerrafundCriteriaDataMultiple = {
+  [key: string]:
+    | {
+        /**
+         * The ID of the polygon
+         */
+        polygon_id: string;
+        /**
+         * List of validation criteria
+         */
+        criteria_list: {
+          /**
+           * The ID of the criteria
+           */
+          criteria_id?: number;
+          /**
+           * The latest created at timestamp of the criteria
+           *
+           * @format date-time
+           */
+          latest_created_at?: string;
+          /**
+           * Indicates if the criteria is valid or not (1 for valid, 0 for invalid)
+           */
+          valid?: number;
+          /**
+           * Extra information about the polygon validation
+           */
+          extra_info?: Record<string, any>;
+        }[];
+      }
+    | {
+        /**
+         * Error message if the polygon or criteria data is not found
+         */
+        error: string;
+      };
+};
+
+export type V2TerrafundCriteriaSite = {
+  /**
+   * The UUID of the polygon.
+   */
+  uuid?: string;
+  /**
+   * Indicates if the polygon is valid or not.
+   */
+  valid?: boolean;
+  /**
+   * Indicates if the polygon has been checked before or not.
+   */
+  checked?: boolean;
+  /**
+   * List of criteria that are not valid.
+   */
+  nonValidCriteria?: Record<string, any>[];
+}[];
 
 export type SitePolygon = {
   id?: number;
@@ -1896,6 +7211,576 @@ export type SitePolygon = {
   validation_status?: boolean;
 };
 
+export type GeometryString = {
+  geometry?: string;
+};
+
+export type SitePolygonsBboxResponse = {
+  bbox?: number[];
+};
+
+export type SitePolygonResponse = {
+  id?: number;
+  uuid?: string;
+  poly_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  status?: string;
+};
+
+export type SitePolygonCreateResponse = {
+  /**
+   * @example Site polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created site polygon
+   */
+  uuid?: string;
+  /**
+   * Calculated area in hectares
+   *
+   * @format double
+   */
+  area?: number;
+};
+
+export type GeoJSONResponse = {
+  type?: string;
+  features?: {
+    type?: string;
+    geometry?: {
+      type?: string;
+      coordinates?: any[];
+    };
+    properties?: {
+      poly_name?: string;
+      plantstart?: string;
+      practice?: string;
+      target_sys?: string;
+      distr?: string;
+      num_trees?: number;
+    };
+  }[];
+};
+
+export type FeatureCollection = {
+  type?: string;
+};
+
+export type PolygonBboxResponse = {
+  bbox?: number[];
+};
+
+export type DashboardPolygonResponse = {
+  uuid?: string;
+};
+
+export type DashboardPolygonData = {
+  data?: {
+    /**
+     * Title of the data field
+     */
+    title?: string;
+    /**
+     * Value of the data field
+     */
+    value?: string;
+    /**
+     * Key of the data field
+     */
+    key?: string;
+  }[];
+};
+
+export type DashboardProjectProfileResponse = {
+  data?: {
+    name?: string;
+    descriptionObjetive?: string;
+    country?: string;
+    organisation?: string;
+    survivalRate?: number;
+    countrySlug?: string;
+    restorationStrategy?: {
+      data?: string[];
+    };
+    targetLandUse?: {
+      data?: string[];
+    };
+    landTenure?: {
+      data?: string[];
+    };
+  };
+};
+
+export type DashboardProjectProfileData = {
+  name?: string;
+  descriptionObjetive?: string;
+  country?: string;
+  organisation?: string;
+  survivalRate?: number;
+  countrySlug?: string;
+  restorationStrategy?: {
+    data?: string[];
+  };
+  targetLandUse?: {
+    data?: string[];
+  };
+  landTenure?: {
+    data?: string[];
+  };
+};
+
+export type DashboardTopPlantedTree = {
+  organization?: string;
+  project?: string;
+  uuid?: string;
+  trees_planted?: number;
+};
+
+export type DashboardTopTreeSpecies = {
+  name?: string;
+  amount?: number;
+};
+
+export type ProjectPipeline = {
+  data?: {
+    name?: {
+      name?: string;
+      description?: string;
+    };
+    /**
+     * @format date
+     */
+    date?: string;
+    id?: number;
+    submitted_by?: string;
+    program?: string;
+    cohort?: string[];
+    publish_for?: string;
+    url?: string;
+    /**
+     * @format date
+     */
+    created_at?: string;
+    /**
+     * @format date
+     */
+    updated_at?: string;
+  };
+};
+
+export type ProjectPipelinePost = {
+  /**
+   * @format date
+   */
+  date?: string;
+  id?: number;
+  submitted_by?: string;
+  program?: string;
+  cohort?: string[];
+  publish_for?: string;
+  url?: string;
+};
+
+export type GeojsonData = {
+  /**
+   * The GeoJSON representation of the polygon geometry.
+   */
+  geojson?: Record<string, any>;
+};
+
+export type EntityTypeResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+    validation_status?: boolean;
+  }[];
+};
+
+export type EntityPolygonResponse = {
+  /**
+   * Type of the entity ('project', 'site', 'unknown')
+   */
+  type?: string;
+  /**
+   * UUID of the entity
+   *
+   * @format uuid
+   */
+  uuid?: string;
+  polygonsData?: {
+    id?: number;
+    uuid?: string;
+    primary_uuid?: string;
+    project_id?: string;
+    proj_name?: string;
+    org_name?: string;
+    poly_id?: string;
+    poly_name?: string;
+    site_id?: string;
+    site_name?: string;
+    /**
+     * @format date
+     */
+    plantstart?: string;
+    practice?: string;
+    target_sys?: string;
+    distr?: string;
+    num_trees?: number;
+    /**
+     * @format float
+     */
+    calc_area?: number;
+    created_by?: string;
+    last_modified_by?: string;
+    /**
+     * @format date-time
+     */
+    deleted_at?: string;
+    /**
+     * @format date-time
+     */
+    created_at?: string;
+    /**
+     * @format date-time
+     */
+    updated_at?: string;
+    status?: string;
+    source?: string;
+    country?: string;
+    is_active?: boolean;
+    version_name?: string;
+    validation_status?: boolean;
+  }[];
+};
+
+export type AuditStatusUpdateRequest = {
+  type?: string;
+  comment?: string;
+  status?: string;
+  is_active?: boolean;
+  request_removed?: boolean;
+};
+
+export type DashboardProjectViewResponse = {
+  data?: {
+    allowed?: boolean;
+  };
+};
+
+export type ProjectPolygonResponse = {
+  /**
+   * @example Project polygon created successfully
+   */
+  message?: string;
+  /**
+   * UUID of the created project polygon
+   */
+  uuid?: string;
+};
+
+export type SitePolygonsLoadedDataResponse = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
+  version_name?: string;
+}[];
+
+export type SitePolygonLoaded = {
+  id?: number;
+  uuid?: string;
+  primary_uuid?: string;
+  project_id?: string;
+  proj_name?: string;
+  org_name?: string;
+  poly_id?: string;
+  poly_name?: string;
+  site_id?: string;
+  site_name?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  practice?: string;
+  target_sys?: string;
+  distr?: string;
+  num_trees?: number;
+  /**
+   * @format float
+   */
+  calc_area?: number;
+  created_by?: string;
+  last_modified_by?: string;
+  /**
+   * @format date-time
+   */
+  deleted_at?: string;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  status?: string;
+  source?: string;
+  country?: string;
+  is_active?: boolean;
+  is_present?: boolean;
+  version_name?: string;
+};
+
+export type ClippedPolygonResponse = {
+  updated_polygons?: {
+    uuid?: string;
+    poly_name?: string;
+  }[];
+};
+
+export type ClippedPolygonsResponse = {
+  /**
+   * A list of processed polygons
+   */
+  processed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+  /**
+   * A list of polygons that couldn't be processed
+   */
+  unprocessed?: {
+    /**
+     * The UUID of the unprocessed polygon
+     *
+     * @example uuid1
+     */
+    uuid?: string;
+    /**
+     * The name of the unprocessed polygon
+     *
+     * @example Polygon Name
+     */
+    poly_name?: string;
+  }[];
+};
+
+export type DeletedPolygonsResponse = {
+  /**
+   * Success message
+   */
+  message?: string;
+  deleted?: {
+    /**
+     * UUID of the deleted polygon geometry
+     */
+    uuid?: string;
+  }[];
+  failed?: {
+    /**
+     * UUID of the polygon geometry that failed to delete
+     */
+    uuid?: string;
+    /**
+     * Error message for the failed deletion
+     */
+    error?: string;
+  }[];
+};
+
+export type MeResponse = {
+  uuid?: string;
+  first_name?: string;
+  last_name?: string;
+  email_address?: string;
+  /**
+   * @format date-time
+   */
+  email_address_verified_at?: string;
+  role?: string;
+  locale?: string;
+  organisation?: {
+    uuid?: string;
+    name?: string;
+    status?: string;
+    readable_status?: string;
+    users_status?: string;
+    type?: string;
+    created_at?: string;
+    updated_at?: string;
+  };
+  frameworks?: {
+    name?: string;
+    slug?: string;
+  }[];
+};
+
+export type MyOrganisationLite = {
+  uuid?: string;
+  name?: string;
+  status?: string;
+  readable_status?: string;
+  users_status?: string;
+  type?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type UpdateMediaRequest = {
+  /**
+   * Name of the media
+   */
+  name?: string;
+  /**
+   * New description for the media
+   */
+  description?: string;
+  /**
+   * Name of the photographer
+   */
+  photographer?: string;
+  /**
+   * Whether the media is public or not
+   */
+  is_public?: boolean;
+};
+
+export type FileResource = {
+  id?: number;
+  model_id?: number;
+  model_type?: string;
+  collection_name?: string;
+  name?: string;
+  file_name?: string;
+  mime_type?: string;
+  disk?: string;
+  size?: number;
+  manipulations?: Record<string, any>;
+  custom_properties?: Record<string, any>;
+  responsive_images?: Record<string, any>;
+  order_column?: number;
+  /**
+   * @format date-time
+   */
+  created_at?: string;
+  /**
+   * @format date-time
+   */
+  updated_at?: string;
+  description?: string;
+  photographer?: string;
+  is_public?: boolean;
+  is_cover?: boolean;
+};
+
 export type UserCreateComplete = {
   token?: string;
   password?: string;
@@ -1907,6 +7792,61 @@ export type UserCreateComplete = {
   role?: string;
 };
 
+export type IndicatorPost = {
+  /**
+   * Array of polygon UUIDs to process. If not provided, all eligible polygons will be processed.
+   */
+  uuids?: string[];
+  /**
+   * Force rerun even if records already exist for this polygon and indicator.
+   *
+   * @default false
+   */
+  force?: boolean;
+  /**
+   * Update existing records instead of skipping them.
+   *
+   * @default false
+   */
+  update_existing?: boolean;
+};
+
+export type Indicators = {
+  ["2015"]?: number;
+  ["2016"]?: number;
+  ["2017"]?: number;
+  ["2018"]?: number;
+  ["2019"]?: number;
+  ["2020"]?: number;
+  ["2021"]?: number;
+  ["2022"]?: number;
+  ["2023"]?: number;
+  ["2024"]?: number;
+  id?: number;
+  poly_name?: string;
+  status?: string;
+  /**
+   * @format date
+   */
+  plantstart?: string;
+  site_name?: string;
+  size?: void;
+  /**
+   * @format date
+   */
+  created_at?: string;
+  indicator_slug?: string;
+  year_of_analysis?: number;
+  value?: Record<string, any>;
+};
+
+export type IndicatorPolygonsStatus = {
+  draft?: number;
+  submitted?: number;
+  approved?: number;
+  ["needs-more-information"]?: number;
+};
+
 export type V2FinancialIndicatorsRead = Record<string, any>[];
 
 export type V2FinancialIndicatorsUpdate = {
@@ -1916,6 +7856,292 @@ export type V2FinancialIndicatorsUpdate = {
   documentation_data?: Record<string, any>[];
   local_currency?: string;
   financial_year_start_month?: number;
+};
+
+export type V2FinancialReportRead = {
+  uuid?: string;
+  status?: string;
+  name?: string;
+  year_of_report?: number;
+  created_at?: string;
+  updated_at?: string;
+  organisation?: {
+    uuid?: string;
+    type?: string;
+    private?: boolean;
+    name?: string;
+    phone?: string;
+    currency?: string;
+    states?: string[];
+    loan_status_types?: string[];
+    land_systems?: string[];
+    fund_utilisation?: string[];
+    detailed_intervention_types?: string[];
+    account_number_1?: string;
+    account_number_2?: string;
+    approach_of_marginalized_communities?: string;
+    community_engagement_numbers_marginalized?: string;
+    founding_date?: string;
+    description?: string;
+    leadership_team?: string;
+    countries?: string[];
+    languages?: string[];
+    tree_species?: {
+      uuid?: string;
+      name?: string;
+      amount?: number;
+      type?: string;
+      collection?: string;
+    }[];
+    web_url?: string;
+    facebook_url?: string;
+    instagram_url?: string;
+    linkedin_url?: string;
+    twitter_url?: string;
+    hq_street_1?: string;
+    hq_street_2?: string;
+    hq_city?: string;
+    hq_state?: string;
+    hq_zipcode?: string;
+    hq_country?: string;
+    fin_start_month?: number;
+    /**
+     * @format float
+     */
+    ha_restored_total?: number;
+    /**
+     * @format float
+     */
+    ha_restored_3year?: number;
+    relevant_experience_years?: number;
+    trees_grown_total?: number;
+    trees_grown_3year?: number;
+    tree_care_approach?: string;
+    ft_permanent_employees?: number;
+    pt_permanent_employees?: number;
+    temp_employees?: number;
+    female_employees?: number;
+    male_employees?: number;
+    young_employees?: number;
+    additional_funding_details?: string;
+    community_experience?: string;
+    total_engaged_community_members_3yr?: number;
+    percent_engaged_women_3yr?: number;
+    percent_engaged_men_3yr?: number;
+    percent_engaged_under_35_3yr?: number;
+    percent_engaged_over_35_3yr?: number;
+    percent_engaged_smallholder_3yr?: number;
+    total_trees_grown?: number;
+    avg_tree_survival_rate?: number;
+    tree_maintenance_aftercare_approach?: string;
+    restored_areas_description?: string;
+    monitoring_evaluation_experience?: string;
+    funding_history?: string;
+    engagement_farmers?: string[];
+    engagement_women?: string[];
+    engagement_youth?: string[];
+    engagement_non_youth?: string[];
+    tree_restoration_practices?: string[];
+    business_model?: string;
+    subtype?: string;
+    shapefiles?: {
+      uuid?: string;
+      shapefileable_type?: string;
+      shapefileable_id?: number;
+      geojson?: string;
+      created_at?: string;
+      updated_at?: string;
+      deleted_at?: string;
+    }[];
+    bank_statements?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    previous_annual_reports?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    logo?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    cover?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    };
+    reference?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    additional?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_2year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_last_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_this_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    op_budget_next_year?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    legal_registration?: {
+      uuid?: string;
+      url?: string;
+      thumb_url?: string;
+      collection_name?: string;
+      title?: string;
+      file_name?: string;
+      mime_type?: string;
+      size?: number;
+      lat?: number;
+      lng?: number;
+      is_public?: boolean;
+      is_cover?: boolean;
+      created_at?: string;
+    }[];
+    /**
+     * this is a list of key value pairs eg slug: name
+     */
+    tags?: string[];
+  };
+  currency?: string;
+  fin_start_month?: number;
+  funding_types?: {
+    uuid?: string;
+    organisation_id?: string;
+    financial_report_id?: string;
+    amount?: number;
+    year?: number;
+    type?: string;
+  }[];
+};
+
+export type V2FinancialLiteReportRead = {
+  uuid?: string;
+  status?: string;
+  name?: string;
+  year_of_report?: number;
+  created_at?: string;
+  updated_at?: string;
 };
 
 export type V2OrganisationInviteCreate = {
