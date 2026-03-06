@@ -12,53 +12,16 @@ import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { useDate } from "@/hooks/useDate";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
 import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
 import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 interface NurseryOverviewTabProps {
   nursery: any;
 }
-
-const exampleSteps: StepProps[] = [
-  {
-    index: 1,
-    status: "completed",
-    label: "Label"
-  },
-  {
-    index: 2,
-    status: "completed",
-    label: "Label"
-  },
-  {
-    index: 3,
-    status: "completed",
-    label: "Label"
-  },
-  {
-    index: 4,
-    status: "error",
-    label: "Label"
-  },
-  {
-    index: 5,
-    status: "active",
-    label: "Label"
-  },
-  {
-    index: 6,
-    status: "available",
-    label: "Label"
-  },
-  {
-    index: 7,
-    status: "available",
-    label: "Label"
-  }
-];
 
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const { format } = useDate();
@@ -70,6 +33,79 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const t = useT();
 
   const nurserySetUpStatus = "approved";
+
+  const exampleSteps: StepProps[] = [
+    {
+      index: 1,
+      status: "completed",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 2,
+      status: "completed",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 3,
+      status: "completed",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 4,
+      status: "error",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 5,
+      status: "active",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 6,
+      status: "available",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    },
+    {
+      index: 7,
+      status: "available",
+      label: "Label",
+      actions: (
+        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
+          {t("Edit")}
+        </Button>
+      )
+    }
+  ];
 
   return (
     <PageBody>
