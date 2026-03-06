@@ -66,17 +66,26 @@ const NurseryDetailPage = () => {
                   link: "/",
                   icon: <NurseryIcon className="!text-theme-primary-900 !h-3.5 !w-3.5" />
                 },
-                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
                 { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` }
               ]}
               suffix={
                 <div className="flex gap-1.5">
                   <div className="flex gap-1.5">
-                    <Button variant="borderless" size="small" className="underline underline-offset-2">
+                    <Button
+                      variant="borderless"
+                      size="small"
+                      className="underline underline-offset-2"
+                      onClick={() => router.push(`/project/${nursery.projectUuid}`)}
+                    >
                       {t("Project Profile")}
                     </Button>
                     <span className="text-theme-neutral-300 text-sm">|</span>
-                    <Button variant="borderless" size="small" className="underline underline-offset-2">
+                    <Button
+                      variant="borderless"
+                      size="small"
+                      className="underline underline-offset-2"
+                      onClick={() => router.push(`/nursery/${nursery.uuid}/reports`)}
+                    >
                       {t("Nursery Reports")}
                     </Button>
                   </div>
