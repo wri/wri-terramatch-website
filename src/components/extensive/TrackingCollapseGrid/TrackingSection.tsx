@@ -8,8 +8,8 @@ import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import MultiActionButton from "@/redesignComponents/actions/Buttons/MultiActionButton/MultiActionButton";
 
-import { useSectionData } from "./hooks";
-import { Status, TrackingDomain, TrackingType, useEntryTypeDefinition } from "./types";
+import { useEntryTypeDefinition, useSectionData } from "./hooks";
+import { Status, TrackingDomain, TrackingType } from "./types";
 
 export interface TrackingSectionProps {
   domain: TrackingDomain;
