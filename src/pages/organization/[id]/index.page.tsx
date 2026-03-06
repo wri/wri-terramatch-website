@@ -1,12 +1,12 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useMemo } from "react";
 
 import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
 import HeroBanner from "@/components/extensive/Banner/Hero/HeroBanner";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
-import { useGetV2OrganisationsUUID } from "@/generated/apiComponents";
-import { V2OrganisationRead } from "@/generated/apiSchemas";
+import { useOrganisation, useOrganisationMediaByCollection } from "@/connections/Organisation";
 
 import FinancialTabContent from "./components/financial/FinancialTabContent";
 import OrganizationHeader from "./components/OrganizationHeader";
@@ -19,33 +19,41 @@ const OrganizationPage = () => {
   const organizationId = query.id as string;
 
   const t = useT();
-  const { data: organizationData, isLoading: organizationLoading } = useGetV2OrganisationsUUID<{
-    data: V2OrganisationRead;
-  }>({
-    pathParams: {
-      uuid: organizationId
-    }
+  const [loaded, { data: organisation, isLoading: organizationLoading }] = useOrganisation({
+    id: organizationId,
+    sideloads: [
+      "media",
+      "financialCollection",
+      "financialReport",
+      "fundingTypes",
+      "leadership",
+      "ownershipStakes",
+      "treeSpeciesHistorical"
+    ]
+  });
+  const [, { media: coverMedia }] = useOrganisationMediaByCollection({
+    organisationUuid: organisation?.uuid ?? "",
+    collectionName: "cover"
   });
 
+  const coverUrl = useMemo(() => coverMedia[0]?.url ?? null, [coverMedia]);
+
   return (
-    <LoadingContainer loading={organizationLoading}>
-      <HeroBanner
-        bgImage={organizationData?.data.cover?.url ?? "/images/bg-hero-banner-2.webp"}
-        className="h-[200px]"
-      />
-      <OrganizationHeader organization={organizationData?.data} />
+    <LoadingContainer loading={!loaded || organizationLoading}>
+      <HeroBanner bgImage={coverUrl ?? "/images/bg-hero-banner-2.webp"} className="h-[200px]" />
+      <OrganizationHeader organization={organisation ?? undefined} />
       <SecondaryTabs
         containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
         tabItems={[
           {
             key: "overview",
             title: t("Overview"),
-            body: <OverviewTabContent organization={organizationData?.data} />
+            body: <OverviewTabContent organization={organisation ?? undefined} />
           },
           {
             key: "financial_information",
             title: t("Financial Information"),
-            body: <FinancialTabContent organization={organizationData?.data} />
+            body: <FinancialTabContent organization={organisation ?? undefined} />
           },
           // Todo: to add these sections back when asked!
           // {

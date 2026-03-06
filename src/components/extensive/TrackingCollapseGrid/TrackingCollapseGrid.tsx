@@ -10,9 +10,9 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types";
 
-import { useTableStatus } from "./hooks";
+import { useEntryTypeMap, useEntryTypes, useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
-import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useTrackingLabels } from "./types";
+import { Status, TrackingCollapseGridProps, useTrackingLabels } from "./types";
 
 const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
   complete: "complete",
@@ -41,7 +41,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
   const prefix = title == null ? `${t(sectionLabel)} ${t(rowLabel)}` : `${title} - ${t(sectionLabel)} ${t(rowLabel)}`;
 
   const boldNumber = (
-    <Text as="span" fontSize="20px" lineHeight="28px" fontWeight="bold" color="primary.900">
+    <Text as="span" textStyle="600" color="primary.900">
       {total}
     </Text>
   );
@@ -62,7 +62,7 @@ const TrackingCollapseGrid: FC<TrackingCollapseGridProps> = ({ title, domain, ty
     >
       <div>
         {shouldShowError && (
-          <Text fontSize="14px" lineHeight="20px" color="error.900" marginBottom={4}>
+          <Text textStyle="300" color="error.900" marginBottom={4}>
             {t("The total number of entries must be the same for each category.")}{" "}
             <strong>{t("Please review your entries.")}</strong>
           </Text>

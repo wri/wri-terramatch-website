@@ -881,6 +881,36 @@ export type CreateAuditStatusBody = {
   data: CreateAuditStatusData;
 };
 
+export type AggregateReportSeriesItemDto = {
+  /**
+   * Reporting task due date (ISO 8601), or null when the report has no due date.
+   *
+   * @example 2024-06-30T23:59:59.000Z
+   */
+  dueDate: Record<string, any> | null;
+  /**
+   * Sum for that reporting period (V2 compatible).
+   *
+   * @example 1500
+   */
+  aggregateAmount: number;
+};
+
+export type AggregateReportsDto = {
+  /**
+   * Trees planted by reporting period (when framework supports it).
+   */
+  treePlanted?: AggregateReportSeriesItemDto[];
+  /**
+   * Seeds planted by reporting period (when framework supports it).
+   */
+  seedingRecords?: AggregateReportSeriesItemDto[];
+  /**
+   * Trees regenerating (ANR) by reporting period (when framework supports it).
+   */
+  treesRegenerating?: AggregateReportSeriesItemDto[];
+};
+
 export type ANRDto = {
   /**
    * Site name
@@ -1312,6 +1342,7 @@ export type ProjectFullDto = {
   sdgsImpacted: string | null;
   totalHectaresRestoredGoal: number | null;
   treesGrownGoal: number | null;
+  jobsCreatedGoal: number | null;
   survivalRate: number | null;
   lastReportedSurvivalRate: number | null;
   landUseTypes: string[] | null;
@@ -1345,7 +1376,9 @@ export type ProjectFullDto = {
    */
   assistedNaturalRegenerationList: ANRDto[];
   goalTreesRestoredAnr: number | null;
+  seedsGrownGoal: number | null;
   directSeedingSurvivalRate: number | null;
+  nurserySeedlingsGoal: number | null;
   application: ProjectApplicationDto;
   media: MediaDto[];
   socioeconomicBenefits: MediaDto[];
@@ -1355,6 +1388,7 @@ export type ProjectFullDto = {
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
   proofOfLandTenureMou: MediaDto[];
+  consortiumPartnershipAgreements: MediaDto[];
   detailedProjectBudget: MediaDto;
 };
 
@@ -1668,6 +1702,7 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  managementAccountsUpload: MediaDto[];
   treePlantingUpload: MediaDto[];
   soilWaterConservationUpload: MediaDto[];
   soilWaterConservationPhotos: MediaDto[];
@@ -1847,6 +1882,7 @@ export type SiteReportFullDto = {
   technicalNarrative: string | null;
   publicNarrative: string | null;
   pctSurvivalToDate: number | null;
+  anrPractices: string[] | null;
   socioeconomicBenefits: MediaDto[];
   media: MediaDto[];
   file: MediaDto[];
@@ -2800,9 +2836,11 @@ export type SubmissionDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   formUuid: string;
   status?: "approved" | "awaiting-approval" | "rejected" | "requires-more-information" | "started" | null;
@@ -3037,9 +3075,11 @@ export type FormFullDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3166,9 +3206,11 @@ export type StoreFormAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   documentation?: string | null;
   documentationLabel?: string | null;
@@ -3302,9 +3344,11 @@ export type FundingProgrammeDto = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3332,9 +3376,11 @@ export type StoreFundingProgrammeAttributes = {
     | "terrafund-landscapes"
     | "enterprises"
     | "epa-ghana-pilot"
+    | "terrafund-3"
     | "ppc"
     | "hbf"
     | "fundo-flora"
+    | "fundo-flora-1"
     | null;
   name: string;
   description: string;
@@ -3378,4 +3424,90 @@ export type ReportingFrameworkDto = {
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
   totalProjectsCount: number;
+};
+
+export type CreateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  /**
+   * Framework name; used to generate slug
+   */
+  name: string;
+};
+
+export type CreateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  attributes: CreateReportingFrameworkAttributes;
+};
+
+export type CreateReportingFrameworkBody = {
+  data: CreateReportingFrameworkData;
+};
+
+export type UpdateReportingFrameworkAttributes = {
+  /**
+   * Stored in DB only; not returned in API (FE uses slug)
+   */
+  accessCode?: string | null;
+  /**
+   * @format uuid
+   */
+  projectFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  projectReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  siteReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  nurseryReportFormUuid?: string | null;
+  name?: string | null;
+};
+
+export type UpdateReportingFrameworkData = {
+  type: "reportingFrameworks";
+  id: string;
+  attributes: UpdateReportingFrameworkAttributes;
+};
+
+export type UpdateReportingFrameworkBody = {
+  data: UpdateReportingFrameworkData;
 };

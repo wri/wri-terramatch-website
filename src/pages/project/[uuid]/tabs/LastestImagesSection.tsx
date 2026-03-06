@@ -1,0 +1,34 @@
+import { useRouter } from "next/router";
+import { FC, useMemo } from "react";
+
+import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
+import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
+import { HookProps } from "@/types/connection";
+
+const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEntity }> = ({
+  entityUuid,
+  entityName
+}) => {
+  const router = useRouter();
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
+  const [, { data: mediaList }] = useMedias(
+    useMemo<HookProps<typeof useMedias>>(() => {
+      return {
+        entity: entityName,
+        uuid: entityUuid,
+        pageNumber: 1,
+        pageSize: 4,
+        sortDirection: "DESC"
+      };
+    }, [entityUuid, entityName])
+  );
+
+  const images = mediaList?.map(media => media.url) ?? [];
+  return <ImageGalleryCard images={images as string[]} onClickAdd={() => goToTab("gallery")} />;
+};
+
+export default LastestImagesSectionTab;

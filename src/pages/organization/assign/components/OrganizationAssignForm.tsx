@@ -1,66 +1,80 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { When } from "react-if";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import Form from "@/components/extensive/Form/Form";
-import {
-  useGetV2OrganisationsListing,
-  usePostV2Organisations,
-  usePostV2OrganisationsJoinExisting
-} from "@/generated/apiComponents";
-import { V2OrganisationUpdate } from "@/generated/apiSchemas";
+import { useOrganisations, useOrgCreate, useOrgJoin } from "@/connections/Organisation";
+import { useMyUser } from "@/connections/User";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 import { useInputDelay } from "@/hooks/useInputDelay";
 
 import { useOrganizationCreateContext } from "../context/OrganizationCreate.provider";
 import OrganizationAssignPanel from "./OrganizationCreatePanel";
 
+const ORG_LIST_FILTER_BASE = { lightResource: true, view: "public" } as const;
+
 const OrganizationAssignForm = () => {
   const t = useT();
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { type, form, selectedOrganization } = useOrganizationCreateContext();
 
-  const [searchedTerm, setSearchTerm] = useState<string>("");
+  const searchedTerm = (form.watch("name") ?? "") as string;
+  const shouldSearch = searchedTerm.trim().length > 0;
 
-  const { mutate: createOrganisation, isLoading: organisationCreateLoading } = usePostV2Organisations({
-    onSuccess: async (data: any) => {
-      const orgUUID = data.data.uuid;
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-      router.push(`/organization/create?uuid=${orgUUID}`);
-    }
-  });
+  const [myUserLoaded, { user }] = useMyUser();
 
-  // Mutations
-  const { mutate: joinOrganisation, isLoading: joinOrganisationLoading } = usePostV2OrganisationsJoinExisting({
-    onSuccess: async () => {
-      queryClient.refetchQueries({ queryKey: ["auth", "me"] });
-      router.push(`/organization/status/pending`);
-    }
-  });
-  // Queries
-  const {
-    data,
-    isLoading,
-    isFetching,
-    refetch: fetchOrganizations
-  } = useGetV2OrganisationsListing(
-    {
-      queryParams: {
-        search: searchedTerm
+  const [, { create: createOrganisation, isCreating: organisationCreateLoading, data: createdOrg, createFailure }] =
+    useOrgCreate({});
+
+  const [, { create: joinOrg, isCreating: joinOrganisationLoading, createFailure: joinOrganisationFailure }] =
+    useOrgJoin({ organisationUuid: selectedOrganization?.uuid });
+
+  const orgFilter = useMemo(
+    () => (shouldSearch ? { ...ORG_LIST_FILTER_BASE, search: searchedTerm } : ORG_LIST_FILTER_BASE),
+    [shouldSearch, searchedTerm]
+  );
+  const [orgsLoaded, { data: organisationsData }] = useOrganisations({ filter: orgFilter });
+
+  const { isTyping } = useInputDelay({ when: searchedTerm, callback: () => {} });
+
+  /**
+   * Handle successful organization creation
+   */
+  useRequestSuccess(
+    organisationCreateLoading,
+    createFailure,
+    useCallback(() => {
+      if (createdOrg?.uuid != null) {
+        router.push(`/organization/create?uuid=${createdOrg.uuid}`);
       }
-    },
-    {
-      enabled: false
-    }
+    }, [createdOrg?.uuid, router]),
+    "Failed to create organization"
   );
 
-  const { isTyping } = useInputDelay({
-    when: searchedTerm,
-    callback: () => fetchOrganizations()
-  });
+  /**
+   * Handle successful organization join request
+   */
+  useRequestSuccess(
+    joinOrganisationLoading,
+    joinOrganisationFailure,
+    useCallback(() => {
+      router.push(`/organization/status/pending`);
+    }, [router]),
+    "Failed to join organization"
+  );
+
+  /**
+   * Handle creation errors
+   */
+  useEffect(() => {
+    if (createFailure != null && !organisationCreateLoading) {
+      const errorMessage = createFailure.message ?? "Failed to create organization";
+      form.setError("name", { message: errorMessage });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createFailure, organisationCreateLoading]);
 
   /**
    * Clear form errors on start typing
@@ -72,42 +86,59 @@ const OrganizationAssignForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTyping]);
 
-  /**
-   * Handle Join Organization Button Click
-   */
-  const handleJoin = async () => {
-    if (!selectedOrganization?.uuid) return;
-    joinOrganisation({
-      body: {
-        organisation_uuid: selectedOrganization?.uuid
-      }
-    });
-  };
-
-  /**
-   * Handle Create Organization Button Click
-   */
-  const handleCreate = async () => {
-    try {
-      await createOrganisation({ body: {} as V2OrganisationUpdate });
-    } catch (err: any) {
-      form.setError("name", { message: err.message });
+  const handleJoin = useCallback(() => {
+    if (user?.emailAddress == null) {
+      // User email not available - cannot join organization
+      console.error("Cannot join organization: user email not available");
+      return;
     }
-  };
 
-  const loading = isTyping || isFetching || isLoading;
+    // Pass the required attributes for the unified createUserAssociation endpoint
+    joinOrg({
+      emailAddress: user.emailAddress,
+      isManager: false // Self-join is typically not a manager
+    });
+  }, [joinOrg, user?.emailAddress]);
+
+  const handleCreate = useCallback(() => {
+    if (createOrganisation != null) {
+      createOrganisation({ status: "draft" });
+    }
+  }, [createOrganisation]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (type === "join") {
+        handleJoin();
+      } else if (type === "create") {
+        handleCreate();
+      }
+    },
+    [type, handleJoin, handleCreate]
+  );
+
+  const loading = isTyping || !orgsLoaded;
+  const primaryButtonProps = useMemo(
+    () =>
+      type === "join"
+        ? {
+            type: "submit" as const,
+            className: "!w-auto px-8",
+            disabled: joinOrganisationLoading || !myUserLoaded || user?.emailAddress == null,
+            children: t("Apply to join organization")
+          }
+        : {
+            type: "button" as const,
+            disabled: organisationCreateLoading,
+            children: t("Create Organization"),
+            onClick: handleCreate
+          },
+    [type, joinOrganisationLoading, organisationCreateLoading, myUserLoaded, user?.emailAddress, t, handleCreate]
+  );
 
   return (
-    <Form
-      onSubmit={e => {
-        e.preventDefault(); //To prevent form submit default behavior which was causing page to refresh which lead to `Ns_binding_aborted` error moreInfo: https://stackoverflow.com/questions/704561/ns-binding-aborted-shown-in-firefox-with-httpfox
-        if (type === "join") {
-          handleJoin();
-        } else if (type === "create") {
-          handleCreate();
-        }
-      }}
-    >
+    <Form onSubmit={handleSubmit}>
       <Form.Header
         title={t("Join Or Create Organization")}
         subtitle={t(
@@ -123,10 +154,13 @@ const OrganizationAssignForm = () => {
           placeholder={t("Type Organization Name")}
           error={form.formState.errors.name}
           clearable
-          onChange={e => setSearchTerm(e.target.value)}
         />
         <When condition={!type && searchedTerm}>
-          <OrganizationAssignPanel searchedTerm={searchedTerm} organizations={data?.data ?? []} loading={loading} />
+          <OrganizationAssignPanel
+            searchedTerm={searchedTerm}
+            organizations={(organisationsData ?? []) as unknown as Array<{ uuid: string; name: string }>}
+            loading={loading}
+          />
         </When>
       </div>
       <Form.Footer
@@ -134,21 +168,7 @@ const OrganizationAssignForm = () => {
           children: "Back",
           onClick: () => router.back()
         }}
-        primaryButtonProps={
-          type === "join"
-            ? {
-                type: "submit",
-                className: "!w-auto px-8",
-                disabled: joinOrganisationLoading,
-                children: t("Apply to join organization")
-              }
-            : {
-                type: "submit",
-                disabled: organisationCreateLoading,
-                children: t("Create Organization"),
-                onClick: handleCreate
-              }
-        }
+        primaryButtonProps={primaryButtonProps}
       />
     </Form>
   );

@@ -80,6 +80,8 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-01T00:00:00Z",
     treesPlantedCount: 50000,
+    jobsCreatedGoal: null,
+    seedsGrownGoal: null,
     isTest: false,
     feedback: null,
     feedbackFields: null,
@@ -129,6 +131,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
     assistedNaturalRegenerationList: [],
     goalTreesRestoredAnr: null,
     directSeedingSurvivalRate: null,
+    nurserySeedlingsGoal: null,
     application: {
       uuid: "550e8400-e29b-41d4-a716-446655440002",
       fundingProgrammeName: "Restoration Fund",
@@ -161,7 +164,8 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       description: null,
       photographer: null,
       createdByUserName: null
-    }
+    },
+    consortiumPartnershipAgreements: []
   };
 
   return { ...baseProject, ...overrides };

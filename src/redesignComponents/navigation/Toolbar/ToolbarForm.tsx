@@ -5,22 +5,35 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Toolbar from "./Toolbar";
 import { ToolbarFormProps } from "./ToolBar.type";
 
-const ToolbarForm: FC<ToolbarFormProps> = ({ ButtonLeft, ButtonPrimary, ButtonSecondary, ButtonTertiary }) => {
+const ToolbarForm: FC<ToolbarFormProps> = ({
+  cancelButtonProps,
+  primaryButtonProps,
+  secondaryButtonProps,
+  tertiaryButtonProps
+}) => {
   return (
     <Toolbar
       className="px-6 py-3"
       contentLeft={
         <div>
-          <Button {...ButtonLeft} variant="borderless" />
+          <Button {...cancelButtonProps} variant="borderless" />
         </div>
       }
       contentRight={
         <div className="flex flex-row-reverse items-center gap-4">
-          <Button {...ButtonPrimary} variant="primary" />
-          <div className="h-4 w-[1px] bg-theme-neutral-300" />
-          <Button {...ButtonSecondary} variant="secondary" />
-          <div className="h-4 w-[1px] bg-theme-neutral-300" />
-          <Button {...ButtonTertiary} variant="borderless" />
+          <Button {...primaryButtonProps} variant="primary" />
+          {secondaryButtonProps && (
+            <>
+              <div className="h-4 w-[1px] bg-theme-neutral-300" />
+              <Button {...secondaryButtonProps} variant="secondary" />
+            </>
+          )}
+          {tertiaryButtonProps && (
+            <>
+              <div className="h-4 w-[1px] bg-theme-neutral-300" />
+              <Button {...tertiaryButtonProps} variant="borderless" />
+            </>
+          )}
         </div>
       }
     />

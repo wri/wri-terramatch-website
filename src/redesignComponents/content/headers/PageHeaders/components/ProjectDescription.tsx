@@ -3,15 +3,16 @@ import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRight, Edit } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useClampedText } from "../hooks/useClampedText";
 
 export interface ProjectDescriptionProps {
   description: string;
+  handleEdit: () => void;
 }
 
-const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
+const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEdit }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
 
@@ -24,8 +25,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
       <Box position="relative" display="inline-block" width="100%">
         <Text
           ref={descriptionRef}
-          fontSize="14px"
-          lineHeight="20px"
+          textStyle="300"
           color="neutral.900"
           style={{
             marginBottom: 0,
@@ -41,8 +41,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
         </Text>
         {isClamped && !isExpanded && (
           <Text
-            fontSize="14px"
-            lineHeight="20px"
+            textStyle="300"
             color="neutral.900"
             position="absolute"
             bottom="-5px"
@@ -57,7 +56,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
             }}
           >
             {"..."}
-            <Button variant="borderless" size="small" rightIcon={<ChevronRight />} onClick={handleToggleExpand}>
+            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={handleToggleExpand}>
               {t("Read More")}
             </Button>
           </Text>
@@ -78,7 +77,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description }) => {
         )}
       </Box>
       <div className="w-fit">
-        <Button variant="secondary" size="small" leftIcon={<Edit />} className="w-auto">
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
       </div>

@@ -41,8 +41,10 @@ const V3_NAMESPACES: Dictionary<string> = {
   jobs: jobServiceUrl,
   organisations: userServiceUrl,
   polygonClipping: researchServiceUrl,
+  reportingFrameworks: entityServiceUrl,
   research: researchServiceUrl,
   trees: entityServiceUrl,
+  userAssociations: userServiceUrl,
   users: userServiceUrl,
   validations: researchServiceUrl
 } as const;

@@ -1,12 +1,11 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { Edit, PhotoAdd, Rejected } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
 
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
@@ -17,6 +16,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
+  onClickAdd?: () => void;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -28,6 +28,7 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
+  onClickAdd,
   ...rest
 }) => {
   const t = useT();
@@ -38,12 +39,6 @@ const BaseImage: FC<BaseImageProps> = ({
   }, [src]);
 
   const showNotAvailable = src == null || loadError;
-  const router = useRouter();
-  const goToTab = (tab: string) => {
-    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
-      shallow: true
-    });
-  };
 
   return (
     <div
@@ -66,8 +61,8 @@ const BaseImage: FC<BaseImageProps> = ({
               borderRadius
             )}
           >
-            <PhotoAdd className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
+            <PhotoAddIcon className="h-6 w-6" />
+            <Button variant="borderless" size="small" onClick={onClickAdd}>
               {t("Add Image")}
             </Button>
           </div>
@@ -76,7 +71,7 @@ const BaseImage: FC<BaseImageProps> = ({
             className={classNames("bg-theme-neutral-300 flex h-full w-full items-center justify-center", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <Rejected className="text-theme-neutral-500 h-5 w-5" />
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
               <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                 {t("Image unavailable")}
               </Text>
@@ -103,7 +98,7 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              <Edit className="h-4 w-4" />
+              <EditIcon className="h-4 w-4" />
               {t("Edit")}
             </Text>
           </div>

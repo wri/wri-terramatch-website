@@ -3,10 +3,19 @@ import {
   LoginDto,
   ResetPasswordResponseDto,
   VerificationUserResponseDto,
-  OrganisationDto,
+  OrganisationLightDto,
+  OrganisationFullDto,
   UserDto,
+  FinancialIndicatorDto,
+  FinancialReportLightDto,
+  MediaDto,
+  FundingTypeDto,
+  LeadershipDto,
+  OwnershipStakeDto,
+  TreeSpeciesDto,
   ActionDto,
-  UserAssociationDto
+  UserAssociationDto,
+  OrganisationInviteDto
 } from "./userServiceSchemas";
 
 export const USER_SERVICE_RESOURCES = [
@@ -15,16 +24,32 @@ export const USER_SERVICE_RESOURCES = [
   "verifications",
   "organisations",
   "users",
+  "financialIndicators",
+  "financialReports",
+  "media",
+  "fundingTypes",
+  "leaderships",
+  "ownershipStakes",
+  "treeSpecies",
   "actions",
-  "associatedUsers"
+  "associatedUsers",
+  "organisationInvites"
 ] as const;
 
 export type UserServiceApiResources = {
   logins: StoreResourceMap<LoginDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
   verifications: StoreResourceMap<VerificationUserResponseDto>;
-  organisations: StoreResourceMap<OrganisationDto>;
+  organisations: StoreResourceMap<OrganisationLightDto | OrganisationFullDto>;
   users: StoreResourceMap<UserDto>;
+  financialIndicators: StoreResourceMap<FinancialIndicatorDto>;
+  financialReports: StoreResourceMap<FinancialReportLightDto>;
+  media: StoreResourceMap<MediaDto>;
+  fundingTypes: StoreResourceMap<FundingTypeDto>;
+  leaderships: StoreResourceMap<LeadershipDto>;
+  ownershipStakes: StoreResourceMap<OwnershipStakeDto>;
+  treeSpecies: StoreResourceMap<TreeSpeciesDto>;
   actions: StoreResourceMap<ActionDto>;
   associatedUsers: StoreResourceMap<UserAssociationDto>;
+  organisationInvites: StoreResourceMap<OrganisationInviteDto>;
 };

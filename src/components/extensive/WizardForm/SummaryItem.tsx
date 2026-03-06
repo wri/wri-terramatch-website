@@ -1,15 +1,18 @@
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC, SetStateAction, useMemo } from "react";
 import { UseFormReturn } from "react-hook-form";
 
-import { FormFooter } from "@/components/extensive/WizardForm/FormFooter";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
+
+import { FormFooter } from "./FormFooter";
 
 type SummaryItemProps = {
   models: FormModelsDefinition;
@@ -20,6 +23,8 @@ type SummaryItemProps = {
   setSelectedStepIndex: (value: SetStateAction<number>) => void;
   onSubmitStep: (data: any) => void;
   submitButtonDisable?: boolean;
+  enableSaveChangesButton?: boolean;
+  saveChanges: () => void;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({
@@ -30,7 +35,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
   downloadButtonText,
   setSelectedStepIndex,
   onSubmitStep,
-  submitButtonDisable
+  submitButtonDisable,
+  enableSaveChangesButton,
+  saveChanges
 }) => {
   const t = useT();
   const user = useIsAdmin();
@@ -56,7 +63,11 @@ const SummaryItem: FC<SummaryItemProps> = ({
   };
 
   return (
-    <div className="overflow-auto sm:h-[calc(100vh-218px)] md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+    <div
+      className={classNames("h-full overflow-auto pr-[12px]", {
+        "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": user
+      })}
+    >
       <FormStepHeader
         id="step"
         title={title}
@@ -66,6 +77,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
+                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
+                variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
         }
@@ -73,17 +86,34 @@ const SummaryItem: FC<SummaryItemProps> = ({
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
       <FormFooter
-        variant="sticky"
-        backButtonProps={{
-          children: t("Back"),
-          onClick: () => setSelectedStepIndex(n => n - 1)
+        className={classNames(
+          "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
+          user ? "bottom-0" : "bottom-[0px]"
+        )}
+        cancelButtonProps={undefined}
+        primaryButtonProps={{
+          children: t(`${enableSaveChangesButton ? "Save changes" : "Submit"}`),
+          onClick: enableSaveChangesButton ? saveChanges : handleSubmitClick,
+          disabled: submitButtonDisable
         }}
-        submitButtonProps={{
-          children: t("Submit"),
-          onClick: handleSubmitClick,
-          disabled: submitButtonDisable,
-          className: "py-3"
-        }}
+        secondaryButtonProps={
+          !enableSaveChangesButton
+            ? {
+                children: t("Save and Exit"),
+                onClick: handleSubmitClick,
+                disabled: submitButtonDisable
+              }
+            : undefined
+        }
+        tertiaryButtonProps={
+          !enableSaveChangesButton
+            ? {
+                children: t("Previous"),
+                leftIcon: <ChevronRightIcon className="rotate-180" />,
+                onClick: () => setSelectedStepIndex(n => n - 1)
+              }
+            : undefined
+        }
       />
     </div>
   );

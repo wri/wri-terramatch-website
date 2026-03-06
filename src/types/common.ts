@@ -170,7 +170,9 @@ export enum FileType {
   Csv = "text/csv",
   AcceptedShapefiles = ".zip, .kml, .geojson",
   Document = "application/pdf, application/msword",
-  CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv"
+  CsvExcel = "application/xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv",
+  /** Standard documents for management accounts, consortium agreements, etc. (max 5MB) */
+  GeneralDocuments = "application/pdf, text/csv, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/plain, image/png, image/jpeg, video/mp4"
 }
 
 export const mediaToUploadedFile = (media: MediaDto, rawFile?: File, uploadState?: UploadState): UploadedFile => ({

@@ -1,16 +1,16 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
-import { CheckApproved, InformationRequired } from "@/redesignComponents/foundations/Icons";
+import { CheckApprovedIcon, InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import TextBadge from "@/redesignComponents/status/Badge/TextBadge";
 
 import type { AccordionHeaderProps, AccordionStatus } from "./types";
 
 const getStatusIcon = (status: AccordionStatus, boxSize: number = 4) =>
   status === "complete" ? (
-    <CheckApproved boxSize={boxSize} color="success.500" />
+    <CheckApprovedIcon boxSize={boxSize} color="success.500" />
   ) : (
-    <InformationRequired boxSize={boxSize} color="error.500" />
+    <InformationRequiredIcon boxSize={boxSize} color="error.500" />
   );
 
 interface StatusLabelTagProps {
@@ -31,7 +31,7 @@ const StatusLabelTag: FC<StatusLabelTagProps> = ({ label, status }) => {
       borderColor="error.300"
     >
       {getStatusIcon(status, 2.5)}
-      <Text fontSize="12px" lineHeight="16px" fontWeight="bold" color="error.900">
+      <Text textStyle="200" color="error.900">
         {label}
       </Text>
     </Flex>
@@ -44,7 +44,7 @@ const AccordionHeader: FC<AccordionHeaderProps> = ({ label, title, badge, status
       <div className="flex items-center gap-3">
         <div className="line-height-[28px] flex items-center gap-2 text-[20px] text-theme-primary-900">
           {label && (
-            <Text fontSize="16px" lineHeight="24px" color={"neutral.800"}>
+            <Text textStyle="400" color={"neutral.800"}>
               {label}:
             </Text>
           )}

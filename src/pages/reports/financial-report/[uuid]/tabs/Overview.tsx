@@ -8,6 +8,7 @@ import Text from "@/components/elements/Text/Text";
 import Container from "@/components/generic/Layout/Container";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
+import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
 import CardFinancial from "@/pages/organization/[id]/components/financial/components/cardFinancial";
 import {
   calculateFinancialRatioStats,
@@ -16,24 +17,12 @@ import {
   formatExchangeData
 } from "@/utils/financialReport";
 
-import { V2FinancialIndicatorsRead } from "../../../../../generated/apiSchemas";
 import FinancialBudgetStackedBarChart from "../components/FinancialBudgetStackedBarChart";
 import FinancialCurrentRatioChart from "../components/FinancialCurrentRatioChart";
 import FinancialStackedBarChart from "../components/FinancialStackedBarChart";
 
 type FinancialReportOverviewTabProps = {
   report?: any;
-};
-
-type FinancialStackedBarChartProps = {
-  uuid: string;
-  organisation_id: number;
-  financial_report_id: number;
-  collection: string;
-  amount: number | null;
-  year: number;
-  description: string | null;
-  documentation: any[];
 };
 
 const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps) => {
@@ -47,8 +36,7 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
     );
   }
 
-  const financialCollection =
-    report?.financialCollection ?? (report?.financial_collection as V2FinancialIndicatorsRead);
+  const financialCollection = report?.financialCollection as FinancialIndicatorDto[];
   const finStartMonth = report?.fin_start_month ?? report?.finStartMonth;
 
   const financialRatioStats = calculateFinancialRatioStats(financialCollection);
@@ -104,10 +92,10 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialCollection
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "profit")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorDto) => item.collection === "profit")
+                .map((item: FinancialIndicatorDto) => (
                   <CardFinancial
-                    key={item.uuid}
+                    key={item.entityUuid}
                     title={t(item?.year?.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Net Profit")}
@@ -159,10 +147,10 @@ const FinancialReportOverviewTab = ({ report }: FinancialReportOverviewTabProps)
             </div>
             <div className="grid grid-cols-3 gap-x-4 gap-y-4">
               {financialCollection
-                .filter((item: FinancialStackedBarChartProps) => item.collection === "budget")
-                .map((item: FinancialStackedBarChartProps) => (
+                .filter((item: FinancialIndicatorDto) => item.collection === "budget")
+                .map((item: FinancialIndicatorDto) => (
                   <CardFinancial
-                    key={item.uuid}
+                    key={item.entityUuid}
                     title={t(item.year.toString())}
                     data={item.amount && item.amount > 0 ? `+${item.amount}` : item.amount ? `-${item.amount}` : "0"}
                     description={t("Budget")}

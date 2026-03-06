@@ -1,26 +1,151 @@
+import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
+import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
-import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { FC, ReactNode, useCallback, useMemo, useState } from "react";
 
-import Button from "@/components/elements/Button/Button";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import InlineLoader from "@/components/generic/Loading/InlineLoader";
+import { useUserAssociations } from "@/connections/UserAssociation";
+import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import GoalsAndProgressEntityTab from "@/pages/site/[uuid]/components/GoalsAndProgressEntityTab";
+import { isEntityAwaitingApproval } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
+
+import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
+import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
+import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
+import LastestImagesSectionTab from "./LastestImagesSection";
+import ProjectSetUpSection from "./ProjectSetUpSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
+  onViewSites?: () => void;
 }
 
-const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
+interface OverviewItemProps {
+  title: string;
+  buttonProps?: IButtonProps;
+  downloadButtonProps?: IButtonProps;
+  children?: ReactNode;
+  flexProps?: FlexProps;
+  tag?: ReactNode;
+}
+
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
+  <Flex direction="column" gap={4} flex={1} {...flexProps}>
+    <Flex alignItems="center" justifyContent="space-between">
+      <div className="flex items-center gap-2">
+        <Text color="primary.900" textStyle="600">
+          {title}
+        </Text>
+        {tag ? tag : null}
+      </div>
+
+      <Flex gap={4}>
+        {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
+        {buttonProps ? <Button {...buttonProps} /> : null}
+      </Flex>
+    </Flex>
+    {children}
+  </Flex>
+);
+
+const mapStatusToTagStateProject = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
+  switch (status) {
+    case "draft":
+      return {
+        type: "draft"
+      };
+    case "started":
+      return {
+        type: "draft"
+      };
+    case "awaiting-approval":
+      return { type: "pending-approval" };
+    case "needs-more-information":
+      return {
+        type: "information-required"
+      };
+    case "approved":
+      return {
+        type: "approved"
+      };
+    default:
+      return undefined;
+  }
+};
+
+const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
+  const router = useRouter();
   const t = useT();
+  const { openModal } = useModalContext();
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
+
+  const [, { data: associatedUsers }] = useUserAssociations({
+    uuid: project.uuid,
+    model: "projects"
+  });
+
+  const monitoringPartners = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-developer")
+      ?.slice(0, 3)
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
+  const projectManagers = useMemo(() => {
+    return associatedUsers
+      ?.filter(user => user.roleName === "project-manager")
+      .map((user, index) => ({
+        id: user.uuid,
+        name: user.fullName,
+        image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
+      }));
+  }, [associatedUsers]);
+
+  const goToContinueEditingTab = () => {
+    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
+      handleEdit();
+    } else {
+      router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
+        shallow: true
+      });
+    }
+  };
+
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
+
+  const mrvOnboardingContentItem = useMemo(() => {
+    return MRV_ONBOARDING_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
+  }, [project.frameworkKey]);
+
+  const handleInviteClick = useCallback(() => {
+    openModal(ModalId.INVITE_MONITORING_PARTNER_MODAL, <InviteMonitoringPartnerModal projectUUID={project.uuid} />);
+  }, [openModal, project.uuid]);
 
   const handleDownloadPolygons = async () => {
     if (!project?.uuid || !project?.name) return;
@@ -38,51 +163,172 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   };
 
   return (
-    <PageBody>
-      <PageRow>
-        <PageCard
-          title={t("Progress & Goals")}
-          headerChildren={
-            <Button
-              as={Link}
-              variant="secondary"
-              className="m-auto"
-              href={`/project/${project.uuid}?tab=goals`}
-              shallow
-            >
-              {t("View all")}
-            </Button>
-          }
-        >
-          <GoalsAndProgressEntityTab entity={project} project />
-        </PageCard>
-      </PageRow>
-      <PageRow>
-        <PageColumn>
-          <PageCard
-            title={t("Project Area")}
-            headerChildren={
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={handleDownloadPolygons} disabled={isDownloading}>
-                  {t("Download Polygons")}
-                  <InlineLoader loading={isDownloading} />
-                </Button>
-                <Button
-                  as={Link}
-                  variant="secondary"
-                  href={`/entity/sites/create/${project.frameworkKey}?parent_name=projects&parent_uuid=${project.uuid}`}
-                >
-                  {t("Add New Site")}
-                </Button>
-              </div>
-            }
+    <PageBody className="bg-theme-neutral-200">
+      <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
+        <Flex gap={7}>
+          <OverviewItem
+            title="Project Map"
+            flexProps={{ flex: 3 }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "View Sites",
+              rightIcon: <ChevronRightIcon />,
+              onClick: onViewSites ?? (() => goToTab("sites"))
+            }}
+            downloadButtonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "Download Project Polygons",
+              leftIcon: <DownloadIcon />,
+              onClick: handleDownloadPolygons,
+              loading: isDownloading
+            }}
           >
-            <OverviewMapArea entityModel={project} type="projects" />
-          </PageCard>
-        </PageColumn>
-      </PageRow>
-      <br />
-      <br />
+            <Box className="relative h-auto">
+              <OverviewMapArea
+                entityModel={project}
+                type="projects"
+                className="max-h-[432px]"
+                disabledPolygonPanel={true}
+              />
+            </Box>
+          </OverviewItem>
+          <OverviewItem
+            flexProps={{ flex: 1, overflow: "hidden" }}
+            title="Project Set Up"
+            tag={(() => {
+              const tagState = mapStatusToTagStateProject(project?.status);
+
+              return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            })()}
+            buttonProps={{
+              variant: "primary",
+              size: "small",
+              children: isProjectSetupComplete ? "Edit" : "Continue",
+              rightIcon: <ChevronRightIcon />,
+              onClick: goToContinueEditingTab
+            }}
+          >
+            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+              <ProjectSetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} />
+            </Box>
+          </OverviewItem>
+        </Flex>
+        <OverviewItem
+          title="Key Indicators & Insights"
+          flexProps={{ paddingY: 2, width: "100%" }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "View Progress & Goals",
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("goals")
+          }}
+        >
+          <KeyIndicatorsInsightsTab project={project} />
+        </OverviewItem>
+        <Flex gap={7} maxHeight="570px" paddingY={2}>
+          <OverviewItem
+            flexProps={{ flex: 1 }}
+            title="Team Members"
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "Manage Team",
+              rightIcon: <ChevronRightIcon />,
+              onClick: () => goToTab("team-members")
+            }}
+          >
+            <ProfileListCard
+              items={[
+                {
+                  title: "Project Managers",
+                  profiles: projectManagers,
+                  onProfileClick: () => {},
+                  type: "project-manager"
+                },
+                {
+                  title: "Monitoring Partners",
+                  profiles: monitoringPartners,
+                  onProfileClick: () => {},
+                  type: "monitoring-partner"
+                }
+              ]}
+              onInviteClick={handleInviteClick}
+            />
+          </OverviewItem>
+          <OverviewItem
+            title="Latest Images"
+            flexProps={{ flex: 1 }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "View Gallery",
+              rightIcon: <ChevronRightIcon />,
+              onClick: () => goToTab("gallery")
+            }}
+          >
+            <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
+          </OverviewItem>
+          <OverviewItem title="Project Onboarding">
+            <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
+              <Text color="neutral.900" textStyle="400">
+                {t("Monitoring, Reporting, and Verification (MRV)")}
+              </Text>
+              <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
+                <Box as="li">
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
+                  </Text>
+                </Box>
+                <Box as="li">
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
+                  </Text>
+                </Box>
+                <Box as="li">
+                  <Text color="neutral.900" textStyle="300">
+                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
+                  </Text>
+                </Box>
+              </Box>
+              <Flex alignItems="center" flexWrap="wrap">
+                <Text color="neutral.900" textStyle="300">
+                  {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
+                </Text>
+                <Button
+                  variant="borderless"
+                  size="small"
+                  rightIcon={<ChevronRightIcon />}
+                  onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
+                >
+                  {t(mrvOnboardingContentItem?.content.mrvLinkText)}
+                </Button>
+              </Flex>
+              <Flex direction="column" gap={2} minHeight={0}>
+                <Text color="neutral.900" textStyle="500">
+                  {t("Helpful Links")}
+                </Text>
+                <Divider />
+                <Flex direction="column" paddingTop={1.5} alignItems="flex-start">
+                  {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
+                    <Button
+                      variant="borderless"
+                      size="small"
+                      rightIcon={<ChevronRightIcon />}
+                      key={link.title}
+                      onClick={() => window.open(link.link, "_blank")}
+                    >
+                      {t(link.title)}
+                    </Button>
+                  ))}
+                </Flex>
+              </Flex>
+            </Flex>
+          </OverviewItem>
+        </Flex>
+      </Flex>
     </PageBody>
   );
 };

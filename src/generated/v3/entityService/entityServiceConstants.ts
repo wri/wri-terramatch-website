@@ -20,6 +20,7 @@ import {
   TreeReportCountsDto,
   DisturbanceDto,
   AuditStatusDto,
+  AggregateReportsDto,
   ProjectLightDto,
   ProjectFullDto,
   SiteLightDto,
@@ -64,6 +65,7 @@ export const ENTITY_SERVICE_RESOURCES = [
   "treeReportCounts",
   "disturbances",
   "auditStatuses",
+  "aggregateReports",
   "projects",
   "sites",
   "nurseries",
@@ -102,6 +104,7 @@ export type EntityServiceApiResources = {
   treeReportCounts: StoreResourceMap<TreeReportCountsDto>;
   disturbances: StoreResourceMap<DisturbanceDto>;
   auditStatuses: StoreResourceMap<AuditStatusDto>;
+  aggregateReports: StoreResourceMap<AggregateReportsDto>;
   projects: StoreResourceMap<ProjectLightDto | ProjectFullDto>;
   sites: StoreResourceMap<SiteLightDto | SiteFullDto>;
   nurseries: StoreResourceMap<NurseryLightDto | NurseryFullDto>;

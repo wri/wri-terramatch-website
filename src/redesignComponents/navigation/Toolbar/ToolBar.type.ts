@@ -13,19 +13,19 @@ export interface ToolbarProps {
 }
 
 export interface BulkActionToolbarProps {
-  ButtonPrimary: IButtonProps;
-  ButtonSecondary: IButtonProps;
-  ButtonTertiary: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
   ButtonCancel: IButtonProps;
   ButtonDelete: IButtonProps;
   ButtonMenu: IMultiActionButtonProps;
 }
 
 export interface ToolbarFormProps {
-  ButtonLeft: IButtonProps;
-  ButtonPrimary: IButtonProps;
-  ButtonSecondary: IButtonProps;
-  ButtonTertiary: IButtonProps;
+  cancelButtonProps?: IButtonProps;
+  primaryButtonProps?: IButtonProps;
+  secondaryButtonProps?: IButtonProps;
+  tertiaryButtonProps?: IButtonProps;
 }
 
 export interface ToolbarSlot {
@@ -35,7 +35,7 @@ export interface ToolbarSlot {
 
 export interface ToolbarObjectProps {
   breadcrumbs: BreadcrumbProps;
-  suffix: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 export type ListItemVariant = "data" | "navigation" | "select";
@@ -72,6 +72,8 @@ export interface ToolbarTableProps {
   onClearFilters: () => void;
   button: IButtonProps;
   className?: string;
+  tooltipContent?: string;
+  showClearFilters?: boolean;
 }
 
 export interface ViewToolbarProps {

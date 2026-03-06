@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 
-import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import EditEntityForm from "@/pages/entity/[entityName]/edit/[uuid]/EditEntityForm";
 import { EntityName } from "@/types/common";
@@ -17,7 +16,6 @@ const EditEntityPage = () => {
   return (
     <BackgroundLayout>
       <EditEntityForm {...{ entityName, entityUUID }} />
-      <PageFooter />
     </BackgroundLayout>
   );
 };

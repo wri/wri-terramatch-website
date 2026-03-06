@@ -1,32 +1,25 @@
-import { DataProvider } from "react-admin";
+import { DataProvider, GetManyParams, GetManyResult } from "react-admin";
 
 import { deleteNursery, loadFullNursery, loadNurseryIndex } from "@/connections/Entity";
-import { fetchGetV2AdminNurseriesMulti, GetV2AdminNurseriesMultiError } from "@/generated/apiComponents";
+import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
+import { v3ErrorForRA } from "../utils/error";
 import { connectionDataProvider } from "../utils/listing";
 
 export const nurseryDataProvider: Partial<DataProvider> = {
   ...connectionDataProvider("Nursery", loadNurseryIndex, loadFullNursery, deleteNursery),
 
-  // @ts-ignore
-  async getMany(_, params) {
-    try {
-      const response = await fetchGetV2AdminNurseriesMulti({
-        queryParams: {
-          ids: params.ids.join(",")
-        }
-      });
-
-      return {
-        // @ts-ignore
-        data: response.data?.map(item => ({
-          ...item,
-          id: item.uuid
-        }))
-      };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminNurseriesMultiError);
+  async getMany(_: string, params: GetManyParams): Promise<GetManyResult> {
+    const results = await Promise.all(params.ids.map(id => loadFullNursery({ id: id as string })));
+    const failed = results.find(r => r.loadFailure != null);
+    if (failed != null) {
+      throw v3ErrorForRA("Nursery get fetch failed", failed.loadFailure);
     }
+
+    const data = results
+      .map(r => (r.data != null ? { ...r.data, id: r.data.uuid } : null))
+      .filter((item): item is NurseryFullDto & { id: string } => item != null);
+
+    return { data } as GetManyResult;
   }
 };

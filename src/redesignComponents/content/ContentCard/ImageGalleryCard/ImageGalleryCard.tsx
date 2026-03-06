@@ -6,9 +6,10 @@ import { MIN_ITEMS } from "./constants";
 
 interface IImageGalleryCardProps {
   images: string[] | undefined;
+  onClickAdd?: () => void;
 }
 
-const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
+const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images, onClickAdd }) => {
   const imageCount = images?.length ?? 0;
   const itemsToShow = Math.max(MIN_ITEMS, imageCount);
   const placeholderCount = itemsToShow - imageCount;
@@ -33,7 +34,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images }) => {
           return (
             <GridItem key={`placeholder-${index}`}>
               {showContent ? (
-                <GalleryImage alt="No images available" isAdd={true} />
+                <GalleryImage alt="No images available" isAdd={true} onClickAdd={onClickAdd} />
               ) : (
                 <div className="bg-theme-neutral-200 rounded-md" style={{ width: 164, height: 164 }} />
               )}
