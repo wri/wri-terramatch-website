@@ -4,7 +4,7 @@ import { FC, useEffect, useMemo } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -45,7 +45,7 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entity, onStatusCha
             size="small"
             leftIcon={<EditIcon boxSize={3} />}
             onClick={() => {
-              if (entity.status === "awaiting-approval" || entity.updateRequestStatus === "awaiting-approval") {
+              if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
                 handleEdit();
               } else {
                 router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);
@@ -56,7 +56,7 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entity, onStatusCha
           </Button>
         ),
         onClick: () => {
-          if (entity.status === "awaiting-approval" || entity.updateRequestStatus === "awaiting-approval") {
+          if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
             handleEdit();
           } else {
             router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);

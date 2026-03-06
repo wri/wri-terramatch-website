@@ -15,7 +15,7 @@ import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavig
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -127,7 +127,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
       actions={
         <EditButton
           onClick={() => {
-            if (project.status === "awaiting-approval" || project.updateRequestStatus === "awaiting-approval") {
+            if (isEntityAwaitingApproval(project.status, project.updateRequestStatus)) {
               handleEdit();
             } else {
               router.push(

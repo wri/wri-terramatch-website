@@ -55,3 +55,7 @@ export const getCurrentPathEntity = () => {
   if (currentRoute?.includes("project")) return "project";
   return "";
 };
+
+export const isEntityAwaitingApproval = (status?: string | null, updateRequestStatus?: string | null): boolean => {
+  return status === "awaiting-approval" || updateRequestStatus === "awaiting-approval";
+};

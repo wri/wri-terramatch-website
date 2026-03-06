@@ -11,6 +11,7 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -123,7 +124,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
-    if (project?.status === "awaiting-approval" || project?.updateRequestStatus === "awaiting-approval") {
+    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
       handleEdit();
     } else {
       router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
