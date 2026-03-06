@@ -8,11 +8,6 @@ export type PatchAuthChangeBody = {
   password?: string;
 };
 
-export type V2PostOrganisationsApproveUserBody = {
-  organisation_uuid: string;
-  user_uuid: string;
-};
-
 export type PatchV2AuthVerifyBody = {
   token?: string;
 };
@@ -122,58 +117,6 @@ export type V2PostOrganisationsBody = {
     deleted_at?: string;
   }[];
   tags?: string[];
-};
-
-export type PostV2GeometryValidateBody = {
-  geometries?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-        est_area?: number;
-      };
-      geometry?: {
-        type?: "Polygon" | "Point";
-        coordinates?: any[];
-      };
-    }[];
-  }[];
-};
-
-export type PutV2GeometryBody = {
-  geometry?: {
-    type?: "FeatureCollection";
-    features?: {
-      type?: "Feature";
-      properties?: {
-        poly_name?: string;
-        /**
-         * @format date
-         */
-        plantstart?: string;
-        practice?: string;
-        target_sys?: string;
-        distr?: string;
-        num_trees?: number;
-        site_id?: string;
-        est_area?: number;
-      };
-      geometry?: {
-        type?: "Polygon" | "Point";
-        coordinates?: any[];
-      };
-    }[];
-  };
 };
 
 export type Body = {

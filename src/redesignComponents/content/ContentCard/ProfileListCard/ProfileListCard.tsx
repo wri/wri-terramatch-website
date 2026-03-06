@@ -22,14 +22,16 @@ export interface IProfileListCardProps {
   profiles?: IProfile[];
   onProfileClick: (profile: IProfile) => void;
   onInviteClick?: () => void;
+  type?: string;
 }
 
 interface ProfileListCardComponentProps {
   items: IProfileListCardProps[];
   onInviteClick: () => void;
+  type?: string;
 }
 
-const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick, onInviteClick }) => {
+const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileClick, onInviteClick, type }) => {
   const t = useT();
 
   return (
@@ -51,37 +53,39 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
           </>
         ) : (
           <>
-            <Flex
-              alignItems="center"
-              gap={2}
-              tabIndex={0}
-              className="group cursor-pointer"
-              role="button"
-              onClick={() => onInviteClick?.()}
-              css={{
-                "&:hover .avatar-add": {
-                  opacity: "0.8",
-                  transform: "scale(1) !important"
-                },
-                "& .avatar-add": {
-                  transform: "scale(1) !important"
-                }
-              }}
-            >
-              <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
-              <Text
-                textStyle="200-bold"
-                padding="6px 8px"
-                borderRadius="4px"
-                backgroundColor="transparent"
-                color="secondary.900"
-                width="auto"
-                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1 px-2 py-1.5"
+            {type === "monitoring-partner" && (
+              <Flex
+                alignItems="center"
+                gap={2}
+                tabIndex={0}
+                className="group cursor-pointer"
+                role="button"
+                onClick={() => onInviteClick?.()}
+                css={{
+                  "&:hover .avatar-add": {
+                    opacity: "0.8",
+                    transform: "scale(1) !important"
+                  },
+                  "& .avatar-add": {
+                    transform: "scale(1) !important"
+                  }
+                }}
               >
-                {t("Invite Team Member")}
-                <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
-              </Text>
-            </Flex>
+                <Avatar variant="add" ariaLabel={t("No profiles found")} name={t("No profiles found")} />
+                <Text
+                  textStyle="200-bold"
+                  padding="6px 8px"
+                  borderRadius="4px"
+                  backgroundColor="transparent"
+                  color="secondary.900"
+                  width="auto"
+                  className="flex items-center gap-1 px-2 py-1.5 group-hover:bg-theme-primary-500/20"
+                >
+                  {t("Invite Team Member")}
+                  <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />
+                </Text>
+              </Flex>
+            )}
           </>
         )}
       </Flex>
@@ -89,7 +93,7 @@ const ProfileSection: FC<IProfileListCardProps> = ({ title, profiles, onProfileC
   );
 };
 
-const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, onInviteClick }) => {
+const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, onInviteClick, type }) => {
   return (
     <Box
       paddingX={5}
@@ -102,7 +106,7 @@ const ProfileListCard: FC<ProfileListCardComponentProps> = ({ items, onInviteCli
       minHeight={0}
     >
       {items.map((item, itemIndex) => (
-        <ProfileSection key={itemIndex} {...item} onInviteClick={onInviteClick} />
+        <ProfileSection key={itemIndex} {...item} onInviteClick={onInviteClick} type={type} />
       ))}
     </Box>
   );

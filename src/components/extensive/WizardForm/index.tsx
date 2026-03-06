@@ -244,9 +244,14 @@ function WizardForm(props: WizardFormProps) {
   }, [selectedStepIndex]);
 
   const isEntityApproved = entity?.status == "approved";
+  const formModel = props?.models as FormModel;
   const renderStep = useCallback(
     (stepId: string, title: string | null, index: number) => (
-      <div className="h-[calc(100vh-218px)] overflow-auto pb-20 md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+      <div
+        className={classNames("h-full overflow-auto pr-[12px]", {
+          "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": isAdmin
+        })}
+      >
         {index === 0 && title === "Site Overview" && (
           <div className="w-full bg-white px-16 pt-8">
             <div className="rounded-lg bg-tertiary-80 p-6">
@@ -258,7 +263,7 @@ function WizardForm(props: WizardFormProps) {
             </div>
           </div>
         )}
-        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} className="pb-24" />
+        <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
         <FormFooter
           className={classNames(
             "absolute right-0 left-0 z-20 shadow-[0_-2px_6px_-1px_rgba(0,0,0,0.10)]",
@@ -266,12 +271,12 @@ function WizardForm(props: WizardFormProps) {
           )}
           cancelButtonProps={undefined}
           primaryButtonProps={{
-            children: t(`${isEntityApproved ? "Save changes" : "Next"}`),
-            disabled: hasErrorInAnyStep,
+            children: t(`${isEntityApproved ? "Save changes" : selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
+            disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={
-            !isEntityApproved
+            !isEntityApproved && formModel?.model != "organisations"
               ? {
                   children: "Save and Exit",
                   onClick: () => {
@@ -308,13 +313,15 @@ function WizardForm(props: WizardFormProps) {
       formHook,
       _onChange,
       selectedStepIndex,
+      lastIndex,
       setSelectedStepIndex,
       isAdmin,
       onClickSaveAndClose,
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      isEntityApproved
+      isEntityApproved,
+      formModel?.model
     ]
   );
 
@@ -386,7 +393,6 @@ function WizardForm(props: WizardFormProps) {
   );
 
   const isSubmissionModel = Array.isArray(props?.models) && props?.models?.length > 1;
-  const formModel = props?.models as FormModel;
 
   const linkHeaderMap = useMemo(() => {
     if (isSubmissionModel) {
@@ -430,7 +436,7 @@ function WizardForm(props: WizardFormProps) {
   }, [formModel?.model, t, entity, isSubmissionModel]);
 
   return selectedStepIndex < 0 ? null : (
-    <div className={classNames("relative", { "h-[calc(100%-108px)]": !isAdmin })}>
+    <div className={classNames("relative", { "h-full": !isAdmin })}>
       <FrameworkProvider frameworkKey={props.framework}>
         <WizardFormProvider
           models={props.models}
@@ -438,7 +444,7 @@ function WizardForm(props: WizardFormProps) {
           orgDetails={orgDetails}
           projectDetails={props.projectDetails}
         >
-          <div className={twMerge("flex w-full flex-col", props.className)}>
+          <div className={twMerge("flex h-full w-full flex-col", props.className)}>
             {entity != null && (
               <Box
                 className={classNames(
@@ -446,7 +452,7 @@ function WizardForm(props: WizardFormProps) {
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
-                <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />
+                {!isAdmin && <ToolbarObject breadcrumbs={{ links: linkHeaderMap, linkRouter: AdminLinkWrapper }} />}
                 <div className="bg-theme-neutral-300 pt-[1px]">
                   <PageHeader
                     title={pageHeaderTitle}
@@ -462,7 +468,6 @@ function WizardForm(props: WizardFormProps) {
               onChangeSelected={setSelectedStepIndex}
               selectedIndex={selectedStepIndex}
               tabItems={tabItems}
-              rounded={props.roundedCorners}
               itemOption={{}}
               carouselOptions={{
                 slidesPerView: 3

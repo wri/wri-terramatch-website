@@ -7,4 +7,5 @@ export interface FormSectionHeaderProps {
   statusLabel?: string;
   actions?: ReactNode;
   showBorder?: boolean;
+  className?: string;
 }

@@ -45,7 +45,8 @@ export const InviteMonitoringPartnerDialog = ({ handleClose, ...props }: InviteM
   } = useForm<FormValues>({ resolver: yupResolver(schema) });
 
   const [, { isCreating, createFailure, create: invitePartner }] = useUserAssociationCreation({
-    uuid: record.id as string
+    uuid: record.id as string,
+    model: "projects"
   });
 
   useRequestComplete(

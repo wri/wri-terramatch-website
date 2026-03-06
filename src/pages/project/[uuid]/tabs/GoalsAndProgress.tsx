@@ -94,14 +94,14 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
   );
 
   return (
-    <PageBody className="text-darkCustom">
-      <PageRow>
+    <PageBody className="bg-theme-neutral-200 pt-5 text-darkCustom">
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard title={t("Project Progress & Goals")}>
           <GoalsAndProgressEntityTab entity={project} project />
         </PageCard>
       </PageRow>
 
-      <PageRow>
+      <PageRow className="mx-0 w-full !max-w-full px-6">
         <PageCard
           title={t(project.frameworkKey == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
@@ -243,7 +243,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
           </div>
         </PageCard>
       </PageRow>
-      <PageRow className="gap-8">
+      <PageRow className="mx-0 w-full !max-w-full gap-8 px-6">
         <PageColumn>
           <PageCard
             title={isTerrafund ? t("Non-Tree Planting Progress") : t("Seed Planting Progress")}

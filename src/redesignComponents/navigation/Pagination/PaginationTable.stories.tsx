@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import PaginationTable from "./PaginationTable";
 
 const meta = {
-  title: "Redesign Components/Navigation/Pagination/Pagination Table",
+  title: "Redesign Components/Navigation/Pagination/Pagination",
   component: PaginationTable,
   tags: ["autodocs"],
   argTypes: {
@@ -77,15 +77,6 @@ export const LargePageSize: Story = {
     pageSize: 25,
     currentPage: 1,
     totalItems: 500,
-    showItemCountText: true
-  }
-};
-
-export const SmallDataset: Story = {
-  args: {
-    pageSize: 10,
-    currentPage: 1,
-    totalItems: 3,
     showItemCountText: true
   }
 };
