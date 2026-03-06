@@ -1,5 +1,6 @@
 export { ApplicationsIcon } from "./ApplicationsIcon";
 export { AreaHectaresIcon } from "./AreaHectaresIcon";
+export { ArrowForward } from "./ArrowForward";
 export { CalendarIcon } from "./CalendarIcon";
 export { CheckIcon } from "./CheckIcon";
 export { CheckApprovedIcon } from "./CheckApprovedIcon";
@@ -27,6 +28,7 @@ export { JobsIcon } from "./JobsIcon";
 export { JobsCircleIcon } from "./JobsCircleIcon";
 export { LandscapeIcon } from "./LandscapeIcon";
 export { LanguageIcon } from "./LanguageIcon";
+export { LeadingIcon } from "./LeadingIcon";
 export { MessagesIcon } from "./MessagesIcon";
 export { MinusIcon } from "./MinusIcon";
 export { MoreVertIcon } from "./MoreVertIcon";

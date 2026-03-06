@@ -5,9 +5,6 @@ import ItemCount from "./ItemCount";
 const meta = {
   title: "Redesign Components/Navigation/Pagination/Item Count",
   component: ItemCount,
-  parameters: {
-    layout: "centered"
-  },
   tags: ["autodocs"],
   argTypes: {
     pageSize: {
@@ -85,15 +82,6 @@ export const LargePageSize: Story = {
     pageSize: 50,
     currentPage: 1,
     totalItems: 500,
-    showItemCountText: true
-  }
-};
-
-export const SmallDataset: Story = {
-  args: {
-    pageSize: 10,
-    currentPage: 1,
-    totalItems: 5,
     showItemCountText: true
   }
 };

@@ -11,8 +11,12 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
@@ -25,6 +29,7 @@ import ProjectSetUpSection from "./ProjectSetUpSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
+  onViewSites?: () => void;
 }
 
 interface OverviewItemProps {
@@ -33,14 +38,19 @@ interface OverviewItemProps {
   downloadButtonProps?: IButtonProps;
   children?: ReactNode;
   flexProps?: FlexProps;
+  tag?: ReactNode;
 }
 
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps }) => (
+const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
-      <Text color="primary.900" textStyle="600">
-        {title}
-      </Text>
+      <div className="flex items-center gap-2">
+        <Text color="primary.900" textStyle="600">
+          {title}
+        </Text>
+        {tag ? tag : null}
+      </div>
+
       <Flex gap={4}>
         {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
         {buttonProps ? <Button {...buttonProps} /> : null}
@@ -50,20 +60,52 @@ const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButto
   </Flex>
 );
 
-const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
+const mapStatusToTagStateProject = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
+  switch (status) {
+    case "draft":
+      return {
+        type: "draft"
+      };
+    case "started":
+      return {
+        type: "draft"
+      };
+    case "awaiting-approval":
+      return { type: "pending-approval" };
+    case "needs-more-information":
+      return {
+        type: "information-required"
+      };
+    case "approved":
+      return {
+        type: "approved"
+      };
+    default:
+      return undefined;
+  }
+};
+
+const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
   const { openModal } = useModalContext();
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
 
   const [, { data: associatedUsers }] = useUserAssociations({
-    uuid: project.uuid
+    uuid: project.uuid,
+    model: "projects"
   });
 
   const monitoringPartners = useMemo(() => {
     return associatedUsers
-      ?.filter(user => user.roleName === "monitoring-partner")
+      ?.filter(user => user.roleName === "project-developer")
       ?.slice(0, 3)
       .map((user, index) => ({
         id: user.uuid,
@@ -82,9 +124,13 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
   }, [associatedUsers]);
 
   const goToContinueEditingTab = () => {
-    router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
-      shallow: true
-    });
+    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
+      handleEdit();
+    } else {
+      router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
+        shallow: true
+      });
+    }
   };
 
   const goToTab = (tab: string) => {
@@ -128,7 +174,7 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
               size: "small",
               children: "View Sites",
               rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("sites")
+              onClick: onViewSites ?? (() => goToTab("sites"))
             }}
             downloadButtonProps={{
               variant: "secondary",
@@ -151,16 +197,21 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
           <OverviewItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
+            tag={(() => {
+              const tagState = mapStatusToTagStateProject(project?.status);
+
+              return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            })()}
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: isProjectSetupComplete ? "Edit" : "Continue Editing",
+              children: isProjectSetupComplete ? "Edit" : "Continue",
               rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProjectSetUpSection entityUuid={project.uuid} onStatusChange={setIsProjectSetupComplete} />
+              <ProjectSetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} />
             </Box>
           </OverviewItem>
         </Flex>
@@ -194,12 +245,14 @@ const ProjectOverviewTab = ({ project }: ProjectOverviewTabProps) => {
                 {
                   title: "Project Managers",
                   profiles: projectManagers,
-                  onProfileClick: () => {}
+                  onProfileClick: () => {},
+                  type: "project-manager"
                 },
                 {
                   title: "Monitoring Partners",
                   profiles: monitoringPartners,
-                  onProfileClick: () => {}
+                  onProfileClick: () => {},
+                  type: "monitoring-partner"
                 }
               ]}
               onInviteClick={handleInviteClick}

@@ -9,7 +9,7 @@ import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormFooter } from "./FormFooter";
@@ -63,7 +63,11 @@ const SummaryItem: FC<SummaryItemProps> = ({
   };
 
   return (
-    <div className="h-[calc(100vh-218px)] overflow-auto pb-20 md:h-[calc(100vh-256px)] lg:h-[calc(100vh-268px)]">
+    <div
+      className={classNames("h-full overflow-auto pr-[12px]", {
+        "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": user
+      })}
+    >
       <FormStepHeader
         id="step"
         title={title}
@@ -73,6 +77,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
+                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
+                variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
         }

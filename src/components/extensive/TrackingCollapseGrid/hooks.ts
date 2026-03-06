@@ -4,8 +4,9 @@ import { useMemo } from "react";
 import { useTrackings } from "@/connections/EntityAssociation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { TrackingEntryDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isNotNull } from "@/utils/array";
 
-import { getTypeMap, Status, TrackingDomain, TrackingEntity, TrackingType, useEntryTypeMap } from "./types";
+import { getTypeMap, Status, TrackingDomain, TrackingEntity, TrackingType } from "./types";
 
 type Position = "first" | "last" | undefined;
 
@@ -62,7 +63,12 @@ export function useTableStatus(
   }, [entries, framework, domain, type]);
 }
 
-function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: TrackingEntryDto[]) {
+function mapRows(
+  usesName: boolean,
+  typeMap: Dictionary<string>,
+  entries: TrackingEntryDto[],
+  onlyIfPresent?: string[]
+) {
   if (usesName) {
     return entries.map(
       ({ subtype, name, amount }, index): SectionRow => ({
@@ -75,18 +81,36 @@ function mapRows(usesName: boolean, typeMap: Dictionary<string>, entries: Tracki
     );
   }
 
-  return Object.keys(typeMap).map((typeName): SectionRow => {
-    // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
-    // data in update requests that is still affected. TM-1098
-    const entryIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
-    return {
-      entryIndex,
-      typeName,
-      label: typeMap[typeName],
-      amount: entryIndex >= 0 ? entries[entryIndex].amount : 0
-    };
-  });
+  return Object.keys(typeMap)
+    .map((typeName): SectionRow | undefined => {
+      // Using findLastIndex to deal with a bug that should now be resolved, but there is some existing
+      // data in update requests that is still affected. TM-1098
+      const entryIndex = findLastIndex(entries, ({ subtype }) => subtype === typeName);
+      if (entryIndex < 0 && onlyIfPresent != null && onlyIfPresent.includes(typeName)) return undefined;
+      return {
+        entryIndex,
+        typeName,
+        label: typeMap[typeName],
+        amount: entryIndex >= 0 ? entries[entryIndex].amount : 0
+      };
+    })
+    .filter(isNotNull);
 }
+
+export const useEntryTypeMap = (domain: TrackingDomain, type: TrackingType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => getTypeMap(domain, type, framework), [domain, type, framework]);
+};
+
+export const useEntryTypes = (domain: TrackingDomain, type: TrackingType) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => Object.keys(getTypeMap(domain, type, framework)), [framework, domain, type]);
+};
+
+export const useEntryTypeDefinition = (domain: TrackingDomain, type: TrackingType, entryType: string) => {
+  const { framework } = useFrameworkContext();
+  return useMemo(() => getTypeMap(domain, type, framework)[entryType], [entryType, framework, domain, type]);
+};
 
 export function useSectionData(
   domain: TrackingDomain,
@@ -98,8 +122,8 @@ export function useSectionData(
 
   return useMemo(
     function () {
-      const { title, addNameLabel, typeMap } = trackingEntryTypes[entryType];
-      const rows = mapRows(addNameLabel != null, typeMap, entries);
+      const { title, addNameLabel, typeMap, onlyIfPresent } = trackingEntryTypes[entryType];
+      const rows = mapRows(addNameLabel != null, typeMap, entries, onlyIfPresent);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
       const entryTypes = Object.keys(trackingEntryTypes);
       const index = entryTypes.indexOf(entryType);

@@ -3,20 +3,23 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { FC, useMemo } from "react";
+import { FC, Fragment, useMemo } from "react";
 import { When } from "react-if";
 import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
+import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
@@ -24,10 +27,11 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  getPlantingStatus,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
   NO_COUNT_TABLE_SPECIES_PER_ROW,
   noCountTableColumns
@@ -75,9 +79,10 @@ type DetailStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<any>;
   project: ProjectFullDto;
+  stepIndex: number;
 };
 
-const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
+const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex }) => {
   const t = useT();
   const router = useRouter();
   const isValid = step.validation.isValidSync(formValues);
@@ -88,6 +93,13 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
     nullText: "Answer Not Provided",
     entity: { entityName: "projects", entityUUID: project.uuid },
     type: "projects"
+  });
+
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
 
   const noGoalTableColumns = useMemo(
@@ -114,99 +126,130 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project }) => {
       }
       actions={
         <EditButton
-          onClick={() =>
-            router.push(
-              `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                step.id
-              )}`
-            )
-          }
+          onClick={() => {
+            if (isEntityAwaitingApproval(project.status, project.updateRequestStatus)) {
+              handleEdit();
+            } else {
+              router.push(
+                `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                  step.id
+                )}`
+              );
+            }
+          }}
           text={t("Edit")}
         />
       }
     >
       <Flex flexDirection="column" gap={3}>
         {entries.map((entry, index) => (
-          <Flex key={`${step.id}-${entry.title}-${index}`} direction="column" gap={1}>
-            {entry.title === "Additional Information" ||
-            (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
-              <Text textStyle="300-bold" color="primary.900">
-                {entry.title}:
-              </Text>
-            )}
-            {(() => {
-              const rawValue = entry.value ?? "-";
-              if (typeof rawValue === "string" || typeof rawValue === "number") {
-                return (
-                  <Text
-                    textStyle="400"
-                    color="neutral.900"
-                    dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
-                  />
-                );
-              }
-              if (rawValue.props.tableType == "noCount") {
-                const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-                const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+          <Fragment key={`${step.id}-${entry.title}-${index}`}>
+            <Flex direction="column" gap={1}>
+              {entry.title === "Additional Information" ||
+              (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
+                <Text textStyle="300-bold" color="primary.900">
+                  {entry.title}:
+                </Text>
+              )}
+              {(() => {
+                const rawValue = entry.value ?? "-";
+                if (typeof rawValue === "string" || typeof rawValue === "number") {
+                  return (
+                    <Text
+                      textStyle="400"
+                      color="neutral.900"
+                      dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
+                    />
+                  );
+                }
+                if (rawValue.props.tableType == "noCount") {
+                  const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
+                  const dataPlants = plantsToNoCountRows(rawValue.props.plants);
 
-                return (
-                  <Table
-                    data={dataPlants}
-                    columns={noCountTableColumns}
-                    css={NO_HEADER_TABLE_WRAPPER_STYLES}
-                    variant="full-width"
-                    totalItems={noCountTableRowCount}
-                    showItemCount={false}
-                    pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
-                    showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-                    className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
-                    renderRow={rowData => {
-                      const row = rowData as Record<number, string> & { id: number };
-                      return (
-                        <TableRow>
-                          {noCountTableColumns.map((col, idx) => (
-                            <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                              <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
-                                <Box
-                                  className={classNames(
-                                    idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                    "border-theme-neutral-300 border-b py-4"
-                                  )}
-                                >
-                                  {row[idx + 1]}
-                                </Box>
-                              </When>
-                            </TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    }}
-                  />
-                );
-              } else if (rawValue.props.tableType == "noGoal") {
-                return (
-                  <Table
-                    data={rawValue.props.plants}
-                    columns={noGoalTableColumns}
-                    variant="full-width"
-                    css={FULL_WIDTH_TABLE_HEADER_STYLES}
-                    totalItems={rawValue.props.plants.length}
-                    showItemCount={false}
-                    className={classNames(
-                      "mt-[2px] !w-[725px]",
-                      rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
-                    )}
-                  />
-                );
-              } else {
-                return (
-                  <Text textStyle="400" color="neutral.900">
-                    {formatEntryValue(rawValue)}
-                  </Text>
-                );
-              }
-            })()}
-          </Flex>
+                  return (
+                    <Table
+                      data={dataPlants}
+                      columns={noCountTableColumns}
+                      css={NO_HEADER_TABLE_WRAPPER_STYLES}
+                      variant="full-width"
+                      totalItems={noCountTableRowCount}
+                      showItemCount={false}
+                      pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
+                      showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
+                      className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
+                      renderRow={rowData => {
+                        const row = rowData as Record<number, string> & { id: number };
+                        return (
+                          <TableRow>
+                            {noCountTableColumns.map((col, idx) => (
+                              <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
+                                <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                                  <Box
+                                    className={classNames(
+                                      idx === noCountTableColumns.length - 1 ? "" : "mr-8",
+                                      "border-b border-theme-neutral-300 py-4"
+                                    )}
+                                  >
+                                    {row[idx + 1]}
+                                  </Box>
+                                </When>
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      }}
+                    />
+                  );
+                } else if (rawValue.props.tableType == "noGoal") {
+                  return (
+                    <Table
+                      data={rawValue.props.plants}
+                      columns={noGoalTableColumns}
+                      variant="full-width"
+                      css={FULL_WIDTH_TABLE_HEADER_STYLES}
+                      totalItems={rawValue.props.plants.length}
+                      showItemCount={false}
+                      className={classNames(
+                        "mt-[2px] !w-[725px]",
+                        rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+                      )}
+                    />
+                  );
+                } else {
+                  return (
+                    <Text textStyle="400" color="neutral.900">
+                      {formatEntryValue(rawValue)}
+                    </Text>
+                  );
+                }
+              })()}
+            </Flex>
+            {stepIndex === 0 && index === 0 && (
+              <Flex direction="column" gap={1}>
+                <Text textStyle="300-bold" color="primary.900">
+                  {t("Project Stage")}:
+                </Text>
+                {project.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={getPlantingStatus(project.plantingStatus)} />
+                      {(project.plantingStatus === "replacement-planting" ||
+                        project.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForward boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Flex>
+            )}
+          </Fragment>
         ))}
       </Flex>
     </Accordion>
@@ -226,11 +269,11 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
-          {steps.map(step => (
-            <DetailStep key={step.id} step={step} formValues={formValues} project={project} />
+          {steps.map((step, index) => (
+            <DetailStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
           ))}
         </WizardFormProvider>
       </Flex>

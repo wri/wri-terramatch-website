@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -17,6 +16,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
+  onClickAdd?: () => void;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -28,6 +28,7 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
+  onClickAdd,
   ...rest
 }) => {
   const t = useT();
@@ -38,12 +39,6 @@ const BaseImage: FC<BaseImageProps> = ({
   }, [src]);
 
   const showNotAvailable = src == null || loadError;
-  const router = useRouter();
-  const goToTab = (tab: string) => {
-    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
-      shallow: true
-    });
-  };
 
   return (
     <div
@@ -67,7 +62,7 @@ const BaseImage: FC<BaseImageProps> = ({
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
+            <Button variant="borderless" size="small" onClick={onClickAdd}>
               {t("Add Image")}
             </Button>
           </div>

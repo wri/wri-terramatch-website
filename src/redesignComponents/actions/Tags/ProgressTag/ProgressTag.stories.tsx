@@ -22,9 +22,9 @@ export const InProgress: Story = {
   }
 };
 
-export const Complete: Story = {
+export const Completed: Story = {
   args: {
-    state: "complete"
+    state: "completed"
   }
 };
 
@@ -33,7 +33,7 @@ export const AllStates: Story = {
     <div className="flex flex-col gap-4">
       <Component state="not-started" />
       <Component state="in-progress" />
-      <Component state="complete" />
+      <Component state="completed" />
     </div>
   )
 };

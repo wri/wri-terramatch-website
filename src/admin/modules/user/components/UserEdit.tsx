@@ -60,7 +60,12 @@ const UserEdit = () => {
           reference={modules.organisation.ResourceName}
           options={{ fullWidth: true }}
         >
-          <AutocompleteInput label="Organisation" optionText="name" fullWidth />
+          <AutocompleteInput
+            label="Organisation"
+            optionText="name"
+            fullWidth
+            filterToQuery={searchText => ({ search: searchText })}
+          />
         </ReferenceInput>
 
         {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
