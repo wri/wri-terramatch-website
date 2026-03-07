@@ -12,8 +12,8 @@ const NURSERY_TYPE_MAP: Record<string, NurseryTypeConfig> = {
     icon: <NurseryExpandingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Nursery Expansion"
   },
-  new: { icon: <NurseryBuildingIcon className="text-theme-secondary-800 h-8 w-8" />, label: "New Nursery" },
-  managing: { icon: <NurseryManagingIcon className="text-theme-secondary-800 h-8 w-8" />, label: "Nursery Management" }
+  building: { icon: <NurseryBuildingIcon className="text-theme-secondary-800 h-8 w-8" />, label: "New Nursery" },
+  managing: { icon: <NurseryManagingIcon className="text-theme-secondary-800 h-8 w-8" />, label: "Co-managed Nursery" }
 };
 
 const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {

@@ -12,6 +12,7 @@ export interface NurseryBannerProps extends Omit<BannerProps, "children"> {
 }
 
 const NurseryBanner: FC<NurseryBannerProps> = ({ nursery, ...bannerProps }) => {
+  console.log("nursery", nursery);
   return (
     <Banner {...bannerProps}>
       <PageHeader title={nursery.name ?? ""} />

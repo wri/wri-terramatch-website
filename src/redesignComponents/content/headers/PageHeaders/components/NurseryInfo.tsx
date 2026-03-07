@@ -43,10 +43,6 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   return (
     <Box gap={2} className="flex flex-col">
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button variant="borderless" size="small" className="-mr-2" onClick={() => router.push("/my-projects")}>
-          {organization}
-        </Button>
-        <SeparatorDot />
         <Button
           variant="borderless"
           size="small"
@@ -54,6 +50,10 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
           onClick={() => router.push(`/project/${projectUuid}`)}
         >
           {projectName}
+        </Button>
+        <SeparatorDot />
+        <Button variant="borderless" size="small" className="-mr-2" onClick={() => router.push(`/my-projects`)}>
+          {organization}
         </Button>
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
