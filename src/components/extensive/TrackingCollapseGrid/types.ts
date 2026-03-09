@@ -236,6 +236,9 @@ type TypeMapValue = {
   // input to be considered complete.
   balanced: boolean;
   addNameLabel?: string;
+  // If included, these types should only be included in the UI display if they already exists in the
+  // underlying data.
+  onlyIfPresent?: string[];
 };
 
 const BASE_DEMOGRAPHIC_TYPE_MAP: Dictionary<TypeMapValue> = {
@@ -427,18 +430,21 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
 
 const HISTORICAL_YEARS: Dictionary<string> = {
   "3-year": "Last 3 Years",
-  older: "More than 3 Years Ago"
+  older: "More than 3 Years Ago",
+  unknown: "Unknown"
 };
 
 const GOAL_YEARS: Dictionary<string> = {
   "1-year": "First Year",
-  "2-year": "Second Year"
+  "2-year": "Second Year",
+  unknown: "Unknown"
 };
 
 const GOAL_STRATEGY: Dictionary<string> = {
   anr: "Assisted Natural Regeneration",
   "direct-seeding": "Direct Seeding",
-  "tree-planting": "Tree Planting"
+  "tree-planting": "Tree Planting",
+  unknown: "Unknown"
 };
 
 const LAND_USE: Dictionary<string> = {
@@ -450,14 +456,16 @@ const LAND_USE: Dictionary<string> = {
   "riparian-area-or-wetland": "Riparian Area or Wetland",
   silvopasture: "Silvopasture",
   "urban-forest": "Urban Forest",
-  "woodlot-or-plantation": "Woodlot or Plantation"
+  "woodlot-or-plantation": "Woodlot or Plantation",
+  unknown: "Unknown"
 };
 
 const HISTORICAL: Dictionary<TypeMapValue> = {
   years: {
     title: "Years",
     typeMap: HISTORICAL_YEARS,
-    balanced: true
+    balanced: true,
+    onlyIfPresent: ["unknown"]
   }
 };
 
@@ -465,12 +473,14 @@ const TREES_GOAL: Dictionary<TypeMapValue> = {
   years: {
     title: "Years",
     typeMap: GOAL_YEARS,
-    balanced: true
+    balanced: true,
+    onlyIfPresent: ["unknown"]
   },
   strategy: {
     title: "Strategy",
     typeMap: GOAL_STRATEGY,
-    balanced: false
+    balanced: false,
+    onlyIfPresent: ["unknown"]
   }
 };
 
@@ -478,12 +488,14 @@ const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   ...TREES_GOAL,
   strategy: {
     ...TREES_GOAL.strategy,
-    balanced: true
+    balanced: true,
+    onlyIfPresent: ["unknown"]
   },
   "land-use": {
     title: "Land Use",
     typeMap: LAND_USE,
-    balanced: true
+    balanced: true,
+    onlyIfPresent: ["unknown"]
   }
 };
 
@@ -509,19 +521,4 @@ export const getTypeMap = (
     default:
       throw new Error(`Unsupported domain: ${domain}`);
   }
-};
-
-export const useEntryTypeMap = (domain: TrackingDomain, type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => getTypeMap(domain, type, framework), [domain, type, framework]);
-};
-
-export const useEntryTypes = (domain: TrackingDomain, type: TrackingType) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => Object.keys(getTypeMap(domain, type, framework)), [framework, domain, type]);
-};
-
-export const useEntryTypeDefinition = (domain: TrackingDomain, type: TrackingType, entryType: string) => {
-  const { framework } = useFrameworkContext();
-  return useMemo(() => getTypeMap(domain, type, framework)[entryType], [entryType, framework, domain, type]);
 };
