@@ -19,7 +19,7 @@ import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
+import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
@@ -182,7 +182,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"

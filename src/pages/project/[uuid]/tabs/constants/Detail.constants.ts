@@ -1,4 +1,4 @@
-import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
+import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 
 export const NO_COUNT_TABLE_SPECIES_PER_ROW = 4;
 export const NO_COUNT_TABLE_SPECIES_PER_PAGE = 5;
