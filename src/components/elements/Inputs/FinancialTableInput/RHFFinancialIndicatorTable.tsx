@@ -12,6 +12,7 @@ import React, {
   useRef,
   useState
 } from "react";
+import { useResourceContext } from "react-admin";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 import { When } from "react-if";
 import { useParams } from "react-router-dom";
@@ -121,6 +122,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const { files, addFile, removeFile } = useFiles(true);
     const { years, collection } = props;
     const orgDetails = useOrgFormDetails();
+    const resource = useResourceContext();
 
     const [selectCurrency, setSelectCurrency] = useState<OptionValue>(
       getValueFromData(value, "currency", orgDetails?.currency ?? "")
@@ -910,6 +912,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       [orgDetails?.title]
     );
     const isNonProfitOrganization = useMemo(() => orgDetails?.type === "non-profit-organization", [orgDetails?.type]);
+    const isfinancialReport = useMemo(
+      () => resource === "financialReport" || router.query.entityName == "financial-reports",
+      [resource, router.query.entityName]
+    );
 
     useValueChanged(value, () => {
       if (!initialized.current && !isEmpty(value)) {
@@ -1198,7 +1204,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             resetTable={resetTable}
             label={t("Documentation")}
             description={t(
-              isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
+              isfinancialReport
+                ? "Please upload audited financial statements for each year requested. If audited financial statements are not available for a given year, please contact your Portfolio Manager before submitting an alternative document.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or PDF files. Please do not submit files in any other format. Financial statements must reflect your organization’s full expenses for the year."
+                : isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
                 ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
                 : "Please provide audited financial statements for each year’s financial data and add any relevant notes or context about your financial position, especially if there are discrepancies between years. We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses."
             )}
