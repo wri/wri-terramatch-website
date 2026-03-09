@@ -912,7 +912,11 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       [orgDetails?.title]
     );
     const isNonProfitOrganization = useMemo(() => orgDetails?.type === "non-profit-organization", [orgDetails?.type]);
-    console.log("financial report", resource);
+    const isfinancialReport = useMemo(
+      () => resource === "financialReport" || router.query.entityName == "financial-reports",
+      [resource, router.query.entityName]
+    );
+
     useValueChanged(value, () => {
       if (!initialized.current && !isEmpty(value)) {
         const formatted = formatFinancialData(value, years, selectCurrency);
@@ -1200,7 +1204,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             resetTable={resetTable}
             label={t("Documentation")}
             description={t(
-              resource !== null && resource == "financialReport"
+              isfinancialReport
                 ? "Please upload audited financial statements for each year requested. If audited financial statements are not available for a given year, please contact your Portfolio Manager before submitting an alternative document.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or PDF files. Please do not submit files in any other format. Financial statements must reflect your organization’s full expenses for the year."
                 : isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
                 ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
