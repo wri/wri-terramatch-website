@@ -105,6 +105,11 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     const queryTab = router.query.tab as string;
     const isValidTab = (tab: string) => tabItems.some(item => item.key === tab);
 
+    if (queryTab == "reporting-tasks") {
+      setActiveSuffixView("reports");
+      return;
+    }
+
     if (queryTab && queryTab !== activeTab && isValidTab(queryTab)) {
       setActiveTab(queryTab);
     } else if (!isValidTab(activeTab) && tabItems.length > 0) {
