@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { InlineMessage as InlineMessageComponent } from "@worldresources/wri-design-systems";
+import classNames from "classnames";
 import { FC } from "react";
-
 export interface InlineMessageProps {
   label: string;
   caption?: string;
@@ -13,7 +13,27 @@ export interface InlineMessageProps {
   isButtonRight?: boolean;
   buttonLeftIcon?: React.ReactNode;
   buttonRightIcon?: React.ReactNode;
+  className?: string;
 }
+
+const BASE_CSS: Record<string, any> = {
+  "& [aria-roledescription] > div > div:first-of-type": {
+    alignItems: "center"
+  },
+  "& [aria-roledescription] > div > div:first-of-type > svg": {
+    marginTop: 0
+  },
+  "& [aria-roledescription]": {
+    columnGap: "16px",
+    marginBottom: "0 !important"
+  },
+  "& [aria-roledescription] > div > div:first-of-type > p": {
+    maxWidth: "100%"
+  },
+  "& [aria-roledescription] > div > p": {
+    maxWidth: "100%"
+  }
+};
 
 const InlineMessage: FC<InlineMessageProps> = ({
   label,
@@ -23,23 +43,11 @@ const InlineMessage: FC<InlineMessageProps> = ({
   icon,
   onActionClick,
   actionLabel,
-  isButtonRight
+  isButtonRight,
+  className
 }) => {
   return (
-    <Box
-      className="w-auto"
-      css={{
-        "& [aria-roledescription] > div > div:first-of-type": {
-          alignItems: "center"
-        },
-        "& [aria-roledescription] > div > div:first-of-type > svg": {
-          marginTop: 0
-        },
-        "& [aria-roledescription]": {
-          gap: "16px"
-        }
-      }}
-    >
+    <Box className={classNames("w-auto", className)} css={BASE_CSS}>
       <InlineMessageComponent
         label={label ?? ""}
         variant={variant}

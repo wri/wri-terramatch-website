@@ -8,9 +8,10 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   size?: number;
   className?: string;
   isAdd?: boolean;
+  onClickAdd?: () => void;
 }
 
-const GalleryImage: FC<GalleryImageProps> = ({ alt, ...rest }) => {
+const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickAdd, ...rest }) => {
   return (
     <BaseImage
       {...rest}
@@ -18,6 +19,8 @@ const GalleryImage: FC<GalleryImageProps> = ({ alt, ...rest }) => {
       borderRadius="rounded-md"
       defaultAlt="Gallery"
       classNamesHover="m-0.5 border border-white w-[calc(100%-0.25rem)] h-[calc(100%-0.25rem)] absolute inset-0 rounded-md"
+      isAdd={isAdd}
+      onClickAdd={onClickAdd}
     />
   );
 };

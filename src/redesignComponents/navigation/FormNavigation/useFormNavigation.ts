@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface UseFormNavigationProps {
   defaultValue?: string;
@@ -18,6 +18,10 @@ export const useFormNavigation = (props: UseFormNavigationProps) => {
     },
     [onTabClick]
   );
+
+  useEffect(() => {
+    setSelectedTab(defaultValue ?? defaultTabValue ?? "");
+  }, [defaultValue, defaultTabValue]);
 
   return {
     selectedTab,

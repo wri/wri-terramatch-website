@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import ProfileItem from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileItem";
 
-import { TreeCircleIcon } from "../../foundations/Icons";
+import { LeadingIcon, TreeCircleIcon } from "../../foundations/Icons";
 import List from "./List";
 
 const meta: Meta<typeof List> = {
@@ -39,202 +39,41 @@ const meta: Meta<typeof List> = {
 export default meta;
 type Story = StoryObj<typeof List>;
 
-const baseItems = [
-  { id: "1", label: "Label", caption: "Caption" },
-  { id: "2", label: "Label", caption: "Caption" },
-  { id: "3", label: "Label", caption: "Caption" },
-  { id: "4", label: "Label", caption: "Caption" }
-];
-
-export const VariantData: Story = {
-  args: {
-    items: baseItems.map(item => ({ ...item, variant: "data" as const, value: "XXX,XXX" }))
-  }
-};
-
-export const VariantNavigation: Story = {
+export const DataListItems: Story = {
   args: {
     items: [
       {
         id: "1",
         label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="tras" />,
-        variant: "navigation" as const
-      },
-      {
-        id: "2",
-        label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
-        variant: "navigation" as const
-      },
-      {
-        id: "3",
-        label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
-        variant: "navigation" as const
-      },
-      {
-        id: "4",
-        label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
-        variant: "navigation" as const
-      },
-      {
-        id: "5",
-        label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
-        variant: "navigation" as const
-      },
-      {
-        id: "6",
-        label: "Label",
-        icon: <TreeCircleIcon className="h-6 w-6" outerBgColor="transparent" />,
-        variant: "navigation" as const
-      }
-    ]
-  }
-};
-
-export const VariantSelect: Story = {
-  args: {
-    items: baseItems.map(item => ({ ...item, variant: "select" as const }))
-  }
-};
-
-export const WithBorder: Story = {
-  args: {
-    noBorder: false,
-    items: baseItems.map(item => ({ ...item, variant: "data" as const }))
-  }
-};
-
-export const NoBorder: Story = {
-  args: {
-    noBorder: true,
-    items: baseItems.map(item => ({ ...item, variant: "data" as const }))
-  }
-};
-
-export const HighlightedIndex: Story = {
-  args: {
-    highlightedIndex: 1,
-    items: baseItems.map(item => ({ ...item, variant: "select" as const }))
-  }
-};
-
-export const ItemIsHighlighted: Story = {
-  args: {
-    items: [
-      { id: "1", label: "Label", caption: "Caption", variant: "data" as const, isHighlighted: false },
-      { id: "2", label: "Label", caption: "Caption", variant: "data" as const, isHighlighted: true },
-      { id: "3", label: "Label", caption: "Caption", variant: "data" as const, isHighlighted: false },
-      { id: "4", label: "Label", caption: "Caption", variant: "data" as const, isHighlighted: false }
-    ]
-  }
-};
-
-export const WithDisabledItems: Story = {
-  args: {
-    items: [
-      { id: "1", label: "Label", caption: "Caption", variant: "select" as const, disabled: false },
-      { id: "2", label: "Label", caption: "Caption", variant: "select" as const, disabled: true },
-      { id: "3", label: "Label", caption: "Caption", variant: "select" as const, disabled: false },
-      { id: "4", label: "Label", caption: "Caption", variant: "select" as const, disabled: true }
-    ]
-  }
-};
-
-export const WithIcons: Story = {
-  args: {
-    items: [
-      {
-        id: "1",
-        label: "Label",
-        caption: "Caption",
-        icon: <TreeCircleIcon className="h-6 w-6" />,
-        variant: "data" as const
-      },
-      {
-        id: "2",
-        label: "Label",
-        caption: "Caption",
-        icon: <TreeCircleIcon className="h-6 w-6" />,
-        variant: "data" as const
-      },
-      {
-        id: "3",
-        label: "Label",
-        caption: "Caption",
-        icon: <TreeCircleIcon className="h-6 w-6" />,
-        variant: "data" as const
-      },
-      {
-        id: "4",
-        label: "Label",
-        caption: "Caption",
-        icon: <TreeCircleIcon className="h-6 w-6" />,
-        variant: "data" as const
-      }
-    ]
-  }
-};
-
-export const WithValue: Story = {
-  args: {
-    items: [
-      { id: "1", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
-      { id: "2", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
-      { id: "3", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" },
-      { id: "4", label: "Label", caption: "Caption", variant: "data" as const, value: "XXX,XXX" }
-    ]
-  }
-};
-
-export const WithOnItemClick: Story = {
-  args: {
-    items: [
-      {
-        id: "1",
-        label: "Label",
-        caption: "Caption",
-        variant: "navigation" as const,
+        variant: "data",
         ariaLabel: "Item 1",
         icon: <TreeCircleIcon className="h-6 w-6" />,
-        onItemClick: () => console.log("Clicked item 1")
+        onItemClick: () => console.log("Clicked item 1"),
+        value: "XXX,XXX"
       },
       {
         id: "2",
         label: "Label",
-        caption: "Caption",
-        variant: "navigation" as const,
+        variant: "data",
         ariaLabel: "Item 2",
         icon: <TreeCircleIcon className="h-6 w-6" />,
-        onItemClick: () => console.log("Clicked item 2")
+        onItemClick: () => console.log("Clicked item 2"),
+        value: "XXX,XXX"
       },
       {
         id: "3",
         label: "Label",
-        caption: "Caption",
-        variant: "navigation" as const,
+        variant: "data",
         ariaLabel: "Item 3",
         icon: <TreeCircleIcon className="h-6 w-6" />,
-        onItemClick: () => console.log("Clicked item 3")
+        onItemClick: () => console.log("Clicked item 3"),
+        value: "XXX,XXX"
       }
     ]
   }
 };
 
-export const WithExpandedItem: Story = {
-  args: {
-    items: [
-      { id: "1", label: "Label", caption: "Caption", variant: "navigation" as const, isExpanded: false },
-      { id: "2", label: "Label", caption: "Caption", variant: "navigation" as const, isExpanded: true },
-      { id: "3", label: "Label", caption: "Caption", variant: "navigation" as const, isExpanded: false }
-    ]
-  }
-};
-
-export const CardList: Story = {
+export const ProfileListItems: Story = {
   args: {
     items: [
       { id: "1", label: "Label", caption: "Caption" },
@@ -261,5 +100,27 @@ export const CardList: Story = {
         ))}
       </Flex>
     );
+  }
+};
+
+export const LinkListItems: Story = {
+  args: {
+    items: [
+      {
+        id: "1",
+        label: "Label",
+        caption: "Data",
+        variant: "navigation",
+        icon: <LeadingIcon className="h-4.5 w-4.5" />
+      },
+      {
+        id: "2",
+        label: "Label",
+        caption: "Data",
+        variant: "navigation",
+        icon: <LeadingIcon className="h-4.5 w-4.5" />
+      },
+      { id: "3", label: "Label", caption: "Data", variant: "navigation", icon: <LeadingIcon className="h-4.5 w-4.5" /> }
+    ]
   }
 };

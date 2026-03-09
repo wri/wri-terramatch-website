@@ -13,9 +13,7 @@ export function getIconWithProgressColor(
   if (!isValidElement(iconElement)) {
     return iconElement;
   }
-  const iconColor =
-    progress === 0 || (goal === 0 && (variant === "progressBar" || variant === "donutChart"))
-      ? "neutral.400"
-      : color ?? "primary.600";
+  // Grey only when no data or progress is 0. Use color when there is progress.
+  const iconColor = progress === 0 ? "neutral.400" : color ?? "primary.600";
   return cloneElement(iconElement as ReactElement, { color: iconColor, boxSize });
 }

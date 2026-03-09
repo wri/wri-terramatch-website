@@ -1156,6 +1156,11 @@ export type FinancialReportLightDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -1388,6 +1393,7 @@ export type ProjectFullDto = {
   documentFiles: MediaDto[];
   programmeSubmission: MediaDto[];
   proofOfLandTenureMou: MediaDto[];
+  consortiumPartnershipAgreements: MediaDto[];
   detailedProjectBudget: MediaDto;
 };
 
@@ -1701,6 +1707,7 @@ export type ProjectReportFullDto = {
   trainingCapacityBuildingUpload: MediaDto[];
   trainingCapacityBuildingPhotos: MediaDto[];
   financialReportUpload: MediaDto[];
+  managementAccountsUpload: MediaDto[];
   treePlantingUpload: MediaDto[];
   soilWaterConservationUpload: MediaDto[];
   soilWaterConservationPhotos: MediaDto[];
@@ -2010,6 +2017,11 @@ export type FinancialReportFullDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2028,11 +2040,6 @@ export type FinancialReportFullDto = {
    */
   approvedAt: string | null;
   completion: number | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  frameworkKey: string | null;
   nothingToReport: boolean | null;
   feedback: string | null;
   feedbackFields: string[] | null;
@@ -3421,6 +3428,7 @@ export type ReportingFrameworkDto = {
   siteReportFormUuid: string | null;
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
+  financialReportFormUuid: string | null;
   totalProjectsCount: number;
 };
 
@@ -3453,6 +3461,10 @@ export type CreateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   /**
    * Framework name; used to generate slug
    */
@@ -3497,6 +3509,10 @@ export type UpdateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   name?: string | null;
 };
 

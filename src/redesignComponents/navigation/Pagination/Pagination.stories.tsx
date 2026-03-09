@@ -87,14 +87,6 @@ export const FewPages: Story = {
   }
 };
 
-export const SinglePage: Story = {
-  args: {
-    currentPage: 1,
-    totalItems: 5,
-    pageSize: 10
-  }
-};
-
 export const LargeDataset: Story = {
   args: {
     currentPage: 1,

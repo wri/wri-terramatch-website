@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useCallback, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -9,15 +10,14 @@ import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import Container from "@/components/generic/Layout/Container";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
+import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
 import { useModalContext } from "@/context/modal.provider";
 import {
   useGetV2OrganisationsApprovedUsersUUID,
-  useGetV2OrganisationsUserRequestsUUID,
-  usePutV2OrganisationsApproveUser,
-  usePutV2OrganisationsRejectUser
+  useGetV2OrganisationsUserRequestsUUID
 } from "@/generated/apiComponents";
-import { V2PostOrganisationsApproveUserBody } from "@/generated/apiRequestBodies";
 import { UserRead } from "@/generated/apiSchemas";
+import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
 
 import InviteTeamMemberModal from "../InviteTeamMemberModal";
 import TeamMemberCard from "./TeamMemberCard";
@@ -27,6 +27,7 @@ const TeamTabContent = () => {
 
   const { query } = useRouter();
   const { openModal, closeModal } = useModalContext();
+  const [selectedUserUuid, setSelectedUserUuid] = useState<string>("");
 
   // Queries
   const { data: approvedUsers, refetch: refetchApprovedUsers } = useGetV2OrganisationsApprovedUsersUUID<{
@@ -43,22 +44,21 @@ const TeamTabContent = () => {
       uuid: String(query.id)
     }
   });
+  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
+    organisationUuid: query.id as string,
+    userUuid: selectedUserUuid
+  });
+  const createRef = useRef(create);
+  createRef.current = create;
 
-  // Mutations
-  const { mutate: approveUser } = usePutV2OrganisationsApproveUser({
-    onSuccess: () => {
-      refetchApprovedUsers();
-      refetchPendingUsers();
-      closeModal(ModalId.CONFIRM_USER);
-    }
-  });
-  const { mutate: rejectUser } = usePutV2OrganisationsRejectUser({
-    onSuccess: () => {
-      refetchApprovedUsers();
-      refetchPendingUsers();
-      closeModal(ModalId.CONFIRM_USER);
-    }
-  });
+  const handleUpdateSuccess = useCallback(() => {
+    refetchApprovedUsers();
+    refetchPendingUsers();
+    closeModal(ModalId.CONFIRM_USER);
+    setSelectedUserUuid("");
+  }, [refetchApprovedUsers, refetchPendingUsers, closeModal]);
+
+  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
 
   /**
    * Conditionally render Approve or Reject Modal Content
@@ -67,6 +67,10 @@ const TeamTabContent = () => {
    * @returns openModal func
    */
   const handleOpenModal = (type: "approve" | "reject", user?: UserRead) => {
+    if (user?.uuid == null) return;
+
+    setSelectedUserUuid(user.uuid);
+
     const title = type === "approve" ? t("Confirm User Approval") : t("Confirm User Rejection");
     const content =
       type === "approve"
@@ -85,18 +89,20 @@ const TeamTabContent = () => {
         primaryButtonProps={{
           children: type === "approve" ? t("Approve User") : t("Reject User"),
           onClick: () => {
-            const actionBody = {
-              organisation_uuid: query.id as string,
-              user_uuid: user?.uuid
-            } as V2PostOrganisationsApproveUserBody;
-
-            if (type === "approve") approveUser({ body: actionBody });
-            else rejectUser({ body: actionBody });
+            // createRef.current is always the latest create fn (updated each render)
+            const status = type === "approve" ? "approved" : "rejected";
+            console.log("[DEBUG] Sending user association update:", { type, status, userUuid: user?.uuid });
+            (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
+              status
+            });
           }
         }}
         secondaryButtonProps={{
           children: t("Cancel"),
-          onClick: () => closeModal(ModalId.CONFIRM_USER)
+          onClick: () => {
+            closeModal(ModalId.CONFIRM_USER);
+            setSelectedUserUuid("");
+          }
         }}
       />
     );
