@@ -1158,7 +1158,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               resetTable={resetTable}
               label={t("Profit Analysis")}
               description={t(
-                "Revenue is defined as the total amount of money the business earns from selling its goods or services during their financial period, before any expenses are deducted.Expenses are defined as the sum of all the costs the business incurs to operate and generate revenue during their financial period, including taxes."
+                "Revenue is defined as the total amount of money your organization earns or receives during the financial period, before expenses are deducted. This may include sales income, service fees, grants, contracts, donations, or other sources of income.<br><br>Expenses are defined as the total costs your organization incurs during the financial period to operate and carry out its activities, including staff costs, operational costs, program costs, and taxes (if applicable).<br><br>Profit is defined as revenue minus expenses for the financial period.<br><br>Please ensure the numbers you input in this section match the audited financial statements uploaded below."
               )}
               tableColumns={forProfitAnalysisColumns}
               value={forProfitAnalysisData ?? []}
@@ -1200,7 +1200,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             description={t(
               isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
                 ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
-                : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
+                : "Please provide audited financial statements for each year’s financial data and add any relevant notes or context about your financial position, especially if there are discrepancies between years. We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses."
             )}
             tableColumns={documentationColumns}
             value={documentationData ?? []}
