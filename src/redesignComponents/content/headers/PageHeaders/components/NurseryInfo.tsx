@@ -9,26 +9,27 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
+import ProjectDescription from "./ProjectDescription";
 import SeparatorDot from "./SeparatorDot";
 
 export interface NurseryInfoProps {
   nursery: NurseryFullDto;
-  title: string;
   organization: string;
   projectName: string;
   projectUuid: string;
   startDate: string;
   endDate: string;
+  description?: string;
 }
 
 const NurseryInfo: FC<NurseryInfoProps> = ({
   nursery,
-  title,
   organization,
   projectName,
   projectUuid,
   startDate,
-  endDate
+  endDate,
+  description
 }) => {
   const t = useT();
   const router = useRouter();
@@ -57,11 +58,15 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
         </Button>
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
-      <div className="w-fit">
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
-          {t("Edit")}
-        </Button>
-      </div>
+      {description != null ? (
+        <ProjectDescription description={description} handleEdit={handleEdit} backgroundColor="neutral.100" />
+      ) : (
+        <div className="w-fit">
+          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
+            {t("Edit")}
+          </Button>
+        </div>
+      )}
     </Box>
   );
 };

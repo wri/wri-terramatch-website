@@ -10,9 +10,14 @@ import { useClampedText } from "../hooks/useClampedText";
 export interface ProjectDescriptionProps {
   description: string;
   handleEdit: () => void;
+  backgroundColor?: string;
 }
 
-const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEdit }) => {
+const ProjectDescription: FC<ProjectDescriptionProps> = ({
+  description,
+  handleEdit,
+  backgroundColor = "secondary.neutral"
+}) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
 
@@ -45,7 +50,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEd
             color="neutral.900"
             position="absolute"
             bottom="-5px"
-            backgroundColor="secondary.neutral"
+            backgroundColor={backgroundColor}
             right="-1px"
             style={{
               display: "block",
