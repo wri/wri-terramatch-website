@@ -69,11 +69,14 @@ export const calendarGlobalStyles = css`
 
   [data-scope="date-picker"][data-part="content"] {
     background: ${getThemedColor("neutral", 100)};
-    border: 1px solid ${getThemedColor("neutral", 300)};
+    border: 1px solid ${getThemedColor("neutral", 600)};
     border-radius: 0.75rem;
     padding: 1rem;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     min-width: 17rem;
+    min-height: 320px;
+    // max-width: 320px;
+    max-width: 286px;
     font-family: inherit;
   }
 
@@ -186,6 +189,18 @@ export const calendarGlobalStyles = css`
     background: transparent;
   }
 
+  [data-scope="date-picker"] [data-part="table-cell"]:has([data-hover-range-start]) {
+    background: linear-gradient(to right, transparent 50%, ${getThemedColor("primary", 200)} 50%);
+  }
+
+  [data-scope="date-picker"] [data-part="table-cell"]:has([data-hover-range-end]) {
+    background: linear-gradient(to left, transparent 50%, ${getThemedColor("primary", 200)} 50%);
+  }
+
+  [data-scope="date-picker"] [data-part="table-cell"]:has([data-hover-range-start][data-hover-range-end]) {
+    background: transparent;
+  }
+
   [data-scope="date-picker"] [data-part="table-cell-trigger"] {
     display: flex;
     align-items: center;
@@ -218,7 +233,7 @@ export const calendarGlobalStyles = css`
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-today][data-in-range] {
     color: ${getThemedColor("accessible", "controls-on-neutral-lights")};
-    border: 2px solid ${getThemedColor("primary", 500)};
+    border: none;
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-in-range] {
@@ -228,7 +243,7 @@ export const calendarGlobalStyles = css`
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-in-range]:hover {
-    background: ${getThemedColor("primary", 300)};
+    background: ${getThemedColor("primary", 200)};
   }
 
   [data-scope="date-picker"] [data-part="table-cell-trigger"][data-selected] {
@@ -251,8 +266,14 @@ export const calendarGlobalStyles = css`
     cursor: not-allowed;
   }
 
-  [data-scope="date-picker"] [data-part="view"][data-view="month"] [data-part="table-cell-trigger"],
-  [data-scope="date-picker"] [data-part="view"][data-view="year"] [data-part="table-cell-trigger"] {
+  .rect-cell-view [data-part="table-cell"] {
+    height: 3.75rem;
+  }
+
+  .rect-cell-view [data-part="table-cell-trigger"],
+  .rect-cell-view [data-part="table-cell-trigger"][data-today],
+  .rect-cell-view [data-part="table-cell-trigger"][data-in-range],
+  .rect-cell-view [data-part="table-cell-trigger"][data-selected] {
     width: auto;
     height: auto;
     border-radius: 0.375rem;
@@ -260,19 +281,24 @@ export const calendarGlobalStyles = css`
     font-size: 0.8125rem;
   }
 
-  [data-scope="date-picker"] [data-part="view"][data-view="month"] [data-part="table-cell-trigger"][data-selected],
-  [data-scope="date-picker"] [data-part="view"][data-view="year"] [data-part="table-cell-trigger"][data-selected] {
-    background: ${getThemedColor("primary", 600)};
+  .rect-cell-view [data-part="table-cell-trigger"][data-selected] {
+    background: ${getThemedColor("primary", 500)};
     color: ${getThemedColor("neutral", 100)};
-    font-weight: 600;
   }
 
-  [data-scope="date-picker"]
-    [data-part="view"][data-view="month"]
-    [data-part="table-cell-trigger"][data-selected]:hover,
-  [data-scope="date-picker"]
-    [data-part="view"][data-view="year"]
-    [data-part="table-cell-trigger"][data-selected]:hover {
-    background: ${getThemedColor("primary", 700)};
+  .rect-cell-view [data-part="table-cell-trigger"][data-selected]:hover {
+    background: ${getThemedColor("primary", 600)};
+  }
+
+  .rect-cell-view [data-part="table-cell-trigger"][data-outside-range] {
+    color: ${getThemedColor("neutral", 900)};
+    opacity: 1;
+  }
+
+  .rect-cell-view [data-part="table-cell"]:has([data-in-range]),
+  .rect-cell-view [data-part="table-cell"]:has([data-range-start]),
+  .rect-cell-view [data-part="table-cell"]:has([data-range-end]),
+  .rect-cell-view [data-part="table-cell"]:has([data-range-start][data-range-end]) {
+    background: transparent;
   }
 `;
