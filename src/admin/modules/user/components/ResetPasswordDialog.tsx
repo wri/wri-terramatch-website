@@ -50,7 +50,7 @@ export const ResetPasswordDialog = (props: ResetPasswordDialogProps) => {
   });
   const notify = useNotify();
 
-  const { mutate: resetPassword, isPending: isLoading } = useAdminResetPassword({
+  const { mutate: resetPassword, isLoading } = useAdminResetPassword({
     onSuccess() {
       notify("Password changed successfully.", { type: "success", undoable: false });
       hideModal();
