@@ -6,7 +6,7 @@ const BackgroundLayout = ({
   children,
   ...sectionProps
 }: PropsWithChildren<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>>) => (
-  <section {...sectionProps} className={classNames("min-h-[calc(100vh-74px)] w-full bg-neutral-150", className)}>
+  <section {...sectionProps} className={classNames("flex min-h-0 w-full flex-1 flex-col bg-neutral-150", className)}>
     {children}
   </section>
 );

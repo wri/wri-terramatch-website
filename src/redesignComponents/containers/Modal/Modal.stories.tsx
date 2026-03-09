@@ -190,9 +190,6 @@ export const CustomSize: Story = {
       </p>
     ),
     content: <ModalContent />,
-    width: "550px",
-    height: "300px",
-    maxHeight: "450px",
     open: false
   },
   render: args => {

@@ -10,10 +10,11 @@ import PageCard from "@/components/extensive/PageElements/Card/PageCard";
 import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageRow from "@/components/extensive/PageElements/Row/PageRow";
 import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
+import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
 import { ContextCondition } from "@/context/ContextCondition";
-import { ALL_TF, Framework } from "@/context/framework.provider";
+import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
 import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
@@ -72,6 +73,12 @@ const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
 const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
+  const { framework } = useFrameworkContext();
+  const nurserySeedlingsTotal = usePlantTotalCount({
+    entity: "projectReports",
+    entityUuid: report.uuid,
+    collection: "nursery-seedling"
+  });
 
   const workdaysTotal = useTotal(WORKDAYS_TOTAL, report);
   const workdaysPaid = useTotal(WORKDAYS_PAID, report);
@@ -221,7 +228,10 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               </Button>
             }
           >
-            <TextField label={t("Seedlings Grown")} value={String(report.seedlingsGrown ?? "")} />
+            <TextField
+              label={t("Seedlings Grown")}
+              value={framework === Framework.PPC ? String(nurserySeedlingsTotal) : String(report.seedlingsGrown ?? "")}
+            />
             <GenericField frameworksShow={[Framework.PPC]} label={t("Tree Species")}>
               <TreeSpeciesTable
                 entity="projectReports"

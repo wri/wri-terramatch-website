@@ -2,6 +2,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useT } from "@transifex/react";
+import { useMemo } from "react";
 import { Else, If, Then } from "react-if";
 
 import { IconNames } from "@/components/extensive/Icon/Icon";
@@ -15,8 +16,18 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
 
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
-    filter: { isManager: false }
+    filter: { isManager: false },
+    model: "projects"
   });
+
+  const monitoringPartners = useMemo(() => {
+    return (
+      associatedUsers?.map(user => ({
+        ...user,
+        status: user.status === "active" ? "Accepted" : "Pending"
+      })) ?? []
+    );
+  }, [associatedUsers]);
 
   const { openModal, closeModal } = useModalContext();
 
@@ -55,7 +66,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
 
           <Divider />
 
-          <If condition={associatedUsers?.length === 0}>
+          <If condition={monitoringPartners?.length === 0}>
             <Then>
               <Box padding={3}>
                 <Typography>This project doesn’t have monitoring partners</Typography>
@@ -63,7 +74,7 @@ export const MonitoringPartnersTable = ({ project }: { project: any }) => {
             </Then>
             <Else>
               <DataGrid
-                rows={associatedUsers ?? []}
+                rows={monitoringPartners ?? []}
                 rowSelection={false}
                 columns={[
                   {

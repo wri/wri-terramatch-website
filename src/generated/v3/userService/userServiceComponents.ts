@@ -1095,7 +1095,14 @@ export const userCreation = new V3ApiEndpoint<UserCreationResponse, UserCreation
 );
 
 export type GetUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type GetUserAssociationQueryParams = {
@@ -1179,10 +1186,17 @@ export const getUserAssociation = new V3ApiEndpoint<
   GetUserAssociationError,
   GetUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "GET");
+>("/userAssociations/v3/{model}/{uuid}", "GET");
 
 export type CreateUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type CreateUserAssociationError = Fetcher.ErrorWrapper<
@@ -1257,10 +1271,17 @@ export const createUserAssociation = new V3ApiEndpoint<
   CreateUserAssociationError,
   CreateUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "POST");
+>("/userAssociations/v3/{model}/{uuid}", "POST");
 
 export type DeleteUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
   uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
 };
 
 export type DeleteUserAssociationQueryParams = {
@@ -1332,7 +1353,196 @@ export const deleteUserAssociation = new V3ApiEndpoint<
   DeleteUserAssociationError,
   DeleteUserAssociationVariables,
   {}
->("/userAssociations/v3/projects/{uuid}", "DELETE");
+>("/userAssociations/v3/{model}/{uuid}", "DELETE");
+
+export type UpdateUserAssociationPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * The model type to associate users with
+   */
+  model: "projects" | "organisations";
+  /**
+   * UUID of the user whose association is being updated
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  userUuid: string;
+};
+
+export type UpdateUserAssociationError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpdateUserAssociationResponse = {
+  meta?: {
+    /**
+     * @example associatedUsers
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example associatedUsers
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserAssociationDto;
+  };
+};
+
+export type UpdateUserAssociationVariables = {
+  body: Schemas.UserAssociationUpdateBody;
+  pathParams: UpdateUserAssociationPathParams;
+};
+
+export const updateUserAssociation = new V3ApiEndpoint<
+  UpdateUserAssociationResponse,
+  UpdateUserAssociationError,
+  UpdateUserAssociationVariables,
+  {}
+>("/userAssociations/v3/{model}/{uuid}/{userUuid}", "PATCH");
+
+export type InviteOrganisationUserPathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+  /**
+   * The model type (organisations only for invite)
+   */
+  model: "organisations";
+};
+
+export type InviteOrganisationUserError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 422;
+      payload: {
+        /**
+         * @example 422
+         */
+        statusCode: number;
+        /**
+         * @example Unprocessable Entity
+         */
+        message: string;
+      };
+    }
+>;
+
+export type InviteOrganisationUserResponse = {
+  meta?: {
+    /**
+     * @example organisationInvites
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example organisationInvites
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationInviteDto;
+  };
+};
+
+export type InviteOrganisationUserVariables = {
+  body: Schemas.OrganisationInviteRequestDto;
+  pathParams: InviteOrganisationUserPathParams;
+};
+
+export const inviteOrganisationUser = new V3ApiEndpoint<
+  InviteOrganisationUserResponse,
+  InviteOrganisationUserError,
+  InviteOrganisationUserVariables,
+  {}
+>("/userAssociations/v3/{model}/{uuid}/invite", "POST");
 
 export const operationsByTag = {
   login: { authLogin },
@@ -1341,5 +1551,11 @@ export const operationsByTag = {
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
-  userAssociation: { getUserAssociation, createUserAssociation, deleteUserAssociation }
+  userAssociation: {
+    getUserAssociation,
+    createUserAssociation,
+    deleteUserAssociation,
+    updateUserAssociation,
+    inviteOrganisationUser
+  }
 };

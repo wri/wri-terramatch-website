@@ -4,6 +4,7 @@ import classNames from "classnames";
 import Link from "next/link";
 import { FC, forwardRef } from "react";
 
+import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ViewToolbarProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
@@ -64,6 +65,9 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
         />
       </Box>
       <ProjectHeader project={project} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
+      {(project.status == "needs-more-information" || project.updateRequestStatus == "needs-more-information") && (
+        <EntityStatusBar entity={project} entityName="projects" />
+      )}
       <Box className="sticky top-[115px] z-20 border-b-4 border-theme-neutral-200 px-0.5">
         <ViewToolbar tabBar={toolbar.tabBar} />
       </Box>
