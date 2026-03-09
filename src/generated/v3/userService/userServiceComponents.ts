@@ -1544,6 +1544,118 @@ export const inviteOrganisationUser = new V3ApiEndpoint<
   {}
 >("/userAssociations/v3/{model}/{uuid}/invite", "POST");
 
+export type AdminUsersResetPasswordPathParams = {
+  /**
+   * User UUID
+   */
+  uuid: string;
+};
+
+export type AdminUsersResetPasswordError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AdminUsersResetPasswordVariables = {
+  body: Schemas.AdminResetPasswordDto;
+  pathParams: AdminUsersResetPasswordPathParams;
+};
+
+/**
+ * Reset a user's password by UUID (admin or self). V2-compatible.
+ */
+export const adminUsersResetPassword = new V3ApiEndpoint<
+  string,
+  AdminUsersResetPasswordError,
+  AdminUsersResetPasswordVariables,
+  {}
+>("/admin/users/reset-password/{uuid}", "PUT");
+
+export type AdminUsersVerifyPathParams = {
+  /**
+   * User UUID
+   */
+  uuid: string;
+};
+
+export type AdminUsersVerifyError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type AdminUsersVerifyVariables = {
+  pathParams: AdminUsersVerifyPathParams;
+};
+
+/**
+ * Verify a user's email by UUID (admin or self). V2-compatible.
+ */
+export const adminUsersVerify = new V3ApiEndpoint<string, AdminUsersVerifyError, AdminUsersVerifyVariables, {}>(
+  "/admin/users/verify/{uuid}",
+  "PATCH"
+);
+
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
@@ -1557,5 +1669,6 @@ export const operationsByTag = {
     deleteUserAssociation,
     updateUserAssociation,
     inviteOrganisationUser
-  }
+  },
+  adminUsers: { adminUsersResetPassword, adminUsersVerify }
 };

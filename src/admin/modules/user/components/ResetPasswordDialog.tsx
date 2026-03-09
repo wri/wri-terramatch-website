@@ -13,7 +13,7 @@ import { useNotify } from "react-admin";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { usePutV2AdminUsersResetPasswordUUID } from "@/generated/apiComponents";
+import { useAdminResetPassword } from "@/admin/api/adminUserActions";
 
 interface ResetPasswordDialogProps extends DialogProps {
   userUUID: string;
@@ -49,21 +49,18 @@ export const ResetPasswordDialog = (props: ResetPasswordDialogProps) => {
     resolver: yupResolver(schema)
   });
   const notify = useNotify();
-  ``;
 
-  const { mutate: resetPassword, isLoading } = usePutV2AdminUsersResetPasswordUUID({
-    onSuccess(data, variables, context) {
+  const { mutate: resetPassword, isPending: isLoading } = useAdminResetPassword({
+    onSuccess() {
       notify("Password changed successfully.", { type: "success", undoable: false });
       hideModal();
     },
-    onError(error, variables, context) {
-      notify(error?.errors?.[0]?.detail || "something went wrong", { type: "error" });
+    onError(error: { errors?: Array<{ detail?: string }>; message?: string }) {
+      notify((error?.errors?.[0]?.detail ?? (error as Error)?.message) || "something went wrong", { type: "error" });
     }
   });
 
-  const onSubmit = (data: FormValue) =>
-    //@ts-ignore
-    resetPassword({ pathParams: { uuid: userUUID }, body: { password: data.password } });
+  const onSubmit = (data: FormValue) => resetPassword({ uuid: userUUID, password: data.password });
 
   const hideModal = () => {
     resetForm();

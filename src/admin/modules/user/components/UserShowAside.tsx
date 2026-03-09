@@ -2,15 +2,11 @@ import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
+import { useAdminVerifyUser } from "@/admin/api/adminUserActions";
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
 import { ResetPasswordDialog } from "@/admin/modules/user/components/ResetPasswordDialog";
-import {
-  usePatchV2AdminUsersVerifyUUID,
-  usePostAuthReset,
-  usePostAuthSendLoginDetails,
-  usePostV2UsersResend
-} from "@/generated/apiComponents";
+import { usePostAuthReset, usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -46,7 +42,7 @@ export const UserShowAside = () => {
     }
   });
 
-  const { mutate: verifyUser } = usePatchV2AdminUsersVerifyUUID({
+  const { mutate: verifyUser } = useAdminVerifyUser({
     onSuccess() {
       notify(`User email has been verified successfully.`, { type: "success" });
       refresh();
@@ -170,9 +166,7 @@ export const UserShowAside = () => {
         title="Email Verification"
         content={`Are you sure you want to verify ${record?.email_address}?`}
         onAgree={() => {
-          verifyUser({
-            pathParams: { uuid }
-          });
+          verifyUser({ uuid });
           setShowVerifyEmailDialog(false);
         }}
         onDisAgree={() => setShowVerifyEmailDialog(false)}
