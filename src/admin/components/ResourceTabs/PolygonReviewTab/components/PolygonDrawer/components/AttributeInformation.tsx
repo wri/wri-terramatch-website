@@ -63,7 +63,7 @@ const AttributeInformation = ({
   const connectionProps = useMemo(
     () => ({
       uuid: selectedPolygon?.primaryUuid ?? undefined,
-      enabled: !!selectedPolygon?.primaryUuid
+      enabled: selectedPolygon?.primaryUuid != null
     }),
     [selectedPolygon?.primaryUuid]
   );
@@ -112,7 +112,7 @@ const AttributeInformation = ({
   }, [calculatedArea]);
 
   const savePolygonData = async () => {
-    if (!selectedPolygon?.primaryUuid) {
+    if (selectedPolygon?.primaryUuid == null) {
       openNotification("error", t("Error!"), t("Missing polygon information"));
       return;
     }
