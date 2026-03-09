@@ -64,6 +64,15 @@ export const ReportingFrameworkShow: FC = () => {
         >
           <TextField source="title" />
         </ReferenceField>
+
+        <ReferenceField
+          source="financialReportFormUuid"
+          reference={modules.form.ResourceName}
+          label="Financial reporting flow"
+          emptyText="Not provided"
+        >
+          <TextField source="title" />
+        </ReferenceField>
       </SimpleShowLayout>
     </Show>
   );

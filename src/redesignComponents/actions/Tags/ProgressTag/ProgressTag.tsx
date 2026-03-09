@@ -5,14 +5,18 @@ import { DetailedHTMLProps, HTMLAttributes } from "react";
 
 import { STATE_PROGRESS_TAG } from "./constants/stateProgressTag";
 
-export type ProgressState = "not-started" | "in-progress" | "complete";
+export type ProgressState = "not-started" | "in-progress" | "completed";
 
 export interface ProgressTagProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  state?: ProgressState;
+  state?: ProgressState | null;
   className?: string;
 }
 
-export function ProgressTag({ state = "not-started", className }: ProgressTagProps) {
+export function ProgressTag({ state = null, className }: ProgressTagProps) {
+  if (state == null) {
+    return null;
+  }
+
   const t = useT();
   const config = STATE_PROGRESS_TAG[state];
 
@@ -23,14 +27,14 @@ export function ProgressTag({ state = "not-started", className }: ProgressTagPro
         {
           "border-theme-neutral-400": state === "not-started",
           "border-theme-primary-400": state === "in-progress",
-          "border-theme-success-300": state === "complete"
+          "border-theme-success-300": state === "completed"
         },
         className
       )}
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-nowrap whitespace-nowrap text-sm font-bold text-theme-neutral-900">
+        <span className="text-nowrap text-theme-neutral-900 whitespace-nowrap text-sm font-bold">
           {t(config.label)}
         </span>
       </Tag.Label>

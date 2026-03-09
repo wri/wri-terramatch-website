@@ -164,7 +164,8 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       description: null,
       photographer: null,
       createdByUserName: null
-    }
+    },
+    consortiumPartnershipAgreements: []
   };
 
   return { ...baseProject, ...overrides };

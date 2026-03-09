@@ -2,6 +2,7 @@ import { useT } from "@transifex/react";
 import { startCase } from "lodash";
 import { ReactNode } from "react";
 
+import { ProgressState } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import { EntityName, SingularEntityName } from "@/types/common";
 
@@ -49,6 +50,23 @@ export const mapStatusToTagState = (status: string | null | undefined): TagSubmi
       return "approved";
     case "no-update":
       return "nothing-reported";
+    default:
+      return undefined;
+  }
+};
+
+export const mapPlantingStatusToProgressState = (status: string | null | undefined): ProgressState | undefined => {
+  switch (status) {
+    case "not-started":
+      return "not-started";
+    case "in-progress":
+      return "in-progress";
+    case "completed":
+      return "completed";
+    case "replacement-planting":
+      return "in-progress";
+    case "no-restoration-expected":
+      return "in-progress";
     default:
       return undefined;
   }

@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
@@ -17,6 +16,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
+  onClickAdd?: () => void;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -28,6 +28,7 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
+  onClickAdd,
   ...rest
 }) => {
   const t = useT();
@@ -38,12 +39,6 @@ const BaseImage: FC<BaseImageProps> = ({
   }, [src]);
 
   const showNotAvailable = src == null || loadError;
-  const router = useRouter();
-  const goToTab = (tab: string) => {
-    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
-      shallow: true
-    });
-  };
 
   return (
     <div
@@ -62,22 +57,22 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={() => goToTab("gallery")}>
+            <Button variant="borderless" size="small" onClick={onClickAdd}>
               {t("Add Image")}
             </Button>
           </div>
         ) : (
           <div
-            className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
+            className={classNames("bg-theme-neutral-300 flex h-full w-full items-center justify-center", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                 {t("Image unavailable")}
               </Text>
             </div>
@@ -97,7 +92,7 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
           <div
             className={classNames(
-              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+              "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
           >

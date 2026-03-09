@@ -10,9 +10,9 @@ import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import { AccordionStatus } from "@/redesignComponents/containers/Accordion/types";
 
-import { useTableStatus } from "./hooks";
+import { useEntryTypeMap, useEntryTypes, useTableStatus } from "./hooks";
 import TrackingSection from "./TrackingSection";
-import { Status, TrackingCollapseGridProps, useEntryTypeMap, useEntryTypes, useTrackingLabels } from "./types";
+import { Status, TrackingCollapseGridProps, useTrackingLabels } from "./types";
 
 const STATUS_MAP: Record<Status, AccordionStatus | undefined> = {
   complete: "complete",
