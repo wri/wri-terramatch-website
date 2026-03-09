@@ -11,7 +11,7 @@ import NurseryOverviewTab from "@/pages/nursery/[uuid]/tabs/Overview";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import NurseryBanner from "@/redesignComponents/content/Banner/NurseryBanner/NurseryBanner";
-import { NurseryIcon } from "@/redesignComponents/foundations/Icons";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
@@ -31,6 +31,10 @@ const NurseryDetailPage = () => {
     }
   });
 
+  const currentTab = (router.query.tab as string) || "overview";
+  const isSuffixView = currentTab === "completed-tasks";
+  const activeTab = isSuffixView ? "overview" : currentTab;
+
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery} /> },
     {
@@ -48,9 +52,10 @@ const NurseryDetailPage = () => {
         />
       )
     },
-    { key: "completed-tasks", title: t("Completed Reports"), body: <CompletedReportsTab nursery={nursery} /> },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
+
+  const suffixContent = isSuffixView ? <CompletedReportsTab nursery={nursery} /> : null;
 
   return (
     <FrameworkProvider frameworkKey={nursery?.frameworkKey}>
@@ -62,11 +67,17 @@ const NurseryDetailPage = () => {
               nursery={nursery}
               breadcrumbs={[
                 {
-                  label: "Nurseries",
-                  link: "/",
-                  icon: <NurseryIcon className="!text-theme-primary-900 !h-3.5 !w-3.5" />
+                  label: t("Projects"),
+                  link: "/my-projects",
+                  icon: <ProjectIcon className="!text-theme-primary-900" />
                 },
-                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` }
+                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
+                {
+                  label: "Nurseries",
+                  link: `/project/${nursery.projectUuid}?tab=nurseries`
+                },
+                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` },
+                ...(isSuffixView ? [{ label: t("Reports"), link: `/nursery/${nursery.uuid}?tab=completed-tasks` }] : [])
               ]}
               suffix={
                 <div className="flex gap-1.5">
@@ -84,7 +95,7 @@ const NurseryDetailPage = () => {
                       variant="borderless"
                       size="small"
                       className="underline underline-offset-2"
-                      onClick={() => router.push(`/nursery/${nursery.uuid}/reports`)}
+                      onClick={() => router.push(`/nursery/${nursery.uuid}?tab=completed-tasks`)}
                     >
                       {t("Nursery Reports")}
                     </Button>
@@ -97,14 +108,14 @@ const NurseryDetailPage = () => {
                     value: item.key,
                     label: item.title
                   })),
-                  defaultValue: TabItems[0].key,
+                  defaultValue: isSuffixView ? "__none__" : activeTab,
                   onTabClick: (tabValue: string) => {
-                    router.push(`/nursery/${nurseryUUID}?tab=${tabValue}`);
+                    router.push(`/nursery/${nurseryUUID}?tab=${tabValue}`, undefined, { shallow: true });
                   }
                 }
               }}
             />
-            <div className="w-full">{TabItems.find(item => item.key === router.query.tab)?.body}</div>
+            <div className="w-full">{suffixContent || TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
         <PageFooter />
