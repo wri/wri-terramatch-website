@@ -1200,7 +1200,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             description={t(
               isFundoFloraNonProfitOrEnterprise || isNonProfitOrganization
                 ? "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
-                : "Please provide supporting documentation for each year's financial data and add any relevant notes or context about your financial position. Please note that these three uploads, one for each year, are required.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or .PDF files. Do not submit files in any other format. Financial statements must detail your entire organisation's expenses. Audited statements are preferred, if available, but are not required at this stage. "
+                : "Please upload audited financial statements for each year requested. If audited financial statements are not available for a given year, please contact your Portfolio Manager before submitting an alternative document.<br><br>We prefer financial statements in a spreadsheet format (.csv, .xls, etc.) or PDF files. Please do not submit files in any other format. Financial statements must reflect your organization’s full expenses for the year."
             )}
             tableColumns={documentationColumns}
             value={documentationData ?? []}
