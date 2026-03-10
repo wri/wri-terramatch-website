@@ -2,6 +2,7 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
+import classNames from "classnames";
 import { useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
@@ -120,8 +121,15 @@ export const DateRangeInput = ({
               <DatePicker.Trigger>
                 <CalendarIcon />
               </DatePicker.Trigger>
-              <DatePicker.Input index={0} />
-              <DatePicker.Input index={1} />
+              <DatePicker.Input index={0} placeholder="MM/DD/YYYY" />
+              <span
+                className={classNames("text-14-light text-theme-neutral-800", {
+                  "!text-theme-neutral-500": !dates[0] && !dates[1]
+                })}
+              >
+                —
+              </span>
+              <DatePicker.Input index={1} placeholder="MM/DD/YYYY" />
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
