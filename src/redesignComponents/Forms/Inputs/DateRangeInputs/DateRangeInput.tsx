@@ -1,176 +1,142 @@
-import type { DatePickerRootProps } from "@ark-ui/react";
-import { DatePicker, Portal, useDatePickerContext } from "@ark-ui/react";
+import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
+import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
+import { useRef, useState } from "react";
 
-import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
-import { CalendarIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 
-import { calendarGlobalStyles, dateRangePickerStyles } from "./styled";
+import { DateRangeInputs, DayView, MonthView, YearView } from "./components";
+import {
+  calendarGlobalStyles,
+  dateRangePickerStyles,
+  FieldCaption,
+  FieldContainer,
+  FieldErrorBar,
+  FieldErrorMessage,
+  FieldLabel,
+  RequiredIndicator
+} from "./styled";
+import type { PreservedDate } from "./types";
 
 interface DateRangeInputProps {
   min?: DatePickerRootProps["min"];
   max?: DatePickerRootProps["max"];
+  label?: string;
+  caption?: string;
+  errorMessage?: string;
+  required?: boolean;
+  disabled?: boolean;
+  size?: "default" | "small";
+  noMarginBottom?: boolean;
 }
 
-const StyledWrapper = styled.div`
-  ${dateRangePickerStyles}
+const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
+  ${({ $size }) => dateRangePickerStyles($size)}
 `;
 
-const DayView = () => {
-  const context = useDatePickerContext();
-  return (
-    <DatePicker.View view="day">
-      <DatePicker.ViewControl>
-        <DatePicker.PrevTrigger>
-          <ChevronRightIcon />
-        </DatePicker.PrevTrigger>
-        <DatePicker.ViewTrigger>
-          <DatePicker.RangeText />
-        </DatePicker.ViewTrigger>
-        <DatePicker.NextTrigger>
-          <ChevronRightIcon />
-        </DatePicker.NextTrigger>
-      </DatePicker.ViewControl>
-      <DatePicker.Table>
-        <DatePicker.TableHead>
-          <DatePicker.TableRow>
-            {context.weekDays.map((weekDay, i) => (
-              <DatePicker.TableHeader key={i}>{weekDay.narrow}</DatePicker.TableHeader>
-            ))}
-          </DatePicker.TableRow>
-        </DatePicker.TableHead>
-        <DatePicker.TableBody>
-          {context.weeks.map((week, i) => (
-            <DatePicker.TableRow key={i}>
-              {week.map((day, j) => (
-                <DatePicker.TableCell key={j} value={day}>
-                  <DatePicker.TableCellTrigger>{day.day}</DatePicker.TableCellTrigger>
-                </DatePicker.TableCell>
-              ))}
-            </DatePicker.TableRow>
-          ))}
-        </DatePicker.TableBody>
-      </DatePicker.Table>
-    </DatePicker.View>
-  );
-};
+export const DateRangeInput = ({
+  min,
+  max,
+  label,
+  caption,
+  errorMessage,
+  required,
+  disabled,
+  size = "default",
+  noMarginBottom = false
+}: DateRangeInputProps) => {
+  const [dates, setDates] = useState<DateValue[]>([]);
+  const preservedRef = useRef<PreservedDate | null>(null);
 
-const MonthView = () => {
-  const context = useDatePickerContext();
-  return (
-    <DatePicker.View view="month" className="rect-cell-view">
-      <DatePicker.ViewControl>
-        <DatePicker.PrevTrigger>
-          <ChevronRightIcon />
-        </DatePicker.PrevTrigger>
-        <DatePicker.ViewTrigger>
-          <DatePicker.RangeText />
-        </DatePicker.ViewTrigger>
-        <DatePicker.NextTrigger>
-          <ChevronRightIcon />
-        </DatePicker.NextTrigger>
-      </DatePicker.ViewControl>
-      <DatePicker.Table>
-        <DatePicker.TableBody>
-          {context.getMonthsGrid({ columns: 3, format: "short" }).map((months, i) => (
-            <DatePicker.TableRow key={i}>
-              {months.map((month, j) => (
-                <DatePicker.TableCell key={j} value={month.value}>
-                  <DatePicker.TableCellTrigger>{month.label}</DatePicker.TableCellTrigger>
-                </DatePicker.TableCell>
-              ))}
-            </DatePicker.TableRow>
-          ))}
-        </DatePicker.TableBody>
-      </DatePicker.Table>
-    </DatePicker.View>
-  );
-};
+  const picker = useDatePicker({
+    selectionMode: "range",
+    fixedWeeks: true,
+    min,
+    max,
+    value: dates,
+    disabled,
+    onValueChange({ value }) {
+      const preserved = preservedRef.current;
 
-const YearView = () => {
-  const context = useDatePickerContext();
-  return (
-    <DatePicker.View view="year" className="rect-cell-view">
-      <DatePicker.ViewControl>
-        <DatePicker.PrevTrigger>
-          <ChevronRightIcon />
-        </DatePicker.PrevTrigger>
-        <DatePicker.ViewTrigger>
-          <DatePicker.RangeText />
-        </DatePicker.ViewTrigger>
-        <DatePicker.NextTrigger>
-          <ChevronRightIcon />
-        </DatePicker.NextTrigger>
-      </DatePicker.ViewControl>
-      <DatePicker.Table>
-        <DatePicker.TableBody>
-          {context.getYearsGrid({ columns: 3 }).map((years, i) => (
-            <DatePicker.TableRow key={i}>
-              {years.map((year, j) => (
-                <DatePicker.TableCell key={j} value={year.value}>
-                  <DatePicker.TableCellTrigger>{year.label}</DatePicker.TableCellTrigger>
-                </DatePicker.TableCell>
-              ))}
-            </DatePicker.TableRow>
-          ))}
-        </DatePicker.TableBody>
-      </DatePicker.Table>
-    </DatePicker.View>
-  );
-};
+      if (preserved && value.length === 1) {
+        preservedRef.current = null;
+        const [a, b] = value[0].compare(preserved.date) > 0 ? [preserved.date, value[0]] : [value[0], preserved.date];
+        setDates([a, b]);
+        return;
+      }
 
-const DateRangeInputs = () => {
-  const context = useDatePickerContext();
+      if (preserved && value.length === 0) return;
+
+      preservedRef.current = null;
+      setDates(value);
+    }
+  });
+
+  const handleClearDate = (index: 0 | 1) => {
+    const keepDate = index === 0 ? dates[1] : dates[0];
+
+    if (!keepDate) {
+      preservedRef.current = null;
+      setDates([]);
+    } else {
+      preservedRef.current = { date: keepDate, clearedIndex: index };
+      setDates([keepDate]);
+    }
+
+    picker.setOpen(true);
+  };
+
   return (
-    <div className="grid w-full max-w-[320px] grid-cols-2 items-center gap-2">
-      <div className="flex items-center gap-2">
-        <DatePicker.Input index={0} className="w-full" />
-        <CloseButton
-          onClick={() => {
-            const [, end] = context.value;
-            context.setValue(end ? [end] : []);
-          }}
-        />
+    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-range-input-container">
+      {errorMessage ? <FieldErrorBar /> : null}
+      <div style={{ marginLeft: errorMessage ? "19px" : "0px" }}>
+        {label ? (
+          <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
+            {required ? (
+              <RequiredIndicator $disabled={disabled} aria-label="required">
+                *
+              </RequiredIndicator>
+            ) : null}
+            {label}
+            {!required ? <span className="optional-text">{" (Optional)"}</span> : ""}
+          </FieldLabel>
+        ) : null}
+        {caption ? (
+          <FieldCaption $size={size} $disabled={disabled} aria-label={caption}>
+            {caption}
+          </FieldCaption>
+        ) : null}
+        {errorMessage ? (
+          <FieldErrorMessage $size={size} aria-label={errorMessage} role="alert">
+            {errorMessage}
+          </FieldErrorMessage>
+        ) : null}
+        <StyledPickerWrapper $size={size} data-invalid={errorMessage ? "" : undefined}>
+          <Global styles={calendarGlobalStyles} />
+          <DatePicker.RootProvider value={picker}>
+            <DatePicker.Label>Select range</DatePicker.Label>
+            <DatePicker.Control>
+              <DatePicker.Trigger>
+                <CalendarIcon />
+              </DatePicker.Trigger>
+              <DatePicker.Input index={0} />
+              <DatePicker.Input index={1} />
+            </DatePicker.Control>
+            <Portal>
+              <DatePicker.Positioner>
+                <DatePicker.Content>
+                  <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} />
+                  <DayView />
+                  <MonthView />
+                  <YearView />
+                </DatePicker.Content>
+              </DatePicker.Positioner>
+            </Portal>
+          </DatePicker.RootProvider>
+        </StyledPickerWrapper>
       </div>
-      <div className="flex items-center gap-2">
-        <DatePicker.Input index={1} className="w-full" />
-        <CloseButton
-          onClick={() => {
-            const [start] = context.value;
-            context.setValue(start ? [start] : []);
-          }}
-        />
-      </div>
-    </div>
-  );
-};
-
-export const DateRangeInput = ({ min, max }: DateRangeInputProps) => {
-  return (
-    <StyledWrapper>
-      <Global styles={calendarGlobalStyles} />
-      <DatePicker.Root selectionMode="range" fixedWeeks min={min} max={max}>
-        <DatePicker.Label>Select range</DatePicker.Label>
-        <DatePicker.Control>
-          <DatePicker.Input index={0} />
-          <DatePicker.Input index={1} />
-          <DatePicker.Trigger>
-            <CalendarIcon />
-          </DatePicker.Trigger>
-        </DatePicker.Control>
-        <Portal>
-          <DatePicker.Positioner>
-            <DatePicker.Content>
-              <DateRangeInputs />
-              <DayView />
-              <MonthView />
-              <YearView />
-            </DatePicker.Content>
-          </DatePicker.Positioner>
-        </Portal>
-      </DatePicker.Root>
-    </StyledWrapper>
+    </FieldContainer>
   );
 };
 
