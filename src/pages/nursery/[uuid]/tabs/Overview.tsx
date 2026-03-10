@@ -1,30 +1,57 @@
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { useRouter } from "next/router";
 
-import LongTextField from "@/components/elements/Field/LongTextField";
-import TextField from "@/components/elements/Field/TextField";
 import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
-import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { useDate } from "@/hooks/useDate";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { isEntityAwaitingApproval } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import { EditIcon, SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
+import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
-import { ProgressSteps } from "@/redesignComponents/status/ProgressIndicator/ProgressSteps";
-import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 interface NurseryOverviewTabProps {
-  nursery: any;
+  nursery: NurseryFullDto;
 }
 
+const mapStatusToTagStateNursery = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
+  switch (status) {
+    case "draft":
+      return {
+        type: "draft"
+      };
+    case "started":
+      return {
+        type: "draft"
+      };
+    case "awaiting-approval":
+      return { type: "pending-approval" };
+    case "needs-more-information":
+      return {
+        type: "information-required"
+      };
+    case "approved":
+      return {
+        type: "approved"
+      };
+    default:
+      return undefined;
+  }
+};
+
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
-  const { format } = useDate();
+  const router = useRouter();
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "nurseries",
+    entityUUID: nursery.uuid,
+    entityStatus: nursery.status ?? "draft",
+    updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
+  });
   const totalNurserySeedlings = usePlantTotalCount({
     entity: "nurseries",
     entityUuid: nursery?.uuid,
@@ -32,101 +59,26 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   });
   const t = useT();
 
-  const nurserySetUpStatus = "approved";
-
-  const exampleSteps: StepProps[] = [
-    {
-      index: 1,
-      status: "completed",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 2,
-      status: "completed",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 3,
-      status: "completed",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 4,
-      status: "error",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 5,
-      status: "active",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 6,
-      status: "available",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
-    },
-    {
-      index: 7,
-      status: "available",
-      label: "Label",
-      actions: (
-        <Button type="button" variant="borderless" size="small" leftIcon={<EditIcon boxSize={3} />} onClick={() => {}}>
-          {t("Edit")}
-        </Button>
-      )
+  const goToContinueEditingTab = () => {
+    if (isEntityAwaitingApproval(nursery?.status, nursery?.updateRequestStatus)) {
+      handleEdit();
+    } else {
+      router.push(`/entity/nurseries/edit/${nursery.uuid}`, undefined, {
+        shallow: true
+      });
     }
-  ];
+  };
 
   return (
     <PageBody>
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
-          <PageItem
-            title={t("Key Indicators")}
-            flexProps={{ maxWidth: "26%" }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: t("View Progress & Goals"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => {}
-            }}
-          >
+          <PageItem title={t("Key Indicators")} flexProps={{ maxWidth: "26%" }} buttonProps={undefined}>
             <MetricCard
               title={t("About Nurseries")}
               variant="donutChart"
-              progress={50}
-              goal={100}
+              progress={nursery?.seedlingGrown ?? 0}
+              goal={totalNurserySeedlings}
               icon={<SeedlingsIcon boxSize={6} />}
               tooltipContent={t("Nursery Information")}
               color="secondary.500"
@@ -154,11 +106,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               links={[
                 {
                   title: t("Use the TerraFund Profile Creation Checklists"),
-                  link: ""
+                  link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
                 },
                 {
                   title: t("Create a Nursery Profile"),
-                  link: ""
+                  link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"
                 }
               ]}
             />
@@ -166,51 +118,25 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           <PageItem
             flexProps={{ maxWidth: "33%", overflow: "hidden" }}
             title={t("Nursery Set Up")}
-            tag={<TagSubmission state={nurserySetUpStatus} />}
+            tag={(() => {
+              const tagState = mapStatusToTagStateNursery(nursery?.status);
+
+              return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            })()}
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: nurserySetUpStatus === "approved" ? t("Edit") : t("Continue Editing"),
+              children: nursery?.status === "approved" ? t("Edit") : t("Continue Editing"),
               rightIcon: <ChevronRightIcon />,
-              onClick: () => {}
+              onClick: goToContinueEditingTab
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProgressSteps steps={exampleSteps} />
+              <EntitySetUpSection entity={nursery} type="nurseries" />
             </Box>
           </PageItem>
         </Flex>
       </Flex>
-      <PageRow>
-        <PageColumn>
-          <PageCard title={t("Nursery Information")} gap={8}>
-            <LongTextField title={t("Planting Contribution")}>{nursery?.plantingContribution}</LongTextField>
-          </PageCard>
-        </PageColumn>
-
-        <PageColumn>
-          <PageCard title={t("Nursery Details")} gap={4}>
-            <TextField label={t("Nursery name")} value={nursery?.name} />
-            <TextField label={t("Nursery type")} value={nursery?.nurseryType} />
-            <TextField label={t("Nursery start date")} value={format(nursery?.startDate)} />
-            <TextField label={t("Nursery end date")} value={format(nursery?.endDate)} />
-            <TextField label={t("Last updated")} value={format(nursery?.updatedAt)} />
-            <TextField label={t("Seedlings or Young Trees to be Grown")} value={nursery?.seedlingGrown} />
-          </PageCard>
-          <PageCard
-            title={"Saplings to be Grown"}
-            headerChildren={
-              <div className="flex items-center gap-2">
-                <span className="text-18 font-semibold text-primary">
-                  {totalNurserySeedlings.toLocaleString?.() ?? 0}
-                </span>
-              </div>
-            }
-          >
-            <TreeSpeciesTable entityUuid={nursery?.uuid} entity="nurseries" collection="nursery-seedling" />
-          </PageCard>
-        </PageColumn>
-      </PageRow>
     </PageBody>
   );
 };

@@ -23,9 +23,9 @@ import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
+import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LastestImagesSectionTab from "./LastestImagesSection";
-import ProjectSetUpSection from "./ProjectSetUpSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
@@ -183,7 +183,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProjectSetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} />
+              <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
             </Box>
           </PageItem>
         </Flex>

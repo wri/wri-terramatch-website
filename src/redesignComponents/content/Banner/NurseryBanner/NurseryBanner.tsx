@@ -11,17 +11,14 @@ export interface NurseryBannerProps extends Omit<BannerProps, "children"> {
   nursery: NurseryFullDto;
 }
 
-const NurseryBanner: FC<NurseryBannerProps> = ({ nursery, ...bannerProps }) => {
-  console.log("nursery", nursery);
-  return (
-    <Banner {...bannerProps}>
-      <PageHeader title={nursery.name ?? ""} />
-      <NurseryHeader nursery={nursery} />
-      {(nursery.status == "needs-more-information" || nursery.updateRequestStatus == "needs-more-information") && (
-        <EntityStatusBar entity={nursery} entityName="nurseries" />
-      )}
-    </Banner>
-  );
-};
+const NurseryBanner: FC<NurseryBannerProps> = ({ nursery, ...bannerProps }) => (
+  <Banner {...bannerProps}>
+    <PageHeader title={nursery.name ?? ""} />
+    <NurseryHeader nursery={nursery} />
+    {(nursery.status == "needs-more-information" || nursery.updateRequestStatus == "needs-more-information") && (
+      <EntityStatusBar entity={nursery} entityName="nurseries" />
+    )}
+  </Banner>
+);
 
 export default NurseryBanner;

@@ -36,7 +36,7 @@ const NurseryDetailPage = () => {
   const activeTab = isSuffixView ? "overview" : currentTab;
 
   const TabItems = [
-    { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery} /> },
+    { key: "overview", title: t("Overview"), body: <NurseryOverviewTab nursery={nursery!} /> },
     {
       key: "gallery",
       title: t("Gallery"),
@@ -90,7 +90,7 @@ const NurseryDetailPage = () => {
                     >
                       {t("Project Profile")}
                     </Button>
-                    <span className="text-theme-neutral-300 text-sm">|</span>
+                    <span className="text-sm text-theme-neutral-300">|</span>
                     <Button
                       variant="borderless"
                       size="small"
