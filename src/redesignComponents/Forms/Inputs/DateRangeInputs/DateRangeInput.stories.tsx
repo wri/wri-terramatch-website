@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import DateRangeInput from "./DateRangeInput";
 
 const meta = {
-  title: "Redesign Components/Forms/Input/DateRangeInput",
+  title: "Redesign Components/Forms/Input/Date Range Inputs",
   component: DateRangeInput,
   parameters: {
     layout: "centered"
