@@ -1,19 +1,19 @@
-import { Box, Flex, FlexProps, Text } from "@chakra-ui/react";
-import { Divider } from "@mui/material";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, ReactNode, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
@@ -23,42 +23,14 @@ import Log from "@/utils/log";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
+import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 import LastestImagesSectionTab from "./LastestImagesSection";
-import ProjectSetUpSection from "./ProjectSetUpSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
 }
-
-interface OverviewItemProps {
-  title: string;
-  buttonProps?: IButtonProps;
-  downloadButtonProps?: IButtonProps;
-  children?: ReactNode;
-  flexProps?: FlexProps;
-  tag?: ReactNode;
-}
-
-const OverviewItem: FC<OverviewItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
-  <Flex direction="column" gap={4} flex={1} {...flexProps}>
-    <Flex alignItems="center" justifyContent="space-between">
-      <div className="flex items-center gap-2">
-        <Text color="primary.900" textStyle="600">
-          {title}
-        </Text>
-        {tag ? tag : null}
-      </div>
-
-      <Flex gap={4}>
-        {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
-        {buttonProps ? <Button {...buttonProps} /> : null}
-      </Flex>
-    </Flex>
-    {children}
-  </Flex>
-);
 
 const mapStatusToTagStateProject = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
   switch (status) {
@@ -166,7 +138,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     <PageBody className="bg-theme-neutral-200">
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
-          <OverviewItem
+          <PageItem
             title="Project Map"
             flexProps={{ flex: 3 }}
             buttonProps={{
@@ -193,8 +165,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                 disabledPolygonPanel={true}
               />
             </Box>
-          </OverviewItem>
-          <OverviewItem
+          </PageItem>
+          <PageItem
             flexProps={{ flex: 1, overflow: "hidden" }}
             title="Project Set Up"
             tag={(() => {
@@ -211,11 +183,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <ProjectSetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} />
+              <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
             </Box>
-          </OverviewItem>
+          </PageItem>
         </Flex>
-        <OverviewItem
+        <PageItem
           title="Key Indicators & Insights"
           flexProps={{ paddingY: 2, width: "100%" }}
           buttonProps={{
@@ -227,9 +199,9 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           }}
         >
           <KeyIndicatorsInsightsTab project={project} />
-        </OverviewItem>
+        </PageItem>
         <Flex gap={7} maxHeight="570px" paddingY={2}>
-          <OverviewItem
+          <PageItem
             flexProps={{ flex: 1 }}
             title="Team Members"
             buttonProps={{
@@ -257,8 +229,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               ]}
               onInviteClick={handleInviteClick}
             />
-          </OverviewItem>
-          <OverviewItem
+          </PageItem>
+          <PageItem
             title="Latest Images"
             flexProps={{ flex: 1 }}
             buttonProps={{
@@ -270,63 +242,47 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             }}
           >
             <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
-          </OverviewItem>
-          <OverviewItem title="Project Onboarding">
-            <Flex direction="column" gap={2} padding={5} backgroundColor="neutral.100" borderRadius={1} minHeight={0}>
-              <Text color="neutral.900" textStyle="400">
-                {t("Monitoring, Reporting, and Verification (MRV)")}
-              </Text>
-              <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
-                <Box as="li">
-                  <Text color="neutral.900" textStyle="300">
-                    <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
-                  </Text>
-                </Box>
-                <Box as="li">
-                  <Text color="neutral.900" textStyle="300">
-                    <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
-                  </Text>
-                </Box>
-                <Box as="li">
-                  <Text color="neutral.900" textStyle="300">
-                    <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
-                  </Text>
-                </Box>
-              </Box>
-              <Flex alignItems="center" flexWrap="wrap">
-                <Text color="neutral.900" textStyle="300">
-                  {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
-                </Text>
-                <Button
-                  variant="borderless"
-                  size="small"
-                  rightIcon={<ChevronRightIcon />}
-                  onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
-                >
-                  {t(mrvOnboardingContentItem?.content.mrvLinkText)}
-                </Button>
-              </Flex>
-              <Flex direction="column" gap={2} minHeight={0}>
-                <Text color="neutral.900" textStyle="500">
-                  {t("Helpful Links")}
-                </Text>
-                <Divider />
-                <Flex direction="column" paddingTop={1.5} alignItems="flex-start">
-                  {mrvOnboardingContentItem?.content.helpfulLinks.map(link => (
+          </PageItem>
+          <PageItem title="Project Onboarding">
+            <About
+              title={t("Monitoring, Reporting, and Verification (MRV)")}
+              description={
+                <>
+                  <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
+                    <Box as="li">
+                      <Text color="neutral.900" textStyle="300">
+                        <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
+                      </Text>
+                    </Box>
+                    <Box as="li">
+                      <Text color="neutral.900" textStyle="300">
+                        <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
+                      </Text>
+                    </Box>
+                    <Box as="li">
+                      <Text color="neutral.900" textStyle="300">
+                        <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
+                      </Text>
+                    </Box>
+                  </Box>
+                  <Flex alignItems="center" flexWrap="wrap">
+                    <Text color="neutral.900" textStyle="300">
+                      {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
+                    </Text>
                     <Button
                       variant="borderless"
                       size="small"
                       rightIcon={<ChevronRightIcon />}
-                      key={link.title}
-                      onClick={() => window.open(link.link, "_blank")}
+                      onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
                     >
-                      {t(link.title)}
+                      {t(mrvOnboardingContentItem?.content.mrvLinkText)}
                     </Button>
-                  ))}
-                </Flex>
-              </Flex>
-            </Flex>
-          </OverviewItem>
+                  </Flex>
+                </>
+              }
+              links={mrvOnboardingContentItem?.content.helpfulLinks ?? []}
+            />
+          </PageItem>
         </Flex>
       </Flex>
     </PageBody>

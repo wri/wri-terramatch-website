@@ -43,6 +43,8 @@ const CompletedReportsTab = ({ nursery }: ReportingTasksProps) => {
           </If>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

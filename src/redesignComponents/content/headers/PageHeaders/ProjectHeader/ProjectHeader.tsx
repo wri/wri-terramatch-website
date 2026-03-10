@@ -8,11 +8,11 @@ import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.
 import {
   countryCodeToFlag,
   formatMonthYear
-} from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
+} from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
 import { formatOptionsList } from "@/utils/options";
 
-import ProjectInfo from "./components/ProjectInfo";
-import TeamSection from "./components/TeamSection";
+import ProjectInfo from "../components/ProjectInfo";
+import TeamSection from "../components/TeamSection";
 
 export interface ProjectHeaderProps {
   project: ProjectFullDto;
@@ -37,15 +37,10 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   );
 
   const countryOptions = useGadmOptions({ level: 0 });
+
   return (
     <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" background="secondary.neutral">
       <Flex gap={5}>
-        {/* TODO: Add back in when we have a way to upload images */}
-
-        {/* <div className={IMAGE_CONTAINER_CLASSES}>
-          <ProfileImage size={IMAGE_SIZE} alt={project.name ?? ""} isAdd />
-        </div> */}
-
         <ProjectInfo
           project={project}
           title={project.name ?? "-"}
