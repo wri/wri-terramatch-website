@@ -3,7 +3,8 @@ import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import classNames from "classnames";
-import { useRef, useState } from "react";
+import type { FC } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 
@@ -36,7 +37,7 @@ const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
   ${({ $size }) => dateRangePickerStyles($size)}
 `;
 
-export const DateRangeInput = ({
+export const DateRangeInput: FC<DateRangeInputProps> = ({
   min,
   max,
   label,
@@ -46,7 +47,7 @@ export const DateRangeInput = ({
   disabled,
   size = "default",
   noMarginBottom = false
-}: DateRangeInputProps) => {
+}) => {
   const [dates, setDates] = useState<DateValue[]>([]);
   const preservedRef = useRef<PreservedDate | null>(null);
 
@@ -74,25 +75,28 @@ export const DateRangeInput = ({
     }
   });
 
-  const handleClearDate = (index: 0 | 1) => {
-    const keepDate = index === 0 ? dates[1] : dates[0];
+  const handleClearDate = useCallback(
+    (index: 0 | 1) => {
+      const keepDate = index === 0 ? dates[1] : dates[0];
 
-    if (!keepDate) {
-      preservedRef.current = null;
-      setDates([]);
-    } else {
-      preservedRef.current = { date: keepDate, clearedIndex: index };
-      setDates([keepDate]);
-    }
+      if (!keepDate) {
+        preservedRef.current = null;
+        setDates([]);
+      } else {
+        preservedRef.current = { date: keepDate, clearedIndex: index };
+        setDates([keepDate]);
+      }
 
-    picker.setOpen(true);
-  };
+      picker.setOpen(true);
+    },
+    [dates, picker]
+  );
 
   return (
     <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-range-input-container">
-      {errorMessage ? <FieldErrorBar /> : null}
-      <div style={{ marginLeft: errorMessage ? "19px" : "0px" }}>
-        {label ? (
+      {errorMessage != null ? <FieldErrorBar /> : null}
+      <div style={{ marginLeft: errorMessage != null ? "19px" : "0px" }}>
+        {label != null ? (
           <FieldLabel $size={size} $disabled={disabled} aria-label={label}>
             {required ? (
               <RequiredIndicator $disabled={disabled} aria-label="required">
@@ -103,20 +107,19 @@ export const DateRangeInput = ({
             {!required ? <span className="optional-text">{" (Optional)"}</span> : ""}
           </FieldLabel>
         ) : null}
-        {caption ? (
+        {caption != null ? (
           <FieldCaption $size={size} $disabled={disabled} aria-label={caption}>
             {caption}
           </FieldCaption>
         ) : null}
-        {errorMessage ? (
+        {errorMessage != null ? (
           <FieldErrorMessage $size={size} aria-label={errorMessage} role="alert">
             {errorMessage}
           </FieldErrorMessage>
         ) : null}
-        <StyledPickerWrapper $size={size} data-invalid={errorMessage ? "" : undefined}>
+        <StyledPickerWrapper $size={size} data-invalid={errorMessage != null ? "" : undefined}>
           <Global styles={calendarGlobalStyles} />
           <DatePicker.RootProvider value={picker}>
-            <DatePicker.Label>Select range</DatePicker.Label>
             <DatePicker.Control>
               <DatePicker.Trigger>
                 <CalendarIcon />

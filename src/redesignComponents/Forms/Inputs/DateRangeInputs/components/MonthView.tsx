@@ -1,8 +1,9 @@
 import { DatePicker, useDatePickerContext } from "@ark-ui/react";
+import type { FC } from "react";
 
 import ViewNavigation from "./ViewNavigation";
 
-const MonthView = () => {
+const MonthView: FC = () => {
   const { getMonthsGrid } = useDatePickerContext();
   return (
     <DatePicker.View view="month" className="rect-cell-view">

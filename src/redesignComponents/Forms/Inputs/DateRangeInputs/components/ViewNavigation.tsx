@@ -1,8 +1,9 @@
 import { DatePicker } from "@ark-ui/react";
+import type { FC } from "react";
 
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 
-const ViewNavigation = () => (
+const ViewNavigation: FC = () => (
   <DatePicker.ViewControl>
     <DatePicker.PrevTrigger>
       <ChevronRightIcon />

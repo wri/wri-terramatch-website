@@ -1,8 +1,9 @@
 import { DatePicker, useDatePickerContext } from "@ark-ui/react";
+import type { FC } from "react";
 
 import ViewNavigation from "./ViewNavigation";
 
-const DayView = () => {
+const DayView: FC = () => {
   const { weekDays, weeks } = useDatePickerContext();
   return (
     <DatePicker.View view="day">

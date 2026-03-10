@@ -1,17 +1,17 @@
 import { useDatePickerContext } from "@ark-ui/react";
+import type { FC } from "react";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
 
 import type { PreservedDate } from "../types";
 import { formatDate } from "../utils";
 
-const DateRangeInputs = ({
-  onClearDate,
-  preservedRef
-}: {
+interface DateRangeInputsProps {
   onClearDate: (index: 0 | 1) => void;
   preservedRef: React.RefObject<PreservedDate | null>;
-}) => {
+}
+
+const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef }) => {
   const { value } = useDatePickerContext();
 
   const isStartCleared = preservedRef.current?.clearedIndex === 0 && value.length === 1;
