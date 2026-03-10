@@ -1,9 +1,9 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
-import { userServiceUrl } from "@/constants/environment";
+import { apiBaseUrl } from "@/constants/environment";
 
-const ADMIN_USERS_BASE = `${userServiceUrl}/admin/users`;
+const ADMIN_USERS_BASE = `${apiBaseUrl}/api/v3/admin/users`;
 
 export type AdminResetPasswordVariables = {
   uuid: string;
