@@ -12,15 +12,13 @@ export interface ProjectBannerProps extends Omit<BannerProps, "children"> {
   gotoTeamMembers: () => void;
 }
 
-const ProjectBanner: FC<ProjectBannerProps> = ({ project, onAddTeamClick, gotoTeamMembers, ...bannerProps }) => {
-  return (
-    <Banner {...bannerProps}>
-      <ProjectHeader project={project} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
-      {(project.status == "needs-more-information" || project.updateRequestStatus == "needs-more-information") && (
-        <EntityStatusBar entity={project} entityName="projects" />
-      )}
-    </Banner>
-  );
-};
+const ProjectBanner: FC<ProjectBannerProps> = ({ project, onAddTeamClick, gotoTeamMembers, ...bannerProps }) => (
+  <Banner {...bannerProps}>
+    <ProjectHeader project={project} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
+    {(project.status == "needs-more-information" || project.updateRequestStatus == "needs-more-information") && (
+      <EntityStatusBar entity={project} entityName="projects" />
+    )}
+  </Banner>
+);
 
 export default ProjectBanner;

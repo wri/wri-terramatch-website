@@ -52,7 +52,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const { framework } = useFrameworkContext();
   const { openModal } = useModalContext();
 
-  const currentTab = (router.query.tab as string) || "overview";
+  const currentTab = (router.query.tab as string) ?? "overview";
   const normalizedTab = currentTab === "reporting-tasks" ? "reports" : currentTab;
   const isSuffix = SUFFIX_VIEW_KEYS.includes(normalizedTab);
   const activeSuffixView = isSuffix ? normalizedTab : null;
@@ -163,7 +163,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
+                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
@@ -189,7 +189,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="w-full">{suffixViewContent || activeTabContent}</div>
+      <div className="w-full">{suffixViewContent ?? activeTabContent}</div>
       <PageFooter />
     </>
   );

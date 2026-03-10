@@ -20,12 +20,12 @@ const PageItem: FC<PageItemProps> = ({ title, buttonProps, downloadButtonProps, 
         <Text color="primary.900" textStyle="600">
           {title}
         </Text>
-        {tag ? tag : null}
+        {tag !== null && tag}
       </div>
 
       <Flex gap={4}>
-        {downloadButtonProps ? <Button {...downloadButtonProps} /> : null}
-        {buttonProps ? <Button {...buttonProps} /> : null}
+        {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
+        {buttonProps !== null && <Button {...buttonProps} />}
       </Flex>
     </Flex>
     {children}

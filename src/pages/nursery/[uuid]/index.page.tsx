@@ -31,7 +31,7 @@ const NurseryDetailPage = () => {
     }
   });
 
-  const currentTab = (router.query.tab as string) || "overview";
+  const currentTab = (router.query.tab as string) ?? "overview";
   const isSuffixView = currentTab === "completed-tasks";
   const activeTab = isSuffixView ? "overview" : currentTab;
 
@@ -115,7 +115,7 @@ const NurseryDetailPage = () => {
                 }
               }}
             />
-            <div className="w-full">{suffixContent || TabItems.find(item => item.key === activeTab)?.body}</div>
+            <div className="w-full">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
         <PageFooter />
