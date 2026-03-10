@@ -91,7 +91,7 @@ const SiteHeader = ({ site }: SiteHeaderProps) => {
           </Then>
           <Else>
             <Button variant="secondary" onClick={handleExport}>
-              {t("Export")}
+              {t("Download Site Files")}
               <InlineLoader loading={exportLoader} />
             </Button>
             <Button onClick={handleEdit}>{t("Edit")}</Button>
