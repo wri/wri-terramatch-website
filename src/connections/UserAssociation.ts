@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 
 import {
+  acceptProjectInvite,
   createUserAssociation,
   CreateUserAssociationPathParams,
   deleteUserAssociation,
@@ -9,7 +10,11 @@ import {
   GetUserAssociationQueryParams,
   inviteOrganisationUser
 } from "@/generated/v3/userService/userServiceComponents";
-import { OrganisationInviteRequestDto, UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
+import {
+  OrganisationInviteRequestDto,
+  ProjectInviteAcceptBodyDto,
+  UserAssociationDto
+} from "@/generated/v3/userService/userServiceSchemas";
 import { resolveUrl } from "@/generated/v3/utils";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
@@ -78,12 +83,26 @@ const inviteOrganisationConnection: Connection<InviteOrganisationUserConnection,
 
 export const useInviteOrganisationUser = connectionHook(inviteOrganisationConnection);
 
+export const acceptProjectInviteByToken = async (token: string): Promise<void> => {
+  const pathParams = { model: "projects" as const };
+  const body = { token } as ProjectInviteAcceptBodyDto;
+  await acceptProjectInvite.fetch({ pathParams, body });
+};
+
 const userAssociationConnection = v3Resource("associatedUsers", getUserAssociation)
   .index<UserAssociationDto, GetUserAssociationPathParams>(({ uuid }) => ({ pathParams: { uuid, model: "projects" } }))
   .filter<GetUserAssociationQueryParams>()
   .buildConnection();
 
 export const useUserAssociations = connectionHook(userAssociationConnection);
+
+const userAssociationCreationConnection = v3Resource("associatedUsers", createUserAssociation)
+  .create<UserAssociationDto, CreateUserAssociationPathParams>(({ uuid }) => ({
+    pathParams: { uuid, model: "projects" }
+  }))
+  .buildConnection();
+
+export const useUserAssociationCreation = connectionHook(userAssociationCreationConnection);
 
 export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
   const failureSelector = deleteUserAssociation.fetchFailedSelector({});
@@ -114,11 +133,3 @@ export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: str
   ApiSlice.pruneCache("associatedUsers");
   ApiSlice.pruneIndex("associatedUsers", "");
 };
-
-const userAssociationCreationConnection = v3Resource("associatedUsers", createUserAssociation)
-  .create<UserAssociationDto, CreateUserAssociationPathParams>(({ uuid }) => ({
-    pathParams: { uuid, model: "projects" }
-  }))
-  .buildConnection();
-
-export const useUserAssociationCreation = connectionHook(userAssociationCreationConnection);

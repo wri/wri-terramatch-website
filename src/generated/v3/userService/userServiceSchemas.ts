@@ -194,6 +194,8 @@ export type OrganisationFullDto = {
   bioeconomyTraditionalKnowledge: string | null;
   bioeconomyProductProcessing: string | null;
   bioeconomyBuyers: string | null;
+  bioeconomyProductList: string[] | null;
+  bioeconomyDescription: string | null;
   /**
    * @format date-time
    */
@@ -737,6 +739,9 @@ export type UserAssociationDto = {
   isManager: boolean;
   organisationName: string;
   roleName: string | null;
+  phoneNumber: string | null;
+  jobRole: string | null;
+  lastLoggedInAt: string | null;
   associatedType: string;
 };
 
@@ -810,4 +815,11 @@ export type OrganisationInviteRequestDto = {
    * Optional callback URL base for the signup link in the email.
    */
   callbackUrl?: Record<string, any>;
+};
+
+export type ProjectInviteAcceptBodyDto = {
+  /**
+   * Token from the project invite email.
+   */
+  token: string;
 };
