@@ -4,9 +4,10 @@ import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
 import classNames from "classnames";
 import type { FC } from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
+import { formatDateValue, getDateFormatString } from "@/utils/date";
 
 import { DateRangeInputs, DayView, MonthView, YearView } from "./components";
 import {
@@ -50,6 +51,7 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 }) => {
   const [dates, setDates] = useState<DateValue[]>([]);
   const preservedRef = useRef<PreservedDate | null>(null);
+  const dateFormat = useMemo(() => getDateFormatString(navigator.language), []);
 
   const picker = useDatePicker({
     selectionMode: "range",
@@ -58,6 +60,9 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     max,
     value: dates,
     disabled,
+    format(date) {
+      return formatDateValue(date, dateFormat);
+    },
     onValueChange({ value }) {
       const preserved = preservedRef.current;
 
@@ -124,7 +129,8 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
               <DatePicker.Trigger>
                 <CalendarIcon />
               </DatePicker.Trigger>
-              <DatePicker.Input index={0} placeholder="MM/DD/YYYY" />
+              <DatePicker.Input index={0} placeholder={dateFormat} />
+
               <span
                 className={classNames("text-14-light text-theme-neutral-800", {
                   "!text-theme-neutral-500": !dates[0] && !dates[1]
@@ -132,12 +138,13 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
               >
                 —
               </span>
-              <DatePicker.Input index={1} placeholder="MM/DD/YYYY" />
+
+              <DatePicker.Input index={1} placeholder={dateFormat} />
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
                 <DatePicker.Content>
-                  <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} />
+                  <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
                   <DayView />
                   <MonthView />
                   <YearView />

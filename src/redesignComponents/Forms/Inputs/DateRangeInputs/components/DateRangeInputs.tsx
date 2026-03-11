@@ -2,21 +2,28 @@ import { useDatePickerContext } from "@ark-ui/react";
 import type { FC } from "react";
 
 import CloseButton from "@/redesignComponents/actions/Buttons/CloseButton/CloseButton";
+import { formatDateValue } from "@/utils/date";
 
 import type { PreservedDate } from "../types";
-import { formatDate } from "../utils";
 
 interface DateRangeInputsProps {
   onClearDate: (index: 0 | 1) => void;
   preservedRef: React.RefObject<PreservedDate | null>;
+  dateFormat: string;
 }
 
-const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef }) => {
+const DateRangeInputs: FC<DateRangeInputsProps> = ({ onClearDate, preservedRef, dateFormat }) => {
   const { value } = useDatePickerContext();
 
   const isStartCleared = preservedRef.current?.clearedIndex === 0 && value.length === 1;
-  const startText = isStartCleared ? "" : value[0] ? formatDate(value[0]) : "";
-  const endText = isStartCleared ? (value[0] ? formatDate(value[0]) : "") : value[1] ? formatDate(value[1]) : "";
+  const startText = isStartCleared ? "" : value[0] ? formatDateValue(value[0], dateFormat) : "";
+  const endText = isStartCleared
+    ? value[0]
+      ? formatDateValue(value[0], dateFormat)
+      : ""
+    : value[1]
+    ? formatDateValue(value[1], dateFormat)
+    : "";
 
   return (
     <div className="mb-3 grid w-full max-w-[320px] grid-cols-2 items-center gap-2">
