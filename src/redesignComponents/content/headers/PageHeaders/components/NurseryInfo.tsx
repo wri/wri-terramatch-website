@@ -5,8 +5,9 @@ import { FC } from "react";
 
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
 import ProjectDescription from "./ProjectDescription";
@@ -40,6 +41,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     entityStatus: nursery.status ?? "started",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
 
   return (
     <Box gap={2} className="flex flex-col">
@@ -59,11 +61,34 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} handleEdit={handleEdit} backgroundColor="neutral.100" />
+        <ProjectDescription
+          description={description}
+          handleEdit={handleEdit}
+          backgroundColor="neutral.100"
+          downloadButtonProps={{
+            variant: "secondary",
+            size: "small",
+            leftIcon: <DownloadIcon />,
+            className: "w-auto",
+            onClick: handleExport,
+            loading: exportLoader,
+            children: t("Download Nursery Files")
+          }}
+        />
       ) : (
-        <div className="w-fit">
+        <div className="flex w-fit gap-2">
           <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
             {t("Edit")}
+          </Button>
+          <Button
+            variant="secondary"
+            size="small"
+            leftIcon={<DownloadIcon />}
+            className="w-auto"
+            onClick={handleExport}
+            loading={exportLoader}
+          >
+            {t("Download Nursery Files")}
           </Button>
         </div>
       )}

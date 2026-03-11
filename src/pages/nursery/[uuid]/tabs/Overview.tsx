@@ -137,6 +137,9 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           </PageItem>
         </Flex>
       </Flex>
+
+      <br />
+      <br />
     </PageBody>
   );
 };
