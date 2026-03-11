@@ -3,12 +3,7 @@ import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { apiBaseUrl } from "@/constants/environment";
 
-const ADMIN_USERS_BASE = `${apiBaseUrl}/api/v3/admin/users`;
-
-export type AdminResetPasswordVariables = {
-  uuid: string;
-  password: string;
-};
+const VERIFY_USER_BASE = `${apiBaseUrl}/api/v3/users/v3/users`;
 
 export type AdminVerifyUserVariables = {
   uuid: string;
@@ -47,33 +42,12 @@ async function fetchWithAuth(url: string, init: RequestInit & { method: string; 
 }
 
 /**
- * PUT {BASE}/admin/users/reset-password/:uuid
- * Body: { password }. Success 200: "Password Updated". 400 validation, 401 unauthorized, 404 not found.
- */
-export async function fetchAdminResetPassword(variables: AdminResetPasswordVariables): Promise<void> {
-  const url = `${ADMIN_USERS_BASE}/reset-password/${variables.uuid}`;
-  await fetchWithAuth(url, {
-    method: "PUT",
-    body: JSON.stringify({ password: variables.password })
-  });
-}
-
-/**
- * PATCH {BASE}/admin/users/verify/:uuid
+ * PATCH {BASE}/users/v3/users/verifyUser/:uuid
  * No body. Success 200: "User verified.". 401 unauthorized, 404 not found.
  */
 export async function fetchAdminVerifyUser(variables: AdminVerifyUserVariables): Promise<void> {
-  const url = `${ADMIN_USERS_BASE}/verify/${variables.uuid}`;
+  const url = `${VERIFY_USER_BASE}/verifyUser/${variables.uuid}`;
   await fetchWithAuth(url, { method: "PATCH" });
-}
-
-export function useAdminResetPassword(
-  options?: Omit<UseMutationOptions<void, AdminUserActionError, AdminResetPasswordVariables>, "mutationFn">
-) {
-  return useMutation({
-    mutationFn: fetchAdminResetPassword,
-    ...options
-  });
 }
 
 export function useAdminVerifyUser(

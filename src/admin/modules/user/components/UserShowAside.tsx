@@ -1,12 +1,11 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
-import { useState } from "react";
 import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
 import { useAdminVerifyUser } from "@/admin/api/adminUserActions";
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
-import { ResetPasswordDialog } from "@/admin/modules/user/components/ResetPasswordDialog";
-import { usePostAuthReset, usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
+import { sendRequestPasswordReset } from "@/connections/ResetPassword";
+import { usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -15,7 +14,6 @@ export const UserShowAside = () => {
   const notify = useNotify();
   const refresh = useRefresh();
 
-  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
 
   const { record } = useShowContext<V2AdminUserRead & RaRecord>();
@@ -28,12 +26,19 @@ export const UserShowAside = () => {
     }
   });
 
-  const { mutate: sendPasswordReset } = usePostAuthReset({
-    onSuccess() {
+  const handleSendPasswordResetEmail = async () => {
+    try {
+      if (record?.email_address == null) {
+        notify(`User email is not available.`, { type: "warning" });
+        return;
+      }
+      await sendRequestPasswordReset(record.email_address, window.location.origin + "/auth/reset-password/");
       notify(`Reset password email has been sent successfully.`, { type: "success" });
       refresh();
+    } catch (error) {
+      notify(`Failed to send reset password email.`, { type: "error" });
     }
-  });
+  };
 
   const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
     onSuccess() {
@@ -132,35 +137,15 @@ export const UserShowAside = () => {
             >
               Verify Email
             </Button>
-            <Button
-              variant="contained"
-              className="!rounded-lg !bg-primary"
-              onClick={() =>
-                sendPasswordReset({
-                  body: {
-                    email_address: record?.email_address,
-                    callback_url: window.location.origin + "/auth/reset-password/"
-                  }
-                })
-              }
-            >
+            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Send Reset Password Email
             </Button>
-            <Button
-              variant="contained"
-              className="!rounded-lg !bg-primary"
-              onClick={() => setShowResetPasswordDialog(true)}
-            >
+            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Reset Password
             </Button>
           </Stack>
         </Box>
       </Aside>
-      <ResetPasswordDialog
-        open={showResetPasswordDialog}
-        userUUID={uuid}
-        onHide={() => setShowResetPasswordDialog(false)}
-      />
       <ConfirmationDialog
         open={showVerifyEmailDialog}
         title="Email Verification"
