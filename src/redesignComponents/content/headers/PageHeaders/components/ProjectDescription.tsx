@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useClampedText } from "../hooks/useClampedText";
@@ -11,12 +11,14 @@ export interface ProjectDescriptionProps {
   description: string;
   handleEdit: () => void;
   backgroundColor?: string;
+  downloadButtonProps?: IButtonProps;
 }
 
 const ProjectDescription: FC<ProjectDescriptionProps> = ({
   description,
   handleEdit,
-  backgroundColor = "secondary.neutral"
+  backgroundColor = "secondary.neutral",
+  downloadButtonProps = null
 }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
@@ -81,10 +83,11 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({
           </Button>
         )}
       </Box>
-      <div className="w-fit">
+      <div className="flex w-fit gap-2">
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
+        {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
       </div>
     </>
   );

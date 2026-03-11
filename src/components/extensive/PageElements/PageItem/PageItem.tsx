@@ -13,7 +13,14 @@ export interface PageItemProps {
   tag?: ReactNode;
 }
 
-const PageItem: FC<PageItemProps> = ({ title, buttonProps, downloadButtonProps, children, flexProps, tag }) => (
+const PageItem: FC<PageItemProps> = ({
+  title,
+  buttonProps = null,
+  downloadButtonProps = null,
+  children,
+  flexProps,
+  tag
+}) => (
   <Flex direction="column" gap={4} flex={1} {...flexProps}>
     <Flex alignItems="center" justifyContent="space-between">
       <div className="flex items-center gap-2">
@@ -22,7 +29,6 @@ const PageItem: FC<PageItemProps> = ({ title, buttonProps, downloadButtonProps, 
         </Text>
         {tag !== null && tag}
       </div>
-
       <Flex gap={4}>
         {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
         {buttonProps !== null && <Button {...buttonProps} />}
