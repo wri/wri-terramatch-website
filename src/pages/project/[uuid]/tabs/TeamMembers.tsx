@@ -279,9 +279,9 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         header={<b className="text-theme-neutral-800">{t("Remove Team Member")}</b>}
         content={
           <Text textStyle="400" color="neutral.900">
-            {t("Are you sure you want to remove {email_address} as a Monitoring Partner to {project_name}?", {
-              email_address: deletePartnerData?.emailAddress ?? "",
-              project_name: project?.name ?? ""
+            {t("Are you sure you want to remove {full_name} as a Monitoring Partner to {project_name}?", {
+              project_name: project?.name ?? "",
+              full_name: deletePartnerData?.fullName ?? ""
             })}
           </Text>
         }
