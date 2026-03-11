@@ -1,11 +1,9 @@
-import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
+import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { Button } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
@@ -52,7 +50,7 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
 
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
-  const { openModal } = useModalContext();
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [deletePartnerData, setDeletePartnerData] = useState<RowData | null>(null);
@@ -62,12 +60,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
     model: "projects"
   });
 
-  const handleInvite = () => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project?.uuid} onSuccess={() => {}} />
-    );
-  };
+  const handleInvite = () => setShowInviteModal(true);
 
   const handleCloseDeleteModal = useCallback(() => {
     setDeletePartnerData(null);
@@ -273,23 +266,32 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           }
         ]}
       />
+      <InviteMonitoringPartnerModal
+        projectUUID={project?.uuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+      />
       <Modal
         open={!!deletePartnerData}
         onClose={handleCloseDeleteModal}
-        size="small"
+        size="medium"
         blocking
-        header={t("REMOVE MONITORING PARTNER?")}
-        content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
-          email_address: deletePartnerData?.emailAddress ?? "",
-          project_name: project?.name ?? ""
-        })}
+        header={<b className="text-theme-neutral-800">{t("Remove Team Member")}</b>}
+        content={
+          <Text textStyle="400" color="neutral.900">
+            {t("Are you sure you want to remove {email_address} as a Monitoring Partner to {project_name}?", {
+              email_address: deletePartnerData?.emailAddress ?? "",
+              project_name: project?.name ?? ""
+            })}
+          </Text>
+        }
         footer={
-          <>
-            <Button variant="secondary" onClick={handleCloseDeleteModal}>
+          <div className="grid w-full grid-cols-2 gap-3">
+            <Button variant="borderless" onClick={handleCloseDeleteModal}>
               {t("Cancel")}
             </Button>
             <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
-          </>
+          </div>
         }
       />
     </Box>

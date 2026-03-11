@@ -1,9 +1,8 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useCallback, useMemo } from "react";
+import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -11,7 +10,6 @@ import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -50,7 +48,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
-  const { openModal } = useModalContext();
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const currentTab = (router.query.tab as string) ?? "overview";
   const normalizedTab = currentTab === "reporting-tasks" ? "reports" : currentTab;
@@ -135,15 +133,15 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   const tabBarDefaultValue = activeSuffixView != null ? "__none__" : activeTab;
 
-  const handleInvite = () => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={() => {}} />
-    );
-  };
+  const handleInvite = () => setShowInviteModal(true);
 
   return (
     <>
+      <InviteMonitoringPartnerModal
+        projectUUID={project.uuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+      />
       <Head>
         <title>{t("Project")}</title>
       </Head>
@@ -163,7 +161,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
