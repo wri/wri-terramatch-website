@@ -1,15 +1,15 @@
 import { Box, TableCell as ChakraTableCell, TableRow } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import { Button } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
+import Modal from "@/redesignComponents/containers/Modal/Modal";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
@@ -52,9 +52,10 @@ export const TEAM_MEMBER_ROLE_CHOICES = [
 
 const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   const t = useT();
-  const { openModal, closeModal } = useModalContext();
+  const { openModal } = useModalContext();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [deletePartnerData, setDeletePartnerData] = useState<RowData | null>(null);
 
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
@@ -68,33 +69,16 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
     );
   };
 
-  const ModalConfirmDeletePartner = useCallback(
-    (rowData: RowData) => {
-      openModal(
-        ModalId.MODAL_CONFIRM_DELETE_PARTNER,
-        <Modal
-          iconProps={{ name: IconNames.EXCLAMATION_CIRCLE, width: 60, height: 60 }}
-          title={t("REMOVE MONITORING PARTNER?")}
-          content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
-            email_address: rowData?.emailAddress,
-            project_name: project?.name
-          })}
-          primaryButtonProps={{
-            children: t("Confirm"),
-            onClick: () => {
-              bulkDeleteUserAssociations(project.uuid, [rowData?.uuid ?? ""]);
-              closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER);
-            }
-          }}
-          secondaryButtonProps={{
-            children: t("Cancel"),
-            onClick: () => closeModal(ModalId.MODAL_CONFIRM_DELETE_PARTNER)
-          }}
-        />
-      );
-    },
-    [closeModal, openModal, t, project.uuid, project?.name]
-  );
+  const handleCloseDeleteModal = useCallback(() => {
+    setDeletePartnerData(null);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (deletePartnerData) {
+      bulkDeleteUserAssociations(project.uuid, [deletePartnerData.uuid ?? ""]);
+    }
+    setDeletePartnerData(null);
+  }, [deletePartnerData, project.uuid]);
 
   const teamMembers = useMemo(() => {
     const all =
@@ -234,7 +218,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
                       : {
                           children: t("Remove"),
                           variant: "secondary",
-                          onClick: () => ModalConfirmDeletePartner(rowData),
+                          onClick: () => setDeletePartnerData(rowData),
                           leftIcon: (
                             <DeleteIcon
                               className="!text-theme-error-500"
@@ -254,7 +238,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
               </ChakraTableCell>
             </TableRow>
           ),
-          [ModalConfirmDeletePartner, t]
+          [t]
         )}
         columns={[
           {
@@ -288,6 +272,25 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
             sortable: false
           }
         ]}
+      />
+      <Modal
+        open={!!deletePartnerData}
+        onClose={handleCloseDeleteModal}
+        size="small"
+        blocking
+        header={t("REMOVE MONITORING PARTNER?")}
+        content={t("Remove {email_address} as Monitoring Partner to {project_name}?", {
+          email_address: deletePartnerData?.emailAddress ?? "",
+          project_name: project?.name ?? ""
+        })}
+        footer={
+          <>
+            <Button variant="secondary" onClick={handleCloseDeleteModal}>
+              {t("Cancel")}
+            </Button>
+            <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
+          </>
+        }
       />
     </Box>
   );
