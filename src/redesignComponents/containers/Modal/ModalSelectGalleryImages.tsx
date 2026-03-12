@@ -13,59 +13,59 @@ interface ModalSelectGalleryImagesProps {
 const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({ open, onClose }) => {
   const mockedImages = [
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=4",
       alt: "Image 1"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=5",
       alt: "Image 2"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=6",
       alt: "Image 3"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=7",
       alt: "Image 4"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=8",
       alt: "Image 5"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=9",
       alt: "Image 6"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=10",
       alt: "Image 7"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=11",
       alt: "Image 8"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=12",
       alt: "Image 9"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=13",
       alt: "Image 10"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=14",
       alt: "Image 11"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=15",
       alt: "Image 12"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=16",
       alt: "Image 13"
     },
     {
-      src: "/images/about-us-2.png",
+      src: "https://i.pravatar.cc/300?img=17",
       alt: "Image 14"
     }
   ];

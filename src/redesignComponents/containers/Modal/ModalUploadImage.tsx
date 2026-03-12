@@ -16,7 +16,7 @@ interface ModalUploadImageProps {
 
 const ModalUploadImage: FC<ModalUploadImageProps> = ({ open, onClose, imgSrc }) => {
   const [sliderValue, setSliderValue] = useState(33);
-  const mockedImgSrc = "/images/about-us-2.png";
+  const mockedImgSrc = "https://i.pravatar.cc/300?img=4";
   return (
     <Modal
       open={open}
