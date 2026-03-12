@@ -81,13 +81,13 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
       onClose={handleClose}
       header={<b className="text-theme-neutral-800">{t("Invite Monitoring Partner")}</b>}
       content={
-        <div className="flex flex-col gap-3">
+        <div className="mb-[-12px] flex flex-col gap-3">
           <Text textStyle="400" color="neutral.900">
             {t("Invite a new team member to join your project as a Monitoring Partner.")}
           </Text>
-          <div className="flex items-baseline gap-2">
-            <InformationRequiredIcon color="neutral.700" />
-            <Text textStyle="400" color="neutral.800" lineHeight="20px">
+          <div className="flex items-center gap-2">
+            <InformationRequiredIcon color="neutral.700" className="mb-[21px]" />
+            <Text textStyle="300" color="neutral.800" lineHeight="20px">
               {t("This action will provide them access to all your project data and reports.")}
             </Text>
           </div>
@@ -101,11 +101,13 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
         </div>
       }
       footer={
-        <div className="mt-[-20px] grid w-full grid-cols-2 gap-3">
-          <Button variant="borderless" onClick={handleClose}>
-            {t("Cancel")}
-          </Button>
-          <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
+        <div className="relative h-14 w-full">
+          <div className="border-theme-neutral-300 absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t px-[13px] pt-4 ">
+            <Button variant="borderless" onClick={handleClose}>
+              {t("Cancel")}
+            </Button>
+            <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
+          </div>
         </div>
       }
     />
