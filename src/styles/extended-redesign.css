@@ -14,3 +14,7 @@
     transform: rotate(360deg);
   }
 }
+
+[data-scope="dialog"][data-part="backdrop"] {
+  background: #000000B2 !important;
+}
