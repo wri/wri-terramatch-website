@@ -1042,6 +1042,54 @@ export const taskUpdate = new V3ApiEndpoint<TaskUpdateResponse, TaskUpdateError,
   "PATCH"
 );
 
+export type ExportImagePathParams = {
+  /**
+   * Media UUID for media to retrieve
+   */
+  uuid: string;
+};
+
+export type ExportImageError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type ExportImageVariables = {
+  pathParams: ExportImagePathParams;
+};
+
+/**
+ * Downloads the original image file for the given media UUID with EXIF, XMP, and GPS metadata embedded. Authorization is checked against the owning entity.
+ */
+export const exportImage = new V3ApiEndpoint<undefined, ExportImageError, ExportImageVariables, {}>(
+  "/entities/v3/files/{uuid}/exportImage",
+  "GET"
+);
+
 export type GetMediaPathParams = {
   /**
    * Media UUID for media to retrieve
@@ -6170,7 +6218,7 @@ export const operationsByTag = {
     impactStoryBulkDelete
   },
   tasks: { taskIndex, taskGet, taskUpdate },
-  files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
+  files: { exportImage, getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
