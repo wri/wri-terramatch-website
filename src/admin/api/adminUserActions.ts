@@ -1,6 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 
-import { adminUsersVerify, AdminUsersVerifyError } from "@/generated/v3/userService/userServiceComponents";
+import { AdminUsersVerifyError, operationsByTag } from "@/generated/v3/userService/userServiceComponents";
 
 export type AdminVerifyUserVariables = {
   uuid: string;
@@ -22,7 +22,7 @@ const toAdminUserActionError = (error: AdminUsersVerifyError): AdminUserActionEr
  */
 export async function fetchAdminVerifyUser(variables: AdminVerifyUserVariables): Promise<void> {
   try {
-    await adminUsersVerify.fetch({
+    await operationsByTag.adminUsers.adminUsersVerify.fetch({
       pathParams: { uuid: variables.uuid }
     });
   } catch (error) {
