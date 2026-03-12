@@ -3,9 +3,6 @@ import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { getAccessToken } from "@/admin/apiProvider/utils/token";
 import { userServiceUrl } from "@/constants/environment";
 
-// Backend controller: @Controller("users/v3/users") + @Patch("verifyUser/:uuid")
-// Local dev llama directamente al user-service (4010), no al gateway (8080),
-// por eso usamos userServiceUrl en lugar de apiBaseUrl.
 const VERIFY_USER_BASE = `${userServiceUrl}/users/v3/users`;
 
 export type AdminVerifyUserVariables = {
