@@ -278,19 +278,28 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         blocking
         header={<b className="text-theme-neutral-800">{t("Remove Team Member")}</b>}
         content={
-          <Text textStyle="400" color="neutral.900">
-            {t("Are you sure you want to remove {full_name} as a Monitoring Partner to {project_name}?", {
-              project_name: project?.name ?? "",
-              full_name: deletePartnerData?.fullName ?? ""
-            })}
-          </Text>
+          <Text
+            textStyle="400"
+            color="neutral.900"
+            dangerouslySetInnerHTML={{
+              __html: t(
+                "Are you sure you want to remove <b>{full_name}</b> as a Monitoring Partner to {project_name}?",
+                {
+                  project_name: project?.name ?? "",
+                  full_name: deletePartnerData?.fullName ?? ""
+                }
+              )
+            }}
+          />
         }
         footer={
-          <div className="grid w-full grid-cols-2 gap-3">
-            <Button variant="borderless" onClick={handleCloseDeleteModal}>
-              {t("Cancel")}
-            </Button>
-            <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
+          <div className="relative h-14 w-full">
+            <div className="border-theme-neutral-300 absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t px-[13px] pt-4 ">
+              <Button variant="borderless" onClick={handleCloseDeleteModal}>
+                {t("Cancel")}
+              </Button>
+              <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
+            </div>
           </div>
         }
       />
