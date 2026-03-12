@@ -1,24 +1,128 @@
 import { Meta, StoryObj } from "@storybook/react";
 
+import { ExpandIcon, MinusIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
+
 import MapControls from "./MapControls";
 
-const meta: Meta<typeof MapControls> = {
-  title: "Redesign Components/Geospatial/MapControls",
+const meta = {
+  title: "Redesign Components/Geospatial/Map Controls",
   component: MapControls,
-  tags: ["autodocs"],
   parameters: {
     layout: "centered"
   },
-  decorators: [
-    Story => (
-      <div style={{ backgroundColor: "#E8E8E8", padding: "40px", borderRadius: "8px" }}>
-        <Story />
-      </div>
-    )
-  ]
-};
+  tags: ["autodocs"]
+} satisfies Meta<typeof MapControls>;
 
 export default meta;
-type Story = StoryObj<typeof MapControls>;
+type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    vertical: true,
+    expanded: false,
+    showExpandedToggle: true,
+    defaultGaps: true,
+    items: [
+      {
+        icon: <PlusIcon />,
+        ariaLabel: "zoom in",
+        label: "zoom in",
+        gap: false
+      },
+      {
+        icon: <MinusIcon />,
+        ariaLabel: "zoom out",
+        label: "zoom out"
+      },
+      {
+        icon: <ExpandIcon />,
+        ariaLabel: "expand",
+        label: "Expand"
+      }
+    ]
+  }
+};
+
+export const WithTooltip: Story = {
+  args: {
+    vertical: true,
+    expanded: false,
+    showExpandedToggle: true,
+    defaultGaps: true,
+    items: [
+      {
+        icon: <ExpandIcon />,
+        ariaLabel: "expand",
+        disabled: false,
+        label: "Expand",
+        tooltip: "Expand tooltip"
+      },
+      {
+        icon: <MinusIcon />,
+        ariaLabel: "zoom out",
+        label: "zoom out",
+        tooltip: "Zoom out tooltip"
+      }
+    ]
+  }
+};
+
+export const MapControl: Story = {
+  args: {
+    items: [
+      {
+        icon: <PlusIcon />,
+        ariaLabel: "zoom in"
+      },
+      {
+        icon: <MinusIcon />,
+        ariaLabel: "zoom out"
+      }
+    ]
+  }
+};
+
+export const Vertical: Story = {
+  args: {
+    items: [
+      {
+        icon: <PlusIcon />,
+        ariaLabel: "zoom in"
+      },
+      {
+        icon: <MinusIcon />,
+        ariaLabel: "zoom out"
+      }
+    ],
+
+    vertical: true,
+    showExpandedToggle: false
+  }
+};
+
+export const Single: Story = {
+  args: {
+    items: [
+      {
+        icon: <ExpandIcon />,
+        label: "Expand",
+        ariaLabel: "expand"
+      }
+    ],
+
+    showExpandedToggle: false,
+    expanded: true
+  }
+};
+
+export const Disabled: Story = {
+  args: {
+    items: [
+      {
+        icon: <ExpandIcon />,
+        ariaLabel: "Expand",
+        disabled: true
+      }
+    ]
+  }
+};

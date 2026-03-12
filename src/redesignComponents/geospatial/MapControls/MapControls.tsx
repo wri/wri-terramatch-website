@@ -1,34 +1,23 @@
+import { Box } from "@chakra-ui/react";
 import { Toolbar } from "@worldresources/wri-design-systems";
+import { ComponentProps, FC } from "react";
 
-import { DownloadIcon } from "@/redesignComponents/foundations/Icons/DownloadIcon";
-import { MinusIcon } from "@/redesignComponents/foundations/Icons/MinusIcon";
-import { PlusIcon } from "@/redesignComponents/foundations/Icons/PlusIcon";
+type ToolbarProps = ComponentProps<typeof Toolbar>;
 
-const MapControls = () => {
+export interface MapControlsProps extends Partial<ToolbarProps> {}
+
+const MapControls: FC<MapControlsProps> = ({ items, ...rest }: MapControlsProps) => {
   return (
-    <Toolbar
-      defaultGaps
-      items={[
-        {
-          ariaLabel: "zoom in",
-          gap: false,
-          icon: <PlusIcon />,
-          label: "zoom in"
-        },
-        {
-          ariaLabel: "zoom out",
-          icon: <MinusIcon />,
-          label: "zoom out"
-        },
-        {
-          ariaLabel: "print",
-          icon: <DownloadIcon />,
-          label: "Print"
+    <Box
+      className="map-controls"
+      css={{
+        "& .toolbar-item-button > div": {
+          justifyContent: "flex-start !important"
         }
-      ]}
-      showExpandedToggle
-      vertical
-    />
+      }}
+    >
+      <Toolbar items={items || []} {...rest} />
+    </Box>
   );
 };
 
