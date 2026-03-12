@@ -350,7 +350,7 @@ export const ModalUploadImageStory: Story = {
           {...args}
           open={showModal}
           onClose={() => setShowModal(false)}
-          imgSrc="/images/about-us-2.png"
+          imgSrc="https://i.pravatar.cc/300?img=4"
         />
       </>
     );
