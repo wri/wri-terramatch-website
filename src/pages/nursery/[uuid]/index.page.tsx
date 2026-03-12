@@ -52,6 +52,7 @@ const NurseryDetailPage = () => {
         />
       )
     },
+    { key: "progress-and-goals", title: t("Progress & Goals"), body: <NurseryOverviewTab nursery={nursery!} /> },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 
