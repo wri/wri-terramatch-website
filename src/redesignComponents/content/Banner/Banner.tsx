@@ -34,14 +34,20 @@ export interface BannerProps {
 
 const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, children }) => {
   const t = useT();
-
+  const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
+    return {
+      label: link.label != null ? t(link.label) : "",
+      link: link.link,
+      icon: link.icon
+    };
+  });
   return (
     <>
       <Box className={classNames("border-theme-neutral-300 sticky z-20 border-b px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
-            links: breadcrumbs.map(link => ({
-              label: t(link.label),
+            links: breadcrumbsWithTranslatedLabels.map(link => ({
+              label: (link.label ?? "").length > 25 ? `${(link.label ?? "").slice(0, 25)}...` : link.label ?? "",
               link: link.link,
               icon: link.icon
             })),

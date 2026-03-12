@@ -71,22 +71,12 @@ const NurseryDetailPage = () => {
                   link: "/my-projects",
                   icon: <ProjectIcon className="!text-theme-primary-900" />
                 },
-                {
-                  label:
-                    (nursery.projectName ?? "").length > 25
-                      ? `${(nursery.projectName ?? "").slice(0, 25)}...`
-                      : nursery.projectName ?? "",
-                  link: `/project/${nursery.projectUuid}`
-                },
+                { label: nursery.projectName ?? "", link: `/project/${nursery.projectUuid}` },
                 {
                   label: "Nurseries",
                   link: `/project/${nursery.projectUuid}?tab=nurseries`
                 },
-                {
-                  label:
-                    (nursery.name ?? "").length > 25 ? `${(nursery.name ?? "").slice(0, 25)}...` : nursery.name ?? "",
-                  link: `/nursery/${nursery.uuid}`
-                },
+                { label: nursery.name ?? "", link: `/nursery/${nursery.uuid}` },
                 ...(isSuffixView ? [{ label: t("Reports"), link: `/nursery/${nursery.uuid}?tab=completed-tasks` }] : [])
               ]}
               suffix={
