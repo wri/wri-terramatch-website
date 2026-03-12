@@ -59,6 +59,12 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   });
   const t = useT();
 
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
+
   const goToContinueEditingTab = () => {
     if (isEntityAwaitingApproval(nursery?.status, nursery?.updateRequestStatus)) {
       handleEdit();
@@ -73,7 +79,17 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     <PageBody>
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
-          <PageItem title={t("Key Indicators")} flexProps={{ maxWidth: "26%" }} buttonProps={undefined}>
+          <PageItem
+            title={t("Key Indicators")}
+            flexProps={{ maxWidth: "26%" }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "View Progress & Goals",
+              rightIcon: <ChevronRightIcon />,
+              onClick: () => goToTab("progress-and-goals")
+            }}
+          >
             <MetricCard
               title={t("About Nurseries")}
               variant="donutChart"
