@@ -1,23 +1,22 @@
 import { DataProvider, Identifier } from "react-admin";
 
+import { loadUser, loadUserIndex } from "@/connections/User";
 import {
   DeleteV2AdminUsersUUIDError,
   fetchDeleteV2AdminUsersUUID,
   fetchGetV2AdminUsers,
   fetchGetV2AdminUsersMulti,
-  fetchGetV2AdminUsersUUID,
   fetchPostV2AdminUsersCreate,
   fetchPutV2AdminUsersUUID,
-  GetV2AdminUsersError,
   GetV2AdminUsersMultiError,
-  GetV2AdminUsersUUIDError,
   PostV2AdminUsersCreateError,
   PutV2AdminUsersUUIDError
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
+import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { getFormattedErrorForRA, v3ErrorForRA } from "../utils/error";
+import { apiListResponseToRAListResult, raConnectionProps, raListParamsToQueryParams } from "../utils/listing";
 
 const normalizeUserObject = (item: V2AdminUserRead) => ({
   ...item,
@@ -44,33 +43,28 @@ export const userDataProvider: DataProvider = {
   },
   //@ts-ignore
   async getList(_, params) {
-    try {
-      const response = await fetchGetV2AdminUsers({
-        queryParams: raListParamsToQueryParams(params)
-      });
-
-      const result = apiListResponseToRAListResult(response);
-
-      return {
-        ...result,
-        data: result.data?.map((item: V2AdminUserRead) => normalizeUserObject(item))
-      };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminUsersError);
+    const connected = await loadUserIndex(raConnectionProps(params));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("Form index fetch failed", connected.loadFailure);
     }
+
+    return {
+      data: (connected.data?.map(user => ({ ...user, id: user.uuid })) ?? []) as UserDto[],
+      total: connected.indexTotal
+    };
   },
 
   //@ts-ignore
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2AdminUsersUUID({
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: normalizeUserObject(response.data) };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminUsersUUIDError);
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    // Disable translation for admin data provider; forms must be edited in English so that the
+    // labels that will be translated from the DB are in English as the source language.
+    const connected = await loadUser({ id });
+    console.log(connected);
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("User get fetch failed", connected.loadFailure);
     }
+
+    return { data: { ...connected.data, id: connected.data!.uuid } } as RecordType;
   },
 
   async getMany(_, params) {

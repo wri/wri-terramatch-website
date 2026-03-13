@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
+import { FunctionField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
@@ -12,6 +12,7 @@ import {
   usePostV2UsersResend
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
+import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
 
@@ -61,20 +62,20 @@ export const UserShowAside = () => {
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               First Name
             </Typography>
-            <TextField source="first_name" className="admin-text-16 !font-medium text-darkCustom" />
+            <TextField source="firstName" className="admin-text-16 !font-medium text-darkCustom" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               Last Name
             </Typography>
-            <TextField source="last_name" className="admin-text-16 !font-medium text-darkCustom" />
+            <TextField source="lastName" className="admin-text-16 !font-medium text-darkCustom" />
           </Grid>
           <Grid item xs={6}>
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               Type
             </Typography>
             <SelectField
-              source="role"
+              source="primaryRole"
               choices={userPrimaryRoleChoices}
               emptyText="Not Provided"
               className="admin-text-16 !font-medium text-darkCustom"
@@ -95,7 +96,11 @@ export const UserShowAside = () => {
             <Typography variant="h6" className="admin-text-16 text-darkCustom/60">
               Verified
             </Typography>
-            <BooleanField source="verified" className="admin-text-16 !font-medium text-darkCustom" />
+            <FunctionField
+              source="emailAddressVerifiedAt"
+              render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "Verified" : "Not Verified")}
+              className="admin-text-16 !font-medium text-darkCustom"
+            />
           </Grid>
         </Grid>
         <Divider />
