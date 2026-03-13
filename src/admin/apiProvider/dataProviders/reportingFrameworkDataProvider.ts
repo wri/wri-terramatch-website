@@ -23,7 +23,8 @@ function formDataToCreateAttributes(data: ReportingFrameworkRecord): CreateRepor
     siteFormUuid: data.siteFormUuid ?? null,
     siteReportFormUuid: data.siteReportFormUuid ?? null,
     nurseryFormUuid: data.nurseryFormUuid ?? null,
-    nurseryReportFormUuid: data.nurseryReportFormUuid ?? null
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? null,
+    financialReportFormUuid: data.financialReportFormUuid ?? null
   };
 }
 
@@ -35,7 +36,8 @@ function formDataToUpdateAttributes(data: ReportingFrameworkRecord): UpdateRepor
     siteFormUuid: data.siteFormUuid ?? undefined,
     siteReportFormUuid: data.siteReportFormUuid ?? undefined,
     nurseryFormUuid: data.nurseryFormUuid ?? undefined,
-    nurseryReportFormUuid: data.nurseryReportFormUuid ?? undefined
+    nurseryReportFormUuid: data.nurseryReportFormUuid ?? undefined,
+    financialReportFormUuid: data.financialReportFormUuid ?? undefined
   };
 }
 

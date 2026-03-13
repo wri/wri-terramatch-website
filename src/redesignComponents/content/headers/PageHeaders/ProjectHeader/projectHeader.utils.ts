@@ -35,7 +35,7 @@ export const formatMonthYear = (date?: string | null): string => {
   return `${String(parsed.getUTCMonth() + 1).padStart(2, "0")}/${parsed.getUTCFullYear()}`;
 };
 
-export const mapPlantingStatusToProgressState = (status?: string | null): ProgressState => {
+export const mapPlantingStatusToProgressState = (status?: string | null): ProgressState | null => {
   switch (status) {
     case "in-progress":
       return "in-progress";
@@ -44,6 +44,6 @@ export const mapPlantingStatusToProgressState = (status?: string | null): Progre
     case "not-started":
       return "not-started";
     default:
-      return "in-progress";
+      return null;
   }
 };

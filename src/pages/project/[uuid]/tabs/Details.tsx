@@ -15,13 +15,13 @@ import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavig
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { v3EntityName } from "@/helpers/entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
-import { mapPlantingStatusToProgressState } from "@/redesignComponents/content/headers/PageHeaders/utils/projectHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
 import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
@@ -31,6 +31,7 @@ import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  getPlantingStatus,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
   NO_COUNT_TABLE_SPECIES_PER_ROW,
   noCountTableColumns
@@ -94,6 +95,13 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
     type: "projects"
   });
 
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "projects",
+    entityUUID: project.uuid,
+    entityStatus: project.status ?? "started",
+    updateRequestStatus: project.updateRequestStatus ?? "no-update"
+  });
+
   const noGoalTableColumns = useMemo(
     () => [
       { key: "name", label: t("Species Name") },
@@ -118,13 +126,17 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
       }
       actions={
         <EditButton
-          onClick={() =>
-            router.push(
-              `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
-                step.id
-              )}`
-            )
-          }
+          onClick={() => {
+            if (isEntityAwaitingApproval(project.status, project.updateRequestStatus)) {
+              handleEdit();
+            } else {
+              router.push(
+                `/entity/${v3EntityName("projects")}/edit/${project?.uuid}?${STEP_QUERY_PARAM}=${encodeURIComponent(
+                  step.id
+                )}`
+              );
+            }
+          }}
           text={t("Edit")}
         />
       }
@@ -175,7 +187,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-theme-neutral-300 border-b py-4"
+                                      "border-b border-theme-neutral-300 py-4"
                                     )}
                                   >
                                     {row[idx + 1]}
@@ -217,18 +229,24 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                 <Text textStyle="300-bold" color="primary.900">
                   {t("Project Stage")}:
                 </Text>
-                <div className="flex items-center gap-2">
-                  <ProgressTag state={mapPlantingStatusToProgressState(project.plantingStatus)!} />
-                  {(project.plantingStatus === "replacement-planting" ||
-                    project.plantingStatus === "no-restoration-expected") && (
-                    <>
-                      <ArrowForward boxSize={4} color="neutral.900" />
-                      <Text textStyle="400" color="neutral.900">
-                        {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
-                      </Text>
-                    </>
-                  )}
-                </div>
+                {project.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={getPlantingStatus(project.plantingStatus)} />
+                      {(project.plantingStatus === "replacement-planting" ||
+                        project.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForward boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[project.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
               </Flex>
             )}
           </Fragment>
@@ -251,7 +269,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
+    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
       <Flex flexDirection="column" gap={2}>
         <WizardFormProvider fieldsProvider={fieldsProvider}>
           {steps.map((step, index) => (

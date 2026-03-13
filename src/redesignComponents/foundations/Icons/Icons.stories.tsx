@@ -34,7 +34,10 @@ import {
   NewTabIcon,
   NothingReportedIcon,
   NotificationIcon,
+  NurseryBuildingIcon,
+  NurseryExpandingIcon,
   NurseryIcon,
+  NurseryManagingIcon,
   OpportunitiesIcon,
   OrganizationIcon,
   PendingIcon,
@@ -90,7 +93,7 @@ const CategoryHeader = ({ title }: { title: string }) => (
 
 export const AllIcons: Story = {
   render: () => (
-    <SimpleGrid columns={4} gap={6}>
+    <SimpleGrid columns={5} gap={6}>
       <Box>
         <CategoryHeader title="Data Visualisation" />
         <VStack align="stretch" gap={4}>
@@ -129,6 +132,21 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Tree Circle">
             <TreeCircleIcon boxSize={8} />
+          </IconWrapper>
+        </VStack>
+      </Box>
+
+      <Box>
+        <CategoryHeader title="Restoration & Land" />
+        <VStack align="stretch" gap={4}>
+          <IconWrapper name="Nursery Building">
+            <NurseryBuildingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Nursery Expanding">
+            <NurseryExpandingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Nursery Managing">
+            <NurseryManagingIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>

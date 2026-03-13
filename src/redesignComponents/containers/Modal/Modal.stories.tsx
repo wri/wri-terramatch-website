@@ -6,6 +6,8 @@ import React, { useState } from "react";
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";
 import ModalStory from "./Modal";
+import ModalSelectGalleryImages from "./ModalSelectGalleryImages";
+import ModalUploadImage from "./ModalUploadImage";
 
 const meta = {
   title: "Redesign Components/Containers/Modal",
@@ -21,7 +23,7 @@ type Story = StoryObj<typeof meta>;
 
 const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-3">
+    <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col gap-3 rounded-lg border border-dashed p-3">
       <div className="flex flex-col">
         <Text textStyle={isLarge ? "600-bold" : "400-bold"} color="neutral.800">
           Detach this instance
@@ -37,7 +39,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         alt="Modal Example"
         width={100}
         height={100}
-        className="h-full w-full max-w-[292px] rounded-lg border border-theme-neutral-300 object-cover"
+        className="border-theme-neutral-300 h-full w-full max-w-[292px] rounded-lg border object-cover"
       />
     </div>
   );
@@ -327,6 +329,47 @@ export const Blocking: Story = {
           onClose={() => setShowModal(false)}
           blocking
         />
+      </>
+    );
+  }
+};
+
+export const ModalUploadImageStory: Story = {
+  args: {
+    header: <div>ModalUploadImage</div>,
+    content: <div>ModalUploadImage</div>,
+    open: false
+  },
+  render: args => {
+    const [showModal, setShowModal] = useState(false);
+
+    return (
+      <>
+        <Button onClick={() => setShowModal(true)}>Show Modal</Button>
+        <ModalUploadImage
+          {...args}
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          imgSrc="https://i.pravatar.cc/300?img=4"
+        />
+      </>
+    );
+  }
+};
+
+export const ModalGalleryImagesStory: Story = {
+  args: {
+    header: <div>ModalGalleryImages</div>,
+    content: <div>ModalGalleryImages</div>,
+    open: false
+  },
+  render: args => {
+    const [showModal, setShowModal] = useState(false);
+
+    return (
+      <>
+        <Button onClick={() => setShowModal(true)}>Show Modal</Button>
+        <ModalSelectGalleryImages {...args} open={showModal} onClose={() => setShowModal(false)} />
       </>
     );
   }

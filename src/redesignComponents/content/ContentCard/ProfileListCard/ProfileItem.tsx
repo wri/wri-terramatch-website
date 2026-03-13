@@ -11,6 +11,7 @@ import { IProfile } from "./ProfileListCard";
 interface ProfileProps {
   profile: IProfile;
   onProfileClick: (profile: IProfile) => void;
+  type?: string;
 }
 
 const ProfileItem: FC<ProfileProps> = ({ profile, onProfileClick, ...props }) => {

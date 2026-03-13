@@ -64,8 +64,9 @@ const SummaryItem: FC<SummaryItemProps> = ({
 
   return (
     <div
-      className="mb-[20px] h-[calc(100vh-354px)] overflow-auto  pb-20 pr-[12px] md:h-[calc(100vh-355px)]
-    lg:h-[calc(100vh-355px)]"
+      className={classNames("h-full overflow-auto pr-[12px]", {
+        "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": user
+      })}
     >
       <FormStepHeader
         id="step"
@@ -76,7 +77,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: downloadButtonText,
-                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
+                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
                 variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }

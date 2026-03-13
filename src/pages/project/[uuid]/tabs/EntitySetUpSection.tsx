@@ -3,7 +3,9 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useMemo } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
-import { v3EntityName } from "@/helpers/entity";
+import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
+import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -12,16 +14,23 @@ import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
-interface ProjectSetUpSectionProps {
-  entityUuid: string;
+interface EntitySetUpSectionProps {
+  entity: EntityFullDto;
   onStatusChange?: (allCompleted: boolean) => void;
+  type: SupportedEntity;
 }
 
-const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entityUuid, onStatusChange }) => {
+const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
   const router = useRouter();
-  const { defaultValues, steps, isReady } = useEntityFormSetup("projects", entityUuid);
+  const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: type,
+    entityUUID: entity.uuid,
+    entityStatus: entity.status ?? "started",
+    updateRequestStatus: entity.updateRequestStatus ?? "no-update"
+  });
 
-  const editPath = useMemo(() => `/entity/${v3EntityName("projects")}/edit/${entityUuid}`, [entityUuid]);
+  const editPath = useMemo(() => `/entity/${v3EntityName(type)}/edit/${entity.uuid}`, [entity.uuid, type]);
 
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {
@@ -36,15 +45,27 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entityUuid, onStatu
             variant="borderless"
             size="small"
             leftIcon={<EditIcon boxSize={3} />}
-            onClick={() => router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`)}
+            onClick={() => {
+              if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
+                handleEdit();
+              } else {
+                router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);
+              }
+            }}
           >
             Edit
           </Button>
         ),
-        onClick: () => router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`)
+        onClick: () => {
+          if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
+            handleEdit();
+          } else {
+            router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);
+          }
+        }
       };
     });
-  }, [editPath, router, steps, defaultValues]);
+  }, [editPath, router, steps, defaultValues, entity.status, entity.updateRequestStatus, handleEdit]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;
@@ -72,4 +93,4 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entityUuid, onStatu
   return <ProgressSteps steps={tabItemsStep} />;
 };
 
-export default ProjectSetUpSection;
+export default EntitySetUpSection;

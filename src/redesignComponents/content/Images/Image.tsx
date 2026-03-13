@@ -17,6 +17,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   classNamesHover?: string;
   isAdd?: boolean;
   onClickAdd?: () => void;
+  hoverContent?: React.ReactNode;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -29,6 +30,7 @@ const BaseImage: FC<BaseImageProps> = ({
   classNamesHover,
   isAdd = false,
   onClickAdd,
+  hoverContent,
   ...rest
 }) => {
   const t = useT();
@@ -98,8 +100,14 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              <EditIcon className="h-4 w-4" />
-              {t("Edit")}
+              {hoverContent ? (
+                hoverContent
+              ) : (
+                <>
+                  <EditIcon className="h-4 w-4" />
+                  {t("Edit")}
+                </>
+              )}
             </Text>
           </div>
         </>
