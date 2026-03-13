@@ -16,6 +16,55 @@ interface ModalUploadImageProps {
 
 const ModalUploadImage: FC<ModalUploadImageProps> = ({ open, onClose, imgSrc }) => {
   const [sliderValue, setSliderValue] = useState(33);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragState, setDragState] = useState({
+    dragging: false,
+    startX: 0,
+    startY: 0,
+    startOffsetX: 0,
+    startOffsetY: 0
+  });
+
+  const scale = 1 + sliderValue / 100;
+
+  const handleMouseDown: React.MouseEventHandler<HTMLDivElement> = event => {
+    event.preventDefault();
+    setDragState({
+      dragging: true,
+      startX: event.clientX,
+      startY: event.clientY,
+      startOffsetX: offset.x,
+      startOffsetY: offset.y
+    });
+  };
+
+  const handleMouseMove: React.MouseEventHandler<HTMLDivElement> = event => {
+    if (!dragState.dragging) return;
+
+    const deltaX = event.clientX - dragState.startX;
+    const deltaY = event.clientY - dragState.startY;
+
+    // Clamp so you can't drag the image completely out of view.
+    const viewportHalf = 150; // half of 300px container
+    const scaledHalf = viewportHalf * scale;
+    const maxOffset = Math.max(0, scaledHalf - viewportHalf);
+
+    const nextX = dragState.startOffsetX + deltaX;
+    const nextY = dragState.startOffsetY + deltaY;
+
+    const clamp = (value: number) => Math.max(-maxOffset, Math.min(maxOffset, value));
+
+    setOffset({
+      x: clamp(nextX),
+      y: clamp(nextY)
+    });
+  };
+
+  const endDrag = () => {
+    if (!dragState.dragging) return;
+    setDragState(prev => ({ ...prev, dragging: false }));
+  };
+
   const mockedImgSrc = "https://i.pravatar.cc/300?img=4";
   return (
     <Modal
@@ -28,7 +77,13 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({ open, onClose, imgSrc }) 
       }
       content={
         <Flex direction="column" gap="4" alignItems="center">
-          <Box className="relative h-[300px] w-[300px] overflow-hidden">
+          <Box
+            className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={endDrag}
+            onMouseLeave={endDrag}
+          >
             <Image
               src={imgSrc ?? mockedImgSrc}
               alt="Project Profile Image"
@@ -36,9 +91,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({ open, onClose, imgSrc }) 
               height={300}
               style={{
                 objectFit: "cover",
-                scale: 1 + sliderValue / 100
+                transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+                transformOrigin: "center center"
               }}
-              className="h-full w-full"
+              className="h-full w-full select-none"
+              draggable={false}
             />
             <Box
               className="absolute inset-0"

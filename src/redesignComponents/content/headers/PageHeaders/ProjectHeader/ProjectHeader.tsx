@@ -1,14 +1,18 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { useGadmOptions } from "@/connections/Gadm";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
+import ModalSelectGalleryImages from "@/redesignComponents/containers/Modal/ModalSelectGalleryImages";
+import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
 import {
   countryCodeToFlag,
   formatMonthYear
 } from "@/redesignComponents/content/headers/PageHeaders/ProjectHeader/projectHeader.utils";
+import ProfileImage from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
+import { PhotoLibraryIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import { formatOptionsList } from "@/utils/options";
 
 import ProjectInfo from "../components/ProjectInfo";
@@ -21,6 +25,8 @@ export interface ProjectHeaderProps {
 }
 
 const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTeamMembers }) => {
+  const [openModalSelectGalleryImages, setOpenModalSelectGalleryImages] = useState(false);
+  const [openModalUploadImage, setOpenModalUploadImage] = useState(false);
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
     filter: { isManager: false },
@@ -40,6 +46,29 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
 
   return (
     <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" background="secondary.neutral">
+      <ModalUploadImage open={openModalUploadImage} onClose={() => setOpenModalUploadImage(false)} />
+      <ModalSelectGalleryImages
+        open={openModalSelectGalleryImages}
+        onClose={() => setOpenModalSelectGalleryImages(false)}
+      />
+      <ProfileImage
+        size={158}
+        src={"https://i.pravatar.cc/300?img=4"}
+        menuItems={[
+          {
+            label: "Select from Gallery",
+            value: "gallery",
+            startIcon: <PhotoLibraryIcon boxSize={4} color="neutral.700" />,
+            onClick: () => setOpenModalSelectGalleryImages(true)
+          },
+          {
+            label: "Upload",
+            value: "upload",
+            startIcon: <UploadIcon boxSize={4} color="neutral.700" />
+          }
+        ]}
+        onClickEdit={() => setOpenModalUploadImage(true)}
+      />
       <Flex gap={5}>
         <ProjectInfo
           project={project}

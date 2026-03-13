@@ -4,9 +4,9 @@ import Image from "next/image";
 import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
+import ModalSelectGalleryImages from "@/redesignComponents/containers/Modal/ModalSelectGalleryImages";
 import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
-
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
@@ -16,8 +16,15 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
-  onClickAdd?: () => void;
   hoverContent?: React.ReactNode;
+  onClickEdit?: () => void;
+  menuItems?: {
+    label: string;
+    value: string;
+    startIcon?: React.ReactNode;
+    onClick?: () => void;
+  }[];
+  menuLabel?: string;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -29,13 +36,15 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
-  onClickAdd,
   hoverContent,
+  onClickEdit,
+  menuItems,
+  menuLabel,
   ...rest
 }) => {
   const t = useT();
   const [loadError, setLoadError] = useState(false);
-
+  const [openModalSelectGalleryImages, setOpenModalSelectGalleryImages] = useState(false);
   useEffect(() => {
     setLoadError(false);
   }, [src]);
@@ -64,12 +73,23 @@ const BaseImage: FC<BaseImageProps> = ({
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={onClickAdd}>
-              {t("Add Image")}
-            </Button>
+            <MenuCustom
+              label={menuLabel ?? "Add Image"}
+              items={[
+                ...(menuItems?.map(item => ({
+                  label: item.label,
+                  value: item.value,
+                  startIcon: item.startIcon,
+                  onClick: item.onClick
+                })) ?? [])
+              ]}
+            />
           </div>
         ) : (
           <div
+            role="button"
+            tabIndex={0}
+            onClick={onClickEdit}
             className={classNames("bg-theme-neutral-300 flex h-full w-full items-center justify-center", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
@@ -97,6 +117,9 @@ const BaseImage: FC<BaseImageProps> = ({
               "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
+            role="button"
+            tabIndex={0}
+            onClick={onClickEdit}
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
@@ -112,6 +135,10 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
         </>
       )}
+      <ModalSelectGalleryImages
+        open={openModalSelectGalleryImages}
+        onClose={() => setOpenModalSelectGalleryImages(false)}
+      />
     </div>
   );
 };
