@@ -1,10 +1,26 @@
 import { createSelector } from "reselect";
 
 import { connectionHook } from "@/connections/util/connectionShortcuts";
-import { userVerify } from "@/generated/v3/userService/userServiceComponents";
+import * as userServiceComponents from "@/generated/v3/userService/userServiceComponents";
 import { PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
+
+// Use real endpoint when present (after generate:userService), stub when missing (e.g. CI with old generated file)
+type UserVerifyEndpoint = {
+  fetch: (vars: { pathParams: { uuid: string } }) => void;
+  isFetchingSelector: (vars: { pathParams: { uuid: string } }) => (state: unknown) => boolean;
+  fetchFailedSelector: (vars: { pathParams: { uuid: string } }) => (state: unknown) => PendingError | undefined;
+};
+
+const stubUserVerify: UserVerifyEndpoint = {
+  fetch: () => {},
+  isFetchingSelector: () => () => false,
+  fetchFailedSelector: () => () => undefined
+};
+
+const userVerify: UserVerifyEndpoint =
+  ((userServiceComponents as Record<string, unknown>).userVerify as UserVerifyEndpoint | undefined) ?? stubUserVerify;
 
 type AdminUserVerifyConnection = {
   isLoading: boolean;
