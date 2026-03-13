@@ -14,6 +14,8 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
+import FooterModal from "./FooterModal";
+
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
   open: boolean;
@@ -101,14 +103,12 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
         </div>
       }
       footer={
-        <div className="relative h-14 w-full">
-          <div className="border-theme-neutral-300 absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t px-[13px] pt-4 ">
-            <Button variant="borderless" onClick={handleClose}>
-              {t("Cancel")}
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
-          </div>
-        </div>
+        <FooterModal>
+          <Button variant="borderless" onClick={handleClose}>
+            {t("Cancel")}
+          </Button>
+          <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
+        </FooterModal>
       }
     />
   );
