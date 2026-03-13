@@ -720,6 +720,10 @@ export type UserCreateAttributes = {
   country: string;
   program: string;
   callbackUrl: string;
+  /**
+   * Token for invite-based signup completion
+   */
+  token?: string;
 };
 
 export type UserCreateData = {
@@ -815,6 +819,33 @@ export type OrganisationInviteRequestDto = {
    * Optional callback URL base for the signup link in the email.
    */
   callbackUrl?: Record<string, any>;
+};
+
+export type ProjectInviteAcceptanceDto = {
+  /**
+   * Primary key of the project invite.
+   */
+  id: number;
+  /**
+   * UUID of the project invite.
+   */
+  uuid: string;
+  /**
+   * ID of the project this invite belongs to.
+   */
+  projectId: number;
+  /**
+   * Email address this invite was sent to.
+   */
+  emailAddress: string;
+  /**
+   * Timestamp when the invite was accepted.
+   */
+  acceptedAt: string | null;
+  /**
+   * Name of the project.
+   */
+  projectName: string | null;
 };
 
 export type ProjectInviteAcceptBodyDto = {
