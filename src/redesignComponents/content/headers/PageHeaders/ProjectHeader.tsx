@@ -59,12 +59,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
         />
       </Flex>
 
-      <TeamSection
-        team={teamMembers}
-        onAddTeamClick={onAddTeamClick}
-        gotoTeamMembers={gotoTeamMembers}
-        project={project}
-      />
+      <TeamSection team={teamMembers} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
     </Box>
   );
 };
