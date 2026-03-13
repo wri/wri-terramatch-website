@@ -48,7 +48,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({ open, onClose, imgSrc }) 
                 WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
               }}
             />
-            <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
+            <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
           </Box>
           <Flex direction="row" gap="4" alignItems="center" width="100%" justifyContent="center">
             <Button
