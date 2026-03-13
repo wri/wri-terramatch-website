@@ -33,7 +33,9 @@ export const deleteMedia = deleterAsync("media", mediaDelete, uuid => ({ pathPar
 
 export const prepareFileForUpload = async (
   file: File,
-  isPublic = true
+  isPublic = true,
+  isCover = false,
+  profileImageScale?: number
 ): Promise<WithFormData<MediaRequestAttributes>> => {
   let location: Awaited<ReturnType<typeof exifr.gps>> | undefined = undefined;
   try {
@@ -45,7 +47,7 @@ export const prepareFileForUpload = async (
   const formData = new FormData();
   formData.append("uploadFile", file);
   const { latitude, longitude } = location ?? { latitude: null, longitude: null };
-  return { isPublic, lat: latitude, lng: longitude, formData };
+  return { isPublic, lat: latitude, lng: longitude, isCover, profileImageScale: profileImageScale ?? null, formData };
 };
 
 export const fileUploadOptions = (

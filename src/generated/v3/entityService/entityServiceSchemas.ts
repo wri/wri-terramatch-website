@@ -148,6 +148,7 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
+  profileImageScale?: number | null;
 };
 
 export type ImpactStoryLightDto = {
@@ -631,6 +632,14 @@ export type MediaRequestBulkAttributes = {
    * The longitude of the media
    */
   lng: number | null;
+  /**
+   * Whether the media is a cover
+   */
+  isCover: boolean | null;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: string | null;
 };
 
 export type MediaRequestBulkData = {
@@ -661,6 +670,14 @@ export type MediaRequestAttributes = {
    * The longitude of the media
    */
   lng: number | null;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: number | null;
+  /**
+   * Whether the media is a cover
+   */
+  isCover: boolean;
 };
 
 export type MediaRequestData = {
@@ -697,6 +714,10 @@ export type MediaUpdateAttributes = {
    * The cover of the project
    */
   isCover?: boolean;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: number | null;
 };
 
 export type MediaData = {
@@ -1921,6 +1942,7 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  profileImageScale?: number | null;
 };
 
 export type FinancialIndicatorDto = {
