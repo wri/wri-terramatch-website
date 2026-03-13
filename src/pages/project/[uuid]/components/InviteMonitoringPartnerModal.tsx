@@ -14,6 +14,8 @@ import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
+import FooterModal from "./FooterModal";
+
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
   open: boolean;
