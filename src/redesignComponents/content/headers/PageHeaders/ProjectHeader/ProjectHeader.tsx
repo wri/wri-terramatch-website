@@ -1,5 +1,5 @@
 import { Box, Flex } from "@chakra-ui/react";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useMedia, useMedias } from "@/connections/EntityAssociation";
 import { useGadmOptions } from "@/connections/Gadm";
@@ -17,7 +17,7 @@ import {
 import { ProfileImage } from "@/redesignComponents/content/Images/ProfileImage/ProfileImage";
 import { PhotoLibraryIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-import { UploadedFile } from "@/types/common";
+import { FileType, UploadedFile } from "@/types/common";
 import { HookProps } from "@/types/connection";
 import { formatOptionsList } from "@/utils/options";
 
@@ -47,6 +47,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     name: string;
   } | null>(null);
   const [coverScale, setCoverScale] = useState<number | undefined>(undefined);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
     filter: { isManager: false },
@@ -206,6 +207,14 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   }, [galleryImages]);
 
   const handleSelectGalleryImage = (image: { uuid: string; src: string; alt: string; url: string; name: string }) => {
+    const isInitialAddMode = selectedCoverUrl == null && coverImage?.uuid == null;
+
+    if (isInitialAddMode) {
+      void handleConfirmGalleryImage(image, 1);
+      setIsGalleryOpen(false);
+      return;
+    }
+
     setSelectedGalleryImage(image);
     setIsGalleryOpen(false);
   };
@@ -252,9 +261,22 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
               {
                 label: "Upload",
                 value: "upload",
-                startIcon: <UploadIcon boxSize={4} color="neutral.700" />
+                startIcon: <UploadIcon boxSize={4} color="neutral.700" />,
+                onClick: () => fileInputRef.current?.click()
               }
             ]}
+          />
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={FileType.Image}
+            className="hidden"
+            onChange={event => {
+              const file = event.target.files?.[0];
+              if (!file) return;
+              void handleUploadProfileImage(file, 1);
+              event.target.value = "";
+            }}
           />
           <ModalUploadImage
             open={open}
