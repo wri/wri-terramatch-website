@@ -148,7 +148,7 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
-  profileImageScale?: number | null;
+  profileImageScale: number | null;
 };
 
 export type ImpactStoryLightDto = {
@@ -639,7 +639,7 @@ export type MediaRequestBulkAttributes = {
   /**
    * The profile image scale
    */
-  profileImageScale: string | null;
+  profileImageScale: number | null;
 };
 
 export type MediaRequestBulkData = {
@@ -677,7 +677,7 @@ export type MediaRequestAttributes = {
   /**
    * Whether the media is a cover
    */
-  isCover: boolean;
+  isCover: boolean | null;
 };
 
 export type MediaRequestData = {
@@ -868,6 +868,41 @@ export type DisturbanceDto = {
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
+};
+
+export type ReminderDto = {
+  /**
+   * UUID of the audit status record created for this reminder
+   */
+  uuid: string;
+  /**
+   * The entity type the reminder was sent for
+   */
+  entityType: string;
+  /**
+   * The UUID of the entity the reminder was sent for
+   */
+  entityUuid: string;
+  /**
+   * The feedback included in the reminder
+   */
+  feedback: string | null;
+};
+
+export type CreateReminderAttributes = {
+  /**
+   * Optional feedback message to include in the reminder email
+   */
+  feedback?: string | null;
+};
+
+export type CreateReminderData = {
+  type: "reminders";
+  attributes: CreateReminderAttributes;
+};
+
+export type CreateReminderBody = {
+  data: CreateReminderData;
 };
 
 export type AuditStatusDto = {
@@ -1942,7 +1977,7 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
-  profileImageScale?: number | null;
+  profileImageScale: number | null;
 };
 
 export type FinancialIndicatorDto = {
