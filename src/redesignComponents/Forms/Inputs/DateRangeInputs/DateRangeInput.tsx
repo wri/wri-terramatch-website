@@ -125,10 +125,11 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
         <StyledPickerWrapper $size={size} data-invalid={errorMessage != null ? "" : undefined}>
           <Global styles={calendarGlobalStyles} />
           <DatePicker.RootProvider value={picker}>
-            <DatePicker.Control>
-              <DatePicker.Trigger>
-                <CalendarIcon />
-              </DatePicker.Trigger>
+            <DatePicker.Control
+              onClick={() => !disabled && picker.setOpen(true)}
+              style={{ cursor: disabled ? "not-allowed" : "pointer" }}
+            >
+              <CalendarIcon />
               <DatePicker.Input index={0} placeholder={dateFormat} />
 
               <span
