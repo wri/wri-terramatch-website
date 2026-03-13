@@ -1,15 +1,48 @@
 import { createSelector } from "reselect";
 
 import { connectionHook } from "@/connections/util/connectionShortcuts";
-import { operationsByTag, verifyUser } from "@/generated/v3/userService/userServiceComponents";
+import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
+import { V3ApiEndpoint } from "@/generated/v3/utils";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectVerificationUser = (store: ApiDataStore) => Object.values(store.verifications)?.[0]?.attributes;
 
+type ResendVerificationError = {
+  statusCode: number;
+  message: string;
+};
+
+type ResendVerificationResponse = {
+  meta?: {
+    resourceType?: "verifications";
+  };
+  data?: {
+    type?: "verifications";
+    id?: string;
+    attributes?: {
+      emailAddress?: string;
+    };
+  };
+};
+
+type ResendVerificationVariables = {
+  body: {
+    emailAddress: string;
+    callbackUrl?: string;
+  };
+};
+
+const resendVerificationEndpoint = new V3ApiEndpoint<
+  ResendVerificationResponse,
+  ResendVerificationError,
+  ResendVerificationVariables,
+  {}
+>("/auth/v3/verifications/resend", "POST");
+
 export const sendResendVerificationEmail = (emailAddress: string, callbackUrl?: string) =>
-  operationsByTag.verificationUser.resendVerification.fetchParallel({
+  resendVerificationEndpoint.fetchParallel({
     body: { emailAddress, callbackUrl }
   });
 
