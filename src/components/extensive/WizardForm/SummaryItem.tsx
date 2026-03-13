@@ -6,10 +6,8 @@ import { UseFormReturn } from "react-hook-form";
 import FormStepHeader from "@/components/extensive/WizardForm/FormStepHeader";
 import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
-import InlineLoader from "@/components/generic/Loading/InlineLoader";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
@@ -46,20 +44,12 @@ const SummaryItem: FC<SummaryItemProps> = ({
   const t = useT();
   const user = useIsAdmin();
   const { getReadableEntityName } = useGetReadableEntityName();
-
   const fieldsProvider = useFieldsProvider();
   const [, { data: actions }] = useActions({
     enabled: !user
   });
 
   const entity = models as FormModel;
-
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler(
-    entity.model as EntityName,
-    entity.uuid,
-    entity.uuid
-  );
-
   const action = useMemo(() => {
     return actions?.find(a => {
       const target = a.target as { uuid?: string };
@@ -74,8 +64,14 @@ const SummaryItem: FC<SummaryItemProps> = ({
     }
   };
 
-  const isMainEntity = ["projects", "sites", "nurseries"].includes(entity.model as EntityName);
-  const entityName = getReadableEntityName(entity.model as EntityName);
+  const isMainEntity = useMemo(
+    () => ["projects", "sites", "nurseries"].includes(entity.model as EntityName),
+    [entity.model]
+  );
+  const entityName = useMemo(
+    () => getReadableEntityName(entity.model as EntityName, true),
+    [entity.model, getReadableEntityName]
+  );
 
   return (
     <div
@@ -91,15 +87,10 @@ const SummaryItem: FC<SummaryItemProps> = ({
           downloadButtonText == null
             ? undefined
             : {
-                children: isMainEntity ? `Download ${entityName} Files` : downloadButtonText,
-                leftIcon: exportLoader ? (
-                  <InlineLoader loading={exportLoader} />
-                ) : (
-                  <DownloadIcon className="h-4 text-theme-primary-800" />
-                ),
+                children: isMainEntity ? `Download ${entityName}` : downloadButtonText,
+                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
                 variant: "secondary",
-                onClick: () =>
-                  isMainEntity ? handleExport() : downloadAnswersCSV(fieldsProvider, formHook.getValues())
+                onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
         }
       >
