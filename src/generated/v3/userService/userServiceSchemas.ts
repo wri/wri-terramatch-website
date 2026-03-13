@@ -194,6 +194,8 @@ export type OrganisationFullDto = {
   bioeconomyTraditionalKnowledge: string | null;
   bioeconomyProductProcessing: string | null;
   bioeconomyBuyers: string | null;
+  bioeconomyProductList: string[] | null;
+  bioeconomyDescription: string | null;
   /**
    * @format date-time
    */
