@@ -737,6 +737,8 @@ export type UserAssociationDto = {
   isManager: boolean;
   organisationName: string;
   roleName: string | null;
+  phoneNumber: string | null;
+  jobRole: string | null;
   associatedType: string;
 };
 

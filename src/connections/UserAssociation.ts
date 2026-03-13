@@ -10,7 +10,7 @@ import {
   inviteOrganisationUser
 } from "@/generated/v3/userService/userServiceComponents";
 import { OrganisationInviteRequestDto, UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
-import { resolveUrl } from "@/generated/v3/utils";
+import { getStableIndexPath, resolveUrl } from "@/generated/v3/utils";
 import ApiSlice, { PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
@@ -84,6 +84,30 @@ const userAssociationConnection = v3Resource("associatedUsers", getUserAssociati
   .buildConnection();
 
 export const useUserAssociations = connectionHook(userAssociationConnection);
+
+export type OrganisationUserAssociationsProps = {
+  organisationUuid: string;
+  status?: "requested" | "approved" | "rejected";
+};
+
+const organisationUserAssociationConnection = v3Resource("associatedUsers", getUserAssociation)
+  .index<UserAssociationDto, OrganisationUserAssociationsProps>(({ organisationUuid, status }) =>
+    organisationUuid != null && organisationUuid !== ""
+      ? {
+          pathParams: { uuid: organisationUuid, model: "organisations" as const },
+          queryParams: status != null ? { status } : undefined
+        }
+      : undefined
+  )
+  .refetch((props, variablesFactory) => {
+    const variables = variablesFactory(props);
+    if (variables == null) return;
+    const { stableUrl } = getStableIndexPath(getUserAssociation.url, variables);
+    ApiSlice.pruneIndex("associatedUsers", stableUrl);
+  })
+  .buildConnection();
+
+export const useOrganisationUserAssociations = connectionHook(organisationUserAssociationConnection);
 
 export const bulkDeleteUserAssociations = async (projectUuid: string, uuids: string[]): Promise<void> => {
   const failureSelector = deleteUserAssociation.fetchFailedSelector({});
