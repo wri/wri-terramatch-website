@@ -48,7 +48,8 @@ export const FileField: FormFieldFactory = {
   getAnswer: ({ name }, formValues) => formValues[name],
 
   appendAnswers: (field, csv, values, fieldsProvider) => {
-    const value = (getAnswer(field, values, fieldsProvider) as UploadedFile[]).filter(isNotNull);
+    const answer = getAnswer(field, values, fieldsProvider) as UploadedFile | UploadedFile[] | null | undefined;
+    const value = (Array.isArray(answer) ? answer : answer ? [answer] : []).filter(isNotNull);
     if (value.length > 0) {
       csv.pushRow([field.label, "FileName", "File Url"]);
 
