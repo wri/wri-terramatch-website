@@ -811,11 +811,3 @@ export type OrganisationInviteRequestDto = {
    */
   callbackUrl?: Record<string, any>;
 };
-
-export type AdminResetPasswordDto = {
-  /**
-   * @minLength 10
-   * @example NewSecureP4ss
-   */
-  password: string;
-};
