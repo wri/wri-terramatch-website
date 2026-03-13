@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import Image from "next/image";
 import React, { FC, useEffect, useRef, useState } from "react";
 
@@ -45,7 +46,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
-
+  const t = useT();
   useEffect(() => {
     if (!open) return;
     if (scale != null && !Number.isNaN(scale)) {
@@ -157,7 +158,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                 onRemoveFile?.();
               }}
             >
-              Remove Image
+              {t("Remove Image")}
             </Button>
             <Button
               variant="secondary"
@@ -165,7 +166,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               leftIcon={<PhotoLibraryIcon />}
               onClick={() => onOpenModalImageGallery?.(true)}
             >
-              Select from Gallery
+              {t("Select from Gallery")}
             </Button>
             <Button
               variant="secondary"
@@ -173,7 +174,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               leftIcon={<UploadIcon />}
               onClick={() => fileInputRef.current?.click()}
             >
-              Upload New
+              {t("Upload New")}
             </Button>
           </Flex>
           <input
@@ -190,7 +191,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             }}
           />
           <Text textStyle="200" color="neutral.800">
-            Upload a JPG or PNG image (max XX MB).
+            {t("Upload a JPG or PNG image (max 10 MB).")}
           </Text>
         </Flex>
       }
@@ -223,7 +224,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             }}
             className="flex-1"
           >
-            Save
+            {t("Save")}
           </Button>
         </Flex>
       }
