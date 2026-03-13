@@ -16,7 +16,7 @@ const MapControls: FC<MapControlsProps> = ({ items, ...rest }: MapControlsProps)
         }
       }}
     >
-      <Toolbar items={items || []} {...rest} />
+      <Toolbar items={items ?? []} {...rest} />
     </Box>
   );
 };
