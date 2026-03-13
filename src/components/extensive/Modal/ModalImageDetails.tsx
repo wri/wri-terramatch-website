@@ -180,9 +180,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
   };
 
   const breadcrumbLinks =
-    entityData && entityData.project
+    entityData?.project != null
       ? [{ title: entityData.project.name, path: "/#" }, { title: entityData.name, path: "/#" }, { title: name }]
-      : entityData
+      : entityData != null
       ? [{ title: entityData.name, path: "/#" }, { title: name }]
       : [{ title: name }];
 
@@ -209,7 +209,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
-          {entityData && (entityData.project || entityData.model !== "project") ? (
+          {entityData != null && (entityData.project || entityData.model !== "project") ? (
             <></>
           ) : (
             <div>
