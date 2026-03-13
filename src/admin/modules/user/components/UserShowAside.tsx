@@ -2,9 +2,9 @@ import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
-import { useAdminVerifyUser } from "@/admin/api/adminUserActions";
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
+import { useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
@@ -48,12 +48,7 @@ export const UserShowAside = () => {
     }
   });
 
-  const { mutate: verifyUser } = useAdminVerifyUser({
-    onSuccess() {
-      notify(`User email has been verified successfully.`, { type: "success" });
-      refresh();
-    }
-  });
+  const [, { verifyUser }] = useAdminUserVerify({ uuid });
 
   return (
     <div className="user-aside">
@@ -152,7 +147,7 @@ export const UserShowAside = () => {
         title="Email Verification"
         content={`Are you sure you want to verify ${record?.email_address}?`}
         onAgree={() => {
-          verifyUser({ uuid });
+          verifyUser();
           setShowVerifyEmailDialog(false);
         }}
         onDisAgree={() => setShowVerifyEmailDialog(false)}
