@@ -77,7 +77,17 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} handleEdit={handleEdit} />
+        <ProjectDescription description={description} handleEdit={handleEdit}>
+          <Button
+            variant="secondary"
+            size="small"
+            leftIcon={<DownloadIcon />}
+            onClick={handleExport}
+            loading={exportLoader}
+          >
+            {t("Download Project Files")}
+          </Button>
+        </ProjectDescription>
       ) : (
         <div className="w-fit">
           <Button

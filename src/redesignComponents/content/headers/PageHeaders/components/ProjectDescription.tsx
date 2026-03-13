@@ -10,9 +10,10 @@ import { useClampedText } from "../hooks/useClampedText";
 export interface ProjectDescriptionProps {
   description: string;
   handleEdit: () => void;
+  children: React.ReactNode;
 }
 
-const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEdit }) => {
+const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEdit, children }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
 
@@ -77,9 +78,10 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEd
         )}
       </Box>
       <div className="w-fit">
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="mr-3 w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
+        {children}
       </div>
     </>
   );
