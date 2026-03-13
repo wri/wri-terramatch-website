@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useMemo } from "react";
 
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
 import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
@@ -14,22 +14,23 @@ import { StepProps } from "@/redesignComponents/status/ProgressIndicator/types";
 
 const stepStatusToBadge = (valid: boolean): StepProps["status"] => (valid ? "completed" : "error");
 
-interface ProjectSetUpSectionProps {
-  entity: ProjectFullDto;
+interface EntitySetUpSectionProps {
+  entity: EntityFullDto;
   onStatusChange?: (allCompleted: boolean) => void;
+  type: SupportedEntity;
 }
 
-const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entity, onStatusChange }) => {
+const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
   const router = useRouter();
-  const { defaultValues, steps, isReady } = useEntityFormSetup("projects", entity.uuid);
+  const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit } = useGetEditEntityHandler({
-    entityName: "projects",
+    entityName: type,
     entityUUID: entity.uuid,
     entityStatus: entity.status ?? "started",
     updateRequestStatus: entity.updateRequestStatus ?? "no-update"
   });
 
-  const editPath = useMemo(() => `/entity/${v3EntityName("projects")}/edit/${entity.uuid}`, [entity.uuid]);
+  const editPath = useMemo(() => `/entity/${v3EntityName(type)}/edit/${entity.uuid}`, [entity.uuid, type]);
 
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {
@@ -92,4 +93,4 @@ const ProjectSetUpSection: FC<ProjectSetUpSectionProps> = ({ entity, onStatusCha
   return <ProgressSteps steps={tabItemsStep} />;
 };
 
-export default ProjectSetUpSection;
+export default EntitySetUpSection;

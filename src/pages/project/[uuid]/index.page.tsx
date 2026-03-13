@@ -1,9 +1,8 @@
 import { useT } from "@transifex/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC, ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, ReactElement, useCallback, useMemo, useState } from "react";
 
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -11,7 +10,6 @@ import { useFullProject } from "@/connections/Entity";
 import FrameworkProvider, { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { MapAreaProvider } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import ProjectDetailTab from "@/pages/project/[uuid]/tabs/Details";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
@@ -19,7 +17,7 @@ import ProjectOverviewTab from "@/pages/project/[uuid]/tabs/Overview";
 import ProjectNurseriesTab from "@/pages/project/[uuid]/tabs/ProjectNurseries";
 import ProjectSitesTab from "@/pages/project/[uuid]/tabs/ProjectSites";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner";
+import ProjectBanner from "@/redesignComponents/content/Banner/ProjectBanner/ProjectBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 
 import InviteMonitoringPartnerModal from "./components/InviteMonitoringPartnerModal";
@@ -44,26 +42,33 @@ type SuffixButtonConfig = {
   labelKey: string;
 };
 
+const SUFFIX_VIEW_KEYS = ["reports", "sites", "nurseries"];
+
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
   const { framework } = useFrameworkContext();
-  const { openModal } = useModalContext();
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
-  const initialTab = (router.query.tab as string) || "overview";
-  const [activeTab, setActiveTab] = useState(initialTab);
-  const [activeSuffixView, setActiveSuffixView] = useState<string | null>(null);
+  const currentTab = (router.query.tab as string) ?? "overview";
+  const normalizedTab = currentTab === "reporting-tasks" ? "reports" : currentTab;
+  const isSuffix = SUFFIX_VIEW_KEYS.includes(normalizedTab);
+  const activeSuffixView = isSuffix ? normalizedTab : null;
+  const activeTab = isSuffix ? "overview" : normalizedTab;
 
-  const handleSuffixButtonClick = useCallback((viewKey: string) => {
-    setActiveSuffixView(prev => (prev === viewKey ? null : viewKey));
-  }, []);
+  const navigateToTab = useCallback(
+    (tab: string) => {
+      router.push(`/project/${project.uuid}?tab=${tab}`, undefined, { shallow: true });
+    },
+    [router, project.uuid]
+  );
 
   const tabItems = useMemo<TabItem[]>(
     () => [
       {
         key: "overview",
         title: t("Overview"),
-        body: <ProjectOverviewTab project={project} onViewSites={() => handleSuffixButtonClick("sites")} />
+        body: <ProjectOverviewTab project={project} onViewSites={() => navigateToTab("sites")} />
       },
       { key: "details", title: t("Project Details"), body: <ProjectDetailTab project={project} /> },
       {
@@ -89,7 +94,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         body: <AuditLog project={project} refresh={refetch} />
       }
     ],
-    [project, t, refetch, handleSuffixButtonClick]
+    [project, t, refetch, navigateToTab]
   );
 
   const tabBarTabs = useMemo(
@@ -101,33 +106,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [tabItems]
   );
 
-  useEffect(() => {
-    const queryTab = router.query.tab as string;
-    const isValidTab = (tab: string) => tabItems.some(item => item.key === tab);
-
-    if (queryTab == "reporting-tasks") {
-      setActiveSuffixView("reports");
-      return;
-    }
-
-    if (queryTab && queryTab !== activeTab && isValidTab(queryTab)) {
-      setActiveTab(queryTab);
-    } else if (!isValidTab(activeTab) && tabItems.length > 0) {
-      setActiveTab(tabItems[0].key);
-    }
-  }, [router.query.tab, tabItems, activeTab]);
-
   const activeTabContent = useMemo(() => tabItems.find(item => item.key === activeTab)?.body, [tabItems, activeTab]);
-
-  const handleTabClick = useCallback(
-    (tabValue: string) => {
-      setActiveTab(tabValue);
-      setActiveSuffixView(null);
-      router.query.tab = tabValue;
-      router.push(router, undefined, { shallow: true });
-    },
-    [router]
-  );
 
   const shouldHideNurseries = framework === Framework.PPC;
 
@@ -152,20 +131,17 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [shouldHideNurseries]
   );
 
-  const tabBarDefaultValue = useMemo(
-    () => (activeSuffixView != null ? "__none__" : activeTab),
-    [activeSuffixView, activeTab]
-  );
+  const tabBarDefaultValue = activeSuffixView != null ? "__none__" : activeTab;
 
-  const handleInvite = () => {
-    openModal(
-      ModalId.INVITE_MONITORING_PARTNER_MODAL,
-      <InviteMonitoringPartnerModal projectUUID={project.uuid} onSuccess={() => {}} />
-    );
-  };
+  const handleInvite = () => setShowInviteModal(true);
 
   return (
     <>
+      <InviteMonitoringPartnerModal
+        projectUUID={project.uuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+      />
       <Head>
         <title>{t("Project")}</title>
       </Head>
@@ -173,10 +149,13 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         className="top-[70px]"
         project={project}
         onAddTeamClick={handleInvite}
-        gotoTeamMembers={() => handleTabClick("team-members")}
+        gotoTeamMembers={() => navigateToTab("team-members")}
         breadcrumbs={[
           { label: t("Projects"), link: "/my-projects", icon: <ProjectIcon className="!text-theme-primary-900" /> },
-          { label: project?.name ?? "", link: `/project/${project?.uuid}` }
+          { label: project?.name ?? "", link: `/project/${project?.uuid}` },
+          ...(activeSuffixView === "nurseries" || activeSuffixView === "sites" || activeSuffixView === "reports"
+            ? [{ label: t(activeSuffixView), link: `/project/${project?.uuid}?tab=${activeSuffixView}` }]
+            : [])
         ]}
         suffix={
           <div className="flex gap-1.5">
@@ -187,7 +166,10 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   variant="borderless"
                   size="small"
                   className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
-                  onClick={() => handleSuffixButtonClick(button.key)}
+                  onClick={() => {
+                    const next = activeSuffixView === button.key ? "overview" : button.key;
+                    navigateToTab(next);
+                  }}
                 >
                   {t(button.labelKey)}
                 </Button>
@@ -199,11 +181,13 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           tabBar: {
             tabs: tabBarTabs,
             defaultValue: tabBarDefaultValue,
-            onTabClick: handleTabClick
+            onTabClick: (tabValue: string) => {
+              navigateToTab(tabValue);
+            }
           }
         }}
       />
-      <div className="w-full">{activeSuffixView ? suffixViewContent : activeTabContent}</div>
+      <div className="w-full">{suffixViewContent ?? activeTabContent}</div>
       <PageFooter />
     </>
   );

@@ -66,6 +66,8 @@ const ProjectNurseriesTab = ({ project }: ProjectNurseriesTabProps) => {
           </LoadingContainer>
         </PageColumn>
       </PageRow>
+      <br />
+      <br />
     </PageBody>
   );
 };

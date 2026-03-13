@@ -1,3 +1,4 @@
+import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -26,7 +27,7 @@ const mockTabBar: TabBarWriProps = {
     { value: "team", label: "Team" }
   ],
   defaultValue: "overview",
-  onTabClick: (tabValue: string) => console.log("Tab clicked:", tabValue)
+  onTabClick: action("Tab clicked")
 };
 
 const mockBreadcrumbs = [
@@ -77,12 +78,8 @@ const baseArgs: ProjectBannerProps = {
     tabBar: mockTabBar
   },
   project: mockProject,
-  onAddTeamClick: () => {
-    console.log("Add team clicked");
-  },
-  gotoTeamMembers: () => {
-    console.log("Go to team members clicked");
-  }
+  onAddTeamClick: action("Add team clicked"),
+  gotoTeamMembers: action("Go to team members clicked")
 };
 
 export const Default: Story = {

@@ -849,6 +849,41 @@ export type DisturbanceDto = {
   propertyAffected: string | null;
 };
 
+export type ReminderDto = {
+  /**
+   * UUID of the audit status record created for this reminder
+   */
+  uuid: string;
+  /**
+   * The entity type the reminder was sent for
+   */
+  entityType: string;
+  /**
+   * The UUID of the entity the reminder was sent for
+   */
+  entityUuid: string;
+  /**
+   * The feedback included in the reminder
+   */
+  feedback: string | null;
+};
+
+export type CreateReminderAttributes = {
+  /**
+   * Optional feedback message to include in the reminder email
+   */
+  feedback?: string | null;
+};
+
+export type CreateReminderData = {
+  type: "reminders";
+  attributes: CreateReminderAttributes;
+};
+
+export type CreateReminderBody = {
+  data: CreateReminderData;
+};
+
 export type AuditStatusDto = {
   id: number;
   uuid: string;
@@ -1156,6 +1191,11 @@ export type FinancialReportLightDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2012,6 +2052,11 @@ export type FinancialReportFullDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2030,11 +2075,6 @@ export type FinancialReportFullDto = {
    */
   approvedAt: string | null;
   completion: number | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  frameworkKey: string | null;
   nothingToReport: boolean | null;
   feedback: string | null;
   feedbackFields: string[] | null;
@@ -3423,6 +3463,7 @@ export type ReportingFrameworkDto = {
   siteReportFormUuid: string | null;
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
+  financialReportFormUuid: string | null;
   totalProjectsCount: number;
 };
 
@@ -3455,6 +3496,10 @@ export type CreateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   /**
    * Framework name; used to generate slug
    */
@@ -3499,6 +3544,10 @@ export type UpdateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   name?: string | null;
 };
 

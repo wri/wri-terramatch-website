@@ -1204,6 +1204,10 @@ export type GetUserAssociationQueryParams = {
    * Flag to filter by manager
    */
   isManager?: boolean;
+  /**
+   * Filter by association status (for organisations: 'requested', 'approved', 'rejected')
+   */
+  status?: "requested" | "approved" | "rejected";
 };
 
 export type GetUserAssociationError = Fetcher.ErrorWrapper<{

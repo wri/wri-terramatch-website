@@ -1,148 +1,73 @@
 import { Typography } from "@mui/material";
-import { useT } from "@transifex/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useMemo } from "react";
 import { useShowContext } from "react-admin";
 import { useParams } from "react-router-dom";
 
 import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_RIGHT_BOTTOM } from "@/components/elements/Menu/MenuVariant";
-import { MENU_ITEM_VARIANT_BLUE, MENU_ITEM_VARIANT_DISABLED } from "@/components/elements/MenuItem/MenuItemVariant";
 import Table from "@/components/elements/Table/Table";
 import { VARIANT_TABLE_ORGANISATION } from "@/components/elements/Table/TableVariants";
-import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import Modal from "@/components/extensive/Modal/Modal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { useOrgUserAssociationUpdate } from "@/connections/Organisation";
-import { useModalContext } from "@/context/modal.provider";
-import { useNotificationContext } from "@/context/notification.provider";
-import { useGetV2AdminUsersUsersOrganisationListUUID } from "@/generated/apiComponents";
-import { V2AdminUserRead } from "@/generated/apiSchemas";
-import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 
-const statusMap: { [key: string]: string } = {
-  requested: "pending",
-  approved: "accepted",
-  rejected: "rejected"
-};
+import { OrganisationUserRow, statusMap, useOrganisationUserTable } from "./useOrganisationUserTable";
 
 const OrganisationUserTable = () => {
   const { id } = useParams<"id">();
   const ctx = useShowContext();
   const orgId = ctx?.record.organisation ? ctx?.record.organisation?.uuid : (id as string);
-  const t = useT();
-  const { openModal, closeModal } = useModalContext();
-  const { openNotification } = useNotificationContext();
-  const [tableKey, setTableKey] = useState(0);
-  const [selectedUserUuid, setSelectedUserUuid] = useState<string>("");
-  const [updateType, setUpdateType] = useState<"approve" | "reject" | null>(null);
-  const {
-    data: usersList,
-    refetch,
-    isLoading
-  } = useGetV2AdminUsersUsersOrganisationListUUID({
-    pathParams: {
-      uuid: orgId
-    }
-  }) as any;
+  const { isLoading, usersList, tableItemMenu } = useOrganisationUserTable(orgId);
 
-  const [, { create, isCreating, createFailure }] = useOrgUserAssociationUpdate({
-    organisationUuid: orgId,
-    userUuid: selectedUserUuid
-  });
-
-  const createRef = useRef(create);
-  createRef.current = create;
-
-  const handleUpdateSuccess = useCallback(() => {
-    refetch();
-    closeModal(ModalId.CONFIRM_USER);
-    if (updateType === "approve") {
-      openNotification("success", "Success!", "User approved successfully");
-    } else if (updateType === "reject") {
-      openNotification("success", "Success!", "User rejected successfully");
-    }
-    setSelectedUserUuid("");
-    setUpdateType(null);
-  }, [refetch, closeModal, openNotification, updateType]);
-
-  useRequestSuccess(isCreating, createFailure, handleUpdateSuccess);
-
-  const tableItemMenu = (user: V2AdminUserRead) => [
-    {
-      id: "1",
-      render: () => (
-        <div className="flex items-center gap-2" onClick={() => {}}>
-          <Text variant="text-12-bold" className="pr-3">
-            {t("Accept")}
-          </Text>
-        </div>
-      ),
-      onClick: () => {
-        handleOpenModal("approve", user.uuid);
-      }
-    },
-    {
-      id: "2",
-      render: () => (
-        <div className={`flex items-center gap-2`} onClick={() => {}}>
-          <Text variant="text-12-bold" className="pr-3">
-            {t("Reject")}
-          </Text>
-        </div>
-      ),
-      onClick: () => {
-        user.status === "rejected" ? () => {} : handleOpenModal("reject", user.uuid);
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "fullName",
+        header: "Name",
+        id: "name"
       },
-      MenuItemVariant: user.status === "rejected" ? MENU_ITEM_VARIANT_DISABLED : MENU_ITEM_VARIANT_BLUE
-    }
-  ];
-
-  const handleOpenModal = (type: "approve" | "reject", userUuid?: string) => {
-    if (userUuid == null) return;
-
-    setSelectedUserUuid(userUuid);
-    setUpdateType(type);
-
-    const title = type === "approve" ? t("Confirm User Approval") : t("Confirm User Rejection");
-    const content =
-      type === "approve"
-        ? t(
-            "Are you sure you want to approve this user's request to join your organization? Once approved, the user will be granted access to your organization's resources and will receive a notification confirming their acceptance. Please note that once approved, the user will have the same level of access as other members in your organization."
+      {
+        accessorKey: "emailAddress",
+        header: "Email address",
+        id: "email"
+      },
+      {
+        accessorKey: "lastLoggedInAt",
+        header: "Last login date",
+        id: "last_login",
+        cell: (user: { row?: { original?: OrganisationUserRow } }) => {
+          const lastLoggedIn = user?.row?.original?.lastLoggedInAt;
+          return lastLoggedIn != null ? new Date(lastLoggedIn).toLocaleDateString("en-GB") : "";
+        }
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        id: "status",
+        cell: (user: { row?: { original?: UserAssociationDto } }) => statusMap[user?.row?.original?.status ?? ""]
+      },
+      {
+        accessorKey: "",
+        header: "",
+        id: "actions",
+        cell: (params: { row?: { original?: UserAssociationDto } }) =>
+          params?.row?.original?.status !== "approved" &&
+          !isLoading && (
+            <Menu
+              menu={tableItemMenu(params?.row?.original as UserAssociationDto)}
+              placement={MENU_PLACEMENT_RIGHT_BOTTOM}
+            >
+              <div className="rounded p-1 hover:bg-primary-200">
+                <Icon
+                  name={IconNames.ELIPSES}
+                  className="roudn h-4 w-4 cursor-pointer rounded-sm text-grey-720 hover:bg-primary-200"
+                />
+              </div>
+            </Menu>
           )
-        : t(
-            "Are you sure you want to reject this user's request to join your organization? Once rejected, the user will be unable to access your organization's resources and will receive a notification confirming their rejection."
-          );
-
-    return openModal(
-      ModalId.CONFIRM_USER,
-      <Modal
-        title={title}
-        content={content}
-        primaryButtonProps={{
-          children: type === "approve" ? t("Approve User") : t("Reject User"),
-          onClick: () => {
-            const status = type === "approve" ? "approved" : "rejected";
-            (createRef.current as (attributes: { status: "approved" | "rejected" }) => void)({
-              status
-            });
-          }
-        }}
-        secondaryButtonProps={{
-          children: t("Cancel"),
-          onClick: () => {
-            closeModal(ModalId.CONFIRM_USER);
-            setSelectedUserUuid("");
-            setUpdateType(null);
-          }
-        }}
-      />
-    );
-  };
-
-  useEffect(() => {
-    setTableKey(prevKey => prevKey + 1);
-  }, [usersList]);
+      }
+    ],
+    [isLoading, tableItemMenu]
+  );
 
   return (
     <div>
@@ -156,54 +81,7 @@ const OrganisationUserTable = () => {
         initialTableState={{
           pagination: { pageSize: 50, pageIndex: 0 }
         }}
-        key={tableKey}
-        columns={[
-          {
-            accessorKey: "first_name",
-            header: "Name",
-            id: "name",
-            cell: (props: any) => {
-              return props?.row?.original.first_name + " " + props?.row?.original?.last_name;
-            }
-          },
-          {
-            accessorKey: "email_address",
-            header: "Emai address",
-            id: "email"
-          },
-          {
-            accessorKey: "last_logged_in_at",
-            header: "Last login date",
-            id: "last_login",
-            cell: user => {
-              const lastLoggedIn = user?.row?.original?.last_logged_in_at;
-              return lastLoggedIn ? new Date(lastLoggedIn).toLocaleDateString("en-GB") : "";
-            }
-          },
-          {
-            accessorKey: "status",
-            header: "Status",
-            id: "status",
-            cell: user => statusMap[user?.row?.original?.status]
-          },
-          {
-            accessorKey: "",
-            header: "",
-            id: "actions",
-            cell: params =>
-              params?.row?.original?.status !== "approved" &&
-              !isLoading && (
-                <Menu menu={tableItemMenu(params?.row?.original)} placement={MENU_PLACEMENT_RIGHT_BOTTOM}>
-                  <div className="rounded p-1 hover:bg-primary-200">
-                    <Icon
-                      name={IconNames.ELIPSES}
-                      className="roudn h-4 w-4 cursor-pointer rounded-sm text-grey-720 hover:bg-primary-200"
-                    />
-                  </div>
-                </Menu>
-              )
-          }
-        ]}
+        columns={columns}
         data={usersList ?? []}
       ></Table>
       <br />
