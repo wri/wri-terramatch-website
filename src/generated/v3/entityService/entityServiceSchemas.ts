@@ -849,6 +849,41 @@ export type DisturbanceDto = {
   propertyAffected: string | null;
 };
 
+export type ReminderDto = {
+  /**
+   * UUID of the audit status record created for this reminder
+   */
+  uuid: string;
+  /**
+   * The entity type the reminder was sent for
+   */
+  entityType: string;
+  /**
+   * The UUID of the entity the reminder was sent for
+   */
+  entityUuid: string;
+  /**
+   * The feedback included in the reminder
+   */
+  feedback: string | null;
+};
+
+export type CreateReminderAttributes = {
+  /**
+   * Optional feedback message to include in the reminder email
+   */
+  feedback?: string | null;
+};
+
+export type CreateReminderData = {
+  type: "reminders";
+  attributes: CreateReminderAttributes;
+};
+
+export type CreateReminderBody = {
+  data: CreateReminderData;
+};
+
 export type AuditStatusDto = {
   id: number;
   uuid: string;

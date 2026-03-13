@@ -1878,6 +1878,94 @@ export const disturbanceIndex = new V3ApiEndpoint<
   {}
 >("/entities/v3/disturbances", "GET");
 
+export type SendReminderPathParams = {
+  /**
+   * Report entity type to send a reminder for
+   */
+  entity: "projectReports" | "siteReports" | "nurseryReports" | "financialReports" | "srpReports";
+  /**
+   * UUID of the report entity
+   *
+   * @format uuid
+   */
+  uuid: string;
+};
+
+export type SendReminderError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SendReminderResponse = {
+  meta?: {
+    /**
+     * @example reminders
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example reminders
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ReminderDto;
+  };
+};
+
+export type SendReminderVariables = {
+  body: Schemas.CreateReminderBody;
+  pathParams: SendReminderPathParams;
+};
+
+/**
+ * Queues a reminder email to the project or organisation users associated with the given report entity and records an audit status entry of type 'reminder-sent'. Requires the authenticated user to have the 'sendReminder' permission on the entity.
+ */
+export const sendReminder = new V3ApiEndpoint<SendReminderResponse, SendReminderError, SendReminderVariables, {}>(
+  "/entities/v3/{entity}/{uuid}/reminders",
+  "POST"
+);
+
 export type GetAuditStatusesPathParams = {
   /**
    * UUID of the resource.
@@ -6173,6 +6261,7 @@ export const operationsByTag = {
   files: { getMedia, mediaUpdate, mediaDelete, siteMediaBulkUpload, uploadFile, mediaBulkDelete },
   trees: { treeScientificNamesSearch, establishmentTreesFind, treeReportCountsFind },
   disturbances: { disturbanceIndex },
+  reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
