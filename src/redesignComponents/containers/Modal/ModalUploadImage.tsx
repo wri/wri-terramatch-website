@@ -220,7 +220,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               }
 
               setPendingFile(null);
-              ApiSlice.pruneCache("media", []);
+              ApiSlice.pruneIndex("media", "");
               onClose();
             }}
             className="flex-1"
