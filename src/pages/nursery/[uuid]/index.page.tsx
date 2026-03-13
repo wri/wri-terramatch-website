@@ -16,6 +16,7 @@ import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
 import CompletedReportsTab from "./tabs/CompletedReports";
+import GoalsAndProgressTab from "./tabs/GoalsAndProgress";
 
 const NurseryDetailPage = () => {
   const t = useT();
@@ -52,6 +53,7 @@ const NurseryDetailPage = () => {
         />
       )
     },
+    { key: "progress-and-goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab nursery={nursery!} /> },
     { key: "audit-log", title: t("Audit Log"), body: <AuditLog nursery={nursery} /> }
   ];
 

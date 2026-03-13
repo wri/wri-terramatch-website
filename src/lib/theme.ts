@@ -265,6 +265,17 @@ export const system = createSystem(designSystemStyles._config, {
   theme: themeConfig
 });
 
+type FontSizeToken = keyof typeof themeConfig.tokens.fontSizes;
+type LineHeightToken = keyof typeof themeConfig.tokens.lineHeights;
+
+export const getThemedFontSize = (token: FontSizeToken): string => {
+  return themeConfig.tokens.fontSizes[token]?.value ?? "";
+};
+
+export const getThemedLineHeight = (token: LineHeightToken): string => {
+  return themeConfig.tokens.lineHeights[token]?.value ?? "";
+};
+
 export const getThemedColor = (
   variant: "neutral" | "primary" | "secondary" | "success" | "warning" | "error" | "accessible",
   index:

@@ -5,12 +5,10 @@ import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -60,7 +58,7 @@ const mapStatusToTagStateProject = (status: string | null | undefined): { type: 
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
-  const { openModal } = useModalContext();
+  const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
   const { handleEdit } = useGetEditEntityHandler({
@@ -116,8 +114,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [project.frameworkKey]);
 
   const handleInviteClick = useCallback(() => {
-    openModal(ModalId.INVITE_MONITORING_PARTNER_MODAL, <InviteMonitoringPartnerModal projectUUID={project.uuid} />);
-  }, [openModal, project.uuid]);
+    setShowInviteModal(true);
+  }, []);
 
   const handleDownloadPolygons = async () => {
     if (!project?.uuid || !project?.name) return;
@@ -136,6 +134,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
 
   return (
     <PageBody className="bg-theme-neutral-200">
+      <InviteMonitoringPartnerModal
+        projectUUID={project.uuid}
+        open={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+      />
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
         <Flex gap={7}>
           <PageItem
