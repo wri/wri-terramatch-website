@@ -27,12 +27,12 @@ const UserCreate = () => {
   const countryChoices = useGadmChoices({ level: 0 });
 
   const schemaObject: any = {
-    first_name: yup.string().nullable().required("First Name is required"),
-    last_name: yup.string().nullable().required("Last Name is required"),
-    email_address: yup.string().nullable().required("Email Address is required").email("Invalid email format"),
-    phone_number: yup.string().nullable(),
-    job_role: yup.string().nullable(),
-    organisation: yup.object().nullable(),
+    firstName: yup.string().nullable().required("First Name is required"),
+    lastName: yup.string().nullable().required("Last Name is required"),
+    emailAddress: yup.string().nullable().required("Email Address is required").email("Invalid email format"),
+    phoneNumber: yup.string().nullable(),
+    jobRole: yup.string().nullable(),
+    organisationUuid: yup.string().nullable(),
     program: yup.string().nullable(),
     country: yup.string().nullable()
   };
@@ -52,15 +52,15 @@ const UserCreate = () => {
   return (
     <Create title="Create User">
       <SimpleForm validate={validateForm(yup.object(schemaObject))}>
-        <TextInput source="first_name" label="First Name" fullWidth />
-        <TextInput source="last_name" label="Last Name" fullWidth />
-        <TextInput source="email_address" label="Professional Email Address" fullWidth type="email" />
-        <TextInput source="phone_number" label="Professional Phone Number" fullWidth type="tel" />
-        <TextInput source="job_role" label="Job Title" fullWidth />
+        <TextInput source="firstName" label="First Name" fullWidth />
+        <TextInput source="lastName" label="Last Name" fullWidth />
+        <TextInput source="emailAddress" label="Professional Email Address" fullWidth type="email" />
+        <TextInput source="phoneNumber" label="Professional Phone Number" fullWidth type="tel" />
+        <TextInput source="jobRole" label="Job Title" fullWidth />
 
         <ReferenceInput
           label="Organisation"
-          source="organisation.uuid"
+          source="organisationUuid"
           reference={modules.organisation.ResourceName}
           options={{ fullWidth: true }}
         >
@@ -74,7 +74,7 @@ const UserCreate = () => {
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
 
         <SelectArrayInput
-          source="direct_frameworks"
+          source="directFrameworks"
           label="Direct Frameworks"
           choices={directFrameworkChoices}
           fullWidth

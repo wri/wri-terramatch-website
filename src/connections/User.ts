@@ -16,6 +16,8 @@ import { ApiDataStore } from "@/store/apiSlice";
 import { Connection, Filter } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
+import { resourceCreator } from "./util/resourceMutator";
+
 export type ValidLocale = Exclude<UserUpdateAttributes["locale"], null>;
 
 export type UserConnection = {
@@ -94,6 +96,8 @@ const userConnection = v3Resource("users", usersFind)
     id == null ? undefined : { pathParams: { uuid: id } }
   )
   .buildConnection();
+
+export const createUser = resourceCreator(userCreationConnection);
 
 export const useUser = connectionHook(userConnection);
 export const loadUser = connectionLoader(userConnection);

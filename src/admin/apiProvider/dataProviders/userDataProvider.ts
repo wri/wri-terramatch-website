@@ -1,15 +1,13 @@
 import { DataProvider, Identifier } from "react-admin";
 
-import { loadUser, loadUserIndex } from "@/connections/User";
+import { createUser, loadUser, loadUserIndex } from "@/connections/User";
 import {
   DeleteV2AdminUsersUUIDError,
   fetchDeleteV2AdminUsersUUID,
   fetchGetV2AdminUsers,
   fetchGetV2AdminUsersMulti,
-  fetchPostV2AdminUsersCreate,
   fetchPutV2AdminUsersUUID,
   GetV2AdminUsersMultiError,
-  PostV2AdminUsersCreateError,
   PutV2AdminUsersUUIDError
 } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
@@ -29,16 +27,13 @@ const normalizeUserObject = (item: V2AdminUserRead) => ({
 
 export const userDataProvider: DataProvider = {
   //@ts-ignore
-  async create(__, params) {
+  async create(_, params) {
     try {
-      const response = await fetchPostV2AdminUsersCreate({
-        body: params.data
-      });
+      const user = await createUser(params.data);
 
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.id } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminUsersCreateError);
+      return { data: { id: user.uuid } };
+    } catch (createFailure) {
+      throw v3ErrorForRA("User creation failed", createFailure);
     }
   },
   //@ts-ignore
