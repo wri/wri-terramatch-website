@@ -816,3 +816,10 @@ export type OrganisationInviteRequestDto = {
    */
   callbackUrl?: Record<string, any>;
 };
+
+export type ProjectInviteAcceptBodyDto = {
+  /**
+   * Token from the project invite email.
+   */
+  token: string;
+};
