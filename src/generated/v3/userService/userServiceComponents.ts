@@ -152,6 +152,59 @@ export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPassw
   "PUT"
 );
 
+export type ResendVerificationError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResendVerificationResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @example user@example.com
+     */
+    id?: string;
+    attributes?: {
+      /**
+       * @example user@example.com
+       */
+      emailAddress?: string;
+    };
+  };
+};
+
+export type ResendVerificationVariables = {
+  body: {
+    emailAddress: string;
+    callbackUrl?: string;
+  };
+};
+
+export const resendVerification = new V3ApiEndpoint<
+  ResendVerificationResponse,
+  ResendVerificationError,
+  ResendVerificationVariables,
+  {}
+>("/auth/v3/verifications/resend", "POST");
+
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -1629,7 +1682,7 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser },
+  verificationUser: { verifyUser, resendVerification },
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },

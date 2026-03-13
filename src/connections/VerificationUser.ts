@@ -1,12 +1,17 @@
 import { createSelector } from "reselect";
 
 import { connectionHook } from "@/connections/util/connectionShortcuts";
-import { verifyUser } from "@/generated/v3/userService/userServiceComponents";
+import { resendVerification, verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
 
 export const selectVerificationUser = (store: ApiDataStore) => Object.values(store.verifications)?.[0]?.attributes;
+
+export const sendResendVerificationEmail = (emailAddress: string, callbackUrl?: string) =>
+  resendVerification.fetchParallel({
+    body: { emailAddress, callbackUrl }
+  });
 
 type VerificationUserConnection = {
   isLoading: boolean;

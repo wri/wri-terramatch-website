@@ -8,8 +8,8 @@ import Confirmation from "@/components/extensive/Confirmation/Confirmation";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
+import { sendResendVerificationEmail } from "@/connections/VerificationUser";
 import { zendeskSupportLink } from "@/constants/links";
-import { usePostV2UsersResend } from "@/generated/apiComponents";
 import { useOnMount } from "@/hooks/useOnMount";
 import { useQueryString } from "@/hooks/useQueryString";
 
@@ -23,20 +23,10 @@ const SignupConfirmPage = () => {
     if (email == null) router.push("/auth/signup");
   });
 
-  const { mutateAsync: resend } = usePostV2UsersResend({
-    onSuccess: () => {
-      timer.reset();
-      timer.start();
-    }
-  });
-
   const handleResend = async () => {
-    return resend({
-      body: {
-        email_address: email,
-        callback_url: window.location.origin + "/auth/verify/email/"
-      }
-    });
+    await sendResendVerificationEmail(email, window.location.origin + "/auth/verify/email/");
+    timer.reset();
+    timer.start();
   };
 
   return email == null ? null : (
