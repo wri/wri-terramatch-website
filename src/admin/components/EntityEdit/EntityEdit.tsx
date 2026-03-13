@@ -98,7 +98,7 @@ const EntityEditDisplay = () => {
         title={bannerTitle}
         summaryOptions={{
           title: "Review Details",
-          downloadButtonText: "Downloaxd"
+          downloadButtonText: "Download"
         }}
         roundedCorners
         hideSaveAndCloseButton
