@@ -53,7 +53,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       />
       <ProfileImage
         size={158}
-        src={"https://i.pravatar.cc/300?img=4"}
+        src={""}
         menuItems={[
           {
             label: "Select from Gallery",
