@@ -17,6 +17,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   classNamesHover?: string;
   isAdd?: boolean;
   onClickAdd?: () => void;
+  hoverContent?: React.ReactNode;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -29,6 +30,7 @@ const BaseImage: FC<BaseImageProps> = ({
   classNamesHover,
   isAdd = false,
   onClickAdd,
+  hoverContent,
   ...rest
 }) => {
   const t = useT();
@@ -57,7 +59,7 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
+              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
               borderRadius
             )}
           >
@@ -68,11 +70,11 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
         ) : (
           <div
-            className={classNames("bg-theme-neutral-300 flex h-full w-full items-center justify-center", borderRadius)}
+            className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
-              <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
+              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
+              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
                 {t("Image unavailable")}
               </Text>
             </div>
@@ -92,14 +94,20 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
           <div
             className={classNames(
-              "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
               borderRadius
             )}
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              <EditIcon className="h-4 w-4" />
-              {t("Edit")}
+              {hoverContent ? (
+                hoverContent
+              ) : (
+                <>
+                  <EditIcon className="h-4 w-4" />
+                  {t("Edit")}
+                </>
+              )}
             </Text>
           </div>
         </>

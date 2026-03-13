@@ -15,7 +15,7 @@ import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { deleteMedia, updateMedia } from "@/connections/Media";
+import { deleteMedia, downloadImage, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -26,7 +26,6 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { usePostV2ExportImage } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -253,7 +252,6 @@ export const MapContainer = ({
   const { setFilters, dashboardCountries } = dashboardContextFromHook ?? {};
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
@@ -574,19 +572,7 @@ export const MapContainer = ({
     const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
       showLoader();
       try {
-        const response = await mutateAsync({
-          body: {
-            uuid: uuid
-          }
-        });
-
-        if (!response) {
-          Log.error("No response received from the server.");
-          openNotification("error", t("Error!"), t("No response received from the server."));
-          return;
-        }
-
-        const blob = new Blob([response], { type: "image/jpeg" });
+        const blob = await downloadImage(uuid);
         const url = window.URL.createObjectURL(blob);
 
         const link = document.createElement("a");
