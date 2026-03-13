@@ -6,7 +6,6 @@ import { updateMedia } from "@/connections/Media";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
 import { DeleteIcon, MinusIcon, PhotoLibraryIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
-import ApiSlice from "@/store/apiSlice";
 import { FileType } from "@/types/common";
 
 import Modal from "./Modal";
@@ -220,7 +219,6 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               }
 
               setPendingFile(null);
-              ApiSlice.pruneIndex("media", "");
               onClose();
             }}
             className="flex-1"

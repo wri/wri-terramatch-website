@@ -186,7 +186,6 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
           }
         })
       );
-      ApiSlice.pruneIndex("media", "");
     },
     [addFile, uploadFile]
   );
@@ -241,7 +240,6 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       setSelectedGalleryImage(null);
       setCoverScale(scale);
       setCoverMediaUuid(image.uuid);
-      ApiSlice.pruneIndex("media", "");
     },
     []
   );
