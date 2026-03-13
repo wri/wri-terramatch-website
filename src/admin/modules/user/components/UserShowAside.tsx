@@ -1,10 +1,7 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
-import { useState } from "react";
 import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, useShowContext } from "react-admin";
 
 import Aside from "@/admin/components/Aside/Aside";
-import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
-import { useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
@@ -15,10 +12,7 @@ export const UserShowAside = () => {
   const notify = useNotify();
   const refresh = useRefresh();
 
-  const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
-
   const { record } = useShowContext<V2AdminUserRead & RaRecord>();
-  const uuid = record?.uuid as string;
 
   const { mutate: resendVerificationEmail } = usePostV2UsersResend({
     onSuccess() {
@@ -47,8 +41,6 @@ export const UserShowAside = () => {
       refresh();
     }
   });
-
-  const [, { verifyUser }] = useAdminUserVerify({ uuid });
 
   return (
     <div className="user-aside">
@@ -126,13 +118,6 @@ export const UserShowAside = () => {
             >
               Resend Verification Email
             </Button>
-            <Button
-              variant="contained"
-              className="!rounded-lg !bg-primary"
-              onClick={() => setShowVerifyEmailDialog(true)}
-            >
-              Verify Email
-            </Button>
             <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Send Reset Password Email
             </Button>
@@ -142,16 +127,6 @@ export const UserShowAside = () => {
           </Stack>
         </Box>
       </Aside>
-      <ConfirmationDialog
-        open={showVerifyEmailDialog}
-        title="Email Verification"
-        content={`Are you sure you want to verify ${record?.email_address}?`}
-        onAgree={() => {
-          verifyUser();
-          setShowVerifyEmailDialog(false);
-        }}
-        onDisAgree={() => setShowVerifyEmailDialog(false)}
-      />
     </div>
   );
 };

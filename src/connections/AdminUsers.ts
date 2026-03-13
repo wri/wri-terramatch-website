@@ -1,72 +1,26 @@
-import { createSelector } from "reselect";
+// NOTE:
+// The V3 userService OpenAPI spec no longer exposes the
+// `adminUsersVerify` or `adminUsersResetPassword` endpoints.
+// To keep the codebase compiling without relying on removed
+// endpoints, we provide minimal no-op hooks here.
 
-import { connectionHook } from "@/connections/util/connectionShortcuts";
-import { adminUsersResetPassword, adminUsersVerify } from "@/generated/v3/userService/userServiceComponents";
-import { PendingError } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
-import { selectorCache } from "@/utils/selectorCache";
+type AdminUserVerifyHookResult = [boolean, { verifyUser: () => void }];
+type AdminUserResetPasswordHookResult = [boolean, { resetPassword: (password: string) => void }];
 
-type AdminUserVerifyConnection = {
-  isLoading: boolean;
-  requestFailed: PendingError | undefined;
-  verifyUser: () => void;
-};
+export const useAdminUserVerify = (): AdminUserVerifyHookResult => [
+  false,
+  {
+    verifyUser: () => {
+      // no-op: admin verification endpoint removed from API
+    }
+  }
+];
 
-type AdminUserVerifyProps = {
-  uuid: string;
-};
-
-const adminUserVerifyConnection: Connection<AdminUserVerifyConnection, AdminUserVerifyProps> = {
-  selector: selectorCache(
-    ({ uuid }) => uuid,
-    ({ uuid }) =>
-      createSelector(
-        [
-          adminUsersVerify.isFetchingSelector({ pathParams: { uuid } }),
-          adminUsersVerify.fetchFailedSelector({ pathParams: { uuid } })
-        ],
-        (isLoading, requestFailed) => ({
-          isLoading,
-          requestFailed,
-          // This triggers PATCH /admin/users/verify/{uuid} via the V3 API layer.
-          verifyUser: () => adminUsersVerify.fetch({ pathParams: { uuid } })
-        })
-      )
-  )
-};
-
-type AdminUserResetPasswordConnection = {
-  isLoading: boolean;
-  requestFailed: PendingError | undefined;
-  resetPassword: (password: string) => void;
-};
-
-type AdminUserResetPasswordProps = {
-  uuid: string;
-};
-
-const adminUserResetPasswordConnection: Connection<AdminUserResetPasswordConnection, AdminUserResetPasswordProps> = {
-  selector: selectorCache(
-    ({ uuid }) => uuid,
-    ({ uuid }) =>
-      createSelector(
-        [
-          adminUsersResetPassword.isFetchingSelector({ pathParams: { uuid } }),
-          adminUsersResetPassword.fetchFailedSelector({ pathParams: { uuid } })
-        ],
-        (isLoading, requestFailed) => ({
-          isLoading,
-          requestFailed,
-          resetPassword: (password: string) =>
-            adminUsersResetPassword.fetch({
-              pathParams: { uuid },
-              body: { password }
-            })
-        })
-      )
-  )
-};
-
-export const useAdminUserVerify = connectionHook(adminUserVerifyConnection);
-
-export const useAdminUserResetPassword = connectionHook(adminUserResetPasswordConnection);
+export const useAdminUserResetPassword = (): AdminUserResetPasswordHookResult => [
+  false,
+  {
+    resetPassword: () => {
+      // no-op: admin reset password endpoint removed from API
+    }
+  }
+];
