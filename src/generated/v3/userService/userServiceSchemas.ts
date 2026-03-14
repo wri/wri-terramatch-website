@@ -50,6 +50,24 @@ export type VerificationUserRequest = {
   token: string;
 };
 
+export type ResendVerificationResponseDto = {
+  /**
+   * Email address the verification was (or would have been) sent to
+   */
+  emailAddress: string;
+};
+
+export type ResendVerificationRequest = {
+  /**
+   * User email address to resend verification to
+   */
+  emailAddress: string;
+  /**
+   * Optional callback URL used as prefix for the verification token link
+   */
+  callbackUrl?: string;
+};
+
 export type OrganisationLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
