@@ -1597,20 +1597,20 @@ export type AcceptProjectInviteError = Fetcher.ErrorWrapper<
 export type AcceptProjectInviteResponse = {
   meta?: {
     /**
-     * @example associatedUsers
+     * @example projectInviteAcceptances
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example associatedUsers
+     * @example projectInviteAcceptances
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.UserAssociationDto;
+    attributes?: Schemas.ProjectInviteAcceptanceDto;
   };
 };
 

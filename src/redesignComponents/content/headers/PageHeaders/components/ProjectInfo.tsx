@@ -7,9 +7,10 @@ import Twemoji from "react-twemoji";
 import { useMyOrg } from "@/connections/Organisation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
 import ProjectDescription from "./ProjectDescription";
@@ -45,6 +46,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     entityStatus: project.status ?? "started",
     updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const [, myOrg] = useMyOrg();
   const router = useRouter();
   return (
@@ -75,17 +77,37 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} handleEdit={handleEdit} />
+        <ProjectDescription
+          description={description}
+          handleEdit={handleEdit}
+          downloadButtonProps={{
+            variant: "secondary",
+            size: "small",
+            leftIcon: <DownloadIcon />,
+            onClick: handleExport,
+            loading: exportLoader,
+            children: t("Download Project Files")
+          }}
+        />
       ) : (
         <div className="w-fit">
           <Button
-            onClick={handleEdit}
+            onClick={() => handleEdit()}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}
-            className="w-auto"
+            className="mr-3 w-auto"
           >
             {t("Add Project Information")}
+          </Button>
+          <Button
+            variant="secondary"
+            size="small"
+            leftIcon={<DownloadIcon />}
+            onClick={handleExport}
+            loading={exportLoader}
+          >
+            {t("Download Project Files")}
           </Button>
         </div>
       )}
