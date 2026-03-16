@@ -65,8 +65,8 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
     format(date) {
       return formatDateValue(date, dateFormat);
     },
-    parse(value) {
-      return parseDateInput(value, dateFormat);
+    parse(value): DateValue | undefined {
+      return parseDateInput(value, dateFormat) as DateValue | undefined;
     },
     onValueChange({ value }) {
       const preserved = preservedRef.current;
