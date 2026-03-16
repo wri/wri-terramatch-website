@@ -92,7 +92,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       ) : (
         <div className="w-fit">
           <Button
-            onClick={handleEdit}
+            onClick={() => handleEdit()}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}
