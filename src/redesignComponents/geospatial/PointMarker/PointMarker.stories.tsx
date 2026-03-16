@@ -63,15 +63,6 @@ export const Cluster: Story = {
   }
 };
 
-export const CustomBackground: Story = {
-  args: {
-    ariaLabel: "Custom background marker",
-    variant: "icon",
-    icon: <PlaceholderIcon color="neutral.100" />,
-    backgroundColor: "#27A9E0"
-  }
-};
-
 export const WithFocusState: Story = {
   args: {
     ariaLabel: "Focused marker",
@@ -113,7 +104,7 @@ export const AllVariants: Story = {
           variant="icon"
           icon={<PlaceholderIcon color="neutral.100" />}
           showFocusState
-          backgroundColor="#27A9E0"
+          backgroundColor="#8ECA3FCC"
         />
         <p style={{ marginTop: "8px", fontSize: "10px", color: "#666" }}>Focus</p>
       </div>

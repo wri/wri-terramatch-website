@@ -363,13 +363,21 @@ export const ModalGalleryImagesStory: Story = {
     content: <div>ModalGalleryImages</div>,
     open: false
   },
-  render: args => {
+  render: () => {
     const [showModal, setShowModal] = useState(false);
 
     return (
       <>
         <Button onClick={() => setShowModal(true)}>Show Modal</Button>
-        <ModalSelectGalleryImages {...args} open={showModal} onClose={() => setShowModal(false)} />
+        <ModalSelectGalleryImages
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          images={[]}
+          hasMore={false}
+          isLoading={false}
+          onLoadMore={() => {}}
+          onSelectImage={() => {}}
+        />
       </>
     );
   }

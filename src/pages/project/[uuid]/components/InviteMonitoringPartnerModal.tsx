@@ -2,7 +2,7 @@ import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
@@ -34,7 +34,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
   const { openToast } = useToastContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -93,12 +93,18 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
               {t("This action will provide them access to all your project data and reports.")}
             </Text>
           </div>
-          <TextInput
-            {...register("email")}
-            label={t("Email Address")}
-            type="email"
-            errorMessage={errors.email?.message}
-            required
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
           />
         </div>
       }

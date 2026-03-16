@@ -7,7 +7,6 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -65,16 +64,6 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     });
   };
 
-  const goToContinueEditingTab = () => {
-    if (isEntityAwaitingApproval(nursery?.status, nursery?.updateRequestStatus)) {
-      handleEdit();
-    } else {
-      router.push(`/entity/nurseries/edit/${nursery.uuid}`, undefined, {
-        shallow: true
-      });
-    }
-  };
-
   return (
     <PageBody>
       <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
@@ -91,16 +80,16 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             }}
           >
             <MetricCard
-              title={t("About Nurseries")}
+              title={t("Seedlings Grown")}
               variant="donutChart"
               progress={nursery?.seedlingGrown ?? 0}
               goal={totalNurserySeedlings}
               icon={<SeedlingsIcon boxSize={6} />}
-              tooltipContent={t("Nursery Information")}
+              tooltipContent={t("Number of seedlings grown for this project.")}
               color="secondary.500"
             />
           </PageItem>
-          <PageItem title="Nursery Information" flexProps={{ maxWidth: "41%" }}>
+          <PageItem title="About Nurseries" flexProps={{ maxWidth: "41%" }}>
             <About
               description={
                 <Text textStyle="300" as="span">
@@ -135,7 +124,9 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             flexProps={{ maxWidth: "33%", overflow: "hidden" }}
             title={t("Nursery Set Up")}
             tag={(() => {
-              const tagState = mapStatusToTagStateNursery(nursery?.status);
+              const tagState = mapStatusToTagStateNursery(
+                nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
+              );
 
               return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
             })()}
@@ -144,7 +135,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               size: "small",
               children: nursery?.status === "approved" ? t("Edit") : t("Continue Editing"),
               rightIcon: <ChevronRightIcon />,
-              onClick: goToContinueEditingTab
+              onClick: () => handleEdit()
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>

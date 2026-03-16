@@ -133,21 +133,30 @@ export const dateRangePickerStyles = (size: "default" | "small" = "default") => 
     color: ${getThemedColor("neutral", 600)};
   }
 
-  [data-part="trigger"] {
+  [data-part="control"] > .chakra-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 0.25rem;
+    flex-shrink: 0;
     color: ${getThemedColor("neutral", 700)};
     transition: color 0.15s;
   }
 
-  [data-part="trigger"]:hover {
+  [data-part="control"]:hover > .chakra-icon {
     color: ${getThemedColor("primary", 600)};
+  }
+
+  [data-part="control"][data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  [data-part="control"][data-disabled] > .chakra-icon {
+    color: ${getThemedColor("neutral", 500)};
+  }
+
+  [data-part="control"][data-disabled]:hover > .chakra-icon {
+    color: ${getThemedColor("neutral", 500)};
   }
 `;
 
