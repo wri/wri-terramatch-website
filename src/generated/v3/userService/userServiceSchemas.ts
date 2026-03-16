@@ -50,6 +50,33 @@ export type VerificationUserRequest = {
   token: string;
 };
 
+export type ResendVerificationResponseDto = {
+  /**
+   * Email address the verification was (or would have been) sent to
+   */
+  emailAddress: string;
+};
+
+export type ResendVerificationAttributes = {
+  /**
+   * User email address to resend verification to
+   */
+  emailAddress: string;
+  /**
+   * Optional callback URL used as prefix for the verification token link
+   */
+  callbackUrl?: string;
+};
+
+export type ResendVerificationData = {
+  type: "verifications";
+  attributes: ResendVerificationAttributes;
+};
+
+export type ResendVerificationBody = {
+  data: ResendVerificationData;
+};
+
 export type OrganisationLightDto = {
   /**
    * Indicates if this resource has the full resource definition.
@@ -221,6 +248,7 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  profileImageScale: number | null;
 };
 
 export type FinancialIndicatorDto = {
@@ -367,6 +395,7 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
+  profileImageScale: number | null;
 };
 
 export type FundingTypeDto = {

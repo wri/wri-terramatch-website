@@ -3,6 +3,7 @@ import {
   LoginDto,
   ResetPasswordResponseDto,
   VerificationUserResponseDto,
+  ResendVerificationResponseDto,
   OrganisationLightDto,
   OrganisationFullDto,
   UserDto,
@@ -41,7 +42,7 @@ export const USER_SERVICE_RESOURCES = [
 export type UserServiceApiResources = {
   logins: StoreResourceMap<LoginDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
-  verifications: StoreResourceMap<VerificationUserResponseDto>;
+  verifications: StoreResourceMap<VerificationUserResponseDto | ResendVerificationResponseDto>;
   organisations: StoreResourceMap<OrganisationLightDto | OrganisationFullDto>;
   users: StoreResourceMap<UserDto>;
   financialIndicators: StoreResourceMap<FinancialIndicatorDto>;
