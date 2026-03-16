@@ -273,10 +273,11 @@ const generateConstants = async (context: Context, config: ConfigBase) => {
       if (schema == null) return;
 
       const schemaProperties: _.Dictionary<SchemaObject>[] =
-        schema.properties != null ? [schema.properties] : [];
-      for (const schemaProp of schemaProperties) {
-        if (schemaProp == null) continue;
-        for (const definition of [schemaProp.data, schemaProp.included]) {
+        schema.oneOf == null
+          ? [schema.properties!]
+          : (schema.oneOf as SchemaObject[]).map(({ properties }) => properties!);
+      for (const schema of schemaProperties) {
+        for (const definition of [schema.data, schema.included]) {
           if (definition == null) continue;
 
           const allDtoProperties: _.Dictionary<SchemaObject>[] = [];
