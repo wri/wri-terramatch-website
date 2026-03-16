@@ -56,7 +56,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         lineHeight="36px"
         color="primary.900"
         fontWeight="bold"
-        className="flex gap-3 items-baseline"
+        className="flex items-baseline gap-3"
       >
         {title} <ProgressTag {...tag} />
       </Text>
