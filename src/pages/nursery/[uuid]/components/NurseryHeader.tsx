@@ -84,7 +84,7 @@ const NurseryHeader = ({ nursery }: NurseryHeaderProps) => {
           </Then>
           <Else>
             <Button variant="secondary" onClick={handleExport}>
-              {t("Export")}
+              {t("Download Nursery Files")}
               <InlineLoader loading={exportLoader} />
             </Button>
             <Button onClick={handleEdit}>{t("Edit")}</Button>
