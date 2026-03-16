@@ -215,13 +215,13 @@ export type ResendUserVerificationError = Fetcher.ErrorWrapper<{
 export type ResendUserVerificationResponse = {
   meta?: {
     /**
-     * @example verifications
+     * @example resendVerifications
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example verifications
+     * @example resendVerifications
      */
     type?: string;
     /**
