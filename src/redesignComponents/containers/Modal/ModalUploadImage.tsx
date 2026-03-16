@@ -184,7 +184,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             className="hidden"
             onChange={event => {
               const file = event.target.files?.[0];
-              if (!file) return;
+              if (file == null) return;
               const objectUrl = URL.createObjectURL(file);
               setLocalImgSrc(objectUrl);
               setPendingFile(file);
@@ -204,11 +204,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             onClick={async () => {
               const scale = 1 + sliderValue / 100;
 
-              if (pendingFile) {
-                await onUploadFile?.(pendingFile, scale);
-              } else if (selectedGalleryImage && onConfirmGalleryImage) {
+              if (pendingFile != null && onUploadFile != null) {
+                await onUploadFile(pendingFile, scale);
+              } else if (selectedGalleryImage != null && onConfirmGalleryImage != null) {
                 await onConfirmGalleryImage(selectedGalleryImage, scale);
-              } else if (mediaUuid) {
+              } else if (mediaUuid != null) {
                 await updateMedia(
                   {
                     isCover: true,

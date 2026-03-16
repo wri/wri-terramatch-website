@@ -117,7 +117,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   }, [coverImage, coverScale]);
 
   useEffect(() => {
-    if (!isGalleryLoaded || !mediaList) return;
+    if (!isGalleryLoaded || mediaList == null) return;
 
     setGalleryImages(prev => {
       if (galleryPagination.page === 1) {
@@ -181,7 +181,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             setCoverScale(scale);
             setCoverMediaUuid(updated.uuid);
           },
-          onError: (errorFile, _errorMessage) => {
+          onError: errorFile => {
             addFile(errorFile);
           }
         })
@@ -194,11 +194,11 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     const file = files?.[0];
     const uuidToDelete = coverMediaUuid ?? coverImage?.uuid ?? file?.uuid;
 
-    if (!uuidToDelete) return;
+    if (uuidToDelete == null) return;
 
     await deleteMedia(uuidToDelete);
 
-    if (file) {
+    if (file != null) {
       removeFile(file);
     }
 
@@ -282,7 +282,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             className="hidden"
             onChange={event => {
               const file = event.target.files?.[0];
-              if (!file) return;
+              if (file == null) return;
               void handleUploadProfileImage(file, 1);
               event.target.value = "";
             }}
