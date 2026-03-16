@@ -77,7 +77,13 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
         />
       ) : (
         <div className="flex w-fit gap-2">
-          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
+          <Button
+            variant="secondary"
+            size="small"
+            leftIcon={<EditIcon />}
+            className="w-auto"
+            onClick={() => handleEdit()}
+          >
             {t("Edit")}
           </Button>
           <Button

@@ -45,7 +45,7 @@ const FinancialReportHeader = ({ financialReport }: FinancialReportHeaderProps) 
             <InlineLoader loading={exportLoader} />
           </Button>
         </When>
-        <Button onClick={handleEdit}>{t("Edit")}</Button>
+        <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
       </div>
     </PageHeader>
   );
