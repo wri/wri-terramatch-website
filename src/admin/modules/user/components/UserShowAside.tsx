@@ -17,8 +17,8 @@ export const UserShowAside = () => {
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
 
   const { record } = useShowContext<V2AdminUserRead & RaRecord>();
-  const uuid = record?.uuid as string;
-  const [, { verifyUser }] = useAdminUserVerify({ uuid });
+
+  const [, { create: verifyUser }] = useAdminUserVerify({ uuid: record?.uuid as string });
 
   const { mutate: resendVerificationEmail } = usePostV2UsersResend({
     onSuccess() {
@@ -145,6 +145,7 @@ export const UserShowAside = () => {
         title="Email Verification"
         content={`Are you sure you want to verify ${record?.email_address}?`}
         onAgree={() => {
+          // @ts-expect-error empty body on a creation hook
           verifyUser();
           setShowVerifyEmailDialog(false);
           refresh();
