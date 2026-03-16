@@ -152,64 +152,6 @@ export const resetPassword = new V3ApiEndpoint<ResetPasswordResponse, ResetPassw
   "PUT"
 );
 
-export type ResendVerificationError = Fetcher.ErrorWrapper<{
-  status: 400;
-  payload: {
-    /**
-     * @example 400
-     */
-    statusCode: number;
-    /**
-     * @example Bad Request
-     */
-    message: string;
-  };
-}>;
-
-export type ResendVerificationResponse = {
-  meta?: {
-    /**
-     * @example verifications
-     */
-    resourceType?: string;
-  };
-  data?: {
-    /**
-     * @example verifications
-     */
-    type?: string;
-    /**
-     * @example user@example.com
-     */
-    id?: string;
-    attributes?: {
-      /**
-       * @example user@example.com
-       */
-      emailAddress?: string;
-    };
-  };
-};
-
-export type ResendVerificationVariables = {
-  body: {
-    data: {
-      type: "verifications";
-      attributes: {
-        emailAddress: string;
-        callbackUrl?: string;
-      };
-    };
-  };
-};
-
-export const resendVerification = new V3ApiEndpoint<
-  ResendVerificationResponse,
-  ResendVerificationError,
-  ResendVerificationVariables,
-  {}
->("/auth/v3/verifications/resend", "POST");
-
 export type VerifyUserError = Fetcher.ErrorWrapper<{
   status: 400;
   payload: {
@@ -255,6 +197,54 @@ export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError,
   "/auth/v3/verifications",
   "POST"
 );
+
+export type ResendUserVerificationError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResendUserVerificationResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResendVerificationResponseDto;
+  };
+};
+
+export type ResendUserVerificationVariables = {
+  body: Schemas.ResendVerificationBody;
+};
+
+/**
+ * Resend a verification email for a user by email address
+ */
+export const resendUserVerification = new V3ApiEndpoint<
+  ResendUserVerificationResponse,
+  ResendUserVerificationError,
+  ResendUserVerificationVariables,
+  {}
+>("/auth/v3/verifications/resend", "POST");
 
 export type OrganisationIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -1655,20 +1645,20 @@ export type AcceptProjectInviteError = Fetcher.ErrorWrapper<
 export type AcceptProjectInviteResponse = {
   meta?: {
     /**
-     * @example associatedUsers
+     * @example projectInviteAcceptances
      */
     resourceType?: string;
   };
   data?: {
     /**
-     * @example associatedUsers
+     * @example projectInviteAcceptances
      */
     type?: string;
     /**
      * @format uuid
      */
     id?: string;
-    attributes?: Schemas.UserAssociationDto;
+    attributes?: Schemas.ProjectInviteAcceptanceDto;
   };
 };
 
@@ -1687,7 +1677,7 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser, resendVerification },
+  verificationUser: { verifyUser, resendUserVerification },
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation },
