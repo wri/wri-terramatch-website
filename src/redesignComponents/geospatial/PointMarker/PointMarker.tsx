@@ -13,6 +13,16 @@ export interface MapMarkerProps {
   variant?: "cluster" | "simple-pin" | "icon";
 }
 
+const BOX_SHADOW = "0px 1px 2px -1px rgba(0, 0, 0, 0.10), 0px 1px 3px 0px rgba(0, 0, 0, 0.10) !important";
+
+const FOCUS_STATE_STYLES = {
+  outline: "2px solid #50B6E2",
+  borderRadius: "50%",
+  scale: "1.25",
+  outlineOffset: "0px !important",
+  "& button:hover": { scale: "1 !important" }
+};
+
 const PointMarker: FC<MapMarkerProps> = ({
   ariaLabel,
   icon,
@@ -25,20 +35,15 @@ const PointMarker: FC<MapMarkerProps> = ({
 }) => {
   return (
     <Box
-      css={
-        variant === "icon"
-          ? {
-              "& button": {
-                width: "40px",
-                height: "40px"
-              }
-            }
-          : {
-              "& button": {
-                fontWeight: "400"
-              }
-            }
-      }
+      css={{
+        "& > div": showFocusState && FOCUS_STATE_STYLES,
+        "& button": {
+          ...(variant === "icon" ? { width: "40px", height: "40px" } : { fontWeight: "400" }),
+          transition: "all 0.1s ease-in-out",
+          boxShadow: BOX_SHADOW
+        },
+        "& button:hover": { scale: 1.25 }
+      }}
     >
       <MapMarker
         ariaLabel={ariaLabel}
