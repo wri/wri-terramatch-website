@@ -9,7 +9,6 @@ import {
   TextField
 } from "@mui/material";
 import { useT } from "@transifex/react";
-import { kebabCase } from "lodash";
 import { FC, useCallback, useMemo, useState } from "react";
 import { AutocompleteArrayInput, Form, useShowContext } from "react-admin";
 import * as yup from "yup";
@@ -20,15 +19,19 @@ import { validateForm } from "@/admin/utils/forms";
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
 import { useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
+import { ReminderEntityType, useSendReminder } from "@/connections/Reminder";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useApiFieldsProvider } from "@/context/wizardForm.provider";
-import { usePostV2AdminENTITYUUIDReminder } from "@/generated/apiComponents";
 import { ReportUpdateAttributes } from "@/generated/v3/entityService/entityServiceSchemas";
-import { pluralEntityName, v3EntityName } from "@/helpers/entity";
+import { v3EntityName } from "@/helpers/entity";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
 import { useEntityForm } from "@/hooks/useFormGet";
 import { SingularEntityName } from "@/types/common";
 import { isNotNull } from "@/utils/array";
+
+type StatusFormValues = {
+  feedbackFields?: string[];
+};
 
 interface StatusChangeModalProps extends DialogProps {
   handleClose: () => void;
@@ -39,7 +42,7 @@ interface StatusChangeModalProps extends DialogProps {
 
 const moreInfoValidationSchema = yup.object({
   feedback: yup.string().nullable(),
-  feedback_fields: yup.array().min(1, "Feedback fields must have at least 1 item").of(yup.string()).required()
+  feedbackFields: yup.array().min(1, "Feedback fields must have at least 1 item").of(yup.string()).required()
 });
 const genericValidationSchema = yup.object({
   feedback: yup.string().nullable()
@@ -51,7 +54,6 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
   const { openNotification } = useNotificationContext();
   const t = useT();
 
-  const resourceName = useMemo(() => kebabCase(pluralEntityName(resource as SingularEntityName)), [resource]);
   const v3Resource = useMemo(() => v3EntityName(resource as SingularEntityName) as FormEntity, [resource]);
   const [, { isUpdating, update }] = useFullEntity(v3Resource, record.uuid);
 
@@ -121,26 +123,21 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
       });
   }, [fieldsProvider]);
 
-  const { mutateAsync: mutateAsyncReminder, isLoading: isLoadingReminder } = usePostV2AdminENTITYUUIDReminder({
-    onSuccess: () => {
+  const { create: createReminder, isCreating: isLoadingReminder } = useSendReminder(
+    { entity: v3Resource as ReminderEntityType, uuid: record.uuid },
+    useCallback(() => {
       openNotification("success", "Success!", t("Reminder sent successfully."));
-    }
-  });
+      setFeedbackValue("");
+      handleClose();
+    }, [openNotification, t, handleClose])
+  );
 
   const handleSave = useCallback(
-    async (data: any) => {
+    (data: StatusFormValues) => {
       if (!record || !status) return;
 
       if (status === "reminder") {
-        await mutateAsyncReminder({
-          pathParams: {
-            uuid: record.id,
-            entity: resourceName
-          },
-          body: { feedback: feedbackValue }
-        });
-        setFeedbackValue("");
-        handleClose();
+        createReminder({ feedback: feedbackValue });
       } else {
         if (status === "due") {
           (update as (a: ReportUpdateAttributes) => void)({ status });
@@ -148,12 +145,12 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
           update({
             status,
             feedback: feedbackValue,
-            feedbackFields: data.feedback_fields
+            feedbackFields: data.feedbackFields
           });
         }
       }
     },
-    [feedbackValue, handleClose, mutateAsyncReminder, record, resourceName, status, update]
+    [createReminder, feedbackValue, record, status, update]
   );
 
   useRequestComplete(
@@ -196,7 +193,7 @@ const StatusChangeModal: FC<StatusChangeModalProps> = ({ handleClose, status, ..
           )}
           {status === "needs-more-information" && feedbackChoices.length > 0 ? (
             <AutocompleteArrayInput
-              source="feedback_fields"
+              source="feedbackFields"
               label="Fields"
               choices={feedbackChoices}
               fullWidth
