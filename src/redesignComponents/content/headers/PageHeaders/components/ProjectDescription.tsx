@@ -83,7 +83,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({
           </Button>
         )}
       </Box>
-      <div className="flex w-fit gap-2">
+      <div className="flex gap-2 w-fit">
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
