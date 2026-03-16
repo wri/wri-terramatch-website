@@ -29,12 +29,12 @@ const UserEdit = () => {
   const countryChoices = useGadmChoices({ level: 0 });
 
   const schemaObject: any = {
-    first_name: yup.string().nullable().required(),
-    last_name: yup.string().nullable().required(),
-    email_address: yup.string().nullable().required(),
-    phone_number: yup.string().nullable().required(),
-    job_role: yup.string().nullable().required(),
-    organisation: yup.object()
+    firstName: yup.string().nullable().required(),
+    lastName: yup.string().nullable().required(),
+    emailAddress: yup.string().nullable().required(),
+    phoneNumber: yup.string().nullable().required(),
+    jobRole: yup.string().nullable().required(),
+    organisationUuid: yup.string().nullable().required()
   };
 
   const roleChoices = useMemo(() => {
@@ -48,15 +48,15 @@ const UserEdit = () => {
   return (
     <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>
       <SimpleForm validate={validateForm(yup.object(schemaObject))}>
-        <TextInput source="first_name" label="First Name" fullWidth />
-        <TextInput source="last_name" label="Last Name" fullWidth />
-        <TextInput source="email_address" label="Professional Email Address" fullWidth type="email" />
-        <TextInput source="phone_number" label="Professional Phone Number" fullWidth type="tel" />
-        <TextInput source="job_role" label="Job Title" fullWidth />
+        <TextInput source="firstName" label="First Name" fullWidth />
+        <TextInput source="lastName" label="Last Name" fullWidth />
+        <TextInput source="emailAddress" label="Professional Email Address" fullWidth type="email" />
+        <TextInput source="phoneNumber" label="Professional Phone Number" fullWidth type="tel" />
+        <TextInput source="jobRole" label="Job Title" fullWidth />
         <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
         <ReferenceInput
           label="Organisation"
-          source="organisation.uuid"
+          source="organisationUuid"
           reference={modules.organisation.ResourceName}
           options={{ fullWidth: true }}
         >
@@ -68,15 +68,10 @@ const UserEdit = () => {
           />
         </ReferenceInput>
 
-        {isFrameworkAdmin && <SelectInput source="role" label="Role" choices={roleChoices} fullWidth />}
+        {isFrameworkAdmin && <SelectInput source="primaryRole" label="Role" choices={roleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
-        <SelectArrayInput
-          source="direct_frameworks"
-          label="Direct Frameworks"
-          choices={directFrameworkChoices}
-          fullWidth
-        />
+        <SelectArrayInput source="frameworks" label="Direct Frameworks" choices={directFrameworkChoices} fullWidth />
       </SimpleForm>
     </Edit>
   );
