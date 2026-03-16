@@ -124,7 +124,9 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             flexProps={{ maxWidth: "33%", overflow: "hidden" }}
             title={t("Nursery Set Up")}
             tag={(() => {
-              const tagState = mapStatusToTagStateNursery(nursery?.status);
+              const tagState = mapStatusToTagStateNursery(
+                nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
+              );
 
               return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
             })()}
