@@ -193,8 +193,13 @@ export type ResendVerificationResponse = {
 
 export type ResendVerificationVariables = {
   body: {
-    emailAddress: string;
-    callbackUrl?: string;
+    data: {
+      type: "verifications";
+      attributes: {
+        emailAddress: string;
+        callbackUrl?: string;
+      };
+    };
   };
 };
 
