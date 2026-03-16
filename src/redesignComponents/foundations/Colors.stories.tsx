@@ -110,7 +110,7 @@ const ColorScaleCard = ({ variant, getTextColor }: { variant: Variant; getTextCo
               variant={variant}
               shade={shade}
               emphasize={shade === 500}
-              className={classNames("border-y border-theme-neutral-300", {
+              className={classNames("border-theme-neutral-300 border-y", {
                 "border-l": index === 0,
                 "border-r": index === colorShades.length - 1
               })}
@@ -145,6 +145,16 @@ export const Primary: Story = {
 
 export const Secondary: Story = {
   render: () => <ColorScaleCard variant="secondary" getTextColor={getTextOnSecondaryColor} />
+};
+
+export const SecondaryNeutral: Story = {
+  render: () => {
+    return (
+      <Box bg="neutral.200" borderRadius="16px" p={8} boxShadow="sm">
+        <Box bg="secondary.neutral" height="40px" width="100%" borderWidth="1px" borderColor="neutral.300" />
+      </Box>
+    );
+  }
 };
 
 const textOnBackgroundShades: Shade[] = [600, 500, 400];
