@@ -7,7 +7,6 @@ import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -63,16 +62,6 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
       shallow: true
     });
-  };
-
-  const goToContinueEditingTab = () => {
-    if (isEntityAwaitingApproval(nursery?.status, nursery?.updateRequestStatus)) {
-      handleEdit();
-    } else {
-      router.push(`/entity/nurseries/edit/${nursery.uuid}`, undefined, {
-        shallow: true
-      });
-    }
   };
 
   return (
@@ -144,7 +133,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               size: "small",
               children: nursery?.status === "approved" ? t("Edit") : t("Continue Editing"),
               rightIcon: <ChevronRightIcon />,
-              onClick: goToContinueEditingTab
+              onClick: () => handleEdit()
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
