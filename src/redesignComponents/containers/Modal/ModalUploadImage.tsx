@@ -1,4 +1,5 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import Image from "next/image";
 import React, { FC, useEffect, useRef, useState } from "react";
 
@@ -6,7 +7,6 @@ import { updateMedia } from "@/connections/Media";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
 import { DeleteIcon, MinusIcon, PhotoLibraryIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
-import ApiSlice from "@/store/apiSlice";
 import { FileType } from "@/types/common";
 
 import Modal from "./Modal";
@@ -46,7 +46,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
-
+  const t = useT();
   useEffect(() => {
     if (!open) return;
     if (scale != null && !Number.isNaN(scale)) {
@@ -158,7 +158,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                 onRemoveFile?.();
               }}
             >
-              Remove Image
+              {t("Remove Image")}
             </Button>
             <Button
               variant="secondary"
@@ -166,7 +166,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               leftIcon={<PhotoLibraryIcon />}
               onClick={() => onOpenModalImageGallery?.(true)}
             >
-              Select from Gallery
+              {t("Select from Gallery")}
             </Button>
             <Button
               variant="secondary"
@@ -174,7 +174,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               leftIcon={<UploadIcon />}
               onClick={() => fileInputRef.current?.click()}
             >
-              Upload New
+              {t("Upload New")}
             </Button>
           </Flex>
           <input
@@ -184,14 +184,14 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             className="hidden"
             onChange={event => {
               const file = event.target.files?.[0];
-              if (!file) return;
+              if (file == null) return;
               const objectUrl = URL.createObjectURL(file);
               setLocalImgSrc(objectUrl);
               setPendingFile(file);
             }}
           />
           <Text textStyle="200" color="neutral.800">
-            Upload a JPG or PNG image (max XX MB).
+            {t("Upload a JPG or PNG image (max 10 MB).")}
           </Text>
         </Flex>
       }
@@ -204,11 +204,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             onClick={async () => {
               const scale = 1 + sliderValue / 100;
 
-              if (pendingFile) {
-                await onUploadFile?.(pendingFile, scale);
-              } else if (selectedGalleryImage && onConfirmGalleryImage) {
+              if (pendingFile != null && onUploadFile != null) {
+                await onUploadFile(pendingFile, scale);
+              } else if (selectedGalleryImage != null && onConfirmGalleryImage != null) {
                 await onConfirmGalleryImage(selectedGalleryImage, scale);
-              } else if (mediaUuid) {
+              } else if (mediaUuid != null) {
                 await updateMedia(
                   {
                     isCover: true,
@@ -220,12 +220,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               }
 
               setPendingFile(null);
-              ApiSlice.pruneCache("media", []);
               onClose();
             }}
             className="flex-1"
           >
-            Save
+            {t("Save")}
           </Button>
         </Flex>
       }

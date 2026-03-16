@@ -8,11 +8,10 @@ import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
-import { updateMedia } from "@/connections/Media";
+import { downloadImage, updateMedia } from "@/connections/Media";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { usePostV2ExportImage } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -54,19 +53,18 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const { openNotification } = useNotificationContext();
   const { getReadableEntityName } = useGetReadableEntityName();
   const t = useT();
-  const { mutateAsync } = usePostV2ExportImage();
   const handleDelete = useCallback(() => {
     onDelete?.(data.uuid);
   }, [data.uuid, onDelete]);
   const setImageCover = useCallback(async () => {
-    const result = await updateMedia({ isCover: true }, { id: data.uuid });
+    const result = await updateMedia({ isCover: true, profileImageScale: data.profileImageScale }, { id: data.uuid });
     if (result) {
       openNotification("success", t("Success!"), t("Image set as cover successfully"));
       reloadGalleryImages?.();
     } else {
       openNotification("error", t("Error!"), t("Failed to set image as cover"));
     }
-  }, [data.uuid, openNotification, reloadGalleryImages, t]);
+  }, [data.profileImageScale, data.uuid, openNotification, reloadGalleryImages, t]);
   const openModalImageDetail = useCallback(() => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,
@@ -85,19 +83,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
   const handleDownload = useCallback(async (): Promise<void> => {
     showLoader();
     try {
-      const response = await mutateAsync({
-        body: {
-          uuid: data.uuid
-        }
-      });
-
-      if (!response) {
-        Log.error("No response received from the server.");
-        openNotification("error", t("Error!"), t("No response received from the server."));
-        return;
-      }
-
-      const blob = new Blob([response], { type: "image/jpeg" });
+      const blob = await downloadImage(data.uuid);
       const url = window.URL.createObjectURL(blob);
 
       const link = document.createElement("a");
@@ -114,7 +100,7 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
       Log.error("Download error:", error);
       hideLoader();
     }
-  }, [data?.fileName, data.uuid, hideLoader, mutateAsync, openNotification, showLoader, t]);
+  }, [data?.fileName, data.uuid, hideLoader, openNotification, showLoader, t]);
 
   const galleryMenu: MenuItemProps[] = useMemo(
     () => [

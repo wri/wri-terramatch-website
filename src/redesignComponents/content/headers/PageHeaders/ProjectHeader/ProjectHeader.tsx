@@ -47,6 +47,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     name: string;
   } | null>(null);
   const [coverScale, setCoverScale] = useState<number | undefined>(undefined);
+  const [coverMediaUuid, setCoverMediaUuid] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
@@ -69,6 +70,12 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     uuid: project.uuid ?? null,
     filter: { isCover: true }
   });
+
+  useEffect(() => {
+    if (coverImage?.uuid) {
+      setCoverMediaUuid(coverImage.uuid);
+    }
+  }, [coverImage?.uuid]);
 
   const { files, addFile, removeFile } = useFiles(true);
   const uploadFile = useUploadFile({
@@ -110,7 +117,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   }, [coverImage, coverScale]);
 
   useEffect(() => {
-    if (!isGalleryLoaded || !mediaList) return;
+    if (!isGalleryLoaded || mediaList == null) return;
 
     setGalleryImages(prev => {
       if (galleryPagination.page === 1) {
@@ -172,9 +179,9 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             addFile(updated);
             setSelectedCoverUrl(updated.url ?? undefined);
             setCoverScale(scale);
-            ApiSlice.pruneCache("media", []);
+            setCoverMediaUuid(updated.uuid);
           },
-          onError: (errorFile, _errorMessage) => {
+          onError: errorFile => {
             addFile(errorFile);
           }
         })
@@ -185,20 +192,21 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
 
   const handleRemoveProfileImage = useCallback(async () => {
     const file = files?.[0];
-    if (coverImage?.uuid == null) return;
-    if (coverImage.uuid) {
-      await deleteMedia(coverImage.uuid);
+    const uuidToDelete = coverMediaUuid ?? coverImage?.uuid ?? file?.uuid;
+
+    if (uuidToDelete == null) return;
+
+    await deleteMedia(uuidToDelete);
+
+    if (file != null) {
+      removeFile(file);
     }
 
-    if (!file) return;
-    if (file.uuid) {
-      await deleteMedia(file.uuid);
-    }
-
-    removeFile(file);
     setSelectedCoverUrl(undefined);
     setCoverScale(undefined);
-  }, [files, removeFile, coverImage?.uuid]);
+    setCoverMediaUuid(undefined);
+    ApiSlice.pruneCache("media", [uuidToDelete]);
+  }, [files, removeFile, coverMediaUuid, coverImage?.uuid]);
 
   const galleryImageItems = useMemo(() => {
     return galleryImages?.map(media => {
@@ -231,6 +239,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       setSelectedCoverUrl(image.url);
       setSelectedGalleryImage(null);
       setCoverScale(scale);
+      setCoverMediaUuid(image.uuid);
     },
     []
   );
@@ -273,7 +282,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             className="hidden"
             onChange={event => {
               const file = event.target.files?.[0];
-              if (!file) return;
+              if (file == null) return;
               void handleUploadProfileImage(file, 1);
               event.target.value = "";
             }}
@@ -282,7 +291,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             open={open}
             onClose={handleCloseUploadModal}
             imgSrc={selectedCoverUrl ?? coverImage?.thumbUrl!}
-            mediaUuid={coverImage?.uuid}
+            mediaUuid={coverMediaUuid}
             onOpenModalImageGallery={setIsGalleryOpen}
             onUploadFile={handleUploadProfileImage}
             onRemoveFile={handleRemoveProfileImage}

@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
-// import { usePostV2ProjectsInviteAccept } from "@/generated/apiComponents";
+import { acceptProjectInviteByToken } from "@/connections/UserAssociation";
 
 export const INVITE_TOKEN_KEY = "invite-token";
 
@@ -20,18 +20,22 @@ export const useSetInviteToken = () => {
 };
 
 /**
- * To accept invitation using usePostV2ProjectsInviteAccept endpoint
+ * To accept invitation using v3 acceptProjectInvite endpoint
  */
 export const useAcceptInvitation = () => {
-  // const { mutate } = usePostV2ProjectsInviteAccept({
-  //   onSuccess() {
-  //     localStorage.removeItem(INVITE_TOKEN_KEY);
-  //   }
-  // });
-  // useEffect(() => {
-  //   const token = localStorage.getItem(INVITE_TOKEN_KEY);
-  //   if (token) {
-  //     mutate({ body: { token } });
-  //   }
-  // }, [mutate]);
+  const hasAccepted = useRef(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem(INVITE_TOKEN_KEY);
+    if (token != null && !hasAccepted.current) {
+      hasAccepted.current = true;
+      acceptProjectInviteByToken(token)
+        .then(() => {
+          localStorage.removeItem(INVITE_TOKEN_KEY);
+        })
+        .catch(() => {
+          hasAccepted.current = false;
+        });
+    }
+  }, []);
 };

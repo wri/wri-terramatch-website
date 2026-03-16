@@ -1,7 +1,7 @@
 import { Icon, IconProps } from "@chakra-ui/react";
-import React from "react";
+import React, { FC } from "react";
 
-export const TerraFundAFR100 = (props: IconProps) => (
+export const TerraFundAFR100: FC<IconProps> = props => (
   <Icon {...props}>
     <svg
       width="80"

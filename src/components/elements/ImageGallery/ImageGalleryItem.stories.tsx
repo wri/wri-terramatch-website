@@ -48,7 +48,8 @@ export const Default: Story = {
       isCover: faker.datatype.boolean(),
       description: faker.lorem.sentence({ min: 4, max: 8 }),
       photographer: faker.person.fullName(),
-      createdByUserName: faker.person.fullName()
+      createdByUserName: faker.person.fullName(),
+      profileImageScale: faker.number.int({ min: 1, max: 10 })
     }
   }
 };
