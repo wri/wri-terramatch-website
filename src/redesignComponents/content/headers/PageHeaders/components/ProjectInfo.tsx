@@ -86,13 +86,13 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             leftIcon: <DownloadIcon />,
             onClick: handleExport,
             loading: exportLoader,
-            children: t("Download")
+            children: t("Download Project Files")
           }}
         />
       ) : (
         <div className="w-fit">
           <Button
-            onClick={handleEdit}
+            onClick={() => handleEdit()}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}

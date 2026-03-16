@@ -15,7 +15,8 @@ const NurseryBanner: FC<NurseryBannerProps> = ({ nursery, ...bannerProps }) => (
   <Banner {...bannerProps}>
     <PageHeader title={nursery.name ?? ""} />
     <NurseryHeader nursery={nursery} />
-    {(nursery.status == "needs-more-information" || nursery.updateRequestStatus == "needs-more-information") && (
+    {(nursery.updateRequestStatus === "needs-more-information" ||
+      (nursery.updateRequestStatus == "no-update" && nursery.status === "needs-more-information")) && (
       <EntityStatusBar entity={nursery} entityName="nurseries" />
     )}
   </Banner>

@@ -1,10 +1,7 @@
 import { Box, Spinner } from "@chakra-ui/react";
-import { useRouter } from "next/router";
 import { FC, useEffect, useMemo } from "react";
 
-import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { EntityFullDto, SupportedEntity } from "@/connections/Entity";
-import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -21,7 +18,6 @@ interface EntitySetUpSectionProps {
 }
 
 const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChange, type }) => {
-  const router = useRouter();
   const { defaultValues, steps, isReady } = useEntityFormSetup(type, entity.uuid);
   const { handleEdit } = useGetEditEntityHandler({
     entityName: type,
@@ -29,8 +25,6 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
     entityStatus: entity.status ?? "started",
     updateRequestStatus: entity.updateRequestStatus ?? "no-update"
   });
-
-  const editPath = useMemo(() => `/entity/${v3EntityName(type)}/edit/${entity.uuid}`, [entity.uuid, type]);
 
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {
@@ -46,26 +40,18 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
             size="small"
             leftIcon={<EditIcon boxSize={3} />}
             onClick={() => {
-              if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
-                handleEdit();
-              } else {
-                router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);
-              }
+              handleEdit(step.id);
             }}
           >
             Edit
           </Button>
         ),
         onClick: () => {
-          if (isEntityAwaitingApproval(entity.status, entity.updateRequestStatus)) {
-            handleEdit();
-          } else {
-            router.push(`${editPath}?${STEP_QUERY_PARAM}=${encodeURIComponent(step.id)}`);
-          }
+          handleEdit(step.id);
         }
       };
     });
-  }, [editPath, router, steps, defaultValues, entity.status, entity.updateRequestStatus, handleEdit]);
+  }, [steps, defaultValues, handleEdit]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;
