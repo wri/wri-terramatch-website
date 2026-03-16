@@ -7,7 +7,7 @@ import type { FC } from "react";
 import { useCallback, useMemo, useRef, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
-import { formatDateValue, getDateFormatString } from "@/utils/date";
+import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
 import { DateRangeInputs, DayView, MonthView, YearView } from "./components";
 import {
@@ -51,17 +51,22 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 }) => {
   const [dates, setDates] = useState<DateValue[]>([]);
   const preservedRef = useRef<PreservedDate | null>(null);
-  const dateFormat = useMemo(() => getDateFormatString(navigator.language), []);
+  const browserLocale = useMemo(() => navigator.language, []);
+  const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
   const picker = useDatePicker({
     selectionMode: "range",
     fixedWeeks: true,
+    locale: browserLocale,
     min,
     max,
     value: dates,
     disabled,
     format(date) {
       return formatDateValue(date, dateFormat);
+    },
+    parse(value) {
+      return parseDateInput(value, dateFormat);
     },
     onValueChange({ value }) {
       const preserved = preservedRef.current;
@@ -77,11 +82,22 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
 
       preservedRef.current = null;
       setDates(value);
+
+      if (value.length === 1) {
+        requestAnimationFrame(() => picker.setOpen(true));
+      }
     }
   });
 
   const handleClearDate = useCallback(
     (index: 0 | 1) => {
+      if (preservedRef.current) {
+        preservedRef.current = null;
+        setDates([]);
+        picker.setOpen(true);
+        return;
+      }
+
       const keepDate = index === 0 ? dates[1] : dates[0];
 
       if (!keepDate) {
