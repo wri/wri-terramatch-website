@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { type CreateConnection, v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, creationHook } from "@/connections/util/connectionShortcuts";
-import { operationsByTag, verifyUser } from "@/generated/v3/userService/userServiceComponents";
+import { resendVerification, verifyUser } from "@/generated/v3/userService/userServiceComponents";
 import { ApiDataStore, PendingError } from "@/store/apiSlice";
 import { Connection } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
@@ -18,12 +18,9 @@ export type ResendVerificationAttributes = {
   callbackUrl?: string;
 };
 
-const resendVerificationConnection: Connection<
-  CreateConnection<ResendVerificationDto, ResendVerificationAttributes>,
-  {}
-> = v3Resource("verifications", operationsByTag.verificationUser.resendVerification)
+const resendVerificationConnection = v3Resource("verifications", resendVerification)
   .create<ResendVerificationDto>()
-  .buildConnection();
+  .buildConnection() as Connection<CreateConnection<ResendVerificationDto, ResendVerificationAttributes>, {}>;
 
 export const useResendVerification = creationHook(resendVerificationConnection);
 
