@@ -91,16 +91,16 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             }}
           >
             <MetricCard
-              title={t("About Nurseries")}
+              title={t("Seedlings Grown")}
               variant="donutChart"
               progress={nursery?.seedlingGrown ?? 0}
               goal={totalNurserySeedlings}
               icon={<SeedlingsIcon boxSize={6} />}
-              tooltipContent={t("Nursery Information")}
+              tooltipContent={t("Number of seedlings grown for this project.")}
               color="secondary.500"
             />
           </PageItem>
-          <PageItem title="Nursery Information" flexProps={{ maxWidth: "41%" }}>
+          <PageItem title="About Nurseries" flexProps={{ maxWidth: "41%" }}>
             <About
               description={
                 <Text textStyle="300" as="span">
