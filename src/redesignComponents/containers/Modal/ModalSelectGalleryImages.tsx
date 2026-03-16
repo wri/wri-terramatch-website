@@ -1,5 +1,5 @@
-import { Grid, GridItem, Text } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { Flex, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import React, { FC, UIEvent, useCallback } from "react";
 
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 
@@ -8,67 +8,33 @@ import Modal from "./Modal";
 interface ModalSelectGalleryImagesProps {
   open: boolean;
   onClose: () => void;
+  images: { uuid: string; src: string; alt: string; url: string; name: string }[];
+  hasMore: boolean;
+  isLoading: boolean;
+  onLoadMore: () => void;
+  onSelectImage: (image: { uuid: string; src: string; alt: string; url: string; name: string }) => void;
 }
 
-const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({ open, onClose }) => {
-  const mockedImages = [
-    {
-      src: "https://i.pravatar.cc/300?img=4",
-      alt: "Image 1"
+const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({
+  open,
+  onClose,
+  images,
+  hasMore,
+  isLoading,
+  onLoadMore,
+  onSelectImage
+}) => {
+  const handleScroll = useCallback(
+    (event: UIEvent<HTMLDivElement>) => {
+      const target = event.currentTarget;
+      const threshold = 80; // px from bottom
+
+      if (hasMore && !isLoading && target.scrollTop + target.clientHeight >= target.scrollHeight - threshold) {
+        onLoadMore();
+      }
     },
-    {
-      src: "https://i.pravatar.cc/300?img=5",
-      alt: "Image 2"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=6",
-      alt: "Image 3"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=7",
-      alt: "Image 4"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=8",
-      alt: "Image 5"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=9",
-      alt: "Image 6"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=10",
-      alt: "Image 7"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=11",
-      alt: "Image 8"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=12",
-      alt: "Image 9"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=13",
-      alt: "Image 10"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=14",
-      alt: "Image 11"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=15",
-      alt: "Image 12"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=16",
-      alt: "Image 13"
-    },
-    {
-      src: "https://i.pravatar.cc/300?img=17",
-      alt: "Image 14"
-    }
-  ];
+    [hasMore, isLoading, onLoadMore]
+  );
 
   return (
     <Modal
@@ -82,20 +48,33 @@ const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({ open, onC
       }
       maxHeight="100vh"
       content={
-        <Grid
-          templateColumns="repeat(3, 1fr)"
-          gap="4"
-          alignItems="center"
-          overflowY="auto"
-          maxHeight="70vh"
-          paddingRight="4"
-        >
-          {mockedImages.map(image => (
-            <GridItem key={image.src}>
-              <GalleryImage src={image.src} alt={image.alt} className="max-h-[140px] min-w-full" hoverContent=" " />
-            </GridItem>
-          ))}
-        </Grid>
+        <Flex direction="column" maxHeight="70vh">
+          <Grid
+            templateColumns="repeat(3, 1fr)"
+            gap="4"
+            alignItems="center"
+            overflowY="auto"
+            maxHeight="70vh"
+            paddingRight="4"
+            onScroll={handleScroll}
+          >
+            {images?.map(image => (
+              <GridItem key={image.uuid} as="button" onClick={() => onSelectImage(image)}>
+                <GalleryImage
+                  src={image.url ?? ""}
+                  alt={image.name ?? ""}
+                  className="max-h-[140px] min-w-full"
+                  hoverContent=" "
+                />
+              </GridItem>
+            ))}
+          </Grid>
+          {isLoading && (
+            <Flex justifyContent="center" alignItems="center" py={4}>
+              <Spinner />
+            </Flex>
+          )}
+        </Flex>
       }
     />
   );
