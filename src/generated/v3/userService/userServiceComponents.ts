@@ -198,6 +198,54 @@ export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError,
   "POST"
 );
 
+export type ResendUserVerificationError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResendUserVerificationResponse = {
+  meta?: {
+    /**
+     * @example verifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example verifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResendVerificationResponseDto;
+  };
+};
+
+export type ResendUserVerificationVariables = {
+  body: Schemas.ResendVerificationBody;
+};
+
+/**
+ * Resend a verification email for a user by email address
+ */
+export const resendUserVerification = new V3ApiEndpoint<
+  ResendUserVerificationResponse,
+  ResendUserVerificationError,
+  ResendUserVerificationVariables,
+  {}
+>("/auth/v3/verifications/resend", "POST");
+
 export type OrganisationIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -1641,7 +1689,7 @@ export const inviteOrganisationUser = new V3ApiEndpoint<
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser },
+  verificationUser: { verifyUser, resendUserVerification },
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
   users: { usersFind, userUpdate, userCreation, userVerify },
