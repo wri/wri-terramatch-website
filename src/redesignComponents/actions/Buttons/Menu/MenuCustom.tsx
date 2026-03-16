@@ -3,32 +3,28 @@ import { FC, useState } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 
-interface MenuCustomProps {
-  label: string;
-  items: {
-    label: string;
-    value: string;
-    startIcon?: React.ReactNode;
-    endIcon?: React.ReactNode;
-    onClick?: () => void;
-  }[];
-}
+import type { MenuContainerTyped, MenuCustomProps, MenuItemTyped, MenuTriggerTyped } from "./MenuCustom.types";
+
+const TypedMenuTrigger = MenuTrigger as FC<MenuTriggerTyped>;
+const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
+const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
+const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
 const MenuCustom: FC<MenuCustomProps> = ({ label, items }) => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Menu.Root open={open} onOpenChange={e => setOpen(e.open)}>
-      <MenuTrigger asChild>
+    <Menu.Root open={open} onOpenChange={(e: { open: boolean }) => setOpen(e.open)}>
+      <TypedMenuTrigger asChild>
         <Button variant="borderless" size="small">
           {label}
         </Button>
-      </MenuTrigger>
+      </TypedMenuTrigger>
       <Portal>
-        <MenuPositioner>
-          <MenuContent>
+        <TypedMenuPositioner>
+          <TypedMenuContent>
             {items.map(item => (
-              <MenuItem
+              <TypedMenuItem
                 key={item.value}
                 value={item.value}
                 textStyle="400"
@@ -38,10 +34,10 @@ const MenuCustom: FC<MenuCustomProps> = ({ label, items }) => {
                 {item.startIcon}
                 {item.label}
                 {item.endIcon}
-              </MenuItem>
+              </TypedMenuItem>
             ))}
-          </MenuContent>
-        </MenuPositioner>
+          </TypedMenuContent>
+        </TypedMenuPositioner>
       </Portal>
     </Menu.Root>
   );
