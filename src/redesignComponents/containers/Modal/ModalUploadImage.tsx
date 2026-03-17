@@ -50,17 +50,18 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   onConfirmGalleryImage,
   onUpdateExistingScale
 }) => {
-  const [sliderValue, setSliderValue] = useState(0);
-  const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(undefined);
+  const t = useT();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [sliderValue, setSliderValue] = useState(0);
+  const [activeImgSrc, setActiveImgSrc] = useState<string | undefined>(imgSrc);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [shouldRemoveExisting, setShouldRemoveExisting] = useState(false);
-  const t = useT();
+
   useEffect(() => {
     if (!open) return;
     if (scale != null && !Number.isNaN(scale)) {
-      const initial = Math.round((scale - 1) * 100);
-      const clamped = Math.min(100, Math.max(0, initial));
+      const clamped = Math.min(100, Math.max(0, Math.round((scale - 1) * 100)));
       setSliderValue(clamped);
     } else {
       setSliderValue(0);
@@ -68,20 +69,79 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   }, [open, scale]);
 
   useEffect(() => {
-    if (!open) return;
-    if (initialFile == null) return;
-    if (pendingFile != null) return;
+    if (open) {
+      setActiveImgSrc(imgSrc);
+      setPendingFile(null);
+      setShouldRemoveExisting(false);
+    } else {
+      setActiveImgSrc(undefined);
+    }
+  }, [open, imgSrc]);
 
+  useEffect(() => {
+    if (!open || initialFile == null || pendingFile != null) return;
+    const objectUrl = URL.createObjectURL(initialFile);
+    setActiveImgSrc(objectUrl);
     setPendingFile(initialFile);
   }, [open, initialFile, pendingFile]);
 
   useEffect(() => {
-    if (!open) {
-      setLocalImgSrc(undefined);
-      setPendingFile(null);
-      setShouldRemoveExisting(false);
+    if (!open || selectedGalleryImage?.url == null) return;
+    setActiveImgSrc(selectedGalleryImage.url);
+    setPendingFile(null);
+  }, [open, selectedGalleryImage]);
+
+  const handleSliderChange = (newValue: unknown) => {
+    let next: number | undefined;
+
+    if (Array.isArray(newValue)) {
+      next = (newValue as number[])[0];
+    } else if (typeof newValue === "number") {
+      next = newValue;
+    } else {
+      const maybeTargetValue = (newValue as any)?.target?.value;
+      if (typeof maybeTargetValue !== "undefined") {
+        const parsed = Number(maybeTargetValue);
+        if (!Number.isNaN(parsed)) next = parsed;
+      }
     }
-  }, [open]);
+
+    if (typeof next === "number") {
+      setSliderValue(Math.min(100, Math.max(0, next)));
+    }
+  };
+
+  const handleLocalFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file == null) return;
+    setActiveImgSrc(URL.createObjectURL(file));
+    setPendingFile(file);
+    event.target.value = "";
+  };
+
+  const handleRemove = () => {
+    setActiveImgSrc(undefined);
+    setPendingFile(null);
+    setShouldRemoveExisting(true);
+  };
+
+  const handleSave = async () => {
+    const currentScale = 1 + sliderValue / 100;
+
+    if (shouldRemoveExisting && onRemoveFile != null) {
+      await onRemoveFile();
+    } else if (pendingFile != null && onUploadFile != null) {
+      await onUploadFile(pendingFile, currentScale);
+    } else if (selectedGalleryImage != null && onConfirmGalleryImage != null) {
+      await onConfirmGalleryImage(selectedGalleryImage, currentScale);
+    } else if (mediaUuid != null) {
+      await updateMedia({ isCover: true, profileImageScale: currentScale }, { id: mediaUuid });
+      onUpdateExistingScale?.(currentScale);
+    }
+
+    setPendingFile(null);
+    onClose();
+  };
 
   return (
     <Modal
@@ -94,15 +154,12 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
       }
       content={
         <Flex direction="column" gap="4" alignItems="center">
-          {shouldRemoveExisting ? (
+          {activeImgSrc != null ? (
             <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
               <BaseImage
-                src={localImgSrc ?? selectedGalleryImage?.url ?? imgSrc}
+                src={activeImgSrc}
                 alt="Project Profile Image"
-                style={{
-                  objectFit: "cover",
-                  transform: `scale(${1 + sliderValue / 100})`
-                }}
+                scale={1 + sliderValue / 100}
                 className="!h-full !w-full select-none"
                 draggable={false}
               />
@@ -130,12 +187,13 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               />
             </Box>
           )}
+
           <Flex direction="row" gap="4" alignItems="center" width="100%" justifyContent="center">
             <Button
               variant="borderless"
               size="small"
               className="w-fit"
-              onClick={() => setSliderValue(Math.max(sliderValue - 1, 0))}
+              onClick={() => setSliderValue(v => Math.max(v - 1, 0))}
             >
               <MinusIcon />
             </Button>
@@ -145,49 +203,24 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               min={0}
               max={100}
               value={[sliderValue]}
-              onChange={(newValue: unknown) => {
-                let next: number | undefined;
-
-                if (Array.isArray(newValue)) {
-                  const arr = newValue as number[];
-                  next = arr[0];
-                } else if (typeof newValue === "number") {
-                  next = newValue;
-                } else {
-                  const maybeTargetValue = (newValue as any)?.target?.value;
-                  if (typeof maybeTargetValue !== "undefined") {
-                    const numericValue = Number(maybeTargetValue);
-                    if (!Number.isNaN(numericValue)) {
-                      next = numericValue;
-                    }
-                  }
-                }
-
-                if (typeof next === "number") {
-                  const clamped = Math.min(100, Math.max(0, next));
-                  setSliderValue(clamped);
-                }
-              }}
+              onChange={handleSliderChange}
             />
             <Button
               variant="borderless"
               size="small"
               className="w-fit"
-              onClick={() => setSliderValue(Math.min(sliderValue + 1, 100))}
+              onClick={() => setSliderValue(v => Math.min(v + 1, 100))}
             >
               <PlusIcon />
             </Button>
           </Flex>
+
           <Flex alignItems="center" gap="4">
             <Button
               size="small"
               leftIcon={<DeleteIcon />}
               className="!border-theme-error-300 !bg-theme-error-100 !text-theme-error-900"
-              onClick={() => {
-                setLocalImgSrc(undefined);
-                setPendingFile(null);
-                setShouldRemoveExisting(true);
-              }}
+              onClick={handleRemove}
             >
               {t("Remove Image")}
             </Button>
@@ -208,19 +241,15 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               {t("Upload New")}
             </Button>
           </Flex>
+
           <input
             ref={fileInputRef}
             type="file"
             accept={FileType.Image}
             className="hidden"
-            onChange={event => {
-              const file = event.target.files?.[0];
-              if (file == null) return;
-              const objectUrl = URL.createObjectURL(file);
-              setLocalImgSrc(objectUrl);
-              setPendingFile(file);
-            }}
+            onChange={handleLocalFileChange}
           />
+
           <Text textStyle="200" color="neutral.800">
             {t("Upload a JPG or PNG image (max 10 MB).")}
           </Text>
@@ -231,32 +260,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
           <Button variant="secondary" onClick={onClose} className="flex-1">
             Cancel
           </Button>
-          <Button
-            onClick={async () => {
-              const scale = 1 + sliderValue / 100;
-
-              if (shouldRemoveExisting && onRemoveFile != null) {
-                await onRemoveFile();
-              } else if (pendingFile != null && onUploadFile != null) {
-                await onUploadFile(pendingFile, scale);
-              } else if (selectedGalleryImage != null && onConfirmGalleryImage != null) {
-                await onConfirmGalleryImage(selectedGalleryImage, scale);
-              } else if (mediaUuid != null) {
-                await updateMedia(
-                  {
-                    isCover: true,
-                    profileImageScale: scale
-                  },
-                  { id: mediaUuid }
-                );
-                onUpdateExistingScale?.(scale);
-              }
-
-              setPendingFile(null);
-              onClose();
-            }}
-            className="flex-1"
-          >
+          <Button onClick={handleSave} className="flex-1">
             {t("Save")}
           </Button>
         </Flex>
