@@ -984,7 +984,7 @@ export type UserCreationResponse = {
 };
 
 export type UserCreationVariables = {
-  body: Schemas.UserCreateBody;
+  body: Schemas.UserCreateBaseBody;
 };
 
 /**

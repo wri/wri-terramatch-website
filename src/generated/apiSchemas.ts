@@ -625,7 +625,6 @@ export type ReportingFrameworkRead = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
-  financial_report_form_uuid?: string;
 };
 
 export type ReportingFrameworkUpdate = {
@@ -637,7 +636,6 @@ export type ReportingFrameworkUpdate = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
-  financial_report_form_uuid?: string;
 };
 
 export type ReportingFrameworkCreate = {
@@ -649,7 +647,6 @@ export type ReportingFrameworkCreate = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
-  financial_report_form_uuid?: string;
 };
 
 export type V2PaginationLinks = {

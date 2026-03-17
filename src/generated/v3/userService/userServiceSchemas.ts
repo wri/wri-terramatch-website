@@ -608,10 +608,15 @@ export type UserDto = {
    * @format date-time
    */
   emailAddressVerifiedAt: string | null;
+  phoneNumber: string | null;
   /**
    * Name of the user's primary organisation, if any.
    */
   organisationName: string | null;
+  /**
+   * UUID of the user's primary organisation, if any.
+   */
+  organisationUuid: string | null;
   /**
    * @format date-time
    */
@@ -620,6 +625,9 @@ export type UserDto = {
    * @format date-time
    */
   lastLoggedInAt: string | null;
+  jobRole: string | null;
+  country: string | null;
+  program: string | null;
   locale: string | null;
   frameworks: UserFramework[];
 };
@@ -721,30 +729,23 @@ export type UserUpdateBody = {
   data: UserData;
 };
 
-export type UserCreateAttributes = {
+export type UserCreateBaseAttributes = {
   firstName: string;
   lastName: string;
-  password: string;
   emailAddress: string;
   phoneNumber: string;
   jobRole: string;
-  role: string;
   country: string;
   program: string;
-  callbackUrl: string;
-  /**
-   * Token for invite-based signup completion
-   */
-  token?: string;
 };
 
-export type UserCreateData = {
+export type UserCreateBaseData = {
   type: "users";
-  attributes: UserCreateAttributes;
+  attributes: UserCreateBaseAttributes;
 };
 
-export type UserCreateBody = {
-  data: UserCreateData;
+export type UserCreateBaseBody = {
+  data: UserCreateBaseData;
 };
 
 export type UserAssociationDto = {
