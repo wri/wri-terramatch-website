@@ -56,7 +56,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [sliderValue, setSliderValue] = useState(0);
   const [activeImgSrc, setActiveImgSrc] = useState<string | undefined>(imgSrc);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
-  const [shouldRemoveExisting, setShouldRemoveExisting] = useState(false);
+  const [isMarkedForRemoval, setIsMarkedForRemoval] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -69,26 +69,32 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   }, [open, scale]);
 
   useEffect(() => {
-    if (open) {
-      setActiveImgSrc(imgSrc);
-      setPendingFile(null);
-      setShouldRemoveExisting(false);
-    } else {
+    if (!open) {
       setActiveImgSrc(undefined);
+      setPendingFile(null);
+      setIsMarkedForRemoval(false);
+      return;
     }
+
+    setActiveImgSrc(imgSrc);
+    setPendingFile(null);
+    setIsMarkedForRemoval(false);
   }, [open, imgSrc]);
 
   useEffect(() => {
-    if (!open || initialFile == null || pendingFile != null) return;
+    if (!open || initialFile == null) return;
+
     const objectUrl = URL.createObjectURL(initialFile);
     setActiveImgSrc(objectUrl);
     setPendingFile(initialFile);
-  }, [open, initialFile, pendingFile]);
+    setIsMarkedForRemoval(false);
+  }, [open, initialFile]);
 
   useEffect(() => {
     if (!open || selectedGalleryImage?.url == null) return;
     setActiveImgSrc(selectedGalleryImage.url);
     setPendingFile(null);
+    setIsMarkedForRemoval(false);
   }, [open, selectedGalleryImage]);
 
   const handleSliderChange = (newValue: unknown) => {
@@ -116,19 +122,20 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
     if (file == null) return;
     setActiveImgSrc(URL.createObjectURL(file));
     setPendingFile(file);
+    setIsMarkedForRemoval(false);
     event.target.value = "";
   };
 
   const handleRemove = () => {
     setActiveImgSrc(undefined);
     setPendingFile(null);
-    setShouldRemoveExisting(true);
+    setIsMarkedForRemoval(true);
   };
 
   const handleSave = async () => {
     const currentScale = 1 + sliderValue / 100;
 
-    if (shouldRemoveExisting && onRemoveFile != null) {
+    if (isMarkedForRemoval && onRemoveFile != null) {
       await onRemoveFile();
     } else if (pendingFile != null && onUploadFile != null) {
       await onUploadFile(pendingFile, currentScale);
@@ -171,11 +178,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
+              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[300px] w-[300px] overflow-hidden">
-              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
+              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box
