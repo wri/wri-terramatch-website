@@ -1,12 +1,19 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Image from "next/image";
 import React, { FC, useEffect, useRef, useState } from "react";
 
 import { updateMedia } from "@/connections/Media";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import BaseImage from "@/redesignComponents/content/Images/Image";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
-import { DeleteIcon, MinusIcon, PhotoLibraryIcon, PlusIcon, UploadIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  DeleteIcon,
+  MinusIcon,
+  PhotoLibraryIcon,
+  PlaceholderIcon,
+  PlusIcon,
+  UploadIcon
+} from "@/redesignComponents/foundations/Icons";
 import { FileType } from "@/types/common";
 
 import Modal from "./Modal";
@@ -44,7 +51,6 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   onUpdateExistingScale
 }) => {
   const [sliderValue, setSliderValue] = useState(0);
-  const mockedImgSrc = "https://i.pravatar.cc/300?img=4";
   const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -88,31 +94,42 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
       }
       content={
         <Flex direction="column" gap="4" alignItems="center">
-          <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
-            <Image
-              src={
-                shouldRemoveExisting ? mockedImgSrc : localImgSrc ?? selectedGalleryImage?.url ?? imgSrc ?? mockedImgSrc
-              }
-              alt="Project Profile Image"
-              width={300}
-              height={300}
-              style={{
-                objectFit: "cover",
-                transform: `scale(${1 + sliderValue / 100})`
-              }}
-              className="h-full w-full select-none"
-              draggable={false}
-            />
-            <Box
-              className="absolute inset-0"
-              style={{
-                backgroundColor: "rgba(255, 255, 255, 0.6)",
-                maskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)",
-                WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
-              }}
-            />
-            <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
-          </Box>
+          {shouldRemoveExisting ? (
+            <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
+              <BaseImage
+                src={localImgSrc ?? selectedGalleryImage?.url ?? imgSrc}
+                alt="Project Profile Image"
+                style={{
+                  objectFit: "cover",
+                  transform: `scale(${1 + sliderValue / 100})`
+                }}
+                className="!h-full !w-full select-none"
+                draggable={false}
+              />
+              <Box
+                className="absolute inset-0"
+                style={{
+                  backgroundColor: "rgba(255, 255, 255, 0.6)",
+                  maskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)",
+                  WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
+                }}
+              />
+              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
+            </Box>
+          ) : (
+            <Box className="relative h-[300px] w-[300px] overflow-hidden">
+              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
+                <PlaceholderIcon boxSize={8} color="neutral.600" />
+              </Flex>
+              <Box
+                className="absolute inset-0 bg-image-background bg-cover bg-center"
+                style={{
+                  maskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)",
+                  WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
+                }}
+              />
+            </Box>
+          )}
           <Flex direction="row" gap="4" alignItems="center" width="100%" justifyContent="center">
             <Button
               variant="borderless"

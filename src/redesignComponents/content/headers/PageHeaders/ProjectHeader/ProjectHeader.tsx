@@ -255,7 +255,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             alt={project.name ?? ""}
             isAdd={selectedCoverUrl == null && coverImage?.uuid == null}
             onClickEdit={() => setOpen(true)}
-            src={selectedCoverUrl ?? coverImage?.thumbUrl!}
+            src={selectedCoverUrl}
             scale={coverScale}
             menuItems={[
               {
