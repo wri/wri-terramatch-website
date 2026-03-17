@@ -24,6 +24,7 @@ export const USER_SERVICE_RESOURCES = [
   "logins",
   "passwordResets",
   "verifications",
+  "resendVerifications",
   "organisations",
   "users",
   "financialIndicators",
@@ -42,7 +43,8 @@ export const USER_SERVICE_RESOURCES = [
 export type UserServiceApiResources = {
   logins: StoreResourceMap<LoginDto>;
   passwordResets: StoreResourceMap<ResetPasswordResponseDto>;
-  verifications: StoreResourceMap<VerificationUserResponseDto | ResendVerificationResponseDto>;
+  verifications: StoreResourceMap<VerificationUserResponseDto>;
+  resendVerifications: StoreResourceMap<ResendVerificationResponseDto>;
   organisations: StoreResourceMap<OrganisationLightDto | OrganisationFullDto>;
   users: StoreResourceMap<UserDto>;
   financialIndicators: StoreResourceMap<FinancialIndicatorDto>;

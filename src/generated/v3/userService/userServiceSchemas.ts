@@ -46,8 +46,17 @@ export type VerificationUserResponseDto = {
   verified: boolean;
 };
 
-export type VerificationUserRequest = {
+export type VerificationUserAttributes = {
   token: string;
+};
+
+export type VerificationUserData = {
+  type: "verifications";
+  attributes: VerificationUserAttributes;
+};
+
+export type VerificationUserBody = {
+  data: VerificationUserData;
 };
 
 export type ResendVerificationResponseDto = {

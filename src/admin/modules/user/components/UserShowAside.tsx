@@ -4,13 +4,9 @@ import { BooleanField, RaRecord, SelectField, TextField, useNotify, useRefresh, 
 
 import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
-import { ResetPasswordDialog } from "@/admin/modules/user/components/ResetPasswordDialog";
-import {
-  usePatchV2AdminUsersVerifyUUID,
-  usePostAuthReset,
-  usePostAuthSendLoginDetails,
-  usePostV2UsersResend
-} from "@/generated/apiComponents";
+import { useAdminUserVerify } from "@/connections/AdminUsers";
+import { sendRequestPasswordReset } from "@/connections/ResetPassword";
+import { usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -18,12 +14,11 @@ import { localeChoices, userPrimaryRoleChoices } from "../const";
 export const UserShowAside = () => {
   const notify = useNotify();
   const refresh = useRefresh();
-
-  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
 
   const { record } = useShowContext<V2AdminUserRead & RaRecord>();
-  const uuid = record?.uuid as string;
+
+  const [, { create: verifyUser }] = useAdminUserVerify({ uuid: record?.uuid as string });
 
   const { mutate: resendVerificationEmail } = usePostV2UsersResend({
     onSuccess() {
@@ -32,23 +27,23 @@ export const UserShowAside = () => {
     }
   });
 
-  const { mutate: sendPasswordReset } = usePostAuthReset({
-    onSuccess() {
+  const handleSendPasswordResetEmail = async () => {
+    try {
+      if (record?.email_address == null) {
+        notify(`User email is not available.`, { type: "warning" });
+        return;
+      }
+      await sendRequestPasswordReset(record.email_address, window.location.origin + "/auth/reset-password/");
       notify(`Reset password email has been sent successfully.`, { type: "success" });
       refresh();
+    } catch (error) {
+      notify(`Failed to send reset password email.`, { type: "error" });
     }
-  });
+  };
 
   const { mutate: sendLoginDetails } = usePostAuthSendLoginDetails({
     onSuccess() {
       notify(`Login details email has been sent successfully.`, { type: "success" });
-      refresh();
-    }
-  });
-
-  const { mutate: verifyUser } = usePatchV2AdminUsersVerifyUUID({
-    onSuccess() {
-      notify(`User email has been verified successfully.`, { type: "success" });
       refresh();
     }
   });
@@ -136,44 +131,24 @@ export const UserShowAside = () => {
             >
               Verify Email
             </Button>
-            <Button
-              variant="contained"
-              className="!rounded-lg !bg-primary"
-              onClick={() =>
-                sendPasswordReset({
-                  body: {
-                    email_address: record?.email_address,
-                    callback_url: window.location.origin + "/auth/reset-password/"
-                  }
-                })
-              }
-            >
+            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Send Reset Password Email
             </Button>
-            <Button
-              variant="contained"
-              className="!rounded-lg !bg-primary"
-              onClick={() => setShowResetPasswordDialog(true)}
-            >
+            <Button variant="contained" className="!rounded-lg !bg-primary" onClick={handleSendPasswordResetEmail}>
               Reset Password
             </Button>
           </Stack>
         </Box>
       </Aside>
-      <ResetPasswordDialog
-        open={showResetPasswordDialog}
-        userUUID={uuid}
-        onHide={() => setShowResetPasswordDialog(false)}
-      />
       <ConfirmationDialog
         open={showVerifyEmailDialog}
         title="Email Verification"
         content={`Are you sure you want to verify ${record?.email_address}?`}
         onAgree={() => {
-          verifyUser({
-            pathParams: { uuid }
-          });
+          // @ts-expect-error empty body on a creation hook
+          verifyUser();
           setShowVerifyEmailDialog(false);
+          refresh();
         }}
         onDisAgree={() => setShowVerifyEmailDialog(false)}
       />
