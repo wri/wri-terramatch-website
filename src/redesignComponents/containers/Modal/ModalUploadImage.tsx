@@ -17,6 +17,7 @@ interface ModalUploadImageProps {
   imgSrc?: string;
   mediaUuid?: string;
   scale?: number;
+  initialFile?: File;
   onOpenModalImageGallery?: (open: boolean) => void;
   onUploadFile?: (file: File, scale: number) => Promise<void> | void;
   onRemoveFile?: () => void;
@@ -34,6 +35,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   imgSrc,
   mediaUuid,
   scale,
+  initialFile,
   onOpenModalImageGallery,
   onUploadFile,
   onRemoveFile,
@@ -46,6 +48,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [localImgSrc, setLocalImgSrc] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [shouldRemoveExisting, setShouldRemoveExisting] = useState(false);
   const t = useT();
   useEffect(() => {
     if (!open) return;
@@ -59,9 +62,18 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   }, [open, scale]);
 
   useEffect(() => {
+    if (!open) return;
+    if (initialFile == null) return;
+    if (pendingFile != null) return;
+
+    setPendingFile(initialFile);
+  }, [open, initialFile, pendingFile]);
+
+  useEffect(() => {
     if (!open) {
       setLocalImgSrc(undefined);
       setPendingFile(null);
+      setShouldRemoveExisting(false);
     }
   }, [open]);
 
@@ -78,7 +90,9 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
         <Flex direction="column" gap="4" alignItems="center">
           <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
             <Image
-              src={localImgSrc ?? selectedGalleryImage?.url ?? imgSrc ?? mockedImgSrc}
+              src={
+                shouldRemoveExisting ? mockedImgSrc : localImgSrc ?? selectedGalleryImage?.url ?? imgSrc ?? mockedImgSrc
+              }
               alt="Project Profile Image"
               width={300}
               height={300}
@@ -155,7 +169,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               onClick={() => {
                 setLocalImgSrc(undefined);
                 setPendingFile(null);
-                onRemoveFile?.();
+                setShouldRemoveExisting(true);
               }}
             >
               {t("Remove Image")}
@@ -204,7 +218,9 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             onClick={async () => {
               const scale = 1 + sliderValue / 100;
 
-              if (pendingFile != null && onUploadFile != null) {
+              if (shouldRemoveExisting && onRemoveFile != null) {
+                await onRemoveFile();
+              } else if (pendingFile != null && onUploadFile != null) {
                 await onUploadFile(pendingFile, scale);
               } else if (selectedGalleryImage != null && onConfirmGalleryImage != null) {
                 await onConfirmGalleryImage(selectedGalleryImage, scale);

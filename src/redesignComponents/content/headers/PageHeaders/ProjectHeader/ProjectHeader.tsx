@@ -49,6 +49,8 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   const [coverScale, setCoverScale] = useState<number | undefined>(undefined);
   const [coverMediaUuid, setCoverMediaUuid] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [headerPendingFile, setHeaderPendingFile] = useState<File | null>(null);
+  const [headerPendingSrc, setHeaderPendingSrc] = useState<string | undefined>(undefined);
   const [, { data: associatedUsers }] = useUserAssociations({
     uuid: project.uuid,
     filter: { isManager: false },
@@ -215,16 +217,9 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   }, [galleryImages]);
 
   const handleSelectGalleryImage = (image: { uuid: string; src: string; alt: string; url: string; name: string }) => {
-    const isInitialAddMode = selectedCoverUrl == null && coverImage?.uuid == null;
-
-    if (isInitialAddMode) {
-      void handleConfirmGalleryImage(image, 1);
-      setIsGalleryOpen(false);
-      return;
-    }
-
     setSelectedGalleryImage(image);
     setIsGalleryOpen(false);
+    setOpen(true);
   };
 
   const handleConfirmGalleryImage = useCallback(
@@ -247,6 +242,8 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   const handleCloseUploadModal = () => {
     setOpen(false);
     setSelectedGalleryImage(null);
+    setHeaderPendingFile(null);
+    setHeaderPendingSrc(undefined);
   };
 
   return (
@@ -283,15 +280,19 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             onChange={event => {
               const file = event.target.files?.[0];
               if (file == null) return;
-              void handleUploadProfileImage(file, 1);
+              const objectUrl = URL.createObjectURL(file);
+              setHeaderPendingFile(file);
+              setHeaderPendingSrc(objectUrl);
+              setOpen(true);
               event.target.value = "";
             }}
           />
           <ModalUploadImage
             open={open}
             onClose={handleCloseUploadModal}
-            imgSrc={selectedCoverUrl ?? coverImage?.thumbUrl!}
+            imgSrc={headerPendingSrc ?? selectedCoverUrl ?? coverImage?.thumbUrl!}
             mediaUuid={coverMediaUuid}
+            initialFile={headerPendingFile ?? undefined}
             onOpenModalImageGallery={setIsGalleryOpen}
             onUploadFile={handleUploadProfileImage}
             onRemoveFile={handleRemoveProfileImage}
