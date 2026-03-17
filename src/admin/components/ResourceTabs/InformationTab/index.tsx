@@ -239,22 +239,24 @@ const InformationTab: FC<IProps> = props => {
                             <TreeSpeciesTable {...{ entity, entityUuid }} collection="seeds" secondColumnWidth="45%" />
                           </div>
                         </ContextCondition>
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-1 py-1">
-                            <Text variant="text-16-bold" className="capitalize">
-                              Trees Planted:
-                            </Text>
-                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountTreePlanted.toLocaleString() ?? 0}
-                            </Text>
-                          </div>
-                          <TreeSpeciesTable
-                            {...{ entity, entityUuid }}
-                            collection="tree-planted"
-                            secondColumnWidth="45%"
-                          />
-                        </div>
                       </>
+                    ) : null}
+                    {props.type !== "nursery-reports" ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Trees Planted:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountTreePlanted.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable
+                          {...{ entity, entityUuid }}
+                          collection="tree-planted"
+                          secondColumnWidth="45%"
+                        />
+                      </div>
                     ) : null}
                     {props.type === "project-reports" ? (
                       <ContextCondition frameworksShow={ALL_TF}>
