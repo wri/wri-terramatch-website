@@ -146,7 +146,9 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
               style={{ cursor: disabled ? "not-allowed" : "pointer" }}
             >
               <CalendarIcon />
-              <DatePicker.Input index={0} placeholder={dateFormat} />
+              <div className="flex justify-center">
+                <DatePicker.Input index={0} placeholder={dateFormat} />
+              </div>
 
               <span
                 className={classNames("text-14-light text-theme-neutral-800", {
@@ -156,7 +158,9 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
                 —
               </span>
 
-              <DatePicker.Input index={1} placeholder={dateFormat} />
+              <div className="flex justify-center">
+                <DatePicker.Input index={1} placeholder={dateFormat} />
+              </div>
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
