@@ -1,11 +1,16 @@
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useCallback, useMemo } from "react";
 
+import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -45,6 +50,8 @@ const mapStatusToTagStateNursery = (status: string | null | undefined): { type: 
 
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
+  const t = useT();
+  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
@@ -56,7 +63,39 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     entityUuid: nursery?.uuid,
     collection: "nursery-seedling"
   });
-  const t = useT();
+
+  const needMoreInformation =
+    nursery.updateRequestStatus === "needs-more-information" ||
+    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
+
+  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
+
+  const statusProps: StatusProps | undefined = useMemo(() => {
+    if (!needMoreInformation) return undefined;
+    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
+    return {
+      title: t(`${titlePrefix} More Info Requested`),
+      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
+      className: "fill-tertiary"
+    };
+  }, [needMoreInformation, hasUpdateRequest, t]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation && statusProps) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -135,7 +174,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               size: "small",
               children: nursery?.status === "approved" ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon />,
-              onClick: () => handleEdit()
+              onClick: handleEditClick
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>

@@ -6,7 +6,8 @@ import Aside from "@/admin/components/Aside/Aside";
 import { ConfirmationDialog } from "@/admin/components/Dialogs/ConfirmationDialog";
 import { useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
-import { usePostAuthSendLoginDetails, usePostV2UsersResend } from "@/generated/apiComponents";
+import { useResendVerification } from "@/connections/VerificationUser";
+import { usePostAuthSendLoginDetails } from "@/generated/apiComponents";
 import { V2AdminUserRead } from "@/generated/apiSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -20,12 +21,14 @@ export const UserShowAside = () => {
 
   const [, { create: verifyUser }] = useAdminUserVerify({ uuid: record?.uuid as string });
 
-  const { mutate: resendVerificationEmail } = usePostV2UsersResend({
-    onSuccess() {
+  const { create: resendVerificationEmail } = useResendVerification(
+    {},
+    () => {
       notify(`Verification email has been sent successfully.`, { type: "success" });
       refresh();
-    }
-  });
+    },
+    "Failed to resend verification email."
+  );
 
   const handleSendPasswordResetEmail = async () => {
     try {
@@ -113,14 +116,17 @@ export const UserShowAside = () => {
             <Button
               variant="contained"
               className="!rounded-lg !bg-primary"
-              onClick={() =>
+              onClick={() => {
+                if (record?.email_address == null) {
+                  notify(`User email is not available.`, { type: "warning" });
+                  return;
+                }
+
                 resendVerificationEmail({
-                  body: {
-                    callback_url: window.location.origin + "/auth/verify/email/",
-                    email_address: record?.email_address
-                  }
-                })
-              }
+                  emailAddress: record.email_address,
+                  callbackUrl: window.location.origin + "/auth/verify/email/"
+                });
+              }}
             >
               Resend Verification Email
             </Button>
