@@ -89,7 +89,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
               color="secondary.500"
             />
           </PageItem>
-          <PageItem title="About Nurseries" flexProps={{ maxWidth: "41%" }}>
+          <PageItem title="About Nurseries" flexProps={{ maxWidth: "37%" }}>
             <About
               description={
                 <Text textStyle="300" as="span">
@@ -121,7 +121,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             />
           </PageItem>
           <PageItem
-            flexProps={{ maxWidth: "33%", overflow: "hidden" }}
+            flexProps={{ maxWidth: "37%", overflow: "hidden" }}
             title={t("Nursery Set Up")}
             tag={(() => {
               const tagState = mapStatusToTagStateNursery(
@@ -133,7 +133,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: nursery?.status === "approved" ? t("Edit") : t("Continue Editing"),
+              children: nursery?.status === "approved" ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon />,
               onClick: () => handleEdit()
             }}
