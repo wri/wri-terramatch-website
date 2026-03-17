@@ -15,7 +15,6 @@ import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
-import FooterModal from "../components/FooterModal";
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
 interface TeamMembersTabProps {

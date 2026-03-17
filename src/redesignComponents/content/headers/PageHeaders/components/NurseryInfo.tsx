@@ -1,8 +1,12 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 
+import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -34,6 +38,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
+  const { openModal } = useModalContext();
 
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
@@ -42,6 +47,39 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
+
+  const needMoreInformation =
+    nursery.updateRequestStatus === "needs-more-information" ||
+    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
+
+  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
+
+  const statusProps: StatusProps | undefined = useMemo(() => {
+    if (!needMoreInformation) return undefined;
+    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
+    return {
+      title: t(`${titlePrefix} More Info Requested`),
+      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
+      className: "fill-tertiary"
+    };
+  }, [needMoreInformation, hasUpdateRequest, t]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation && statusProps) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
@@ -63,7 +101,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
       {description != null ? (
         <ProjectDescription
           description={description}
-          handleEdit={handleEdit}
+          handleEdit={handleEditClick}
           backgroundColor="neutral.100"
           downloadButtonProps={{
             variant: "secondary",
@@ -77,13 +115,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
         />
       ) : (
         <div className="flex w-fit gap-2">
-          <Button
-            variant="secondary"
-            size="small"
-            leftIcon={<EditIcon />}
-            className="w-auto"
-            onClick={() => handleEdit()}
-          >
+          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
             {t("Edit")}
           </Button>
           <Button
