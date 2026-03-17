@@ -64,7 +64,7 @@ const ManagerType = ({ nursery }: { nursery: NurseryFullDto }) => {
                     </>
                   }
                 >
-                  <InfoIcon className="size-3 text-theme-neutral-800" />
+                  <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
                 </Tooltip>
               </Text>
             </>
