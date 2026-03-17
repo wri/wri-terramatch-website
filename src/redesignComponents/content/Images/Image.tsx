@@ -68,7 +68,7 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
@@ -87,17 +87,40 @@ const BaseImage: FC<BaseImageProps> = ({
           </div>
         ) : (
           <div
-            role="button"
-            tabIndex={0}
-            onClick={onClickEdit}
-            className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
+            className={classNames(
+              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
+              borderRadius
+            )}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                 {t("Image unavailable")}
               </Text>
             </div>
+            {onClickEdit && (
+              <div
+                className={classNames(
+                  "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+                  borderRadius
+                )}
+                role="button"
+                tabIndex={0}
+                onClick={onClickEdit}
+              >
+                <div className={classNamesHover} />
+                <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
+                  {hoverContent ? (
+                    hoverContent
+                  ) : (
+                    <>
+                      <EditIcon className="h-4 w-4" />
+                      {t("Edit")}
+                    </>
+                  )}
+                </Text>
+              </div>
+            )}
           </div>
         )
       ) : (
@@ -113,27 +136,29 @@ const BaseImage: FC<BaseImageProps> = ({
               onError={() => setLoadError(true)}
             />
           </div>
-          <div
-            className={classNames(
-              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-              borderRadius
-            )}
-            role="button"
-            tabIndex={0}
-            onClick={onClickEdit}
-          >
-            <div className={classNamesHover} />
-            <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
-              {hoverContent ? (
-                hoverContent
-              ) : (
-                <>
-                  <EditIcon className="h-4 w-4" />
-                  {t("Edit")}
-                </>
+          {onClickEdit && (
+            <div
+              className={classNames(
+                "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+                borderRadius
               )}
-            </Text>
-          </div>
+              role="button"
+              tabIndex={0}
+              onClick={onClickEdit}
+            >
+              <div className={classNamesHover} />
+              <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
+                {hoverContent ? (
+                  hoverContent
+                ) : (
+                  <>
+                    <EditIcon className="h-4 w-4" />
+                    {t("Edit")}
+                  </>
+                )}
+              </Text>
+            </div>
+          )}
         </>
       )}
     </div>
