@@ -126,7 +126,6 @@ export const dateRangePickerStyles = (size: "default" | "small" = "default") => 
     color: ${getThemedColor("neutral", 900)};
     width: 100%;
     padding: 0;
-    text-align: center;
   }
 
   [data-part="input"]::placeholder {
@@ -243,6 +242,11 @@ export const calendarGlobalStyles = css`
     font-size: ${getThemedFontSize("300")};
     line-height: ${getThemedLineHeight("500")};
     font-weight: normal;
+    display: inline-block;
+  }
+
+  [data-scope="date-picker"] [data-part="range-text"]::first-letter {
+    text-transform: uppercase;
   }
 
   [data-scope="date-picker"] [data-part="table"] {
