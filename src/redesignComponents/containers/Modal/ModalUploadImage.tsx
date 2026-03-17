@@ -14,6 +14,7 @@ import {
   PlusIcon,
   UploadIcon
 } from "@/redesignComponents/foundations/Icons";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import { FileType } from "@/types/common";
 
 import Modal from "./Modal";
@@ -36,6 +37,8 @@ interface ModalUploadImageProps {
   onUpdateExistingScale?: (scale: number) => void;
 }
 
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+
 const ModalUploadImage: FC<ModalUploadImageProps> = ({
   open,
   onClose,
@@ -57,6 +60,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [activeImgSrc, setActiveImgSrc] = useState<string | undefined>(imgSrc);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [isMarkedForRemoval, setIsMarkedForRemoval] = useState(false);
+  const [fileSizeError, setFileSizeError] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -120,6 +124,14 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const handleLocalFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file == null) return;
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      setFileSizeError(true);
+      event.target.value = "";
+      return;
+    }
+
+    setFileSizeError(false);
     setActiveImgSrc(URL.createObjectURL(file));
     setPendingFile(file);
     setIsMarkedForRemoval(false);
@@ -161,6 +173,15 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
       }
       content={
         <Flex direction="column" gap="4" alignItems="center">
+          {fileSizeError && (
+            <InlineMessage
+              label={t("Upload failed. File size exceeds 10 MB.")}
+              caption={t("To continue, reduce the file size or select a different image.")}
+              variant="error"
+              size="small"
+              className="inline-message-full-width"
+            />
+          )}
           {activeImgSrc != null ? (
             <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
               <BaseImage
@@ -178,11 +199,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
+              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[300px] w-[300px] overflow-hidden">
-              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
+              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box

@@ -51,6 +51,30 @@ const BaseImage: FC<BaseImageProps> = ({
 
   const showNotAvailable = src == null || loadError;
 
+  const hoverContentComponent = (
+    <div
+      className={classNames(
+        "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        borderRadius
+      )}
+      role="button"
+      tabIndex={0}
+      onClick={onClickEdit}
+    >
+      <div className={classNamesHover} />
+      <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
+        {hoverContent ? (
+          hoverContent
+        ) : (
+          <>
+            <EditIcon className="h-4 w-4" />
+            {t("Edit")}
+          </>
+        )}
+      </Text>
+    </div>
+  );
+
   return (
     <div
       {...rest}
@@ -98,29 +122,7 @@ const BaseImage: FC<BaseImageProps> = ({
                 {t("Image unavailable")}
               </Text>
             </div>
-            {onClickEdit && (
-              <div
-                className={classNames(
-                  "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-                  borderRadius
-                )}
-                role="button"
-                tabIndex={0}
-                onClick={onClickEdit}
-              >
-                <div className={classNamesHover} />
-                <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
-                  {hoverContent ? (
-                    hoverContent
-                  ) : (
-                    <>
-                      <EditIcon className="h-4 w-4" />
-                      {t("Edit")}
-                    </>
-                  )}
-                </Text>
-              </div>
-            )}
+            {onClickEdit && hoverContentComponent}
           </div>
         )
       ) : (
@@ -136,29 +138,7 @@ const BaseImage: FC<BaseImageProps> = ({
               onError={() => setLoadError(true)}
             />
           </div>
-          {onClickEdit && (
-            <div
-              className={classNames(
-                "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-                borderRadius
-              )}
-              role="button"
-              tabIndex={0}
-              onClick={onClickEdit}
-            >
-              <div className={classNamesHover} />
-              <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
-                {hoverContent ? (
-                  hoverContent
-                ) : (
-                  <>
-                    <EditIcon className="h-4 w-4" />
-                    {t("Edit")}
-                  </>
-                )}
-              </Text>
-            </div>
-          )}
+          {onClickEdit && hoverContentComponent}
         </>
       )}
     </div>
