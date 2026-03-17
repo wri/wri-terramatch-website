@@ -560,7 +560,7 @@ export const MapContainer = ({
     };
 
     const setImageCover = async (uuid: string) => {
-      const result = await updateMedia({ isCover: true, profileImageScale: 0 }, { id: uuid });
+      const result = await updateMedia({ isCover: true }, { id: uuid });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
         setShouldRefetchMediaData(true);
