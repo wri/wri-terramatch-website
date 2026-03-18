@@ -23,10 +23,10 @@
 .no-ghost-dragging div,
 .no-ghost-dragging > img,
 .no-ghost-dragging > div {
-  -webkit-user-drag: none; /* Safari/Chrome/Opera */
-  -moz-user-drag: none; /* Firefox */
-  -ms-user-drag: none; /* Internet Explorer/Edge */
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
   user-drag: none;
-  -webkit-user-select: none; /* Helps prevent selection, which can initiate drag */
+  -webkit-user-select: none;
   user-select: none;
 }
