@@ -10,6 +10,7 @@ import {
 import { connectionHook, connectionLoader } from "@/connections/util/connectionShortcuts";
 import { deleterAsync } from "@/connections/util/resourceDeleter";
 import { resourceCreator, resourceUpdater } from "@/connections/util/resourceMutator";
+import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import {
   createUserAssociation,
   organisationCreation,
@@ -25,7 +26,6 @@ import {
   FinancialReportLightDto,
   FundingTypeDto,
   LeadershipDto,
-  MediaDto,
   OrganisationFullDto,
   OrganisationLightDto,
   OrganisationUpdateAttributes,
