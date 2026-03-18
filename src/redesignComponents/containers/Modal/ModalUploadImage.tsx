@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import { updateMedia } from "@/connections/Media";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -61,6 +61,9 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [isMarkedForRemoval, setIsMarkedForRemoval] = useState(false);
   const [fileSizeError, setFileSizeError] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const startRef = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (!open) return;
@@ -101,24 +104,9 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
     setIsMarkedForRemoval(false);
   }, [open, selectedGalleryImage]);
 
-  const handleSliderChange = (newValue: unknown) => {
-    let next: number | undefined;
-
-    if (Array.isArray(newValue)) {
-      next = (newValue as number[])[0];
-    } else if (typeof newValue === "number") {
-      next = newValue;
-    } else {
-      const maybeTargetValue = (newValue as any)?.target?.value;
-      if (typeof maybeTargetValue !== "undefined") {
-        const parsed = Number(maybeTargetValue);
-        if (!Number.isNaN(parsed)) next = parsed;
-      }
-    }
-
-    if (typeof next === "number") {
-      setSliderValue(Math.min(100, Math.max(0, next)));
-    }
+  const handleSliderChange = (details: { value: number[] }) => {
+    const value = details.value?.[0] ?? 0;
+    setSliderValue(Math.min(100, Math.max(0, value)));
   };
 
   const handleLocalFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +150,67 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
     onClose();
   };
 
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    startRef.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    };
+  };
+
+  useEffect(() => {
+    setPosition({ x: 0, y: 0 });
+  }, [activeImgSrc]);
+
+  const baseScale = scale && !Number.isNaN(scale) ? scale : 1;
+  const zoomFactor = 1 + sliderValue / 100;
+  const effectiveScale = baseScale * zoomFactor;
+
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!isDragging) return;
+
+      const newX = e.clientX - startRef.current.x;
+      const newY = e.clientY - startRef.current.y;
+
+      const containerSize = 300;
+      const scaledSize = containerSize * effectiveScale;
+
+      const maxOffset = (scaledSize - containerSize) / 2;
+
+      setPosition({
+        x: Math.max(-maxOffset, Math.min(maxOffset, newX)),
+        y: Math.max(-maxOffset, Math.min(maxOffset, newY))
+      });
+    },
+    [effectiveScale, isDragging]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [handleMouseMove, handleMouseUp]);
+
+  useEffect(() => {
+    const containerSize = 300;
+    const scaledSize = containerSize * effectiveScale;
+    const maxOffset = (scaledSize - containerSize) / 2;
+
+    setPosition(prev => ({
+      x: Math.max(-maxOffset, Math.min(maxOffset, prev.x)),
+      y: Math.max(-maxOffset, Math.min(maxOffset, prev.y))
+    }));
+  }, [effectiveScale]);
+
   return (
     <Modal
       open={open}
@@ -183,13 +232,22 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
             />
           )}
           {activeImgSrc != null ? (
-            <Box className="relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing">
+            <Box
+              onMouseDown={handleMouseDown}
+              onMouseLeave={() => setIsDragging(false)}
+              className="no-ghost-dragging relative h-[300px] w-[300px] cursor-grab overflow-hidden active:cursor-grabbing "
+            >
               <BaseImage
                 src={activeImgSrc}
                 alt="Project Profile Image"
-                scale={1 + sliderValue / 100}
-                className="!h-full !w-full select-none"
-                draggable={false}
+                className="!h-full !w-full"
+                style={{
+                  transform: `translate(${position.x}px, ${position.y}px) scale(${1 + sliderValue / 100})`,
+                  WebkitUserSelect: "none",
+                  KhtmlUserSelect: "none",
+                  MozUserSelect: "none",
+                  userSelect: "none"
+                }}
               />
               <Box
                 className="absolute inset-0"
@@ -231,7 +289,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               min={0}
               max={100}
               value={[sliderValue]}
-              onChange={handleSliderChange}
+              onValueChange={handleSliderChange}
             />
             <Button
               variant="borderless"

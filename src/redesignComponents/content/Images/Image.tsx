@@ -9,7 +9,6 @@ import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/found
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
-  scale?: number;
   size?: number;
   className?: string;
   borderRadius?: "rounded-md" | "rounded-full";
@@ -30,7 +29,6 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
 const BaseImage: FC<BaseImageProps> = ({
   src,
   alt,
-  scale,
   size = 164,
   className,
   borderRadius = "rounded-md",
@@ -41,6 +39,7 @@ const BaseImage: FC<BaseImageProps> = ({
   onClickEdit,
   menuItems,
   menuLabel,
+  style,
   ...rest
 }) => {
   const t = useT();
@@ -134,7 +133,7 @@ const BaseImage: FC<BaseImageProps> = ({
               fill
               className="object-cover"
               sizes={`${size}px`}
-              style={scale != null ? { transform: `scale(${scale})` } : undefined}
+              style={style}
               onError={() => setLoadError(true)}
             />
           </div>
