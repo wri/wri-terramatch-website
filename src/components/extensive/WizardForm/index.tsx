@@ -190,6 +190,20 @@ function WizardForm(props: WizardFormProps) {
     );
   }, [formHook, modal, props]);
 
+  const onClickSaveAndExit = useCallback(() => {
+    if (isAdmin) {
+      let values = formHook.getValues();
+      values = { ...values };
+
+      props.onChange?.(values, true);
+      formHook.reset(values);
+      props.onSubmit?.(values);
+      return;
+    }
+
+    onClickSaveAndClose();
+  }, [formHook, isAdmin, onClickSaveAndClose, props]);
+
   const onClickSaveChanges = useCallback(() => {
     if (isAdmin) {
       formHook.handleSubmit(onSubmitStep)();
@@ -365,6 +379,7 @@ function WizardForm(props: WizardFormProps) {
             models={props.models}
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
+            onSaveAndExit={onClickSaveAndExit}
           />
         );
       }
@@ -381,7 +396,8 @@ function WizardForm(props: WizardFormProps) {
       setSelectedStepIndex,
       onSubmitStep,
       isEntityApproved,
-      onClickSaveChanges
+      onClickSaveChanges,
+      onClickSaveAndExit
     ]
   );
 
