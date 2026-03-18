@@ -6,8 +6,6 @@ import React, { useState } from "react";
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";
 import ModalStory from "./Modal";
-import ModalSelectGalleryImages from "./ModalSelectGalleryImages";
-import ModalUploadImage from "./ModalUploadImage";
 
 const meta = {
   title: "Redesign Components/Containers/Modal",
@@ -328,55 +326,6 @@ export const Blocking: Story = {
           open={showModal}
           onClose={() => setShowModal(false)}
           blocking
-        />
-      </>
-    );
-  }
-};
-
-export const ModalUploadImageStory: Story = {
-  args: {
-    header: <div>ModalUploadImage</div>,
-    content: <div>ModalUploadImage</div>,
-    open: false
-  },
-  render: args => {
-    const [showModal, setShowModal] = useState(false);
-
-    return (
-      <>
-        <Button onClick={() => setShowModal(true)}>Show Modal</Button>
-        <ModalUploadImage
-          {...args}
-          open={showModal}
-          onClose={() => setShowModal(false)}
-          imgSrc="https://i.pravatar.cc/300?img=4"
-        />
-      </>
-    );
-  }
-};
-
-export const ModalGalleryImagesStory: Story = {
-  args: {
-    header: <div>ModalGalleryImages</div>,
-    content: <div>ModalGalleryImages</div>,
-    open: false
-  },
-  render: () => {
-    const [showModal, setShowModal] = useState(false);
-
-    return (
-      <>
-        <Button onClick={() => setShowModal(true)}>Show Modal</Button>
-        <ModalSelectGalleryImages
-          open={showModal}
-          onClose={() => setShowModal(false)}
-          images={[]}
-          hasMore={false}
-          isLoading={false}
-          onLoadMore={() => {}}
-          onSelectImage={() => {}}
         />
       </>
     );

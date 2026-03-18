@@ -45,8 +45,7 @@ const mockData: MediaDto[] = (() => {
       isCover: faker.datatype.boolean(),
       description: faker.lorem.sentence({ min: 4, max: 8 }),
       photographer: faker.person.fullName(),
-      createdByUserName: faker.person.fullName(),
-      profileImageScale: faker.number.int({ min: 1, max: 10 })
+      createdByUserName: faker.person.fullName()
     });
   }
   return data;

@@ -163,8 +163,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       createdAt: "2024-01-01T00:00:00Z",
       description: null,
       photographer: null,
-      createdByUserName: null,
-      profileImageScale: null
+      createdByUserName: null
     },
     consortiumPartnershipAgreements: []
   };

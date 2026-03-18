@@ -9,10 +9,9 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   className?: string;
   isAdd?: boolean;
   onClickEdit?: () => void;
-  hoverContent?: React.ReactNode;
 }
 
-const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickEdit, hoverContent, ...rest }) => {
+const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickEdit, ...rest }) => {
   return (
     <BaseImage
       {...rest}
@@ -22,7 +21,6 @@ const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickEdit, hoverCon
       classNamesHover="m-0.5 border border-white w-[calc(100%-0.25rem)] h-[calc(100%-0.25rem)] absolute inset-0 rounded-md"
       isAdd={isAdd}
       onClickEdit={onClickEdit}
-      hoverContent={hoverContent}
     />
   );
 };
