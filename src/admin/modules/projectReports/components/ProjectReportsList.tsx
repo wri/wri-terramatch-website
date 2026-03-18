@@ -52,8 +52,8 @@ const ProjectReportDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: ProjectReportLightDto) => {
-          const { title } = getReportStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: ProjectReportLightDto) => {
+          const { title } = getReportStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -101,9 +101,9 @@ export const ProjectReportsList: FC = () => {
       label="Organisation"
       sort={{
         field: "name",
-        order: "DESC"
+        order: "ASC"
       }}
-      perPage={1000}
+      perPage={100}
       filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organisation" className="select-page-admin" />
