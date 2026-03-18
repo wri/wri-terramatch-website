@@ -14,7 +14,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
-import ProjectDescription from "./ProjectDescription";
+import DescriptionHeader from "./DescriptionHeader";
 import SeparatorDot from "./SeparatorDot";
 
 export interface NurseryInfoProps {
@@ -46,7 +46,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     entityStatus: nursery.status ?? "started",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
 
   const needMoreInformation =
     nursery.updateRequestStatus === "needs-more-information" ||
@@ -55,7 +55,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
   const statusProps: StatusProps | undefined = useMemo(() => {
-    if (!needMoreInformation) return undefined;
+    if (needMoreInformation !== true) return undefined;
     const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
     return {
       title: t(`${titlePrefix} More Info Requested`),
@@ -65,7 +65,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   }, [needMoreInformation, hasUpdateRequest, t]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && statusProps) {
+    if (needMoreInformation === true && statusProps != null) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -81,25 +81,32 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     }
   }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit]);
 
+  const handleProjectNav = useCallback(() => {
+    router.push(`/project/${projectUuid}`);
+  }, [router, projectUuid]);
+
+  const handleMyProjectsNav = useCallback(() => {
+    router.push(`/my-projects`);
+  }, [router]);
+
+  const handleExportClick = useCallback(() => {
+    handleExport();
+  }, [handleExport]);
+
   return (
     <Box gap={2} className="flex flex-col">
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button
-          variant="borderless"
-          size="small"
-          className="-mr-2"
-          onClick={() => router.push(`/project/${projectUuid}`)}
-        >
+        <Button variant="borderless" size="small" className="-mr-2" onClick={handleProjectNav}>
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button variant="borderless" size="small" className="-mr-2" onClick={() => router.push(`/my-projects`)}>
+        <Button variant="borderless" size="small" className="-ml-2" onClick={handleMyProjectsNav}>
           {organization}
         </Button>
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription
+        <DescriptionHeader
           description={description}
           handleEdit={handleEditClick}
           backgroundColor="neutral.100"
@@ -108,7 +115,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
             size: "small",
             leftIcon: <DownloadIcon />,
             className: "w-auto",
-            onClick: handleExport,
+            onClick: handleExportClick,
             loading: exportLoader,
             children: t("Download Nursery Files")
           }}
@@ -123,7 +130,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
             size="small"
             leftIcon={<DownloadIcon />}
             className="w-auto"
-            onClick={handleExport}
+            onClick={handleExportClick}
             loading={exportLoader}
           >
             {t("Download Nursery Files")}

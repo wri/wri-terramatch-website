@@ -2,6 +2,7 @@ import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import {
+  AgroforestyIcon,
   ApplicationsIcon,
   AreaHectaresIcon,
   CalendarIcon,
@@ -57,6 +58,7 @@ import {
   SurvivalRateIcon,
   TreeCircleIcon,
   TreeIcon,
+  TreePlantingIcon,
   UserAddIcon,
   VisibilityIcon,
   VisibilityOffIcon
@@ -139,6 +141,9 @@ export const AllIcons: Story = {
       <Box>
         <CategoryHeader title="Restoration & Land" />
         <VStack align="stretch" gap={4}>
+          <IconWrapper name="Agroforesty">
+            <AgroforestyIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Nursery Building">
             <NurseryBuildingIcon boxSize={8} />
           </IconWrapper>
@@ -147,6 +152,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Nursery Managing">
             <NurseryManagingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Tree Planting">
+            <TreePlantingIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
