@@ -4,7 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
@@ -120,10 +120,10 @@ function WizardForm(props: WizardFormProps) {
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
-      () => ({
+      (): UseFormProps => ({
         defaultValues: props.defaultValues,
         mode: "onTouched",
-        resolved: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
+        resolver: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
       }),
       [props.defaultValues, selectedSection?.validation]
     )
