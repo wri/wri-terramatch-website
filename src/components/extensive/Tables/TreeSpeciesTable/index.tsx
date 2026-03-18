@@ -7,7 +7,7 @@ import { TableType } from "@/components/extensive/Tables/TreeSpeciesTable/column
 import { SupportedEntity, usePlants } from "@/connections/EntityAssociation";
 import Log from "@/utils/log";
 
-import { TreeSpeciesTableRowData, usePlantTotalCount, useTableData, useTableType, useTreeTableColumns } from "./hooks";
+import { TreeSpeciesTableRowData, useTableData, useTableType, useTreeTableColumns } from "./hooks";
 
 export type PlantData = {
   name?: string | null;
@@ -138,7 +138,7 @@ const TreeSpeciesTable: FC<TreeSpeciesTableProps> = props => {
 
   // If we receive plants but not converted table data, render the goals data fetcher composition
   if (plants != null && data == null && entity != null && entityUuid != null) {
-    const totalCountSeeds = usePlantTotalCount({ entity, entityUuid, collection: collection! });
+    const totalCountSeeds = plants.reduce((sum, plant) => sum + (plant.amount ?? 0), 0);
     const isReports = entity === "nurseryReports" || entity === "siteReports";
     if (isReports) {
       return (
