@@ -3,9 +3,10 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
 import { useCallback, useState } from "react";
 
+import Button from "@/components/elements/Button/Button";
 import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useModalContext } from "@/context/modal.provider";
@@ -47,39 +48,41 @@ const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
   if (MOCK_HAS_ANR_MONITORING_PLOT_DATA) {
     return (
       <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Text variant="text-14-bold" className="text-darkCustom">
+        <div className="flex items-baseline justify-between gap-1.5">
+          <Text variant="text-14-semibold" className="text-darkCustom">
             {t("Assisted Natural Regeneration Monitoring Plots")}
           </Text>
           <button
             type="button"
-            className="text-darkCustom hover:opacity-70"
+            className="group text-darkCustom"
             onClick={() => setPlotsVisible(prev => !prev)}
             aria-label={plotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
           >
-            {plotsVisible ? <VisibilityOff sx={{ fontSize: 22 }} /> : <Visibility sx={{ fontSize: 22 }} />}
+            {plotsVisible ? (
+              <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+            ) : (
+              <Visibility sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+            )}
           </button>
         </div>
-        <button
-          type="button"
-          className="flex w-fit items-center gap-2 rounded-md p-1 text-left hover:bg-neutral-200"
+        <Button
           onClick={openDeleteConfirmModal}
+          variant="semi-red"
+          iconProps={{ name: IconNames.TRASH_PA }}
+          className="border-[1px] "
         >
-          <Icon name={IconNames.TRASH_PA} className="h-5 w-5 text-darkCustom" />
-          <Text variant="text-12-bold" className="text-darkCustom">
-            {t("Delete ANR Monitoring Plots")}
-          </Text>
-        </button>
+          <span className="text-12-bold normal-case text-darkCustom">{t("Delete ANR Monitoring Plots")}</span>
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <Text variant="text-14-bold" className="text-darkCustom">
+      <Text variant="text-14-semibold" className="text-darkCustom">
         {t("Assisted Natural Regeneration Monitoring Plots")}
       </Text>
-      <Text variant="text-12-bold" className="text-grey-500">
+      <Text variant="text-12-semibold" className="text-grey-500">
         {t("Upload ANR Monitoring Plots")}
       </Text>
       <CommentaryBox
