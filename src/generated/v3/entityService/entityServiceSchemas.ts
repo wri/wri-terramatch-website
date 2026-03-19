@@ -149,6 +149,7 @@ export type MediaDto = {
   photographer: string | null;
   createdByUserName: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type ImpactStoryLightDto = {
@@ -640,6 +641,10 @@ export type MediaRequestBulkAttributes = {
    * The profile image scale
    */
   profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestBulkData = {
@@ -678,6 +683,10 @@ export type MediaRequestAttributes = {
    * Whether the media is a cover
    */
   isCover: boolean | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestData = {
@@ -718,6 +727,10 @@ export type MediaUpdateAttributes = {
    * The profile image scale
    */
   profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaData = {
@@ -1978,6 +1991,7 @@ export type EmbeddedMediaDto = {
   description: string | null;
   photographer: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FinancialIndicatorDto = {

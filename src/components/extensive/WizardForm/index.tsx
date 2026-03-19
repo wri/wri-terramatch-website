@@ -4,7 +4,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useForm, UseFormProps, UseFormReturn } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 
 import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
@@ -120,14 +120,11 @@ function WizardForm(props: WizardFormProps) {
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
     useMemo(
-      () =>
-        selectedSection?.validation != null
-          ? {
-              resolver: yupResolver(selectedSection?.validation),
-              defaultValues: props.defaultValues,
-              mode: "onTouched"
-            }
-          : { mode: "onTouched" },
+      (): UseFormProps => ({
+        defaultValues: props.defaultValues,
+        mode: "onTouched",
+        resolver: selectedSection?.validation == null ? undefined : yupResolver(selectedSection.validation)
+      }),
       [props.defaultValues, selectedSection?.validation]
     )
   );
@@ -243,14 +240,6 @@ function WizardForm(props: WizardFormProps) {
     // Find the first invalid step or go straight to the last step.
     const stepIndex = steps.findIndex(({ validation }) => !validation.isValidSync(props.defaultValues));
     setSelectedStepIndex(stepIndex < 0 ? lastIndex : stepIndex);
-  });
-
-  useValueChanged(props.defaultValues, () => {
-    if (props.defaultValues != null) {
-      for (const [key, value] of Object.entries(props.defaultValues)) {
-        formHook.setValue(key, value);
-      }
-    }
   });
 
   useLayoutEffect(() => {

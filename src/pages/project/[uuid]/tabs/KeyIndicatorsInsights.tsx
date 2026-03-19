@@ -16,6 +16,8 @@ import {
   SeedlingsIcon,
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
+
+import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
 }
@@ -60,16 +62,14 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     return computeTreesGrownFromTrackings(allEntries ?? [], project?.survivalRate ?? 0);
   }, [framework, trackings, project?.survivalRate]);
 
+  const keyIndicatorsTooltipContentItem = useMemo(() => {
+    return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
+  }, [project.frameworkKey]);
+
   return (
     <Flex flex={1} flexWrap="wrap" className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8" justify={"flex-start"}>
       <MetricCard
-        title={t(
-          framework === Framework.PPC
-            ? "Trees Growing"
-            : framework === Framework.HBF
-            ? "Saplings Growing"
-            : "Trees Planted"
-        )}
+        title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
         progress={totalTreesRestoredCount}
         goal={treesGrownGoal}
         variant="donutChart"
@@ -80,33 +80,33 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
-            <b>{t("Trees Planted")}</b>
+            <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
             <br />
-            {t("Number of trees planted for this project")}
+            {t(`${keyIndicatorsTooltipContentItem?.treesRestored.content}`)}
           </Box>
         }
       />
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <MetricCard
-          title={t("Trees Regenerated")}
+          title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
           progress={project.regeneratedTreesCount ?? 0}
           goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<RegenerationIcon />}
           color="secondary.600"
-          type="treesRestored"
+          type="treesRegenerated"
           className={metricClassName}
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
-              <b>{t("Trees Regenerated")}</b>
+              <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
               <br />
-              {t("Number of trees regenerated for this project")}
+              {t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.content}`)}
             </Box>
           }
         />
         <MetricCard
-          title={t("Seedlings Grown")}
+          title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
           progress={project.seedsPlantedCount ?? 0}
           goal={project.seedsGrownGoal ?? 0}
           variant="donutChart"
@@ -117,16 +117,16 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
-              <b>{t("Seedlings Grown")}</b>
+              <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
               <br />
-              {t("Number of seedlings grown for this project")}
+              {t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.content}`)}
             </Box>
           }
         />
       </ContextCondition>
       {(project?.frameworkKey == "terra-fund-3" || project?.frameworkKey == Framework.TF_3) && (
         <MetricCard
-          title={t("Trees to be restored")}
+          title={t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}
           progress={treesGrownTf3 ?? 0}
           goal={0}
           variant="large"
@@ -137,15 +137,15 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
-              <b>{t("Trees to be restored")}</b>
+              <b>{t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}</b>
               <br />
-              {t("Number of trees to be restored for this project")}
+              {t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.content}`)}
             </Box>
           }
         />
       )}
       <MetricCard
-        title={t("Area Restored (ha)")}
+        title={t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}
         progress={totalHectaresRestored}
         goal={totalHectaresRestoredGoal}
         variant="donutChart"
@@ -156,9 +156,9 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
-            <b>{t("Area Restored (ha)")}</b>
+            <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
             <br />
-            {t("Number of hectares within approved polygons for this project")}
+            {t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.content}`)}
             {hectaresTargetPercentage != null && (
               <>
                 <br />
@@ -170,7 +170,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       />
       {framework === Framework.PPC ? (
         <MetricCard
-          title={t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}
+          title={t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}
           progress={framework === Framework.PPC ? project.combinedWorkdayCount : project.totalJobsCreated}
           goal={project.jobsCreatedGoal ?? 0}
           variant="large"
@@ -180,20 +180,16 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
-              <b>{t(framework === Framework.PPC ? "Workdays Created" : "Jobs Created")}</b>
+              <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
               <br />
-              {t(
-                framework === Framework.PPC
-                  ? "Number of workdays created for this project"
-                  : "Number of jobs created for this project"
-              )}
+              {t(`${keyIndicatorsTooltipContentItem?.jobsCreated.content}`)}
             </Box>
           }
           frameworkKey={framework!}
         />
       ) : (
         <MetricCard
-          title={t("Jobs Created")}
+          title={t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}
           progress={project.totalJobsCreated}
           goal={project.jobsCreatedGoal ?? 0}
           variant="donutChart"
@@ -203,9 +199,9 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
-              <b>{t("Jobs Created")}</b>
+              <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
               <br />
-              {t("Number of jobs created for this project")}
+              {t(`${keyIndicatorsTooltipContentItem?.jobsCreated.content}`)}
             </Box>
           }
           frameworkKey={framework!}
