@@ -55,7 +55,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
   const statusProps: StatusProps | undefined = useMemo(() => {
-    if (needMoreInformation !== true) return undefined;
+    if (!needMoreInformation) return undefined;
     const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
     return {
       title: t(`${titlePrefix} More Info Requested`),
@@ -65,7 +65,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   }, [needMoreInformation, hasUpdateRequest, t]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation === true && statusProps != null) {
+    if (needMoreInformation && statusProps != null) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
