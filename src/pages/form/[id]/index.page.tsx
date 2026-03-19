@@ -10,6 +10,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useForm } from "@/connections/Form";
 import { useSubmissionCreate } from "@/connections/FormSubmission";
 import { useRequestSuccess } from "@/hooks/useConnectionUpdate";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import ApplicationsTable from "../cards/ApplicationsTable";
@@ -26,6 +27,7 @@ const FormIntroPage = () => {
     isCreating,
     createFailure,
     useCallback(() => {
+      ApiSlice.pruneIndex("applications");
       router.push(`/form/submission/${submission?.uuid}`);
     }, [router, submission?.uuid]),
     "Application creation failed"

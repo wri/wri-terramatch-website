@@ -46,8 +46,8 @@ const mockData: MediaDto[] = (() => {
       description: faker.lorem.sentence({ min: 4, max: 8 }),
       photographer: faker.person.fullName(),
       createdByUserName: faker.person.fullName(),
-      profileImageScale: 1,
-      profileImagePosition: { x: 0, y: 0 }
+      profileImageScale: faker.number.int({ min: 1, max: 10 }),
+      profileImagePosition: { x: faker.number.int({ min: 1, max: 10 }), y: faker.number.int({ min: 1, max: 10 }) }
     });
   }
   return data;

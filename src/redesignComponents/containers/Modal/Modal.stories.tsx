@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Image from "next/image";
 import React, { useState } from "react";
 
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";
 import ModalStory from "./Modal";
@@ -23,7 +25,7 @@ type Story = StoryObj<typeof meta>;
 
 const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-3">
+    <div className="border-theme-neutral-700 bg-theme-neutral-200 flex flex-col gap-3 rounded-lg border border-dashed p-3">
       <div className="flex flex-col">
         <Text textStyle={isLarge ? "600-bold" : "400-bold"} color="neutral.800">
           Detach this instance
@@ -39,7 +41,7 @@ const ModalContent = ({ isLarge = false }: { isLarge?: boolean }) => {
         alt="Modal Example"
         width={100}
         height={100}
-        className="h-full w-full max-w-[292px] rounded-lg border border-theme-neutral-300 object-cover"
+        className="border-theme-neutral-300 h-full w-full max-w-[292px] rounded-lg border object-cover"
       />
     </div>
   );
@@ -230,23 +232,25 @@ export const WithActions: Story = {
         <ModalStory
           {...args}
           footer={
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setShowModal(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowModal(false);
-                }}
-              >
-                Save
-              </Button>
-            </>
+            <ButtonGroup
+              buttons={[
+                {
+                  id: "cancel",
+                  children: "Cancel",
+                  variant: "secondary",
+                  onClick: () => {
+                    setShowModal(false);
+                  }
+                },
+                {
+                  id: "save",
+                  children: "Save",
+                  onClick: () => {
+                    setShowModal(false);
+                  }
+                }
+              ]}
+            />
           }
           open={showModal}
           onClose={() => setShowModal(false)}
@@ -363,13 +367,30 @@ export const ModalGalleryImagesStory: Story = {
     content: <div>ModalGalleryImages</div>,
     open: false
   },
-  render: args => {
+  render: () => {
     const [showModal, setShowModal] = useState(false);
 
     return (
       <>
         <Button onClick={() => setShowModal(true)}>Show Modal</Button>
-        <ModalSelectGalleryImages {...args} open={showModal} onClose={() => setShowModal(false)} />
+        <ModalSelectGalleryImages
+          open={showModal}
+          onClose={() => setShowModal(false)}
+          images={Array.from(
+            { length: 10 },
+            (_, i): { uuid: string; src: string; alt: string; url: string; name: string } => ({
+              uuid: `image-${i}`,
+              src: `https://i.pravatar.cc/300?img=${i}`,
+              alt: `Image ${i}`,
+              url: `https://i.pravatar.cc/300?img=${i}`,
+              name: `Image ${i}`
+            })
+          )}
+          hasMore={false}
+          isLoading={false}
+          onLoadMore={() => {}}
+          onSelectImage={() => {}}
+        />
       </>
     );
   }

@@ -34,7 +34,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({ images, onClickAdd }) =>
           return (
             <GridItem key={`placeholder-${index}`}>
               {showContent ? (
-                <GalleryImage alt="No images available" isAdd={true} onClickAdd={onClickAdd} />
+                <GalleryImage alt="No images available" isAdd={true} onClickEdit={onClickAdd} />
               ) : (
                 <div className="bg-theme-neutral-200 rounded-md" style={{ width: 164, height: 164 }} />
               )}

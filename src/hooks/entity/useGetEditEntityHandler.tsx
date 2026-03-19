@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -45,7 +46,7 @@ export const useGetEditEntityHandler = ({
     );
   }
 
-  const handleEdit = () => {
+  const handleEdit = (stepId?: string | null) => {
     if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
       openModal(
         ModalId.REVIEW_IN_PROGRESS,
@@ -72,7 +73,13 @@ export const useGetEditEntityHandler = ({
           primaryButtonProps={{
             children: t("Edit"),
             onClick: () => {
-              router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+              if (stepId != null) {
+                router.push(
+                  `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                );
+              } else {
+                router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+              }
               closeModal(ModalId.CONFIRM_EDIT);
             }
           }}
