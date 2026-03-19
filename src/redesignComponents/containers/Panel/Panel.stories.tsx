@@ -54,6 +54,7 @@ export const Default: Story = {
 
 export const PanelWithBreadcrumb: Story = {
   args: {
+    width: "fit-content",
     content: (
       <Flex className="items-center justify-between gap-2 px-4 py-3">
         <Flex className="items-center gap-2">
@@ -62,10 +63,12 @@ export const PanelWithBreadcrumb: Story = {
             onClick={() => {}}
           />
           <Breadcrumb
+            size="small"
+            maxItems={2}
             links={[
-              { label: "One", link: "#" },
-              { label: "Two", link: "#" },
-              { label: "Three", link: "#" }
+              { label: "Page level 1", link: "#" },
+              { label: "Page level 2", link: "#" },
+              { label: "Page level 3", link: "#" }
             ]}
             linkRouter={Link}
           />
