@@ -36,6 +36,15 @@ const variantStyles = {
     header: {
       gap: 3
     }
+  },
+  borderless: {
+    container: {
+      background: "neutral.100",
+      padding: 4
+    },
+    header: {
+      gap: 2
+    }
   }
 };
 
