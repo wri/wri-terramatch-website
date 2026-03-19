@@ -2600,6 +2600,284 @@ export const deleteProjectPolygon = new V3ApiEndpoint<
   {}
 >("/research/v3/projectPolygons/{polyUuid}", "DELETE");
 
+export type GetAnrPlotGeometryPathParams = {
+  sitePolygonUuid: string;
+};
+
+export type GetAnrPlotGeometryError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAnrPlotGeometryResponse = {
+  meta?: {
+    /**
+     * @example anrPlotGeometries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example anrPlotGeometries
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AnrPlotGeometryDto;
+  };
+};
+
+export type GetAnrPlotGeometryVariables = {
+  pathParams: GetAnrPlotGeometryPathParams;
+};
+
+/**
+ * Returns the active GeoJSON FeatureCollection of ANR monitoring plots
+ *       uploaded for the specified site polygon.
+ */
+export const getAnrPlotGeometry = new V3ApiEndpoint<
+  GetAnrPlotGeometryResponse,
+  GetAnrPlotGeometryError,
+  GetAnrPlotGeometryVariables,
+  {}
+>("/research/v3/sitePolygons/{sitePolygonUuid}/plotGeometry", "GET");
+
+export type UpsertAnrPlotGeometryPathParams = {
+  sitePolygonUuid: string;
+};
+
+export type UpsertAnrPlotGeometryError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UpsertAnrPlotGeometryResponse = {
+  meta?: {
+    /**
+     * @example anrPlotGeometries
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example anrPlotGeometries
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.AnrPlotGeometryDto;
+  };
+};
+
+export type UpsertAnrPlotGeometryVariables = {
+  pathParams: UpsertAnrPlotGeometryPathParams;
+};
+
+/**
+ * Uploads a GeoJSON FeatureCollection as the ANR monitoring plot grid for
+ *       the specified site polygon. If a plot already exists it is soft-deleted and replaced
+ *       atomically. Supported formats: GeoJSON (.geojson), KML (.kml), Shapefile (.zip).
+ *       Admin only (polygons-manage permission required).
+ */
+export const upsertAnrPlotGeometry = new V3ApiEndpoint<
+  UpsertAnrPlotGeometryResponse,
+  UpsertAnrPlotGeometryError,
+  UpsertAnrPlotGeometryVariables,
+  {}
+>("/research/v3/sitePolygons/{sitePolygonUuid}/plotGeometry", "PUT");
+
+export type DeleteAnrPlotGeometryPathParams = {
+  sitePolygonUuid: string;
+};
+
+export type DeleteAnrPlotGeometryError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type DeleteAnrPlotGeometryResponse = {
+  meta?: {
+    resourceType?: "anrPlotGeometries";
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type DeleteAnrPlotGeometryVariables = {
+  pathParams: DeleteAnrPlotGeometryPathParams;
+};
+
+/**
+ * Soft-deletes the active ANR plot grid for the specified site polygon.
+ *       The record is retained in history (deletedAt is set). Admin only.
+ */
+export const deleteAnrPlotGeometry = new V3ApiEndpoint<
+  DeleteAnrPlotGeometryResponse,
+  DeleteAnrPlotGeometryError,
+  DeleteAnrPlotGeometryVariables,
+  {}
+>("/research/v3/sitePolygons/{sitePolygonUuid}/plotGeometry", "DELETE");
+
+export type GetAnrPlotGeometryGeoJsonPathParams = {
+  sitePolygonUuid: string;
+};
+
+export type GetAnrPlotGeometryGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type GetAnrPlotGeometryGeoJsonResponse = {
+  meta?: {
+    /**
+     * @example geojsonExports
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example geojsonExports
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.GeoJsonExportDto;
+  };
+};
+
+export type GetAnrPlotGeometryGeoJsonVariables = {
+  pathParams: GetAnrPlotGeometryGeoJsonPathParams;
+};
+
+/**
+ * Returns the active ANR monitoring plot grid as a GeoJSON FeatureCollection
+ *       for the specified site polygon. Reuses the standard GeoJsonExportDto shape,
+ *       consistent with other geometry export endpoints.
+ */
+export const getAnrPlotGeometryGeoJson = new V3ApiEndpoint<
+  GetAnrPlotGeometryGeoJsonResponse,
+  GetAnrPlotGeometryGeoJsonError,
+  GetAnrPlotGeometryGeoJsonVariables,
+  {}
+>("/research/v3/sitePolygons/{sitePolygonUuid}/plotGeometry/geojson", "GET");
+
 export const operationsByTag = {
   sitePolygons: {
     createSitePolygons,
@@ -2634,5 +2912,6 @@ export const operationsByTag = {
     uploadProjectPolygonFile,
     updateProjectPolygon,
     deleteProjectPolygon
-  }
+  },
+  anrPlotGeometry: { getAnrPlotGeometry, upsertAnrPlotGeometry, deleteAnrPlotGeometry, getAnrPlotGeometryGeoJson }
 };
