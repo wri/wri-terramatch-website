@@ -67,7 +67,6 @@ const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
-  const [isPolygonStatusOpen, setIsPolygonStatusOpen] = useState(false);
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
 
@@ -213,7 +212,6 @@ const Polygons = (props: IPolygonProps) => {
           flyToPolygonBounds(item);
           setPolygonFromMap({ isOpen: true, uuid: item.uuid });
           setIsOpenPolygonDrawer(true);
-          setIsPolygonStatusOpen(false);
           setSelectedPolygonsInCheckbox([]);
         }
       },
@@ -254,7 +252,6 @@ const Polygons = (props: IPolygonProps) => {
           flyToPolygonBounds(item);
           setPolygonFromMap({ isOpen: true, uuid: item.uuid });
           setIsOpenPolygonDrawer(true);
-          setIsPolygonStatusOpen(false);
           setSelectedPolygonsInCheckbox([]);
         }
       },
@@ -308,7 +305,6 @@ const Polygons = (props: IPolygonProps) => {
         {isOpenPolygonDrawer && (
           <PolygonDrawer
             polygonSelected={selectedPolygon?.uuid ?? polygonFromMap?.uuid ?? ""}
-            isPolygonStatusOpen={isPolygonStatusOpen}
             refresh={props?.refresh}
             isOpenPolygonDrawer={isOpenPolygonDrawer}
             setSelectedPolygonToDrawer={setSelectedPolygon as any}

@@ -2,7 +2,7 @@ import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
-import { Else, If, Then, When } from "react-if";
+import { When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
 import Button from "@/components/elements/Button/Button";
@@ -25,6 +25,7 @@ import Log from "@/utils/log";
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
 import StatusDisplay from "../PolygonStatus/StatusDisplay";
+import AnrMonitoringPlots from "./components/AnrMonitoringPlots";
 import AttributeInformation from "./components/AttributeInformation";
 import SinglePolygonValidation from "./components/SinglePolygonValidation";
 import VersionHistory from "./components/VersionHistory";
@@ -38,7 +39,6 @@ const statusColor: Record<string, string> = {
 
 const PolygonDrawer = ({
   polygonSelected,
-  isPolygonStatusOpen,
   refresh,
   isOpenPolygonDrawer,
   setSelectedPolygonToDrawer,
@@ -48,7 +48,6 @@ const PolygonDrawer = ({
   setIsOpenPolygonDrawer
 }: {
   polygonSelected: string;
-  isPolygonStatusOpen: any;
   refresh?: () => void;
   isOpenPolygonDrawer: boolean;
   setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
@@ -57,7 +56,8 @@ const PolygonDrawer = ({
   setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
   polygonFromMap?: { isOpen: boolean; uuid: string };
 }) => {
-  const [buttonToogle, setButtonToogle] = useState(true);
+  type TopTab = "attributes" | "polygonStatus" | "anrMonitoringPlots";
+  const [activeTab, setActiveTab] = useState<TopTab>("attributes");
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
@@ -125,9 +125,10 @@ const PolygonDrawer = ({
       hideLoader();
     }
   });
-  useValueChanged(isPolygonStatusOpen, () => {
-    setButtonToogle(!isPolygonStatusOpen);
-  });
+
+  useEffect(() => {
+    setActiveTab("attributes");
+  }, [polygonSelected]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -141,7 +142,7 @@ const PolygonDrawer = ({
   }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
     if (openEditNewPolygon) {
-      setButtonToogle(true);
+      setActiveTab("attributes");
       setOpenAttributes(true);
     }
   }, [openEditNewPolygon]);
@@ -195,109 +196,116 @@ const PolygonDrawer = ({
       </div>
       <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
         <Button
-          variant={`${buttonToogle ? "white-toggle" : "transparent-toggle"}`}
-          onClick={() => setButtonToogle(!buttonToogle)}
+          variant={`${activeTab === "attributes" ? "white-toggle" : "transparent-toggle"}`}
+          onClick={() => setActiveTab("attributes")}
         >
           Attributes
         </Button>
         <Button
-          variant={`${buttonToogle ? "transparent-toggle" : "white-toggle"}`}
-          onClick={() => setButtonToogle(!buttonToogle)}
+          variant={`${activeTab === "polygonStatus" ? "white-toggle" : "transparent-toggle"}`}
+          onClick={() => setActiveTab("polygonStatus")}
         >
           Polygon Status
         </Button>
+        <Button
+          variant={`${activeTab === "anrMonitoringPlots" ? "white-toggle" : "transparent-toggle"}`}
+          onClick={() => setActiveTab("anrMonitoringPlots")}
+        >
+          ANR Monitoring Plots
+        </Button>
       </div>
-      <If condition={!buttonToogle}>
-        <Then>
-          <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <div className="flex items-center gap-2">
-              <Text variant="text-14-semibold" className="w-[15%] break-words">
-                Status:
+      {activeTab === "polygonStatus" ? (
+        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+          <div className="flex items-center gap-2">
+            <Text variant="text-14-semibold" className="w-[15%] break-words">
+              Status:
+            </Text>
+            <When condition={selectedPolygon?.status}>
+              <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
+            </When>
+          </div>
+          <StatusDisplay
+            titleStatus="sitePolygons"
+            name={selectedPolygon?.name}
+            refresh={refresh}
+            record={selectedPolygon}
+            onStatusChange={handlePolygonStatusChange}
+            showChangeRequest={false}
+            checkPolygonsSite={true}
+          />
+          <CommentarySection
+            variantText="text-14-semibold"
+            record={selectedPolygon}
+            entity="sitePolygons"
+            refresh={refetchAuditLog}
+          ></CommentarySection>
+          {auditLogData != null && (
+            <>
+              <Text variant="text-14-semibold" className="">
+                Audit Log
               </Text>
-              <When condition={selectedPolygon?.status}>
-                <Status className="w-[35%]" status={selectedPolygon?.status as StatusEnum} />
-              </When>
-            </div>
-            <StatusDisplay
-              titleStatus="sitePolygons"
-              name={selectedPolygon?.name}
-              refresh={refresh}
-              record={selectedPolygon}
-              onStatusChange={handlePolygonStatusChange}
-              showChangeRequest={false}
-              checkPolygonsSite={true}
-            />
-            <CommentarySection
-              variantText="text-14-semibold"
-              record={selectedPolygon}
-              entity="sitePolygons"
-              refresh={refetchAuditLog}
-            ></CommentarySection>
-            {auditLogData != null && (
-              <>
-                <Text variant="text-14-semibold" className="">
-                  Audit Log
-                </Text>
-                <AuditLogTable
-                  fullColumns={false}
-                  auditLogData={auditLogData}
-                  auditData={auditData}
-                  refresh={refetchAuditLog}
-                />
-              </>
-            )}
-          </div>
-        </Then>
-        <Else>
-          <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
-            <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
-              <SinglePolygonValidation
-                polygonUuid={polygonSelected}
-                clickedValidation={setCheckPolygonValidation}
-                clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
+              <AuditLogTable
+                fullColumns={false}
+                auditLogData={auditLogData}
+                auditData={auditData}
+                refresh={refetchAuditLog}
               />
-            </Accordion>
-            <Divider />
-            <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
-              {selectedPolygonData && (
-                <AttributeInformation
-                  selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
-                  sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
-                  setSelectedPolygonData={setSelectPolygonVersion}
-                  setStatusSelectedPolygon={setStatusSelectedPolygon}
-                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
-                  selectedPolygonIndex={selectedPolygonIndex}
-                  setPolygonFromMap={setPolygonFromMap}
-                  setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
-                  setIsLoadingDropdownVersions={setIsLoadingDropdown}
-                />
-              )}
-            </Accordion>
-            <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-              {selectedPolygonData && (
-                <VersionHistory
-                  wrapperRef={wrapperRef}
-                  setPolygonFromMap={setPolygonFromMap}
-                  polygonFromMap={polygonFromMap}
-                  selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
-                  setSelectPolygonVersion={setSelectPolygonVersion}
-                  selectPolygonVersion={selectPolygonVersion}
-                  refreshPolygonList={refresh}
-                  refreshSiteData={sitePolygonRefresh}
-                  setSelectedPolygonData={setSelectedPolygonData}
-                  setStatusSelectedPolygon={setStatusSelectedPolygon}
-                  isLoadingDropdown={isLoadingDropdown}
-                  setIsLoadingDropdown={setIsLoadingDropdown}
-                  setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
-                  selectedPolygonIndex={selectedPolygonIndex}
-                />
-              )}
-            </Accordion>
-            <Divider />
-            <div className="mt-[89px] lg:mt-[104px] wide:mt-[174px]" />
-          </div>
-        </Else>
-      </If>
+            </>
+          )}
+        </div>
+      ) : activeTab === "anrMonitoringPlots" ? (
+        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+          <AnrMonitoringPlots polygonUuid={polygonSelected} />
+        </div>
+      ) : (
+        <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+          <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
+            <SinglePolygonValidation
+              polygonUuid={polygonSelected}
+              clickedValidation={setCheckPolygonValidation}
+              clickedRunFixPolygonOverlaps={runFixPolygonOverlaps}
+            />
+          </Accordion>
+          <Divider />
+          <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
+            {selectedPolygonData && (
+              <AttributeInformation
+                selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
+                sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
+                setSelectedPolygonData={setSelectPolygonVersion}
+                setStatusSelectedPolygon={setStatusSelectedPolygon}
+                setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                selectedPolygonIndex={selectedPolygonIndex}
+                setPolygonFromMap={setPolygonFromMap}
+                setIsOpenPolygonDrawer={setIsOpenPolygonDrawer}
+                setIsLoadingDropdownVersions={setIsLoadingDropdown}
+              />
+            )}
+          </Accordion>
+          <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
+            {selectedPolygonData && (
+              <VersionHistory
+                wrapperRef={wrapperRef}
+                setPolygonFromMap={setPolygonFromMap}
+                polygonFromMap={polygonFromMap}
+                selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                setSelectPolygonVersion={setSelectPolygonVersion}
+                selectPolygonVersion={selectPolygonVersion}
+                refreshPolygonList={refresh}
+                refreshSiteData={sitePolygonRefresh}
+                setSelectedPolygonData={setSelectedPolygonData}
+                setStatusSelectedPolygon={setStatusSelectedPolygon}
+                isLoadingDropdown={isLoadingDropdown}
+                setIsLoadingDropdown={setIsLoadingDropdown}
+                setSelectedPolygonToDrawer={setSelectedPolygonToDrawer}
+                selectedPolygonIndex={selectedPolygonIndex}
+              />
+            )}
+          </Accordion>
+          <Divider />
+          <div className="mt-[89px] lg:mt-[104px] wide:mt-[174px]" />
+        </div>
+      )}
     </div>
   );
 };
