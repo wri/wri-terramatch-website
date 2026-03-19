@@ -8,12 +8,11 @@ import * as yup from "yup";
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
 import { useToastContext } from "@/context/toast.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
   open: boolean;
@@ -107,14 +106,21 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
         </div>
       }
       footer={
-        <div className="relative h-14 w-full">
-          <div className="absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t border-theme-neutral-300 px-[13px] pt-4 ">
-            <Button variant="borderless" onClick={handleClose}>
-              {t("Cancel")}
-            </Button>
-            <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
-          </div>
-        </div>
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              variant: "borderless",
+              children: t("Cancel"),
+              onClick: handleClose
+            },
+            {
+              id: "send",
+              children: t("Send Invite"),
+              onClick: handleSubmit(onSubmit)
+            }
+          ]}
+        />
       }
     />
   );
