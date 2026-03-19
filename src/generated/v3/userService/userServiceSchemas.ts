@@ -46,8 +46,44 @@ export type VerificationUserResponseDto = {
   verified: boolean;
 };
 
-export type VerificationUserRequest = {
+export type VerificationUserAttributes = {
   token: string;
+};
+
+export type VerificationUserData = {
+  type: "verifications";
+  attributes: VerificationUserAttributes;
+};
+
+export type VerificationUserBody = {
+  data: VerificationUserData;
+};
+
+export type ResendVerificationResponseDto = {
+  /**
+   * Email address the verification was (or would have been) sent to
+   */
+  emailAddress: string;
+};
+
+export type ResendVerificationAttributes = {
+  /**
+   * User email address to resend verification to
+   */
+  emailAddress: string;
+  /**
+   * Optional callback URL used as prefix for the verification token link
+   */
+  callbackUrl?: string;
+};
+
+export type ResendVerificationData = {
+  type: "verifications";
+  attributes: ResendVerificationAttributes;
+};
+
+export type ResendVerificationBody = {
+  data: ResendVerificationData;
 };
 
 export type OrganisationLightDto = {
@@ -194,6 +230,8 @@ export type OrganisationFullDto = {
   bioeconomyTraditionalKnowledge: string | null;
   bioeconomyProductProcessing: string | null;
   bioeconomyBuyers: string | null;
+  bioeconomyProductList: string[] | null;
+  bioeconomyDescription: string | null;
   /**
    * @format date-time
    */
@@ -219,6 +257,7 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  profileImageScale: number | null;
 };
 
 export type FinancialIndicatorDto = {
@@ -365,6 +404,7 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
+  profileImageScale: number | null;
 };
 
 export type FundingTypeDto = {
@@ -718,6 +758,10 @@ export type UserCreateAttributes = {
   country: string;
   program: string;
   callbackUrl: string;
+  /**
+   * Token for invite-based signup completion
+   */
+  token?: string;
 };
 
 export type UserCreateData = {
@@ -737,6 +781,9 @@ export type UserAssociationDto = {
   isManager: boolean;
   organisationName: string;
   roleName: string | null;
+  phoneNumber: string | null;
+  jobRole: string | null;
+  lastLoggedInAt: string | null;
   associatedType: string;
 };
 
@@ -810,4 +857,38 @@ export type OrganisationInviteRequestDto = {
    * Optional callback URL base for the signup link in the email.
    */
   callbackUrl?: Record<string, any>;
+};
+
+export type ProjectInviteAcceptanceDto = {
+  /**
+   * Primary key of the project invite.
+   */
+  id: number;
+  /**
+   * UUID of the project invite.
+   */
+  uuid: string;
+  /**
+   * ID of the project this invite belongs to.
+   */
+  projectId: number;
+  /**
+   * Email address this invite was sent to.
+   */
+  emailAddress: string;
+  /**
+   * Timestamp when the invite was accepted.
+   */
+  acceptedAt: string | null;
+  /**
+   * Name of the project.
+   */
+  projectName: string | null;
+};
+
+export type ProjectInviteAcceptBodyDto = {
+  /**
+   * Token from the project invite email.
+   */
+  token: string;
 };

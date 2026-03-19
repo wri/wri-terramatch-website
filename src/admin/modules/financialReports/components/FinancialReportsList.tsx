@@ -29,6 +29,7 @@ import {
   getFinancialReportStatusOptions,
   getReportStatusOptions
 } from "@/constants/options/status";
+import { useUserFrameworkChoices } from "@/constants/options/userFrameworksChoices";
 import { fetchGetV2FinancialReportsExport, GetV2FinancialReportsExportError } from "@/generated/apiComponents";
 import { FinancialReportLightDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { downloadFileBlob } from "@/utils/network";
@@ -37,6 +38,7 @@ import { optionToChoices } from "@/utils/options";
 import modules from "../..";
 
 const FinancialReportsDataGrid: FC = () => {
+  const frameworkInputChoices = useUserFrameworkChoices();
   const tableMenu = [
     {
       id: "1",
@@ -75,7 +77,17 @@ const FinancialReportsDataGrid: FC = () => {
           return <CustomChipField label={readableChangeRequestStatus?.title} />;
         }}
       />
+      <FunctionField
+        source="frameworkKey"
+        label="Framework"
+        render={(record?: FinancialReportLightDto) => {
+          const frameworkKey = record?.frameworkKey;
+          return frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey;
+        }}
+        sortable={false}
+      />
       <TextField source="yearOfReport" label="Year of Report" />
+      <DateField source="dueAt" label="Due Date" locales="en-GB" />
       <DateField source="updatedAt" label="Last Updated" locales="en-GB" />
       <DateField source="submittedAt" label="Date Submitted" locales="en-GB" />
       <Menu menu={tableMenu} placement={MENU_PLACEMENT_BOTTOM_LEFT} classNameContentMenu="!sticky">
@@ -87,6 +99,7 @@ const FinancialReportsDataGrid: FC = () => {
 
 export const FinancialReportsList: FC = () => {
   const [exporting, setExporting] = useState<boolean>(false);
+  const frameworkInputChoices = useUserFrameworkChoices();
 
   const handleExport = async () => {
     setExporting(true);
@@ -109,9 +122,9 @@ export const FinancialReportsList: FC = () => {
       label="Organisation"
       sort={{
         field: "name",
-        order: "DESC"
+        order: "ASC"
       }}
-      perPage={1000}
+      perPage={100}
       filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organisation" className="select-page-admin" />
@@ -128,6 +141,13 @@ export const FinancialReportsList: FC = () => {
       label="Change Request Status"
       source="updateRequestStatus"
       choices={optionToChoices(getChangeRequestStatusOptions())}
+      className="select-page-admin"
+    />,
+    <SelectInput
+      key="frameworkKey"
+      label="Framework"
+      source="frameworkKey"
+      choices={frameworkInputChoices}
       className="select-page-admin"
     />
   ];

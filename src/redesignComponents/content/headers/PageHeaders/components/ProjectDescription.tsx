@@ -2,7 +2,7 @@ import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useCallback } from "react";
 
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useClampedText } from "../hooks/useClampedText";
@@ -10,10 +10,16 @@ import { useClampedText } from "../hooks/useClampedText";
 export interface ProjectDescriptionProps {
   description: string;
   handleEdit: () => void;
-  children: React.ReactNode;
+  backgroundColor?: string;
+  downloadButtonProps?: IButtonProps;
 }
 
-const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEdit, children }) => {
+const ProjectDescription: FC<ProjectDescriptionProps> = ({
+  description,
+  handleEdit,
+  backgroundColor = "secondary.neutral",
+  downloadButtonProps = null
+}) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
 
@@ -46,7 +52,7 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEd
             color="neutral.900"
             position="absolute"
             bottom="-5px"
-            backgroundColor="secondary.neutral"
+            backgroundColor={backgroundColor}
             right="-1px"
             style={{
               display: "block",
@@ -77,11 +83,11 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({ description, handleEd
           </Button>
         )}
       </Box>
-      <div className="w-fit">
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="mr-3 w-auto" onClick={handleEdit}>
+      <div className="flex w-fit gap-2">
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
-        {children}
+        {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
       </div>
     </>
   );

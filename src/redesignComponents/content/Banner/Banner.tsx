@@ -4,13 +4,9 @@ import classNames from "classnames";
 import Link from "next/link";
 import { FC, forwardRef } from "react";
 
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
-import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { ViewToolbarProps } from "@/redesignComponents/navigation/Toolbar/ToolBar.type";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import ViewToolbar from "@/redesignComponents/navigation/Toolbar/ViewToolbar";
-
-import ProjectHeader from "../headers/PageHeaders/ProjectHeader";
 
 interface NextLinkAdapterProps {
   to: string;
@@ -28,34 +24,30 @@ const NextLinkAdapter = forwardRef<HTMLAnchorElement, NextLinkAdapterProps>(
 
 NextLinkAdapter.displayName = "NextLinkAdapter";
 
-export interface ProjectBannerProps {
+export interface BannerProps {
   breadcrumbs: { label: string; link: string; icon?: React.ReactNode }[];
   suffix: React.ReactNode;
   toolbar: ViewToolbarProps;
-  project: ProjectFullDto;
   className?: string;
-  onAddTeamClick: () => void;
-  gotoTeamMembers: () => void;
+  children?: React.ReactNode;
 }
 
-const ProjectBanner: FC<ProjectBannerProps> = ({
-  breadcrumbs,
-  suffix,
-  toolbar,
-  project,
-  className,
-  onAddTeamClick,
-  gotoTeamMembers
-}) => {
+const Banner: FC<BannerProps> = ({ breadcrumbs, suffix, toolbar, className, children }) => {
   const t = useT();
-
+  const breadcrumbsWithTranslatedLabels = breadcrumbs.map(link => {
+    return {
+      label: link.label != null ? t(link.label) : "",
+      link: link.link,
+      icon: link.icon
+    };
+  });
   return (
     <>
       <Box className={classNames("sticky z-20 border-b border-theme-neutral-300 px-1", className)}>
         <ToolbarObject
           breadcrumbs={{
-            links: breadcrumbs.map(link => ({
-              label: t(link.label),
+            links: breadcrumbsWithTranslatedLabels.map(link => ({
+              label: (link.label ?? "").length > 25 ? `${(link.label ?? "").slice(0, 25)}...` : link.label ?? "",
               link: link.link,
               icon: link.icon
             })),
@@ -64,10 +56,7 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
           suffix={suffix}
         />
       </Box>
-      <ProjectHeader project={project} onAddTeamClick={onAddTeamClick} gotoTeamMembers={gotoTeamMembers} />
-      {(project.status == "needs-more-information" || project.updateRequestStatus == "needs-more-information") && (
-        <EntityStatusBar entity={project} entityName="projects" />
-      )}
+      {children}
       <Box className="sticky top-[115px] z-20 border-b-4 border-theme-neutral-200 px-0.5">
         <ViewToolbar tabBar={toolbar.tabBar} />
       </Box>
@@ -75,4 +64,4 @@ const ProjectBanner: FC<ProjectBannerProps> = ({
   );
 };
 
-export default ProjectBanner;
+export default Banner;
