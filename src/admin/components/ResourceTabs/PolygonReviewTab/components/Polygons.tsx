@@ -268,9 +268,26 @@ const Polygons = (props: IPolygonProps) => {
       {
         id: "5",
         render: () => (
+          <div className="flex items-center gap-2">
+            <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
+            <Text variant="text-12-bold">Delete Polygon</Text>
+          </div>
+        ),
+        onClick: () => {
+          openFormModalHandlerConfirm(item);
+        }
+      },
+      {
+        id: "6",
+        render: () => <div className="h-[1px] w-full bg-grey-750" />,
+        MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
+      },
+      {
+        id: "5",
+        render: () => (
           <div className="flex w-full items-center gap-2">
             {/* TODO: Replace with the correct ANR Monitoring Plots icon once the SVG exists in the Icon assets. */}
-            <Icon name={IconNames.ASSISTED_NATURAL_REGENERATION} className="h-6 w-6" />
+            <div className="h-5 w-5" />
             <Text variant="text-12-bold">{t("ANR Monitoring Plots")}</Text>
           </div>
         ),
@@ -281,23 +298,6 @@ const Polygons = (props: IPolygonProps) => {
           setPolygonFromMap({ isOpen: true, uuid: item.uuid, source: "menu" });
           setIsOpenPolygonDrawer(true);
           setSelectedPolygonsInCheckbox([]);
-        }
-      },
-      {
-        id: "6",
-        render: () => <div className="h-[1px] w-full bg-grey-750" />,
-        MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
-      },
-      {
-        id: "7",
-        render: () => (
-          <div className="flex items-center gap-2">
-            <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
-            <Text variant="text-12-bold">Delete Polygon</Text>
-          </div>
-        ),
-        onClick: () => {
-          openFormModalHandlerConfirm(item);
         }
       }
     ],
