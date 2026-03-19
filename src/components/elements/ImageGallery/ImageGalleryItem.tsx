@@ -57,14 +57,17 @@ const ImageGalleryItem: FC<ImageGalleryItemProps> = ({
     onDelete?.(data.uuid);
   }, [data.uuid, onDelete]);
   const setImageCover = useCallback(async () => {
-    const result = await updateMedia({ isCover: true }, { id: data.uuid });
+    const result = await updateMedia(
+      { isCover: true, profileImageScale: data.profileImageScale, profileImagePosition: data.profileImagePosition },
+      { id: data.uuid }
+    );
     if (result) {
       openNotification("success", t("Success!"), t("Image set as cover successfully"));
       reloadGalleryImages?.();
     } else {
       openNotification("error", t("Error!"), t("Failed to set image as cover"));
     }
-  }, [data.uuid, openNotification, reloadGalleryImages, t]);
+  }, [data.profileImageScale, data.profileImagePosition, data.uuid, openNotification, reloadGalleryImages, t]);
   const openModalImageDetail = useCallback(() => {
     openModal(
       ModalId.MODAL_IMAGE_DETAIL,

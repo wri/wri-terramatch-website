@@ -105,7 +105,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
           photographer: formData.photographer,
           description: formData.description ?? undefined,
           isPublic: formData.is_public,
-          isCover: formData.is_cover
+          isCover: formData.is_cover,
+          profileImageScale: data.profileImageScale,
+          profileImagePosition: data.profileImagePosition
         },
         { id: data.uuid }
       );
@@ -114,7 +116,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     }
 
     if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
-      const result = updateMedia({ isCover: true }, { id: data.uuid });
+      const result = updateMedia(
+        { isCover: true, profileImageScale: data.profileImageScale, profileImagePosition: data.profileImagePosition },
+        { id: data.uuid }
+      );
       updatePromises.push(result);
     }
 

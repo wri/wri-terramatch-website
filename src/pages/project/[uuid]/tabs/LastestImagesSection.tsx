@@ -22,7 +22,8 @@ const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnt
         uuid: entityUuid,
         pageNumber: 1,
         pageSize: 4,
-        sortDirection: "DESC"
+        sortDirection: "DESC",
+        sortField: "createdAt"
       };
     }, [entityUuid, entityName])
   );
