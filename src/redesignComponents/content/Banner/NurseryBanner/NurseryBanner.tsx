@@ -1,6 +1,5 @@
 import { FC } from "react";
 
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Banner, { BannerProps } from "@/redesignComponents/content/Banner/Banner";
 import NurseryHeader from "@/redesignComponents/content/headers/PageHeaders/NurseryHeader/NurseryHeader";
@@ -15,9 +14,6 @@ const NurseryBanner: FC<NurseryBannerProps> = ({ nursery, ...bannerProps }) => (
   <Banner {...bannerProps}>
     <PageHeader title={nursery.name ?? ""} />
     <NurseryHeader nursery={nursery} />
-    {(nursery.status == "needs-more-information" || nursery.updateRequestStatus == "needs-more-information") && (
-      <EntityStatusBar entity={nursery} entityName="nurseries" />
-    )}
   </Banner>
 );
 

@@ -42,7 +42,7 @@ type SuffixButtonConfig = {
   labelKey: string;
 };
 
-const SUFFIX_VIEW_KEYS = ["reports", "sites", "nurseries"];
+const SUFFIX_VIEW_KEYS = ["reporting-tasks", "sites", "nurseries"];
 
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
@@ -51,10 +51,9 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
 
   const currentTab = (router.query.tab as string) ?? "overview";
-  const normalizedTab = currentTab === "reporting-tasks" ? "reports" : currentTab;
-  const isSuffix = SUFFIX_VIEW_KEYS.includes(normalizedTab);
-  const activeSuffixView = isSuffix ? normalizedTab : null;
-  const activeTab = isSuffix ? "overview" : normalizedTab;
+  const isSuffix = SUFFIX_VIEW_KEYS.includes(currentTab);
+  const activeSuffixView = isSuffix ? currentTab : null;
+  const activeTab = isSuffix ? "overview" : currentTab;
 
   const navigateToTab = useCallback(
     (tab: string) => {
@@ -106,15 +105,13 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
     [tabItems]
   );
 
-  const activeTabContent = useMemo(() => tabItems.find(item => item.key === activeTab)?.body, [tabItems, activeTab]);
-
   const shouldHideNurseries = framework === Framework.PPC;
 
   const suffixViewContent = useMemo(() => {
     if (!activeSuffixView) return null;
 
     const viewMap: Record<string, ReactElement> = {
-      reports: <ProgressReportTab projectUUID={project.uuid} />,
+      "reporting-tasks": <ProgressReportTab projectUUID={project.uuid} />,
       sites: <ProjectSitesTab project={project} />,
       nurseries: <ProjectNurseriesTab project={project} />
     };
@@ -124,7 +121,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   const suffixButtons: SuffixButtonConfig[] = useMemo(
     () => [
-      { key: "reports", labelKey: "Reports" },
+      { key: "reporting-tasks", labelKey: "Reports" },
       { key: "sites", labelKey: "Sites" },
       ...(shouldHideNurseries ? [] : [{ key: "nurseries", labelKey: "Nurseries" }])
     ],
@@ -153,8 +150,13 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         breadcrumbs={[
           { label: t("Projects"), link: "/my-projects", icon: <ProjectIcon className="!text-theme-primary-900" /> },
           { label: project?.name ?? "", link: `/project/${project?.uuid}` },
-          ...(activeSuffixView === "nurseries" || activeSuffixView === "sites" || activeSuffixView === "reports"
-            ? [{ label: t(activeSuffixView), link: `/project/${project?.uuid}?tab=${activeSuffixView}` }]
+          ...(activeSuffixView
+            ? [
+                {
+                  label: t(activeSuffixView === "reporting-tasks" ? "Reports" : activeSuffixView),
+                  link: `/project/${project?.uuid}?tab=${activeSuffixView}`
+                }
+              ]
             : [])
         ]}
         suffix={
@@ -167,8 +169,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
                   size="small"
                   className={`underline underline-offset-2 ${activeSuffixView === button.key ? "font-semibold" : ""}`}
                   onClick={() => {
-                    const next = activeSuffixView === button.key ? "overview" : button.key;
-                    navigateToTab(next);
+                    navigateToTab(button.key);
                   }}
                 >
                   {t(button.labelKey)}
@@ -187,7 +188,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="w-full">{suffixViewContent ?? activeTabContent}</div>
+      <div className="w-full">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
       <PageFooter />
     </>
   );

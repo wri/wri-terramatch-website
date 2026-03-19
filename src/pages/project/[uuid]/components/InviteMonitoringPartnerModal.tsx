@@ -2,7 +2,7 @@ import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
@@ -13,8 +13,6 @@ import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-
-import FooterModal from "./FooterModal";
 
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
@@ -34,7 +32,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
   const { openToast } = useToastContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -93,22 +91,30 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
               {t("This action will provide them access to all your project data and reports.")}
             </Text>
           </div>
-          <TextInput
-            {...register("email")}
-            label={t("Email Address")}
-            type="email"
-            errorMessage={errors.email?.message}
-            required
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
           />
         </div>
       }
       footer={
-        <FooterModal>
-          <Button variant="borderless" onClick={handleClose}>
-            {t("Cancel")}
-          </Button>
-          <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
-        </FooterModal>
+        <div className="relative h-14 w-full">
+          <div className="absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t border-theme-neutral-300 px-[13px] pt-4 ">
+            <Button variant="borderless" onClick={handleClose}>
+              {t("Cancel")}
+            </Button>
+            <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
+          </div>
+        </div>
       }
     />
   );

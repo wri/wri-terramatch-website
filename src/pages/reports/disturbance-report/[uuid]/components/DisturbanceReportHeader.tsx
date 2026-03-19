@@ -105,7 +105,7 @@ const DisturbanceReportHeader = ({ disturbanceReport }: DisturbanceReportHeaderP
               {t("Export")}
               <InlineLoader loading={exportLoader} />
             </Button>
-            <Button onClick={handleEdit}>{t("Edit")}</Button>
+            <Button onClick={() => handleEdit()}>{t("Edit")}</Button>
           </>
         )}
       </div>

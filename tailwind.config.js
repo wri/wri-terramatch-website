@@ -305,7 +305,8 @@ module.exports = {
       impactStoryBg: 'url("/images/Impact Story - Landing Page.png")',
       tabScrollLeft: 'url("/images/mask.png")',
       tabScrollRight: 'url("/images/maskRight.png")',
-      mask: 'url("/images/mask.png")'
+      mask: 'url("/images/mask.png")',
+      "image-background": 'url("/images/image-background.png")'
     }
   },
   plugins: [
