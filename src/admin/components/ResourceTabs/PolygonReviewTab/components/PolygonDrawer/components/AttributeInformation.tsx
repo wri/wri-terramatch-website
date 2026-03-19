@@ -28,7 +28,7 @@ interface AttributeInformationProps {
   isLoadingVersions?: boolean;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
-  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string; source?: string }>>;
   setIsLoadingDropdownVersions: Dispatch<SetStateAction<boolean>>;
   setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
 }
@@ -155,7 +155,7 @@ const AttributeInformation = ({
           label: polygonActive?.name as string,
           uuid: polygonActive?.polygonUuid as string
         });
-        setPolygonFromMap({ isOpen: true, uuid: polygonActive?.polygonUuid ?? "" });
+        setPolygonFromMap({ isOpen: true, uuid: polygonActive?.polygonUuid ?? "", source: "drawer" });
         setStatusSelectedPolygon(polygonActive?.status ?? "");
       }
       setIsLoadingDropdownVersions(false);

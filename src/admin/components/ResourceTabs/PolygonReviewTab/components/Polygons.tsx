@@ -25,7 +25,7 @@ import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
 
-import PolygonDrawer from "./PolygonDrawer/PolygonDrawer";
+import PolygonDrawer, { PolygonDrawerTopTab } from "./PolygonDrawer/PolygonDrawer";
 import PolygonItem from "./PolygonItem";
 
 export interface IPolygonItem {
@@ -39,6 +39,7 @@ export interface IPolygonItem {
 export interface IpolygonFromMap {
   isOpen: boolean;
   uuid: string;
+  source?: "menu" | "map" | "drawer";
 }
 
 export interface IPolygonProps {
@@ -66,6 +67,7 @@ const INVALID_STATUSES = ["undefined", "null", "notChecked"];
 const Polygons = (props: IPolygonProps) => {
   const t = useT();
   const [isOpenPolygonDrawer, setIsOpenPolygonDrawer] = useState(false);
+  const [drawerInitialTopTab, setDrawerInitialTopTab] = useState<PolygonDrawerTopTab>("attributes");
   const [selectedPolygon, setSelectedPolygon] = useState<IPolygonItem>();
   const [openCollapseAll, setOpenCollapseAll] = useState(false);
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
@@ -112,6 +114,12 @@ const Polygons = (props: IPolygonProps) => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
 
+      // Default to Attributes only when the drawer is opened from map intent.
+      // Menu intent should preserve `drawerInitialTopTab` (e.g. ANR).
+      const source = polygonFromMap?.source ?? "map";
+      if (source === "map") {
+        setDrawerInitialTopTab("attributes");
+      }
       if (newSelectedPolygon) {
         setSelectedPolygon(newSelectedPolygon);
         setIsOpenPolygonDrawer(true);
@@ -208,9 +216,10 @@ const Polygons = (props: IPolygonProps) => {
           </div>
         ),
         onClick: () => {
+          setDrawerInitialTopTab("attributes");
           setSelectedPolygon(item);
           flyToPolygonBounds(item);
-          setPolygonFromMap({ isOpen: true, uuid: item.uuid });
+          setPolygonFromMap({ isOpen: true, uuid: item.uuid, source: "menu" });
           setIsOpenPolygonDrawer(true);
           setSelectedPolygonsInCheckbox([]);
         }
@@ -248,20 +257,39 @@ const Polygons = (props: IPolygonProps) => {
           </div>
         ),
         onClick: () => {
+          setDrawerInitialTopTab("attributes");
           setSelectedPolygon(item);
           flyToPolygonBounds(item);
-          setPolygonFromMap({ isOpen: true, uuid: item.uuid });
+          setPolygonFromMap({ isOpen: true, uuid: item.uuid, source: "menu" });
           setIsOpenPolygonDrawer(true);
           setSelectedPolygonsInCheckbox([]);
         }
       },
       {
         id: "5",
+        render: () => (
+          <div className="flex w-full items-center gap-2">
+            {/* TODO: Replace with the correct ANR Monitoring Plots icon once the SVG exists in the Icon assets. */}
+            <Icon name={IconNames.ASSISTED_NATURAL_REGENERATION} className="h-6 w-6" />
+            <Text variant="text-12-bold">{t("ANR Monitoring Plots")}</Text>
+          </div>
+        ),
+        onClick: () => {
+          setDrawerInitialTopTab("anrMonitoringPlots");
+          setSelectedPolygon(item);
+          flyToPolygonBounds(item);
+          setPolygonFromMap({ isOpen: true, uuid: item.uuid, source: "menu" });
+          setIsOpenPolygonDrawer(true);
+          setSelectedPolygonsInCheckbox([]);
+        }
+      },
+      {
+        id: "6",
         render: () => <div className="h-[1px] w-full bg-grey-750" />,
         MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
       },
       {
-        id: "6",
+        id: "7",
         render: () => (
           <div className="flex items-center gap-2">
             <Icon name={IconNames.TRASH_PA} className="h-5 w-5" />
@@ -278,7 +306,8 @@ const Polygons = (props: IPolygonProps) => {
       flyToPolygonBounds,
       setPolygonFromMap,
       setSelectedPolygonsInCheckbox,
-      openFormModalHandlerConfirm
+      openFormModalHandlerConfirm,
+      t
     ]
   );
 
@@ -305,6 +334,7 @@ const Polygons = (props: IPolygonProps) => {
         {isOpenPolygonDrawer && (
           <PolygonDrawer
             polygonSelected={selectedPolygon?.uuid ?? polygonFromMap?.uuid ?? ""}
+            initialTopTab={drawerInitialTopTab}
             refresh={props?.refresh}
             isOpenPolygonDrawer={isOpenPolygonDrawer}
             setSelectedPolygonToDrawer={setSelectedPolygon as any}

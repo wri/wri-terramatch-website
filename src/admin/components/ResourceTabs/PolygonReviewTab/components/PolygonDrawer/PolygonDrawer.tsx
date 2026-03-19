@@ -37,6 +37,8 @@ const statusColor: Record<string, string> = {
   "needs-more-information": "bg-tertiary-600"
 };
 
+export type PolygonDrawerTopTab = "attributes" | "polygonStatus" | "anrMonitoringPlots";
+
 const PolygonDrawer = ({
   polygonSelected,
   refresh,
@@ -45,19 +47,20 @@ const PolygonDrawer = ({
   selectedPolygonIndex,
   setPolygonFromMap,
   polygonFromMap,
-  setIsOpenPolygonDrawer
+  setIsOpenPolygonDrawer,
+  initialTopTab = "attributes"
 }: {
   polygonSelected: string;
   refresh?: () => void;
   isOpenPolygonDrawer: boolean;
-  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string; source?: string }>>;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
   setIsOpenPolygonDrawer: Dispatch<SetStateAction<boolean>>;
   polygonFromMap?: { isOpen: boolean; uuid: string };
+  initialTopTab?: PolygonDrawerTopTab;
 }) => {
-  type TopTab = "attributes" | "polygonStatus" | "anrMonitoringPlots";
-  const [activeTab, setActiveTab] = useState<TopTab>("attributes");
+  const [activeTab, setActiveTab] = useState<PolygonDrawerTopTab>(initialTopTab);
   const [selectedPolygonData, setSelectedPolygonData] = useState<SitePolygonLightDto>();
   const [openAttributes, setOpenAttributes] = useState(true);
   const [checkPolygonValidation, setCheckPolygonValidation] = useState(false);
@@ -127,8 +130,8 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    setActiveTab("attributes");
-  }, [polygonSelected]);
+    setActiveTab(initialTopTab);
+  }, [polygonSelected, initialTopTab]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -142,10 +145,10 @@ const PolygonDrawer = ({
   }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
     if (openEditNewPolygon) {
-      setActiveTab("attributes");
       setOpenAttributes(true);
+      setActiveTab(prev => (initialTopTab === "attributes" ? "attributes" : prev));
     }
-  }, [openEditNewPolygon]);
+  }, [initialTopTab, openEditNewPolygon]);
 
   useEffect(() => {
     setSelectPolygonVersion(selectedPolygonData);
@@ -211,7 +214,7 @@ const PolygonDrawer = ({
           variant={`${activeTab === "anrMonitoringPlots" ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setActiveTab("anrMonitoringPlots")}
         >
-          ANR Monitoring Plots
+          {t("ANR Monitoring Plots")}
         </Button>
       </div>
       {activeTab === "polygonStatus" ? (
