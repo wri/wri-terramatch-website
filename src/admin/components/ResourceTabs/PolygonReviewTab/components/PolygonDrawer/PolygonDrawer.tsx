@@ -201,24 +201,27 @@ const PolygonDrawer = ({
         <Button
           variant={`${activeTab === "attributes" ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setActiveTab("attributes")}
+          className="px-3 py-1 lg:px-2.5 lg:py-1"
         >
-          Attributes
+          <span className="text-12">{t("Attributes")}</span>
         </Button>
         <Button
           variant={`${activeTab === "polygonStatus" ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setActiveTab("polygonStatus")}
+          className="px-3 py-1 lg:px-2.5 lg:py-1"
         >
-          Polygon Status
+          <span className="text-12">{t("Polygon Status")}</span>
         </Button>
         <Button
           variant={`${activeTab === "anrMonitoringPlots" ? "white-toggle" : "transparent-toggle"}`}
           onClick={() => setActiveTab("anrMonitoringPlots")}
+          className="px-3 py-1 lg:px-2.5 lg:py-1"
         >
-          {t("ANR Monitoring Plots")}
+          <span className="text-12">{t("ANR Monitoring Plots")}</span>
         </Button>
       </div>
       {activeTab === "polygonStatus" ? (
-        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
           <div className="flex items-center gap-2">
             <Text variant="text-14-semibold" className="w-[15%] break-words">
               Status:
@@ -257,11 +260,11 @@ const PolygonDrawer = ({
           )}
         </div>
       ) : activeTab === "anrMonitoringPlots" ? (
-        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+        <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
           <AnrMonitoringPlots polygonUuid={polygonSelected} />
         </div>
       ) : (
-        <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-3">
+        <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
           <Accordion variant="drawer" title={"Validation"} defaultOpen={true}>
             <SinglePolygonValidation
               polygonUuid={polygonSelected}
