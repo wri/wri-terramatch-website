@@ -113,7 +113,11 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
 
         if (checked) {
           await updateMedia(
-            { isCover: checked, profileImageScale: selectedItem.profileImageScale! },
+            {
+              isCover: checked,
+              profileImageScale: selectedItem.profileImageScale!,
+              profileImagePosition: selectedItem.profileImagePosition!
+            },
             { id: selectedItem.uuid }
           );
         }
@@ -130,7 +134,14 @@ const FilePreviewTable: FC<FilePreviewTableProps> = ({ items, onDelete, updateFi
     (item: Partial<UploadedFile>, checked: boolean) => {
       showLoader();
       try {
-        updateMedia({ isPublic: checked, profileImageScale: item.profileImageScale! }, { id: item.uuid });
+        updateMedia(
+          {
+            isPublic: checked,
+            profileImageScale: item.profileImageScale!,
+            profileImagePosition: item.profileImagePosition!
+          },
+          { id: item.uuid }
+        );
         updateFile?.({ ...item, isPublic: checked });
       } catch (error) {
         Log.error("Error updating public status:", error);

@@ -190,6 +190,8 @@ export const mediaToUploadedFile = (media: MediaDto, rawFile?: File, uploadState
     lat: media.lat ?? undefined,
     lng: media.lng ?? undefined,
     profileImageScale: media.profileImageScale != null ? Number(media.profileImageScale) : undefined,
+    profileImagePosition:
+      media.profileImagePosition != null ? (media.profileImagePosition as { x: number; y: number }) : undefined,
     rawFile,
     uploadState
   };
@@ -217,7 +219,7 @@ export type UploadedFile = {
   lat?: number;
   lng?: number;
   profileImageScale?: number;
-
+  profileImagePosition?: { x: number; y: number };
   // Client side data
   rawFile?: File;
   uploadState?: UploadState;

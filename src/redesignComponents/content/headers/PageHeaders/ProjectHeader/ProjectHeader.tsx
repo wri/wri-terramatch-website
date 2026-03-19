@@ -47,6 +47,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     name: string;
   } | null>(null);
   const [coverScale, setCoverScale] = useState<number | undefined>(undefined);
+  const [coverPosition, setCoverPosition] = useState<{ x: number; y: number } | undefined>(undefined);
   const [coverMediaUuid, setCoverMediaUuid] = useState<string | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [headerPendingFile, setHeaderPendingFile] = useState<File | null>(null);
@@ -99,9 +100,9 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   );
 
   useEffect(() => {
-    const rawScale = (coverImage as any)?.profileImageScale;
-
-    if (coverScale != null) return;
+    const rawScale = coverImage?.profileImageScale;
+    const rawPosition = coverImage?.profileImagePosition;
+    if (coverScale != null || coverPosition != null) return;
 
     if (rawScale == null) {
       if (coverImage) {
@@ -110,13 +111,23 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       return;
     }
 
+    if (rawPosition != null) {
+      if (coverImage) {
+        setCoverPosition(rawPosition as { x: number; y: number });
+      }
+    }
+
     const numericScale =
       typeof rawScale === "string" ? parseFloat(rawScale) : typeof rawScale === "number" ? rawScale : undefined;
 
     if (numericScale != null && !Number.isNaN(numericScale)) {
       setCoverScale(numericScale);
     }
-  }, [coverImage, coverScale]);
+
+    if (rawPosition != null) {
+      setCoverPosition(rawPosition as { x: number; y: number });
+    }
+  }, [coverImage, coverScale, coverPosition]);
 
   useEffect(() => {
     if (!isGalleryLoaded || mediaList == null) return;
@@ -156,7 +167,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   const [open, setOpen] = useState(false);
 
   const handleUploadProfileImage = useCallback(
-    async (file: File, scale: number) => {
+    async (file: File, scale: number, position: { x: number; y: number }) => {
       const fileObject: Partial<UploadedFile> = {
         collectionName: "media",
         size: file.size,
@@ -164,24 +175,27 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
         mimeType: file.type,
         rawFile: file,
         isCover: true,
-        profileImageScale: scale
+        profileImageScale: scale,
+        profileImagePosition: position
       };
 
       addFile(fileObject);
 
       uploadFile(
-        await prepareFileForUpload(file, true, true, scale),
+        await prepareFileForUpload(file, true, true, scale, position),
         fileUploadOptions(file, "media", {
           onSuccess: successFile => {
             const updated: UploadedFile = {
               ...(successFile as UploadedFile),
               isCover: true,
-              profileImageScale: scale
+              profileImageScale: scale,
+              profileImagePosition: position
             };
             addFile(updated);
             setSelectedCoverUrl(updated.url ?? undefined);
             setCoverScale(scale);
             setCoverMediaUuid(updated.uuid);
+            setCoverPosition(position);
           },
           onError: errorFile => {
             addFile(errorFile);
@@ -223,11 +237,16 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   };
 
   const handleConfirmGalleryImage = useCallback(
-    async (image: { uuid: string; src: string; alt: string; url: string; name: string }, scale: number) => {
+    async (
+      image: { uuid: string; src: string; alt: string; url: string; name: string },
+      scale: number,
+      position: { x: number; y: number }
+    ) => {
       await updateMedia(
         {
           isCover: true,
-          profileImageScale: scale
+          profileImageScale: scale,
+          profileImagePosition: position
         },
         { id: image.uuid }
       );
@@ -235,6 +254,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
       setSelectedGalleryImage(null);
       setCoverScale(scale);
       setCoverMediaUuid(image.uuid);
+      setCoverPosition(position);
     },
     []
   );
@@ -245,6 +265,17 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     setHeaderPendingFile(null);
     setHeaderPendingSrc(undefined);
   };
+
+  const headerPosition = useMemo(() => {
+    if (coverPosition == null) return undefined;
+
+    const factor = IMAGE_SIZE / 300;
+
+    return {
+      x: coverPosition.x * factor,
+      y: coverPosition.y * factor
+    };
+  }, [coverPosition]);
 
   return (
     <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" background="secondary.neutral">
@@ -257,6 +288,7 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             onClickEdit={() => setOpen(true)}
             src={selectedCoverUrl ?? coverImage?.thumbUrl!}
             scale={coverScale}
+            position={headerPosition}
             menuItems={[
               {
                 label: "Select from Gallery",
@@ -297,9 +329,11 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
             onUploadFile={handleUploadProfileImage}
             onRemoveFile={handleRemoveProfileImage}
             scale={coverScale}
+            positionActive={coverPosition}
             selectedGalleryImage={selectedGalleryImage}
             onConfirmGalleryImage={handleConfirmGalleryImage}
             onUpdateExistingScale={setCoverScale}
+            onUpdateExistingPosition={setCoverPosition}
           />
           {isGalleryOpen && (
             <ModalSelectGalleryImages

@@ -49,7 +49,8 @@ export const Default: Story = {
       description: faker.lorem.sentence({ min: 4, max: 8 }),
       photographer: faker.person.fullName(),
       createdByUserName: faker.person.fullName(),
-      profileImageScale: faker.number.int({ min: 1, max: 10 })
+      profileImageScale: faker.number.int({ min: 1, max: 10 }),
+      profileImagePosition: { x: faker.number.int({ min: 1, max: 10 }), y: faker.number.int({ min: 1, max: 10 }) }
     }
   }
 };

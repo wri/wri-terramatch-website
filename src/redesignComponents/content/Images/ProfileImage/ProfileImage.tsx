@@ -8,6 +8,7 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   alt?: string;
   size?: number;
   scale?: number;
+  position?: { x: number; y: number };
   className?: string;
   isAdd?: boolean;
   menuItems?: {
@@ -20,7 +21,28 @@ export interface ProfileImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onClickEdit?: () => void;
 }
 
-export const ProfileImage: FC<ProfileImageProps> = ({ alt, src, className, isAdd, onClickEdit, scale, ...rest }) => {
+export const ProfileImage: FC<ProfileImageProps> = ({
+  alt,
+  src,
+  className,
+  isAdd,
+  onClickEdit,
+  scale,
+  position,
+  ...rest
+}) => {
+  const transforms: string[] = [];
+
+  if (position != null) {
+    transforms.push(`translate(${position.x}px, ${position.y}px)`);
+  }
+
+  if (scale != null && !Number.isNaN(scale)) {
+    transforms.push(`scale(${scale})`);
+  }
+
+  const style = transforms.length > 0 ? { transform: transforms.join(" ") } : undefined;
+
   return (
     <BaseImage
       {...rest}
@@ -28,7 +50,7 @@ export const ProfileImage: FC<ProfileImageProps> = ({ alt, src, className, isAdd
       onClickEdit={onClickEdit}
       src={src}
       alt={alt}
-      scale={scale}
+      style={style}
       borderRadius="rounded-full"
       defaultAlt="Profile"
       className={classNames(
