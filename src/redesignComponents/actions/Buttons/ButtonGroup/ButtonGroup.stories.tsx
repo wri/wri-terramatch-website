@@ -55,20 +55,17 @@ export const RowThreeSecondaryEqualWidth: Story = {
       {
         id: "btn-1",
         children: "Label",
-        variant: "secondary",
-        className: "flex-1"
+        variant: "secondary"
       },
       {
         id: "btn-2",
         children: "Label",
-        variant: "secondary",
-        className: "flex-1"
+        variant: "secondary"
       },
       {
         id: "btn-3",
         children: "Label",
-        variant: "secondary",
-        className: "flex-1"
+        variant: "secondary"
       }
     ]
   }
@@ -82,21 +79,18 @@ export const RowThreeSmallSecondaryEqualWidth: Story = {
         id: "btn-1",
         children: "Label",
         variant: "secondary",
-        className: "flex-1",
         size: "small"
       },
       {
         id: "btn-2",
         children: "Label",
         variant: "secondary",
-        className: "flex-1",
         size: "small"
       },
       {
         id: "btn-3",
         children: "Label",
         variant: "secondary",
-        className: "flex-1",
         size: "small"
       }
     ]
@@ -113,14 +107,12 @@ export const GroupedRowsSecondary: Story = {
           {
             id: "btn-1",
             children: "Label",
-            variant: "secondary",
-            className: "flex-1"
+            variant: "secondary"
           },
           {
             id: "btn-2",
             children: "Label",
-            variant: "secondary",
-            className: "flex-1"
+            variant: "secondary"
           }
         ]
       },
@@ -130,14 +122,12 @@ export const GroupedRowsSecondary: Story = {
           {
             id: "btn-3",
             children: "Label",
-            variant: "secondary",
-            className: "flex-1"
+            variant: "secondary"
           },
           {
             id: "btn-4",
             children: "Label",
-            variant: "secondary",
-            className: "flex-1"
+            variant: "secondary"
           }
         ]
       }
@@ -156,14 +146,12 @@ export const GroupedRowsSmallSecondary: Story = {
             id: "btn-1",
             children: "Label",
             variant: "secondary",
-            className: "flex-1",
             size: "small"
           },
           {
             id: "btn-2",
             children: "Label",
             variant: "secondary",
-            className: "flex-1",
             size: "small"
           }
         ]
@@ -175,14 +163,12 @@ export const GroupedRowsSmallSecondary: Story = {
             id: "btn-3",
             children: "Label",
             variant: "secondary",
-            className: "flex-1",
             size: "small"
           },
           {
             id: "btn-4",
             children: "Label",
             variant: "secondary",
-            className: "flex-1",
             size: "small"
           }
         ]

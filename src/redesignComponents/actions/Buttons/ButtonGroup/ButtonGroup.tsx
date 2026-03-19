@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import React, { FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 import Button, { IButtonProps } from "../Button/Button";
 
@@ -22,7 +23,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({ className, buttons = [], groups = [
       justifyContent={buttons.length > 0 ? "flex-start" : "space-between"}
     >
       {buttons.map(button => (
-        <Button key={button.id} {...button} />
+        <Button key={button.id} className={twMerge(button.className, "flex-1")} {...button} />
       ))}
       {groups.map(group => (
         <Flex key={group.id} gap={3}>

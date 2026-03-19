@@ -380,14 +380,12 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               id: "cancel",
               children: t("Cancel"),
               onClick: onClose,
-              variant: "secondary",
-              className: "flex-1"
+              variant: "secondary"
             },
             {
               id: "save",
               children: t("Save"),
-              onClick: handleSave,
-              className: "flex-1"
+              onClick: handleSave
             }
           ]}
         />

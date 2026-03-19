@@ -1,12 +1,12 @@
 import { Box, TableCell as ChakraTableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { Button } from "@worldresources/wri-design-systems";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { bulkDeleteUserAssociations, useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 import { getThemedColor } from "@/lib/theme";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import ActionCell from "@/redesignComponents/dataDisplay/Table/components/ActionCell";
 import CustomTableCell from "@/redesignComponents/dataDisplay/Table/components/TableCell";
@@ -293,14 +293,21 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           />
         }
         footer={
-          <div className="relative h-14 w-full">
-            <div className="absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t border-theme-neutral-300 px-[13px] pt-4 ">
-              <Button variant="borderless" onClick={handleCloseDeleteModal}>
-                {t("Cancel")}
-              </Button>
-              <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
-            </div>
-          </div>
+          <ButtonGroup
+            buttons={[
+              {
+                id: "cancel",
+                variant: "borderless",
+                children: t("Cancel"),
+                onClick: handleCloseDeleteModal
+              },
+              {
+                id: "confirm",
+                children: t("Confirm"),
+                onClick: handleConfirmDelete
+              }
+            ]}
+          />
         }
       />
     </Box>

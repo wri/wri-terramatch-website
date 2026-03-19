@@ -3,6 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react";
 import Image from "next/image";
 import React, { useState } from "react";
 
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";
 import ModalStory from "./Modal";
@@ -230,23 +232,25 @@ export const WithActions: Story = {
         <ModalStory
           {...args}
           footer={
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  setShowModal(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={() => {
-                  setShowModal(false);
-                }}
-              >
-                Save
-              </Button>
-            </>
+            <ButtonGroup
+              buttons={[
+                {
+                  id: "cancel",
+                  children: "Cancel",
+                  variant: "secondary",
+                  onClick: () => {
+                    setShowModal(false);
+                  }
+                },
+                {
+                  id: "save",
+                  children: "Save",
+                  onClick: () => {
+                    setShowModal(false);
+                  }
+                }
+              ]}
+            />
           }
           open={showModal}
           onClose={() => setShowModal(false)}
