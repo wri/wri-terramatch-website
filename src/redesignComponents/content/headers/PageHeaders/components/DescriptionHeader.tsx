@@ -1,6 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import { FC } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -24,14 +24,6 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
 }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description, maxLines);
-
-  const handleToggleExpand = useCallback(() => {
-    toggleExpand();
-  }, [toggleExpand]);
-
-  const handleEditClick = useCallback(() => {
-    handleEdit?.();
-  }, [handleEdit]);
 
   return (
     <>
@@ -69,7 +61,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             }}
           >
             {"..."}
-            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={handleToggleExpand}>
+            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={toggleExpand}>
               {t("Read More")}
             </Button>
           </Text>
@@ -78,7 +70,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
           <Button
             variant="borderless"
             size="small"
-            onClick={handleToggleExpand}
+            onClick={toggleExpand}
             style={{
               display: "inline-flex",
               lineHeight: "20px",
@@ -90,7 +82,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
         ) : null}
       </Box>
       <div className="flex w-fit gap-2">
-        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
+        <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
         {downloadButtonProps != null ? <Button {...downloadButtonProps} /> : null}

@@ -50,22 +50,10 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   const [, myOrg] = useMyOrg();
   const router = useRouter();
 
-  const handleEditClick = useCallback(() => {
-    handleEdit();
-  }, [handleEdit]);
-
-  const handleExportClick = useCallback(() => {
-    handleExport();
-  }, [handleExport]);
-
   const handleOrganizationNav = useCallback(() => {
     const orgId = myOrg?.organisationId;
     router.push(orgId != null ? `/organization/${orgId}` : "/");
   }, [router, myOrg?.organisationId]);
-
-  const handleAddProjectInformation = useCallback(() => {
-    handleEdit();
-  }, [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
@@ -92,12 +80,12 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       {description != null ? (
         <DescriptionHeader
           description={description}
-          handleEdit={handleEditClick}
+          handleEdit={handleEdit}
           downloadButtonProps={{
             variant: "secondary",
             size: "small",
             leftIcon: <DownloadIcon />,
-            onClick: handleExportClick,
+            onClick: handleExport,
             loading: exportLoader,
             children: t("Download Project Files")
           }}
@@ -105,7 +93,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       ) : (
         <div className="w-fit">
           <Button
-            onClick={handleAddProjectInformation}
+            onClick={() => handleEdit()}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}
@@ -117,7 +105,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             variant="secondary"
             size="small"
             leftIcon={<DownloadIcon />}
-            onClick={handleExportClick}
+            onClick={handleExport}
             loading={exportLoader}
           >
             {t("Download Project Files")}

@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback } from "react";
+import { FC } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -36,26 +36,19 @@ const SiteInfo: FC<SiteInfoProps> = ({
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
 
-  const handleProjectNav = useCallback(() => {
-    router.push(`/project/${projectUuid}`);
-  }, [router, projectUuid]);
-
-  const handleMyProjectsNav = useCallback(() => {
-    router.push(`/my-projects`);
-  }, [router]);
-
-  const handleExportClick = useCallback(() => {
-    handleExport();
-  }, [handleExport]);
-
   return (
     <Box gap={2} className="flex flex-col">
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button variant="borderless" size="small" className="-mr-2" onClick={handleProjectNav}>
+        <Button
+          variant="borderless"
+          size="small"
+          className="-mr-2"
+          onClick={() => router.push(`/project/${projectUuid}`)}
+        >
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button variant="borderless" size="small" className="-ml-2" onClick={handleMyProjectsNav}>
+        <Button variant="borderless" size="small" className="-ml-2" onClick={() => router.push(`/my-projects`)}>
           {organization}
         </Button>
       </Text>
@@ -69,7 +62,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
             size: "small",
             leftIcon: <DownloadIcon />,
             className: "w-auto",
-            onClick: handleExportClick,
+            onClick: handleExport,
             loading: exportLoader,
             children: t("Download Site Files")
           }}
@@ -85,7 +78,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
             size="small"
             leftIcon={<DownloadIcon />}
             className="w-auto"
-            onClick={handleExportClick}
+            onClick={handleExport}
             loading={exportLoader}
           >
             {t("Download Site Files")}
