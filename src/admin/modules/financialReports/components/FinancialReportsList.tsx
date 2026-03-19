@@ -80,9 +80,10 @@ const FinancialReportsDataGrid: FC = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={({ frameworkKey }: FinancialReportLightDto) =>
-          frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey
-        }
+        render={(record?: FinancialReportLightDto) => {
+          const frameworkKey = record?.frameworkKey;
+          return frameworkInputChoices.find((framework: any) => framework.id === frameworkKey)?.name ?? frameworkKey;
+        }}
         sortable={false}
       />
       <TextField source="yearOfReport" label="Year of Report" />
@@ -121,9 +122,9 @@ export const FinancialReportsList: FC = () => {
       label="Organisation"
       sort={{
         field: "name",
-        order: "DESC"
+        order: "ASC"
       }}
-      perPage={1000}
+      perPage={100}
       filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organisation" className="select-page-admin" />
