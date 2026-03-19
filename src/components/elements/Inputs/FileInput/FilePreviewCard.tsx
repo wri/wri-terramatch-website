@@ -41,7 +41,14 @@ const FilePreviewCard = ({
     (checked: boolean) => {
       if (file == null) return;
 
-      updateMedia({ isPublic: checked }, { id: file.uuid });
+      updateMedia(
+        {
+          isPublic: checked,
+          profileImageScale: file.profileImageScale!,
+          profileImagePosition: file.profileImagePosition!
+        },
+        { id: file.uuid }
+      );
     },
     [file]
   );

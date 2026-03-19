@@ -175,22 +175,27 @@ export enum FileType {
   GeneralDocuments = "application/pdf, text/csv, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/plain, image/png, image/jpeg, video/mp4"
 }
 
-export const mediaToUploadedFile = (media: MediaDto, rawFile?: File, uploadState?: UploadState): UploadedFile => ({
-  uuid: media.uuid,
-  url: media.url ?? "",
-  thumbUrl: media.thumbUrl ?? undefined,
-  size: media.size,
-  fileName: media.fileName,
-  mimeType: media.mimeType ?? "",
-  createdAt: media.createdAt,
-  collectionName: media.collectionName,
-  isPublic: media.isPublic,
-  isCover: media.isCover,
-  lat: media.lat ?? undefined,
-  lng: media.lng ?? undefined,
-  rawFile,
-  uploadState
-});
+export const mediaToUploadedFile = (media: MediaDto, rawFile?: File, uploadState?: UploadState): UploadedFile => {
+  return {
+    uuid: media.uuid,
+    url: media.url ?? "",
+    thumbUrl: media.thumbUrl ?? undefined,
+    size: media.size,
+    fileName: media.fileName,
+    mimeType: media.mimeType ?? "",
+    createdAt: media.createdAt,
+    collectionName: media.collectionName,
+    isPublic: media.isPublic,
+    isCover: media.isCover,
+    lat: media.lat ?? undefined,
+    lng: media.lng ?? undefined,
+    profileImageScale: media.profileImageScale != null ? Number(media.profileImageScale) : undefined,
+    profileImagePosition:
+      media.profileImagePosition != null ? (media.profileImagePosition as { x: number; y: number }) : undefined,
+    rawFile,
+    uploadState
+  };
+};
 
 export type UploadState = {
   isLoading?: boolean;
@@ -213,7 +218,8 @@ export type UploadedFile = {
   isCover?: boolean;
   lat?: number;
   lng?: number;
-
+  profileImageScale?: number;
+  profileImagePosition?: { x: number; y: number };
   // Client side data
   rawFile?: File;
   uploadState?: UploadState;
