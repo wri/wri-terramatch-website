@@ -67,7 +67,7 @@ const OrganisationCreate: FC = () => {
           reference={modules.fundingProgramme.ResourceName}
           label="Funding Programme"
           sort={{ field: "name", order: "DESC" }}
-          perPage={1000}
+          perPage={100}
         >
           <AutocompleteInput optionText="name" label="Funding Programme" fullWidth />
         </ReferenceInput>

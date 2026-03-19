@@ -31,15 +31,21 @@ const getFilterKey = (original: string, replace?: { key: string; replaceWith: st
 };
 
 export const raConnectionProps = <FilterType, SideloadType>(params: GetListParams) => {
-  const filter = { ...params.filter };
+  const filter: Record<string, unknown> = { ...params.filter };
+
   if (filter.frameworkKey != null && !Array.isArray(filter.frameworkKey)) {
     filter.frameworkKey = [filter.frameworkKey];
+  }
+
+  if (filter.q != null && filter.search == null) {
+    filter.search = filter.q;
+    delete filter.q;
   }
 
   const queryParams: PaginatedConnectionProps & FilterProp<FilterType> & SideloadsProp<SideloadType> = {
     pageSize: params.pagination.perPage,
     pageNumber: params.pagination.page,
-    filter
+    filter: filter as FilterType
   };
 
   if (params.sort.field != null) {

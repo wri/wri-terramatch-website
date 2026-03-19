@@ -78,8 +78,8 @@ const SiteDataGrid: FC = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: SiteLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: SiteLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -147,9 +147,9 @@ export const SitesList: FC = () => {
       label="Organization"
       sort={{
         field: "name",
-        order: "DESC"
+        order: "ASC"
       }}
-      perPage={1000}
+      perPage={100}
       filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />

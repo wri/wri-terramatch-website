@@ -6,7 +6,6 @@ import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "reac
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
-
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
@@ -16,8 +15,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
-  onClickAdd?: () => void;
-  hoverContent?: React.ReactNode;
+  onClickEdit?: () => void;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -29,8 +27,7 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
-  onClickAdd,
-  hoverContent,
+  onClickEdit,
   ...rest
 }) => {
   const t = useT();
@@ -64,12 +61,15 @@ const BaseImage: FC<BaseImageProps> = ({
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={onClickAdd}>
+            <Button variant="borderless" size="small" onClick={onClickEdit}>
               {t("Add Image")}
             </Button>
           </div>
         ) : (
           <div
+            role="button"
+            tabIndex={0}
+            onClick={onClickEdit}
             className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
@@ -100,14 +100,8 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className={classNamesHover} />
             <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              {hoverContent ? (
-                hoverContent
-              ) : (
-                <>
-                  <EditIcon className="h-4 w-4" />
-                  {t("Edit")}
-                </>
-              )}
+              <EditIcon className="h-4 w-4" />
+              {t("Edit")}
             </Text>
           </div>
         </>

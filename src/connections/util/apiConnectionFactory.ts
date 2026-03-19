@@ -689,22 +689,26 @@ class ApiConnectionFactory<
             return () => ({ isUpdating: false, updateFailure: undefined, update });
           }
 
-          // Avoid creating inline in the createSelector call so that the function has the same identity on every
-          // state update, preventing some possible re-renders when the function is a dependency in useEffect.
-          const update = (attributes: Attributes) => {
-            const id = props.id ?? customIdFactory?.(props);
-            if (id == null) {
-              Log.error("No ID available for update payload", props);
-              return;
-            }
-            updateEndpoint.fetch({
-              ...variables,
-              body: { data: { type: resource, id, attributes } }
-            } as unknown as UpdateVariables);
-          };
           return createSelector(
             [updateEndpoint.isFetchingSelector(variables), updateEndpoint.fetchFailedSelector(variables)],
-            (isUpdating, updateFailure) => ({ isUpdating, updateFailure, update })
+            (isUpdating, updateFailure) => {
+              const update = (attributes: Attributes) => {
+                const id = props.id ?? customIdFactory?.(props);
+                if (id == null) {
+                  Log.error("No ID available for update payload", props);
+                  return;
+                }
+
+                if (updateFailure != null) {
+                  ApiSlice.clearPending(resolveUrl(updateEndpoint.url, variables), updateEndpoint.method);
+                }
+                updateEndpoint.fetch({
+                  ...variables,
+                  body: { data: { type: resource, id, attributes } }
+                } as unknown as UpdateVariables);
+              };
+              return { isUpdating, updateFailure, update };
+            }
           );
         }
       ]

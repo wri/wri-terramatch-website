@@ -15,7 +15,6 @@ import { RowData } from "@/redesignComponents/dataDisplay/Table/tableUtils";
 import { DeleteIcon, UserAddIcon } from "@/redesignComponents/foundations/Icons";
 import ToolbarTable from "@/redesignComponents/navigation/Toolbar/ToolbarTable";
 
-import FooterModal from "../components/FooterModal";
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 
 interface TeamMembersTabProps {
@@ -294,12 +293,14 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
           />
         }
         footer={
-          <FooterModal>
-            <Button variant="borderless" onClick={handleCloseDeleteModal}>
-              {t("Cancel")}
-            </Button>
-            <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
-          </FooterModal>
+          <div className="relative h-14 w-full">
+            <div className="absolute mx-[-13px] grid w-[calc(100%+26px)] grid-cols-2 gap-3 border-t border-theme-neutral-300 px-[13px] pt-4 ">
+              <Button variant="borderless" onClick={handleCloseDeleteModal}>
+                {t("Cancel")}
+              </Button>
+              <Button onClick={handleConfirmDelete}>{t("Confirm")}</Button>
+            </div>
+          </div>
         }
       />
     </Box>

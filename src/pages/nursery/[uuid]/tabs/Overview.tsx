@@ -1,13 +1,17 @@
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
+import { useCallback, useMemo } from "react";
 
+import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -46,6 +50,8 @@ const mapStatusToTagStateNursery = (status: string | null | undefined): { type: 
 
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
+  const t = useT();
+  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
@@ -57,22 +63,44 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     entityUuid: nursery?.uuid,
     collection: "nursery-seedling"
   });
-  const t = useT();
+
+  const needMoreInformation =
+    nursery.updateRequestStatus === "needs-more-information" ||
+    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
+
+  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
+
+  const statusProps: StatusProps | undefined = useMemo(() => {
+    if (!needMoreInformation) return undefined;
+    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
+    return {
+      title: t(`${titlePrefix} More Info Requested`),
+      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
+      className: "fill-tertiary"
+    };
+  }, [needMoreInformation, hasUpdateRequest, t]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation && statusProps) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
       shallow: true
     });
-  };
-
-  const goToContinueEditingTab = () => {
-    if (isEntityAwaitingApproval(nursery?.status, nursery?.updateRequestStatus)) {
-      handleEdit();
-    } else {
-      router.push(`/entity/nurseries/edit/${nursery.uuid}`, undefined, {
-        shallow: true
-      });
-    }
   };
 
   return (
@@ -91,16 +119,16 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             }}
           >
             <MetricCard
-              title={t("About Nurseries")}
+              title={t("Seedlings Grown")}
               variant="donutChart"
               progress={nursery?.seedlingGrown ?? 0}
               goal={totalNurserySeedlings}
               icon={<SeedlingsIcon boxSize={6} />}
-              tooltipContent={t("Nursery Information")}
+              tooltipContent={t("Number of seedlings grown for this project.")}
               color="secondary.500"
             />
           </PageItem>
-          <PageItem title="Nursery Information" flexProps={{ maxWidth: "41%" }}>
+          <PageItem title="About Nurseries" flexProps={{ maxWidth: "37%" }}>
             <About
               description={
                 <Text textStyle="300" as="span">
@@ -132,19 +160,21 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             />
           </PageItem>
           <PageItem
-            flexProps={{ maxWidth: "33%", overflow: "hidden" }}
+            flexProps={{ maxWidth: "37%", overflow: "hidden" }}
             title={t("Nursery Set Up")}
             tag={(() => {
-              const tagState = mapStatusToTagStateNursery(nursery?.status);
+              const tagState = mapStatusToTagStateNursery(
+                nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
+              );
 
               return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
             })()}
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: nursery?.status === "approved" ? t("Edit") : t("Continue Editing"),
+              children: nursery?.status === "approved" ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon />,
-              onClick: goToContinueEditingTab
+              onClick: handleEditClick
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>

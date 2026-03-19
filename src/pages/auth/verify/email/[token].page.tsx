@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -8,24 +9,25 @@ import Confirmation from "@/components/extensive/Confirmation/Confirmation";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
 import ContentLayout from "@/components/generic/Layout/ContentLayout";
-import { useVerificationUser } from "@/connections/VerificationUser";
+import { userVerification } from "@/connections/VerificationUser";
 import { useValueChanged } from "@/hooks/useValueChanged";
 
 const VerifyEmail = () => {
   const t = useT();
   const router = useRouter();
-  const token = router.query.token as string;
+  const [isVerified, setIsVerified] = useState(false);
 
-  const [, { isSuccess: verified, requestFailed }] = useVerificationUser({ token });
-
-  useValueChanged(requestFailed, async () => {
-    if (requestFailed != null) {
+  useValueChanged(router.query.token, async () => {
+    try {
+      const response = await userVerification({ token: router.query.token as string });
+      setIsVerified(response != null);
+    } catch (error) {
       router.push("/");
     }
   });
 
   return (
-    verified && (
+    isVerified && (
       <BackgroundLayout>
         <ContentLayout>
           <Confirmation
