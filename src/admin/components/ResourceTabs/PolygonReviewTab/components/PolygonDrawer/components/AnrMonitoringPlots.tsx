@@ -1,22 +1,105 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
-import CommentaryBox from "@/components/elements/CommentaryBox/CommentaryBox";
 import Text from "@/components/elements/Text/Text";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import {
+  deleteAnrPlotGeometry,
+  upsertAnrPlotGeometryResource,
+  useAnrPlotGeometry
+} from "@/connections/AnrPlotGeometry";
 import { useModalContext } from "@/context/modal.provider";
+import { useNotificationContext } from "@/context/notification.provider";
+import ApiSlice from "@/store/apiSlice";
+import Log from "@/utils/log";
 
-const MOCK_HAS_ANR_MONITORING_PLOT_DATA = true;
-
-const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
+const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
+  const { openNotification } = useNotificationContext();
+  const uploadInputRef = useRef<HTMLInputElement>(null);
   const [plotsVisible, setPlotsVisible] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const [, { data: anrPlotGeometry, isLoading }] = useAnrPlotGeometry({
+    sitePolygonUuid,
+    enabled: sitePolygonUuid !== ""
+  });
+
+  const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
+
+  const getErrorMessage = useCallback((error: unknown, fallback: string) => {
+    if (error != null && typeof error === "object" && "message" in error) {
+      try {
+        const parsedMessage = JSON.parse((error as any).message as string);
+        if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
+          return parsedMessage.message as string;
+        }
+      } catch {
+        return (error as any).message as string;
+      }
+    }
+    return fallback;
+  }, []);
+
+  const refreshAnrPlotGeometryAfterUpload = useCallback(() => {
+    if (sitePolygonUuid === "") return;
+    ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
+  }, [sitePolygonUuid]);
+
+  const refreshAnrPlotGeometryAfterDelete = useCallback(() => {
+    if (sitePolygonUuid === "") return;
+    ApiSlice.pruneCache("anrPlotGeometries", [sitePolygonUuid]);
+    ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
+  }, [sitePolygonUuid]);
+
+  const uploadAnrPlotGeometry = useCallback(async () => {
+    if (sitePolygonUuid === "") {
+      setIsUploading(false);
+      return;
+    }
+    try {
+      const file = uploadInputRef.current?.files?.[0];
+      if (file == null) {
+        setIsUploading(false);
+        return;
+      }
+      await upsertAnrPlotGeometryResource(sitePolygonUuid, file);
+      refreshAnrPlotGeometryAfterUpload();
+      openNotification("success", t("Success!"), t("ANR monitoring plots uploaded successfully"));
+    } catch (error) {
+      const errorMessage = getErrorMessage(error, t("Error uploading ANR monitoring plots"));
+      openNotification("error", t("Error!"), errorMessage);
+      Log.error("Error uploading ANR monitoring plots", error);
+    } finally {
+      setIsUploading(false);
+      if (uploadInputRef.current != null) {
+        uploadInputRef.current.value = "";
+      }
+    }
+  }, [getErrorMessage, openNotification, refreshAnrPlotGeometryAfterUpload, sitePolygonUuid, t]);
+
+  const onSelectGeoJsonFile = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file == null) return;
+      const hasGeoJsonExtension = file.name.toLowerCase().endsWith(".geojson");
+      if (!hasGeoJsonExtension) {
+        openNotification("error", t("Invalid file"), t("Please upload a .geojson file."));
+        event.target.value = "";
+        return;
+      }
+      setIsUploading(true);
+      await uploadAnrPlotGeometry();
+    },
+    [openNotification, t, uploadAnrPlotGeometry]
+  );
 
   const openDeleteConfirmModal = useCallback(() => {
     openModal(
@@ -25,14 +108,34 @@ const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
         title={t("Delete ANR Monitoring Plots")}
         content={t("Are you sure you want to delete ANR monitoring plots for this polygon? This cannot be undone.")}
         onClose={() => closeModal(ModalId.CONFIRM_ANR_MONITORING_PLOTS_DELETION)}
-        onConfirm={() => {
-          closeModal(ModalId.CONFIRM_ANR_MONITORING_PLOTS_DELETION);
+        onConfirm={async () => {
+          try {
+            setIsDeleting(true);
+            await deleteAnrPlotGeometry(sitePolygonUuid);
+            refreshAnrPlotGeometryAfterDelete();
+            openNotification("success", t("Success!"), t("ANR monitoring plots deleted successfully"));
+          } catch (error) {
+            const errorMessage = getErrorMessage(error, t("Error deleting ANR monitoring plots"));
+            openNotification("error", t("Error!"), errorMessage);
+            Log.error("Error deleting ANR monitoring plots", error);
+          } finally {
+            setIsDeleting(false);
+            closeModal(ModalId.CONFIRM_ANR_MONITORING_PLOTS_DELETION);
+          }
         }}
       />
     );
-  }, [closeModal, openModal, t]);
+  }, [closeModal, getErrorMessage, openModal, openNotification, refreshAnrPlotGeometryAfterDelete, sitePolygonUuid, t]);
 
-  if (polygonUuid === "") {
+  const openUploadDialog = useCallback(() => {
+    uploadInputRef.current?.click();
+  }, []);
+
+  const geoJsonInput = (
+    <input ref={uploadInputRef} type="file" accept=".geojson" className="hidden" onChange={onSelectGeoJsonFile} />
+  );
+
+  if (sitePolygonUuid === "") {
     return (
       <div className="flex flex-col gap-3">
         <Text variant="text-14" className="text-gray-500">
@@ -41,11 +144,20 @@ const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
         <Text variant="text-12" className="text-gray-400">
           {t("Select a polygon to view ANR monitoring plots.")}
         </Text>
+        {geoJsonInput}
       </div>
     );
   }
 
-  if (MOCK_HAS_ANR_MONITORING_PLOT_DATA) {
+  if (isLoading || isUploading) {
+    return (
+      <div className="flex items-center justify-center p-4">
+        <Text variant="text-14-light">{t("Loading ANR monitoring plots...")}</Text>
+      </div>
+    );
+  }
+
+  if (hasAnrPlotGeometry) {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex items-baseline justify-between gap-1.5">
@@ -66,13 +178,24 @@ const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
           </button>
         </div>
         <Button
+          onClick={openUploadDialog}
+          variant="semi-black"
+          iconProps={{ name: IconNames.UPLOAD_CLOUD_CUSTOM }}
+          className="border-[1px]"
+          disabled={isUploading}
+        >
+          <span className="text-12-bold normal-case text-darkCustom">{t("Replace ANR Monitoring Plots")}</span>
+        </Button>
+        <Button
           onClick={openDeleteConfirmModal}
           variant="semi-red"
           iconProps={{ name: IconNames.TRASH_PA }}
-          className="border-[1px] "
+          className="border-[1px]"
+          disabled={isDeleting}
         >
           <span className="text-12-bold normal-case text-darkCustom">{t("Delete ANR Monitoring Plots")}</span>
         </Button>
+        {geoJsonInput}
       </div>
     );
   }
@@ -82,21 +205,13 @@ const AnrMonitoringPlots = ({ polygonUuid }: { polygonUuid: string }) => {
       <Text variant="text-14-semibold" className="text-darkCustom">
         {t("Assisted Natural Regeneration Monitoring Plots")}
       </Text>
-      <Text variant="text-12-semibold" className="text-grey-500">
+      <Text variant="text-12-semibold" className="text-gray-500">
         {t("Upload ANR Monitoring Plots")}
       </Text>
-      <CommentaryBox
-        name="John Doe"
-        lastName="Doe"
-        buttonProps={{
-          iconProps: { name: IconNames.UPLOAD_CLOUD_CUSTOM, className: "h-4 w-4" },
-          children: (
-            <Text variant="text-12-bold" className="text-white">
-              {t("upload")}
-            </Text>
-          )
-        }}
-      />
+      <Button onClick={openUploadDialog} variant="semi-black" iconProps={{ name: IconNames.UPLOAD_CLOUD_CUSTOM }}>
+        <span className="text-12-bold normal-case text-darkCustom">{t("Upload")}</span>
+      </Button>
+      {geoJsonInput}
     </div>
   );
 };

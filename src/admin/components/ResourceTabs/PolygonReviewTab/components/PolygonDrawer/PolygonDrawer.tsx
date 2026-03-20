@@ -261,7 +261,7 @@ const PolygonDrawer = ({
         </div>
       ) : activeTab === "anrMonitoringPlots" ? (
         <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
-          <AnrMonitoringPlots polygonUuid={polygonSelected} />
+          <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid ?? ""} />
         </div>
       ) : (
         <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">

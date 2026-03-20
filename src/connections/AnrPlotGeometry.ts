@@ -58,6 +58,7 @@ export const upsertAnrPlotGeometryResource = async (
   formData.append("file", file);
 
   const urlVariables = { pathParams: { sitePolygonUuid } };
+  const getUrl = resolveUrl(getAnrPlotGeometry.url, urlVariables);
   const fullUrl = resolveUrl(upsertAnrPlotGeometry.url, urlVariables);
   const failureSelector = upsertAnrPlotGeometry.fetchFailedSelector(urlVariables);
 
@@ -88,6 +89,7 @@ export const upsertAnrPlotGeometryResource = async (
 
       if (pending == null && failure == null) {
         unsubscribe();
+        ApiSlice.clearPending(getUrl, "GET");
         ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
         const result = currentState.anrPlotGeometries[sitePolygonUuid];
         resolve(result?.attributes as AnrPlotGeometryDto);
