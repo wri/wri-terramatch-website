@@ -46,7 +46,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
             {t("Restoration Strategy:")}
           </Text>
           <Flex className="w-auto flex-col" alignItems="center" gap={2}>
-            {restorationStrategyConfig != null && restorationStrategyConfig.icon != null ? (
+            {restorationStrategyConfig?.icon != null ? (
               <>
                 {restorationStrategyConfig.icon}
                 <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
@@ -68,7 +68,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
             {t("Target Land Use:")}
           </Text>
           <Flex className="w-auto flex-col" alignItems="center" gap={2}>
-            {targetLandUseConfig != null && targetLandUseConfig.icon != null ? (
+            {targetLandUseConfig?.icon != null ? (
               <>
                 {targetLandUseConfig.icon}
                 <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
