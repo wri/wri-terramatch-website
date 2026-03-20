@@ -20,6 +20,8 @@ import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
+import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
@@ -61,6 +63,37 @@ const SiteDetailPage = () => {
                 ]}
               />
               <SiteHeader site={site} />
+              <SiteBanner
+                site={site}
+                className="top-[70px]"
+                breadcrumbs={[
+                  {
+                    label: t("My Projects"),
+                    link: "/my-projects",
+                    icon: <ProjectIcon className="!text-theme-primary-900" />
+                  },
+                  { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
+                  { label: site.name ?? "", link: `/site/${site.uuid}` }
+                ]}
+                suffix={<>Sufix</>}
+                toolbar={{
+                  tabBar: {
+                    tabs: [
+                      { value: "overview", label: t("Overview") },
+                      { value: "details", label: t("Details") },
+                      { value: "gallery", label: t("Gallery") },
+                      { value: "goals", label: t("Progress & Goals") },
+                      { value: "completed-tasks", label: t("Completed Reports") },
+                      { value: "audit-log", label: t("Audit Log") }
+                    ],
+                    defaultValue: "overview",
+                    onTabClick: (tabValue: string) => {
+                      router.push(`/site/${site.uuid}?tab=${tabValue}`);
+                    }
+                  }
+                }}
+              />
+
               <EntityStatusBar entityName="sites" entity={site} />
               <SecondaryTabs
                 tabItems={[
