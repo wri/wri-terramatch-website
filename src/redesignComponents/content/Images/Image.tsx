@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -17,6 +18,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   isAdd?: boolean;
   hoverContent?: React.ReactNode;
   onClickEdit?: () => void;
+  onClickAdd?: () => void;
   menuItems?: {
     label: string;
     value: string;
@@ -38,6 +40,7 @@ const BaseImage: FC<BaseImageProps> = ({
   isAdd = false,
   hoverContent,
   onClickEdit,
+  onClickAdd,
   menuItems,
   menuLabel,
   style,
@@ -97,17 +100,12 @@ const BaseImage: FC<BaseImageProps> = ({
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <MenuCustom
-              label={menuLabel ?? "Add Image"}
-              items={[
-                ...(menuItems?.map(item => ({
-                  label: item.label,
-                  value: item.value,
-                  startIcon: item.startIcon,
-                  onClick: item.onClick
-                })) ?? [])
-              ]}
-            />
+            {onClickAdd && (
+              <Button onClick={onClickAdd} variant="borderless" size="small">
+                {t("Add Image")}
+              </Button>
+            )}
+            {menuItems && <MenuCustom label={menuLabel ?? "Add Image"} items={menuItems} />}
           </div>
         ) : (
           <div
