@@ -1,10 +1,6 @@
 import { useT } from "@transifex/react";
-import Head from "next/head";
 import { useRouter } from "next/router";
 
-import SecondaryTabs from "@/components/elements/Tabs/Secondary/SecondaryTabs";
-import EntityStatusBar from "@/components/extensive/EntityStatusBar";
-import PageBreadcrumbs from "@/components/extensive/PageElements/Breadcrumbs/PageBreadcrumbs";
 import PageFooter from "@/components/extensive/PageElements/Footer/PageFooter";
 import Loader from "@/components/generic/Loading/Loader";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
@@ -15,11 +11,11 @@ import { MapAreaProvider } from "@/context/mapArea.provider";
 import { ToastType, useToastContext } from "@/context/toast.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import GalleryTab from "@/pages/project/[uuid]/tabs/Gallery";
-import SiteHeader from "@/pages/site/[uuid]/components/SiteHeader";
 import SiteCompletedReportsTab from "@/pages/site/[uuid]/tabs/CompletedReports";
 import SiteDetailTab from "@/pages/site/[uuid]/tabs/Details";
 import GoalsAndProgressTab from "@/pages/site/[uuid]/tabs/GoalsAndProgress";
 import SiteOverviewTab from "@/pages/site/[uuid]/tabs/Overview";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import SiteBanner from "@/redesignComponents/content/Banner/SiteBanner/SiteBanner";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
@@ -41,6 +37,38 @@ const SiteDetailPage = () => {
     }
   });
 
+  const currentTab = (router.query.tab as string) ?? "overview";
+  const isSuffixView = currentTab === "completed-tasks";
+  const activeTab = isSuffixView ? "overview" : currentTab;
+
+  const TabItems = [
+    { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
+    { key: "details", title: t("Details"), body: <SiteDetailTab site={site!} /> },
+    {
+      key: "gallery",
+      title: t("Gallery"),
+      body: (
+        <GalleryTab
+          modelName="sites"
+          modelUUID={site?.uuid ?? ""}
+          modelTitle={t("Site")}
+          entityData={site}
+          emptyStateContent={t(
+            "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
+          )}
+        />
+      )
+    },
+    { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site!} /> },
+    {
+      key: "audit-log",
+      title: t("Audit Log"),
+      body: <AuditLog site={site!} refresh={refetch} />
+    }
+  ];
+
+  const suffixContent = isSuffixView ? <SiteCompletedReportsTab site={site!} /> : null;
+
   return (
     <MapAreaProvider>
       <FrameworkProvider frameworkKey={site?.frameworkKey}>
@@ -52,7 +80,7 @@ const SiteDetailPage = () => {
         <LoadingContainer loading={!isLoaded}>
           {site == null ? null : (
             <>
-              <Head>
+              {/* <Head>
                 <title>{`${t("Site")} ${site.name}`}</title>
               </Head>
               <PageBreadcrumbs
@@ -62,7 +90,7 @@ const SiteDetailPage = () => {
                   { title: site.name ?? "" }
                 ]}
               />
-              <SiteHeader site={site} />
+              <SiteHeader site={site} /> */}
               <SiteBanner
                 site={site}
                 className="top-[70px]"
@@ -73,64 +101,49 @@ const SiteDetailPage = () => {
                     icon: <ProjectIcon className="!text-theme-primary-900" />
                   },
                   { label: site.projectName ?? "", link: `/project/${site.projectUuid}` },
-                  { label: site.name ?? "", link: `/site/${site.uuid}` }
+                  { label: site.name ?? "", link: `/site/${site.uuid}` },
+                  ...(isSuffixView ? [{ label: t("Reports"), link: `/site/${site.uuid}?tab=completed-tasks` }] : [])
                 ]}
-                suffix={<>Sufix</>}
+                suffix={
+                  <div className="flex gap-1.5">
+                    <div className="flex gap-1.5">
+                      <Button
+                        variant="borderless"
+                        size="small"
+                        className="underline underline-offset-2"
+                        onClick={() => router.push(`/project/${site.projectUuid}`)}
+                      >
+                        {t("Project Profile")}
+                      </Button>
+                      <span className="text-theme-neutral-300 text-sm">|</span>
+                      <Button
+                        variant="borderless"
+                        size="small"
+                        className="underline underline-offset-2"
+                        onClick={() => router.push(`/site/${site.uuid}?tab=completed-tasks`)}
+                      >
+                        {t("Site Reports")}
+                      </Button>
+                    </div>
+                  </div>
+                }
                 toolbar={{
                   tabBar: {
-                    tabs: [
-                      { value: "overview", label: t("Overview") },
-                      { value: "details", label: t("Details") },
-                      { value: "gallery", label: t("Gallery") },
-                      { value: "goals", label: t("Progress & Goals") },
-                      { value: "completed-tasks", label: t("Completed Reports") },
-                      { value: "audit-log", label: t("Audit Log") }
-                    ],
-                    defaultValue: "overview",
+                    tabs: TabItems.map(item => ({
+                      value: item.key,
+                      label: item.title
+                    })),
+                    defaultValue: isSuffixView ? "__none__" : activeTab,
                     onTabClick: (tabValue: string) => {
-                      router.push(`/site/${site.uuid}?tab=${tabValue}`);
+                      router.push(`/site/${siteUUID}?tab=${tabValue}`, undefined, { shallow: true });
                     }
                   }
                 }}
               />
-
-              <EntityStatusBar entityName="sites" entity={site} />
-              <SecondaryTabs
-                tabItems={[
-                  { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site} refetch={refetch} /> },
-                  { key: "details", title: t("Details"), body: <SiteDetailTab site={site} /> },
-                  {
-                    key: "gallery",
-                    title: t("Gallery"),
-                    body: (
-                      <GalleryTab
-                        modelName="sites"
-                        modelUUID={site.uuid}
-                        modelTitle={t("Site")}
-                        entityData={site}
-                        emptyStateContent={t(
-                          "Your gallery is currently empty. Add images by using the 'Edit' button on this site, or images added to your site reports will also automatically populate this gallery."
-                        )}
-                      />
-                    )
-                  },
-                  { key: "goals", title: t("Progress & Goals"), body: <GoalsAndProgressTab site={site} /> },
-                  {
-                    key: "completed-tasks",
-                    title: t("Completed Reports"),
-                    body: <SiteCompletedReportsTab site={site} />
-                  },
-                  {
-                    key: "audit-log",
-                    title: t("Audit Log"),
-                    body: <AuditLog site={site} refresh={refetch} />
-                  }
-                ]}
-                containerClassName="max-w-[82vw] px-10 xl:px-0 w-full"
-              />
-              <PageFooter />
+              <div className="w-full">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
             </>
           )}
+          <PageFooter />
         </LoadingContainer>
       </FrameworkProvider>
     </MapAreaProvider>

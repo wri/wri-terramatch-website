@@ -9,10 +9,13 @@ export interface SiteBannerProps extends Omit<BannerProps, "children"> {
   site: SiteFullDto;
 }
 
-const SiteBanner: FC<SiteBannerProps> = ({ site, ...bannerProps }) => (
-  <Banner {...bannerProps}>
-    <SiteHeader site={site} />
-  </Banner>
-);
+const SiteBanner: FC<SiteBannerProps> = ({ site, ...bannerProps }) => {
+  console.log("Site", site);
+  return (
+    <Banner {...bannerProps}>
+      <SiteHeader site={site} />
+    </Banner>
+  );
+};
 
 export default SiteBanner;

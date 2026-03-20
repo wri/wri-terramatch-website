@@ -7,11 +7,11 @@ import { AgroforestyIcon, TreePlantingIcon } from "@/redesignComponents/foundati
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
 const SITE_TYPE_MAP: Record<string, SiteTypeConfig> = {
-  "Tree Planting": {
+  "tree-planting": {
     icon: <TreePlantingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Tree Planting"
   },
-  Agroforesty: {
+  agroforest: {
     icon: <AgroforestyIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Agroforesty"
   }
