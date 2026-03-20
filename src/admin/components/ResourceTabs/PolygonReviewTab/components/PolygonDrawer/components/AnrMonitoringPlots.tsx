@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { ChangeEvent, useCallback, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -13,6 +13,7 @@ import {
   upsertAnrPlotGeometryResource,
   useAnrPlotGeometry
 } from "@/connections/AnrPlotGeometry";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
@@ -23,7 +24,9 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const prevSitePolygonUuidRef = useRef<string | null>(null);
   const [plotsVisible, setPlotsVisible] = useState(true);
+  const anrMapOverlay = useAnrMapOverlayOptional();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -33,6 +36,25 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
   });
 
   const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
+
+  useEffect(() => {
+    if (sitePolygonUuid === "") {
+      prevSitePolygonUuidRef.current = "";
+      return;
+    }
+    const prev = prevSitePolygonUuidRef.current;
+    if (prev != null && prev !== "" && prev !== sitePolygonUuid) {
+      setPlotsVisible(false);
+    }
+    prevSitePolygonUuidRef.current = sitePolygonUuid;
+  }, [sitePolygonUuid]);
+
+  useEffect(() => {
+    if (anrMapOverlay == null) {
+      return;
+    }
+    anrMapOverlay.setShowPlotsOnMap(plotsVisible);
+  }, [anrMapOverlay, plotsVisible]);
 
   const getErrorMessage = useCallback((error: unknown, fallback: string) => {
     if (error != null && typeof error === "object" && "message" in error) {
@@ -171,9 +193,9 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
             aria-label={plotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
           >
             {plotsVisible ? (
-              <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
-            ) : (
               <Visibility sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+            ) : (
+              <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
             )}
           </button>
         </div>

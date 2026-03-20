@@ -13,6 +13,7 @@ import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { bulkUpdateSitePolygonStatus, PolygonStatus } from "@/connections/SitePolygons";
 import { createPolygonValidation } from "@/connections/Validation";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -73,10 +74,13 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
+  const anrMapOverlay = useAnrMapOverlayOptional();
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
+  /** Tracks tab transitions so we can set ANR map visibility when entering the ANR tab (avoids child useEffect running one frame late). */
+  const prevActiveTabForAnrRef = useRef<PolygonDrawerTopTab | null>(null);
 
   const runPolygonValidation = async () => {
     try {
@@ -132,6 +136,32 @@ const PolygonDrawer = ({
   useEffect(() => {
     setActiveTab(initialTopTab);
   }, [polygonSelected, initialTopTab]);
+
+  useEffect(() => {
+    if (anrMapOverlay == null) {
+      return;
+    }
+    if (!isOpenPolygonDrawer) {
+      anrMapOverlay.resetAnrMapOverlay();
+      prevActiveTabForAnrRef.current = null;
+      return;
+    }
+    anrMapOverlay.setDrawerOpen(true);
+    const onAnrTab = activeTab === "anrMonitoringPlots";
+    anrMapOverlay.setAnrTabActive(onAnrTab);
+    if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
+      anrMapOverlay.setShowPlotsOnMap(true);
+    }
+    prevActiveTabForAnrRef.current = activeTab;
+
+    if (selectedPolygon?.uuid == null || selectedPolygon.uuid === "") {
+      return;
+    }
+    anrMapOverlay.syncDrawerSelection({
+      sitePolygonUuid: selectedPolygon.uuid,
+      geometryPolygonUuid: polygonSelected
+    });
+  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {

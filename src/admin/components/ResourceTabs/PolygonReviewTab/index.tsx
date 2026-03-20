@@ -37,6 +37,7 @@ import {
   useUploadGeometryWithVersions
 } from "@/connections/GeometryUpload";
 import { bulkUpdateSitePolygonStatus, deleteSitePolygon } from "@/connections/SitePolygons";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useMonitoredDataContext } from "@/context/monitoredData.provider";
@@ -812,156 +813,158 @@ const PolygonReviewTab: FC<IProps> = props => {
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonData} reloadSiteData={refetch}>
-      <TabbedShowLayout.Tab {...props}>
-        <Grid spacing={2} container>
-          <Grid xs={9}>
-            <Stack gap={4} className="pt-9 pl-8">
-              <div className="flex flex-col items-start gap-3" ref={containerRef}>
-                <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
-                  <div className="w-40 lg:w-48">
-                    <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
-                      Site Status
-                      <ToolTip
-                        title={""}
-                        content={
-                          "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
-                        }
-                        width="w-64 lg:w-72"
-                        trigger="click"
-                      >
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
-                      </ToolTip>
-                    </Text>
-                    <Text variant="text-14-bold" className="leading-[normal] text-black">
-                      {record?.readable_status}
-                    </Text>
-                  </div>
-                  <div className="w-full">
-                    <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
-                      Polygon Overview
-                      <ToolTip
-                        title=""
-                        content={`This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the 'Check Polygon' and 'Approve Polygon' features below to validate and approve the remaining polygons.`}
-                        width="w-72 lg:w-80"
-                        trigger="click"
-                      >
-                        <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
-                      </ToolTip>
-                    </Text>
-                    <If condition={sitePolygonData.length < total}>
-                      <Then>
-                        <Box sx={{ width: "100%" }}>
-                          <LinearProgress sx={{ borderRadius: 5 }} />
-                        </Box>
-                      </Then>
-                      <Else>
-                        <LinearProgressBarMonitored data={dataPolygonOverview} />
-                      </Else>
-                    </If>
-                  </div>
-                </div>
-                <div className="min-w-[450px] flex-[18]">
-                  <div className="mb-2">
-                    <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
-                      Add or Edit Polygons
-                    </Text>
-                    <Text variant="text-14-light" className="text-darkCustom">
-                      Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
-                      below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
-                      application.
-                    </Text>
-                  </div>
-                  <div className="mt-8 flex w-[65%] gap-3">
-                    <AddDataButton
-                      classNameContent="flex-1"
-                      openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
-                      openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
-                      openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
-                    />
-
-                    <Button
-                      variant="white-page-admin"
-                      className="flex-1"
-                      iconProps={{
-                        className: "w-4 h-4 group-hover-text-primary-500",
-                        name: IconNames.DOWNLOAD_PA
-                      }}
-                      onClick={() => {
-                        setSelectedPolygonsInCheckbox([]);
-                        downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
-                      }}
-                    >
-                      Download
-                    </Button>
-                    <Button
-                      className="flex-1 px-3"
-                      onClick={() => {
-                        setSelectedPolygonsInCheckbox([]);
-                        openFormModalHandlerSubmitPolygon();
-                      }}
-                    >
-                      <Text variant="text-14-bold" className="text-white">
-                        approve polygons
+      <AnrMapOverlayProvider>
+        <TabbedShowLayout.Tab {...props}>
+          <Grid spacing={2} container>
+            <Grid xs={9}>
+              <Stack gap={4} className="pt-9 pl-8">
+                <div className="flex flex-col items-start gap-3" ref={containerRef}>
+                  <div className="mb-2 flex w-full gap-2 rounded-xl border-2 border-grey-350 bg-white p-3 shadow-monitored">
+                    <div className="w-40 lg:w-48">
+                      <Text variant="text-14" className="flex items-center gap-1 text-darkCustom">
+                        Site Status
+                        <ToolTip
+                          title={""}
+                          content={
+                            "Site status indicates the current status of the site. Active sites that have been approved by project managers will have the status: Restoration in Progress."
+                          }
+                          width="w-64 lg:w-72"
+                          trigger="click"
+                        >
+                          <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                        </ToolTip>
                       </Text>
-                    </Button>
+                      <Text variant="text-14-bold" className="leading-[normal] text-black">
+                        {record?.readable_status}
+                      </Text>
+                    </div>
+                    <div className="w-full">
+                      <Text variant="text-14" className="mb-2 flex items-center gap-1 text-darkCustom">
+                        Polygon Overview
+                        <ToolTip
+                          title=""
+                          content={`This graphic displays the breakdown of polygon statuses for this site. Approved Polygons are ready for monitoring, but all other statuses require polygon validation and approval. Use the 'Check Polygon' and 'Approve Polygon' features below to validate and approve the remaining polygons.`}
+                          width="w-72 lg:w-80"
+                          trigger="click"
+                        >
+                          <Icon name={IconNames.IC_INFO} className="h-3.5 w-3.5 text-darkCustom lg:h-4 lg:w-4" />
+                        </ToolTip>
+                      </Text>
+                      <If condition={sitePolygonData.length < total}>
+                        <Then>
+                          <Box sx={{ width: "100%" }}>
+                            <LinearProgress sx={{ borderRadius: 5 }} />
+                          </Box>
+                        </Then>
+                        <Else>
+                          <LinearProgressBarMonitored data={dataPolygonOverview} />
+                        </Else>
+                      </If>
+                    </div>
+                  </div>
+                  <div className="min-w-[450px] flex-[18]">
+                    <div className="mb-2">
+                      <Text variant="text-16-bold" className="mb-2 flex items-center gap-1 text-darkCustom">
+                        Add or Edit Polygons
+                      </Text>
+                      <Text variant="text-14-light" className="text-darkCustom">
+                        Add, remove or edit polygons that are associated to a site. Polygons may be edited in the map
+                        below; exported, modified in QGIS or ArcGIS and imported again; or fed through the mobile
+                        application.
+                      </Text>
+                    </div>
+                    <div className="mt-8 flex w-[65%] gap-3">
+                      <AddDataButton
+                        classNameContent="flex-1"
+                        openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
+                        openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
+                        openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
+                      />
+
+                      <Button
+                        variant="white-page-admin"
+                        className="flex-1"
+                        iconProps={{
+                          className: "w-4 h-4 group-hover-text-primary-500",
+                          name: IconNames.DOWNLOAD_PA
+                        }}
+                        onClick={() => {
+                          setSelectedPolygonsInCheckbox([]);
+                          downloadSiteGeoJsonPolygons(record?.uuid ?? "", record?.name ?? "sitePolygons");
+                        }}
+                      >
+                        Download
+                      </Button>
+                      <Button
+                        className="flex-1 px-3"
+                        onClick={() => {
+                          setSelectedPolygonsInCheckbox([]);
+                          openFormModalHandlerSubmitPolygon();
+                        }}
+                      >
+                        <Text variant="text-14-bold" className="text-white">
+                          approve polygons
+                        </Text>
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <MapContainer
-                record={record}
-                entityData={{
-                  name: record?.name,
-                  project: record?.projectName ? { name: record.projectName } : undefined
-                }}
-                polygonsData={polygonDataMap}
-                bbox={activeBbox}
-                className="rounded-lg"
-                status={true}
-                setPolygonFromMap={setPolygonFromMap}
+                <MapContainer
+                  record={record}
+                  entityData={{
+                    name: record?.name,
+                    project: record?.projectName ? { name: record.projectName } : undefined
+                  }}
+                  polygonsData={polygonDataMap}
+                  bbox={activeBbox}
+                  className="rounded-lg"
+                  status={true}
+                  setPolygonFromMap={setPolygonFromMap}
+                  polygonFromMap={polygonFromMap}
+                  showPopups
+                  showLegend
+                  mapFunctions={mapFunctions}
+                  tooltipType="edit"
+                  sitePolygonData={sitePolygonData}
+                  modelFilesData={modelFilesData}
+                  setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
+                  isLoadingDelayedJob={props.isLoadingDelayedJob}
+                  setAlertTitle={props.setAlertTitle}
+                />
+                <SiteAttributeTable
+                  setPolygonFromMap={setPolygonFromMap}
+                  flyToPolygonBounds={flyToPolygonBounds}
+                  openFormModalHandlerConfirmDeletion={openFormModalHandlerConfirmDeletion}
+                  setSorting={setSorting}
+                  sorting={sorting}
+                  paginatedData={paginatedData}
+                  allData={sortedData}
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  pageSize={pageSize}
+                  setCurrentPage={setCurrentPage}
+                  setPageSize={setPageSize}
+                  containerRef={containerRef}
+                />
+              </Stack>
+            </Grid>
+            <Grid xs={3} className="pt-9 pr-4 pl-8">
+              <PolygonReviewAside
+                type={props.type}
+                data={transformedSiteDataForList as IPolygonItem[]}
                 polygonFromMap={polygonFromMap}
-                showPopups
-                showLegend
-                mapFunctions={mapFunctions}
-                tooltipType="edit"
-                sitePolygonData={sitePolygonData}
-                modelFilesData={modelFilesData}
-                setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
-                isLoadingDelayedJob={props.isLoadingDelayedJob}
-                setAlertTitle={props.setAlertTitle}
-              />
-              <SiteAttributeTable
                 setPolygonFromMap={setPolygonFromMap}
-                flyToPolygonBounds={flyToPolygonBounds}
-                openFormModalHandlerConfirmDeletion={openFormModalHandlerConfirmDeletion}
-                setSorting={setSorting}
-                sorting={sorting}
-                paginatedData={paginatedData}
-                allData={sortedData}
-                currentPage={currentPage}
-                totalPages={totalPages}
-                pageSize={pageSize}
-                setCurrentPage={setCurrentPage}
-                setPageSize={setPageSize}
-                containerRef={containerRef}
+                mapFunctions={mapFunctions}
+                refresh={refetch}
+                totalPolygons={total}
+                progress={progress}
+                siteUuid={record?.uuid}
+                isLoading={loading && sitePolygonData.length === 0}
               />
-            </Stack>
+            </Grid>
           </Grid>
-          <Grid xs={3} className="pt-9 pr-4 pl-8">
-            <PolygonReviewAside
-              type={props.type}
-              data={transformedSiteDataForList as IPolygonItem[]}
-              polygonFromMap={polygonFromMap}
-              setPolygonFromMap={setPolygonFromMap}
-              mapFunctions={mapFunctions}
-              refresh={refetch}
-              totalPolygons={total}
-              progress={progress}
-              siteUuid={record?.uuid}
-              isLoading={loading && sitePolygonData.length === 0}
-            />
-          </Grid>
-        </Grid>
-      </TabbedShowLayout.Tab>
+        </TabbedShowLayout.Tab>
+      </AnrMapOverlayProvider>
     </SitePolygonDataProvider>
   );
 };
