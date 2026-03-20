@@ -147,6 +147,16 @@ export const Secondary: Story = {
   render: () => <ColorScaleCard variant="secondary" getTextColor={getTextOnSecondaryColor} />
 };
 
+export const SecondaryNeutral: Story = {
+  render: () => {
+    return (
+      <Box bg="neutral.200" borderRadius="16px" p={8} boxShadow="sm">
+        <Box bg="secondary.neutral" height="40px" width="100%" borderWidth="1px" borderColor="neutral.300" />
+      </Box>
+    );
+  }
+};
+
 const textOnBackgroundShades: Shade[] = [600, 500, 400];
 
 const TextColorCard = ({ variant, getTextColor }: { variant: Variant; getTextColor: (shade: Shade) => string }) => (

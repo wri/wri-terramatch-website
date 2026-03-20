@@ -187,7 +187,7 @@ export type VerifyUserResponse = {
 };
 
 export type VerifyUserVariables = {
-  body: Schemas.VerificationUserRequest;
+  body: Schemas.VerificationUserBody;
 };
 
 /**
@@ -197,6 +197,54 @@ export const verifyUser = new V3ApiEndpoint<VerifyUserResponse, VerifyUserError,
   "/auth/v3/verifications",
   "POST"
 );
+
+export type ResendUserVerificationError = Fetcher.ErrorWrapper<{
+  status: 400;
+  payload: {
+    /**
+     * @example 400
+     */
+    statusCode: number;
+    /**
+     * @example Bad Request
+     */
+    message: string;
+  };
+}>;
+
+export type ResendUserVerificationResponse = {
+  meta?: {
+    /**
+     * @example resendVerifications
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example resendVerifications
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.ResendVerificationResponseDto;
+  };
+};
+
+export type ResendUserVerificationVariables = {
+  body: Schemas.ResendVerificationBody;
+};
+
+/**
+ * Resend a verification email for a user by email address
+ */
+export const resendUserVerification = new V3ApiEndpoint<
+  ResendUserVerificationResponse,
+  ResendUserVerificationError,
+  ResendUserVerificationVariables,
+  {}
+>("/auth/v3/verifications/resend", "POST");
 
 export type OrganisationIndexQueryParams = {
   ["sort[field]"]?: string;
@@ -1199,6 +1247,100 @@ export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError,
   "PATCH"
 );
 
+export type UserVerifyPathParams = {
+  /**
+   * User UUID
+   */
+  uuid: string;
+};
+
+export type UserVerifyError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UserVerifyResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+  };
+  data?: {
+    /**
+     * @example users
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.UserDto;
+    relationships?: {
+      org?: {
+        /**
+         * @example organisations
+         */
+        type?: string;
+        /**
+         * @format uuid
+         */
+        id?: string;
+        meta?: {
+          userStatus?: "approved" | "requested" | "rejected" | "na";
+        };
+      };
+    };
+  };
+  included?: {
+    /**
+     * @example organisations
+     */
+    type?: string;
+    /**
+     * @format uuid
+     */
+    id?: string;
+    attributes?: Schemas.OrganisationLightDto;
+  }[];
+};
+
+export type UserVerifyVariables = {
+  pathParams: UserVerifyPathParams;
+};
+
+/**
+ * Verify a user's email by UUID (admin or self).
+ */
+export const userVerify = new V3ApiEndpoint<UserVerifyResponse, UserVerifyError, UserVerifyVariables, {}>(
+  "/users/v3/users/verifyUser/{uuid}",
+  "PATCH"
+);
+
 export type GetUserAssociationPathParams = {
   /**
    * UUID of the resource.
@@ -1734,10 +1876,10 @@ export const acceptProjectInvite = new V3ApiEndpoint<
 export const operationsByTag = {
   login: { authLogin },
   resetPassword: { requestPasswordReset, resetPassword },
-  verificationUser: { verifyUser },
+  verificationUser: { verifyUser, resendUserVerification },
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
-  users: { userIndex, userCreation, usersFind, userUpdate },
+  users: { userIndex, userCreation, usersFind, userUpdate, userVerify },
   userAssociation: {
     getUserAssociation,
     createUserAssociation,

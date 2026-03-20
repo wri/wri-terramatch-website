@@ -1525,6 +1525,7 @@ export type GetV2AdminReportingFrameworksResponse = {
     site_report_form_uuid?: string;
     nursery_form_uuid?: string;
     nursery_report_form_uuid?: string;
+    financial_report_form_uuid?: string;
   }[];
 };
 
@@ -1572,6 +1573,7 @@ export type PostV2AdminReportingFrameworksResponse = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type PostV2AdminReportingFrameworksRequestBody = {
@@ -1583,6 +1585,7 @@ export type PostV2AdminReportingFrameworksRequestBody = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type PostV2AdminReportingFrameworksVariables = {
@@ -1641,6 +1644,7 @@ export type PutV2AdminReportingFrameworksUUIDResponse = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type PutV2AdminReportingFrameworksUUIDRequestBody = {
@@ -1652,6 +1656,7 @@ export type PutV2AdminReportingFrameworksUUIDRequestBody = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type PutV2AdminReportingFrameworksUUIDVariables = {
@@ -1711,6 +1716,7 @@ export type DeleteV2AdminReportingFrameworksUUIDResponse = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type DeleteV2AdminReportingFrameworksUUIDVariables = {
@@ -1769,6 +1775,7 @@ export type GetV2ReportingFrameworksAccessCodeACCESSCODEResponse = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type GetV2ReportingFrameworksAccessCodeACCESSCODEVariables = {
@@ -1837,6 +1844,7 @@ export type GetV2ReportingFrameworksFrameworkKeyResponse = {
   site_report_form_uuid?: string;
   nursery_form_uuid?: string;
   nursery_report_form_uuid?: string;
+  financial_report_form_uuid?: string;
 };
 
 export type GetV2ReportingFrameworksFrameworkKeyVariables = {
@@ -5316,63 +5324,6 @@ export const usePostV2ProjectsUUIDInvite = (
   >(
     (variables: PostV2ProjectsUUIDInviteVariables) =>
       fetchPostV2ProjectsUUIDInvite({ ...fetcherOptions, ...variables }),
-    options
-  );
-};
-
-export type PostV2ProjectsInviteAcceptError = Fetcher.ErrorWrapper<undefined>;
-
-export type PostV2ProjectsInviteAcceptResponse = {
-  id?: number;
-  uuid?: string;
-  project_id?: number;
-  email_address?: string;
-  /**
-   * @format datetime
-   */
-  accepted_at?: string;
-  /**
-   * @format datetime
-   */
-  created_at?: string;
-};
-
-export type PostV2ProjectsInviteAcceptRequestBody = {
-  token: string;
-};
-
-export type PostV2ProjectsInviteAcceptVariables = {
-  body: PostV2ProjectsInviteAcceptRequestBody;
-} & ApiContext["fetcherOptions"];
-
-export const fetchPostV2ProjectsInviteAccept = (variables: PostV2ProjectsInviteAcceptVariables, signal?: AbortSignal) =>
-  apiFetch<
-    PostV2ProjectsInviteAcceptResponse,
-    PostV2ProjectsInviteAcceptError,
-    PostV2ProjectsInviteAcceptRequestBody,
-    {},
-    {},
-    {}
-  >({ url: "/v2/projects/invite/accept", method: "post", ...variables, signal });
-
-export const usePostV2ProjectsInviteAccept = (
-  options?: Omit<
-    reactQuery.UseMutationOptions<
-      PostV2ProjectsInviteAcceptResponse,
-      PostV2ProjectsInviteAcceptError,
-      PostV2ProjectsInviteAcceptVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const { fetcherOptions } = useApiContext();
-  return reactQuery.useMutation<
-    PostV2ProjectsInviteAcceptResponse,
-    PostV2ProjectsInviteAcceptError,
-    PostV2ProjectsInviteAcceptVariables
-  >(
-    (variables: PostV2ProjectsInviteAcceptVariables) =>
-      fetchPostV2ProjectsInviteAccept({ ...fetcherOptions, ...variables }),
     options
   );
 };
