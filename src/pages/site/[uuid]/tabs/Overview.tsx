@@ -1,105 +1,38 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { useEffect } from "react";
 
-import ModalIdentified from "@/admin/components/extensive/Modal/ModalIdentified";
-import { AuditLogButtonStates } from "@/admin/components/ResourceTabs/AuditLogTab/constants/enum";
-import AddDataButton from "@/admin/components/ResourceTabs/PolygonReviewTab/components/AddDataButton";
-import Button from "@/components/elements/Button/Button";
-import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
-import { downloadSiteGeoJsonPolygons } from "@/components/elements/Map-mapbox/utils";
-import StepProgressbar from "@/components/elements/ProgressBar/StepProgressbar/StepProgressbar";
-import Text from "@/components/elements/Text/Text";
-import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import ModalAdd from "@/components/extensive/Modal/ModalAdd";
-import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import ModalSubmit from "@/components/extensive/Modal/ModalSubmit";
+import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import About from "@/components/extensive/PageElements/About/About";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
-import PageCard from "@/components/extensive/PageElements/Card/PageCard";
-import PageColumn from "@/components/extensive/PageElements/Column/PageColumn";
-import PageRow from "@/components/extensive/PageElements/Row/PageRow";
-import {
-  prepareGeometryForUpload,
-  useCompareGeometry,
-  useUploadGeometry,
-  useUploadGeometryWithVersions
-} from "@/connections/GeometryUpload";
-import { bulkUpdateSitePolygonStatus, useAllSitePolygons } from "@/connections/SitePolygons";
-import { useLoading } from "@/context/loaderAdmin.provider";
+import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { useModalContext } from "@/context/modal.provider";
-import { useNotificationContext } from "@/context/notification.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { CompareGeometryFileResponse } from "@/generated/v3/researchService/researchServiceComponents";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { getEntityDetailPageLink } from "@/helpers/entity";
-import { useStatusActionsMap } from "@/hooks/AuditStatus/useStatusActionsMap";
-import { FileType, UploadedFile } from "@/types/common";
-import { getErrorMessageFromPayload } from "@/utils/errors";
-import Log from "@/utils/log";
-
-import GoalsAndProgressEntityTab from "../components/GoalsAndProgressEntityTab";
-import SiteArea from "../components/SiteArea";
-
+import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
+import LastestImagesSectionTab from "@/pages/project/[uuid]/tabs/LastestImagesSection";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
+import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
+import {
+  AreaHectaresIcon,
+  ChevronRightIcon,
+  RegenerationIcon,
+  SeedlingsIcon,
+  SurvivalRateIcon
+} from "@/redesignComponents/foundations/Icons";
+import { TreeIcon } from "@/redesignComponents/foundations/Icons";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
 }
 
-const ContentForSubmission: FC<{ siteName: string; polygons: SitePolygonLightDto[] }> = ({ siteName, polygons }) => {
+const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
-  return (
-    <>
-      <Text
-        variant="text-12-light"
-        as="p"
-        className="text-center"
-        dangerouslySetInnerHTML={{
-          __html: t(`Are your sure you want to submit your polygons for the site <strong> {siteName}. </strong> ?`, {
-            siteName: siteName
-          })
-        }}
-      />
-      <div className="ml-6">
-        <ul style={{ listStyleType: "circle" }}>
-          {polygons?.map(polygon => (
-            <li key={polygon.uuid}>
-              <Text variant="text-12-light" as="p">
-                {polygon?.name ?? t("Unnamed Polygon")}
-              </Text>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
-};
-
-const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps) => {
-  const t = useT();
-  const router = useRouter();
-  const [editPolygon, setEditPolygon] = useState(false);
   const contextMapArea = useMapAreaContext();
-  const {
-    setSiteData,
-    setShouldRefetchPolygonData,
-    setSelectedPolygonsInCheckbox,
-    polygonData: polygonList
-  } = contextMapArea;
-  const { openModal, closeModal } = useModalContext();
-  const [files, setFiles] = useState<UploadedFile[]>([]);
-  const [saveFlags, setSaveFlags] = useState<boolean>(false);
-  const { openNotification } = useNotificationContext();
-  const { hideLoader } = useLoading();
-  const uploadGeometry = useUploadGeometry({});
-  const compareGeometry = useCompareGeometry({});
-  const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
+  const { setSiteData } = contextMapArea;
 
-  const [polygonLoaded, setPolygonLoaded] = useState<boolean>(false);
-  const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   const { data: sitePolygonDataV3, refetch: refetchV3 } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
@@ -112,448 +45,173 @@ const SiteOverviewTab = ({ site, refetch: refetchEntity }: SiteOverviewTabProps)
     setSiteData(site);
   }, [setSiteData, site]);
 
-  useEffect(() => {
-    if (files && files.length > 0 && saveFlags) {
-      uploadFiles();
-      setSaveFlags(false);
-      if (!polygonLoaded) {
-        closeModal(ModalId.ADD_POLYGONS);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files, saveFlags]);
-
-  const uploadFiles = async () => {
-    const siteUuid = site.uuid;
-
-    if (submitPolygonLoaded) {
-      const uploadPromises = files.map(
-        file =>
-          new Promise((resolve, reject) => {
-            const fileToUpload = file.rawFile as File;
-            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-            uploadGeometryWithVersions(attributes, {
-              onSuccess: (response: any) => resolve(response),
-              onError: (error: any) => reject(error)
-            });
-          })
-      );
-
-      try {
-        await Promise.all(uploadPromises);
-        openNotification("success", t("Success!"), t("Polygons versioned successfully"));
-        setShouldRefetchPolygonData(true);
-        refetchV3();
-      } catch (error) {
-        if (error && typeof error === "object" && "message" in error) {
-          let errorMessage = (error as { message: string }).message;
-          const parsedMessage = JSON.parse(errorMessage);
-          if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-            errorMessage = parsedMessage.message;
-          }
-          openNotification("error", t("Error uploading file"), errorMessage);
-        } else {
-          const errorMessage = getErrorMessageFromPayload(error);
-          openNotification("error", t("Error uploading file"), t(errorMessage));
-        }
-      } finally {
-        setPolygonLoaded(false);
-        setSubmitPolygonLoaded(false);
-        hideLoader();
-      }
-      return;
-    }
-
-    if (!polygonLoaded) {
-      const uploadPromises = files.map(
-        file =>
-          new Promise((resolve, reject) => {
-            const fileToUpload = file.rawFile as File;
-            const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-            (uploadGeometry as any)(attributes, {
-              onSuccess: (response: any) => resolve(response),
-              onError: (error: any) => reject(error)
-            });
-          })
-      );
-
-      try {
-        await Promise.all(uploadPromises);
-        setShouldRefetchPolygonData(true);
-        openNotification("success", t("Success!"), t("File uploaded successfully"));
-        closeModal(ModalId.UPLOAD_IMAGES);
-      } catch (error) {
-        const errorMessage =
-          error && typeof error === "object" && "message" in error
-            ? (error.message as string)
-            : t("An unknown error occurred");
-        openNotification("error", t("Error uploading file"), errorMessage);
-      } finally {
-        setPolygonLoaded(false);
-        setSubmitPolygonLoaded(false);
-        hideLoader();
-      }
-      return;
-    }
-
-    const isPreviewMode = polygonLoaded && !submitPolygonLoaded;
-
-    try {
-      if (isPreviewMode) {
-        const file = files[0];
-        if (!file) {
-          openNotification("error", t("Error"), t("No file selected"));
-          return;
-        }
-
-        const fileToUpload = file.rawFile as File;
-        const attributes = prepareGeometryForUpload(fileToUpload, siteUuid);
-
-        compareGeometry(attributes, {
-          onSuccess: (response: CompareGeometryFileResponse) => {
-            const dataArray = Array.isArray(response.data)
-              ? response.data
-              : response.data != null
-              ? [response.data]
-              : [];
-            const responseAttributes = dataArray[0]?.attributes;
-
-            openFormModalHandlerIdentifiedPolygons(responseAttributes?.existingUuids ?? [], {
-              featuresForVersioning: responseAttributes?.featuresForVersioning ?? 0,
-              featuresForCreation: responseAttributes?.featuresForCreation ?? 0,
-              totalFeatures: responseAttributes?.totalFeatures ?? 0
-            });
-          },
-          onError: (error: any) => {
-            const errorMessage =
-              error && typeof error === "object" && "message" in error
-                ? (error.message as string)
-                : t("An unknown error occurred");
-            openNotification("error", t("Error uploading file"), errorMessage);
-          }
-        });
-      }
-    } catch (error) {
-      if (error && typeof error === "object" && "message" in error) {
-        let errorMessage = (error as { message: string }).message;
-        const parsedMessage = JSON.parse(errorMessage);
-        if (parsedMessage && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          errorMessage = parsedMessage.message;
-        }
-        openNotification("error", t("Error uploading file"), errorMessage);
-      } else {
-        const errorMessage = getErrorMessageFromPayload(error);
-        openNotification("error", t("Error uploading file"), t(errorMessage));
-      }
-    } finally {
-      setPolygonLoaded(false);
-      setSubmitPolygonLoaded(false);
-      hideLoader();
-    }
-  };
-
-  const openFormModalHandlerAddPolygon = () => {
-    setPolygonLoaded(false);
-    setSubmitPolygonLoaded(false);
-    openModal(
-      ModalId.ADD_POLYGONS,
-      <ModalAdd
-        title={t("Add Polygons")}
-        descriptionInput={`${t("Drag and drop a GeoJSON, Shapefile, or KML for your site")} ${site?.name}.`}
-        descriptionList={
-          <div className="mt-9 flex">
-            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
-            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
-          </div>
-        }
-        onClose={() => closeModal(ModalId.ADD_POLYGONS)}
-        content={t("Start by adding polygons to your site.")}
-        primaryButtonText={t("Save")}
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            setSaveFlags(true);
-          }
-        }}
-        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
-        maxFileSize={2 * 1024 * 1024}
-        setErrorMessage={(message: string) => openNotification("error", t("Error uploading file"), t(message))}
-        setFile={setFiles}
-      ></ModalAdd>
-    );
-  };
-
-  const openFormModalHandlerUploadImages = () => {
-    openModal(
-      ModalId.UPLOAD_IMAGES,
-      <ModalAdd
-        title={t("Upload Images")}
-        variantFileInput={VARIANT_FILE_INPUT_MODAL_ADD_IMAGES}
-        descriptionInput={t(
-          "Drag and drop a geotagged or non-geotagged PNG, GIF or JPEG for your site Tannous/Brayton Road."
-        )}
-        descriptionList={
-          <Text variant="text-12-bold" className="mt-9 ">
-            {t("Uploaded Files")}
-          </Text>
-        }
-        onClose={() => closeModal(ModalId.UPLOAD_IMAGES)}
-        content={t("Start by adding images for processing.")}
-        primaryButtonText={t("Save")}
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => closeModal(ModalId.UPLOAD_IMAGES)
-        }}
-      ></ModalAdd>
-    );
-  };
-
-  const openFormModalHandlerAddPolygons = () => {
-    openModal(
-      ModalId.REPLACEMENT_POLYGONS,
-      <ModalAdd
-        title={t("Download All Polygons")}
-        secondTitle={t("Upload All Polygons")}
-        descriptionInput={t("Drag and drop a single GeoJSON, KML or SHP to create a new version of your polygon.")}
-        descriptionList={
-          <div className="mt-9 flex">
-            <Text variant="text-12-bold">{t("TerraMatch upload limits")}:&nbsp;</Text>
-            <Text variant="text-12-light">{t("50 MB per upload")}</Text>
-          </div>
-        }
-        onClose={() => {
-          closeModal(ModalId.REPLACEMENT_POLYGONS);
-          setPolygonLoaded(false);
-          setSubmitPolygonLoaded(false);
-        }}
-        content={t(
-          "Click the button below to download all polygons related to the site. All Available attributes - including the Site indentifier (UUID) - are included."
-        )}
-        secondContent={t(
-          "As a single SHP, KML or GeoJSON, upload all polygons (and make sure to include the Site identifier)."
-        )}
-        primaryButtonText={t("Next")}
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            setPolygonLoaded(true);
-            setSaveFlags(true);
-          }
-        }}
-        acceptedTypes={FileType.AcceptedShapefiles.split(",") as FileType[]}
-        setFile={setFiles}
-        allowMultiple={false}
-        btnDownload={true}
-        btnDownloadProps={{
-          onClick: () => {
-            downloadSiteGeoJsonPolygons(site?.uuid, site?.name ?? "");
-          }
-        }}
-      />
-    );
-  };
-
-  const openFormModalHandlerIdentifiedPolygons = (
-    existingUuids: string[],
-    summary?: { featuresForVersioning: number; featuresForCreation: number; totalFeatures: number }
-  ) => {
-    openModal(
-      ModalId.IDENTIFIED_POLYGONS,
-      <ModalIdentified
-        title={t("Polygons Identified")}
-        existingUuids={existingUuids}
-        sitePolygonData={sitePolygonDataV3}
-        summary={summary}
-        setSubmitPolygonLoaded={setSubmitPolygonLoaded}
-        setSaveFlags={setSaveFlags}
-        setPolygonLoaded={setPolygonLoaded}
-        onClose={() => {
-          closeModal(ModalId.IDENTIFIED_POLYGONS);
-          setPolygonLoaded(false);
-          closeModal(ModalId.REPLACEMENT_POLYGONS);
-        }}
-        content={t(
-          "Based on the recent upload, the following polygons were identified and will be used to create new versions. Polygons within the site that are not shown have not been uploaded will not be affected."
-        )}
-        primaryButtonText={t("Submit")}
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: () => {
-            setPolygonLoaded(false);
-            setSubmitPolygonLoaded(true);
-            setSaveFlags(true);
-            closeModal(ModalId.REPLACEMENT_POLYGONS);
-            closeModal(ModalId.IDENTIFIED_POLYGONS);
-          }
-        }}
-        secondaryButtonText={t("Cancel")}
-        secondaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "white-page-admin",
-          onClick: () => {
-            setPolygonLoaded(false);
-            setSubmitPolygonLoaded(false);
-            closeModal(ModalId.IDENTIFIED_POLYGONS);
-            setSaveFlags(false);
-          }
-        }}
-      />
-    );
-  };
-
-  const openFormModalHandlerSubmitReviewConfirm = (polygons: unknown) => {
-    openModal(
-      ModalId.CONFIRM_POLYGON_SUBMISSION,
-      <ModalConfirm
-        commentArea
-        className="max-w-xs"
-        title={t("Confirm Polygon Submission")}
-        content={<ContentForSubmission polygons={polygons as SitePolygonLightDto[]} siteName={site.name ?? ""} />}
-        onClose={() => closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION)}
-        onConfirm={async data => {
-          closeModal(ModalId.CONFIRM_POLYGON_SUBMISSION);
-          try {
-            await bulkUpdateSitePolygonStatus(
-              (polygons as SitePolygonLightDto[]).map(polygon => polygon.uuid),
-              "submitted",
-              data
-            );
-            setShouldRefetchPolygonData(true);
-            openNotification("success", t("Success! Your polygons were submitted."));
-          } catch (error) {
-            Log.error("Failed to fetch polygon statuses", error);
-          }
-        }}
-      />
-    );
-  };
-
-  const openFormModalHandlerSubmitPolygon = () => {
-    openModal(
-      ModalId.SUBMIT_POLYGONS,
-      <ModalSubmit
-        title={t("Submit Polygons")}
-        onClose={() => closeModal(ModalId.SUBMIT_POLYGONS)}
-        content={t("Project Developers may submit one, many, or all polygons for review.")}
-        primaryButtonText={t("Next")}
-        primaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "primary",
-          onClick: (polygons: unknown) => {
-            closeModal(ModalId.SUBMIT_POLYGONS);
-            openFormModalHandlerSubmitReviewConfirm(polygons);
-          }
-        }}
-        secondaryButtonText={t("Cancel")}
-        secondaryButtonProps={{
-          className: "px-8 py-3",
-          variant: "white-page-admin",
-          onClick: () => closeModal(ModalId.SUBMIT_POLYGONS)
-        }}
-        site={site}
-        polygonList={polygonList}
-      />,
-      true
-    );
-  };
-
-  const { valuesForStatus, statusLabels } = useStatusActionsMap(AuditLogButtonStates.SITE);
+  const mockecBoolean = false;
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageBody>
-        <PageRow>
-          <PageCard
-            title={t("Progress & Goals")}
-            headerChildren={
-              <Button
-                as={Link}
-                variant="secondary"
-                className="m-auto"
-                href={getEntityDetailPageLink("sites", router.query.uuid as string, "goals")}
-                shallow
-              >
-                {t("View all")}
-              </Button>
-            }
+        <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
+          <Flex gap={7}>
+            <PageItem
+              title="Site Map"
+              flexProps={{ flex: 1 }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: "View all Areas",
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => {}
+              }}
+            >
+              <Box className="relative h-auto">
+                <OverviewMapArea
+                  entityModel={site}
+                  type="sites"
+                  className="max-h-[432px]"
+                  disabledPolygonPanel={true}
+                />
+              </Box>
+            </PageItem>
+            <PageItem
+              flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
+              title="Sites Set Up"
+              tag={<TagSubmission state="information-required" />}
+              buttonProps={{
+                variant: "primary",
+                size: "small",
+                children: mockecBoolean ? t("Edit") : t("Continue"),
+                rightIcon: <ChevronRightIcon />
+              }}
+            >
+              <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+                <EntitySetUpSection entity={site} type="sites" />
+              </Box>
+            </PageItem>
+          </Flex>
+          <PageItem
+            title="Key Indicators & Insights"
+            flexProps={{ paddingY: 2, width: "100%" }}
+            buttonProps={{
+              variant: "secondary",
+              size: "small",
+              children: "View Progress & Goals",
+              rightIcon: <ChevronRightIcon />
+            }}
           >
-            <GoalsAndProgressEntityTab entity={site} />
-          </PageCard>
-        </PageRow>
-        <PageRow>
-          <PageColumn>
-            <PageCard title={t("Site Area")}>
-              <div className="flex gap-11 ">
-                <div className="w-[54%]">
-                  <Text variant="text-14-light" className="mb-6">
-                    {t("Use the map below to view, add, remove or edit polygons associated to a site. ")}
-                    <a
-                      className="text-14-light text-primary-500 hover:underline"
-                      target="_blank"
-                      href={
-                        "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                      }
-                      rel="noreferrer"
-                    >
-                      {t("Access our guide for adding polygons to a site on TerraMatch here.")}
-                    </a>
-                  </Text>
-                  <div className="flex w-full gap-3">
-                    <AddDataButton
-                      openFormModalHandlerAddPolygon={openFormModalHandlerAddPolygon}
-                      openFormModalHandlerUploadImages={openFormModalHandlerUploadImages}
-                      openFormModalHandlerAddPolygons={openFormModalHandlerAddPolygons}
-                    />
-                    <Button
-                      variant="white-border"
-                      className=""
-                      onClick={() => {
-                        setSelectedPolygonsInCheckbox([]);
-                        downloadSiteGeoJsonPolygons(site?.uuid, site?.name ?? "");
-                      }}
-                    >
-                      <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" />
-                      &nbsp; {t("Download")}
-                    </Button>
-                    <Button
-                      variant="primary"
-                      className=""
-                      onClick={() => {
-                        openFormModalHandlerSubmitPolygon();
-                        setSelectedPolygonsInCheckbox([]);
-                      }}
-                    >
-                      {t("SUBMIT Polygons")}
-                    </Button>
-                  </div>
-                </div>
-                <div className="w-[46%]">
-                  <StepProgressbar
-                    color="secondary"
-                    value={valuesForStatus?.(site?.status as string) ?? 0}
-                    labels={statusLabels}
-                    classNameLabels="min-w-[99px]"
-                    className={"w-[98%] pl-[1%]"}
-                  />
-                </div>
-              </div>
-              <SiteArea
-                sites={site}
-                setEditPolygon={setEditPolygon}
-                editPolygon={editPolygon}
-                refetch={refetchEntity}
+            <Flex gap={4}>
+              <MetricCard
+                className="flex-1"
+                title="Trees Planted"
+                variant="large"
+                progress={0}
+                goal={100}
+                icon={<TreeIcon />}
+                tooltipContent="This is a tooltip"
+                color="secondary.600"
               />
-            </PageCard>
-          </PageColumn>
-        </PageRow>
-        <br />
-        <br />
+              <MetricCard
+                className="flex-1"
+                title="Seeds Planted"
+                variant="large"
+                progress={50}
+                goal={100}
+                icon={<SeedlingsIcon />}
+                tooltipContent="This is a tooltip"
+                color="secondary.600"
+              />
+              <MetricCard
+                className="flex-1"
+                title="Trees Regenerating"
+                variant="large"
+                progress={25}
+                goal={100}
+                icon={<RegenerationIcon />}
+                tooltipContent="This is a tooltip"
+                color="secondary.600"
+              />
+              <MetricCard
+                className="flex-1"
+                title="Survival Rate"
+                variant="large"
+                progress={75}
+                goal={100}
+                icon={<SurvivalRateIcon />}
+                tooltipContent="This is a tooltip"
+                color="secondary.600"
+              />
+              <MetricCard
+                className="flex-1"
+                title="Area Restored (ha)"
+                variant="large"
+                progress={100}
+                goal={100}
+                icon={<AreaHectaresIcon />}
+                tooltipContent="This is a tooltip"
+                color="secondary.700"
+              />
+            </Flex>
+          </PageItem>
+          <Flex gap={7} maxHeight="570px" paddingY={2}>
+            <PageItem
+              title="Latest Images"
+              flexProps={{ flex: 1 }}
+              buttonProps={{
+                variant: "secondary",
+                size: "small",
+                children: "View Gallery",
+                rightIcon: <ChevronRightIcon />
+              }}
+            >
+              <LastestImagesSectionTab entityUuid={site.uuid} entityName="sites" />
+            </PageItem>
+            <PageItem title="Project Onboarding">
+              <About
+                description={
+                  <Flex direction="column" gap={5}>
+                    <Text color="neutral.900" textStyle="300">
+                      <strong>{t("Sites")}: </strong>
+                      {t(
+                        "are the core units for reporting your restoration work in TerraMatch. Each site can include one or more restoration areas or polygons and should reflect a meaningful geographic grouping for your project."
+                      )}
+                    </Text>
+                    <Flex alignItems="center" flexWrap="wrap">
+                      <Text color="neutral.900" textStyle="300">
+                        {t(
+                          "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or"
+                        )}
+                      </Text>
+                      <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />}>
+                        {t("info@terramatch.org")}
+                      </Button>
+                    </Flex>
+                  </Flex>
+                }
+                links={[
+                  {
+                    title: "Follow the TerraFund Siting Guide ",
+                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                  },
+                  {
+                    title: "Use the TerraFund Profile Creation Checklist ",
+                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                  },
+                  {
+                    title: "Create a Site Profile",
+                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                  },
+                  {
+                    title: "Use the Site Profile Polygon Guide",
+                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                  },
+                  {
+                    title: "Download & Use Greenhouse.Flority",
+                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
+                  }
+                ]}
+              />
+            </PageItem>
+          </Flex>
+        </Flex>
       </PageBody>
     </SitePolygonDataProvider>
   );

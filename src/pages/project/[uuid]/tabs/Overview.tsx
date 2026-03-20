@@ -143,7 +143,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         <Flex gap={7}>
           <PageItem
             title="Project Map"
-            flexProps={{ flex: 3 }}
+            flexProps={{ flex: 1 }}
             buttonProps={{
               variant: "secondary",
               size: "small",
@@ -170,7 +170,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             </Box>
           </PageItem>
           <PageItem
-            flexProps={{ flex: 1, overflow: "hidden" }}
+            flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
             title="Project Set Up"
             tag={(() => {
               const tagState = mapStatusToTagStateProject(project?.status);
