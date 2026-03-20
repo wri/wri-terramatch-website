@@ -32,6 +32,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    width: "400px",
     content: (
       <Flex className="items-center justify-between gap-2 px-4 py-3">
         <Flex className="items-center gap-2">
@@ -54,7 +55,7 @@ export const Default: Story = {
 
 export const PanelWithBreadcrumb: Story = {
   args: {
-    width: "fit-content",
+    width: "400px",
     content: (
       <Flex className="items-center justify-between gap-2 px-4 py-3">
         <Flex className="items-center gap-2">
@@ -84,6 +85,7 @@ export const PanelWithBreadcrumb: Story = {
 
 export const PanelTitle: Story = {
   args: {
+    width: "400px",
     content: (
       <Flex className="flex-col gap-2 p-4">
         <Flex className="w-full items-center justify-between gap-2">
@@ -106,6 +108,7 @@ export const PanelTitle: Story = {
 
 export const PanelTitleHideCloseButton: Story = {
   args: {
+    width: "400px",
     content: (
       <Flex className="flex-col gap-2 p-4">
         <Flex className="w-full items-center justify-between gap-2">
@@ -126,6 +129,7 @@ export const PanelTitleHideCloseButton: Story = {
 };
 export const PanelTitleAccordion: Story = {
   args: {
+    width: "400px",
     content: (
       <Flex className="flex-col gap-2">
         <Accordion
