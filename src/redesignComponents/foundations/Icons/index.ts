@@ -1,3 +1,4 @@
+export { AgroforestyIcon } from "./AgroforestyIcon";
 export { ApplicationsIcon } from "./ApplicationsIcon";
 export { AreaHectaresIcon } from "./AreaHectaresIcon";
 export { ArrowForward } from "./ArrowForward";
@@ -59,6 +60,7 @@ export { SpeciesIcon } from "./SpeciesIcon";
 export { SpeciesNativeIcon } from "./SpeciesNativeIcon";
 export { SurvivalRateIcon } from "./SurvivalRateIcon";
 export { TreeIcon } from "./TreeIcon";
+export { TreePlantingIcon } from "./TreePlantingIcon";
 export { TreeCircleIcon } from "./TreeCircleIcon";
 export { UploadIcon } from "./UploadIcon";
 export { UserAddIcon } from "./UserAddIcon";
