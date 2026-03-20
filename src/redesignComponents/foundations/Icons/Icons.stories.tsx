@@ -2,6 +2,7 @@ import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import {
+  ANRIcon,
   ApplicationsIcon,
   AreaHectaresIcon,
   CalendarIcon,
@@ -139,6 +140,9 @@ export const AllIcons: Story = {
       <Box>
         <CategoryHeader title="Restoration & Land" />
         <VStack align="stretch" gap={4}>
+          <IconWrapper name="ANR">
+            <ANRIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Nursery Building">
             <NurseryBuildingIcon boxSize={8} />
           </IconWrapper>

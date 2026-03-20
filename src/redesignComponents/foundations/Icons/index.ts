@@ -1,3 +1,4 @@
+export { ANRIcon } from "./ANRIcon";
 export { ApplicationsIcon } from "./ApplicationsIcon";
 export { AreaHectaresIcon } from "./AreaHectaresIcon";
 export { ArrowForward } from "./ArrowForward";
