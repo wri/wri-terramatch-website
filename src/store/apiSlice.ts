@@ -465,7 +465,7 @@ export default class ApiSlice {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, ids }));
   }
 
-  static pruneIndex(resource: ResourceType, searchQuery: string) {
+  static pruneIndex(resource: ResourceType, searchQuery?: string) {
     this.redux.dispatch(apiSlice.actions.pruneCache({ resource, searchQuery }));
   }
 

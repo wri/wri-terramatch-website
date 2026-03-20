@@ -48,6 +48,8 @@ export const StrategyAreaField: FormFieldFactory = {
 
   getAnswer: ({ name, options }, formValues) => {
     const value = formValues[name];
+    if (value == null) return value;
+
     const parsedValue: { [key: string]: number }[] = JSON.parse(value);
     if (!Array.isArray(parsedValue)) return value;
 

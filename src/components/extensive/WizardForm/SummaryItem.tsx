@@ -24,6 +24,7 @@ type SummaryItemProps = {
   downloadButtonText?: string;
   setSelectedStepIndex: (value: SetStateAction<number>) => void;
   onSubmitStep: (data: any) => void;
+  onSaveAndExit: () => void;
   submitButtonDisable?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
@@ -37,6 +38,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   downloadButtonText,
   setSelectedStepIndex,
   onSubmitStep,
+  onSaveAndExit,
   submitButtonDisable,
   enableSaveChangesButton,
   saveChanges
@@ -88,7 +90,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: isMainEntity ? `Download ${entityName}` : downloadButtonText,
-                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
+                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
                 variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
@@ -111,8 +113,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
           !enableSaveChangesButton
             ? {
                 children: t("Save and Exit"),
-                onClick: handleSubmitClick,
-                disabled: submitButtonDisable
+                onClick: onSaveAndExit
               }
             : undefined
         }

@@ -24,11 +24,13 @@ const ApplicationsTable = () => {
       },
       {
         accessorKey: "uuid",
+        id: "stage",
         header: "Stage",
         cell: props => last(props.row.original.submissions)?.stageName
       },
       {
         accessorKey: "uuid",
+        id: "status",
         cell: props => {
           const status = last(props.row.original.submissions)?.status;
           const statusProps = status == null ? undefined : getActionCardStatusMapper(t)[status];
@@ -46,6 +48,7 @@ const ApplicationsTable = () => {
       },
       {
         accessorKey: "uuid",
+        id: "action",
         header: "",
         cell: props => (
           <ActionTableCell

@@ -53,7 +53,7 @@ export const TreeSpeciesField: FormFieldFactory = {
 
   addFormEntries: addEntryWith((field, formValues, { entity, fieldsProvider }) => {
     const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
-    const collection = value[0]?.collection;
+    const collection = value[0]?.collection ?? field.collection ?? undefined;
     return treeSpeciesEntryValue(collection, entity, field, formValues, fieldsProvider);
   }),
 

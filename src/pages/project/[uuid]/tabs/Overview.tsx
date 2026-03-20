@@ -180,7 +180,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             buttonProps={{
               variant: "primary",
               size: "small",
-              children: isProjectSetupComplete ? "Edit" : "Continue",
+              children: isProjectSetupComplete ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon />,
               onClick: goToContinueEditingTab
             }}

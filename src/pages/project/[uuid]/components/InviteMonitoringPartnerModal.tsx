@@ -2,20 +2,17 @@ import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
 import { useToastContext } from "@/context/toast.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import Modal from "@/redesignComponents/containers/Modal/Modal";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-
-import FooterModal from "./FooterModal";
-
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
   open: boolean;
@@ -34,7 +31,7 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
   const { openToast } = useToastContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -93,22 +90,37 @@ const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }:
               {t("This action will provide them access to all your project data and reports.")}
             </Text>
           </div>
-          <TextInput
-            {...register("email")}
-            label={t("Email Address")}
-            type="email"
-            errorMessage={errors.email?.message}
-            required
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
           />
         </div>
       }
       footer={
-        <FooterModal>
-          <Button variant="borderless" onClick={handleClose}>
-            {t("Cancel")}
-          </Button>
-          <Button onClick={handleSubmit(onSubmit)}>{t("Send Invite")}</Button>
-        </FooterModal>
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              variant: "borderless",
+              children: t("Cancel"),
+              onClick: handleClose
+            },
+            {
+              id: "send",
+              children: t("Send Invite"),
+              onClick: handleSubmit(onSubmit)
+            }
+          ]}
+        />
       }
     />
   );

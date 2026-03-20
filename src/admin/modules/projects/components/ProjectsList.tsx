@@ -62,8 +62,8 @@ const ProjectDataGrid = () => {
         source="status"
         label="Status"
         sortable={false}
-        render={({ status }: ProjectLightDto) => {
-          const { title } = getStatusOptions().find((option: any) => option.value === status) ?? {};
+        render={(record?: ProjectLightDto) => {
+          const { title } = getStatusOptions().find((option: any) => option.value === record?.status) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -71,9 +71,9 @@ const ProjectDataGrid = () => {
         source="updateRequestStatus"
         label="Change Request Status"
         sortable={false}
-        render={({ updateRequestStatus }: ProjectLightDto) => {
+        render={(record?: ProjectLightDto) => {
           const { title } =
-            getChangeRequestStatusOptions().find((option: any) => option.value === updateRequestStatus) ?? {};
+            getChangeRequestStatusOptions().find((option: any) => option.value === record?.updateRequestStatus) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -81,8 +81,9 @@ const ProjectDataGrid = () => {
         source="plantingStatus"
         label="Planting Status"
         sortable={false}
-        render={({ plantingStatus }: ProjectLightDto) => {
-          const { title } = getPlantingStatusOptions().find((option: any) => option.value === plantingStatus) ?? {};
+        render={(record?: ProjectLightDto) => {
+          const { title } =
+            getPlantingStatusOptions().find((option: any) => option.value === record?.plantingStatus) ?? {};
           return <CustomChipField label={title} />;
         }}
       />
@@ -91,9 +92,10 @@ const ProjectDataGrid = () => {
       <FunctionField
         source="frameworkKey"
         label="Framework"
-        render={({ frameworkKey }: ProjectLightDto) =>
-          frameworkInputChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey
-        }
+        render={(record?: ProjectLightDto) => {
+          const frameworkKey = record?.frameworkKey;
+          return frameworkInputChoices.find(({ id }) => id === frameworkKey)?.name ?? frameworkKey;
+        }}
         sortable={false}
       />
       <FunctionField
@@ -143,9 +145,9 @@ export const ProjectsList: FC = () => {
       className="select-page-admin"
       sort={{
         field: "name",
-        order: "DESC"
+        order: "ASC"
       }}
-      perPage={1000}
+      perPage={100}
       filter={{ status: "approved" }}
     >
       <AutocompleteInput optionText="name" label="Organization" className="select-page-admin" />
