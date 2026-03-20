@@ -47,11 +47,12 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       {images?.map(image => (
         <GridItem key={image.uuid}>
           <GalleryImage
-            onClick={() => onSelectImage?.(image)}
+            onClickEdit={onSelectImage && (() => onSelectImage(image))}
             src={image.src}
             alt={image.alt}
             size={imageSize}
             className="bg-theme-neutral-200 min-w-full"
+            hoverContent={" "}
           />
         </GridItem>
       ))}
