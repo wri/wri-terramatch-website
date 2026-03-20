@@ -274,12 +274,12 @@ function WizardForm(props: WizardFormProps) {
           )}
           cancelButtonProps={undefined}
           primaryButtonProps={{
-            children: t(`${isEntityApproved ? "Save changes" : selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
+            children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={
-            !isEntityApproved && formModel?.model != "organisations"
+            formModel?.model != "organisations"
               ? {
                   children: "Save and Exit",
                   onClick: () => {
@@ -294,7 +294,7 @@ function WizardForm(props: WizardFormProps) {
               : undefined
           }
           tertiaryButtonProps={
-            !props.hideBackButton && !isEntityApproved
+            !props.hideBackButton
               ? {
                   children: t("Previous"),
                   leftIcon: <ChevronRightIcon className="rotate-180" />,
@@ -323,7 +323,6 @@ function WizardForm(props: WizardFormProps) {
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      isEntityApproved,
       formModel?.model
     ]
   );
@@ -453,7 +452,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
+                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
