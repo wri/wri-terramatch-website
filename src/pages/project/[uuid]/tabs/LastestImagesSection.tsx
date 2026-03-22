@@ -28,8 +28,13 @@ const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnt
     }, [entityUuid, entityName])
   );
 
-  const images = mediaList?.map(media => media.url) ?? [];
-  return <ImageGalleryCard images={images as string[]} onClickAdd={() => goToTab("gallery")} />;
+  const images =
+    mediaList?.map(media => ({
+      uuid: media.uuid,
+      src: media.url ?? "",
+      alt: media.name
+    })) ?? [];
+  return <ImageGalleryCard images={images} onClickAdd={() => goToTab("gallery")} />;
 };
 
 export default LastestImagesSectionTab;
