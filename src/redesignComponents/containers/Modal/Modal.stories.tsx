@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+import { GalleryImageType } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 
 import { getThemedColor } from "../../../lib/theme";
 import Button from "../../actions/Buttons/Button/Button";
@@ -378,12 +379,10 @@ export const ModalGalleryImagesStory: Story = {
           onClose={() => setShowModal(false)}
           images={Array.from(
             { length: 10 },
-            (_, i): { uuid: string; src: string; alt: string; url: string; name: string } => ({
+            (_, i): GalleryImageType => ({
               uuid: `image-${i}`,
               src: `https://i.pravatar.cc/300?img=${i}`,
-              alt: `Image ${i}`,
-              url: `https://i.pravatar.cc/300?img=${i}`,
-              name: `Image ${i}`
+              alt: `Image ${i}`
             })
           )}
           hasMore={false}
