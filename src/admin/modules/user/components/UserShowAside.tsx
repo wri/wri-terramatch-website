@@ -8,7 +8,6 @@ import { useAdminUserVerify } from "@/connections/AdminUsers";
 import { sendRequestPasswordReset } from "@/connections/ResetPassword";
 import { useResendVerification } from "@/connections/VerificationUser";
 import { usePostAuthSendLoginDetails } from "@/generated/apiComponents";
-import { V2AdminUserRead } from "@/generated/apiSchemas";
 import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
 import { localeChoices, userPrimaryRoleChoices } from "../const";
@@ -18,7 +17,7 @@ export const UserShowAside = () => {
   const refresh = useRefresh();
   const [showVerifyEmailDialog, setShowVerifyEmailDialog] = useState(false);
 
-  const { record } = useShowContext<V2AdminUserRead & RaRecord>();
+  const { record } = useShowContext<RaRecord>();
 
   const [, { create: verifyUser }] = useAdminUserVerify({ uuid: record?.uuid as string });
 
