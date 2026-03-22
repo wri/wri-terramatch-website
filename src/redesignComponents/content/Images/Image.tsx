@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
 import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -17,6 +18,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   isAdd?: boolean;
   hoverContent?: React.ReactNode;
   onClickEdit?: () => void;
+  onClickAdd?: () => void;
   menuItems?: {
     label: string;
     value: string;
@@ -38,6 +40,7 @@ const BaseImage: FC<BaseImageProps> = ({
   isAdd = false,
   hoverContent,
   onClickEdit,
+  onClickAdd,
   menuItems,
   menuLabel,
   style,
@@ -54,7 +57,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const hoverContentComponent = (
     <div
       className={classNames(
-        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
@@ -92,33 +95,28 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <MenuCustom
-              label={menuLabel ?? "Add Image"}
-              items={[
-                ...(menuItems?.map(item => ({
-                  label: item.label,
-                  value: item.value,
-                  startIcon: item.startIcon,
-                  onClick: item.onClick
-                })) ?? [])
-              ]}
-            />
+            {onClickAdd && (
+              <Button onClick={onClickAdd} variant="borderless" size="small">
+                {t("Add Image")}
+              </Button>
+            )}
+            {menuItems && <MenuCustom label={menuLabel ?? "Add Image"} items={menuItems} />}
           </div>
         ) : (
           <div
             className={classNames(
-              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
+              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
               borderRadius
             )}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
+              <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                 {t("Image unavailable")}
               </Text>
             </div>
