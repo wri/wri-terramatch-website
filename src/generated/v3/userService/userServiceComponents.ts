@@ -1247,6 +1247,64 @@ export const userUpdate = new V3ApiEndpoint<UserUpdateResponse, UserUpdateError,
   "PATCH"
 );
 
+export type UserDeletePathParams = {
+  /**
+   * UUID of the resource.
+   */
+  uuid: string;
+};
+
+export type UserDeleteError = Fetcher.ErrorWrapper<
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 404;
+      payload: {
+        /**
+         * @example 404
+         */
+        statusCode: number;
+        /**
+         * @example Not Found
+         */
+        message: string;
+      };
+    }
+>;
+
+export type UserDeleteResponse = {
+  meta?: {
+    /**
+     * @example users
+     */
+    resourceType?: string;
+    /**
+     * @format uuid
+     */
+    resourceId?: string;
+  };
+};
+
+export type UserDeleteVariables = {
+  pathParams: UserDeletePathParams;
+};
+
+export const userDelete = new V3ApiEndpoint<UserDeleteResponse, UserDeleteError, UserDeleteVariables, {}>(
+  "/users/v3/users/{uuid}",
+  "DELETE"
+);
+
 export type UserVerifyPathParams = {
   /**
    * User UUID
@@ -1879,7 +1937,7 @@ export const operationsByTag = {
   verificationUser: { verifyUser, resendUserVerification },
   organisations: { organisationIndex, organisationCreation, organisationShow, organisationUpdate, organisationDelete },
   actions: { actionsIndex },
-  users: { userIndex, userCreation, usersFind, userUpdate, userVerify },
+  users: { userIndex, userCreation, usersFind, userUpdate, userDelete, userVerify },
   userAssociation: {
     getUserAssociation,
     createUserAssociation,

@@ -751,6 +751,42 @@ export type ActionDto = {
 
 export type UserUpdateAttributes = {
   /**
+   * Organisation UUID
+   *
+   * @format uuid
+   */
+  organisationUuid?: Record<string, any> | null;
+  /**
+   * First name
+   */
+  firstName?: Record<string, any> | null;
+  /**
+   * Last name
+   */
+  lastName?: Record<string, any> | null;
+  /**
+   * Email address
+   *
+   * @format email
+   */
+  emailAddress?: Record<string, any> | null;
+  /**
+   * Job role
+   */
+  jobRole?: Record<string, any> | null;
+  /**
+   * Phone number
+   */
+  phoneNumber?: Record<string, any> | null;
+  /**
+   * Country
+   */
+  country?: Record<string, any> | null;
+  /**
+   * Program
+   */
+  program?: Record<string, any> | null;
+  /**
    * New default locale for the given user
    */
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
