@@ -10,6 +10,7 @@ import { useFiles } from "@/hooks/useFiles";
 import { getPlantingStatus } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import ModalSelectGalleryImages from "@/redesignComponents/containers/Modal/ModalSelectGalleryImages";
 import ModalUploadImage from "@/redesignComponents/containers/Modal/ModalUploadImage";
+import { GalleryImageType } from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import {
   countryCodeToFlag,
   formatMonthYear
@@ -230,8 +231,14 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
     });
   }, [galleryImages]);
 
-  const handleSelectGalleryImage = (image: { uuid: string; src: string; alt: string; url: string; name: string }) => {
-    setSelectedGalleryImage(image);
+  const handleSelectGalleryImage = (image: GalleryImageType) => {
+    setSelectedGalleryImage({
+      uuid: image.uuid,
+      src: image.src,
+      alt: image.alt,
+      url: image.src,
+      name: image.alt
+    });
     setIsGalleryOpen(false);
     setOpen(true);
   };

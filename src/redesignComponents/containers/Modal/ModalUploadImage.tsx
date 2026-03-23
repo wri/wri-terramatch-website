@@ -4,6 +4,7 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import { updateMedia } from "@/connections/Media";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 import BaseImage from "@/redesignComponents/content/Images/Image";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
 import {
@@ -288,11 +289,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
+              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[300px] w-[300px] overflow-hidden">
-              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
+              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box
@@ -373,14 +374,21 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
         </Flex>
       }
       footer={
-        <Flex direction="row" gap="4" alignItems="center" width="100%">
-          <Button variant="secondary" onClick={onClose} className="flex-1">
-            Cancel
-          </Button>
-          <Button onClick={handleSave} className="flex-1">
-            {t("Save")}
-          </Button>
-        </Flex>
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              children: t("Cancel"),
+              onClick: onClose,
+              variant: "secondary"
+            },
+            {
+              id: "save",
+              children: t("Save"),
+              onClick: handleSave
+            }
+          ]}
+        />
       }
     />
   );

@@ -90,7 +90,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
             ? undefined
             : {
                 children: isMainEntity ? `Download ${entityName}` : downloadButtonText,
-                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
+                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
                 variant: "secondary",
                 onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
               }
@@ -105,27 +105,16 @@ const SummaryItem: FC<SummaryItemProps> = ({
         )}
         cancelButtonProps={undefined}
         primaryButtonProps={{
-          children: t(`${enableSaveChangesButton ? "Save changes" : "Submit"}`),
-          onClick: enableSaveChangesButton ? saveChanges : handleSubmitClick,
+          children: t("Submit"),
+          onClick: handleSubmitClick,
           disabled: submitButtonDisable
         }}
-        secondaryButtonProps={
-          !enableSaveChangesButton
-            ? {
-                children: t("Save and Exit"),
-                onClick: onSaveAndExit
-              }
-            : undefined
-        }
-        tertiaryButtonProps={
-          !enableSaveChangesButton
-            ? {
-                children: t("Previous"),
-                leftIcon: <ChevronRightIcon className="rotate-180" />,
-                onClick: () => setSelectedStepIndex(n => n - 1)
-              }
-            : undefined
-        }
+        secondaryButtonProps={undefined}
+        tertiaryButtonProps={{
+          children: t("Previous"),
+          leftIcon: <ChevronRightIcon className="rotate-180" />,
+          onClick: () => setSelectedStepIndex(n => n - 1)
+        }}
       />
     </div>
   );

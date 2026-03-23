@@ -110,7 +110,7 @@ const ColorScaleCard = ({ variant, getTextColor }: { variant: Variant; getTextCo
               variant={variant}
               shade={shade}
               emphasize={shade === 500}
-              className={classNames("border-y border-theme-neutral-300", {
+              className={classNames("border-theme-neutral-300 border-y", {
                 "border-l": index === 0,
                 "border-r": index === colorShades.length - 1
               })}
