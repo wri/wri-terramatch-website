@@ -16,5 +16,21 @@
 }
 
 [data-scope="dialog"][data-part="backdrop"] {
-  background: #000000B2 !important;
+  background: #000000b2 !important;
+}
+
+.no-ghost-dragging img,
+.no-ghost-dragging div,
+.no-ghost-dragging > img,
+.no-ghost-dragging > div {
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.chakra-dialog__footer {
+  padding: 0px !important;
 }
