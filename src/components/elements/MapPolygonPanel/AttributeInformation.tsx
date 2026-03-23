@@ -11,6 +11,7 @@ import {
   extractGeoJsonFromResponse,
   formatFileName
 } from "@/components/elements/Map-mapbox/utils";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { loadAnrPlotGeometryGeoJson } from "@/connections/AnrPlotGeometry";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import {
@@ -175,7 +176,7 @@ const AttributeInformation = ({
             <div className="flex items-center gap-2">
               <button
                 type="button"
-                className="group text-white"
+                className="group border-none bg-transparent"
                 onClick={() => setAttributePlotsVisible(prev => !prev)}
                 aria-label={attributePlotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
               >
@@ -185,9 +186,12 @@ const AttributeInformation = ({
                   <VisibilityOff sx={{ fontSize: 20 }} className="group-hover:text-primary-500" />
                 )}
               </button>
-              <Button variant="semi-black" className="px-3 py-1" onClick={downloadMonitoringPlots}>
-                {t("Download")}
-              </Button>
+              <button
+                className="text-13-semibold group flex h-8 items-center gap-1 rounded-lg px-2 py-0.5 uppercase text-white hover:bg-white hover:text-primary-500"
+                onClick={downloadMonitoringPlots}
+              >
+                <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" /> {t("Download")}
+              </button>
             </div>
           ) : null
         }
