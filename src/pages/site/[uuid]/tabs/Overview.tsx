@@ -25,7 +25,7 @@ import {
 } from "@/redesignComponents/foundations/Icons";
 import { TreeIcon } from "@/redesignComponents/foundations/Icons";
 
-import { ABOUT_SITES_CONTENT } from "./constants/AboutSites";
+import { ABOUT_SITES_CONTENT } from "./constants/AboutSites.constants";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
