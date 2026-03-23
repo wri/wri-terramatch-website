@@ -1,9 +1,10 @@
 export { AgriculturalLandIcon } from "./RestorationAndLand/AgriculturalLandIcon";
 export { AgroforestyIcon } from "./RestorationAndLand/AgroforestyIcon";
-export { AssistedNaturalRegenIcon } from "./RestorationAndLand/AssistedNaturalRegenIcon";
+export { ANRIcon } from "./ANRIcon";
 export { ApplicationsIcon } from "./NavigationSections/ApplicationsIcon";
 export { AreaHectaresIcon } from "./DataVisualisation/AreaHectaresIcon";
 export { ArrowForward } from "./ArrowForward";
+export { AssistedNaturalRegenIcon } from "./RestorationAndLand/AssistedNaturalRegenIcon";
 export { CalendarIcon } from "./Function/CalendarIcon";
 export { CheckIcon } from "./Function/CheckIcon";
 export { CheckApprovedIcon } from "./Status/CheckApprovedIcon";

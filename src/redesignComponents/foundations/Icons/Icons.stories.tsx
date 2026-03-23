@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import {
   AgriculturalLandIcon,
   AgroforestyIcon,
+  ANRIcon,
   ApplicationsIcon,
   AreaHectaresIcon,
   AssistedNaturalRegenIcon,
@@ -153,6 +154,9 @@ export const AllIcons: Story = {
       <Box>
         <CategoryHeader title="Restoration & Land" />
         <VStack align="stretch" gap={4}>
+          <IconWrapper name="ANR">
+            <ANRIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Agroforesty">
             <AgroforestyIcon boxSize={8} />
           </IconWrapper>
@@ -490,6 +494,9 @@ export const RestorationAndLand: Story = {
     <VStack align="stretch" gap={6}>
       <CategoryHeader title="Restoration & Land" />
       <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
+        <IconWrapper name="ANR">
+          <ANRIcon boxSize={8} />
+        </IconWrapper>
         <IconWrapper name="Agroforesty">
           <AgroforestyIcon boxSize={8} />
         </IconWrapper>
