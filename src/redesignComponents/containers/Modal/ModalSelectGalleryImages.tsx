@@ -1,18 +1,20 @@
-import { Flex, Grid, GridItem, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Spinner, Text } from "@chakra-ui/react";
 import React, { FC, UIEvent, useCallback } from "react";
 
-import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
+import ImageGalleryCard, {
+  GalleryImageType
+} from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 
 import Modal from "./Modal";
 
 interface ModalSelectGalleryImagesProps {
   open: boolean;
   onClose: () => void;
-  images: { uuid: string; src: string; alt: string; url: string; name: string }[];
+  images: GalleryImageType[];
   hasMore: boolean;
   isLoading: boolean;
   onLoadMore: () => void;
-  onSelectImage: (image: { uuid: string; src: string; alt: string; url: string; name: string }) => void;
+  onSelectImage: (image: GalleryImageType) => void;
 }
 
 const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({
@@ -49,26 +51,13 @@ const ModalSelectGalleryImages: FC<ModalSelectGalleryImagesProps> = ({
       maxHeight="100vh"
       content={
         <Flex direction="column" maxHeight="70vh">
-          <Grid
-            templateColumns="repeat(3, 1fr)"
-            gap="4"
-            alignItems="center"
-            overflowY="auto"
-            maxHeight="70vh"
-            paddingRight="4"
+          <ImageGalleryCard
+            className="overflow-y-auto py-0 pr-4 pl-0"
+            images={images}
+            columns={3}
             onScroll={handleScroll}
-          >
-            {images?.map(image => (
-              <GridItem key={image.uuid} as="button" onClick={() => onSelectImage(image)}>
-                <GalleryImage
-                  src={image.url ?? ""}
-                  alt={image.name ?? ""}
-                  className="max-h-[140px] min-w-full"
-                  hoverContent=" "
-                />
-              </GridItem>
-            ))}
-          </Grid>
+            onSelectImage={onSelectImage}
+          />
           {isLoading && (
             <Flex justifyContent="center" alignItems="center" py={4}>
               <Spinner />
