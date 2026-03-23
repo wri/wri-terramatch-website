@@ -2,9 +2,11 @@ import { Box, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import {
-  ANRIcon,
+  AgriculturalLandIcon,
+  AgroforestyIcon,
   ApplicationsIcon,
   AreaHectaresIcon,
+  AssistedNaturalRegenIcon,
   CalendarIcon,
   CheckApprovedIcon,
   CheckIcon,
@@ -15,12 +17,14 @@ import {
   CorrectIcon,
   DashboardIcon,
   DeleteIcon,
+  DirectSeedingIcon,
   DownloadIcon,
   DraftIcon,
   DragIcon,
   DueIcon,
   EditIcon,
   ExpandIcon,
+  GrasslandIcon,
   IncorrectIcon,
   IndeterminateIcon,
   InfoIcon,
@@ -30,8 +34,10 @@ import {
   JobsIcon,
   LandscapeIcon,
   LanguageIcon,
+  MangroveIcon,
   MessagesIcon,
   MoreVertIcon,
+  NaturalForestIcon,
   NewTabIcon,
   NothingReportedIcon,
   NotificationIcon,
@@ -39,8 +45,10 @@ import {
   NurseryExpandingIcon,
   NurseryIcon,
   NurseryManagingIcon,
+  OpenNaturalEcosystemIcon,
   OpportunitiesIcon,
   OrganizationIcon,
+  PeatlandIcon,
   PendingIcon,
   PhotoAddIcon,
   PlaceholderIcon,
@@ -52,15 +60,20 @@ import {
   SearchIcon,
   SeedlingsCircleIcon,
   SeedlingsIcon,
+  SilvopastureIcon,
   SiteIcon,
   SpeciesIcon,
   SpeciesNativeIcon,
   SurvivalRateIcon,
   TreeCircleIcon,
   TreeIcon,
+  TreePlantingIcon,
+  UrbanForestIcon,
   UserAddIcon,
   VisibilityIcon,
-  VisibilityOffIcon
+  VisibilityOffIcon,
+  WetlandIcon,
+  WoodlotIcon
 } from ".";
 
 const meta: Meta = {
@@ -140,8 +153,26 @@ export const AllIcons: Story = {
       <Box>
         <CategoryHeader title="Restoration & Land" />
         <VStack align="stretch" gap={4}>
-          <IconWrapper name="ANR">
-            <ANRIcon boxSize={8} />
+          <IconWrapper name="Agroforesty">
+            <AgroforestyIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Agricultural Land">
+            <AgriculturalLandIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Assisted Natural Regen">
+            <AssistedNaturalRegenIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Direct Seeding">
+            <DirectSeedingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Grassland">
+            <GrasslandIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Mangrove">
+            <MangroveIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Natural Forest">
+            <NaturalForestIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="Nursery Building">
             <NurseryBuildingIcon boxSize={8} />
@@ -151,6 +182,27 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Nursery Managing">
             <NurseryManagingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Open Natural Ecosystem">
+            <OpenNaturalEcosystemIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Peatland">
+            <PeatlandIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Silvopasture">
+            <SilvopastureIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Tree Planting">
+            <TreePlantingIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Urban Forest">
+            <UrbanForestIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Wetland">
+            <WetlandIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="Woodlot">
+            <WoodlotIcon boxSize={8} />
           </IconWrapper>
         </VStack>
       </Box>
@@ -427,6 +479,67 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Download">
           <DownloadIcon boxSize={8} />
+        </IconWrapper>
+      </SimpleGrid>
+    </VStack>
+  )
+};
+
+export const RestorationAndLand: Story = {
+  render: () => (
+    <VStack align="stretch" gap={6}>
+      <CategoryHeader title="Restoration & Land" />
+      <SimpleGrid columns={[2, 3, 4, 6]} gap={4}>
+        <IconWrapper name="Agroforesty">
+          <AgroforestyIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Agricultural Land">
+          <AgriculturalLandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Assisted Natural Regen">
+          <AssistedNaturalRegenIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Direct Seeding">
+          <DirectSeedingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Grassland">
+          <GrasslandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Mangrove">
+          <MangroveIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Natural Forest">
+          <NaturalForestIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Nursery Building">
+          <NurseryBuildingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Nursery Expanding">
+          <NurseryExpandingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Nursery Managing">
+          <NurseryManagingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Open Natural Ecosystem">
+          <OpenNaturalEcosystemIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Peatland">
+          <PeatlandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Silvopasture">
+          <SilvopastureIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Tree Planting">
+          <TreePlantingIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Urban Forest">
+          <UrbanForestIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Wetland">
+          <WetlandIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Woodlot">
+          <WoodlotIcon boxSize={8} />
         </IconWrapper>
       </SimpleGrid>
     </VStack>
