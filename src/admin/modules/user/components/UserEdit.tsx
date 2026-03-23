@@ -20,9 +20,27 @@ import {
 } from "@/admin/modules/user/const";
 import { validateForm } from "@/admin/utils/forms";
 import { useGadmChoices } from "@/connections/Gadm";
+import { UserFramework } from "@/generated/v3/userService/userServiceSchemas";
 
 import modules from "../..";
 import UserTitle from "./UserTitle";
+
+function directFrameworksToSlugs(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map(item => {
+    if (item != null && typeof item === "object" && "slug" in item) {
+      return String((item as UserFramework).slug);
+    }
+    return String(item);
+  });
+}
+
+const normalizeFrameworksForApi = (frameworks: unknown): string[] => directFrameworksToSlugs(frameworks);
+
+const transformUserSave = (data: Record<string, unknown>) => ({
+  ...data,
+  directFrameworks: normalizeFrameworksForApi(data.directFrameworks)
+});
 
 const UserEdit = () => {
   const { isFrameworkAdmin, isSuperAdmin, role } = useGetUserRole();
@@ -46,7 +64,7 @@ const UserEdit = () => {
   }, [isSuperAdmin, role]);
 
   return (
-    <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false}>
+    <Edit title={<UserTitle />} mutationMode="pessimistic" actions={false} transform={transformUserSave}>
       <SimpleForm validate={validateForm(yup.object(schemaObject))}>
         <TextInput source="firstName" label="First Name" fullWidth />
         <TextInput source="lastName" label="Last Name" fullWidth />
@@ -54,15 +72,12 @@ const UserEdit = () => {
         <TextInput source="phoneNumber" label="Professional Phone Number" fullWidth type="tel" />
         <TextInput source="jobRole" label="Job Title" fullWidth />
         <SelectInput source="locale" label="Locale" choices={localeChoices} fullWidth />
-        <ReferenceInput
-          label="Organisation"
-          source="organisationUuid"
-          reference={modules.organisation.ResourceName}
-          options={{ fullWidth: true }}
-        >
+        <ReferenceInput label="Organisation" source="organisationUuid" reference={modules.organisation.ResourceName}>
           <AutocompleteInput
+            source="organisationUuid"
             label="Organisation"
             optionText="name"
+            optionValue="uuid"
             fullWidth
             filterToQuery={searchText => ({ search: searchText })}
           />
@@ -71,7 +86,34 @@ const UserEdit = () => {
         {isFrameworkAdmin && <SelectInput source="primaryRole" label="Role" choices={roleChoices} fullWidth />}
         <SelectInput source="program" label="Program" choices={frameworkChoices} fullWidth />
         <SelectInput source="country" label="Country" choices={countryChoices} fullWidth />
-        <SelectArrayInput source="frameworks" label="Direct Frameworks" choices={directFrameworkChoices} fullWidth />
+        <SelectArrayInput
+          source="directFrameworks"
+          label="Direct Frameworks"
+          choices={directFrameworkChoices}
+          fullWidth
+          format={(value: unknown) => {
+            if (!Array.isArray(value)) {
+              return [];
+            }
+            return value
+              .map((item: unknown) => {
+                if (typeof item === "string") {
+                  return item;
+                }
+                if (item != null && typeof item === "object" && "slug" in item) {
+                  return String((item as { slug: string }).slug);
+                }
+                return "";
+              })
+              .filter(Boolean);
+          }}
+          parse={(slugs: string[]) =>
+            slugs.map(slug => {
+              const choice = directFrameworkChoices.find(c => c.id === slug);
+              return { slug, name: typeof choice?.name === "string" ? choice.name : slug };
+            })
+          }
+        />
       </SimpleForm>
     </Edit>
   );

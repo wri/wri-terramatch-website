@@ -670,6 +670,7 @@ export type UserDto = {
   program: string | null;
   locale: string | null;
   frameworks: UserFramework[];
+  directFrameworks: UserFramework[];
 };
 
 export type OrganisationCreateAttributes = {
@@ -790,6 +791,8 @@ export type UserUpdateAttributes = {
    * New default locale for the given user
    */
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+  primaryRole: string;
+  directFrameworks: string[];
 };
 
 export type UserData = {

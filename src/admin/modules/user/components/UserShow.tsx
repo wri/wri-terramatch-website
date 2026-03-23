@@ -74,7 +74,7 @@ export const UserShow = () => (
           label="All Frameworks (includes frameworks through role and project associations)"
           render={renderFrameworks("frameworks")}
         />
-        <FunctionField label="Direct Frameworks" render={renderFrameworks("frameworks")} />
+        <FunctionField label="Direct Frameworks" render={renderFrameworks("directFrameworks")} />
       </SimpleShowLayout>
       <UserProjectsTable title="Monitoring Projects" projectKey="monitoring_projects" />
       <UserProjectsTable title="Managed Projects" projectKey="managed_projects" />
