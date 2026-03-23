@@ -32,6 +32,7 @@ type AttributeInformationProps = {
   sitePolygonUuid: string;
   polygonNameForFile?: string;
   hasAnrPlotGeometry: boolean;
+  anrMonitoringPlotsEligible: boolean;
   attributePlotsVisible: boolean;
   setAttributePlotsVisible: Dispatch<SetStateAction<boolean>>;
 };
@@ -41,6 +42,7 @@ const AttributeInformation = ({
   sitePolygonUuid,
   polygonNameForFile,
   hasAnrPlotGeometry,
+  anrMonitoringPlotsEligible,
   attributePlotsVisible,
   setAttributePlotsVisible
 }: AttributeInformationProps) => {
@@ -124,7 +126,7 @@ const AttributeInformation = ({
   };
 
   const downloadMonitoringPlots = async () => {
-    if (sitePolygonUuid === "") {
+    if (sitePolygonUuid === "" || !anrMonitoringPlotsEligible) {
       return;
     }
     try {
@@ -169,9 +171,9 @@ const AttributeInformation = ({
       <Dropdown
         multiSelect
         label={t("Restoration Practice")}
-        suffixLabelView={hasAnrPlotGeometry}
+        suffixLabelView={hasAnrPlotGeometry && anrMonitoringPlotsEligible}
         suffixLabel={
-          hasAnrPlotGeometry ? (
+          hasAnrPlotGeometry && anrMonitoringPlotsEligible ? (
             <div className="flex items-center gap-2">
               <button
                 type="button"

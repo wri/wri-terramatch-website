@@ -26,6 +26,7 @@ import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import Log from "@/utils/log";
+import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -152,6 +153,10 @@ const MapSidePanel = ({
       }
       setClickedButton("");
     } else if (clickedButton === "anrMonitoringPlots") {
+      if (!isSitePolygonEligibleForAnrMonitoringPlots(selected)) {
+        setClickedButton("");
+        return;
+      }
       setTabEditPolygon("ANR Monitoring Plots");
       setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
@@ -346,6 +351,7 @@ const MapSidePanel = ({
                 site_id={entityUuid}
                 validationStatus={item.validationStatus ?? "notChecked"}
                 isAdmin={isAdmin}
+                anrMonitoringPlotsEligible={isSitePolygonEligibleForAnrMonitoringPlots(item)}
               />
             )}
           />

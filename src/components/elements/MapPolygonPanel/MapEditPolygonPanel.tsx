@@ -19,6 +19,7 @@ import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import ApiSlice from "@/store/apiSlice";
+import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import Button from "../Button/Button";
 import Text from "../Text/Text";
@@ -91,10 +92,14 @@ const MapEditPolygonPanel = ({
       return typedPolygon.polygonUuid === editPolygon.uuid;
     }) as SitePolygonLightDto | undefined;
   }, [editPolygon?.uuid, polygonData]);
+  const anrPlotsEligible = useMemo(
+    () => isSitePolygonEligibleForAnrMonitoringPlots(selectedSitePolygon),
+    [selectedSitePolygon]
+  );
   const sitePolygonUuidForAnr = selectedSitePolygon?.uuid ?? "";
   const [, { data: anrPlotGeometry }] = useAnrPlotGeometry({
     sitePolygonUuid: sitePolygonUuidForAnr,
-    enabled: sitePolygonUuidForAnr !== ""
+    enabled: sitePolygonUuidForAnr !== "" && anrPlotsEligible
   });
   const anrMapOverlay = useAnrMapOverlayOptional();
   const anrMapOverlayRef = useRef(anrMapOverlay);
@@ -103,7 +108,7 @@ const MapEditPolygonPanel = ({
   const isAnrTab = tabEditPolygon === "ANR Monitoring Plots";
 
   const downloadMonitoringPlots = useCallback(async () => {
-    if (sitePolygonUuidForAnr === "") {
+    if (sitePolygonUuidForAnr === "" || !anrPlotsEligible) {
       return;
     }
     const response = await loadAnrPlotGeometryGeoJson({ sitePolygonUuid: sitePolygonUuidForAnr });
@@ -114,7 +119,13 @@ const MapEditPolygonPanel = ({
     const polygonName = selectedSitePolygon?.name ?? "polygon";
     const filename = formatFileName(`${polygonName}_anr_monitoring_plots`);
     downloadGeoJsonFile(geojson, filename);
-  }, [selectedSitePolygon?.name, sitePolygonUuidForAnr]);
+  }, [anrPlotsEligible, selectedSitePolygon?.name, sitePolygonUuidForAnr]);
+
+  useEffect(() => {
+    if (!anrPlotsEligible && tabEditPolygon === "ANR Monitoring Plots") {
+      setTabEditPolygon("Attributes");
+    }
+  }, [anrPlotsEligible, setTabEditPolygon, tabEditPolygon]);
 
   useEffect(() => {
     if (polygonValidationData) {
@@ -141,22 +152,23 @@ const MapEditPolygonPanel = ({
       return;
     }
     const isAttributeTab = tabEditPolygon === "Attributes";
-    const shouldShowFromAttributes = isAttributeTab && hasAnrPlotGeometry && attributePlotsVisible;
+    const shouldShowFromAttributes = anrPlotsEligible && isAttributeTab && hasAnrPlotGeometry && attributePlotsVisible;
     anrMapOverlay.setDrawerOpen(editPolygon?.isOpen === true);
-    anrMapOverlay.setAnrTabActive(isAnrTab || shouldShowFromAttributes);
+    anrMapOverlay.setAnrTabActive((isAnrTab && anrPlotsEligible) || shouldShowFromAttributes);
     if (sitePolygonUuidForAnr !== "" && editPolygon?.uuid != null && editPolygon.uuid !== "") {
       anrMapOverlay.syncDrawerSelection({
         sitePolygonUuid: sitePolygonUuidForAnr,
         geometryPolygonUuid: editPolygon.uuid
       });
     }
-    if ((isAnrTab && hasAnrPlotGeometry && plotsVisible) || shouldShowFromAttributes) {
+    if ((anrPlotsEligible && isAnrTab && hasAnrPlotGeometry && plotsVisible) || shouldShowFromAttributes) {
       anrMapOverlay.setShowPlotsOnMap(true);
       return;
     }
     anrMapOverlay.setShowPlotsOnMap(false);
   }, [
     anrMapOverlay,
+    anrPlotsEligible,
     editPolygon?.isOpen,
     editPolygon?.uuid,
     hasAnrPlotGeometry,
@@ -194,7 +206,8 @@ const MapEditPolygonPanel = ({
       <div className="flex rounded-lg bg-white">
         <button
           className={classNames(
-            "text-12-semibold w-1/4 rounded-l-lg border border-neutral-300 p-3 hover:bg-neutral-100",
+            "text-12-semibold rounded-l-lg border border-neutral-300 p-3 hover:bg-neutral-100",
+            anrPlotsEligible ? "w-1/4" : "w-1/3",
             tabEditPolygon === "Attributes"
               ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
               : "border border-neutral-300"
@@ -207,7 +220,8 @@ const MapEditPolygonPanel = ({
         </button>
         <button
           className={classNames(
-            "text-12-semibold w-1/4 border border-neutral-300 p-3 hover:bg-neutral-100",
+            "text-12-semibold border border-neutral-300 p-3 hover:bg-neutral-100",
+            anrPlotsEligible ? "w-1/4" : "w-1/3",
             tabEditPolygon === "Checklist"
               ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
               : "border border-neutral-300"
@@ -220,7 +234,8 @@ const MapEditPolygonPanel = ({
         </button>
         <button
           className={classNames(
-            "text-12-semibold w-1/4 border border-neutral-300 p-3 hover:bg-neutral-100",
+            "text-12-semibold border border-neutral-300 p-3 hover:bg-neutral-100",
+            anrPlotsEligible ? "w-1/4" : "w-1/3 rounded-r-lg",
             tabEditPolygon === "Version"
               ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
               : "border border-neutral-300"
@@ -231,19 +246,21 @@ const MapEditPolygonPanel = ({
         >
           {t("Version")}
         </button>
-        <button
-          className={classNames(
-            "text-12-semibold w-1/4 rounded-r-lg border border-neutral-300 p-3 hover:bg-neutral-100",
-            tabEditPolygon === "ANR Monitoring Plots"
-              ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
-              : "border border-neutral-300"
-          )}
-          onClick={() => {
-            setTabEditPolygon("ANR Monitoring Plots");
-          }}
-        >
-          {t("ANR Monitoring Plots")}
-        </button>
+        {anrPlotsEligible ? (
+          <button
+            className={classNames(
+              "text-12-semibold w-1/4 rounded-r-lg border border-neutral-300 p-3 hover:bg-neutral-100",
+              tabEditPolygon === "ANR Monitoring Plots"
+                ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
+                : "border border-neutral-300"
+            )}
+            onClick={() => {
+              setTabEditPolygon("ANR Monitoring Plots");
+            }}
+          >
+            {t("ANR Monitoring Plots")}
+          </button>
+        ) : null}
       </div>
       <div className="mr-[-10px] mt-4 h-[calc(100%-132px)] overflow-y-auto pr-2">
         <When condition={tabEditPolygon === "Attributes"}>
@@ -252,6 +269,7 @@ const MapEditPolygonPanel = ({
             sitePolygonUuid={sitePolygonUuidForAnr}
             polygonNameForFile={selectedSitePolygon?.name ?? undefined}
             hasAnrPlotGeometry={hasAnrPlotGeometry}
+            anrMonitoringPlotsEligible={anrPlotsEligible}
             attributePlotsVisible={attributePlotsVisible}
             setAttributePlotsVisible={setAttributePlotsVisible}
           />
@@ -266,7 +284,7 @@ const MapEditPolygonPanel = ({
             recallEntityData={recallEntityData}
           />
         </When>
-        <When condition={tabEditPolygon === "ANR Monitoring Plots"}>
+        <When condition={tabEditPolygon === "ANR Monitoring Plots" && anrPlotsEligible}>
           <div className="flex flex-col gap-4 pr-2">
             <div className="flex items-baseline justify-between gap-2">
               <Text variant="text-14-semibold" className="text-white">

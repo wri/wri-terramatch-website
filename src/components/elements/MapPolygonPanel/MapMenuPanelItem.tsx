@@ -44,6 +44,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   isCollapsed?: boolean;
   validationStatus?: string;
   isAdmin?: boolean;
+  anrMonitoringPlotsEligible?: boolean;
 }
 
 const MapMenuPanelItem = ({
@@ -62,6 +63,7 @@ const MapMenuPanelItem = ({
   isCollapsed,
   validationStatus,
   isAdmin,
+  anrMonitoringPlotsEligible = false,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
@@ -210,16 +212,20 @@ const MapMenuPanelItem = ({
       ),
       onClick: () => openFormModalHandlerConfirm()
     },
-    {
-      id: "6",
-      render: () => (
-        <Text variant="text-14-semibold" className="flex items-center">
-          <AssistedNaturalRegenIcon className="h-4 w-4 lg:h-5 lg:w-5" />
-          &nbsp; {t("ANR Monitoring Plots")}
-        </Text>
-      ),
-      onClick: () => setClickedButton("anrMonitoringPlots")
-    }
+    ...(anrMonitoringPlotsEligible
+      ? [
+          {
+            id: "6",
+            render: () => (
+              <Text variant="text-14-semibold" className="flex items-center">
+                <AssistedNaturalRegenIcon className="h-4 w-4 lg:h-5 lg:w-5" />
+                &nbsp; {t("ANR Monitoring Plots")}
+              </Text>
+            ),
+            onClick: () => setClickedButton("anrMonitoringPlots")
+          }
+        ]
+      : [])
   ];
 
   return (

@@ -1,7 +1,7 @@
 import { Divider } from "@mui/material";
 import { useT } from "@transifex/react";
 import { isEmpty } from "lodash";
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { When } from "react-if";
 
 import Accordion from "@/components/elements/Accordion/Accordion";
@@ -22,6 +22,7 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
+import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import AuditLogTable from "../../../AuditLogTab/components/AuditLogTable";
 import CommentarySection from "../CommentarySection/CommentarySection";
@@ -74,6 +75,10 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
+  const anrPlotsEligible = useMemo(
+    () => isSitePolygonEligibleForAnrMonitoringPlots(selectedPolygon),
+    [selectedPolygon]
+  );
   const anrMapOverlay = useAnrMapOverlayOptional();
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
@@ -136,8 +141,16 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    setActiveTab(initialTopTab);
-  }, [polygonSelected, initialTopTab]);
+    const eligible = isSitePolygonEligibleForAnrMonitoringPlots(selectedPolygon);
+    const safeTab = initialTopTab === "anrMonitoringPlots" && !eligible ? "attributes" : initialTopTab;
+    setActiveTab(safeTab);
+  }, [polygonSelected, initialTopTab, selectedPolygon]);
+
+  useEffect(() => {
+    if (!isSitePolygonEligibleForAnrMonitoringPlots(selectedPolygon) && activeTab === "anrMonitoringPlots") {
+      setActiveTab("attributes");
+    }
+  }, [selectedPolygon, activeTab]);
 
   useEffect(() => {
     if (anrMapOverlay == null) {
@@ -149,7 +162,7 @@ const PolygonDrawer = ({
       return;
     }
     anrMapOverlay.setDrawerOpen(true);
-    const onAnrTab = activeTab === "anrMonitoringPlots";
+    const onAnrTab = activeTab === "anrMonitoringPlots" && anrPlotsEligible;
     anrMapOverlay.setAnrTabActive(onAnrTab);
 
     if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
@@ -163,7 +176,7 @@ const PolygonDrawer = ({
       anrMapOverlay.setShowPlotsOnMap(true);
     }
     prevActiveTabForAnrRef.current = activeTab;
-  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
+  }, [anrMapOverlay, activeTab, anrPlotsEligible, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
 
   useEffect(() => {
     return () => {
@@ -251,13 +264,15 @@ const PolygonDrawer = ({
         >
           <span className="text-12">{t("Polygon Status")}</span>
         </Button>
-        <Button
-          variant={`${activeTab === "anrMonitoringPlots" ? "white-toggle" : "transparent-toggle"}`}
-          onClick={() => setActiveTab("anrMonitoringPlots")}
-          className="px-3 py-1 lg:px-2.5 lg:py-1"
-        >
-          <span className="text-12">{t("ANR Monitoring Plots")}</span>
-        </Button>
+        {anrPlotsEligible ? (
+          <Button
+            variant={`${activeTab === "anrMonitoringPlots" ? "white-toggle" : "transparent-toggle"}`}
+            onClick={() => setActiveTab("anrMonitoringPlots")}
+            className="px-3 py-1 lg:px-2.5 lg:py-1"
+          >
+            <span className="text-12">{t("ANR Monitoring Plots")}</span>
+          </Button>
+        ) : null}
       </div>
       {activeTab === "polygonStatus" ? (
         <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
@@ -298,7 +313,7 @@ const PolygonDrawer = ({
             </>
           )}
         </div>
-      ) : activeTab === "anrMonitoringPlots" ? (
+      ) : activeTab === "anrMonitoringPlots" && anrPlotsEligible ? (
         <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
           <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid ?? ""} />
         </div>
