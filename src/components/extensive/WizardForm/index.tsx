@@ -30,8 +30,8 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons/ProjectIcon";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
@@ -274,12 +274,12 @@ function WizardForm(props: WizardFormProps) {
           )}
           cancelButtonProps={undefined}
           primaryButtonProps={{
-            children: t(`${isEntityApproved ? "Save changes" : selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
+            children: t(`${selectedStepIndex === lastIndex ? "Submit" : "Next"}`),
             disabled: hasErrorInAnyStep && selectedStepIndex === lastIndex,
             onClick: formHook.handleSubmit(onSubmitStep, onSubmitStep)
           }}
           secondaryButtonProps={
-            !isEntityApproved && formModel?.model != "organisations"
+            formModel?.model != "organisations"
               ? {
                   children: "Save and Exit",
                   onClick: () => {
@@ -294,17 +294,11 @@ function WizardForm(props: WizardFormProps) {
               : undefined
           }
           tertiaryButtonProps={
-            !props.hideBackButton && !isEntityApproved
+            !props.hideBackButton && selectedStepIndex > 0
               ? {
                   children: t("Previous"),
                   leftIcon: <ChevronRightIcon className="rotate-180" />,
-                  onClick: () => {
-                    if (selectedStepIndex > 0) {
-                      setSelectedStepIndex(n => n - 1);
-                    } else {
-                      props.onBackFirstStep();
-                    }
-                  }
+                  onClick: () => setSelectedStepIndex(n => n - 1)
                 }
               : undefined
           }
@@ -323,7 +317,6 @@ function WizardForm(props: WizardFormProps) {
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      isEntityApproved,
       formModel?.model
     ]
   );
@@ -453,7 +446,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >

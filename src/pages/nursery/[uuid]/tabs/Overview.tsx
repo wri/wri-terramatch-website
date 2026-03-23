@@ -18,7 +18,7 @@ import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSu
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
-import ChevronRightIcon from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
+import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 interface NurseryOverviewTabProps {
   nursery: NurseryFullDto;
 }

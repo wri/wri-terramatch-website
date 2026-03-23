@@ -300,7 +300,7 @@ const SiteReportDetailPage = () => {
                             items={[
                               {
                                 iconName: IconNames.NON_TREES_PLANTED_CIRCLE,
-                                label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                                label: t("Total non-trees planted (on report):"),
                                 variantLabel: "text-14",
                                 classNameLabel: " text-neutral-650 uppercase !w-auto",
                                 classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
@@ -329,7 +329,7 @@ const SiteReportDetailPage = () => {
                             items={[
                               {
                                 iconName: IconNames.LEAF_CIRCLE_PD,
-                                label: t("TOTAL seeds PLANTED (ON REPORT):"),
+                                label: t("Total trees replanted (on report):"),
                                 variantLabel: "text-14",
                                 classNameLabel: " text-neutral-650 uppercase !w-auto",
                                 classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",

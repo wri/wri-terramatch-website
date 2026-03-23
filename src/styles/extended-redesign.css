@@ -30,3 +30,7 @@
   -webkit-user-select: none;
   user-select: none;
 }
+
+.chakra-dialog__footer {
+  padding: 0px !important;
+}

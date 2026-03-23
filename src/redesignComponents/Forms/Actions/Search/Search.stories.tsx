@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons/PlaceholderIcon";
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons/Function/PlaceholderIcon";
 
 import Search from "./Search";
 

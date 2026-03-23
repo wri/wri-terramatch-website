@@ -29,6 +29,7 @@ export const useGetEditEntityHandler = ({
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { getReadableEntityName } = useGetReadableEntityName();
+  const readableEntityNameSingular = (getReadableEntityName(entityName, true) ?? t("Entity")).toLowerCase();
   let editTitle = t("Are you sure you want to edit your {entityName}?", {
     entityName: getReadableEntityName(entityName)
   });
@@ -40,9 +41,12 @@ export const useGetEditEntityHandler = ({
   );
 
   if (entityStatus === "started") {
-    editTitle = t("Continue working on draft report?");
+    editTitle = t("Continue working on draft {entityName}?", {
+      entityName: readableEntityNameSingular
+    });
     editContent = t(
-      'By clicking "Edit," you\'ll access your draft report. You can edit the report contents and either save the report as a draft again, or click to the end and press "Submit" to send it to your project manager for review.'
+      'By clicking "Edit," you\'ll access your draft {entityName}. You can edit the {entityName} contents and either save it as a draft again, or click to the end and press "Submit" to send it to your project manager for review.',
+      { entityName: readableEntityNameSingular }
     );
   }
 
