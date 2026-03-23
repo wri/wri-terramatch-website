@@ -1,9 +1,14 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 
+import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -33,8 +38,47 @@ const SiteInfo: FC<SiteInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
+  const { openModal } = useModalContext();
 
+  const needMoreInformation =
+    site.updateRequestStatus === "needs-more-information" ||
+    (site.updateRequestStatus === "no-update" && site.status === "needs-more-information");
+
+  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(site.updateRequestStatus ?? "");
+
+  const statusProps: StatusProps | undefined = useMemo(() => {
+    if (!needMoreInformation) return undefined;
+    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
+    return {
+      title: t(`${titlePrefix} More Info Requested`),
+      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
+      className: "fill-tertiary"
+    };
+  }, [needMoreInformation, hasUpdateRequest, t]);
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "sites",
+    entityUUID: site.uuid,
+    entityStatus: site.status as string,
+    updateRequestStatus: site.updateRequestStatus as string
+  });
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation && statusProps != null) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={site.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={site.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
@@ -56,6 +100,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
       {description != null ? (
         <DescriptionHeader
           description={description}
+          handleEdit={handleEditClick}
           backgroundColor="neutral.100"
           downloadButtonProps={{
             variant: "secondary",
@@ -70,7 +115,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
         />
       ) : (
         <div className="flex w-fit gap-2">
-          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto">
+          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
             {t("Edit")}
           </Button>
           <Button
