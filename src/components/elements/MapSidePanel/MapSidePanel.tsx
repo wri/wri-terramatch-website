@@ -1,6 +1,16 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  DetailedHTMLProps,
+  Dispatch,
+  Fragment,
+  HTMLAttributes,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { When } from "react-if";
 
 import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
@@ -39,6 +49,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   type: string;
   recallEntityData?: any;
   entityUuid?: string;
+  setTabEditPolygon: Dispatch<SetStateAction<string>>;
 }
 
 const MapSidePanel = ({
@@ -58,6 +69,7 @@ const MapSidePanel = ({
   type,
   recallEntityData,
   entityUuid,
+  setTabEditPolygon,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -133,6 +145,14 @@ const MapSidePanel = ({
       deletePolygon(selected?.polygonUuid ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
+      setTabEditPolygon("Attributes");
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      if (selected?.polygonUuid) {
+        flyToPolygonBounds();
+      }
+      setClickedButton("");
+    } else if (clickedButton === "anrMonitoringPlots") {
+      setTabEditPolygon("ANR Monitoring Plots");
       setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();

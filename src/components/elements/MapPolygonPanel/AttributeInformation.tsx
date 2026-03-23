@@ -1,9 +1,17 @@
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
+import {
+  downloadGeoJsonFile,
+  extractGeoJsonFromResponse,
+  formatFileName
+} from "@/components/elements/Map-mapbox/utils";
+import { loadAnrPlotGeometryGeoJson } from "@/connections/AnrPlotGeometry";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import {
   dropdownOptionsRestoration,
@@ -19,7 +27,23 @@ import Log from "@/utils/log";
 import Text from "../Text/Text";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
-const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
+type AttributeInformationProps = {
+  handleClose: () => void;
+  sitePolygonUuid: string;
+  polygonNameForFile?: string;
+  hasAnrPlotGeometry: boolean;
+  attributePlotsVisible: boolean;
+  setAttributePlotsVisible: Dispatch<SetStateAction<boolean>>;
+};
+
+const AttributeInformation = ({
+  handleClose,
+  sitePolygonUuid,
+  polygonNameForFile,
+  hasAnrPlotGeometry,
+  attributePlotsVisible,
+  setAttributePlotsVisible
+}: AttributeInformationProps) => {
   const t = useT();
   const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto>();
@@ -99,6 +123,24 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     }
   };
 
+  const downloadMonitoringPlots = async () => {
+    if (sitePolygonUuid === "") {
+      return;
+    }
+    try {
+      const response = await loadAnrPlotGeometryGeoJson({ sitePolygonUuid });
+      const geojson = extractGeoJsonFromResponse(response.data);
+      if (geojson == null) {
+        throw new Error("Failed to extract ANR monitoring plots GeoJSON");
+      }
+      const filename = formatFileName(`${polygonNameForFile ?? "polygon"}_anr_monitoring_plots`);
+      downloadGeoJsonFile(geojson, filename);
+    } catch (error) {
+      Log.error("Error downloading ANR monitoring plots:", error);
+      openNotification("error", t("Error!"), t("Error downloading ANR monitoring plots"));
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -127,6 +169,28 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
       <Dropdown
         multiSelect
         label={t("Restoration Practice")}
+        suffixLabelView={hasAnrPlotGeometry}
+        suffixLabel={
+          hasAnrPlotGeometry ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="group text-white"
+                onClick={() => setAttributePlotsVisible(prev => !prev)}
+                aria-label={attributePlotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
+              >
+                {attributePlotsVisible ? (
+                  <Visibility sx={{ fontSize: 20 }} className="group-hover:text-primary-500" />
+                ) : (
+                  <VisibilityOff sx={{ fontSize: 20 }} className="group-hover:text-primary-500" />
+                )}
+              </button>
+              <Button variant="semi-black" className="px-3 py-1" onClick={downloadMonitoringPlots}>
+                {t("Download")}
+              </Button>
+            </div>
+          ) : null
+        }
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Select Restoration Practice")}
