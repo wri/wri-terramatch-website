@@ -22,7 +22,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
-import { ANRIcon } from "@/redesignComponents/foundations/Icons";
+import { AssistedNaturalRegenIcon } from "@/redesignComponents/foundations/Icons";
 import { OptionValue } from "@/types/common";
 import Log from "@/utils/log";
 
@@ -287,7 +287,7 @@ const Polygons = (props: IPolygonProps) => {
         id: "7",
         render: () => (
           <div className="flex w-full items-center gap-2">
-            <ANRIcon className="h-5 w-5" />
+            <AssistedNaturalRegenIcon boxSize={5} />
             <Text variant="text-12-bold">{t("ANR Monitoring Plots")}</Text>
           </div>
         ),
