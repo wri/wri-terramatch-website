@@ -485,8 +485,8 @@ export const MapContainer = ({
       upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
     };
 
-    applyAnrOverlay();
     currentMap.on("style.load", applyAnrOverlay);
+    applyAnrOverlay();
     return () => {
       currentMap.off("style.load", applyAnrOverlay);
       removeAnrPlotGeometryOverlay(currentMap);

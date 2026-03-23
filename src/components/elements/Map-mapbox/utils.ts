@@ -1786,7 +1786,17 @@ let anrPlotMouseEnterHandler: (() => void) | null = null;
 let anrPlotMouseLeaveHandler: (() => void) | null = null;
 let anrPlotPopup: mapboxgl.Popup | null = null;
 
+let anrPlotPendingIdleRetry: { map: mapboxgl.Map; fn: () => void } | null = null;
+
+function cancelAnrPendingRetry() {
+  if (anrPlotPendingIdleRetry != null) {
+    anrPlotPendingIdleRetry.map.off("idle", anrPlotPendingIdleRetry.fn);
+    anrPlotPendingIdleRetry = null;
+  }
+}
+
 export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefined) {
+  cancelAnrPendingRetry();
   if (map == null) return;
   try {
     if (anrPlotPopup != null) {
@@ -1836,6 +1846,12 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
   }
 
   if (!map.isStyleLoaded()) {
+    const retryFn = () => {
+      anrPlotPendingIdleRetry = null;
+      upsertAnrPlotGeometryOverlay(map, geojson, options);
+    };
+    anrPlotPendingIdleRetry = { map, fn: retryFn };
+    map.once("idle", retryFn);
     return;
   }
 

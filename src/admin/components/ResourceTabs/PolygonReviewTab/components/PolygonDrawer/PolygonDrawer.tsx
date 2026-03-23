@@ -81,6 +81,8 @@ const PolygonDrawer = ({
   const wrapperRef = useRef(null);
   /** Tracks tab transitions so we can set ANR map visibility when entering the ANR tab (avoids child useEffect running one frame late). */
   const prevActiveTabForAnrRef = useRef<PolygonDrawerTopTab | null>(null);
+  const anrMapOverlayRef = useRef(anrMapOverlay);
+  anrMapOverlayRef.current = anrMapOverlay;
 
   const runPolygonValidation = async () => {
     try {
@@ -149,19 +151,26 @@ const PolygonDrawer = ({
     anrMapOverlay.setDrawerOpen(true);
     const onAnrTab = activeTab === "anrMonitoringPlots";
     anrMapOverlay.setAnrTabActive(onAnrTab);
+
+    if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
+      anrMapOverlay.syncDrawerSelection({
+        sitePolygonUuid: selectedPolygon.uuid,
+        geometryPolygonUuid: polygonSelected
+      });
+    }
+
     if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
       anrMapOverlay.setShowPlotsOnMap(true);
     }
     prevActiveTabForAnrRef.current = activeTab;
-
-    if (selectedPolygon?.uuid == null || selectedPolygon.uuid === "") {
-      return;
-    }
-    anrMapOverlay.syncDrawerSelection({
-      sitePolygonUuid: selectedPolygon.uuid,
-      geometryPolygonUuid: polygonSelected
-    });
   }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
+
+  useEffect(() => {
+    return () => {
+      anrMapOverlayRef.current?.resetAnrMapOverlay();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {

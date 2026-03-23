@@ -304,7 +304,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     validationStatus: data.validationStatus ?? "notChecked"
   }));
 
-  const polygonDataMap = parsePolygonDataV3(sitePolygonData);
+  const polygonDataMap = useMemo(() => parsePolygonDataV3(sitePolygonData), [sitePolygonData]);
 
   const dataPolygonOverview = countStatusesV3(sitePolygonData);
 

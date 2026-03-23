@@ -284,7 +284,7 @@ const Polygons = (props: IPolygonProps) => {
         MenuItemVariant: MENU_ITEM_VARIANT_DIVIDER
       },
       {
-        id: "5",
+        id: "7",
         render: () => (
           <div className="flex w-full items-center gap-2">
             <ANRIcon className="h-5 w-5" />
