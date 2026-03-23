@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import About from "@/components/extensive/PageElements/About/About";
@@ -10,6 +10,7 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LastestImagesSectionTab from "@/pages/project/[uuid]/tabs/LastestImagesSection";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -23,6 +24,8 @@ import {
   SurvivalRateIcon
 } from "@/redesignComponents/foundations/Icons";
 import { TreeIcon } from "@/redesignComponents/foundations/Icons";
+
+import { ABOUT_SITES_CONTENT } from "./constants/AboutSites";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
@@ -32,6 +35,14 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
   const { setSiteData } = contextMapArea;
+  const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
+
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "sites",
+    entityUUID: site.uuid,
+    entityStatus: site.status ?? "started",
+    updateRequestStatus: site.updateRequestStatus ?? "no-update"
+  });
 
   const { data: sitePolygonDataV3, refetch: refetchV3 } = useAllSitePolygons({
     entityName: "sites",
@@ -45,7 +56,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     setSiteData(site);
   }, [setSiteData, site]);
 
-  const mockecBoolean = false;
+  const mockedFrameworkKey = "ppc";
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
@@ -79,12 +90,13 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               buttonProps={{
                 variant: "primary",
                 size: "small",
-                children: mockecBoolean ? t("Edit") : t("Continue"),
-                rightIcon: <ChevronRightIcon />
+                children: isSiteSetupComplete ? t("Edit") : t("Continue"),
+                rightIcon: <ChevronRightIcon />,
+                onClick: () => handleEdit()
               }}
             >
               <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-                <EntitySetUpSection entity={site} type="sites" />
+                <EntitySetUpSection onStatusChange={setIsSiteSetupComplete} entity={site} type="sites" />
               </Box>
             </PageItem>
           </Flex>
@@ -162,52 +174,28 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 rightIcon: <ChevronRightIcon />
               }}
             >
-              <LastestImagesSectionTab entityUuid={site.uuid} entityName="sites" />
+              <LastestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={3} />
             </PageItem>
-            <PageItem title="Project Onboarding">
+            <PageItem title={ABOUT_SITES_CONTENT[mockedFrameworkKey].title}>
               <About
                 description={
                   <Flex direction="column" gap={5}>
                     <Text color="neutral.900" textStyle="300">
-                      <strong>{t("Sites")}: </strong>
-                      {t(
-                        "are the core units for reporting your restoration work in TerraMatch. Each site can include one or more restoration areas or polygons and should reflect a meaningful geographic grouping for your project."
-                      )}
+                      <strong>{t("Sites")} </strong>
+                      {t(ABOUT_SITES_CONTENT[mockedFrameworkKey].content[0])}
                     </Text>
-                    <Flex alignItems="center" flexWrap="wrap">
-                      <Text color="neutral.900" textStyle="300">
-                        {t(
-                          "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or"
-                        )}
-                      </Text>
-                      <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />}>
+                    <Text color="neutral.900" textStyle="300">
+                      {t(ABOUT_SITES_CONTENT[mockedFrameworkKey].content[1])}
+                      <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} as="span">
                         {t("info@terramatch.org")}
                       </Button>
-                    </Flex>
+                    </Text>
                   </Flex>
                 }
-                links={[
-                  {
-                    title: "Follow the TerraFund Siting Guide ",
-                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                  },
-                  {
-                    title: "Use the TerraFund Profile Creation Checklist ",
-                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                  },
-                  {
-                    title: "Create a Site Profile",
-                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                  },
-                  {
-                    title: "Use the Site Profile Polygon Guide",
-                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                  },
-                  {
-                    title: "Download & Use Greenhouse.Flority",
-                    link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27065988566811-How-to-Add-Polygons-to-TerraMatch-Sites"
-                  }
-                ]}
+                links={ABOUT_SITES_CONTENT[mockedFrameworkKey].links.map(link => ({
+                  title: link.title,
+                  link: link.link
+                }))}
               />
             </PageItem>
           </Flex>
