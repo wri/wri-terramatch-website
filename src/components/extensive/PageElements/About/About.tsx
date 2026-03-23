@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import ChevronRightIcon from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
+import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 interface AboutProps {
