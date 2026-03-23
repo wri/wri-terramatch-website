@@ -233,7 +233,7 @@ const MapEditPolygonPanel = ({
         </button>
         <button
           className={classNames(
-            "text-12-semibold w-1/4 rounded-r-lg border border-neutral-300 py-3 px-1 !tracking-tight hover:bg-neutral-100",
+            "text-12-semibold w-1/4 rounded-r-lg border border-neutral-300 py-3 px-1 !tracking-tighter hover:bg-neutral-100",
             tabEditPolygon === "ANR Monitoring Plots"
               ? "border-0 border-b-4 border-primary bg-blueCustom-10 pb-2"
               : "border border-neutral-300"
