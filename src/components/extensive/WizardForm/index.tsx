@@ -300,7 +300,10 @@ function WizardForm(props: WizardFormProps) {
                   leftIcon: <ChevronRightIcon className="rotate-180" />,
                   onClick: () => setSelectedStepIndex(n => n - 1)
                 }
-              : undefined
+              : {
+                  children: t("Download")
+                  // TODO: Add download functionality
+                }
           }
         />
       </div>

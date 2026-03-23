@@ -3,20 +3,86 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { AgroforestyIcon, TreePlantingIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  AgriculturalLandIcon,
+  AgroforestyIcon,
+  AssistedNaturalRegenIcon,
+  DirectSeedingIcon,
+  GrasslandIcon,
+  MangroveIcon,
+  NaturalForestIcon,
+  OpenNaturalEcosystemIcon,
+  PeatlandIcon,
+  SilvopastureIcon,
+  TreePlantingIcon,
+  UrbanForestIcon,
+  WetlandIcon,
+  WoodlotIcon
+} from "@/redesignComponents/foundations/Icons";
 
 type SiteTypeConfig = { icon: ReactNode; label: string };
-const SITE_TYPE_MAP: Record<string, SiteTypeConfig> = {
+
+const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
   "tree-planting": {
     icon: <TreePlantingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Tree Planting"
   },
-  agroforest: {
-    icon: <AgroforestyIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Agroforesty"
+  "assisted-natural-regeneration": {
+    icon: <AssistedNaturalRegenIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Assisted Natural Regeneration"
+  },
+  "direct-seeding": {
+    icon: <DirectSeedingIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Direct Seeding"
   }
 };
 
+const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
+  agroforest: {
+    icon: <AgroforestyIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Agroforesty"
+  },
+  "agricultural-land": {
+    icon: <AgriculturalLandIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Agricultural Land"
+  },
+  grassland: {
+    icon: <GrasslandIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Grassland"
+  },
+  mangrove: {
+    icon: <MangroveIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Mangrove"
+  },
+  "open-natural-ecosystem": {
+    icon: <OpenNaturalEcosystemIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Open Natural Ecosystem"
+  },
+  "natural-forest": {
+    icon: <NaturalForestIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Natural Forest"
+  },
+  peatland: {
+    icon: <PeatlandIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Peatland"
+  },
+  "riparian-area-or-wetland": {
+    icon: <WetlandIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Riparian Area / Wetland"
+  },
+  silvopasture: {
+    icon: <SilvopastureIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Silvopasture"
+  },
+  "urban-forest": {
+    icon: <UrbanForestIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Urban Forest"
+  },
+  "woodlot-or-plantation": {
+    icon: <WoodlotIcon className="text-theme-secondary-800 h-8 w-8" />,
+    label: "Woodlot / Plantation"
+  }
+};
 const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
   const t = useT();
   const restorationStrategyKey =
@@ -26,11 +92,11 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
         : site.restorationStrategy
       : null;
   const restorationStrategyConfig =
-    restorationStrategyKey != null ? SITE_TYPE_MAP[restorationStrategyKey] ?? null : null;
+    restorationStrategyKey != null ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey] ?? null : null;
 
   const targetLandUseKey =
     site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes[0] : site.landUseTypes) : null;
-  const targetLandUseConfig = targetLandUseKey != null ? SITE_TYPE_MAP[targetLandUseKey] ?? null : null;
+  const targetLandUseConfig = targetLandUseKey != null ? SITE_TARGET_LAND_USE_MAP[targetLandUseKey] ?? null : null;
 
   return (
     <Box
