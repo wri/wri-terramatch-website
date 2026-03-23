@@ -294,17 +294,11 @@ function WizardForm(props: WizardFormProps) {
               : undefined
           }
           tertiaryButtonProps={
-            !props.hideBackButton
+            !props.hideBackButton && selectedStepIndex > 0
               ? {
                   children: t("Previous"),
                   leftIcon: <ChevronRightIcon className="rotate-180" />,
-                  onClick: () => {
-                    if (selectedStepIndex > 0) {
-                      setSelectedStepIndex(n => n - 1);
-                    } else {
-                      props.onBackFirstStep();
-                    }
-                  }
+                  onClick: () => setSelectedStepIndex(n => n - 1)
                 }
               : undefined
           }
