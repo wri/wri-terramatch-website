@@ -1,12 +1,5 @@
 import React, { createContext, ReactNode, useCallback, useContext, useMemo, useRef, useState } from "react";
 
-/**
- * Coordinates ANR monitoring plot map overlay between the polygon drawer (sidebar) and MapContainer.
- *
- * - Map reads: drawerOpen, sitePolygonUuid (API id), geometryPolygonUuid, showPlotsOnMap
- * - AnrMonitoringPlots writes: showPlotsOnMap via toggle
- * - PolygonDrawer syncs drawer + selection; geometryPolygonUuid change forces plots hidden until user toggles again
- */
 export type AnrMapOverlayContextValue = {
   /** Polygon review drawer is open */
   drawerOpen: boolean;
@@ -102,7 +95,6 @@ export const useAnrMapOverlay = (): AnrMapOverlayContextValue => {
   return ctx;
 };
 
-/** Safe for MapContainer used outside polygon review (e.g. dashboard). */
 export const useAnrMapOverlayOptional = (): AnrMapOverlayContextValue | undefined => {
   return useContext(AnrMapOverlayContext);
 };

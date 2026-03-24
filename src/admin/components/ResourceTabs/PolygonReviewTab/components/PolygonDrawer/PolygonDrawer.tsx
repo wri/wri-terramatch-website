@@ -79,7 +79,6 @@ const PolygonDrawer = ({
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
-  /** Tracks tab transitions so we can set ANR map visibility when entering the ANR tab (avoids child useEffect running one frame late). */
   const prevActiveTabForAnrRef = useRef<PolygonDrawerTopTab | null>(null);
   const anrMapOverlayRef = useRef(anrMapOverlay);
   anrMapOverlayRef.current = anrMapOverlay;

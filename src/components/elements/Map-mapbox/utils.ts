@@ -33,7 +33,7 @@ import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
 
-/** ANR monitoring plot grid overlay (geojson source + fill/line layers). Prefix must stay in sync with Google satellite visibility helpers. */
+/** Prefix must stay in sync with Google satellite visibility helpers. */
 export const ANR_PLOT_SOURCE_ID = "anr_plot_geometry-source";
 export const ANR_PLOT_FILL_LAYER_ID = "anr_plot_geometry-fill";
 export const ANR_PLOT_LINE_LAYER_ID = "anr_plot_geometry-line";
@@ -183,7 +183,6 @@ const handleLayerClick = (
     return;
   }
 
-  // Prefer ANR plot popup: click can hit both polygon and ANR fill layers; do not open site polygon popup on ANR cells.
   if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
     const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
     if (anrHits.length > 0) {
@@ -1829,9 +1828,6 @@ export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefine
   }
 }
 
-/**
- * Renders ANR monitoring plot GeoJSON above site polygon layers (inserted before {@link LAYERS_NAMES.MEDIA_IMAGES} when present).
- */
 export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown, options: { visible: boolean }) {
   if (map == null) return;
   removeAnrPlotGeometryOverlay(map);
