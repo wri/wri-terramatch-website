@@ -89,6 +89,10 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const { autocompleteSearch, findTaxonId } = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
+  const hasInitializedSpeciesRef = useRef(value.length > 0);
+  if (value.length > 0) {
+    hasInitializedSpeciesRef.current = true;
+  }
 
   const entityUuid = useFormModelUuid(props.model);
   const isEntity = props.model != null && entityUuid != null;
@@ -110,7 +114,8 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
     collection
   });
   const shouldPrepopulate =
-    value.length == 0 &&
+    !hasInitializedSpeciesRef.current &&
+    value.length === 0 &&
     (Object.values(previousPlantingCounts ?? {}).length > 0 || (establishmentTrees ?? []).length > 0);
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
@@ -133,6 +138,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
         }
       }
       onChange(values);
+      hasInitializedSpeciesRef.current = true;
     }
   });
 
@@ -168,8 +174,9 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const handleDelete = useCallback(
     (uuid: string | undefined) => {
       if (uuid != null) {
-        remove(value, (v: TreeSpeciesValue) => v.uuid == uuid);
-        onChange(value);
+        const _tmp = [...value];
+        remove(_tmp, (v: TreeSpeciesValue) => v.uuid === uuid);
+        onChange(_tmp);
         clearErrors();
       }
     },
