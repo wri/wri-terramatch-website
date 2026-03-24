@@ -6,7 +6,7 @@ import { FC, Fragment, isValidElement } from "react";
 import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -150,15 +150,13 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
   }
 
   return (
-    <PageBody className="bg-theme-neutral-100 mx-auto w-[82vw] px-4 py-7">
-      <Flex flexDirection="column" gap={2}>
-        <WizardFormProvider fieldsProvider={fieldsProvider}>
-          {steps.map(step => (
-            <DetailStep key={step.id} step={step} formValues={formValues} site={site} />
-          ))}
-        </WizardFormProvider>
-      </Flex>
-    </PageBody>
+    <PageContent className="bg-theme-neutral-100 gap-2">
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        {steps.map(step => (
+          <DetailStep key={step.id} step={step} formValues={formValues} site={site} />
+        ))}
+      </WizardFormProvider>
+    </PageContent>
   );
 };
 

@@ -92,7 +92,7 @@ const NurseryDetailPage = () => {
                     >
                       {t("Project Profile")}
                     </Button>
-                    <span className="text-sm text-theme-neutral-300">|</span>
+                    <span className="text-theme-neutral-300 text-sm">|</span>
                     <Button
                       variant="borderless"
                       size="small"
@@ -117,7 +117,7 @@ const NurseryDetailPage = () => {
                 }
               }}
             />
-            <div className="w-full">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+            <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
         <PageFooter />

@@ -7,7 +7,7 @@ import EntityStatusModal, { StatusProps } from "@/components/extensive/EntitySta
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import { useModalContext } from "@/context/modal.provider";
@@ -104,89 +104,84 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   };
 
   return (
-    <PageBody>
-      <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
-        <Flex gap={7}>
-          <PageItem
-            title={t("Key Indicators")}
-            flexProps={{ maxWidth: "26%" }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: "View Progress & Goals",
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("progress-and-goals")
-            }}
-          >
-            <MetricCard
-              title={t("Seedlings Grown")}
-              variant="donutChart"
-              progress={nursery?.seedlingGrown ?? 0}
-              goal={totalNurserySeedlings}
-              icon={<SeedlingsIcon boxSize={6} />}
-              tooltipContent={t("Number of seedlings grown for this project.")}
-              color="secondary.500"
-            />
-          </PageItem>
-          <PageItem title="About Nurseries" flexProps={{ maxWidth: "37%" }}>
-            <About
-              description={
-                <Text textStyle="300" as="span">
-                  <strong>{t("Nurseries")}</strong>&nbsp;
-                  {t(
-                    "are the lifeblood of your tree planting project. Whenever your project builds a new nursery or expands an existing one to supply your sites, create a nursery profile on TerraMatch. If your project uses nurseries managed by others, or relies only on direct seeding or assisted natural regeneration, you do not need to add any nursery profiles. If you have challenges or need assistance, please reach out to your project manager or "
-                  )}
-                  <Link
-                    href="mailto:info@terramatch.org?subject=Support%20Request%20for%20Nursery%20Profile"
-                    fontWeight="bold"
-                    target="_blank"
-                  >
-                    <Text as="span" textStyle="200-bold">
-                      info@terramatch.org
-                    </Text>
-                  </Link>
-                </Text>
+    <PageContent>
+      <Flex gap={7}>
+        <PageItem
+          title={t("Key Indicators")}
+          flexProps={{ maxWidth: "26%" }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "View Progress & Goals",
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("progress-and-goals")
+          }}
+        >
+          <MetricCard
+            title={t("Seedlings Grown")}
+            variant="donutChart"
+            progress={nursery?.seedlingGrown ?? 0}
+            goal={totalNurserySeedlings}
+            icon={<SeedlingsIcon boxSize={6} />}
+            tooltipContent={t("Number of seedlings grown for this project.")}
+            color="secondary.500"
+          />
+        </PageItem>
+        <PageItem title="About Nurseries" flexProps={{ maxWidth: "37%" }}>
+          <About
+            description={
+              <Text textStyle="300" as="span">
+                <strong>{t("Nurseries")}</strong>&nbsp;
+                {t(
+                  "are the lifeblood of your tree planting project. Whenever your project builds a new nursery or expands an existing one to supply your sites, create a nursery profile on TerraMatch. If your project uses nurseries managed by others, or relies only on direct seeding or assisted natural regeneration, you do not need to add any nursery profiles. If you have challenges or need assistance, please reach out to your project manager or "
+                )}
+                <Link
+                  href="mailto:info@terramatch.org?subject=Support%20Request%20for%20Nursery%20Profile"
+                  fontWeight="bold"
+                  target="_blank"
+                >
+                  <Text as="span" textStyle="200-bold">
+                    info@terramatch.org
+                  </Text>
+                </Link>
+              </Text>
+            }
+            links={[
+              {
+                title: t("Use the TerraFund Profile Creation Checklists"),
+                link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
+              },
+              {
+                title: t("Create a Nursery Profile"),
+                link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"
               }
-              links={[
-                {
-                  title: t("Use the TerraFund Profile Creation Checklists"),
-                  link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
-                },
-                {
-                  title: t("Create a Nursery Profile"),
-                  link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512665359899-How-to-Create-a-Nursery-Profile"
-                }
-              ]}
-            />
-          </PageItem>
-          <PageItem
-            flexProps={{ maxWidth: "37%", overflow: "hidden" }}
-            title={t("Nursery Set Up")}
-            tag={(() => {
-              const tagState = mapStatusToTagStateNursery(
-                nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
-              );
+            ]}
+          />
+        </PageItem>
+        <PageItem
+          flexProps={{ maxWidth: "37%", overflow: "hidden" }}
+          title={t("Nursery Set Up")}
+          tag={(() => {
+            const tagState = mapStatusToTagStateNursery(
+              nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
+            );
 
-              return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
-            })()}
-            buttonProps={{
-              variant: "primary",
-              size: "small",
-              children: nursery?.status === "approved" ? t("Edit") : t("Continue"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: handleEditClick
-            }}
-          >
-            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection entity={nursery} type="nurseries" />
-            </Box>
-          </PageItem>
-        </Flex>
+            return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+          })()}
+          buttonProps={{
+            variant: "primary",
+            size: "small",
+            children: nursery?.status === "approved" ? t("Edit") : t("Continue"),
+            rightIcon: <ChevronRightIcon />,
+            onClick: handleEditClick
+          }}
+        >
+          <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+            <EntitySetUpSection entity={nursery} type="nurseries" />
+          </Box>
+        </PageItem>
       </Flex>
-
-      <br />
-      <br />
-    </PageBody>
+    </PageContent>
   );
 };
 

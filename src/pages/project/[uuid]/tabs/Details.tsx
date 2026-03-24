@@ -9,7 +9,7 @@ import * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -187,7 +187,7 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-b border-theme-neutral-300 py-4"
+                                      "border-theme-neutral-300 border-b py-4"
                                     )}
                                   >
                                     {row[idx + 1]}
@@ -269,15 +269,13 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
-      <Flex flexDirection="column" gap={2}>
-        <WizardFormProvider fieldsProvider={fieldsProvider}>
-          {steps.map((step, index) => (
-            <DetailStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
-          ))}
-        </WizardFormProvider>
-      </Flex>
-    </PageBody>
+    <PageContent className="bg-theme-neutral-100 gap-2">
+      <WizardFormProvider fieldsProvider={fieldsProvider}>
+        {steps.map((step, index) => (
+          <DetailStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
+        ))}
+      </WizardFormProvider>
+    </PageContent>
   );
 };
 

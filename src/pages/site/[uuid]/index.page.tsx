@@ -140,7 +140,7 @@ const SiteDetailPage = () => {
                   }
                 }}
               />
-              <div className="w-full">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+              <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
             </>
           )}
           <PageFooter />

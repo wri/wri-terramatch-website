@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from "react";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import About from "@/components/extensive/PageElements/About/About";
-import PageBody from "@/components/extensive/PageElements/Body/PageBody";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -133,162 +133,160 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   };
 
   return (
-    <PageBody className="bg-theme-neutral-200">
+    <PageContent>
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Flex direction="column" gap={5} paddingX={6} paddingBottom={4}>
-        <Flex gap={7}>
-          <PageItem
-            title="Project Map"
-            flexProps={{ flex: 1 }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: "View Sites",
-              rightIcon: <ChevronRightIcon />,
-              onClick: onViewSites ?? (() => goToTab("sites"))
-            }}
-            downloadButtonProps={{
-              variant: "secondary",
-              size: "small",
-              children: "Download Project Polygons",
-              leftIcon: <DownloadIcon />,
-              onClick: handleDownloadPolygons,
-              loading: isDownloading
-            }}
-          >
-            <Box className="relative h-auto">
-              <OverviewMapArea
-                entityModel={project}
-                type="projects"
-                className="max-h-[432px]"
-                disabledPolygonPanel={true}
-              />
-            </Box>
-          </PageItem>
-          <PageItem
-            flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
-            title="Project Set Up"
-            tag={(() => {
-              const tagState = mapStatusToTagStateProject(project?.status);
-
-              return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
-            })()}
-            buttonProps={{
-              variant: "primary",
-              size: "small",
-              children: isProjectSetupComplete ? t("Edit") : t("Continue"),
-              rightIcon: <ChevronRightIcon />,
-              onClick: goToContinueEditingTab
-            }}
-          >
-            <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
-              <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
-            </Box>
-          </PageItem>
-        </Flex>
+      <Flex gap={7}>
         <PageItem
-          title="Key Indicators & Insights"
-          flexProps={{ paddingY: 2, width: "100%" }}
+          title="Project Map"
+          flexProps={{ flex: 1 }}
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "View Progress & Goals",
+            children: "View Sites",
             rightIcon: <ChevronRightIcon />,
-            onClick: () => goToTab("goals")
+            onClick: onViewSites ?? (() => goToTab("sites"))
+          }}
+          downloadButtonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "Download Project Polygons",
+            leftIcon: <DownloadIcon />,
+            onClick: handleDownloadPolygons,
+            loading: isDownloading
           }}
         >
-          <KeyIndicatorsInsightsTab project={project} />
+          <Box className="relative h-auto">
+            <OverviewMapArea
+              entityModel={project}
+              type="projects"
+              className="max-h-[432px]"
+              disabledPolygonPanel={true}
+            />
+          </Box>
         </PageItem>
-        <Flex gap={7} maxHeight="570px" paddingY={2}>
-          <PageItem
-            flexProps={{ flex: 1 }}
-            title="Team Members"
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: "Manage Team",
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("team-members")
-            }}
-          >
-            <ProfileListCard
-              items={[
-                {
-                  title: "Project Managers",
-                  profiles: projectManagers,
-                  onProfileClick: () => {},
-                  type: "project-manager"
-                },
-                {
-                  title: "Monitoring Partners",
-                  profiles: monitoringPartners,
-                  onProfileClick: () => {},
-                  type: "monitoring-partner"
-                }
-              ]}
-              onInviteClick={handleInviteClick}
-            />
-          </PageItem>
-          <PageItem
-            title="Latest Images"
-            flexProps={{ flex: 1 }}
-            buttonProps={{
-              variant: "secondary",
-              size: "small",
-              children: "View Gallery",
-              rightIcon: <ChevronRightIcon />,
-              onClick: () => goToTab("gallery")
-            }}
-          >
-            <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
-          </PageItem>
-          <PageItem title="Project Onboarding">
-            <About
-              title={t("Monitoring, Reporting, and Verification (MRV)")}
-              description={
-                <>
-                  <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
-                    <Box as="li">
-                      <Text color="neutral.900" textStyle="300">
-                        <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
-                      </Text>
-                    </Box>
-                    <Box as="li">
-                      <Text color="neutral.900" textStyle="300">
-                        <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
-                      </Text>
-                    </Box>
-                    <Box as="li">
-                      <Text color="neutral.900" textStyle="300">
-                        <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
-                      </Text>
-                    </Box>
-                  </Box>
-                  <Flex alignItems="center" flexWrap="wrap">
-                    <Text color="neutral.900" textStyle="300">
-                      {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
-                    </Text>
-                    <Button
-                      variant="borderless"
-                      size="small"
-                      rightIcon={<ChevronRightIcon />}
-                      onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
-                    >
-                      {t(mrvOnboardingContentItem?.content.mrvLinkText)}
-                    </Button>
-                  </Flex>
-                </>
-              }
-              links={mrvOnboardingContentItem?.content.helpfulLinks ?? []}
-            />
-          </PageItem>
-        </Flex>
+        <PageItem
+          flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
+          title="Project Set Up"
+          tag={(() => {
+            const tagState = mapStatusToTagStateProject(project?.status);
+
+            return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+          })()}
+          buttonProps={{
+            variant: "primary",
+            size: "small",
+            children: isProjectSetupComplete ? t("Edit") : t("Continue"),
+            rightIcon: <ChevronRightIcon />,
+            onClick: goToContinueEditingTab
+          }}
+        >
+          <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
+            <EntitySetUpSection onStatusChange={setIsProjectSetupComplete} entity={project} type="projects" />
+          </Box>
+        </PageItem>
       </Flex>
-    </PageBody>
+      <PageItem
+        title="Key Indicators & Insights"
+        flexProps={{ paddingY: 2, width: "100%" }}
+        buttonProps={{
+          variant: "secondary",
+          size: "small",
+          children: "View Progress & Goals",
+          rightIcon: <ChevronRightIcon />,
+          onClick: () => goToTab("goals")
+        }}
+      >
+        <KeyIndicatorsInsightsTab project={project} />
+      </PageItem>
+      <Flex gap={7} maxHeight="570px" paddingY={2}>
+        <PageItem
+          flexProps={{ flex: 1 }}
+          title="Team Members"
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "Manage Team",
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("team-members")
+          }}
+        >
+          <ProfileListCard
+            items={[
+              {
+                title: "Project Managers",
+                profiles: projectManagers,
+                onProfileClick: () => {},
+                type: "project-manager"
+              },
+              {
+                title: "Monitoring Partners",
+                profiles: monitoringPartners,
+                onProfileClick: () => {},
+                type: "monitoring-partner"
+              }
+            ]}
+            onInviteClick={handleInviteClick}
+          />
+        </PageItem>
+        <PageItem
+          title="Latest Images"
+          flexProps={{ flex: 1 }}
+          buttonProps={{
+            variant: "secondary",
+            size: "small",
+            children: "View Gallery",
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("gallery")
+          }}
+        >
+          <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
+        </PageItem>
+        <PageItem title="Project Onboarding">
+          <About
+            title={t("Monitoring, Reporting, and Verification (MRV)")}
+            description={
+              <>
+                <Box as="ul" listStyleType="disc" marginInlineStart={3} paddingLeft={4}>
+                  <Box as="li">
+                    <Text color="neutral.900" textStyle="300">
+                      <strong>{t("Monitoring")}:</strong> {t(mrvOnboardingContentItem?.content.monitoring)}
+                    </Text>
+                  </Box>
+                  <Box as="li">
+                    <Text color="neutral.900" textStyle="300">
+                      <strong>{t("Reporting")}:</strong> {t(mrvOnboardingContentItem?.content.reporting)}
+                    </Text>
+                  </Box>
+                  <Box as="li">
+                    <Text color="neutral.900" textStyle="300">
+                      <strong>{t("Verification")}:</strong> {t(mrvOnboardingContentItem?.content.verification)}
+                    </Text>
+                  </Box>
+                </Box>
+                <Flex alignItems="center" flexWrap="wrap">
+                  <Text color="neutral.900" textStyle="300">
+                    {t(mrvOnboardingContentItem?.content.mrvLinkPrefix)}
+                  </Text>
+                  <Button
+                    variant="borderless"
+                    size="small"
+                    rightIcon={<ChevronRightIcon />}
+                    onClick={() => window.open(mrvOnboardingContentItem?.content.mrvFrameworkLink, "_blank")}
+                  >
+                    {t(mrvOnboardingContentItem?.content.mrvLinkText)}
+                  </Button>
+                </Flex>
+              </>
+            }
+            links={mrvOnboardingContentItem?.content.helpfulLinks ?? []}
+          />
+        </PageItem>
+      </Flex>
+    </PageContent>
   );
 };
 

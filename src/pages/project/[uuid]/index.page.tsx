@@ -188,7 +188,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="w-full">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
       <PageFooter />
     </>
   );
