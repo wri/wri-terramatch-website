@@ -3,12 +3,14 @@ import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import {
   AgriculturalLandIcon,
   AgroforestyIcon,
   AssistedNaturalRegenIcon,
   DirectSeedingIcon,
   GrasslandIcon,
+  InfoIcon,
   MangroveIcon,
   NaturalForestIcon,
   OpenNaturalEcosystemIcon,
@@ -20,31 +22,41 @@ import {
   WoodlotIcon
 } from "@/redesignComponents/foundations/Icons";
 
-type SiteTypeConfig = { icon: ReactNode; label: string };
+type SiteTypeConfig = { icon: ReactNode; label: string; tooltip?: string };
 
 const SITE_RESTORATION_STRATEGY_MAP: Record<string, SiteTypeConfig> = {
   "tree-planting": {
     icon: <TreePlantingIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Tree Planting"
+    label: "Tree Planting",
+    tooltip:
+      "Tree planting is defined as the planting of seedlings or saplings over an area to meet specific goals. This includes all planting, including areas with no forest canopy and in areas with partial canopy coverage."
   },
   "assisted-natural-regeneration": {
     icon: <AssistedNaturalRegenIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Assisted Natural Regeneration"
+    label: "Assisted Natural Regeneration",
+    tooltip:
+      "Assisted natural regeneration is the exclusion of threats (i.e. grazing, fire, invasive plants) that prevent natural regrowth from seeds and roots already present in the soil or from natural seed dispersal from nearby trees. This does not include any tree planting."
   },
   "direct-seeding": {
     icon: <DirectSeedingIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Direct Seeding"
+    label: "Direct Seeding",
+    tooltip:
+      "Direct seeding is the active dispersal of seeds (preferably ecologically diverse, native seed mixes) that accelerate natural regrowth, provided the area is protected from disturbances. It includes only active collection and dispersal of seeds and excludes any natural dispersal that would occur without human intervention. This does not include any tree planting."
   }
 };
 
 const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
   agroforest: {
     icon: <AgroforestyIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Agroforesty"
+    label: "Agroforesty",
+    tooltip:
+      "An agroforest is productive, managed land containing a mix of woody perennial species (trees, shrubs, bamboos) and agricultural crops in a way that improves the agricultural productivity and ecological function of a site. This category includes agroforestry for shade grown crops (cacao, coffee), as well as planting trees at a low density to allow for continued full-sun agriculture, also known as intercropping or row cropping. Please note that silvopasture is its own separate land use system."
   },
   "agricultural-land": {
     icon: <AgriculturalLandIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Agricultural Land"
+    label: "Agricultural Land",
+    tooltip:
+      "A natural forest ecosystem is a rural landscape where the majority of trees are native species and features biologically integrated communities of plants, animals and microbes, together with the local soils (substrates) and atmospheres (climates) with which they interact."
   },
   grassland: {
     icon: <GrasslandIcon className="text-theme-secondary-800 h-8 w-8" />,
@@ -56,7 +68,9 @@ const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
   },
   "open-natural-ecosystem": {
     icon: <OpenNaturalEcosystemIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Open Natural Ecosystem"
+    label: "Open Natural Ecosystem",
+    tooltip:
+      "Open Natural Ecosystems mainly comprise naturally open and often treeless habitats, ranging from savannas and scrublands to grasslands, ravines and dunes. Grasslands are generally open and continuous, fairly flat areas of grass. They are often located between temperate forests at high latitudes and deserts at subtropical latitudes."
   },
   "natural-forest": {
     icon: <NaturalForestIcon className="text-theme-secondary-800 h-8 w-8" />,
@@ -64,23 +78,33 @@ const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
   },
   peatland: {
     icon: <PeatlandIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Peatland"
+    label: "Peatland",
+    tooltip:
+      "Peatlands are terrestrial wetland ecosystems in which waterlogged conditions prevent plant material from fully decomposing."
   },
   "riparian-area-or-wetland": {
     icon: <WetlandIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Riparian Area / Wetland"
+    label: "Riparian Area / Wetland",
+    tooltip:
+      "Wetlands are areas where the soil is covered with water or can be present near the ground throughout the year, including marshes, swamps, bogs, and fens. They support both terrestrial and aquatic species. Riparian ecosystems encompass a suite of ecosystem types, including river banks, floodplains, and wetlands, that are characterized primarily by being transitional zones between terrestrial and aquatic realms."
   },
   silvopasture: {
     icon: <SilvopastureIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Silvopasture"
+    label: "Silvopasture",
+    tooltip:
+      "A silvopasture system is productive, managed land containing a mix of woody perennial species (trees, shrubs, bamboos) and animal forage or pasture land to improve the agricultural productivity and ecological function of a site for continued use as pasture. "
   },
   "urban-forest": {
     icon: <UrbanForestIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Urban Forest"
+    label: "Urban Forest",
+    tooltip:
+      "An urban forest encompasses the trees and shrubs in an urban area, including trees in yards, along streets and utility corridors, in protected areas, and in watersheds. This includes individual trees, street trees, green spaces with trees, and even the associated vegetation and the soil beneath the trees."
   },
   "woodlot-or-plantation": {
     icon: <WoodlotIcon className="text-theme-secondary-800 h-8 w-8" />,
-    label: "Woodlot / Plantation"
+    label: "Woodlot / Plantation",
+    tooltip:
+      "A plantation is a forest predominantly composed of intensively managed trees that are established through planting and/or deliberate seeding, with the explicit goal of harvesting and processing those trees for wood once they reach maturity. A woodlot is a type of plantation, predominantly managed by a single landholder or a community, to supply wood for construction and fuel to the landholder or community."
   }
 };
 const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
@@ -116,7 +140,19 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
               <>
                 {restorationStrategyConfig.icon}
                 <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
-                  {t(restorationStrategyConfig.label)}
+                  {t(restorationStrategyConfig.label)}{" "}
+                  {restorationStrategyConfig.tooltip != null && (
+                    <Tooltip
+                      content={
+                        <>
+                          <span className="text-sm font-semibold">{t(restorationStrategyConfig.label)}: </span>
+                          {t(restorationStrategyConfig.tooltip)}
+                        </>
+                      }
+                    >
+                      <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
+                    </Tooltip>
+                  )}
                 </Text>
               </>
             ) : (
@@ -138,7 +174,19 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
               <>
                 {targetLandUseConfig.icon}
                 <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
-                  {t(targetLandUseConfig.label)}
+                  {t(targetLandUseConfig.label)}{" "}
+                  {targetLandUseConfig.tooltip != null && (
+                    <Tooltip
+                      content={
+                        <>
+                          <span className="text-sm font-semibold">{t(targetLandUseConfig.label)}: </span>
+                          {t(targetLandUseConfig.tooltip)}
+                        </>
+                      }
+                    >
+                      <InfoIcon className="text-theme-neutral-800 h-3 w-3" />
+                    </Tooltip>
+                  )}
                 </Text>
               </>
             ) : (
