@@ -20,7 +20,8 @@ import WizardFormProvider, {
   FormModel,
   FormModelsDefinition,
   OrgFormDetails,
-  ProjectFormDetails
+  ProjectFormDetails,
+  useFieldsProvider
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
@@ -30,8 +31,7 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/ChevronRightIcon";
-import { ProjectIcon } from "@/redesignComponents/foundations/Icons/ProjectIcon";
+import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
 import Log from "@/utils/log";
 
@@ -40,6 +40,7 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
+import { downloadAnswersCSV } from "./utils";
 
 export type WizardFormEntity = {
   uuid?: string | null;
@@ -116,6 +117,7 @@ function WizardForm(props: WizardFormProps) {
   const isAdmin = useIsAdmin();
   const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
+  const fieldsProvider = useFieldsProvider();
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
@@ -293,21 +295,10 @@ function WizardForm(props: WizardFormProps) {
                 }
               : undefined
           }
-          tertiaryButtonProps={
-            !props.hideBackButton
-              ? {
-                  children: t("Previous"),
-                  leftIcon: <ChevronRightIcon className="rotate-180" />,
-                  onClick: () => {
-                    if (selectedStepIndex > 0) {
-                      setSelectedStepIndex(n => n - 1);
-                    } else {
-                      props.onBackFirstStep();
-                    }
-                  }
-                }
-              : undefined
-          }
+          tertiaryButtonProps={{
+            children: t("Download"),
+            onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+          }}
         />
       </div>
     ),
@@ -317,13 +308,13 @@ function WizardForm(props: WizardFormProps) {
       _onChange,
       selectedStepIndex,
       lastIndex,
-      setSelectedStepIndex,
       isAdmin,
       onClickSaveAndClose,
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      formModel?.model
+      formModel?.model,
+      fieldsProvider
     ]
   );
 
@@ -452,7 +443,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
