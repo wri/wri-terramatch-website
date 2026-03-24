@@ -10,15 +10,11 @@ export type AnrPlotMapPopupProps = {
   onClose: () => void;
 };
 
-/**
- * Lightweight popup for ANR monitoring plot features (GeoJSON properties: plot_id, area_m2, select).
- * Styling aligned with TooltipMap / site polygon popups (white card, top accent).
- */
 export const AnrPlotMapPopup = ({ plotId, areaM2, select, onClose }: AnrPlotMapPopupProps) => {
   const t = useT();
 
   return (
-    <div className="shadow-md relative w-[240px] rounded border-t-[5px] border-t-[rgb(195,110,95)] bg-white px-3 pb-3 pt-2">
+    <div className="shadow-md border-gray-500 relative w-[240px] rounded border-t-[5px] bg-white px-3 pb-3 pt-2">
       <button
         type="button"
         onClick={onClose}

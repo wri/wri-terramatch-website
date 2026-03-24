@@ -1829,9 +1829,6 @@ export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefine
   }
 }
 
-/**
- * Renders ANR monitoring plot GeoJSON above site polygon layers (inserted before {@link LAYERS_NAMES.MEDIA_IMAGES} when present).
- */
 export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown, options: { visible: boolean }) {
   if (map == null) return;
   removeAnrPlotGeometryOverlay(map);
@@ -1870,7 +1867,7 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
         paint: {
-          "fill-color": "rgb(195, 110, 95)",
+          "fill-color": "#9ca3af",
           "fill-opacity": 0.5
         }
       },
@@ -1884,7 +1881,7 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
         paint: {
-          "line-color": "rgb(195, 110, 95)",
+          "line-color": "#6b7280",
           "line-width": 1.5,
           "line-opacity": 0.85
         }
