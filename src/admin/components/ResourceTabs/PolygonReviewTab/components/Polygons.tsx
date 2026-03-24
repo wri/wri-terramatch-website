@@ -114,9 +114,6 @@ const Polygons = (props: IPolygonProps) => {
   useEffect(() => {
     if (polygonFromMap?.isOpen) {
       const newSelectedPolygon = polygonMenu.find(polygon => polygon.uuid === polygonFromMap.uuid);
-
-      // Default to Attributes only when the drawer is opened from map intent.
-      // Menu intent should preserve `drawerInitialTopTab` (e.g. ANR).
       const source = polygonFromMap?.source ?? "map";
       if (source === "map") {
         setDrawerInitialTopTab("attributes");
