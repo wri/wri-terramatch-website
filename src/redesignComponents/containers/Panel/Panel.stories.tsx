@@ -12,7 +12,7 @@ import Accordion from "../Accordion/Accordion";
 import Panel from "./Panel";
 
 const meta = {
-  title: "Redesign Components/Containers/Panel",
+  title: "Redesign Components/Containers/Panel/Panel",
   component: Panel,
   parameters: {
     layout: "centered"
