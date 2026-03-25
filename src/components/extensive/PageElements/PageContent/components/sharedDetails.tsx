@@ -128,9 +128,7 @@ export type SharedDetailStepProps = {
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
-  /** Entry title that triggers the "Additional Information" separator + divider */
   additionalInfoTitle: string;
-  /** Optional content rendered after the first entry in the list */
   afterFirstEntry?: ReactNode;
 };
 
@@ -212,7 +210,8 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
                 textStyle={entry.title === additionalInfoTitle ? "400" : "300-bold"}
                 color={entry.title === additionalInfoTitle ? "neutral.700" : "primary.900"}
               >
-                {entry.title}:
+                {t(entry.title)}
+                {entry.title === additionalInfoTitle ? "" : ":"}
               </Text>
               <div
                 className={classNames(
