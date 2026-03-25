@@ -21,6 +21,7 @@ import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 
 import AuditLog from "./tabs/AuditLog";
+import SiteMapTab from "./tabs/SiteMap";
 
 const SiteDetailPage = () => {
   const t = useT();
@@ -43,7 +44,8 @@ const SiteDetailPage = () => {
 
   const TabItems = [
     { key: "overview", title: t("Overview"), body: <SiteOverviewTab site={site!} refetch={refetch} /> },
-    { key: "details", title: t("Details"), body: <SiteDetailTab site={site!} /> },
+    { key: "details", title: t("Site Details"), body: <SiteDetailTab site={site!} /> },
+    { key: "map", title: t("Site Map"), body: <SiteMapTab site={site!} /> },
     {
       key: "gallery",
       title: t("Gallery"),
@@ -80,17 +82,6 @@ const SiteDetailPage = () => {
         <LoadingContainer loading={!isLoaded}>
           {site == null ? null : (
             <>
-              {/* <Head>
-                <title>{`${t("Site")} ${site.name}`}</title>
-              </Head>
-              <PageBreadcrumbs
-                links={[
-                  { title: t("My Projects"), path: "/my-projects" },
-                  { title: site.projectName ?? "", path: `/project/${site.projectUuid}` },
-                  { title: site.name ?? "" }
-                ]}
-              />
-              <SiteHeader site={site} /> */}
               <SiteBanner
                 site={site}
                 className="top-[70px]"
@@ -115,7 +106,7 @@ const SiteDetailPage = () => {
                       >
                         {t("Project Profile")}
                       </Button>
-                      <span className="text-theme-neutral-300 text-sm">|</span>
+                      <span className="text-sm text-theme-neutral-300">|</span>
                       <Button
                         variant="borderless"
                         size="small"

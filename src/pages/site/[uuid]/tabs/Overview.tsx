@@ -1,6 +1,7 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import router from "next/router";
+import { useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import About from "@/components/extensive/PageElements/About/About";
@@ -15,17 +16,12 @@ import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
 import LastestImagesSectionTab from "@/pages/project/[uuid]/tabs/LastestImagesSection";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
-import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
-import {
-  AreaHectaresIcon,
-  ChevronRightIcon,
-  RegenerationIcon,
-  SeedlingsIcon,
-  SurvivalRateIcon
-} from "@/redesignComponents/foundations/Icons";
-import { TreeIcon } from "@/redesignComponents/foundations/Icons";
+import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
+import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { ABOUT_SITES_CONTENT } from "./constants/AboutSites.constants";
+import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
   refetch?: () => void;
@@ -56,21 +52,29 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     setSiteData(site);
   }, [setSiteData, site]);
 
-  const mockedFrameworkKey = "ppc";
+  const goToTab = (tab: string) => {
+    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+      shallow: true
+    });
+  };
+
+  const aboutSitesContentItem = useMemo(() => {
+    return ABOUT_SITES_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
+  }, [site.frameworkKey]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
         <Flex gap={7}>
           <PageItem
-            title="Site Map"
+            title={t("Site Map")}
             flexProps={{ flex: 1 }}
             buttonProps={{
               variant: "secondary",
               size: "small",
               children: "View all Areas",
               rightIcon: <ChevronRightIcon />,
-              onClick: () => {}
+              onClick: () => goToTab("map")
             }}
           >
             <Box className="relative h-auto">
@@ -79,8 +83,12 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageItem>
           <PageItem
             flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
-            title="Sites Set Up"
-            tag={<TagSubmission state="information-required" />}
+            title={t("Sites Set Up")}
+            tag={(() => {
+              const tagState = mapStatusToTagStateEntity(site?.status);
+
+              return site?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            })()}
             buttonProps={{
               variant: "primary",
               size: "small",
@@ -95,101 +103,56 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           </PageItem>
         </Flex>
         <PageItem
-          title="Key Indicators & Insights"
+          title={t("Key Indicators & Insights")}
           flexProps={{ paddingY: 2, width: "100%" }}
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "View Progress & Goals",
-            rightIcon: <ChevronRightIcon />
+            children: t("View Progress & Goals"),
+            rightIcon: <ChevronRightIcon />,
+            onClick: () => goToTab("goals")
           }}
         >
           <Flex gap={4}>
-            <MetricCard
-              className="flex-1"
-              title="Trees Planted"
-              variant="large"
-              progress={0}
-              goal={100}
-              icon={<TreeIcon />}
-              tooltipContent="This is a tooltip"
-              color="secondary.600"
-            />
-            <MetricCard
-              className="flex-1"
-              title="Seeds Planted"
-              variant="large"
-              progress={50}
-              goal={100}
-              icon={<SeedlingsIcon />}
-              tooltipContent="This is a tooltip"
-              color="secondary.600"
-            />
-            <MetricCard
-              className="flex-1"
-              title="Trees Regenerating"
-              variant="large"
-              progress={25}
-              goal={100}
-              icon={<RegenerationIcon />}
-              tooltipContent="This is a tooltip"
-              color="secondary.600"
-            />
-            <MetricCard
-              className="flex-1"
-              title="Survival Rate"
-              variant="large"
-              progress={75}
-              goal={100}
-              icon={<SurvivalRateIcon />}
-              tooltipContent="This is a tooltip"
-              color="secondary.600"
-            />
-            <MetricCard
-              className="flex-1"
-              title="Area Restored (ha)"
-              variant="large"
-              progress={100}
-              goal={100}
-              icon={<AreaHectaresIcon />}
-              tooltipContent="This is a tooltip"
-              color="secondary.700"
-            />
+            <KeyIndicatorsInsightsTab site={site} />
           </Flex>
         </PageItem>
         <Flex gap={7} maxHeight="570px" paddingY={2}>
           <PageItem
-            title="Latest Images"
+            title={t("Latest Images")}
             flexProps={{ flex: 1 }}
             buttonProps={{
               variant: "secondary",
               size: "small",
-              children: "View Gallery",
-              rightIcon: <ChevronRightIcon />
+              children: t("View Gallery"),
+              rightIcon: <ChevronRightIcon />,
+              onClick: () => goToTab("gallery")
             }}
           >
             <LastestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={3} />
           </PageItem>
-          <PageItem title={ABOUT_SITES_CONTENT[mockedFrameworkKey].title}>
+          <PageItem title={t(aboutSitesContentItem?.title!)}>
             <About
               description={
                 <Flex direction="column" gap={5}>
                   <Text color="neutral.900" textStyle="300">
                     <strong>{t("Sites")} </strong>
-                    {t(ABOUT_SITES_CONTENT[mockedFrameworkKey].content[0])}
+                    {t(aboutSitesContentItem?.paragraph1!)}
                   </Text>
                   <Text color="neutral.900" textStyle="300">
-                    {t(ABOUT_SITES_CONTENT[mockedFrameworkKey].content[1])}
+                    {t(aboutSitesContentItem?.paragraph2!)}
                     <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} as="span">
-                      {t("info@terramatch.org")}
+                      info@terramatch.org
                     </Button>
                   </Text>
                 </Flex>
               }
-              links={ABOUT_SITES_CONTENT[mockedFrameworkKey].links.map(link => ({
-                title: link.title,
-                link: link.link
-              }))}
+              links={
+                aboutSitesContentItem?.links.map(link => ({
+                  title: t(link.title),
+                  link: link.link
+                })) ?? []
+              }
             />
           </PageItem>
         </Flex>

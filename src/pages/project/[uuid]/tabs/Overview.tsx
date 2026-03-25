@@ -18,6 +18,7 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerModal";
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
@@ -29,31 +30,6 @@ interface ProjectOverviewTabProps {
   project: ProjectFullDto;
   onViewSites?: () => void;
 }
-
-const mapStatusToTagStateProject = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
-  switch (status) {
-    case "draft":
-      return {
-        type: "draft"
-      };
-    case "started":
-      return {
-        type: "draft"
-      };
-    case "awaiting-approval":
-      return { type: "pending-approval" };
-    case "needs-more-information":
-      return {
-        type: "information-required"
-      };
-    case "approved":
-      return {
-        type: "approved"
-      };
-    default:
-      return undefined;
-  }
-};
 
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
@@ -172,7 +148,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
           title="Project Set Up"
           tag={(() => {
-            const tagState = mapStatusToTagStateProject(project?.status);
+            const tagState = mapStatusToTagStateEntity(project?.status);
 
             return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
           })()}

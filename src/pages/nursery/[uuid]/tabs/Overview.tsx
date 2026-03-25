@@ -19,34 +19,10 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import MetricCard from "@/redesignComponents/dataDisplay/Metrics/MetricCard";
 import { SeedlingsIcon } from "@/redesignComponents/foundations/Icons";
 import ChevronRightIcon from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
+import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 interface NurseryOverviewTabProps {
   nursery: NurseryFullDto;
 }
-
-const mapStatusToTagStateNursery = (status: string | null | undefined): { type: TagSubmissionState } | undefined => {
-  switch (status) {
-    case "draft":
-      return {
-        type: "draft"
-      };
-    case "started":
-      return {
-        type: "draft"
-      };
-    case "awaiting-approval":
-      return { type: "pending-approval" };
-    case "needs-more-information":
-      return {
-        type: "information-required"
-      };
-    case "approved":
-      return {
-        type: "approved"
-      };
-    default:
-      return undefined;
-  }
-};
 
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
@@ -162,7 +138,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
           flexProps={{ maxWidth: "37%", overflow: "hidden" }}
           title={t("Nursery Set Up")}
           tag={(() => {
-            const tagState = mapStatusToTagStateNursery(
+            const tagState = mapStatusToTagStateEntity(
               nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
             );
 

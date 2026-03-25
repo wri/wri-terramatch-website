@@ -1,10 +1,11 @@
-export const ABOUT_SITES_CONTENT = {
-  "hbf-terrafund": {
+export const ABOUT_SITES_CONTENT = [
+  {
+    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3", "hbf"],
     title: "About Sites",
-    content: [
+    paragraph1:
       " are the core units for reporting your restoration work in TerraMatch. Each site can include one or more restoration areas or polygons and should reflect a meaningful geographic grouping for your project.",
-      "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or"
-    ],
+    paragraph2:
+      "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or",
     links: [
       {
         title: "Follow the TerraFund Siting Guide ",
@@ -28,12 +29,13 @@ export const ABOUT_SITES_CONTENT = {
       }
     ]
   },
-  ppc: {
+  {
+    frameworks: ["ppc"],
     title: "About Sites",
-    content: [
+    paragraph1:
       " are the core units for reporting your restoration work on the IMP. Each site typically includes one restoration area (polygon), but can include multiple areas, based on proximity and other characteristics. Please review your siting approach with your Project Manager or Global Lead to determine how many sites you need to create for your PPC project.",
-      "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to"
-    ],
+    paragraph2:
+      "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to",
     links: [
       {
         title: "What is the PPC definition of a site? ",
@@ -49,4 +51,4 @@ export const ABOUT_SITES_CONTENT = {
       }
     ]
   }
-};
+];
