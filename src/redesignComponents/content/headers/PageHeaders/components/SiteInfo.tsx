@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo } from "react";
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -41,8 +42,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const { openModal } = useModalContext();
 
   const needMoreInformation =
-    site.updateRequestStatus === "needs-more-information" ||
-    (site.updateRequestStatus === "no-update" && site.status === "needs-more-information");
+    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
 
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(site.updateRequestStatus ?? "");
 

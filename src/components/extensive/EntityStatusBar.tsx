@@ -28,7 +28,7 @@ type StatusBarStatus = keyof typeof StatusMapping;
 const hasUpdateRequest = ({ updateRequestStatus }: EntityFullDto) =>
   !["draft", "no-update", "approved"].includes(updateRequestStatus ?? "");
 
-const getStatusProps = (
+export const getStatusProps = (
   t: typeof useT,
   entity: EntityFullDto,
   entityStatus: StatusBarStatus

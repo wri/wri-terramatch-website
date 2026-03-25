@@ -68,7 +68,7 @@ export const PanelWithBreadcrumb: Story = {
             maxItems={2}
             links={[
               { label: "Page level 1", link: "#" },
-              { label: "Page level 2", link: "#" },
+              { label: "...", link: "#" },
               { label: "Page level 3", link: "#" }
             ]}
             linkRouter={Link}
