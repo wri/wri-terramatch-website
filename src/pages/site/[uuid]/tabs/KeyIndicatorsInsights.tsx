@@ -45,7 +45,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         color="secondary.600"
         type="treesRestored"
         className={METRIC_CARD_CLASS_NAME}
-        classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -56,22 +55,34 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
       />
       <MetricCard
         className={METRIC_CARD_CLASS_NAME}
-        title={t("Seeds Planted")}
+        title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
         variant="large"
         progress={site.seedsPlantedCount ?? 0}
         goal={0}
         icon={<SeedlingsIcon />}
-        tooltipContent={t("Seeds Planted")}
+        tooltipContent={
+          <Box fontSize="14px" lineHeight="20px">
+            <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
+            <br />
+            {t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.content}`)}
+          </Box>
+        }
         color="secondary.600"
       />
       <MetricCard
         className={METRIC_CARD_CLASS_NAME}
-        title={t("Trees Regenerating")}
+        title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
         variant="large"
         progress={site.regeneratedTreesCount ?? 0}
         goal={0}
         icon={<RegenerationIcon />}
-        tooltipContent={t("Trees Regenerating")}
+        tooltipContent={
+          <Box fontSize="14px" lineHeight="20px">
+            <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
+            <br />
+            {t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.content}`)}
+          </Box>
+        }
         color="secondary.600"
       />
       <MetricCard
@@ -81,7 +92,13 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         progress={site.survivalRatePlanted ?? 0}
         goal={0}
         icon={<SurvivalRateIcon />}
-        tooltipContent={t("Survival Rate")}
+        tooltipContent={
+          <Box fontSize="14px" lineHeight="20px">
+            <b>{t("Survival Rate")}</b>
+            <br />
+            {t("This is the percentage of planted trees that are currently surviving across this site.")}
+          </Box>
+        }
         color="secondary.600"
       />
       <MetricCard
@@ -93,7 +110,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         color="secondary.700"
         type="hectaresRestored"
         className={METRIC_CARD_CLASS_NAME}
-        classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -111,7 +127,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           icon={<JobsIcon />}
           type="jobsCreated"
           className={METRIC_CARD_CLASS_NAME + " !h-auto"}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>

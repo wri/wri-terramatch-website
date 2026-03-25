@@ -22,12 +22,18 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   progress,
   color,
   iconWithColor,
-  tooltipContent
+  tooltipContent,
+  classNameTitle
 }) => (
   <Flex direction="column" gap={2}>
     <Flex gap={1} color={color} alignItems="center">
       {iconWithColor}
-      <Text textStyle="300" color="neutral.800" paddingLeft={1}>
+      <Text
+        textStyle="300"
+        color="neutral.800"
+        paddingLeft={1}
+        className={twMerge("whitespace-nowrap", classNameTitle)}
+      >
         {title}
       </Text>
       <Tooltip content={tooltipContent} position="top">
@@ -45,13 +51,14 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
   progress,
   color,
   iconWithColor,
-  tooltipContent
+  tooltipContent,
+  classNameTitle
 }) => (
   <Flex gap={3} color={color} alignItems="center">
     {iconWithColor}
     <Flex direction="column" gap={0}>
       <Flex gap={1} alignItems="center">
-        <Text textStyle="400" color="neutral.800">
+        <Text textStyle="400" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
@@ -71,7 +78,8 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
   goal,
   color,
   iconWithColor,
-  tooltipContent
+  tooltipContent,
+  classNameTitle
 }) => {
   const t = useT();
   const progressValue = goal > 0 ? (progress / goal) * 100 : 0;
@@ -80,7 +88,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
     <Flex direction="column" gap={2}>
       <Flex gap={2} alignItems="center">
         {iconWithColor}
-        <Text textStyle="300" color="neutral.800">
+        <Text textStyle="300" color="neutral.800" className={twMerge("whitespace-nowrap", classNameTitle)}>
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
@@ -125,7 +133,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
       </DonutChart>
       <Flex direction="column" gap={2}>
         <Flex gap={1} alignItems="center">
-          <Text textStyle="400" color="neutral.900" className={classNameTitle}>
+          <Text textStyle="400" color="neutral.900" className={twMerge("whitespace-nowrap", classNameTitle)}>
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
@@ -190,6 +198,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           color={color}
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
+          classNameTitle={classNameTitle}
         />
       );
       break;
@@ -216,6 +225,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           color={color}
           iconWithColor={iconWithColor14}
           tooltipContent={tooltipContent}
+          classNameTitle={classNameTitle}
         />
       );
       break;
@@ -227,6 +237,7 @@ const MetricCard: FC<MetricCardProps> = props => {
           color={color}
           iconWithColor={iconWithColor50}
           tooltipContent={tooltipContent}
+          classNameTitle={classNameTitle}
         />
       );
       break;

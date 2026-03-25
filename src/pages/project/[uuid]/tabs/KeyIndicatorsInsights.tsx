@@ -77,7 +77,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         color="secondary.600"
         type="treesRestored"
         className={METRIC_CARD_CLASS_NAME}
-        classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -96,7 +95,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           color="secondary.600"
           type="treesRegenerated"
           className={METRIC_CARD_CLASS_NAME}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
@@ -114,7 +112,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           color="secondary.600"
           type="saplingsRestored"
           className={METRIC_CARD_CLASS_NAME}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
@@ -134,7 +131,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           color="secondary.600"
           type="treesToBeRestored"
           className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}</b>
@@ -153,7 +149,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         color="secondary.700"
         type="hectaresRestored"
         className={METRIC_CARD_CLASS_NAME}
-        classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -177,7 +172,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<JobsIcon />}
           type="jobsCreated"
           className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -196,7 +190,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<JobsIcon />}
           type="jobsCreated"
           className={METRIC_CARD_CLASS_NAME}
-          classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
