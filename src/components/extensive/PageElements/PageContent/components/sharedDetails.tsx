@@ -208,21 +208,18 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
         {entries.map((entry, index) => (
           <Fragment key={`${step.id}-${entry.title}-${index}`}>
             <Flex direction="column" gap={1}>
-              {entry.title === additionalInfoTitle ? (
-                <>
-                  <Text textStyle="400" color="neutral.700">
-                    {t("Additional Information")}:
-                  </Text>
-                  <div className="bg-theme-neutral-300 my-2 h-px w-full" />
-                </>
-              ) : null}
-              {entry.title === "Additional Information" ||
-              entry.title === additionalInfoTitle ||
-              (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
-                <Text textStyle="300-bold" color="primary.900">
-                  {entry.title}:
-                </Text>
-              )}
+              <Text
+                textStyle={entry.title === additionalInfoTitle ? "400" : "300-bold"}
+                color={entry.title === additionalInfoTitle ? "neutral.700" : "primary.900"}
+              >
+                {entry.title}:
+              </Text>
+              <div
+                className={classNames(
+                  "bg-theme-neutral-300 my-2 h-px w-full",
+                  entry.title !== additionalInfoTitle && "hidden"
+                )}
+              />
               <EntryValueRenderer value={entry.value} noGoalTableColumns={noGoalTableColumns} />
             </Flex>
             {index === 0 && afterFirstEntry}
