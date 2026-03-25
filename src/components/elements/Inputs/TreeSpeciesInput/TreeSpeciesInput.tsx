@@ -40,6 +40,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   clearErrors: () => void;
   collection?: string;
   model: FormModelType;
+  formDefaultIncludesFieldKey?: boolean;
 
   onError?: () => void;
   error?: FieldError;
@@ -89,7 +90,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const { autocompleteSearch, findTaxonId } = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
-  const hasInitializedSpeciesRef = useRef(value.length > 0);
+  const hasInitializedSpeciesRef = useRef(value.length > 0 || props.formDefaultIncludesFieldKey === true);
   if (value.length > 0) {
     hasInitializedSpeciesRef.current = true;
   }
@@ -422,7 +423,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
                     </div>
                   )}
                   {establishmentTrees != null &&
-                    establishmentTrees?.find(({ name }) => name === value.name ?? "") == null && (
+                    establishmentTrees?.find(({ name }) => name === (value.name ?? "")) == null && (
                       <div title={t("New Species (not used in establishment)")}>
                         <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                       </div>
