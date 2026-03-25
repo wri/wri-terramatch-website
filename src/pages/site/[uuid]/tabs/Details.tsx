@@ -36,17 +36,15 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
     site.uuid
   );
 
-  const formValues = defaultValues ?? {};
-
   if (isFormLoading || !providerLoaded) {
     return null;
   }
 
   return (
-    <PageContent className="bg-theme-neutral-100 gap-2">
+    <PageContent className="gap-2 bg-theme-neutral-100">
       <WizardFormProvider fieldsProvider={fieldsProvider}>
         {steps.map(step => (
-          <DetailStep key={step.id} step={step} formValues={formValues} site={site} />
+          <DetailStep key={step.id} step={step} formValues={defaultValues} site={site} />
         ))}
       </WizardFormProvider>
     </PageContent>

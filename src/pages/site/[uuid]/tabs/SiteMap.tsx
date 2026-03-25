@@ -9,17 +9,15 @@ interface SiteMapTabProps {
   site: SiteFullDto;
 }
 
-const SiteMapTab: FC<SiteMapTabProps> = ({ site }) => {
-  return (
-    <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
-      <Box className="relative h-auto">
-        <OverviewMapArea entityModel={site} type="sites" className="max-h-[432px]" />
-      </Box>
-      <br />
-      <br />
-      <br />
-    </PageBody>
-  );
-};
+const SiteMapTab: FC<SiteMapTabProps> = ({ site }) => (
+  <PageBody className="mx-auto w-[82vw] bg-theme-neutral-100 px-4 py-7">
+    <Box className="relative h-auto">
+      <OverviewMapArea entityModel={site} type="sites" className="max-h-[432px]" />
+    </Box>
+    <br />
+    <br />
+    <br />
+  </PageBody>
+);
 
 export default SiteMapTab;
