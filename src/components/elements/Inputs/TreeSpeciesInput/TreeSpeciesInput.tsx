@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, remove } from "lodash";
-import { FC, Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
+import { FC, Fragment, KeyboardEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { FieldError } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
@@ -90,10 +90,12 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const { autocompleteSearch, findTaxonId } = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
-  const hasInitializedSpeciesRef = useRef(value.length > 0 || props.formDefaultIncludesFieldKey === true);
-  if (value.length > 0) {
-    hasInitializedSpeciesRef.current = true;
-  }
+  const hasInitializedSpeciesRef = useRef(props.formDefaultIncludesFieldKey === true);
+  useEffect(() => {
+    if (value.length > 0) {
+      hasInitializedSpeciesRef.current = true;
+    }
+  }, [value.length]);
 
   const entityUuid = useFormModelUuid(props.model);
   const isEntity = props.model != null && entityUuid != null;
