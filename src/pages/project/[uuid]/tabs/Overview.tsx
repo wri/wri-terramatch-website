@@ -6,17 +6,20 @@ import { useCallback, useMemo, useState } from "react";
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
 import About from "@/components/extensive/PageElements/About/About";
+import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
+import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
 import ProfileListCard from "@/redesignComponents/content/ContentCard/ProfileListCard/ProfileListCard";
-import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon, SiteIcon } from "@/redesignComponents/foundations/Icons";
 import Log from "@/utils/log";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
@@ -34,6 +37,7 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
+  const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isProjectSetupComplete, setIsProjectSetupComplete] = useState(false);
@@ -108,6 +112,43 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
   };
 
+  const hasSites = (project.totalSites ?? 0) > 0;
+  const hasNurseries = (project.totalNurseries ?? 0) > 0;
+  const shouldHideNurseries = framework === Framework.PPC;
+
+  const addSitesAndNurseriesButtons: IButtonProps[] = [
+    {
+      variant: "borderless",
+      size: "small",
+      rightIcon: <ChevronRightIcon boxSize={4} />,
+      className: "!text-theme-neutral-100",
+      children: t("Add Sites"),
+      onClick: () => goToTab("sites")
+    }
+  ];
+
+  if (!shouldHideNurseries) {
+    addSitesAndNurseriesButtons.push({
+      variant: "borderless",
+      size: "small",
+      rightIcon: <ChevronRightIcon boxSize={4} />,
+      className: "!text-theme-neutral-100",
+      children: t("Add Nurseries"),
+      onClick: () => goToTab("nurseries")
+    });
+  }
+
+  const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
+    entityName: "projects",
+    entityUuid: project.uuid,
+    enabled: !!project.uuid
+  });
+
+  const showSiteAreasMapPlaceholder =
+    !isLoadingProjectPolygons &&
+    (projectPolygonDataV3?.length ?? 0) === 0 &&
+    (!isProjectSetupComplete || (!hasSites && !hasNurseries));
+
   return (
     <PageContent>
       <InviteMonitoringPartnerModal
@@ -142,6 +183,32 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               className="max-h-[432px]"
               disabledPolygonPanel={true}
             />
+            {showSiteAreasMapPlaceholder && (
+              <MapPlaceholder
+                icon={<SiteIcon boxSize={6} color="neutral.100" />}
+                title="Siting Strategy not defined yet."
+                className="bg-map-project-placeholder"
+                buttonGroupProps={
+                  !isProjectSetupComplete
+                    ? {
+                        buttons: [
+                          {
+                            variant: "borderless",
+                            size: "small",
+                            className: "!text-theme-neutral-100",
+                            children: t("Please finish project set-up before adding sites."),
+                            onClick: goToContinueEditingTab
+                          }
+                        ]
+                      }
+                    : !hasSites && !hasNurseries
+                    ? {
+                        buttons: addSitesAndNurseriesButtons
+                      }
+                    : undefined
+                }
+              />
+            )}
           </Box>
         </PageItem>
         <PageItem

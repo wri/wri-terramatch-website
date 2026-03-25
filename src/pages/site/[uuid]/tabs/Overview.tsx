@@ -88,9 +88,16 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                 <MapPlaceholder
                   icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
                   title="Site Areas not defined yet."
-                  buttonProps={{
-                    children: "Add Polygons",
-                    onClick: () => goToTab("map")
+                  buttonGroupProps={{
+                    buttons: [
+                      {
+                        variant: "borderless",
+                        size: "small",
+                        rightIcon: <ChevronRightIcon boxSize={4} />,
+                        className: "!text-theme-neutral-100",
+                        children: t("Add Polygons")
+                      }
+                    ]
                   }}
                 />
               )}

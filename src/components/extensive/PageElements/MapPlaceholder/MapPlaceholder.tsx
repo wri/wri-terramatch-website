@@ -2,23 +2,16 @@ import { Flex, Text } from "@chakra-ui/react";
 import React, { FC } from "react";
 import { twMerge } from "tailwind-merge";
 
-import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import ButtonGroup, { ButtonGroupProps } from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 
 interface MapPlaceholderProps {
   className?: string;
   icon?: React.ReactNode;
   title: string;
-  buttonProps?: IButtonProps;
+  buttonGroupProps?: ButtonGroupProps;
 }
-export const MapPlaceholder: FC<MapPlaceholderProps> = ({ className, icon, title, buttonProps }) => {
-  const {
-    variant = "borderless",
-    size = "small",
-    rightIcon = <ChevronRightIcon boxSize={4} />,
-    className: buttonClassName,
-    ...rest
-  } = buttonProps ?? {};
+export const MapPlaceholder: FC<MapPlaceholderProps> = ({ className, icon, title, buttonGroupProps }) => {
+  const { className: buttonGroupClassName, ...rest } = buttonGroupProps ?? {};
   return (
     <Flex
       className={twMerge(
@@ -33,13 +26,7 @@ export const MapPlaceholder: FC<MapPlaceholderProps> = ({ className, icon, title
           {title}
         </Text>
       </Flex>
-      <Button
-        variant={variant}
-        size={size}
-        rightIcon={rightIcon}
-        className={twMerge("!text-theme-neutral-100 relative z-[1]", buttonClassName)}
-        {...rest}
-      />
+      <ButtonGroup className={twMerge("!w-fit !border-0 !bg-transparent !p-0", buttonGroupClassName)} {...rest} />
     </Flex>
   );
 };
