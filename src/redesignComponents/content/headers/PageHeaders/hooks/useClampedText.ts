@@ -10,7 +10,7 @@ export interface UseClampedTextReturn {
   toggleExpand: () => void;
 }
 
-export const useClampedText = (description: string | undefined): UseClampedTextReturn => {
+export const useClampedText = (description: string | undefined, maxLines: number = MAX_LINES): UseClampedTextReturn => {
   const descriptionRef = useRef<HTMLParagraphElement>(null);
   const [isClamped, setIsClamped] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -19,11 +19,11 @@ export const useClampedText = (description: string | undefined): UseClampedTextR
     if (descriptionRef.current != null) {
       const element = descriptionRef.current;
       const lineHeight = parseInt(window.getComputedStyle(element).lineHeight, 10);
-      const maxHeight = lineHeight * MAX_LINES;
+      const maxHeight = lineHeight * maxLines;
       const isCurrentlyClamped = element.scrollHeight > maxHeight;
       setIsClamped(isCurrentlyClamped);
     }
-  }, []);
+  }, [maxLines]);
 
   useEffect(() => {
     if (description != null) {
