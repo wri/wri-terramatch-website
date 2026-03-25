@@ -1,9 +1,9 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, ReactNode } from "react";
+import { twMerge } from "tailwind-merge";
 
 import { Framework } from "@/context/framework.provider";
-import { getThemedColor } from "@/lib/theme";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 
 import { InformationRequiredIcon } from "../../foundations/Icons";
@@ -233,18 +233,15 @@ const MetricCard: FC<MetricCardProps> = props => {
   }
 
   return (
-    <Box
+    <Flex
       padding={3}
-      borderRadius={8}
-      border={`1px solid ${getThemedColor("neutral", 300)}`}
-      height="fit-content"
-      justifyContent="start"
-      display="flex"
-      backgroundColor="neutral.100"
-      className={className}
+      className={twMerge(
+        "border-theme-neutral-300 bg-theme-neutral-100 h-fit justify-start rounded-lg border p-3",
+        className
+      )}
     >
       {content}
-    </Box>
+    </Flex>
   );
 };
 

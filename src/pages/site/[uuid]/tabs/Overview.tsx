@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import About from "@/components/extensive/PageElements/About/About";
+import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
@@ -13,11 +14,11 @@ import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
-import LastestImagesSectionTab from "@/pages/project/[uuid]/tabs/LastestImagesSection";
+import LatestImagesSectionTab from "@/pages/project/[uuid]/tabs/LatestImagesSection";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
 import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission.type";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
 import { ABOUT_SITES_CONTENT } from "./constants/AboutSites.constants";
@@ -40,7 +41,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     updateRequestStatus: site.updateRequestStatus ?? "no-update"
   });
 
-  const { data: sitePolygonDataV3, refetch: refetchV3 } = useAllSitePolygons({
+  const {
+    data: sitePolygonDataV3,
+    isLoading: isLoadingSitePolygons,
+    refetch: refetchV3
+  } = useAllSitePolygons({
     entityName: "sites",
     entityUuid: site.uuid,
     enabled: !!site.uuid
@@ -79,6 +84,16 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
           >
             <Box className="relative h-auto">
               <OverviewMapArea entityModel={site} type="sites" className="max-h-[432px]" disabledPolygonPanel={true} />
+              {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
+                <MapPlaceholder
+                  icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
+                  title="Site Areas not defined yet."
+                  buttonProps={{
+                    children: "Add Polygons",
+                    onClick: () => goToTab("map")
+                  }}
+                />
+              )}
             </Box>
           </PageItem>
           <PageItem
@@ -93,7 +108,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               variant: "primary",
               size: "small",
               children: isSiteSetupComplete ? t("Edit") : t("Continue"),
-              rightIcon: <ChevronRightIcon />,
+              rightIcon: <ChevronRightIcon boxSize={4} />,
               onClick: () => handleEdit()
             }}
           >
@@ -129,7 +144,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               onClick: () => goToTab("gallery")
             }}
           >
-            <LastestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={3} />
+            <LatestImagesSectionTab entityUuid={site.uuid} entityName="sites" columns={3} />
           </PageItem>
           <PageItem title={t(aboutSitesContentItem?.title!)}>
             <About

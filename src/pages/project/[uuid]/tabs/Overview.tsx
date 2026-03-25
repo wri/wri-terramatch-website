@@ -24,7 +24,7 @@ import InviteMonitoringPartnerModal from "../components/InviteMonitoringPartnerM
 import { MRV_ONBOARDING_CONTENT } from "./constants/mrvOnboardingContent";
 import EntitySetUpSection from "./EntitySetUpSection";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
-import LastestImagesSectionTab from "./LastestImagesSection";
+import LatestImagesSectionTab from "./LatestImagesSection";
 
 interface ProjectOverviewTabProps {
   project: ProjectFullDto;
@@ -219,7 +219,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             onClick: () => goToTab("gallery")
           }}
         >
-          <LastestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
+          <LatestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
         </PageItem>
         <PageItem title="Project Onboarding">
           <About

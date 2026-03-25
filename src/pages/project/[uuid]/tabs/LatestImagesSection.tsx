@@ -5,7 +5,7 @@ import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import ImageGalleryCard from "@/redesignComponents/content/ContentCard/ImageGalleryCard/ImageGalleryCard";
 import { HookProps } from "@/types/connection";
 
-const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEntity; columns?: number }> = ({
+const LatestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEntity; columns?: number }> = ({
   entityUuid,
   entityName,
   columns
@@ -38,4 +38,4 @@ const LastestImagesSectionTab: FC<{ entityUuid: string; entityName: SupportedEnt
   return <ImageGalleryCard images={images} onClickAdd={() => goToTab("gallery")} columns={columns} />;
 };
 
-export default LastestImagesSectionTab;
+export default LatestImagesSectionTab;

@@ -1,8 +1,10 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import { FC, useMemo } from "react";
 
+import KeyIndicatorsInsightsRow, {
+  METRIC_CARD_CLASS_NAME
+} from "@/components/extensive/PageElements/KeyIndicatorsInsightsRow/KeyIndicatorsInsightsRow";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -25,9 +27,6 @@ interface KeyIndicatorsInsightsProps {
 
 const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   const t = useT();
-  const metricClassName = classNames(
-    "flex-1 max-w-[calc((100%/2)-6px)] ws-1100:max-w-[calc((100%/3)-6px)] md:!max-w-[calc((100%/4)-6px)] lg:!max-w-[calc((100%/4)-1rem)] w-[350px]"
-  );
 
   const framework = site?.frameworkKey;
 
@@ -36,7 +35,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   }, [site.frameworkKey]);
 
   return (
-    <Flex flex={1} flexWrap="wrap" className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8" justify={"flex-start"}>
+    <KeyIndicatorsInsightsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
         progress={site.treesPlantedCount ?? 0}
@@ -45,7 +44,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         icon={<ProjectIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={metricClassName}
+        className={METRIC_CARD_CLASS_NAME}
         classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
@@ -56,7 +55,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         }
       />
       <MetricCard
-        className="flex-1"
+        className={METRIC_CARD_CLASS_NAME}
         title={t("Seeds Planted")}
         variant="large"
         progress={site.seedsPlantedCount ?? 0}
@@ -66,7 +65,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         color="secondary.600"
       />
       <MetricCard
-        className="flex-1"
+        className={METRIC_CARD_CLASS_NAME}
         title={t("Trees Regenerating")}
         variant="large"
         progress={site.regeneratedTreesCount ?? 0}
@@ -76,7 +75,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         color="secondary.600"
       />
       <MetricCard
-        className="flex-1"
+        className={METRIC_CARD_CLASS_NAME}
         title={t("Survival Rate")}
         variant="large"
         progress={site.survivalRatePlanted ?? 0}
@@ -93,7 +92,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={metricClassName}
+        className={METRIC_CARD_CLASS_NAME}
         classNameTitle="whitespace-nowrap"
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
@@ -111,7 +110,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           variant={keyIndicatorsTooltipContentItem?.jobsCreated.type as MetricCardVariant}
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={metricClassName + " !h-auto"}
+          className={METRIC_CARD_CLASS_NAME + " !h-auto"}
           classNameTitle="whitespace-nowrap"
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
@@ -123,7 +122,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           frameworkKey={framework!}
         />
       </ContextCondition>
-    </Flex>
+    </KeyIndicatorsInsightsRow>
   );
 };
 
