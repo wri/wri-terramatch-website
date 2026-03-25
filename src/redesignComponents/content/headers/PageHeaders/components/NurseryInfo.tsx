@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo } from "react";
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -49,8 +50,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
 
   const needMoreInformation =
-    nursery.updateRequestStatus === "needs-more-information" ||
-    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
+    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
 
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
