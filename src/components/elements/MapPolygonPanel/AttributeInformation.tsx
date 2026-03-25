@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
@@ -38,7 +38,7 @@ type AttributeInformationProps = {
   setAttributePlotsVisible: Dispatch<SetStateAction<boolean>>;
 };
 
-const AttributeInformation = ({
+const AttributeInformation: FC<AttributeInformationProps> = ({
   handleClose,
   sitePolygonUuid,
   polygonNameForFile,
@@ -46,7 +46,7 @@ const AttributeInformation = ({
   anrMonitoringPlotsEligible,
   attributePlotsVisible,
   setAttributePlotsVisible
-}: AttributeInformationProps) => {
+}) => {
   const t = useT();
   const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto>();
@@ -126,7 +126,7 @@ const AttributeInformation = ({
     }
   };
 
-  const downloadMonitoringPlots = async () => {
+  const downloadMonitoringPlots = useCallback(async () => {
     if (sitePolygonUuid === "" || !anrMonitoringPlotsEligible) {
       return;
     }
@@ -142,7 +142,7 @@ const AttributeInformation = ({
       Log.error("Error downloading ANR monitoring plots:", error);
       openNotification("error", t("Error!"), t("Error downloading ANR monitoring plots"));
     }
-  };
+  }, [anrMonitoringPlotsEligible, openNotification, polygonNameForFile, sitePolygonUuid, t]);
 
   return (
     <div className="flex flex-col gap-4">

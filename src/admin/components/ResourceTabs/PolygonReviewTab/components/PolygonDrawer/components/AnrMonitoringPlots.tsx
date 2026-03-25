@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -19,13 +19,10 @@ import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
-const AnrMonitoringPlots = ({
-  sitePolygonUuid,
-  dataFetchEnabled = true
-}: {
+const AnrMonitoringPlots: FC<{
   sitePolygonUuid: string;
   dataFetchEnabled?: boolean;
-}) => {
+}> = ({ sitePolygonUuid, dataFetchEnabled = true }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();

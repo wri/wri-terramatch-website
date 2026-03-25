@@ -18,6 +18,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import ApiSlice from "@/store/apiSlice";
 import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
@@ -179,13 +180,11 @@ const MapEditPolygonPanel = ({
     sitePolygonUuidForAnr
   ]);
 
-  useEffect(() => {
-    return () => {
-      if (anrMapOverlayRef.current != null) {
-        anrMapOverlayRef.current.resetAnrMapOverlay();
-      }
-    };
-  }, []);
+  useOnUnmount(() => {
+    if (anrMapOverlayRef.current != null) {
+      anrMapOverlayRef.current.resetAnrMapOverlay();
+    }
+  });
 
   return (
     <>
