@@ -58,14 +58,14 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       ))}
       {Array.from({ length: placeholderCount }).map((_, index) => {
         const isFirstPlaceholder = index === 0;
-        const showContent = isEmpty && isFirstPlaceholder;
+        const showAddSlot = Boolean(onClickAdd && isFirstPlaceholder);
 
         return (
           <GridItem key={`placeholder-${index}`}>
-            {showContent ? (
+            {showAddSlot ? (
               <GalleryImage
-                className="min-w-full"
-                alt="No images available"
+                className="bg-theme-neutral-200 min-w-full"
+                alt={isEmpty ? "No images available" : "Add image"}
                 isAdd={true}
                 onClickAdd={onClickAdd}
                 size={imageSize}
