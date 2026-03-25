@@ -12,6 +12,7 @@ import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/M
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
 import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
@@ -26,7 +27,6 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import { ABOUT_SITES_CONTENT } from "./constants/AboutSites.constants";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
