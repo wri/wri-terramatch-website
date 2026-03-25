@@ -1,7 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-
 import { FC, useCallback, useMemo } from "react";
 
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
@@ -80,8 +79,6 @@ const SiteInfo: FC<SiteInfoProps> = ({
       handleEdit();
     }
   }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
-
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
 
   return (
     <Box gap={2} className="flex flex-col">
