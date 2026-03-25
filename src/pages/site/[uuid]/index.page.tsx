@@ -84,7 +84,6 @@ const SiteDetailPage = () => {
             <>
               <SiteBanner
                 site={site}
-                className="top-[70px]"
                 breadcrumbs={[
                   {
                     label: t("My Projects"),
@@ -106,7 +105,7 @@ const SiteDetailPage = () => {
                       >
                         {t("Project Profile")}
                       </Button>
-                      <span className="text-sm text-theme-neutral-300">|</span>
+                      <span className="text-theme-neutral-300 text-sm">|</span>
                       <Button
                         variant="borderless"
                         size="small"

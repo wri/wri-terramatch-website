@@ -143,7 +143,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         <title>{t("Project")}</title>
       </Head>
       <ProjectBanner
-        className="top-[70px]"
         project={project}
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => navigateToTab("team-members")}
