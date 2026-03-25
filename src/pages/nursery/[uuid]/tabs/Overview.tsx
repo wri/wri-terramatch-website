@@ -3,13 +3,14 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { useCallback, useMemo } from "react";
 
-import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -41,27 +42,15 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   });
 
   const needMoreInformation =
-    nursery.updateRequestStatus === "needs-more-information" ||
-    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
-
-  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
-
-  const statusProps: StatusProps | undefined = useMemo(() => {
-    if (!needMoreInformation) return undefined;
-    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
-    return {
-      title: t(`${titlePrefix} More Info Requested`),
-      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
-      className: "fill-tertiary"
-    };
-  }, [needMoreInformation, hasUpdateRequest, t]);
+    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
+  const statusProps = useMemo(() => getStatusProps(t, nursery, nursery.status!), [t, nursery]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && statusProps) {
+    if (needMoreInformation) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
-          statusProps={statusProps}
+          statusProps={statusProps!}
           feedback={nursery.feedback}
           needMoreInformation={needMoreInformation}
           entityName="nurseries"

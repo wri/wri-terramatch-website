@@ -107,6 +107,7 @@ const SITE_TARGET_LAND_USE_MAP: Record<string, SiteTypeConfig> = {
       "A plantation is a forest predominantly composed of intensively managed trees that are established through planting and/or deliberate seeding, with the explicit goal of harvesting and processing those trees for wood once they reach maturity. A woodlot is a type of plantation, predominantly managed by a single landholder or a community, to supply wood for construction and fuel to the landholder or community."
   }
 };
+
 const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
   const t = useT();
   const restorationStrategyKey =

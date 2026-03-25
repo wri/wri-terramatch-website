@@ -3,9 +3,10 @@ import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
 import { FC, useCallback, useMemo } from "react";
 
-import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
-import { IconNames } from "@/components/extensive/Icon/Icon";
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -41,20 +42,8 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const { openModal } = useModalContext();
 
   const needMoreInformation =
-    site.updateRequestStatus === "needs-more-information" ||
-    (site.updateRequestStatus === "no-update" && site.status === "needs-more-information");
+    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
 
-  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(site.updateRequestStatus ?? "");
-
-  const statusProps: StatusProps | undefined = useMemo(() => {
-    if (!needMoreInformation) return undefined;
-    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
-    return {
-      title: t(`${titlePrefix} More Info Requested`),
-      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
-      className: "fill-tertiary"
-    };
-  }, [needMoreInformation, hasUpdateRequest, t]);
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
@@ -63,15 +52,17 @@ const SiteInfo: FC<SiteInfoProps> = ({
     updateRequestStatus: site.updateRequestStatus as string
   });
 
+  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
+
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && statusProps != null) {
+    if (needMoreInformation) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
-          statusProps={statusProps}
+          statusProps={statusProps!}
           feedback={site.feedback}
           needMoreInformation={needMoreInformation}
-          entityName="nurseries"
+          entityName="sites"
           entityUuid={site.uuid}
         />
       );

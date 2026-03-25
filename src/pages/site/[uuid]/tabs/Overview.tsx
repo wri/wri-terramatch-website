@@ -1,15 +1,21 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import router from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
+import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -21,7 +27,6 @@ import { TagSubmissionState } from "@/redesignComponents/actions/Tags/TagSubmiss
 import { AreaHectaresIcon, ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { mapStatusToTagStateEntity } from "@/utils/mapStatusToTagStateEntity";
 
-import { ABOUT_SITES_CONTENT } from "./constants/AboutSites.constants";
 import KeyIndicatorsInsightsTab from "./KeyIndicatorsInsights";
 interface SiteOverviewTabProps {
   site: SiteFullDto;
@@ -30,6 +35,7 @@ interface SiteOverviewTabProps {
 
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
+  const { openModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
   const { setSiteData } = contextMapArea;
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
@@ -66,6 +72,28 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const aboutSitesContentItem = useMemo(() => {
     return ABOUT_SITES_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
   }, [site.frameworkKey]);
+
+  const needMoreInformation =
+    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
+
+  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps!}
+          feedback={site.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="sites"
+          entityUuid={site.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
@@ -116,7 +144,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               size: "small",
               children: isSiteSetupComplete ? t("Edit") : t("Continue"),
               rightIcon: <ChevronRightIcon boxSize={4} />,
-              onClick: () => handleEdit()
+              onClick: () => handleEditClick()
             }}
           >
             <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
