@@ -202,8 +202,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         {entries.map((entry, index) => (
           <Fragment key={`${step.id}-${entry.title}-${index}`}>
             <Flex direction="column" gap={1}>
-              {entry.title === "Additional Information" ||
-              (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
+              {entry.title === t("Additional Information") ||
+              (entry.title === t("Tree Species") && step.title === t("Tree Species")) ? null : (
                 <Text textStyle="300-bold" color="primary.900">
                   {t(entry.title)}:
                 </Text>
