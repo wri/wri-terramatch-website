@@ -39,6 +39,11 @@ const HighLevelMetics: FC = () => {
         <Labeled label="Trees Planted" sx={inlineLabelSx}>
           <NumberField source="treesPlantedCount" emptyText="0" />
         </Labeled>
+        <ContextCondition frameworksHide={[Framework.PPC]}>
+          <Labeled label="Tree Regenerating" sx={inlineLabelSx}>
+            <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+          </Labeled>
+        </ContextCondition>
         <ContextCondition frameworksShow={[Framework.PPC]}>
           <Labeled label="Seeds Planted" sx={inlineLabelSx}>
             <NumberField source="seedsPlantedCount" emptyText="0" />

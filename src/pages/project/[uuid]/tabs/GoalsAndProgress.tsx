@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { orderBy } from "lodash";
 import { useCallback, useMemo } from "react";
 
 import ProgressBarChart from "@/admin/components/ResourceTabs/MonitoredTab/components/ProgressBarChart";
@@ -56,16 +55,6 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
     uuid: project.uuid
   });
   const dataAggregated = aggregateState != null ? aggregateState.data : undefined;
-
-  const naturalGenerationData = useMemo(
-    () =>
-      orderBy(project.assistedNaturalRegenerationList, ["treeCount"], ["desc"]).map(({ name, treeCount }) => ({
-        uuid: name,
-        name: [name, []] as [string, string[]],
-        treeCount: treeCount.toLocaleString()
-      })),
-    [project.assistedNaturalRegenerationList]
-  );
 
   const LABEL_LEGEND = useMemo(
     () => [
@@ -363,7 +352,10 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                   <div className="relative h-9 w-[218px]">
                     <div className="absolute inset-0 z-0 h-full w-full">
                       <ProgressBarChart
-                        data={getProgressData(project.goalTreesRestoredAnr ?? 0, project.regeneratedTreesCount ?? 0)}
+                        data={getProgressData(
+                          project.goalTreesRestoredAnr ?? 0,
+                          project.treesRegeneratingSpeciesCount ?? 0
+                        )}
                         className="h-full w-full"
                       />
                     </div>
@@ -375,7 +367,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     />
                   </div>
                   <Text variant="text-24-bold" className="ml-2 flex items-baseline text-darkCustom">
-                    {project.regeneratedTreesCount.toLocaleString()}
+                    {(project.treesRegeneratingSpeciesCount ?? 0).toLocaleString()}
                     <Text variant="text-16-light" className="ml-1 text-darkCustom">
                       of {project.goalTreesRestoredAnr?.toLocaleString()}
                     </Text>
@@ -394,14 +386,14 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
                     variantLabel: "text-14",
                     classNameLabel: " text-neutral-650 uppercase !w-auto",
                     classNameLabelValue: "!justify-start ml-2 !text-2xl",
-                    value: project.regeneratedTreesCount.toLocaleString()
+                    value: (project.treesRegeneratingSpeciesCount ?? 0).toLocaleString()
                   }
                 ]}
               />
             </ContextCondition>
 
             <div className="mt-2">
-              <TreeSpeciesTable data={naturalGenerationData} visibleRows={5} tableType="treeCountSite" />
+              <TreeSpeciesTable entity="projects" entityUuid={project.uuid} collection="anr" visibleRows={5} />
             </div>
           </PageCard>
         </PageColumn>

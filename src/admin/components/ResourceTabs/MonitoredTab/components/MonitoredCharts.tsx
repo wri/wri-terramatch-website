@@ -36,9 +36,7 @@ const ChartContainer = ({
 };
 
 interface RecordType {
-  // Temporary until all entities have been moved to v3.
-  total_hectares_restored_sum?: number;
-  totalHectaresRestoredSum?: number;
+  totalHectaresRestoredSum: number;
 }
 
 const RestorationMetrics = ({
@@ -50,7 +48,7 @@ const RestorationMetrics = ({
   totalHectaresRestoredGoal: number;
   strategiesData: any[];
 }) => {
-  const sum = record.total_hectares_restored_sum ?? record.totalHectaresRestoredSum ?? 0;
+  const sum = record.totalHectaresRestoredSum;
   return (
     <div className="flex w-full flex-col gap-6 lg:ml-[35px]">
       <SecDashboard

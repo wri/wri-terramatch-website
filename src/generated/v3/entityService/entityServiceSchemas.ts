@@ -1424,6 +1424,10 @@ export type ProjectFullDto = {
   incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project
+   */
+  treesRegeneratingSpeciesCount: number;
   workdayCount: number;
   selfReportedWorkdayCount: number;
   combinedWorkdayCount: number;
@@ -1515,6 +1519,10 @@ export type SiteFullDto = {
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this site
+   */
+  treesRegeneratingSpeciesCount: number;
   combinedWorkdayCount: number;
   workdayCount: number;
   ppcExternalId: number | null;
@@ -1716,6 +1724,10 @@ export type ProjectReportFullDto = {
   seedsPlantedCount: number | null;
   treesPlantedCount: number | null;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project report
+   */
+  treesRegeneratingSpeciesCount: number;
   topThreeSuccesses: string | null;
   challengesFaced: string | null;
   lessonsLearned: string | null;
@@ -1948,6 +1960,10 @@ export type SiteReportFullDto = {
   totalNonTreeSpeciesPlantedCount: number | null;
   totalTreeReplantingCount: number | null;
   totalTreesPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
   totalSeedsPlantedCount: number | null;
   plantingStatus: string | null;
   survivalCalculation: string | null;
