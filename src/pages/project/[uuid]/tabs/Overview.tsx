@@ -83,11 +83,14 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     }
   };
 
-  const goToTab = (tab: string) => {
-    router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
-      shallow: true
-    });
-  };
+  const goToTab = useCallback(
+    (tab: string) => {
+      router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
+        shallow: true
+      });
+    },
+    [router]
+  );
 
   const mrvOnboardingContentItem = useMemo(() => {
     return MRV_ONBOARDING_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
@@ -116,38 +119,60 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   const hasNurseries = (project.totalNurseries ?? 0) > 0;
   const shouldHideNurseries = framework === Framework.PPC;
 
-  const addSitesAndNurseriesButtons: IButtonProps[] = [
-    {
-      variant: "borderless",
-      size: "small",
-      rightIcon: <ChevronRightIcon boxSize={4} />,
-      className: "!text-theme-neutral-100",
-      children: t("Add Sites"),
-      onClick: () => goToTab("sites")
-    }
-  ];
+  const addSitesAndNurseriesButtons = useMemo<IButtonProps[]>(() => {
+    const buttons: IButtonProps[] = [
+      {
+        variant: "borderless",
+        size: "small",
+        rightIcon: <ChevronRightIcon boxSize={4} />,
+        className: "!text-theme-neutral-100",
+        children: t("Add Sites"),
+        onClick: () => goToTab("sites")
+      }
+    ];
 
-  if (!shouldHideNurseries) {
-    addSitesAndNurseriesButtons.push({
-      variant: "borderless",
-      size: "small",
-      rightIcon: <ChevronRightIcon boxSize={4} />,
-      className: "!text-theme-neutral-100",
-      children: t("Add Nurseries"),
-      onClick: () => goToTab("nurseries")
-    });
-  }
+    if (!shouldHideNurseries) {
+      buttons.push({
+        variant: "borderless",
+        size: "small",
+        rightIcon: <ChevronRightIcon boxSize={4} />,
+        className: "!text-theme-neutral-100",
+        children: t("Add Nurseries"),
+        onClick: () => goToTab("nurseries")
+      });
+    }
+
+    return buttons;
+  }, [goToTab, shouldHideNurseries, t]);
 
   const { data: projectPolygonDataV3, isLoading: isLoadingProjectPolygons } = useAllSitePolygons({
     entityName: "projects",
     entityUuid: project.uuid,
-    enabled: !!project.uuid
+    enabled: project.uuid != null
   });
 
   const showSiteAreasMapPlaceholder =
     !isLoadingProjectPolygons &&
     (projectPolygonDataV3?.length ?? 0) === 0 &&
     (!isProjectSetupComplete || (!hasSites && !hasNurseries));
+
+  const teamMemberItems = useMemo(
+    () => [
+      {
+        title: t("Project Managers"),
+        profiles: projectManagers,
+        onProfileClick: () => {},
+        type: "project-manager"
+      },
+      {
+        title: t("Monitoring Partners"),
+        profiles: monitoringPartners,
+        onProfileClick: () => {},
+        type: "monitoring-partner"
+      }
+    ],
+    [monitoringPartners, projectManagers, t]
+  );
 
   return (
     <PageContent>
@@ -163,14 +188,14 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "View Sites",
+            children: t("View Sites"),
             rightIcon: <ChevronRightIcon />,
             onClick: onViewSites ?? (() => goToTab("sites"))
           }}
           downloadButtonProps={{
             variant: "secondary",
             size: "small",
-            children: "Download Project Polygons",
+            children: t("Download Project Polygons"),
             leftIcon: <DownloadIcon />,
             onClick: handleDownloadPolygons,
             loading: isDownloading
@@ -186,7 +211,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             {showSiteAreasMapPlaceholder && (
               <MapPlaceholder
                 icon={<SiteIcon boxSize={6} color="neutral.100" />}
-                title="Siting Strategy not defined yet."
+                title={t("Siting Strategy not defined yet.")}
                 className="bg-map-project-placeholder"
                 buttonGroupProps={
                   !isProjectSetupComplete
@@ -213,7 +238,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         </PageItem>
         <PageItem
           flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
-          title="Project Set Up"
+          title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);
 
@@ -233,12 +258,12 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         </PageItem>
       </Flex>
       <PageItem
-        title="Key Indicators & Insights"
+        title={t("Key Indicators & Insights")}
         flexProps={{ paddingY: 2, width: "100%" }}
         buttonProps={{
           variant: "secondary",
           size: "small",
-          children: "View Progress & Goals",
+          children: t("View Progress & Goals"),
           rightIcon: <ChevronRightIcon />,
           onClick: () => goToTab("goals")
         }}
@@ -248,47 +273,31 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       <Flex gap={7} maxHeight="570px" paddingY={2}>
         <PageItem
           flexProps={{ flex: 1 }}
-          title="Team Members"
+          title={t("Team Members")}
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "Manage Team",
+            children: t("Manage Team"),
             rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("team-members")
           }}
         >
-          <ProfileListCard
-            items={[
-              {
-                title: "Project Managers",
-                profiles: projectManagers,
-                onProfileClick: () => {},
-                type: "project-manager"
-              },
-              {
-                title: "Monitoring Partners",
-                profiles: monitoringPartners,
-                onProfileClick: () => {},
-                type: "monitoring-partner"
-              }
-            ]}
-            onInviteClick={handleInviteClick}
-          />
+          <ProfileListCard items={teamMemberItems} onInviteClick={handleInviteClick} />
         </PageItem>
         <PageItem
-          title="Latest Images"
+          title={t("Latest Images")}
           flexProps={{ flex: 1 }}
           buttonProps={{
             variant: "secondary",
             size: "small",
-            children: "View Gallery",
+            children: t("View Gallery"),
             rightIcon: <ChevronRightIcon />,
             onClick: () => goToTab("gallery")
           }}
         >
           <LatestImagesSectionTab entityUuid={project.uuid} entityName="projects" />
         </PageItem>
-        <PageItem title="Project Onboarding">
+        <PageItem title={t("Project Onboarding")}>
           <About
             title={t("Monitoring, Reporting, and Verification (MRV)")}
             description={
