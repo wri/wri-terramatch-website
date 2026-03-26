@@ -16,9 +16,9 @@ import {
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
-import KeyIndicatorsInsightsRow, {
+import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
-} from "../../../../components/extensive/PageElements/KeyIndicatorsInsightsRow/KeyIndicatorsInsightsRow";
+} from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow ";
 import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
 
 interface KeyIndicatorsInsightsProps {
@@ -67,7 +67,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   }, [project.frameworkKey]);
 
   return (
-    <KeyIndicatorsInsightsRow>
+    <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
         progress={totalTreesRestoredCount}
@@ -200,7 +200,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           frameworkKey={framework!}
         />
       )}
-    </KeyIndicatorsInsightsRow>
+    </MetricCardsRow>
   );
 };
 

@@ -2,9 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { FC, useMemo } from "react";
 
-import KeyIndicatorsInsightsRow, {
+import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
-} from "@/components/extensive/PageElements/KeyIndicatorsInsightsRow/KeyIndicatorsInsightsRow";
+} from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow ";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -35,7 +35,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
   }, [site.frameworkKey]);
 
   return (
-    <KeyIndicatorsInsightsRow>
+    <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
         progress={site.treesPlantedCount ?? 0}
@@ -137,7 +137,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
           frameworkKey={framework!}
         />
       </ContextCondition>
-    </KeyIndicatorsInsightsRow>
+    </MetricCardsRow>
   );
 };
 
