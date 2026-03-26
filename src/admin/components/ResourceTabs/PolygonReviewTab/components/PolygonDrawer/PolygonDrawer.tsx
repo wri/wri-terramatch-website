@@ -19,6 +19,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useOnMount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -84,7 +85,6 @@ const PolygonDrawer = ({
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
-  /** Tracks tab transitions so we can set ANR map visibility when entering the ANR tab (avoids child useEffect running one frame late). */
   const prevActiveTabForAnrRef = useRef<PolygonDrawerTopTab | null>(null);
   const anrMapOverlayRef = useRef(anrMapOverlay);
   anrMapOverlayRef.current = anrMapOverlay;
@@ -178,12 +178,11 @@ const PolygonDrawer = ({
     prevActiveTabForAnrRef.current = activeTab;
   }, [anrMapOverlay, activeTab, anrPlotsEligible, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
 
-  useEffect(() => {
+  useOnMount(() => {
     return () => {
       anrMapOverlayRef.current?.resetAnrMapOverlay();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
@@ -315,7 +314,7 @@ const PolygonDrawer = ({
         </div>
       ) : activeTab === "anrMonitoringPlots" && anrPlotsEligible ? (
         <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
-          <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid ?? ""} />
+          <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid} />
         </div>
       ) : (
         <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
@@ -328,7 +327,7 @@ const PolygonDrawer = ({
           </Accordion>
           <Divider />
           <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
-            {selectedPolygonData && (
+            {selectedPolygonData != null && (
               <AttributeInformation
                 selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
                 sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
@@ -343,12 +342,12 @@ const PolygonDrawer = ({
             )}
           </Accordion>
           <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-            {selectedPolygonData && (
+            {selectedPolygonData != null && (
               <VersionHistory
                 wrapperRef={wrapperRef}
                 setPolygonFromMap={setPolygonFromMap}
                 polygonFromMap={polygonFromMap}
-                selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                selectedPolygon={selectedPolygonData}
                 setSelectPolygonVersion={setSelectPolygonVersion}
                 selectPolygonVersion={selectPolygonVersion}
                 refreshPolygonList={refresh}

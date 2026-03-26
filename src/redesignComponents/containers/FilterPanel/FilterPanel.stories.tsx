@@ -1,17 +1,14 @@
-import { Box, Text } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
-import React from "react";
 
-import { getThemedColor } from "@/lib/theme";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 
-import Button from "../../actions/Buttons/Button/Button";
-import CloseButton from "../../actions/Buttons/CloseButton/CloseButton";
-import Panel from "../../containers/Panel/Panel";
 import Checkbox from "../../Forms/Actions/Checkbox/Checkbox";
 import Search from "../../Forms/Actions/Search/Search";
 import CheckboxList from "../../Forms/Inputs/CheckboxList";
 import { LanguageIcon } from "../../foundations/Icons";
+import FilterPanel from "./FilterPanel";
+import FilterCard from "./FilterPanelElements/FilteCards";
 
 const sampleOptions = [
   {
@@ -47,67 +44,37 @@ const sampleOptions = [
 ];
 
 const meta = {
-  title: "Redesign Components/Data Display/Filter Panel",
-  component: Panel,
+  title: "Redesign Components/Containers/Panel/Filter Panel",
+  component: FilterPanel,
   parameters: {
     layout: "centered"
   },
   tags: ["autodocs"]
-} satisfies Meta<typeof Panel>;
+} satisfies Meta<typeof FilterPanel>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const FilterPanel: Story = {
+export const Default: Story = {
   args: {
-    content: <div>content</div>
+    title: "Filters",
+    content: <></>
   },
   render: function Render(args) {
     return (
-      <Panel
+      <FilterPanel
+        {...args}
         variant="fixed"
-        header={
-          <Box
-            style={{
-              padding: "20px",
-              borderBottom: `1px solid ${getThemedColor("neutral", 300)}`
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Text style={{ fontWeight: "700" }}>Filters</Text>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <Text
-                  style={{
-                    color: getThemedColor("neutral", 700),
-                    fontWeight: 400
-                  }}
-                >
-                  Close
-                </Text>
-                <CloseButton />
-              </div>
-            </div>
-          </Box>
-        }
+        classNameContent="!h-[628px]"
         content={
-          <div style={{ maxHeight: "500px" }}>
-            <div>
-              <Box
-                style={{
-                  border: `1px solid ${getThemedColor("neutral", 300)}`,
-                  padding: "15px",
-                  margin: "15px",
-                  borderRadius: "5px"
-                }}
-              >
-                <h2>Label</h2>
-                <p>Caption</p>
-
-                <Search options={sampleOptions} placeholder="Search" />
-                <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
-                  <Tag variant="info-white" label="Label" closable />
-                  <Tag variant="info-white" label="Label" closable />
-                </div>
+          <>
+            <Search options={sampleOptions} placeholder="Search" />
+            <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+              <Tag variant="info-white" label="Label" closable />
+              <Tag variant="info-white" label="Label" closable />
+            </div>
+            <FilterCard label="Label" caption="Caption">
+              <div>
                 <div
                   style={{
                     display: "flex",
@@ -177,20 +144,10 @@ export const FilterPanel: Story = {
                     Label
                   </Checkbox>
                 </div>
-              </Box>
-            </div>
-            <div>
-              <Box
-                style={{
-                  border: `1px solid ${getThemedColor("neutral", 300)}`,
-                  padding: "15px",
-                  margin: "15px",
-                  borderRadius: "5px"
-                }}
-              >
-                <h2>Label</h2>
-                <p>Caption</p>
-
+              </div>
+            </FilterCard>
+            <FilterCard label="Label" caption="Caption">
+              <div>
                 <div
                   style={{
                     display: "flex",
@@ -210,27 +167,24 @@ export const FilterPanel: Story = {
                     Label
                   </Checkbox>
                 </div>
-              </Box>
-            </div>
-          </div>
+              </div>
+            </FilterCard>
+          </>
         }
         footer={
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              padding: "10px",
-              background: "white",
-              gap: "15px"
-            }}
-          >
-            <Button style={{ flex: 1 }} variant="secondary">
-              Clear All
-            </Button>
-            <Button style={{ flex: 1 }} variant="primary">
-              Apply
-            </Button>
-          </div>
+          <ButtonGroup
+            className=""
+            buttons={[
+              {
+                children: "Clear All",
+                variant: "secondary"
+              },
+              {
+                children: "Apply",
+                variant: "primary"
+              }
+            ]}
+          />
         }
       />
     );
