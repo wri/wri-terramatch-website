@@ -36,7 +36,7 @@ import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
-export const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
+const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
   <Button variant="secondary" size="small" leftIcon={<EditIcon boxSize={4} />} onClick={onClick}>
     {text}
   </Button>
