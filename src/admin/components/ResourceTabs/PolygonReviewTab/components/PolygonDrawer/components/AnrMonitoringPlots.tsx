@@ -19,7 +19,21 @@ import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
-const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) => {
+function getAnrPlotGeometryErrorMessage(error: unknown, fallback: string): string {
+  if (error != null && typeof error === "object" && "message" in error) {
+    try {
+      const parsedMessage = JSON.parse((error as any).message as string);
+      if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
+        return parsedMessage.message as string;
+      }
+    } catch {
+      return (error as any).message as string;
+    }
+  }
+  return fallback;
+}
+
+const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
@@ -32,7 +46,7 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
 
   const [, { data: anrPlotGeometry, isLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
-    enabled: sitePolygonUuid !== ""
+    enabled: sitePolygonUuid != null
   });
 
   const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
@@ -71,18 +85,18 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
   }, []);
 
   const refreshAnrPlotGeometryAfterUpload = useCallback(() => {
-    if (sitePolygonUuid === "") return;
+    if (sitePolygonUuid == null) return;
     ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
   }, [sitePolygonUuid]);
 
   const refreshAnrPlotGeometryAfterDelete = useCallback(() => {
-    if (sitePolygonUuid === "") return;
+    if (sitePolygonUuid == null) return;
     ApiSlice.pruneCache("anrPlotGeometries", [sitePolygonUuid]);
     ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
   }, [sitePolygonUuid]);
 
   const uploadAnrPlotGeometry = useCallback(async () => {
-    if (sitePolygonUuid === "") {
+    if (sitePolygonUuid == null) {
       setIsUploading(false);
       return;
     }
@@ -96,7 +110,7 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
       refreshAnrPlotGeometryAfterUpload();
       openNotification("success", t("Success!"), t("ANR monitoring plots uploaded successfully"));
     } catch (error) {
-      const errorMessage = getErrorMessage(error, t("Error uploading ANR monitoring plots"));
+      const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error uploading ANR monitoring plots"));
       openNotification("error", t("Error!"), errorMessage);
       Log.error("Error uploading ANR monitoring plots", error);
     } finally {
@@ -105,7 +119,7 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
         uploadInputRef.current.value = "";
       }
     }
-  }, [getErrorMessage, openNotification, refreshAnrPlotGeometryAfterUpload, sitePolygonUuid, t]);
+  }, [openNotification, refreshAnrPlotGeometryAfterUpload, sitePolygonUuid, t]);
 
   const onSelectGeoJsonFile = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -131,13 +145,17 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
         content={t("Are you sure you want to delete ANR monitoring plots for this polygon? This cannot be undone.")}
         onClose={() => closeModal(ModalId.CONFIRM_ANR_MONITORING_PLOTS_DELETION)}
         onConfirm={async () => {
+          if (sitePolygonUuid == null) {
+            closeModal(ModalId.CONFIRM_ANR_MONITORING_PLOTS_DELETION);
+            return;
+          }
           try {
             setIsDeleting(true);
             await deleteAnrPlotGeometry(sitePolygonUuid);
             refreshAnrPlotGeometryAfterDelete();
             openNotification("success", t("Success!"), t("ANR monitoring plots deleted successfully"));
           } catch (error) {
-            const errorMessage = getErrorMessage(error, t("Error deleting ANR monitoring plots"));
+            const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error deleting ANR monitoring plots"));
             openNotification("error", t("Error!"), errorMessage);
             Log.error("Error deleting ANR monitoring plots", error);
           } finally {
@@ -147,7 +165,7 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
         }}
       />
     );
-  }, [closeModal, getErrorMessage, openModal, openNotification, refreshAnrPlotGeometryAfterDelete, sitePolygonUuid, t]);
+  }, [closeModal, openModal, openNotification, refreshAnrPlotGeometryAfterDelete, sitePolygonUuid, t]);
 
   const openUploadDialog = useCallback(() => {
     uploadInputRef.current?.click();
@@ -157,7 +175,7 @@ const AnrMonitoringPlots = ({ sitePolygonUuid }: { sitePolygonUuid: string }) =>
     <input ref={uploadInputRef} type="file" accept=".geojson" className="hidden" onChange={onSelectGeoJsonFile} />
   );
 
-  if (sitePolygonUuid === "") {
+  if (sitePolygonUuid == null) {
     return (
       <div className="flex flex-col gap-3">
         <Text variant="text-14" className="text-gray-500">

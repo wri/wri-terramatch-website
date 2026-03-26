@@ -299,7 +299,7 @@ const PolygonDrawer = ({
         </div>
       ) : activeTab === "anrMonitoringPlots" ? (
         <div className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
-          <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid ?? ""} />
+          <AnrMonitoringPlots sitePolygonUuid={selectedPolygon?.uuid} />
         </div>
       ) : (
         <div ref={wrapperRef} className="flex max-h-max flex-[1_1_0] flex-col gap-6 overflow-auto pr-2.5">
@@ -312,7 +312,7 @@ const PolygonDrawer = ({
           </Accordion>
           <Divider />
           <Accordion variant="drawer" title={"Attribute Information"} defaultOpen={openAttributes}>
-            {selectedPolygonData && (
+            {selectedPolygonData != null && (
               <AttributeInformation
                 selectedPolygon={selectPolygonVersion ?? selectedPolygonData}
                 sitePolygonRefresh={sitePolygonRefresh ?? (() => {})}
@@ -327,12 +327,12 @@ const PolygonDrawer = ({
             )}
           </Accordion>
           <Accordion variant="drawer" title={"Version History"} defaultOpen={true} className="min-h-[168px]">
-            {selectedPolygonData && (
+            {selectedPolygonData != null && (
               <VersionHistory
                 wrapperRef={wrapperRef}
                 setPolygonFromMap={setPolygonFromMap}
                 polygonFromMap={polygonFromMap}
-                selectedPolygon={selectedPolygonData ?? selectPolygonVersion}
+                selectedPolygon={selectedPolygonData}
                 setSelectPolygonVersion={setSelectPolygonVersion}
                 selectPolygonVersion={selectPolygonVersion}
                 refreshPolygonList={refresh}
