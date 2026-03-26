@@ -122,7 +122,7 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        "border-theme-neutral-300 border-b py-4",
+                        "border-b border-theme-neutral-300 py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
@@ -250,7 +250,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                   {!isAdditionalInformation && entry.title !== "Photos and videos" && ":"}
                 </Text>
                 <div
-                  className={classNames("bg-theme-neutral-300 my-2 h-px w-full", !isAdditionalInformation && "hidden")}
+                  className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
                 />
                 <EntryValueRenderer
                   entry={entry}
