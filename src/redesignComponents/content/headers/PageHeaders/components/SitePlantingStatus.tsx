@@ -8,11 +8,11 @@ import { AgroforestyIcon, TreePlantingIcon } from "@/redesignComponents/foundati
 type SiteTypeConfig = { icon: ReactNode; label: string };
 const SITE_TYPE_MAP: Record<string, SiteTypeConfig> = {
   "Tree Planting": {
-    icon: <TreePlantingIcon className="text-theme-secondary-800 h-8 w-8" />,
+    icon: <TreePlantingIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Tree Planting"
   },
   Agroforesty: {
-    icon: <AgroforestyIcon className="text-theme-secondary-800 h-8 w-8" />,
+    icon: <AgroforestyIcon className="h-8 w-8 text-theme-secondary-800" />,
     label: "Agroforesty"
   }
 };
@@ -61,7 +61,7 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
           </Flex>
         </div>
         <div className="flex h-full w-fit items-center">
-          <div className="bg-theme-neutral-300 h-13 w-px" />
+          <div className="h-13 w-px bg-theme-neutral-300" />
         </div>
         <div className="flex w-fit flex-col justify-center gap-2">
           <Text color="primary.900" textStyle="300" textWrap="nowrap">

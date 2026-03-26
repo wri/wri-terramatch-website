@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { ChangeEvent, FC, useCallback, useRef, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -13,6 +13,7 @@ import {
   upsertAnrPlotGeometryResource,
   useAnrPlotGeometry
 } from "@/connections/AnrPlotGeometry";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
@@ -37,7 +38,9 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const prevSitePolygonUuidRef = useRef<string | null>(null);
   const [plotsVisible, setPlotsVisible] = useState(true);
+  const anrMapOverlay = useAnrMapOverlayOptional();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -47,6 +50,25 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
   });
 
   const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
+
+  useEffect(() => {
+    if (sitePolygonUuid === "") {
+      prevSitePolygonUuidRef.current = "";
+      return;
+    }
+    const prev = prevSitePolygonUuidRef.current;
+    if (prev != null && prev !== "" && prev !== sitePolygonUuid) {
+      setPlotsVisible(false);
+    }
+    prevSitePolygonUuidRef.current = sitePolygonUuid ?? null;
+  }, [sitePolygonUuid]);
+
+  useEffect(() => {
+    if (anrMapOverlay == null) {
+      return;
+    }
+    anrMapOverlay.setShowPlotsOnMap(plotsVisible);
+  }, [anrMapOverlay, plotsVisible]);
 
   const refreshAnrPlotGeometryAfterUpload = useCallback(() => {
     if (sitePolygonUuid == null) return;
@@ -175,9 +197,9 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
             aria-label={plotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
           >
             {plotsVisible ? (
-              <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
-            ) : (
               <Visibility sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+            ) : (
+              <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
             )}
           </button>
         </div>

@@ -13,11 +13,13 @@ import { useAuditStatuses } from "@/connections/AuditStatus";
 import { clipSinglePolygon } from "@/connections/PolygonClipping";
 import { bulkUpdateSitePolygonStatus, PolygonStatus } from "@/connections/SitePolygons";
 import { createPolygonValidation } from "@/connections/Validation";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -73,10 +75,14 @@ const PolygonDrawer = ({
   const sitePolygonRefresh = context?.reloadSiteData;
   const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
+  const anrMapOverlay = useAnrMapOverlayOptional();
   const { statusSelectedPolygon, setStatusSelectedPolygon, setShouldRefetchValidation } = contextMapArea;
   const { showLoader, hideLoader } = useLoading();
   const { openNotification } = useNotificationContext();
   const wrapperRef = useRef(null);
+  const prevActiveTabForAnrRef = useRef<PolygonDrawerTopTab | null>(null);
+  const anrMapOverlayRef = useRef(anrMapOverlay);
+  anrMapOverlayRef.current = anrMapOverlay;
 
   const runPolygonValidation = async () => {
     try {
@@ -132,6 +138,36 @@ const PolygonDrawer = ({
   useEffect(() => {
     setActiveTab(initialTopTab);
   }, [polygonSelected, initialTopTab]);
+
+  useEffect(() => {
+    if (anrMapOverlay == null) {
+      return;
+    }
+    if (!isOpenPolygonDrawer) {
+      anrMapOverlay.resetAnrMapOverlay();
+      prevActiveTabForAnrRef.current = null;
+      return;
+    }
+    anrMapOverlay.setDrawerOpen(true);
+    const onAnrTab = activeTab === "anrMonitoringPlots";
+    anrMapOverlay.setAnrTabActive(onAnrTab);
+
+    if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
+      anrMapOverlay.syncDrawerSelection({
+        sitePolygonUuid: selectedPolygon.uuid,
+        geometryPolygonUuid: polygonSelected
+      });
+    }
+
+    if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
+      anrMapOverlay.setShowPlotsOnMap(true);
+    }
+    prevActiveTabForAnrRef.current = activeTab;
+  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
+
+  useOnUnmount(() => {
+    anrMapOverlayRef.current?.resetAnrMapOverlay();
+  });
 
   useEffect(() => {
     if (Array.isArray(sitePolygonData)) {

@@ -204,7 +204,7 @@ export const StandardPanelHeaderIcon: Story = {
     ),
     content: (
       <Flex className="flex-col pt-4">
-        <Flex className="border-theme-neutral-300 flex-col gap-2 border-b">
+        <Flex className="flex-col gap-2 border-b border-theme-neutral-300">
           <Flex className="w-full items-center justify-between gap-2 px-4">
             <Text textStyle="600-bold" color="neutral.800">
               Title
@@ -238,7 +238,7 @@ export const PanelContent: Story = {
     width: "fit-content",
     content: (
       <Flex className="flex-col p-4">
-        <Flex className="border-theme-neutral-700 bg-theme-neutral-200 flex-col gap-2 rounded-lg border border-dashed p-4">
+        <Flex className="flex-col gap-2 rounded-lg border border-dashed border-theme-neutral-700 bg-theme-neutral-200 p-4">
           <Text color="neutral.800" textStyle="700-bold" className="whitespace-nowrap">
             Component placeholder
           </Text>
