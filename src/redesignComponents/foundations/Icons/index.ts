@@ -53,6 +53,7 @@ export { OpportunitiesIcon } from "./NavigationSections/OpportunitiesIcon";
 export { OrganizationIcon } from "./NavigationSections/OrganizationIcon";
 export { PendingIcon } from "./Status/PendingIcon";
 export { PeatlandIcon } from "./RestorationAndLand/PeatlandIcon";
+export { PhotosIcon } from "./PhotosIcon";
 export { PhotoAddIcon } from "./Function/PhotoAddIcon";
 export { PhotoLibraryIcon } from "./PhotoLibraryIcon";
 export { PlaceholderIcon } from "./Function/PlaceholderIcon";

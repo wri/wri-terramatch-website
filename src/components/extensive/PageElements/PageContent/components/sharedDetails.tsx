@@ -1,4 +1,4 @@
-import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Flex, Grid, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
@@ -30,9 +30,10 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon, PhotosIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
+import GalleryEntryItem from "./GalleryEntryItem";
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
@@ -56,10 +57,42 @@ export type SharedDetailsProps = {
 type EntryValueRendererProps = {
   entry: FormEntry;
   noGoalTableColumns: { key: string; label: string }[];
+  entityName: "projects" | "sites";
+  entityUUID: string;
 };
 
-const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererProps) => {
+const parseImageLinks = (html: string): { url: string; name: string }[] => {
+  const regex = /<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
+  const results: { url: string; name: string }[] = [];
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    results.push({ url: match[1], name: match[2] });
+  }
+  return results;
+};
+
+const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID }: EntryValueRendererProps) => {
   const rawValue = entry.value ?? "-";
+  if (entry.title === "Photos and videos") {
+    const htmlValue = typeof rawValue === "string" ? rawValue : "";
+    const images = parseImageLinks(htmlValue);
+
+    if (images.length === 0) {
+      return (
+        <Text textStyle="400" color="neutral.900">
+          -
+        </Text>
+      );
+    }
+
+    return (
+      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+        {images.map((img, idx) => (
+          <GalleryEntryItem key={idx} src={img.url} name={img.name} entityName={entityName} entityUUID={entityUUID} />
+        ))}
+      </Grid>
+    );
+  }
   if (typeof rawValue === "string" || typeof rawValue === "number") {
     return (
       <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
@@ -89,7 +122,7 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        "border-b border-theme-neutral-300 py-4",
+                        "border-theme-neutral-300 border-b py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
@@ -205,16 +238,26 @@ const SharedDetails: FC<SharedDetailsProps> = ({
             <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
                 <Text
+                  display="flex"
+                  alignItems="center"
+                  gap={1}
+                  lineHeight={"normal"}
                   textStyle={isAdditionalInformation ? "400" : "300-bold"}
                   color={isAdditionalInformation ? "neutral.700" : "primary.900"}
                 >
-                  {t(entry.title)}
-                  {!isAdditionalInformation && ":"}
+                  {entry.title === "Photos and videos" ? <PhotosIcon boxSize={3.5} color="primary.900" /> : null}
+                  {t(entry.title === "Photos and videos" ? "Photos" : entry.title)}
+                  {!isAdditionalInformation && entry.title !== "Photos and videos" && ":"}
                 </Text>
                 <div
-                  className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
+                  className={classNames("bg-theme-neutral-300 my-2 h-px w-full", !isAdditionalInformation && "hidden")}
                 />
-                <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
+                <EntryValueRenderer
+                  entry={entry}
+                  noGoalTableColumns={noGoalTableColumns}
+                  entityName={entityName}
+                  entityUUID={entityUUID}
+                />
               </Flex>
               {stepIndex === 0 && index === 0 && entityName === "projects" && (
                 <Flex direction="column" gap={1}>
