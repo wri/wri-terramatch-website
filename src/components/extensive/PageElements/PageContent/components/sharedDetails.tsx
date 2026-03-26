@@ -72,7 +72,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
   const entries = useGetFormEntries({
     stepId: step.id,
     values: formValues,
-    nullText: "Answer Not Provided",
+    nullText: t("Answer Not Provided"),
     entity: { entityName, entityUUID },
     type: entityName
   });
