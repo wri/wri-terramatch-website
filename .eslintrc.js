@@ -56,7 +56,9 @@ module.exports = {
     "react-hooks/exhaustive-deps": "error",
     "prettier/prettier": [
       "error",
-      {},
+      {
+        endOfLine: "auto"
+      },
       {
         usePrettierrc: true
       }
