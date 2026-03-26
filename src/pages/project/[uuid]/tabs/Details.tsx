@@ -26,7 +26,7 @@ const ProjectStageBlock: FC<{ project: ProjectFullDto }> = ({ project }) => {
       <Text textStyle="300-bold" color="primary.900">
         {t("Project Stage")}:
       </Text>
-      {project.plantingStatus !== null ? (
+      {project.plantingStatus != null ? (
         <div className="flex items-center gap-2">
           <ProgressTag state={getPlantingStatus(project.plantingStatus)} />
           {(project.plantingStatus === "replacement-planting" ||
@@ -53,18 +53,21 @@ type DetailStepProps = {
   stepIndex: number;
 };
 
-const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex }) => (
-  <SharedDetailStep
-    step={step}
-    formValues={formValues}
-    entityName="projects"
-    entityUUID={project.uuid}
-    entityStatus={project.status}
-    updateRequestStatus={project.updateRequestStatus}
-    additionalInfoTitle="Additional Information"
-    afterFirstEntry={stepIndex === 0 ? <ProjectStageBlock project={project} /> : undefined}
-  />
-);
+const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex }) => {
+  const t = useT();
+  return (
+    <SharedDetailStep
+      step={step}
+      formValues={formValues}
+      entityName="projects"
+      entityUUID={project.uuid}
+      entityStatus={project.status}
+      updateRequestStatus={project.updateRequestStatus}
+      additionalInfoTitle={t("Additional Information")}
+      afterFirstEntry={stepIndex === 0 ? <ProjectStageBlock project={project} /> : undefined}
+    />
+  );
+};
 
 const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   const { steps, defaultValues, fieldsProvider, isFormLoading, providerLoaded } = useEntityFormSetup(
@@ -79,7 +82,7 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
   }
 
   return (
-    <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+    <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider}>
         {steps.map((step, index) => (
           <DetailStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />

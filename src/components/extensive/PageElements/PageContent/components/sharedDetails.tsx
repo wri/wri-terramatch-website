@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { FC, Fragment, ReactElement, ReactNode, useMemo } from "react";
-import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
@@ -78,16 +77,16 @@ export const EntryValueRenderer: FC<EntryValueRendererProps> = ({ value, noGoalT
             <TableRow>
               {noCountTableColumns.map((col, idx) => (
                 <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                  <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                  {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-theme-neutral-300 border-b py-4"
+                        "border-b border-theme-neutral-300 py-4"
                       )}
                     >
                       {row[idx + 1]}
                     </Box>
-                  </When>
+                  )}
                 </TableCell>
               ))}
             </TableRow>
@@ -116,7 +115,7 @@ export const EntryValueRenderer: FC<EntryValueRendererProps> = ({ value, noGoalT
 
   return (
     <Text textStyle="400" color="neutral.900">
-      {formatEntryValue(rawValue as string | number)}
+      {formatEntryValue(rawValue)}
     </Text>
   );
 };
@@ -215,7 +214,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
               </Text>
               <div
                 className={classNames(
-                  "bg-theme-neutral-300 my-2 h-px w-full",
+                  "my-2 h-px w-full bg-theme-neutral-300",
                   entry.title !== additionalInfoTitle && "hidden"
                 )}
               />
