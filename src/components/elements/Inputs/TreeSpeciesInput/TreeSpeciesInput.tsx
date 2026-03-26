@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { isEmpty, remove } from "lodash";
-import { FC, Fragment, KeyboardEvent, useCallback, useId, useMemo, useRef, useState } from "react";
+import { FC, Fragment, KeyboardEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { FieldError } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 
@@ -40,6 +40,7 @@ export interface TreeSpeciesInputProps extends Omit<InputWrapperProps, "error"> 
   clearErrors: () => void;
   collection?: string;
   model: FormModelType;
+  formDefaultIncludesFieldKey?: boolean;
 
   onError?: () => void;
   error?: FieldError;
@@ -89,6 +90,12 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const { autocompleteSearch, findTaxonId } = useAutocompleteSearch();
 
   const { onChange, value, clearErrors, collection } = props;
+  const hasInitializedSpeciesRef = useRef(props.formDefaultIncludesFieldKey === true);
+  useEffect(() => {
+    if (value.length > 0) {
+      hasInitializedSpeciesRef.current = true;
+    }
+  }, [value.length]);
 
   const entityUuid = useFormModelUuid(props.model);
   const isEntity = props.model != null && entityUuid != null;
@@ -110,7 +117,8 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
     collection
   });
   const shouldPrepopulate =
-    value.length == 0 &&
+    !hasInitializedSpeciesRef.current &&
+    value.length === 0 &&
     (Object.values(previousPlantingCounts ?? {}).length > 0 || (establishmentTrees ?? []).length > 0);
   useValueChanged(shouldPrepopulate, function () {
     if (shouldPrepopulate) {
@@ -133,6 +141,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
         }
       }
       onChange(values);
+      hasInitializedSpeciesRef.current = true;
     }
   });
 
@@ -168,8 +177,9 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
   const handleDelete = useCallback(
     (uuid: string | undefined) => {
       if (uuid != null) {
-        remove(value, (v: TreeSpeciesValue) => v.uuid == uuid);
-        onChange(value);
+        const _tmp = [...value];
+        remove(_tmp, (v: TreeSpeciesValue) => v.uuid === uuid);
+        onChange(_tmp);
         clearErrors();
       }
     },
@@ -415,7 +425,7 @@ const TreeSpeciesInput: FC<TreeSpeciesInputProps> = props => {
                     </div>
                   )}
                   {establishmentTrees != null &&
-                    establishmentTrees?.find(({ name }) => name === value.name ?? "") == null && (
+                    establishmentTrees?.find(({ name }) => name === (value.name ?? "")) == null && (
                       <div title={t("New Species (not used in establishment)")}>
                         <Icon name={IconNames.NEW_TAG_TREE_SPECIES} className="min-h-8 min-w-8 h-8 w-8" />
                       </div>

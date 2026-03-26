@@ -444,7 +444,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
+                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >
