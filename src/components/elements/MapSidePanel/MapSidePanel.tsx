@@ -1,6 +1,16 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import React, { DetailedHTMLProps, Fragment, HTMLAttributes, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  DetailedHTMLProps,
+  Dispatch,
+  Fragment,
+  HTMLAttributes,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { When } from "react-if";
 
 import { downloadPolygonGeoJson } from "@/components/elements/Map-mapbox/utils";
@@ -16,6 +26,7 @@ import { useDate } from "@/hooks/useDate";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { usePolygonsPagination } from "@/hooks/usePolygonsPagination";
 import Log from "@/utils/log";
+import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonAnrEligibility";
 
 import Button from "../Button/Button";
 import Checkbox from "../Inputs/Checkbox/Checkbox";
@@ -39,6 +50,7 @@ export interface MapSidePanelProps extends DetailedHTMLProps<HTMLAttributes<HTML
   type: string;
   recallEntityData?: any;
   entityUuid?: string;
+  setTabEditPolygon: Dispatch<SetStateAction<string>>;
 }
 
 const MapSidePanel = ({
@@ -58,6 +70,7 @@ const MapSidePanel = ({
   type,
   recallEntityData,
   entityUuid,
+  setTabEditPolygon,
   ...props
 }: MapSidePanelProps) => {
   const t = useT();
@@ -133,6 +146,18 @@ const MapSidePanel = ({
       deletePolygon(selected?.polygonUuid ?? "");
       setClickedButton("");
     } else if (clickedButton === "editPolygon") {
+      setTabEditPolygon("Attributes");
+      setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
+      if (selected?.polygonUuid) {
+        flyToPolygonBounds();
+      }
+      setClickedButton("");
+    } else if (clickedButton === "anrMonitoringPlots") {
+      if (!isSitePolygonEligibleForAnrMonitoringPlots(selected)) {
+        setClickedButton("");
+        return;
+      }
+      setTabEditPolygon("ANR Monitoring Plots");
       setEditPolygon?.({ isOpen: true, uuid: selected?.polygonUuid ?? "", primary_uuid: selected?.primaryUuid ?? "" });
       if (selected?.polygonUuid) {
         flyToPolygonBounds();
@@ -326,6 +351,7 @@ const MapSidePanel = ({
                 site_id={entityUuid}
                 validationStatus={item.validationStatus ?? "notChecked"}
                 isAdmin={isAdmin}
+                anrMonitoringPlotsEligible={isSitePolygonEligibleForAnrMonitoringPlots(item)}
               />
             )}
           />

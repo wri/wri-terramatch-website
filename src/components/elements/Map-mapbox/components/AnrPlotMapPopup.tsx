@@ -14,7 +14,7 @@ export const AnrPlotMapPopup = ({ plotId, areaM2, select, onClose }: AnrPlotMapP
   const t = useT();
 
   return (
-    <div className="shadow-md relative w-[240px] rounded border-t-[5px] border-t-[rgb(195,110,95)] bg-white px-3 pb-3 pt-2">
+    <div className="border-t-gray-700 shadow-md relative w-[240px] rounded border-t-[5px] bg-white px-3 pb-3 pt-2">
       <button
         type="button"
         onClick={onClose}

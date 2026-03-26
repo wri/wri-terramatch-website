@@ -1,5 +1,5 @@
 import { Icon, IconProps } from "@chakra-ui/react";
-import React, { FC } from "react";
+import { FC } from "react";
 
 export const ANRIcon: FC<IconProps> = props => (
   <Icon {...props}>

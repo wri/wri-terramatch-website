@@ -1887,8 +1887,8 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
         paint: {
-          "fill-color": "rgb(195, 110, 95)",
-          "fill-opacity": 0.5
+          "fill-color": "#9ca3af",
+          "fill-opacity": 0.7
         }
       },
       beforeLayer
@@ -1901,14 +1901,22 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         source: ANR_PLOT_SOURCE_ID,
         layout: { visibility: "visible" },
         paint: {
-          "line-color": "rgb(195, 110, 95)",
-          "line-width": 1.5,
-          "line-opacity": 0.85
+          "line-color": "#6b7280",
+          "line-width": 1.95,
+          "line-opacity": 0.9
         }
       },
       beforeLayer
     );
 
+    if (map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null) {
+      try {
+        map.moveLayer(ANR_PLOT_LINE_LAYER_ID, LAYERS_NAMES.MEDIA_IMAGES);
+        map.moveLayer(ANR_PLOT_FILL_LAYER_ID, ANR_PLOT_LINE_LAYER_ID);
+      } catch (e) {
+        Log.warn("moveLayer ANR plot overlay:", e);
+      }
+    }
     state.clickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
       const feature = e.features?.[0];
       if (feature == null) return;

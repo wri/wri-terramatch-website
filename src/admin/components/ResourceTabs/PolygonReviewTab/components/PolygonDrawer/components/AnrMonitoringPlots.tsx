@@ -18,7 +18,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
-
 function getAnrPlotGeometryErrorMessage(error: unknown, fallback: string): string {
   if (error != null && typeof error === "object" && "message" in error) {
     try {
@@ -33,7 +32,10 @@ function getAnrPlotGeometryErrorMessage(error: unknown, fallback: string): strin
   return fallback;
 }
 
-const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid }) => {
+const AnrMonitoringPlots: FC<{
+  sitePolygonUuid: string;
+  dataFetchEnabled?: boolean;
+}> = ({ sitePolygonUuid, dataFetchEnabled = true }) => {
   const t = useT();
   const { openModal, closeModal } = useModalContext();
   const { openNotification } = useNotificationContext();
@@ -46,7 +48,7 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
 
   const [, { data: anrPlotGeometry, isLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
-    enabled: sitePolygonUuid != null
+    enabled: sitePolygonUuid !== "" && dataFetchEnabled
   });
 
   const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
@@ -171,6 +173,21 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
           {t("Select a polygon to view ANR monitoring plots.")}
         </Text>
         {geoJsonInput}
+      </div>
+    );
+  }
+
+  if (!dataFetchEnabled) {
+    return (
+      <div className="flex flex-col gap-3">
+        <Text variant="text-14" className="text-darkCustom">
+          {t("ANR Monitoring Plots")}
+        </Text>
+        <Text variant="text-12" className="text-gray-500">
+          {t(
+            "ANR monitoring plots are only available for approved polygons that include Assisted Natural Regeneration as a restoration practice."
+          )}
+        </Text>
       </div>
     );
   }

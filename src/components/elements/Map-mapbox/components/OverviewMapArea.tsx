@@ -8,6 +8,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -147,14 +148,14 @@ const OverviewMapArea = ({
   };
 
   return (
-    <>
+    <AnrMapOverlayProvider>
       {!disabledPolygonPanel && (
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
+          className="absolute z-20 flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -197,7 +198,7 @@ const OverviewMapArea = ({
         pdView={true}
         disabledPolygonPanel={disabledPolygonPanel}
       />
-    </>
+    </AnrMapOverlayProvider>
   );
 };
 
