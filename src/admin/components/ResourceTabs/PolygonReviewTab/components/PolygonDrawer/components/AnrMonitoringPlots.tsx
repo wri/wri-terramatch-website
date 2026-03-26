@@ -1,7 +1,7 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
@@ -60,7 +60,7 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
     if (prev != null && prev !== "" && prev !== sitePolygonUuid) {
       setPlotsVisible(false);
     }
-    prevSitePolygonUuidRef.current = sitePolygonUuid;
+    prevSitePolygonUuidRef.current = sitePolygonUuid ?? null;
   }, [sitePolygonUuid]);
 
   useEffect(() => {
@@ -69,20 +69,6 @@ const AnrMonitoringPlots: FC<{ sitePolygonUuid?: string }> = ({ sitePolygonUuid 
     }
     anrMapOverlay.setShowPlotsOnMap(plotsVisible);
   }, [anrMapOverlay, plotsVisible]);
-
-  const getErrorMessage = useCallback((error: unknown, fallback: string) => {
-    if (error != null && typeof error === "object" && "message" in error) {
-      try {
-        const parsedMessage = JSON.parse((error as any).message as string);
-        if (parsedMessage != null && typeof parsedMessage === "object" && "message" in parsedMessage) {
-          return parsedMessage.message as string;
-        }
-      } catch {
-        return (error as any).message as string;
-      }
-    }
-    return fallback;
-  }, []);
 
   const refreshAnrPlotGeometryAfterUpload = useCallback(() => {
     if (sitePolygonUuid == null) return;

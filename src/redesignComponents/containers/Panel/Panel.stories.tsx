@@ -12,7 +12,7 @@ import Accordion from "../Accordion/Accordion";
 import Panel from "./Panel";
 
 const meta = {
-  title: "Redesign Components/Containers/Panel",
+  title: "Redesign Components/Containers/Panel/Panel",
   component: Panel,
   parameters: {
     layout: "centered"
@@ -68,7 +68,7 @@ export const PanelWithBreadcrumb: Story = {
             maxItems={2}
             links={[
               { label: "Page level 1", link: "#" },
-              { label: "Page level 2", link: "#" },
+              { label: "...", link: "#" },
               { label: "Page level 3", link: "#" }
             ]}
             linkRouter={Link}
