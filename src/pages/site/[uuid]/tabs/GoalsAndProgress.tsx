@@ -293,6 +293,31 @@ const GoalsAndProgressTab = ({ site }: GoalsAndProgressTabProps) => {
           </div>
         </PageCard>
       </PageRow>
+      <PageRow>
+        <PageCard title={t("Assisted Natural Regeneration Progress")}>
+          <div className="grid grid-cols-2 gap-16">
+            <div className="flex flex-col gap-4">
+              <GoalProgressCard
+                hasProgress={false}
+                classNameCard="!pl-0"
+                items={[
+                  {
+                    iconName: IconNames.REFRESH_CIRCLE_PD,
+                    label: t("Trees Regenerating:"),
+                    variantLabel: "text-14",
+                    classNameLabel: " text-neutral-650 uppercase !w-auto",
+                    classNameLabelValue: "!justify-start ml-2 !text-2xl",
+                    value: site.treesRegeneratingSpeciesCount ?? 0
+                  }
+                ]}
+              />
+            </div>
+            <div>
+              <TreeSpeciesTable entity="sites" entityUuid={site.uuid} collection="anr" visibleRows={5} />
+            </div>
+          </div>
+        </PageCard>
+      </PageRow>
       <br />
       <br />
     </PageBody>

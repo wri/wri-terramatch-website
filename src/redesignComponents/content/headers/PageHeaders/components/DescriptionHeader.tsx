@@ -13,6 +13,7 @@ export interface DescriptionHeaderProps {
   backgroundColor?: string;
   downloadButtonProps?: IButtonProps;
   maxLines?: number;
+  readMoreOnClick?: () => void;
 }
 
 const DescriptionHeader: FC<DescriptionHeaderProps> = ({
@@ -20,7 +21,8 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
   handleEdit,
   backgroundColor = "secondary.neutral",
   downloadButtonProps = null,
-  maxLines = 3
+  maxLines = 3,
+  readMoreOnClick
 }) => {
   const t = useT();
   const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description, maxLines);
@@ -61,7 +63,12 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             }}
           >
             {"..."}
-            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={toggleExpand}>
+            <Button
+              variant="borderless"
+              size="small"
+              rightIcon={<ChevronRightIcon />}
+              onClick={readMoreOnClick ?? toggleExpand}
+            >
               {t("Read More")}
             </Button>
           </Text>

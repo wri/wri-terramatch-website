@@ -67,6 +67,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
             children: t("Download Site Files")
           }}
           maxLines={2}
+          readMoreOnClick={() => router.push(`/site/${site.uuid}?tab=details`)}
         />
       ) : (
         <div className="flex w-fit gap-2">
