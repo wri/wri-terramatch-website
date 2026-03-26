@@ -90,7 +90,7 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
                     <Box
                       className={classNames(
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-b border-theme-neutral-300 py-4"
+                        "border-theme-neutral-300 border-b py-4"
                       )}
                     >
                       {row[idx + 1]}
@@ -201,12 +201,29 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         {entries.map((entry, index) => (
           <Fragment key={`${step.id}-${entry.title}-${index}`}>
             <Flex direction="column" gap={1}>
-              {entry.title === t("Additional Information") ||
-              (entry.title === t("Tree Species") && step.title === t("Tree Species")) ? null : (
-                <Text textStyle="300-bold" color="primary.900">
-                  {t(entry.title)}:
-                </Text>
-              )}
+              <Text
+                textStyle={
+                  entry.title === t("Additional Information") ||
+                  entry.title === t("Tree Species - Additional Information")
+                    ? "400"
+                    : "300-bold"
+                }
+                color={entry.title === t("Additional Information") ? "neutral.700" : "primary.900"}
+              >
+                {t(entry.title)}
+                {entry.title !== t("Additional Information") ||
+                entry.title !== t("Tree Species - Additional Information")
+                  ? ":"
+                  : ""}
+              </Text>
+              <div
+                className={classNames(
+                  "bg-theme-neutral-300 my-2 h-px w-full",
+                  (entry.title !== t("Additional Information") ||
+                    entry.title !== t("Tree Species - Additional Information")) &&
+                    "hidden"
+                )}
+              />
               <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
             </Flex>
             {stepIndex === 0 && index === 0 && entityName === "projects" && (
