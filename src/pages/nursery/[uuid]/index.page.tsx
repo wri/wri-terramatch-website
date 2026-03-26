@@ -65,7 +65,6 @@ const NurseryDetailPage = () => {
         {nursery == null ? null : (
           <>
             <NurseryBanner
-              className="top-[70px]"
               nursery={nursery}
               breadcrumbs={[
                 {

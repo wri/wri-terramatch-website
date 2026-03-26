@@ -70,10 +70,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
 
   return (
     <PageContent>
-      <Flex gap={7}>
+      <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title={t("Key Indicators")}
           flexProps={{ maxWidth: "26%" }}
+          className="max-h-fit !w-full !max-w-full sm:!w-[26%] sm:!max-w-[26%]"
           buttonProps={{
             variant: "secondary",
             size: "small",
@@ -92,7 +93,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             color="secondary.500"
           />
         </PageItem>
-        <PageItem title="About Nurseries" flexProps={{ maxWidth: "37%" }}>
+        <PageItem
+          title="About Nurseries"
+          flexProps={{ maxWidth: "37%" }}
+          className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
+        >
           <About
             description={
               <Text textStyle="300" as="span">
@@ -125,6 +130,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
         </PageItem>
         <PageItem
           flexProps={{ maxWidth: "37%", overflow: "hidden" }}
+          className="!w-full !max-w-full sm:!w-[37%] sm:!max-w-[37%]"
           title={t("Nursery Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(

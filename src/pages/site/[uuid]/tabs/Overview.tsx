@@ -98,7 +98,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
       <PageContent>
-        <Flex gap={7}>
+        <Flex gap={7} className="flex-col sm:flex-row">
           <PageItem
             title={t("Site Map")}
             flexProps={{ flex: 1 }}
@@ -132,7 +132,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             </Box>
           </PageItem>
           <PageItem
-            flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
+            flexProps={{ width: "fit-content", overflow: "hidden" }}
+            className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
             title={t("Sites Set Up")}
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
@@ -167,7 +168,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             <KeyIndicatorsInsightsTab site={site} />
           </Flex>
         </PageItem>
-        <Flex gap={7} maxHeight="570px" paddingY={2}>
+        <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[570px] sm:flex-row">
           <PageItem
             title={t("Latest Images")}
             flexProps={{ flex: 1 }}

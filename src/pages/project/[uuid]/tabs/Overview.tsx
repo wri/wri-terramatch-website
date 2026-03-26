@@ -181,7 +181,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         open={showInviteModal}
         onClose={() => setShowInviteModal(false)}
       />
-      <Flex gap={7}>
+      <Flex gap={7} className="flex-col sm:flex-row">
         <PageItem
           title="Project Map"
           flexProps={{ flex: 1 }}
@@ -237,7 +237,8 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           </Box>
         </PageItem>
         <PageItem
-          flexProps={{ width: "fit-content", maxWidth: "30%", overflow: "hidden" }}
+          flexProps={{ width: "fit-content", overflow: "hidden" }}
+          className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
           title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);
@@ -270,7 +271,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       >
         <KeyIndicatorsInsightsTab project={project} />
       </PageItem>
-      <Flex gap={7} maxHeight="570px" paddingY={2}>
+      <Flex gap={7} paddingY={2} className="max-h-full flex-col sm:max-h-[570px] sm:flex-row">
         <PageItem
           flexProps={{ flex: 1 }}
           title={t("Team Members")}
