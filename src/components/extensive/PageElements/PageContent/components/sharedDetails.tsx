@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { FC, Fragment, useMemo } from "react";
-import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
@@ -87,16 +86,16 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
             <TableRow>
               {noCountTableColumns.map((col, idx) => (
                 <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                  <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                  {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-theme-neutral-300 border-b py-4"
+                        "border-b border-theme-neutral-300 py-4"
                       )}
                     >
                       {row[idx + 1]}
                     </Box>
-                  </When>
+                  )}
                 </TableCell>
               ))}
             </TableRow>
