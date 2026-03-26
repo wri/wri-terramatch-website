@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { FC, Fragment, useMemo } from "react";
-import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
@@ -127,8 +126,8 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
         {entries.map((entry, index) => (
           <Fragment key={`${step.id}-${entry.title}-${index}`}>
             <Flex direction="column" gap={1}>
-              {entry.title === "Additional Information" ||
-              (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
+              {entry.title === t("Additional Information") ||
+              (entry.title === t("Tree Species") && step.title === t("Tree Species")) ? null : (
                 <Text textStyle="300-bold" color="primary.900">
                   {entry.title}:
                 </Text>
@@ -165,7 +164,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
                           <TableRow>
                             {noCountTableColumns.map((col, idx) => (
                               <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                                <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                                {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
@@ -174,7 +173,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
                                   >
                                     {row[idx + 1]}
                                   </Box>
-                                </When>
+                                )}
                               </TableCell>
                             ))}
                           </TableRow>
