@@ -211,10 +211,9 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                 color={entry.title === t("Additional Information") ? "neutral.700" : "primary.900"}
               >
                 {t(entry.title)}
-                {entry.title !== t("Additional Information") ||
-                entry.title !== t("Tree Species - Additional Information")
-                  ? ":"
-                  : ""}
+                {(entry.title !== t("Additional Information") ||
+                  entry.title !== t("Tree Species - Additional Information")) &&
+                  ":"}
               </Text>
               <div
                 className={classNames(
