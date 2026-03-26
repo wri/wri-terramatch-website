@@ -169,7 +169,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
                                   <Box
                                     className={classNames(
                                       idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-theme-neutral-300 border-b py-4"
+                                      "border-b border-theme-neutral-300 py-4"
                                     )}
                                   >
                                     {row[idx + 1]}

@@ -18,7 +18,7 @@ import {
 
 import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
-} from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow ";
+} from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
 
 interface KeyIndicatorsInsightsProps {
