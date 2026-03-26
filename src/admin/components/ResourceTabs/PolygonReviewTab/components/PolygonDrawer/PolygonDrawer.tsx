@@ -19,7 +19,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useOnMount } from "@/hooks/useOnMount";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -165,10 +165,8 @@ const PolygonDrawer = ({
     prevActiveTabForAnrRef.current = activeTab;
   }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
 
-  useOnMount(() => {
-    return () => {
-      anrMapOverlayRef.current?.resetAnrMapOverlay();
-    };
+  useOnUnmount(() => {
+    anrMapOverlayRef.current?.resetAnrMapOverlay();
   });
 
   useEffect(() => {
