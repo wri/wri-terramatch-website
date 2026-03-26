@@ -89,8 +89,8 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-b border-theme-neutral-300 py-4"
+                        "border-b border-theme-neutral-300 py-4",
+                        idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
                       {row[idx + 1]}
@@ -198,44 +198,52 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       }
     >
       <Flex flexDirection="column" gap={3}>
-        {entries.map((entry, index) => (
-          <Fragment key={`${step.id}-${entry.title}-${index}`}>
-            <Flex direction="column" gap={1}>
-              {entry.title === t("Additional Information") ||
-              (entry.title === t("Tree Species") && step.title === t("Tree Species")) ? null : (
-                <Text textStyle="300-bold" color="primary.900">
-                  {t(entry.title)}:
-                </Text>
-              )}
-              <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
-            </Flex>
-            {stepIndex === 0 && index === 0 && entityName === "projects" && (
+        {entries.map((entry, index) => {
+          const isAdditionalInformation =
+            entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information";
+          return (
+            <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
-                <Text textStyle="300-bold" color="primary.900">
-                  {t("Project Stage")}:
+                <Text
+                  textStyle={isAdditionalInformation ? "400" : "300-bold"}
+                  color={isAdditionalInformation ? "neutral.700" : "primary.900"}
+                >
+                  {t(entry.title)}
+                  {!isAdditionalInformation && ":"}
                 </Text>
-                {entity.plantingStatus !== null ? (
-                  <>
-                    <div className="flex items-center gap-2">
-                      <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
-                      {(entity.plantingStatus === "replacement-planting" ||
-                        entity.plantingStatus === "no-restoration-expected") && (
-                        <>
-                          <ArrowForward boxSize={4} color="neutral.900" />
-                          <Text textStyle="400" color="neutral.900">
-                            {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
-                          </Text>
-                        </>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  "-"
-                )}
+                <div
+                  className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
+                />
+                <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
               </Flex>
-            )}
-          </Fragment>
-        ))}
+              {stepIndex === 0 && index === 0 && entityName === "projects" && (
+                <Flex direction="column" gap={1}>
+                  <Text textStyle="300-bold" color="primary.900">
+                    {t("Project Stage")}:
+                  </Text>
+                  {entity.plantingStatus !== null ? (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
+                        {(entity.plantingStatus === "replacement-planting" ||
+                          entity.plantingStatus === "no-restoration-expected") && (
+                          <>
+                            <ArrowForward boxSize={4} color="neutral.900" />
+                            <Text textStyle="400" color="neutral.900">
+                              {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
+                            </Text>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    "-"
+                  )}
+                </Flex>
+              )}
+            </Fragment>
+          );
+        })}
       </Flex>
     </Accordion>
   );
