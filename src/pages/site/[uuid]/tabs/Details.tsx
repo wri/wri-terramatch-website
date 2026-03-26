@@ -1,7 +1,7 @@
 import { Dictionary } from "lodash";
 import { FC } from "react";
 
-import { SharedDetailStep } from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
+import SharedDetails from "@/components/extensive/PageElements/PageContent/components/sharedDetails";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import WizardFormProvider from "@/context/wizardForm.provider";
@@ -12,15 +12,15 @@ interface SiteDetailsTabProps {
   site: SiteFullDto;
 }
 
-type DetailStepProps = {
+type SharedDetailsStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
   site: SiteFullDto;
   stepIndex: number;
 };
 
-const DetailStep: FC<DetailStepProps> = ({ step, formValues, site, stepIndex }) => (
-  <SharedDetailStep
+const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, site, stepIndex }) => (
+  <SharedDetails
     step={step}
     formValues={formValues}
     entityName="sites"
@@ -46,7 +46,7 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
     <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider}>
         {steps.map((step, index) => (
-          <DetailStep key={step.id} step={step} formValues={defaultValues} site={site} stepIndex={index} />
+          <SharedDetailsStep key={step.id} step={step} formValues={defaultValues} site={site} stepIndex={index} />
         ))}
       </WizardFormProvider>
     </PageContent>

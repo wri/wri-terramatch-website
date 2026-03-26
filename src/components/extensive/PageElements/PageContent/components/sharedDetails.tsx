@@ -9,6 +9,7 @@ import { When } from "react-if";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -42,7 +43,7 @@ const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }
   </Button>
 );
 
-export type SharedDetailStepProps = {
+export type SharedDetailsProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
   entityName: "projects" | "sites";
@@ -53,7 +54,81 @@ export type SharedDetailStepProps = {
   entity: ProjectFullDto | SiteFullDto;
 };
 
-export const SharedDetailStep: FC<SharedDetailStepProps> = ({
+type EntryValueRendererProps = {
+  entry: FormEntry;
+  noGoalTableColumns: { key: string; label: string }[];
+};
+
+const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererProps) => {
+  const rawValue = entry.value ?? "-";
+  if (typeof rawValue === "string" || typeof rawValue === "number") {
+    return (
+      <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
+    );
+  }
+  if (rawValue.props.tableType == "noCount") {
+    const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
+    const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+
+    return (
+      <Table
+        data={dataPlants}
+        columns={noCountTableColumns}
+        css={NO_HEADER_TABLE_WRAPPER_STYLES}
+        variant="full-width"
+        totalItems={noCountTableRowCount}
+        showItemCount={false}
+        pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
+        showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
+        className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
+        renderRow={rowData => {
+          const row = rowData as Record<number, string> & { id: number };
+          return (
+            <TableRow>
+              {noCountTableColumns.map((col, idx) => (
+                <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
+                  <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                    <Box
+                      className={classNames(
+                        idx === noCountTableColumns.length - 1 ? "" : "mr-8",
+                        "border-theme-neutral-300 border-b py-4"
+                      )}
+                    >
+                      {row[idx + 1]}
+                    </Box>
+                  </When>
+                </TableCell>
+              ))}
+            </TableRow>
+          );
+        }}
+      />
+    );
+  } else if (rawValue.props.tableType == "noGoal") {
+    return (
+      <Table
+        data={rawValue.props.plants}
+        columns={noGoalTableColumns}
+        variant="full-width"
+        css={FULL_WIDTH_TABLE_HEADER_STYLES}
+        totalItems={rawValue.props.plants.length}
+        showItemCount={false}
+        className={classNames(
+          "mt-[2px] !w-[725px]",
+          rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+        )}
+      />
+    );
+  } else {
+    return (
+      <Text textStyle="400" color="neutral.900">
+        {formatEntryValue(rawValue)}
+      </Text>
+    );
+  }
+};
+
+const SharedDetails: FC<SharedDetailsProps> = ({
   step,
   formValues,
   entityName,
@@ -130,81 +205,10 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
               {entry.title === "Additional Information" ||
               (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
                 <Text textStyle="300-bold" color="primary.900">
-                  {entry.title}:
+                  {t(entry.title)}:
                 </Text>
               )}
-              {(() => {
-                const rawValue = entry.value ?? "-";
-                if (typeof rawValue === "string" || typeof rawValue === "number") {
-                  return (
-                    <Text
-                      textStyle="400"
-                      color="neutral.900"
-                      dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
-                    />
-                  );
-                }
-                if (rawValue.props.tableType == "noCount") {
-                  const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-                  const dataPlants = plantsToNoCountRows(rawValue.props.plants);
-
-                  return (
-                    <Table
-                      data={dataPlants}
-                      columns={noCountTableColumns}
-                      css={NO_HEADER_TABLE_WRAPPER_STYLES}
-                      variant="full-width"
-                      totalItems={noCountTableRowCount}
-                      showItemCount={false}
-                      pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
-                      showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-                      className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
-                      renderRow={rowData => {
-                        const row = rowData as Record<number, string> & { id: number };
-                        return (
-                          <TableRow>
-                            {noCountTableColumns.map((col, idx) => (
-                              <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                                <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
-                                  <Box
-                                    className={classNames(
-                                      idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                                      "border-b border-theme-neutral-300 py-4"
-                                    )}
-                                  >
-                                    {row[idx + 1]}
-                                  </Box>
-                                </When>
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        );
-                      }}
-                    />
-                  );
-                } else if (rawValue.props.tableType == "noGoal") {
-                  return (
-                    <Table
-                      data={rawValue.props.plants}
-                      columns={noGoalTableColumns}
-                      variant="full-width"
-                      css={FULL_WIDTH_TABLE_HEADER_STYLES}
-                      totalItems={rawValue.props.plants.length}
-                      showItemCount={false}
-                      className={classNames(
-                        "mt-[2px] !w-[725px]",
-                        rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
-                      )}
-                    />
-                  );
-                } else {
-                  return (
-                    <Text textStyle="400" color="neutral.900">
-                      {formatEntryValue(rawValue)}
-                    </Text>
-                  );
-                }
-              })()}
+              <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
             </Flex>
             {stepIndex === 0 && index === 0 && entityName === "projects" && (
               <Flex direction="column" gap={1}>
@@ -237,3 +241,5 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
     </Accordion>
   );
 };
+
+export default SharedDetails;
