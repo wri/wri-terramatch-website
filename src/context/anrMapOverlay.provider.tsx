@@ -9,10 +9,10 @@ export type AnrMapOverlayContextValue = {
   geometryPolygonUuid: string | null;
   /** True when polygon drawer is on the ANR Monitoring Plots tab */
   anrTabActive: boolean;
-  setAnrTabActive: (value: boolean) => void;
+  setAnrTabActive: React.Dispatch<React.SetStateAction<boolean>>;
   /** User toggle: show ANR grid on map while on ANR tab (eye icon) */
   showPlotsOnMap: boolean;
-  setShowPlotsOnMap: (value: boolean) => void;
+  setShowPlotsOnMap: React.Dispatch<React.SetStateAction<boolean>>;
   /** Called when drawer closes — clears overlay state */
   resetAnrMapOverlay: () => void;
   /** Called from PolygonDrawer when drawer is open */
@@ -39,14 +39,6 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
     setShowPlotsOnMapState(false);
   }, []);
 
-  const setAnrTabActive = useCallback((value: boolean) => {
-    setAnrTabActiveState(value);
-  }, []);
-
-  const setShowPlotsOnMap = useCallback((value: boolean) => {
-    setShowPlotsOnMapState(value);
-  }, []);
-
   const syncDrawerSelection = useCallback((args: { sitePolygonUuid: string; geometryPolygonUuid: string }) => {
     const { sitePolygonUuid, geometryPolygonUuid: geom } = args;
     const prev = prevGeometryUuidRef.current;
@@ -64,9 +56,9 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
       sitePolygonUuidForApi,
       geometryPolygonUuid,
       anrTabActive,
-      setAnrTabActive,
+      setAnrTabActive: setAnrTabActiveState,
       showPlotsOnMap,
-      setShowPlotsOnMap,
+      setShowPlotsOnMap: setShowPlotsOnMapState,
       resetAnrMapOverlay,
       syncDrawerSelection,
       setDrawerOpen
@@ -76,9 +68,7 @@ export const AnrMapOverlayProvider: React.FC<{ children: ReactNode }> = ({ child
       sitePolygonUuidForApi,
       geometryPolygonUuid,
       anrTabActive,
-      setAnrTabActive,
       showPlotsOnMap,
-      setShowPlotsOnMap,
       resetAnrMapOverlay,
       syncDrawerSelection
     ]

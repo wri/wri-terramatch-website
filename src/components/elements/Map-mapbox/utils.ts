@@ -1780,39 +1780,58 @@ export function parseValidationDataV3(
   });
 }
 
-let anrPlotClickHandler: ((e: mapboxgl.MapLayerMouseEvent) => void) | null = null;
-let anrPlotMouseEnterHandler: (() => void) | null = null;
-let anrPlotMouseLeaveHandler: (() => void) | null = null;
-let anrPlotPopup: mapboxgl.Popup | null = null;
+type AnrPlotOverlayState = {
+  clickHandler: ((e: mapboxgl.MapLayerMouseEvent) => void) | null;
+  mouseEnterHandler: (() => void) | null;
+  mouseLeaveHandler: (() => void) | null;
+  popup: mapboxgl.Popup | null;
+  pendingIdleRetry: { fn: () => void } | null;
+};
 
-let anrPlotPendingIdleRetry: { map: mapboxgl.Map; fn: () => void } | null = null;
+const anrPlotOverlayStateByMap = new WeakMap<mapboxgl.Map, AnrPlotOverlayState>();
 
-function cancelAnrPendingRetry() {
-  if (anrPlotPendingIdleRetry != null) {
-    anrPlotPendingIdleRetry.map.off("idle", anrPlotPendingIdleRetry.fn);
-    anrPlotPendingIdleRetry = null;
+function getAnrPlotOverlayState(map: mapboxgl.Map): AnrPlotOverlayState {
+  const existing = anrPlotOverlayStateByMap.get(map);
+  if (existing != null) return existing;
+  const created: AnrPlotOverlayState = {
+    clickHandler: null,
+    mouseEnterHandler: null,
+    mouseLeaveHandler: null,
+    popup: null,
+    pendingIdleRetry: null
+  };
+  anrPlotOverlayStateByMap.set(map, created);
+  return created;
+}
+
+function cancelAnrPendingRetry(map: mapboxgl.Map) {
+  const state = getAnrPlotOverlayState(map);
+  if (state.pendingIdleRetry != null) {
+    map.off("idle", state.pendingIdleRetry.fn);
+    state.pendingIdleRetry = null;
   }
 }
 
 export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefined) {
-  cancelAnrPendingRetry();
   if (map == null) return;
+  cancelAnrPendingRetry(map);
+  const state = getAnrPlotOverlayState(map);
   try {
-    if (anrPlotPopup != null) {
-      anrPlotPopup.remove();
-      anrPlotPopup = null;
+    if (state.popup != null) {
+      state.popup.remove();
+      state.popup = null;
     }
-    if (anrPlotClickHandler != null) {
-      map.off("click", ANR_PLOT_FILL_LAYER_ID, anrPlotClickHandler);
-      anrPlotClickHandler = null;
+    if (state.clickHandler != null) {
+      map.off("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
+      state.clickHandler = null;
     }
-    if (anrPlotMouseEnterHandler != null) {
-      map.off("mouseenter", ANR_PLOT_FILL_LAYER_ID, anrPlotMouseEnterHandler);
-      anrPlotMouseEnterHandler = null;
+    if (state.mouseEnterHandler != null) {
+      map.off("mouseenter", ANR_PLOT_FILL_LAYER_ID, state.mouseEnterHandler);
+      state.mouseEnterHandler = null;
     }
-    if (anrPlotMouseLeaveHandler != null) {
-      map.off("mouseleave", ANR_PLOT_FILL_LAYER_ID, anrPlotMouseLeaveHandler);
-      anrPlotMouseLeaveHandler = null;
+    if (state.mouseLeaveHandler != null) {
+      map.off("mouseleave", ANR_PLOT_FILL_LAYER_ID, state.mouseLeaveHandler);
+      state.mouseLeaveHandler = null;
     }
     if (map.getLayer(ANR_PLOT_LINE_LAYER_ID) != null) {
       map.removeLayer(ANR_PLOT_LINE_LAYER_ID);
@@ -1831,6 +1850,7 @@ export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefine
 export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown, options: { visible: boolean }) {
   if (map == null) return;
   removeAnrPlotGeometryOverlay(map);
+  const state = getAnrPlotOverlayState(map);
 
   if (!options.visible) {
     return;
@@ -1843,10 +1863,11 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
 
   if (!map.isStyleLoaded()) {
     const retryFn = () => {
-      anrPlotPendingIdleRetry = null;
+      const currentState = getAnrPlotOverlayState(map);
+      currentState.pendingIdleRetry = null;
       upsertAnrPlotGeometryOverlay(map, geojson, options);
     };
-    anrPlotPendingIdleRetry = { map, fn: retryFn };
+    state.pendingIdleRetry = { fn: retryFn };
     map.once("idle", retryFn);
     return;
   }
@@ -1888,12 +1909,12 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
       beforeLayer
     );
 
-    anrPlotClickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
+    state.clickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
       const feature = e.features?.[0];
       if (feature == null) return;
-      if (anrPlotPopup != null) {
-        anrPlotPopup.remove();
-        anrPlotPopup = null;
+      if (state.popup != null) {
+        state.popup.remove();
+        state.popup = null;
       }
       const props = feature.properties ?? {};
       const popupContent = document.createElement("div");
@@ -1919,27 +1940,27 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
           areaM2: areaParsed,
           select: props.select != null ? String(props.select) : null,
           onClose: () => {
-            anrPlotPopup?.remove();
-            anrPlotPopup = null;
+            state.popup?.remove();
+            state.popup = null;
           }
         })
       );
-      anrPlotPopup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
+      state.popup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
         .setLngLat(e.lngLat)
         .setDOMContent(popupContent)
         .addTo(map);
     };
 
-    map.on("click", ANR_PLOT_FILL_LAYER_ID, anrPlotClickHandler);
+    map.on("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
 
-    anrPlotMouseEnterHandler = () => {
+    state.mouseEnterHandler = () => {
       map.getCanvas().style.cursor = "pointer";
     };
-    anrPlotMouseLeaveHandler = () => {
+    state.mouseLeaveHandler = () => {
       map.getCanvas().style.cursor = "";
     };
-    map.on("mouseenter", ANR_PLOT_FILL_LAYER_ID, anrPlotMouseEnterHandler);
-    map.on("mouseleave", ANR_PLOT_FILL_LAYER_ID, anrPlotMouseLeaveHandler);
+    map.on("mouseenter", ANR_PLOT_FILL_LAYER_ID, state.mouseEnterHandler);
+    map.on("mouseleave", ANR_PLOT_FILL_LAYER_ID, state.mouseLeaveHandler);
   } catch (e) {
     Log.warn("upsertAnrPlotGeometryOverlay:", e);
   }
