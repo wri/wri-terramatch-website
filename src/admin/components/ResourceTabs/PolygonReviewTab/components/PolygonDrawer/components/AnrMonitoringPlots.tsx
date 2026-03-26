@@ -18,7 +18,6 @@ import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
-
 function getAnrPlotGeometryErrorMessage(error: unknown, fallback: string): string {
   if (error != null && typeof error === "object" && "message" in error) {
     try {
