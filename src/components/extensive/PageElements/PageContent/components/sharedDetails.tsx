@@ -8,12 +8,14 @@ import { FC, Fragment, useMemo } from "react";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
+import { parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import AttachFileItem from "@/pages/project/[uuid]/components/AttachFileItem";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   getPlantingStatus,
@@ -73,9 +75,9 @@ const parseImageLinks = (html: string): { url: string; name: string }[] => {
 
 const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID }: EntryValueRendererProps) => {
   const rawValue = entry.value ?? "-";
+
   if (entry.title === "Photos and videos") {
-    const htmlValue = typeof rawValue === "string" ? rawValue : "";
-    const images = parseImageLinks(htmlValue);
+    const images = parseImageLinks(typeof rawValue === "string" ? rawValue : "");
 
     if (images.length === 0) {
       return (
@@ -93,12 +95,42 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
       </Grid>
     );
   }
+  if (
+    entry.title ===
+      "If you have any additional documentation on your site you would like to share, please add it below." ||
+    entry.title === "Additional Documentation"
+  ) {
+    const files = parseFilesFromHtml(typeof rawValue === "string" ? rawValue : "");
+
+    if (files.length === 0) {
+      return (
+        <Text textStyle="400" color="neutral.900">
+          -
+        </Text>
+      );
+    }
+
+    return (
+      <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+        {files.map(file => (
+          <AttachFileItem
+            key={file.fileUrl}
+            fileName={file.fileName}
+            onClick={() => window.open(file.fileUrl, "_blank")}
+            fileType={file.fileType}
+          />
+        ))}
+      </Grid>
+    );
+  }
+
   if (typeof rawValue === "string" || typeof rawValue === "number") {
     return (
       <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
     );
   }
-  if (rawValue.props.tableType == "noCount") {
+
+  if (rawValue.props.tableType === "noCount") {
     const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
     const dataPlants = plantsToNoCountRows(rawValue.props.plants);
 
@@ -122,7 +154,7 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        "border-b border-theme-neutral-300 py-4",
+                        "border-theme-neutral-300 border-b py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
@@ -136,7 +168,9 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
         }}
       />
     );
-  } else if (rawValue.props.tableType == "noGoal") {
+  }
+
+  if (rawValue.props.tableType === "noGoal") {
     return (
       <Table
         data={rawValue.props.plants}
@@ -151,13 +185,13 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
         )}
       />
     );
-  } else {
-    return (
-      <Text textStyle="400" color="neutral.900">
-        {formatEntryValue(rawValue)}
-      </Text>
-    );
   }
+
+  return (
+    <Text textStyle="400" color="neutral.900">
+      {formatEntryValue(rawValue)}
+    </Text>
+  );
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -250,7 +284,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                   {!isAdditionalInformation && entry.title !== "Photos and videos" && ":"}
                 </Text>
                 <div
-                  className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
+                  className={classNames("bg-theme-neutral-300 my-2 h-px w-full", !isAdditionalInformation && "hidden")}
                 />
                 <EntryValueRenderer
                   entry={entry}

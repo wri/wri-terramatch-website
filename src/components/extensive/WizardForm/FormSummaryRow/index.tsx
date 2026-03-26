@@ -22,23 +22,27 @@ import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 import { parseFilesFromHtml } from "./parseFilesFromHtml";
 
-const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> = {
-  "Additional Documentation": entry => {
-    if (typeof entry.value !== "string") return null;
+const renderAdditionalDocumentation = (entry: any): JSX.Element | null => {
+  if (typeof entry.value !== "string") return null;
 
-    return (
-      <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
-        {parseFilesFromHtml(entry.value).map(file => (
-          <AttachFileItem
-            key={file.fileUrl}
-            fileName={file.fileName}
-            onClick={() => window.open(file.fileUrl, "_blank")}
-            fileType={file.fileType}
-          />
-        ))}
-      </Grid>
-    );
-  }
+  return (
+    <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+      {parseFilesFromHtml(entry.value).map(file => (
+        <AttachFileItem
+          key={file.fileUrl}
+          fileName={file.fileName}
+          onClick={() => window.open(file.fileUrl, "_blank")}
+          fileType={file.fileType}
+        />
+      ))}
+    </Grid>
+  );
+};
+
+const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> = {
+  "Additional Documentation": renderAdditionalDocumentation,
+  "If you have any additional documentation on your site you would like to share, please add it below.":
+    renderAdditionalDocumentation
 };
 
 const getFieldsRequiringAttentionCount = (
