@@ -16,9 +16,10 @@ type DetailStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
   site: SiteFullDto;
+  stepIndex: number;
 };
 
-const DetailStep: FC<DetailStepProps> = ({ step, formValues, site }) => (
+const DetailStep: FC<DetailStepProps> = ({ step, formValues, site, stepIndex }) => (
   <SharedDetailStep
     step={step}
     formValues={formValues}
@@ -27,6 +28,8 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, site }) => (
     entityStatus={site.status}
     updateRequestStatus={site.updateRequestStatus}
     additionalInfoTitle="Tree Species - Additional Information"
+    stepIndex={stepIndex}
+    entity={site}
   />
 );
 
@@ -43,8 +46,8 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
   return (
     <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider}>
-        {steps.map(step => (
-          <DetailStep key={step.id} step={step} formValues={defaultValues} site={site} />
+        {steps.map((step, index) => (
+          <DetailStep key={step.id} step={step} formValues={defaultValues} site={site} stepIndex={index} />
         ))}
       </WizardFormProvider>
     </PageContent>

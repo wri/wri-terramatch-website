@@ -61,8 +61,10 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, project, stepIndex 
     entityUUID={project.uuid}
     entityStatus={project.status}
     updateRequestStatus={project.updateRequestStatus}
+    entity={project}
     additionalInfoTitle="Additional Information"
     afterFirstEntry={stepIndex === 0 ? <ProjectStageBlock project={project} /> : undefined}
+    stepIndex={stepIndex}
   />
 );
 

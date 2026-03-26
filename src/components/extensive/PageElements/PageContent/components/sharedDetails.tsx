@@ -3,22 +3,26 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { FC, Fragment, ReactElement, ReactNode, useMemo } from "react";
+import { FC, Fragment, useMemo } from "react";
 import { When } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
+import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
+  getPlantingStatus,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
   NO_COUNT_TABLE_SPECIES_PER_ROW,
   noCountTableColumns
 } from "@/pages/project/[uuid]/tabs/constants/Detail.constants";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
+import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 import Table from "@/redesignComponents/dataDisplay/Table/Table";
@@ -26,7 +30,7 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 
@@ -38,89 +42,6 @@ export const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick,
   </Button>
 );
 
-type PlantRow = { name?: string | null };
-type TableElement = ReactElement<{ tableType: string; plants: PlantRow[] }>;
-
-type EntryValueRendererProps = {
-  value: unknown;
-  noGoalTableColumns: Array<{ key: string; label: string }>;
-};
-
-export const EntryValueRenderer: FC<EntryValueRendererProps> = ({ value, noGoalTableColumns }) => {
-  const rawValue = value ?? "-";
-
-  if (typeof rawValue === "string" || typeof rawValue === "number") {
-    return (
-      <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
-    );
-  }
-
-  const element = rawValue as TableElement;
-
-  if (element.props.tableType === "noCount") {
-    const noCountTableRowCount = element.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
-    const dataPlants = plantsToNoCountRows(element.props.plants);
-
-    return (
-      <Table
-        data={dataPlants}
-        columns={noCountTableColumns}
-        css={NO_HEADER_TABLE_WRAPPER_STYLES}
-        variant="full-width"
-        totalItems={noCountTableRowCount}
-        showItemCount={false}
-        pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
-        showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
-        className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
-        renderRow={rowData => {
-          const row = rowData as Record<number, string> & { id: number };
-          return (
-            <TableRow>
-              {noCountTableColumns.map((col, idx) => (
-                <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
-                  <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
-                    <Box
-                      className={classNames(
-                        idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-theme-neutral-300 border-b py-4"
-                      )}
-                    >
-                      {row[idx + 1]}
-                    </Box>
-                  </When>
-                </TableCell>
-              ))}
-            </TableRow>
-          );
-        }}
-      />
-    );
-  }
-
-  if (element.props.tableType === "noGoal") {
-    return (
-      <Table
-        data={element.props.plants}
-        columns={noGoalTableColumns}
-        variant="full-width"
-        css={FULL_WIDTH_TABLE_HEADER_STYLES}
-        totalItems={element.props.plants.length}
-        showItemCount={false}
-        className={classNames(
-          "mt-[2px] !w-[725px]",
-          element.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
-        )}
-      />
-    );
-  }
-
-  return (
-    <Text textStyle="400" color="neutral.900">
-      {formatEntryValue(rawValue as string | number)}
-    </Text>
-  );
-};
-
 export type SharedDetailStepProps = {
   step: FormStepWithValidation;
   formValues: Dictionary<unknown>;
@@ -128,8 +49,8 @@ export type SharedDetailStepProps = {
   entityUUID: string;
   entityStatus?: string | null;
   updateRequestStatus?: string | null;
-  additionalInfoTitle: string;
-  afterFirstEntry?: ReactNode;
+  stepIndex: number;
+  entity: ProjectFullDto | SiteFullDto;
 };
 
 export const SharedDetailStep: FC<SharedDetailStepProps> = ({
@@ -139,8 +60,8 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
   entityUUID,
   entityStatus,
   updateRequestStatus,
-  additionalInfoTitle,
-  afterFirstEntry
+  stepIndex,
+  entity
 }) => {
   const t = useT();
   const router = useRouter();
@@ -206,22 +127,110 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
         {entries.map((entry, index) => (
           <Fragment key={`${step.id}-${entry.title}-${index}`}>
             <Flex direction="column" gap={1}>
-              <Text
-                textStyle={entry.title === additionalInfoTitle ? "400" : "300-bold"}
-                color={entry.title === additionalInfoTitle ? "neutral.700" : "primary.900"}
-              >
-                {t(entry.title)}
-                {entry.title === additionalInfoTitle ? "" : ":"}
-              </Text>
-              <div
-                className={classNames(
-                  "bg-theme-neutral-300 my-2 h-px w-full",
-                  entry.title !== additionalInfoTitle && "hidden"
-                )}
-              />
-              <EntryValueRenderer value={entry.value} noGoalTableColumns={noGoalTableColumns} />
+              {entry.title === "Additional Information" ||
+              (entry.title === "Tree Species" && step.title === "Tree Species") ? null : (
+                <Text textStyle="300-bold" color="primary.900">
+                  {entry.title}:
+                </Text>
+              )}
+              {(() => {
+                const rawValue = entry.value ?? "-";
+                if (typeof rawValue === "string" || typeof rawValue === "number") {
+                  return (
+                    <Text
+                      textStyle="400"
+                      color="neutral.900"
+                      dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }}
+                    />
+                  );
+                }
+                if (rawValue.props.tableType == "noCount") {
+                  const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
+                  const dataPlants = plantsToNoCountRows(rawValue.props.plants);
+
+                  return (
+                    <Table
+                      data={dataPlants}
+                      columns={noCountTableColumns}
+                      css={NO_HEADER_TABLE_WRAPPER_STYLES}
+                      variant="full-width"
+                      totalItems={noCountTableRowCount}
+                      showItemCount={false}
+                      pageSize={NO_COUNT_TABLE_SPECIES_PER_PAGE}
+                      showPagination={NO_COUNT_TABLE_SPECIES_PER_PAGE < noCountTableRowCount}
+                      className={classNames("mt-[2px]", dataPlants.length <= NO_COUNT_TABLE_SPECIES_PER_PAGE && "mb-3")}
+                      renderRow={rowData => {
+                        const row = rowData as Record<number, string> & { id: number };
+                        return (
+                          <TableRow>
+                            {noCountTableColumns.map((col, idx) => (
+                              <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
+                                <When condition={row[idx + 1] !== undefined && row[idx + 1] !== ""}>
+                                  <Box
+                                    className={classNames(
+                                      idx === noCountTableColumns.length - 1 ? "" : "mr-8",
+                                      "border-theme-neutral-300 border-b py-4"
+                                    )}
+                                  >
+                                    {row[idx + 1]}
+                                  </Box>
+                                </When>
+                              </TableCell>
+                            ))}
+                          </TableRow>
+                        );
+                      }}
+                    />
+                  );
+                } else if (rawValue.props.tableType == "noGoal") {
+                  return (
+                    <Table
+                      data={rawValue.props.plants}
+                      columns={noGoalTableColumns}
+                      variant="full-width"
+                      css={FULL_WIDTH_TABLE_HEADER_STYLES}
+                      totalItems={rawValue.props.plants.length}
+                      showItemCount={false}
+                      className={classNames(
+                        "mt-[2px] !w-[725px]",
+                        rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+                      )}
+                    />
+                  );
+                } else {
+                  return (
+                    <Text textStyle="400" color="neutral.900">
+                      {formatEntryValue(rawValue)}
+                    </Text>
+                  );
+                }
+              })()}
             </Flex>
-            {index === 0 && afterFirstEntry}
+            {stepIndex === 0 && index === 0 && (
+              <Flex direction="column" gap={1}>
+                <Text textStyle="300-bold" color="primary.900">
+                  {t("Project Stage")}:
+                </Text>
+                {entity.plantingStatus !== null ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
+                      {(entity.plantingStatus === "replacement-planting" ||
+                        entity.plantingStatus === "no-restoration-expected") && (
+                        <>
+                          <ArrowForward boxSize={4} color="neutral.900" />
+                          <Text textStyle="400" color="neutral.900">
+                            {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
+                          </Text>
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  "-"
+                )}
+              </Flex>
+            )}
           </Fragment>
         ))}
       </Flex>
