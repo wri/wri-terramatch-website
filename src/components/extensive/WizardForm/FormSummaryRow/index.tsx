@@ -18,6 +18,7 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
+import GalleryEntryItem from "../../PageElements/PageContent/components/GalleryEntryItem";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 import { parseFilesFromHtml } from "./parseFilesFromHtml";
@@ -35,6 +36,30 @@ const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> =
             onClick={() => window.open(file.fileUrl, "_blank")}
             fileType={file.fileType}
           />
+        ))}
+      </Grid>
+    );
+  },
+  "Photos and videos": entry => {
+    const parseImageLinks = (html: string): { url: string; name: string }[] => {
+      const regex = /<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
+      const results: { url: string; name: string }[] = [];
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+        results.push({ url: match[1], name: match[2] });
+      }
+      return results;
+    };
+    if (typeof entry.value !== "string") return null;
+    const htmlValue = typeof entry.value === "string" ? entry.value : "";
+    const images = parseImageLinks(htmlValue);
+    if (images.length === 0) {
+      return <Text variant="text-body-500">-</Text>;
+    }
+    return (
+      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+        {images.map((img, idx) => (
+          <GalleryEntryItem key={idx} src={img.url} name={img.name} url={""} />
         ))}
       </Grid>
     );
