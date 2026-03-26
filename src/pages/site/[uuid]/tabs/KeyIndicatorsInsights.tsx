@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 
 import MetricCardsRow, {
   METRIC_CARD_CLASS_NAME
-} from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow ";
+} from "@/components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
