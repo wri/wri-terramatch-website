@@ -1,3 +1,4 @@
+import { Grid } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
@@ -9,6 +10,7 @@ import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary"
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { Framework, toFramework, useFramework } from "@/context/framework.provider";
 import { useFieldsProvider, useFormEntities } from "@/context/wizardForm.provider";
+import AttachFileItem from "@/pages/project/[uuid]/components/AttachFileItem";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
@@ -18,6 +20,26 @@ import { EntityName } from "@/types/common";
 import List from "../../List/List";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
+import { parseFilesFromHtml } from "./parseFilesFromHtml";
+
+const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> = {
+  "Additional Documentation": entry => {
+    if (typeof entry.value !== "string") return null;
+
+    return (
+      <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+        {parseFilesFromHtml(entry.value).map(file => (
+          <AttachFileItem
+            key={file.fileUrl}
+            fileName={file.fileName}
+            onClick={() => window.open(file.fileUrl, "_blank")}
+            fileType={file.fileType}
+          />
+        ))}
+      </Grid>
+    );
+  }
+};
 
 const getFieldsRequiringAttentionCount = (
   validation: yup.ObjectSchema<Record<string, unknown>>,
@@ -77,39 +99,49 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       <List
         className="flex flex-col gap-4"
         items={entries}
-        render={entry => (
-          <div
-            className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-              "w-full flex-col": isTrackingType(entry.value?.props?.type)
-            })}
-          >
-            <Text variant="text-body-500" className=" flex-1">
-              {entry.title}
-            </Text>
-            <div
-              className={classNames("flex-1", {
-                "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
-              })}
-            >
-              <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-                <Then>
-                  <Text variant="text-body-300" className="flex-1" containHtml>
-                    {formatEntryValue(entry.value)}
-                  </Text>
-                </Then>
-                <Else>
-                  <div
-                    className={classNames("", {
-                      "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
-                    })}
-                  >
-                    {formatEntryValue(entry.value)}
-                  </div>
-                </Else>
-              </If>
-            </div>
-          </div>
-        )}
+        render={entry => {
+          const CustomRenderer = customEntryRenderers[entry.title as keyof typeof customEntryRenderers];
+
+          if (CustomRenderer) {
+            return <CustomRenderer {...entry} />;
+          }
+
+          return (
+            <>
+              <div
+                className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
+                  "w-full flex-col": isTrackingType(entry.value?.props?.type)
+                })}
+              >
+                <Text variant="text-body-500" className=" flex-1">
+                  {entry.title}
+                </Text>
+                <div
+                  className={classNames("flex-1", {
+                    "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                  })}
+                >
+                  <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
+                    <Then>
+                      <Text variant="text-body-300" className="flex-1" containHtml>
+                        {formatEntryValue(entry.value)}
+                      </Text>
+                    </Then>
+                    <Else>
+                      <div
+                        className={classNames("", {
+                          "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                        })}
+                      >
+                        {formatEntryValue(entry.value)}
+                      </div>
+                    </Else>
+                  </If>
+                </div>
+              </div>
+            </>
+          );
+        }}
       />
     </Accordion>
   );

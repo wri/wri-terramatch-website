@@ -3,6 +3,7 @@ export { AgroforestyIcon } from "./RestorationAndLand/AgroforestyIcon";
 export { ANRIcon } from "./ANRIcon";
 export { ApplicationsIcon } from "./NavigationSections/ApplicationsIcon";
 export { AreaHectaresIcon } from "./DataVisualisation/AreaHectaresIcon";
+export { AttachFileIcon } from "./AttachFileIcon";
 export { ArrowForward } from "./ArrowForward";
 export { AssistedNaturalRegenIcon } from "./RestorationAndLand/AssistedNaturalRegenIcon";
 export { CalendarIcon } from "./Function/CalendarIcon";
