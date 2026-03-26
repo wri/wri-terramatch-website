@@ -990,7 +990,7 @@ export const MapContainer = ({
               <ZoomControl map={map.current} />
             </ControlGroup>
 
-            {record?.uuid != null && validationType === "bulkValidation" ? (
+            {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
                 <CheckPolygonControl
                   siteRecord={record}

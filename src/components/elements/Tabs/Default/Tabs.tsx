@@ -88,7 +88,7 @@ const Tabs: FC<TabsProps> = props => {
   return (
     <div
       className={twMerge(
-        "flex h-full min-h-0 w-full bg-theme-neutral-100 pl-6 pr-2.5 pt-2 pb-16 shadow",
+        "bg-theme-neutral-100 flex h-full min-h-0 w-full pl-6 pr-2.5 pt-2 pb-16 shadow",
         props.className
       )}
     >

@@ -143,7 +143,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         <title>{t("Project")}</title>
       </Head>
       <ProjectBanner
-        className="top-[70px]"
         project={project}
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => navigateToTab("team-members")}
@@ -163,7 +162,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
@@ -188,7 +187,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="w-full">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
       <PageFooter />
     </>
   );

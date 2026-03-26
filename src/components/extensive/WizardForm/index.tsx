@@ -9,7 +9,6 @@ import { twMerge } from "tailwind-merge";
 
 import AdminLinkWrapper from "@/components/elements/AdminLinkWrapper/AdminLinkWrapper";
 import Tabs, { TabItem } from "@/components/elements/Tabs/Default/Tabs";
-import Text from "@/components/elements/Text/Text";
 import { FormStep } from "@/components/extensive/WizardForm/FormStep";
 import { useFormNavigation } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useFormStepsWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -20,7 +19,8 @@ import WizardFormProvider, {
   FormModel,
   FormModelsDefinition,
   OrgFormDetails,
-  ProjectFormDetails
+  ProjectFormDetails,
+  useFieldsProvider
 } from "@/context/wizardForm.provider";
 import { ErrorWrapper } from "@/generated/apiFetcher";
 import { entityLinkHeaderMap, mapEntityTitle, mapStatusToTagState } from "@/helpers/entityFormLinkHeader";
@@ -30,9 +30,9 @@ import { useOnMount } from "@/hooks/useOnMount";
 import { useReportingWindow } from "@/hooks/useReportingWindow";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import PageHeader from "@/redesignComponents/content/headers/PageHeaders/PageHeader";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons/Function/ChevronRightIcon";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons/NavigationSections/ProjectIcon";
 import ToolbarObject from "@/redesignComponents/navigation/Toolbar/ToolbarObject";
+import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessage";
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
@@ -40,6 +40,7 @@ import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
 import SummaryItem from "./SummaryItem";
+import { downloadAnswersCSV } from "./utils";
 
 export type WizardFormEntity = {
   uuid?: string | null;
@@ -116,6 +117,7 @@ function WizardForm(props: WizardFormProps) {
   const isAdmin = useIsAdmin();
   const reportingWindow = useReportingWindow(toFramework(entity?.frameworkKey), entity?.dueAt!);
   const taskTitle = t("Reporting Task {window}", { window: reportingWindow });
+  const fieldsProvider = useFieldsProvider();
 
   const lastIndex = props.summaryOptions ? steps.length : steps.length - 1;
   const formHook: UseFormReturn = useForm(
@@ -256,14 +258,15 @@ function WizardForm(props: WizardFormProps) {
         })}
       >
         {index === 0 && title === "Site Overview" && (
-          <div className="w-full bg-white px-16 pt-8">
-            <div className="rounded-lg bg-tertiary-80 p-6">
-              <Text variant="text-16-bold" className="text-white">
-                {t(
-                  `Note: To edit your site polygons, close this form and edit directly on the new map interface located at the bottom of the site landing page.`
-                )}
-              </Text>
-            </div>
+          <div className="w-full bg-white pt-8 pl-20">
+            <InlineMessage
+              size="full-width"
+              label={t("Note")}
+              caption={t(
+                "To edit your site polygons, close this form and edit directly on the new map interface located at the bottom of the site landing page."
+              )}
+              variant="info-grey"
+            />
           </div>
         )}
         <FormStep id="step" stepId={stepId} formHook={formHook} onChange={_onChange} />
@@ -293,15 +296,10 @@ function WizardForm(props: WizardFormProps) {
                 }
               : undefined
           }
-          tertiaryButtonProps={
-            !props.hideBackButton && selectedStepIndex > 0
-              ? {
-                  children: t("Previous"),
-                  leftIcon: <ChevronRightIcon className="rotate-180" />,
-                  onClick: () => setSelectedStepIndex(n => n - 1)
-                }
-              : undefined
-          }
+          tertiaryButtonProps={{
+            children: t("Download"),
+            onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+          }}
         />
       </div>
     ),
@@ -311,13 +309,13 @@ function WizardForm(props: WizardFormProps) {
       _onChange,
       selectedStepIndex,
       lastIndex,
-      setSelectedStepIndex,
       isAdmin,
       onClickSaveAndClose,
       props,
       onSubmitStep,
       hasErrorInAnyStep,
-      formModel?.model
+      formModel?.model,
+      fieldsProvider
     ]
   );
 
@@ -446,7 +444,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >

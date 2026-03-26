@@ -285,7 +285,15 @@ const ProjectHeader: FC<ProjectHeaderProps> = ({ project, onAddTeamClick, gotoTe
   }, [coverPosition]);
 
   return (
-    <Box display="flex" gap={4} px={6} py={5} justifyContent="space-between" background="secondary.neutral">
+    <Box
+      position="relative"
+      display="flex"
+      gap={4}
+      px={6}
+      py={5}
+      justifyContent="space-between"
+      background="secondary.neutral"
+    >
       <Flex gap={5}>
         <div className={IMAGE_CONTAINER_CLASSES}>
           <ProfileImage

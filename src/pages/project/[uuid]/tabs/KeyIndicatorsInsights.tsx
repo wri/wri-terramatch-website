@@ -1,6 +1,5 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import { FC, useMemo } from "react";
 
 import { useTrackings } from "@/connections/EntityAssociation";
@@ -17,7 +16,11 @@ import {
   TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
+import MetricCardsRow, {
+  METRIC_CARD_CLASS_NAME
+} from "../../../../components/extensive/PageElements/MetricCardsRow/MetricCardsRow";
 import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
+
 interface KeyIndicatorsInsightsProps {
   project: ProjectFullDto;
 }
@@ -38,9 +41,6 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     (project.treesPlantedCount ?? 0) + (project.treesRegeneratingSpeciesCount ?? 0) + (project.seedsPlantedCount ?? 0);
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
-  const metricClassName = classNames(
-    "flex-1 max-w-[calc((100%/2)-6px)] ws-1100:max-w-[calc((100%/3)-6px)] md:!max-w-[calc((100%/4)-6px)] lg:!max-w-[calc((100%/4)-1rem)] w-[350px]"
-  );
   const totalHectaresRestored = project.totalHectaresRestoredSum ?? 0;
   const totalHectaresRestoredGoal = project.totalHectaresRestoredGoal ?? 0;
   const hectaresTargetPercentage =
@@ -67,7 +67,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
   }, [project.frameworkKey]);
 
   return (
-    <Flex flex={1} flexWrap="wrap" className="gap-x-3 gap-y-3 lg:gap-x-8 lg:gap-y-8" justify={"flex-start"}>
+    <MetricCardsRow>
       <MetricCard
         title={t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}
         progress={totalTreesRestoredCount}
@@ -76,8 +76,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         icon={<ProjectIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={metricClassName}
-        classNameTitle="whitespace-nowrap"
+        className={METRIC_CARD_CLASS_NAME}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -95,8 +94,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<RegenerationIcon />}
           color="secondary.600"
           type="treesRegenerated"
-          className={metricClassName}
-          classNameTitle="whitespace-nowrap"
+          className={METRIC_CARD_CLASS_NAME}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
@@ -113,8 +111,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<SeedlingsIcon />}
           color="secondary.600"
           type="saplingsRestored"
-          className={metricClassName}
-          classNameTitle="whitespace-nowrap"
+          className={METRIC_CARD_CLASS_NAME}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
@@ -133,8 +130,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<TreeIcon />}
           color="secondary.600"
           type="treesToBeRestored"
-          className={metricClassName + " !h-auto"}
-          classNameTitle="whitespace-nowrap"
+          className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}</b>
@@ -152,8 +148,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={metricClassName}
-        classNameTitle="whitespace-nowrap"
+        className={METRIC_CARD_CLASS_NAME}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -176,8 +171,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="large"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={metricClassName + " !h-auto"}
-          classNameTitle="whitespace-nowrap"
+          className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -195,8 +189,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="donutChart"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={metricClassName}
-          classNameTitle="whitespace-nowrap"
+          className={METRIC_CARD_CLASS_NAME}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -207,7 +200,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           frameworkKey={framework!}
         />
       )}
-    </Flex>
+    </MetricCardsRow>
   );
 };
 

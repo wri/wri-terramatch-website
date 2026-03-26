@@ -1,9 +1,15 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
@@ -33,8 +39,37 @@ const SiteInfo: FC<SiteInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
+  const { openModal } = useModalContext();
+
+  const needMoreInformation =
+    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
+  const { handleEdit } = useGetEditEntityHandler({
+    entityName: "sites",
+    entityUUID: site.uuid,
+    entityStatus: site.status as string,
+    updateRequestStatus: site.updateRequestStatus as string
+  });
+
+  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps!}
+          feedback={site.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="sites"
+          entityUuid={site.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
@@ -56,6 +91,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
       {description != null ? (
         <DescriptionHeader
           description={description}
+          handleEdit={handleEditClick}
           backgroundColor="neutral.100"
           downloadButtonProps={{
             variant: "secondary",
@@ -71,7 +107,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
         />
       ) : (
         <div className="flex w-fit gap-2">
-          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto">
+          <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEditClick}>
             {t("Edit")}
           </Button>
           <Button
