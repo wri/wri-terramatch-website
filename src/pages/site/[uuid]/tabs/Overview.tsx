@@ -115,7 +115,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
               {!isLoadingSitePolygons && (sitePolygonDataV3?.length ?? 0) === 0 && (
                 <MapPlaceholder
                   icon={<AreaHectaresIcon boxSize={6} color="neutral.100" />}
-                  title="Site Areas not defined yet."
+                  title={t("Site Areas not defined yet.")}
                   buttonGroupProps={{
                     buttons: [
                       {

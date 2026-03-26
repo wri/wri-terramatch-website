@@ -1,4 +1,5 @@
 import { Grid, GridItem } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -35,6 +36,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   const itemsToShow = Math.max(minimumCapacity, roundedCapacity);
   const placeholderCount = itemsToShow - imageCount;
   const isEmpty = imageCount === 0;
+  const t = useT();
 
   return (
     <Grid
@@ -58,14 +60,14 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       ))}
       {Array.from({ length: placeholderCount }).map((_, index) => {
         const isFirstPlaceholder = index === 0;
-        const showAddSlot = Boolean(onClickAdd && isFirstPlaceholder);
+        const showAddSlot = onClickAdd != null && isFirstPlaceholder;
 
         return (
           <GridItem key={`placeholder-${index}`}>
             {showAddSlot ? (
               <GalleryImage
                 className="bg-theme-neutral-200 min-w-full"
-                alt={isEmpty ? "No images available" : "Add image"}
+                alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}
                 size={imageSize}

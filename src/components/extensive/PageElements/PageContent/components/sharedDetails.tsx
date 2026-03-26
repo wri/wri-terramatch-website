@@ -206,7 +206,7 @@ export const SharedDetailStep: FC<SharedDetailStepProps> = ({
                 }
               })()}
             </Flex>
-            {stepIndex === 0 && index === 0 && (
+            {stepIndex === 0 && index === 0 && entityName === "projects" && (
               <Flex direction="column" gap={1}>
                 <Text textStyle="300-bold" color="primary.900">
                   {t("Project Stage")}:

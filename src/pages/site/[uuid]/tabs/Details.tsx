@@ -27,7 +27,6 @@ const DetailStep: FC<DetailStepProps> = ({ step, formValues, site, stepIndex }) 
     entityUUID={site.uuid}
     entityStatus={site.status}
     updateRequestStatus={site.updateRequestStatus}
-    additionalInfoTitle="Tree Species - Additional Information"
     stepIndex={stepIndex}
     entity={site}
   />
