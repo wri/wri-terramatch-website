@@ -33,19 +33,19 @@ const NURSERY_TYPE_MAP: Record<string, NurseryTypeConfig> = {
       "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
   },
   "new-nursery": {
-    icon: <NurseryBuildingIcon className="h-8 w-8 text-theme-secondary-800" />,
+    icon: <NurseryBuildingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "New Nursery",
     tooltip:
       "A nursery that is newly established, including setting up infrastructure, sourcing materials, and starting seedling production."
   },
   "co-managed-nursery": {
-    icon: <NurseryManagingIcon className="h-8 w-8 text-theme-secondary-800" />,
+    icon: <NurseryManagingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Co-managed Nursery",
     tooltip:
       "A nursery jointly operated with a community or partner, where the organization might be supporting maintenance, production management, and quality control to build skills or economic opportunities or any other activity."
   },
   "nursery-expansion": {
-    icon: <NurseryExpandingIcon className="h-8 w-8 text-theme-secondary-800" />,
+    icon: <NurseryExpandingIcon className="text-theme-secondary-800 h-8 w-8" />,
     label: "Nursery Expansion",
     tooltip:
       "An existing nursery that increases its production capacity for the project, such as by adding infrastructure, expanding structures, or increasing seedling output."

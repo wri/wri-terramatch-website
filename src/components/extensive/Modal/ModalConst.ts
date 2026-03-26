@@ -20,6 +20,7 @@ export const ModalId = {
   CONFIRM_UPDATE: "ConfirmUpdate",
   CONFIRM_NURSERY_DELETION: "ConfirmNurseryDeletion",
   CONFIRM_POLYGON_DELETION: "ConfirmPolygonDeletion",
+  CONFIRM_ANR_MONITORING_PLOTS_DELETION: "ConfirmAnrMonitoringPlotsDeletion",
   CONFIRM_POLYGON_TYPE: "ConfirmPolygonType",
   CONFIRMATION_MODAL: "ConfirmationModal",
   CONFIRM_POLYGON_APPROVAL: "confirmPolygonApproval",
