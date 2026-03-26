@@ -112,6 +112,16 @@ const HighLevelMetrics: FC = () => {
                 </Box>
               </Stack>
             </Labeled>
+            <Labeled label="Total Number of Trees Regenerating">
+              <Stack direction="row" spacing={6} alignItems="center">
+                <Box>
+                  <Typography variant="body2" color="text.secondary">
+                    Reports
+                  </Typography>
+                  <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+                </Box>
+              </Stack>
+            </Labeled>
           </>
           <div className="hidden">
             <ContextCondition frameworksShow={[Framework.TF]}>

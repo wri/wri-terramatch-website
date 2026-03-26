@@ -19,7 +19,7 @@ import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
-import { useOnMount } from "@/hooks/useOnMount";
+import { useOnUnmount } from "@/hooks/useOnMount";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
@@ -178,10 +178,38 @@ const PolygonDrawer = ({
     prevActiveTabForAnrRef.current = activeTab;
   }, [anrMapOverlay, activeTab, anrPlotsEligible, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
 
-  useOnMount(() => {
-    return () => {
-      anrMapOverlayRef.current?.resetAnrMapOverlay();
-    };
+  useOnUnmount(() => {
+    anrMapOverlayRef.current?.resetAnrMapOverlay();
+  });
+
+  useEffect(() => {
+    if (anrMapOverlay == null) {
+      return;
+    }
+    if (!isOpenPolygonDrawer) {
+      anrMapOverlay.resetAnrMapOverlay();
+      prevActiveTabForAnrRef.current = null;
+      return;
+    }
+    anrMapOverlay.setDrawerOpen(true);
+    const onAnrTab = activeTab === "anrMonitoringPlots";
+    anrMapOverlay.setAnrTabActive(onAnrTab);
+
+    if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
+      anrMapOverlay.syncDrawerSelection({
+        sitePolygonUuid: selectedPolygon.uuid,
+        geometryPolygonUuid: polygonSelected
+      });
+    }
+
+    if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
+      anrMapOverlay.setShowPlotsOnMap(true);
+    }
+    prevActiveTabForAnrRef.current = activeTab;
+  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
+
+  useOnUnmount(() => {
+    anrMapOverlayRef.current?.resetAnrMapOverlay();
   });
 
   useEffect(() => {

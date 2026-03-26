@@ -373,6 +373,33 @@ const SiteReportDetailPage = () => {
                           </Text>
                         </div>
                         <div>
+                          <Text variant="text-20-bold">{t("Trees Regenerating")}</Text>
+                          <GoalProgressCard
+                            hasProgress={false}
+                            classNameCard="!pl-0"
+                            items={[
+                              {
+                                iconName: IconNames.REFRESH_CIRCLE_PD,
+                                label: t("Total Trees Regenerating (on report):"),
+                                variantLabel: "text-14",
+                                classNameLabel: " text-neutral-650 uppercase !w-auto",
+                                classNameLabelValue: "!justify-start ml-2 !text-2xl items-baseline",
+                                value: siteReport.totalTreesRegeneratingSpeciesCount ?? 0
+                              }
+                            ]}
+                            className="mb-5 mt-4 pr-[41px] lg:pr-[150px]"
+                          />
+                          <div className="mb-2 border-b border-dashed border-blueCustom-700 pb-6">
+                            <TreeSpeciesTable
+                              entity="siteReports"
+                              entityUuid={siteReportUUID}
+                              collection="anr"
+                              visibleRows={8}
+                              galleryType={"treeSpeciesPD"}
+                            />
+                          </div>
+                        </div>
+                        <div>
                           <Text variant="text-20-bold">{t("Disturbances")}</Text>
                           <DisturbancesTablePD modelName="siteReports" modelUUID={siteReportUUID} />
                         </div>

@@ -145,6 +145,16 @@ const HighLevelMetrics: FC = () => {
               emptyText="0"
             />
           </Labeled>
+          <When condition={resource === "siteReport"}>
+            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+              <NumberField source="totalTreesRegeneratingSpeciesCount" emptyText="0" />
+            </Labeled>
+          </When>
+          <When condition={resource === "projectReport"}>
+            <Labeled label="Total Number of Trees Regenerating" sx={inlineLabelSx}>
+              <NumberField source="treesRegeneratingSpeciesCount" emptyText="0" />
+            </Labeled>
+          </When>
           <ContextCondition frameworksShow={[Framework.PPC]}>
             <When condition={resource === "projectReport" || resource === "siteReport"}>
               <Labeled label="Total Number Of Seeds Planted" sx={inlineLabelSx}>

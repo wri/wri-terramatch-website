@@ -167,7 +167,8 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
       profileImageScale: null,
       profileImagePosition: null
     },
-    consortiumPartnershipAgreements: []
+    consortiumPartnershipAgreements: [],
+    treesRegeneratingSpeciesCount: 0
   };
 
   return { ...baseProject, ...overrides };
