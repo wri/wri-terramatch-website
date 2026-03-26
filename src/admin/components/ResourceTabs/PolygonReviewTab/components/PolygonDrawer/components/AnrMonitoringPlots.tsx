@@ -74,6 +74,7 @@ const AnrMonitoringPlots: FC<{
 
   const refreshAnrPlotGeometryAfterUpload = useCallback(() => {
     if (sitePolygonUuid == null) return;
+    ApiSlice.pruneCache("anrPlotGeometries", [sitePolygonUuid]);
     ApiSlice.pruneCache("geojsonExports", [sitePolygonUuid]);
   }, [sitePolygonUuid]);
 
@@ -98,6 +99,7 @@ const AnrMonitoringPlots: FC<{
       refreshAnrPlotGeometryAfterUpload();
       openNotification("success", t("Success!"), t("ANR monitoring plots uploaded successfully"));
     } catch (error) {
+      refreshAnrPlotGeometryAfterUpload();
       const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error uploading ANR monitoring plots"));
       openNotification("error", t("Error!"), errorMessage);
       Log.error("Error uploading ANR monitoring plots", error);
@@ -143,6 +145,7 @@ const AnrMonitoringPlots: FC<{
             refreshAnrPlotGeometryAfterDelete();
             openNotification("success", t("Success!"), t("ANR monitoring plots deleted successfully"));
           } catch (error) {
+            refreshAnrPlotGeometryAfterDelete();
             const errorMessage = getAnrPlotGeometryErrorMessage(error, t("Error deleting ANR monitoring plots"));
             openNotification("error", t("Error!"), errorMessage);
             Log.error("Error deleting ANR monitoring plots", error);
