@@ -35,7 +35,7 @@ function computeTreesGrownFromTrackings(entries: TrackingEntryDto[], survivalRat
 
 const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) => {
   const totalTreesRestoredCount =
-    (project.treesPlantedCount ?? 0) + (project.regeneratedTreesCount ?? 0) + (project.seedsPlantedCount ?? 0);
+    (project.treesPlantedCount ?? 0) + (project.treesRegeneratingSpeciesCount ?? 0) + (project.seedsPlantedCount ?? 0);
   const treesGrownGoal = project.treesGrownGoal ?? 0;
   const t = useT();
   const metricClassName = classNames(
@@ -89,7 +89,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
         <MetricCard
           title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
-          progress={project.regeneratedTreesCount ?? 0}
+          progress={project.treesRegeneratingSpeciesCount ?? 0}
           goal={project.goalTreesRestoredAnr ?? 0}
           variant="donutChart"
           icon={<RegenerationIcon />}
