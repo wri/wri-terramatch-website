@@ -10,11 +10,12 @@ import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 type GalleryEntryItemProps = {
   src: string;
   name: string;
-  entityName: "projects" | "sites";
-  entityUUID: string;
+  entityName?: "projects" | "sites";
+  entityUUID?: string;
+  url?: string;
 };
 
-const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, entityUUID }) => {
+const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, entityUUID, url }) => {
   const t = useT();
   const router = useRouter();
 
@@ -30,7 +31,11 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
           size="small"
           rightIcon={<ChevronRightIcon boxSize={2.5} />}
           onClick={() => {
-            router.push(`/${entityName === "projects" ? "project" : "site"}/${entityUUID}?tab=gallery`);
+            if (entityName && entityUUID) {
+              router.push(`/${entityName === "projects" ? "project" : "site"}/${entityUUID}?tab=gallery`);
+            } else {
+              router.push(url ?? "");
+            }
           }}
         >
           {t("Edit")}

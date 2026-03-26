@@ -18,13 +18,13 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
+import GalleryEntryItem from "../../PageElements/PageContent/components/GalleryEntryItem";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 import { parseFilesFromHtml } from "./parseFilesFromHtml";
 
 const renderAdditionalDocumentation = (entry: any): JSX.Element | null => {
   if (typeof entry.value !== "string") return null;
-
   return (
     <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
       {parseFilesFromHtml(entry.value).map(file => (
@@ -40,9 +40,36 @@ const renderAdditionalDocumentation = (entry: any): JSX.Element | null => {
 };
 
 const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> = {
-  "Additional Documentation": renderAdditionalDocumentation,
-  "If you have any additional documentation on your site you would like to share, please add it below.":
-    renderAdditionalDocumentation
+  "Additional Documentation": entry => {
+    return renderAdditionalDocumentation(entry);
+  },
+  "If you have any additional documentation on your site you would like to share, please add it below.": entry => {
+    return renderAdditionalDocumentation(entry);
+  },
+  "Photos and videos": entry => {
+    const parseImageLinks = (html: string): { url: string; name: string }[] => {
+      const regex = /<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
+      const results: { url: string; name: string }[] = [];
+      let match;
+      while ((match = regex.exec(html)) !== null) {
+        results.push({ url: match[1], name: match[2] });
+      }
+      return results;
+    };
+    if (typeof entry.value !== "string") return null;
+    const htmlValue = typeof entry.value === "string" ? entry.value : "";
+    const images = parseImageLinks(htmlValue);
+    if (images.length === 0) {
+      return <Text variant="text-body-500">-</Text>;
+    }
+    return (
+      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+        {images.map((img, idx) => (
+          <GalleryEntryItem key={idx} src={img.url} name={img.name} url={""} />
+        ))}
+      </Grid>
+    );
+  }
 };
 
 const getFieldsRequiringAttentionCount = (
