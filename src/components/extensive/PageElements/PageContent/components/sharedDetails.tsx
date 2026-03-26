@@ -89,8 +89,8 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        idx === noCountTableColumns.length - 1 ? "" : "mr-8",
-                        "border-theme-neutral-300 border-b py-4"
+                        "border-theme-neutral-300 border-b py-4",
+                        idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
                       {row[idx + 1]}
