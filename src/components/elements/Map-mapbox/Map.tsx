@@ -14,12 +14,14 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { deleteMedia, downloadImage, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS, FORM_POLYGONS } from "@/constants/statuses";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
@@ -69,6 +71,7 @@ import {
   drawTemporaryPolygon,
   fetchPolygonGeometry,
   getCurrentMapStyle,
+  removeAnrPlotGeometryOverlay,
   removeBorderCountry,
   removeBorderLandscape,
   removePopups,
@@ -76,6 +79,7 @@ import {
   startDrawing,
   stopDrawing,
   updatePolygonProjectGeometry,
+  upsertAnrPlotGeometryOverlay,
   zoomToBbox,
   zoomToCenter
 } from "./utils";
@@ -267,6 +271,20 @@ export const MapContainer = ({
     selectedPolygonsInCheckbox
   } = contextMapArea;
 
+  const anrMapOverlay = useAnrMapOverlayOptional();
+  const anrPlotGeometryFetchEnabled =
+    anrMapOverlay != null &&
+    anrMapOverlay.drawerOpen &&
+    anrMapOverlay.anrTabActive &&
+    anrMapOverlay.showPlotsOnMap &&
+    anrMapOverlay.sitePolygonUuidForApi != null &&
+    anrMapOverlay.sitePolygonUuidForApi !== "";
+
+  const [, { data: anrPlotGeometryDto }] = useAnrPlotGeometry({
+    sitePolygonUuid: anrMapOverlay?.sitePolygonUuidForApi ?? "",
+    enabled: anrPlotGeometryFetchEnabled
+  });
+
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
     setUserChangedStyle(true);
@@ -444,6 +462,36 @@ export const MapContainer = ({
   ]);
 
   useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
+
+  useEffect(() => {
+    if (!map?.current) {
+      return;
+    }
+    const currentMap = map.current;
+
+    const applyAnrOverlay = () => {
+      const features = anrPlotGeometryDto?.geojson?.features;
+      const shouldShow =
+        anrMapOverlay != null &&
+        anrMapOverlay.drawerOpen &&
+        anrMapOverlay.anrTabActive &&
+        anrMapOverlay.showPlotsOnMap &&
+        features != null &&
+        features.length > 0;
+      if (!shouldShow) {
+        removeAnrPlotGeometryOverlay(currentMap);
+        return;
+      }
+      upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
+    };
+
+    currentMap.on("style.load", applyAnrOverlay);
+    applyAnrOverlay();
+    return () => {
+      currentMap.off("style.load", applyAnrOverlay);
+      removeAnrPlotGeometryOverlay(currentMap);
+    };
+  }, [map, anrMapOverlay, anrPlotGeometryDto, styleLoaded, sourcesAdded]);
 
   useEffect(() => {
     if (!map.current || !styleLoaded) return;

@@ -25,12 +25,19 @@ import {
 } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
+import { AnrPlotMapPopup } from "./components/AnrPlotMapPopup";
 import { MediaPopup } from "./components/MediaPopup";
 import { BBox, Feature, FeatureCollection, GeoJsonProperties, Geometry } from "./GeoJSON";
 import { DashboardGetProjectsData } from "./Map";
 import type { LayerType, LayerWithStyle, TooltipType } from "./Map.d";
 import { BASEMAP_CONFIGS, MapStyle } from "./MapControls/types";
 import { getPulsingDot } from "./pulsing.dot";
+
+/** Prefix must stay in sync with Google satellite visibility helpers. */
+export const ANR_PLOT_SOURCE_ID = "anr_plot_geometry-source";
+export const ANR_PLOT_FILL_LAYER_ID = "anr_plot_geometry-fill";
+export const ANR_PLOT_LINE_LAYER_ID = "anr_plot_geometry-line";
+export const ANR_PLOT_LAYER_PREFIX = "anr_plot_geometry";
 
 type DataPolygonOverview = {
   status: string;
@@ -174,6 +181,13 @@ const handleLayerClick = (
     };
     setMobilePopupData(popupData);
     return;
+  }
+
+  if (layerName === LAYERS_NAMES.POLYGON_GEOMETRY && map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
+    const anrHits = map.queryRenderedFeatures(e.point, { layers: [ANR_PLOT_FILL_LAYER_ID] });
+    if (anrHits.length > 0) {
+      return;
+    }
   }
 
   removePopups("POLYGON");
@@ -1000,7 +1014,8 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map) => {
       LAYERS_NAMES.POLYGON_GEOMETRY,
       LAYERS_NAMES.DELETED_GEOMETRIES,
       LAYERS_NAMES.CENTROIDS,
-      LAYERS_NAMES.POLYGON_CENTROIDS
+      LAYERS_NAMES.POLYGON_CENTROIDS,
+      ANR_PLOT_LAYER_PREFIX
     ];
     const isPolygonLayer = (layerId: string) => {
       return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
@@ -1082,7 +1097,8 @@ export const removeGoogleSatelliteLayer = (map: mapboxgl.Map) => {
       LAYERS_NAMES.POLYGON_GEOMETRY,
       LAYERS_NAMES.DELETED_GEOMETRIES,
       LAYERS_NAMES.CENTROIDS,
-      LAYERS_NAMES.POLYGON_CENTROIDS
+      LAYERS_NAMES.POLYGON_CENTROIDS,
+      ANR_PLOT_LAYER_PREFIX
     ];
     const isPolygonLayer = (layerId: string) => {
       return polygonLayerPrefixes.some(prefix => layerId.startsWith(prefix));
@@ -1762,4 +1778,198 @@ export function parseValidationDataV3(
       ...(polygonValidation.length > 0 ? { polygonValidation } : {})
     };
   });
+}
+
+type AnrPlotOverlayState = {
+  clickHandler: ((e: mapboxgl.MapLayerMouseEvent) => void) | null;
+  mouseEnterHandler: (() => void) | null;
+  mouseLeaveHandler: (() => void) | null;
+  popup: mapboxgl.Popup | null;
+  pendingIdleRetry: { fn: () => void } | null;
+};
+
+const anrPlotOverlayStateByMap = new WeakMap<mapboxgl.Map, AnrPlotOverlayState>();
+
+function getAnrPlotOverlayState(map: mapboxgl.Map): AnrPlotOverlayState {
+  const existing = anrPlotOverlayStateByMap.get(map);
+  if (existing != null) return existing;
+  const created: AnrPlotOverlayState = {
+    clickHandler: null,
+    mouseEnterHandler: null,
+    mouseLeaveHandler: null,
+    popup: null,
+    pendingIdleRetry: null
+  };
+  anrPlotOverlayStateByMap.set(map, created);
+  return created;
+}
+
+function cancelAnrPendingRetry(map: mapboxgl.Map) {
+  const state = getAnrPlotOverlayState(map);
+  if (state.pendingIdleRetry != null) {
+    map.off("idle", state.pendingIdleRetry.fn);
+    state.pendingIdleRetry = null;
+  }
+}
+
+export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefined) {
+  if (map == null) return;
+  cancelAnrPendingRetry(map);
+  const state = getAnrPlotOverlayState(map);
+  try {
+    if (state.popup != null) {
+      state.popup.remove();
+      state.popup = null;
+    }
+    if (state.clickHandler != null) {
+      map.off("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
+      state.clickHandler = null;
+    }
+    if (state.mouseEnterHandler != null) {
+      map.off("mouseenter", ANR_PLOT_FILL_LAYER_ID, state.mouseEnterHandler);
+      state.mouseEnterHandler = null;
+    }
+    if (state.mouseLeaveHandler != null) {
+      map.off("mouseleave", ANR_PLOT_FILL_LAYER_ID, state.mouseLeaveHandler);
+      state.mouseLeaveHandler = null;
+    }
+    if (map.getLayer(ANR_PLOT_LINE_LAYER_ID) != null) {
+      map.removeLayer(ANR_PLOT_LINE_LAYER_ID);
+    }
+    if (map.getLayer(ANR_PLOT_FILL_LAYER_ID) != null) {
+      map.removeLayer(ANR_PLOT_FILL_LAYER_ID);
+    }
+    if (map.getSource(ANR_PLOT_SOURCE_ID) != null) {
+      map.removeSource(ANR_PLOT_SOURCE_ID);
+    }
+  } catch (e) {
+    Log.warn("removeAnrPlotGeometryOverlay:", e);
+  }
+}
+
+export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown, options: { visible: boolean }) {
+  if (map == null) return;
+  removeAnrPlotGeometryOverlay(map);
+  const state = getAnrPlotOverlayState(map);
+
+  if (!options.visible) {
+    return;
+  }
+
+  const geojsonFormatted = convertToAcceptedGEOJSON(geojson) as GeoJSON.FeatureCollection;
+  if (geojsonFormatted?.features == null || geojsonFormatted.features.length === 0) {
+    return;
+  }
+
+  if (!map.isStyleLoaded()) {
+    const retryFn = () => {
+      const currentState = getAnrPlotOverlayState(map);
+      currentState.pendingIdleRetry = null;
+      upsertAnrPlotGeometryOverlay(map, geojson, options);
+    };
+    state.pendingIdleRetry = { fn: retryFn };
+    map.once("idle", retryFn);
+    return;
+  }
+
+  const beforeLayer = map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null ? LAYERS_NAMES.MEDIA_IMAGES : undefined;
+
+  try {
+    map.addSource(ANR_PLOT_SOURCE_ID, {
+      type: "geojson",
+      data: geojsonFormatted as GeoJSON.FeatureCollection
+    });
+
+    map.addLayer(
+      {
+        id: ANR_PLOT_FILL_LAYER_ID,
+        type: "fill",
+        source: ANR_PLOT_SOURCE_ID,
+        layout: { visibility: "visible" },
+        paint: {
+          "fill-color": "#9ca3af",
+          "fill-opacity": 0.7
+        }
+      },
+      beforeLayer
+    );
+
+    map.addLayer(
+      {
+        id: ANR_PLOT_LINE_LAYER_ID,
+        type: "line",
+        source: ANR_PLOT_SOURCE_ID,
+        layout: { visibility: "visible" },
+        paint: {
+          "line-color": "#6b7280",
+          "line-width": 1.95,
+          "line-opacity": 0.9
+        }
+      },
+      beforeLayer
+    );
+
+    if (map.getLayer(LAYERS_NAMES.MEDIA_IMAGES) != null) {
+      try {
+        map.moveLayer(ANR_PLOT_LINE_LAYER_ID, LAYERS_NAMES.MEDIA_IMAGES);
+        map.moveLayer(ANR_PLOT_FILL_LAYER_ID, ANR_PLOT_LINE_LAYER_ID);
+      } catch (e) {
+        Log.warn("moveLayer ANR plot overlay:", e);
+      }
+    }
+    state.clickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
+      const feature = e.features?.[0];
+      if (feature == null) return;
+      if (state.popup != null) {
+        state.popup.remove();
+        state.popup = null;
+      }
+      const props = feature.properties ?? {};
+      const popupContent = document.createElement("div");
+      popupContent.className = "popup-content-map";
+      const root = createRoot(popupContent);
+      const rawPlotId = props.plot_id;
+      const rawArea = props.area_m2;
+      const plotIdParsed =
+        typeof rawPlotId === "number"
+          ? rawPlotId
+          : rawPlotId != null && !Number.isNaN(Number(rawPlotId))
+          ? Number(rawPlotId)
+          : undefined;
+      const areaParsed =
+        typeof rawArea === "number"
+          ? rawArea
+          : rawArea != null && !Number.isNaN(Number(rawArea))
+          ? Number(rawArea)
+          : undefined;
+      root.render(
+        createElement(AnrPlotMapPopup, {
+          plotId: plotIdParsed,
+          areaM2: areaParsed,
+          select: props.select != null ? String(props.select) : null,
+          onClose: () => {
+            state.popup?.remove();
+            state.popup = null;
+          }
+        })
+      );
+      state.popup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
+        .setLngLat(e.lngLat)
+        .setDOMContent(popupContent)
+        .addTo(map);
+    };
+
+    map.on("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
+
+    state.mouseEnterHandler = () => {
+      map.getCanvas().style.cursor = "pointer";
+    };
+    state.mouseLeaveHandler = () => {
+      map.getCanvas().style.cursor = "";
+    };
+    map.on("mouseenter", ANR_PLOT_FILL_LAYER_ID, state.mouseEnterHandler);
+    map.on("mouseleave", ANR_PLOT_FILL_LAYER_ID, state.mouseLeaveHandler);
+  } catch (e) {
+    Log.warn("upsertAnrPlotGeometryOverlay:", e);
+  }
 }

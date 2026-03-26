@@ -1,9 +1,18 @@
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { useT } from "@transifex/react";
-import { useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import Dropdown from "@/components/elements/Inputs/Dropdown/Dropdown";
 import Input from "@/components/elements/Inputs/Input/Input";
+import {
+  downloadGeoJsonFile,
+  extractGeoJsonFromResponse,
+  formatFileName
+} from "@/components/elements/Map-mapbox/utils";
+import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
+import { loadAnrPlotGeometryGeoJson } from "@/connections/AnrPlotGeometry";
 import { createVersionWithAttributes } from "@/connections/SitePolygons";
 import {
   dropdownOptionsRestoration,
@@ -19,7 +28,25 @@ import Log from "@/utils/log";
 import Text from "../Text/Text";
 import { useTranslatedOptions } from "./hooks/useTranslatedOptions";
 
-const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
+type AttributeInformationProps = {
+  handleClose: () => void;
+  sitePolygonUuid: string;
+  polygonNameForFile?: string;
+  hasAnrPlotGeometry: boolean;
+  anrMonitoringPlotsEligible: boolean;
+  attributePlotsVisible: boolean;
+  setAttributePlotsVisible: Dispatch<SetStateAction<boolean>>;
+};
+
+const AttributeInformation: FC<AttributeInformationProps> = ({
+  handleClose,
+  sitePolygonUuid,
+  polygonNameForFile,
+  hasAnrPlotGeometry,
+  anrMonitoringPlotsEligible,
+  attributePlotsVisible,
+  setAttributePlotsVisible
+}) => {
   const t = useT();
   const { editPolygon, setShouldRefetchPolygonData, polygonData: polygonDataContext } = useMapAreaContext();
   const [polygonData, setPolygonData] = useState<SitePolygonLightDto>();
@@ -99,6 +126,24 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
     }
   };
 
+  const downloadMonitoringPlots = useCallback(async () => {
+    if (sitePolygonUuid === "" || !anrMonitoringPlotsEligible) {
+      return;
+    }
+    try {
+      const response = await loadAnrPlotGeometryGeoJson({ sitePolygonUuid });
+      const geojson = extractGeoJsonFromResponse(response.data);
+      if (geojson == null) {
+        throw new Error("Failed to extract ANR monitoring plots GeoJSON");
+      }
+      const filename = formatFileName(`${polygonNameForFile ?? "polygon"}_anr_monitoring_plots`);
+      downloadGeoJsonFile(geojson, filename);
+    } catch (error) {
+      Log.error("Error downloading ANR monitoring plots:", error);
+      openNotification("error", t("Error!"), t("Error downloading ANR monitoring plots"));
+    }
+  }, [anrMonitoringPlotsEligible, openNotification, polygonNameForFile, sitePolygonUuid, t]);
+
   return (
     <div className="flex flex-col gap-4">
       <Input
@@ -127,6 +172,31 @@ const AttributeInformation = ({ handleClose }: { handleClose: () => void }) => {
       <Dropdown
         multiSelect
         label={t("Restoration Practice")}
+        suffixLabelView={hasAnrPlotGeometry && anrMonitoringPlotsEligible}
+        suffixLabel={
+          hasAnrPlotGeometry && anrMonitoringPlotsEligible ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="group border-none bg-transparent"
+                onClick={() => setAttributePlotsVisible(prev => !prev)}
+                aria-label={attributePlotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
+              >
+                {attributePlotsVisible ? (
+                  <Visibility sx={{ fontSize: 20 }} className="group-hover:text-primary-500" />
+                ) : (
+                  <VisibilityOff sx={{ fontSize: 20 }} className="group-hover:text-primary-500" />
+                )}
+              </button>
+              <button
+                className="text-13-semibold group flex h-8 items-center gap-1 rounded-lg px-2 py-0.5 uppercase text-white hover:bg-white hover:text-primary-500"
+                onClick={downloadMonitoringPlots}
+              >
+                <Icon name={IconNames.DOWNLOAD_PA} className="h-4 w-4" /> {t("Download")}
+              </button>
+            </div>
+          ) : null
+        }
         labelClassName="capitalize text-white"
         labelVariant="text-14-light"
         placeholder={t("Select Restoration Practice")}

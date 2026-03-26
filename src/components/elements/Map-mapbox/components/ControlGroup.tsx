@@ -30,7 +30,7 @@ const ControlGroup = ({ children, position, className, isFullscreen, ...props }:
           "left-5 items-start": position.includes("left"),
           "right-5 items-end": position.includes("right"),
           "bottom-8": position.includes("bottom"),
-          "!left-[24vw] items-start": position.includes("site"),
+          "!left-[30vw] items-start": position.includes("site"),
           "!left-5": isFullscreen,
           "left-[45%]": position.includes("center"),
           "left-[calc(50%+11.5vw)] -translate-x-1/2": position.includes("centerSite"),

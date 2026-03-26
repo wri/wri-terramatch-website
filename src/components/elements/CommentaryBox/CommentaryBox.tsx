@@ -1,8 +1,10 @@
 import { useT } from "@transifex/react";
 import { useState } from "react";
 import { When } from "react-if";
+import { twMerge } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
+import { IButtonProps } from "@/components/elements/Button/Button";
 import TextArea from "@/components/elements/Inputs/textArea/TextArea";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
@@ -22,10 +24,11 @@ export interface CommentaryBoxProps {
   refresh?: () => void;
   record?: any;
   entity?: AuditStatusEntityType;
+  buttonProps?: IButtonProps;
 }
 
 const CommentaryBox = (props: CommentaryBoxProps) => {
-  const { name, lastName, buttonSendOnBox } = props;
+  const { name, lastName, buttonSendOnBox, buttonProps } = props;
   const t = useT();
 
   const onSuccess = async (createdAuditStatus: AuditStatusDto) => {
@@ -182,13 +185,14 @@ const CommentaryBox = (props: CommentaryBoxProps) => {
       {error && <div className="text-red">{error}</div>}
       <When condition={!buttonSendOnBox}>
         <Button
-          className="self-end border-[2.5px] border-primary"
+          className={twMerge("self-end border-[2.5px] border-primary", buttonProps?.className)}
           disabled={loading || isCreating}
-          iconProps={{ name: IconNames.SEND, className: "h-4 w-4" }}
+          iconProps={buttonProps?.iconProps ?? { name: IconNames.SEND, className: "h-4 w-4" }}
           onClick={submitComment}
+          {...buttonProps}
         >
           <Text variant="text-12-bold" className="text-white">
-            {t("SEND")}
+            {buttonProps?.children ?? t("SEND")}
           </Text>
           {(loading || isCreating) && <Icon name={IconNames.ELLIPSE_POLYGON} className={"h-6 w-6 animate-spin"} />}
         </Button>

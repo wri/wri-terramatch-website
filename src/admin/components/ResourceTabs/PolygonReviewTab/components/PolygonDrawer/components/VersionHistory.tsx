@@ -50,7 +50,7 @@ const VersionHistory = ({
   setStatusSelectedPolygon?: any;
   isLoadingDropdown: boolean;
   setIsLoadingDropdown: Dispatch<SetStateAction<boolean>>;
-  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string }>>;
+  setPolygonFromMap: Dispatch<SetStateAction<{ isOpen: boolean; uuid: string; source?: string }>>;
   setSelectedPolygonToDrawer?: Dispatch<SetStateAction<{ id: string; status: string; label: string; uuid: string }>>;
   selectedPolygonIndex?: string;
   polygonFromMap?: { isOpen: boolean; uuid: string };
@@ -104,7 +104,7 @@ const VersionHistory = ({
             uuid: polygonData?.poly_id as string
           });
         }
-        setPolygonFromMap({ isOpen: true, uuid: polygonData?.poly_id ?? "" });
+        setPolygonFromMap({ isOpen: true, uuid: polygonData?.poly_id ?? "", source: "drawer" });
         if (setStatusSelectedPolygon != null) {
           setStatusSelectedPolygon(polygonData?.status ?? "");
         }
@@ -273,7 +273,7 @@ const VersionHistory = ({
         setStatusSelectedPolygon(newlyActiveVersion.status ?? "");
       }
 
-      setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "" });
+      setPolygonFromMap({ isOpen: true, uuid: polygonUuid ?? "", source: "drawer" });
       openNotification("success", "Success!", "Polygon version made active successfully");
     } catch (error) {
       openNotification("error", "Error!", "Error making polygon version active");

@@ -1046,3 +1046,44 @@ export type UpdateProjectPolygonDataDto = {
 export type UpdateProjectPolygonRequestDto = {
   data: UpdateProjectPolygonDataDto;
 };
+
+export type AnrPlotGeometryDto = {
+  /**
+   * The site polygon UUID this plot grid belongs to
+   *
+   * @example 123e4567-e89b-12d3-a456-426614174000
+   */
+  sitePolygonUuid: string;
+  /**
+   * GeoJSON FeatureCollection of ANR monitoring plot grid
+   */
+  geojson: {
+    type?: "FeatureCollection";
+    features?: {
+      type?: "Feature";
+      geometry?: Record<string, any>;
+      properties?: {
+        /**
+         * @example 37
+         */
+        plot_id?: number;
+        /**
+         * @example 897
+         */
+        area_m2?: number;
+        /**
+         * @example Yes
+         */
+        select?: string | null;
+      };
+    }[];
+  };
+  /**
+   * Cached count of plot features in the FeatureCollection
+   */
+  plotCount: number | null;
+  /**
+   * User ID of the Admin who uploaded this grid
+   */
+  createdBy: number | null;
+};
