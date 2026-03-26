@@ -8,7 +8,7 @@ import { FC, Fragment, useMemo } from "react";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
+import { ParsedFile, parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -37,6 +37,8 @@ import { ArrowForward, EditIcon, PhotosIcon } from "@/redesignComponents/foundat
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import GalleryEntryItem from "./GalleryEntryItem";
 
+const MEDIA_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg", "mp4", "mov", "avi", "webm", "mkv"]);
+
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
 const EditButton: FC<{ onClick: () => void; text: string }> = ({ onClick, text }) => (
@@ -63,21 +65,11 @@ type EntryValueRendererProps = {
   entityUUID: string;
 };
 
-const parseImageLinks = (html: string): { url: string; name: string }[] => {
-  const regex = /<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
-  const results: { url: string; name: string }[] = [];
-  let match;
-  while ((match = regex.exec(html)) !== null) {
-    results.push({ url: match[1], name: match[2] });
-  }
-  return results;
-};
-
 const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID }: EntryValueRendererProps) => {
   const rawValue = entry.value ?? "-";
 
   if (entry.title === "Photos and videos") {
-    const images = parseImageLinks(typeof rawValue === "string" ? rawValue : "");
+    const images = parseFilesFromHtml(typeof rawValue === "string" ? rawValue : "");
 
     if (images.length === 0) {
       return (
@@ -89,8 +81,14 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
 
     return (
       <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
-        {images.map((img, idx) => (
-          <GalleryEntryItem key={idx} src={img.url} name={img.name} entityName={entityName} entityUUID={entityUUID} />
+        {images.map(file => (
+          <GalleryEntryItem
+            key={file.fileUrl}
+            src={file.fileUrl}
+            name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
+            entityName={entityName}
+            entityUUID={entityUUID}
+          />
         ))}
       </Grid>
     );
@@ -110,17 +108,37 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID 
       );
     }
 
+    const mediaFiles = files.filter(f => MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
+    const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
+
     return (
-      <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
-        {files.map(file => (
-          <AttachFileItem
-            key={file.fileUrl}
-            fileName={file.fileName}
-            onClick={() => window.open(file.fileUrl, "_blank")}
-            fileType={file.fileType}
-          />
-        ))}
-      </Grid>
+      <>
+        {mediaFiles.length > 0 && (
+          <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+            {mediaFiles.map((file: ParsedFile) => (
+              <GalleryEntryItem
+                key={file.fileUrl}
+                src={file.fileUrl}
+                name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
+                entityName={entityName}
+                entityUUID={entityUUID}
+              />
+            ))}
+          </Grid>
+        )}
+        {documentFiles.length > 0 && (
+          <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+            {documentFiles.map((file: ParsedFile) => (
+              <AttachFileItem
+                key={file.fileUrl}
+                fileName={file.fileName}
+                onClick={() => window.open(file.fileUrl, "_blank")}
+                fileType={file.fileType}
+              />
+            ))}
+          </Grid>
+        )}
+      </>
     );
   }
 

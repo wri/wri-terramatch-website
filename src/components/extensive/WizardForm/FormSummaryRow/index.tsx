@@ -21,55 +21,74 @@ import List from "../../List/List";
 import GalleryEntryItem from "../../PageElements/PageContent/components/GalleryEntryItem";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
-import { parseFilesFromHtml } from "./parseFilesFromHtml";
+import { ParsedFile, parseFilesFromHtml } from "./parseFilesFromHtml";
 
-const renderAdditionalDocumentation = (entry: any): JSX.Element | null => {
+const MEDIA_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg", "mp4", "mov", "avi", "webm", "mkv"]);
+
+const isMediaFile = (fileType: string) => MEDIA_EXTENSIONS.has(fileType.toLowerCase());
+
+const renderPhotosAndVideos = (entry: any): JSX.Element | null => {
   if (typeof entry.value !== "string") return null;
+  const images = parseFilesFromHtml(entry.value);
+  if (images.length === 0) return <Text variant="text-body-500">-</Text>;
   return (
-    <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
-      {parseFilesFromHtml(entry.value).map(file => (
-        <AttachFileItem
+    <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+      {images.map(file => (
+        <GalleryEntryItem
           key={file.fileUrl}
-          fileName={file.fileName}
-          onClick={() => window.open(file.fileUrl, "_blank")}
-          fileType={file.fileType}
+          src={file.fileUrl}
+          name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
+          url={""}
         />
       ))}
     </Grid>
   );
 };
 
+const renderAdditionalDocumentation = (entry: any): JSX.Element | null => {
+  if (typeof entry.value !== "string") return null;
+
+  const files = parseFilesFromHtml(entry.value);
+  if (files.length === 0) return null;
+
+  const mediaFiles = files.filter(f => isMediaFile(f.fileType));
+  const documentFiles = files.filter(f => !isMediaFile(f.fileType));
+
+  return (
+    <>
+      {mediaFiles.length > 0 && (
+        <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
+          {mediaFiles.map((file: ParsedFile) => (
+            <GalleryEntryItem
+              key={file.fileUrl}
+              src={file.fileUrl}
+              name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
+              url={""}
+            />
+          ))}
+        </Grid>
+      )}
+      {documentFiles.length > 0 && (
+        <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
+          {documentFiles.map((file: ParsedFile) => (
+            <AttachFileItem
+              key={file.fileUrl}
+              fileName={file.fileName}
+              onClick={() => window.open(file.fileUrl, "_blank")}
+              fileType={file.fileType}
+            />
+          ))}
+        </Grid>
+      )}
+    </>
+  );
+};
+
 const customEntryRenderers: Record<string, (entry: any) => JSX.Element | null> = {
-  "Additional Documentation": entry => {
-    return renderAdditionalDocumentation(entry);
-  },
-  "If you have any additional documentation on your site you would like to share, please add it below.": entry => {
-    return renderAdditionalDocumentation(entry);
-  },
-  "Photos and videos": entry => {
-    const parseImageLinks = (html: string): { url: string; name: string }[] => {
-      const regex = /<a\s+href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
-      const results: { url: string; name: string }[] = [];
-      let match;
-      while ((match = regex.exec(html)) !== null) {
-        results.push({ url: match[1], name: match[2] });
-      }
-      return results;
-    };
-    if (typeof entry.value !== "string") return null;
-    const htmlValue = typeof entry.value === "string" ? entry.value : "";
-    const images = parseImageLinks(htmlValue);
-    if (images.length === 0) {
-      return <Text variant="text-body-500">-</Text>;
-    }
-    return (
-      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
-        {images.map((img, idx) => (
-          <GalleryEntryItem key={idx} src={img.url} name={img.name} url={""} />
-        ))}
-      </Grid>
-    );
-  }
+  "Additional Documentation": renderAdditionalDocumentation,
+  "If you have any additional documentation on your site you would like to share, please add it below.":
+    renderAdditionalDocumentation,
+  "Photos and videos": renderPhotosAndVideos
 };
 
 const getFieldsRequiringAttentionCount = (
