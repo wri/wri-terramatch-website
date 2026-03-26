@@ -66,49 +66,44 @@ const ProgressDataCard = (values: ProgressDataCardItem) => {
 const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgressEntityTabProps) => {
   const t = useT();
   const totalTreesRestoredCount =
-    (entity?.trees_planted_count ?? entity?.treesPlantedCount) +
-    (entity?.trees_regenerating_species_count ?? entity?.treesRegeneratingSpeciesCount) +
-    (entity?.seeds_planted_count ?? entity?.seedsPlantedCount);
+    entity?.treesPlantedCount + entity?.treesRegeneratingSpeciesCount + entity?.seedsPlantedCount;
   const keyAttribute = project ? "project" : "site";
   const attribMapping: { [key: string]: any } = {
     project: {
-      total_jobs_created: entity.totalJobsCreated,
-      jobs_created_goal: entity.jobsCreatedGoal,
-      total_hectares_restored_sum:
+      totalJobsCreated: entity.totalJobsCreated,
+      jobsCreatedGoal: entity.jobsCreatedGoal,
+      totalHectaresRestoredSum:
         project && entity.frameworkKey == Framework.PPC
           ? Math.round(entity.totalHectaresRestoredSum)
           : entity.totalHectaresRestoredSum,
-      total_hectares_restored_goal: entity.totalHectaresRestoredGoal,
-      trees_restored_count: totalTreesRestoredCount,
-      trees_grown_goal: entity.treesGrownGoal,
-      workday_count: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
+      totalHectaresRestoredGoal: entity.totalHectaresRestoredGoal,
+      treesRestoredCount: totalTreesRestoredCount,
+      treesGrownGoal: entity.treesGrownGoal,
+      workdayCount: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
     },
     site: {
-      total_jobs_created: null,
-      jobs_created_goal: null,
-      total_hectares_restored_sum: entity.totalHectaresRestoredSum,
-      total_hectares_restored_goal: entity.hectaresToRestoreGoal,
-      trees_restored_count:
-        entity.treesPlantedCount +
-        (entity.trees_regenerating_species_count ?? entity.treesRegeneratingSpeciesCount) +
-        entity.seedsPlantedCount,
-      trees_grown_goal: null,
-      workday_count: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
+      totalJobsCreated: null,
+      jobsCreatedGoal: null,
+      totalHectaresRestoredSum: entity.totalHectaresRestoredSum,
+      totalHectaresRestoredGoal: entity.hectaresToRestoreGoal,
+      treesRestoredCount: entity.treesPlantedCount + entity.treesRegeneratingSpeciesCount + entity.seedsPlantedCount,
+      treesGrownGoal: null,
+      workdayCount: entity.frameworkKey == Framework.PPC ? entity.combinedWorkdayCount : entity.workdayCount
     }
   };
   const chartDataJobs = {
     chartData: [
-      { name: t("JOBS CREATED"), value: attribMapping[keyAttribute].total_jobs_created },
+      { name: t("JOBS CREATED"), value: attribMapping[keyAttribute].totalJobsCreated },
       {
         name: t("TOTAL JOBS CREATED GOAL"),
-        value: attribMapping[keyAttribute].jobs_created_goal
+        value: attribMapping[keyAttribute].jobsCreatedGoal
       }
     ],
     cardValues: {
       label: t("Jobs Created"),
-      value: attribMapping[keyAttribute].total_jobs_created,
+      value: attribMapping[keyAttribute].totalJobsCreated,
       totalName: t("TOTAL JOBS CREATED GOAL"),
-      totalValue: attribMapping[keyAttribute].jobs_created_goal
+      totalValue: attribMapping[keyAttribute].jobsCreatedGoal
     },
     graph: true,
     hectares: false
@@ -117,61 +112,61 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
     chartData: [
       {
         name: t("HECTARES RESTORED"),
-        value: attribMapping[keyAttribute].total_hectares_restored_sum,
+        value: attribMapping[keyAttribute].totalHectaresRestoredSum,
         tooltipContent: "Number of hectares within approved polygons for this project"
       },
       {
         name: t("TOTAL HECTARES RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].total_hectares_restored_goal)
+        value: parseFloat(attribMapping[keyAttribute].totalHectaresRestoredGoal)
       }
     ],
     cardValues: {
       label: t("HECTARES RESTORED"),
-      value: attribMapping[keyAttribute].total_hectares_restored_sum,
+      value: attribMapping[keyAttribute].totalHectaresRestoredSum,
       totalName: t("TOTAL HECTARES RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].total_hectares_restored_goal)
+      totalValue: parseFloat(attribMapping[keyAttribute].totalHectaresRestoredGoal)
     }
   };
   const chartDataTreesRestored = {
     chartData: [
-      { name: t("TREES RESTORED"), value: attribMapping[keyAttribute].trees_restored_count },
+      { name: t("TREES RESTORED"), value: attribMapping[keyAttribute].treesRestoredCount },
       {
         name: t("TOTAL TREES RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].trees_grown_goal)
+        value: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
       }
     ],
     cardValues: {
       label: t("TREES RESTORED"),
-      value: attribMapping[keyAttribute].trees_restored_count,
+      value: attribMapping[keyAttribute].treesRestoredCount,
       totalName: t("TOTAL TREES RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].trees_grown_goal)
+      totalValue: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
     }
   };
   const chartDataWorkdays = {
     chartData: [
       {
         name: t("WORKDAYS CREATED"),
-        value: attribMapping[keyAttribute].workday_count
+        value: attribMapping[keyAttribute].workdayCount
       }
     ],
     cardValues: {
       label: t("WORKDAYS CREATED"),
-      value: attribMapping[keyAttribute].workday_count
+      value: attribMapping[keyAttribute].workdayCount
     }
   };
   const chartDataSaplings = {
     chartData: [
-      { name: t("SAPLINGS RESTORED"), value: attribMapping[keyAttribute].trees_restored_count },
+      { name: t("SAPLINGS RESTORED"), value: attribMapping[keyAttribute].treesRestoredCount },
       {
         name: t("TOTAL SAPLINGS RESTORED"),
-        value: parseFloat(attribMapping[keyAttribute].trees_grown_goal)
+        value: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
       }
     ],
     cardValues: {
       label: t("SAPLINGS RESTORED"),
-      value: attribMapping[keyAttribute].trees_restored_count,
+      value: attribMapping[keyAttribute].treesRestoredCount,
       totalName: t("TOTAL SAPLINGS RESTORED"),
-      totalValue: parseFloat(attribMapping[keyAttribute].trees_grown_goal)
+      totalValue: parseFloat(attribMapping[keyAttribute].treesGrownGoal)
     }
   };
 
@@ -250,7 +245,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       />
     ]
   };
-  const frameworkKey = (entity.framework_key ?? entity.frameworkKey) as Framework;
+  const frameworkKey = entity.frameworkKey as Framework;
   const framework = isTerrafund(frameworkKey) ? Framework.TF : frameworkKey;
   return (
     <div className="flex w-full flex-wrap items-start justify-between gap-4">
@@ -260,7 +255,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
       <GoalProgressCard
         label={t("Trees restored")}
         value={totalTreesRestoredCount}
-        limit={entity.trees_grown_goal ?? entity.treesGrownGoal}
+        limit={entity.treesGrownGoal}
         hasProgress={false}
         items={[
           {
@@ -268,7 +263,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Trees Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.trees_planted_count ?? entity.treesPlantedCount,
+            value: entity.treesPlantedCount,
             tooltipContent: project ? TOOLTIP_TREES_PLANTED_PROJECT : TOOLTIP_TREES_PLANTED_SITE,
             classNameLabelValue: "flex items-center gap-2"
           },
@@ -277,7 +272,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Seeds Planted:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.seeds_planted_count ?? entity.seedsPlantedCount,
+            value: entity.seedsPlantedCount,
             tooltipContent: project ? TOOLTIP_SEEDS_PLANTED_PROJECT : TOOLTIP_SEEDS_PLANTED_SITE
           },
           {
@@ -285,7 +280,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             label: t("Trees Regenerating:"),
             variantLabel: "text-14",
             classNameLabel: " text-neutral-650 uppercase",
-            value: entity.trees_regenerating_species_count ?? entity.treesRegeneratingSpeciesCount,
+            value: entity.treesRegeneratingSpeciesCount,
             tooltipContent: project ? TOOLTIP_TREES_REGENERATING_PROJECT : TOOLTIP_TREES_REGENERATING_SITE
           }
         ]}
