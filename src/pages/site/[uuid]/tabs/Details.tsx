@@ -43,7 +43,7 @@ const SiteDetailTab: FC<SiteDetailsTabProps> = ({ site }) => {
   }
 
   return (
-    <PageContent className="bg-theme-neutral-100 gap-2 sm:px-32">
+    <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
       <WizardFormProvider fieldsProvider={fieldsProvider}>
         {steps.map((step, index) => (
           <SharedDetailsStep key={step.id} step={step} formValues={defaultValues} site={site} stepIndex={index} />
