@@ -2,6 +2,7 @@ import { Flex, Grid, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { ParsedFile } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
+import { MediaType } from "@/redesignComponents/content/Images/Image";
 import { PhotosIcon } from "@/redesignComponents/foundations/Icons";
 
 import GalleryEntryItem from "./GalleryEntryItem";
@@ -11,12 +12,14 @@ export type MediaSectionProps = {
   files: ParsedFile[];
   entityName?: "projects" | "sites";
   entityUUID?: string;
+  type?: MediaType;
+  icon?: React.ReactNode;
 };
 
-const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID }) => (
+const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID, type, icon }) => (
   <Flex direction="column" gap={1}>
     <Text display="flex" alignItems="center" gap={1} lineHeight="normal" textStyle="300-bold" color="primary.900">
-      <PhotosIcon boxSize={3.5} color="primary.900" />
+      {icon ?? <PhotosIcon boxSize={3.5} color="primary.900" />}
       {label}
     </Text>
     {files.length === 0 ? (
@@ -32,6 +35,8 @@ const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityU
             name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
             entityName={entityName}
             entityUUID={entityUUID}
+            type={type}
+            url={file.fileUrl}
           />
         ))}
       </Grid>

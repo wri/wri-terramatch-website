@@ -1,6 +1,6 @@
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 
-import BaseImage from "../Image";
+import BaseImage, { MediaType } from "../Image";
 
 export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
@@ -11,7 +11,7 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onClickEdit?: () => void;
   onClickAdd?: () => void;
   hoverContent?: React.ReactNode;
-  type?: "video" | "image";
+  type?: MediaType;
 }
 
 const GalleryImage: FC<GalleryImageProps> = ({

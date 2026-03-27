@@ -5,6 +5,7 @@ import {
   parseFilesFromHtml,
   VIDEO_EXTENSIONS
 } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
+import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 import MediaSection from "./MediaSection";
 
@@ -29,7 +30,14 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
         <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
       {videos.length > 0 && (
-        <MediaSection label="Videos" files={videos} entityName={entityName} entityUUID={entityUUID} />
+        <MediaSection
+          label="Videos"
+          files={videos}
+          entityName={entityName}
+          entityUUID={entityUUID}
+          type="video"
+          icon={<PlayCircleIcon boxSize={3.5} color="primary.900" />}
+        />
       )}
     </>
   );
