@@ -127,6 +127,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                       }
                     ]
                   }}
+                  className="z-10"
                 />
               )}
             </Box>
