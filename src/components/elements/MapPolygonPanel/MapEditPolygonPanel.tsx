@@ -1,5 +1,6 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -98,10 +99,12 @@ const MapEditPolygonPanel = ({
     [selectedSitePolygon]
   );
   const sitePolygonUuidForAnr = selectedSitePolygon?.uuid ?? "";
-  const [, { data: anrPlotGeometry }] = useAnrPlotGeometry({
+  const [anrConnectionReady, { data: anrPlotGeometry, isLoading: isAnrPlotGeometryLoading }] = useAnrPlotGeometry({
     sitePolygonUuid: sitePolygonUuidForAnr,
     enabled: sitePolygonUuidForAnr !== "" && anrPlotsEligible
   });
+  const isAnrPlotsDataPending =
+    anrPlotsEligible && sitePolygonUuidForAnr !== "" && (!anrConnectionReady || Boolean(isAnrPlotGeometryLoading));
   const anrMapOverlay = useAnrMapOverlayOptional();
   const anrMapOverlayRef = useRef(anrMapOverlay);
   anrMapOverlayRef.current = anrMapOverlay;
@@ -285,42 +288,53 @@ const MapEditPolygonPanel = ({
         </When>
         <When condition={tabEditPolygon === "ANR Monitoring Plots" && anrPlotsEligible}>
           <div className="flex flex-col gap-4 pr-2">
-            <div className="flex items-baseline justify-between gap-2">
-              <Text variant="text-14-semibold" className="text-white">
-                {t("Assisted Natural Regeneration Monitoring Plots")}
-              </Text>
-              {hasAnrPlotGeometry && (
-                <button
-                  type="button"
-                  className="group text-white"
-                  onClick={() => setPlotsVisible(prev => !prev)}
-                  aria-label={plotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
-                >
-                  {plotsVisible ? (
-                    <Visibility sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
-                  ) : (
-                    <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
-                  )}
-                </button>
-              )}
-            </div>
-            {hasAnrPlotGeometry ? (
-              <>
-                <Text variant="text-12-light" className="text-white">
-                  {t(
-                    "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time. Download the monitoring plots to help your team locate and monitor the areas during field visits"
-                  )}
+            {isAnrPlotsDataPending ? (
+              <div className="flex flex-col items-center justify-center gap-3 py-8 text-white">
+                <CircularProgress size={28} color="inherit" aria-label={t("Loading")} />
+                <Text variant="text-14-light" className="text-white">
+                  {t("Loading ANR monitoring plots...")}
                 </Text>
-                <Button variant="semi-black" onClick={downloadMonitoringPlots}>
-                  {t("Download Monitoring Plots")}
-                </Button>
-              </>
+              </div>
             ) : (
-              <Text variant="text-12-light" className="text-white">
-                {t(
-                  "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download"
+              <>
+                <div className="flex items-baseline justify-between gap-2">
+                  <Text variant="text-14-semibold" className="text-white">
+                    {t("Assisted Natural Regeneration Monitoring Plots")}
+                  </Text>
+                  {hasAnrPlotGeometry && (
+                    <button
+                      type="button"
+                      className="group text-white"
+                      onClick={() => setPlotsVisible(prev => !prev)}
+                      aria-label={plotsVisible ? t("Hide ANR monitoring plots") : t("Show ANR monitoring plots")}
+                    >
+                      {plotsVisible ? (
+                        <Visibility sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+                      ) : (
+                        <VisibilityOff sx={{ fontSize: 22 }} className="group-hover:text-primary-500" />
+                      )}
+                    </button>
+                  )}
+                </div>
+                {hasAnrPlotGeometry ? (
+                  <>
+                    <Text variant="text-12-light" className="text-white">
+                      {t(
+                        "These monitoring plots mark the specific areas where tree counts are conducted to track natural regeneration over time. Download the monitoring plots to help your team locate and monitor the areas during field visits"
+                      )}
+                    </Text>
+                    <Button variant="semi-black" onClick={downloadMonitoringPlots}>
+                      {t("Download Monitoring Plots")}
+                    </Button>
+                  </>
+                ) : (
+                  <Text variant="text-12-light" className="text-white">
+                    {t(
+                      "The monitoring plots are not available yet. They will appear here once they are updated by the project team and ready for download"
+                    )}
+                  </Text>
                 )}
-              </Text>
+              </>
             )}
           </div>
         </When>
