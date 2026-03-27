@@ -1,6 +1,6 @@
 export const ABOUT_SITES_CONTENT = [
   {
-    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3", "hbf"],
+    frameworks: ["terrafund", "terrafund-landscapes", "enterprises", "epa-ghana-pilot", "terrafund-3"],
     title: "About Sites",
     paragraph1:
       " are the core units for reporting your restoration work in TerraMatch. Each site can include one or more restoration areas or polygons and should reflect a meaningful geographic grouping for your project.",
@@ -8,11 +8,11 @@ export const ABOUT_SITES_CONTENT = [
       "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or",
     links: [
       {
-        title: "Follow the TerraFund Siting Guide ",
+        title: "Follow the TerraFund Siting Guide",
         link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/25201750730907-TerraFund-Siting-Guide"
       },
       {
-        title: "Use the TerraFund Profile Creation Checklist ",
+        title: "Use the TerraFund Profile Creation Checklist",
         link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/45890074377755-Checklists-Tips-for-TerraFund-Project-Nursery-and-Site-Establishment"
       },
       {
@@ -26,6 +26,24 @@ export const ABOUT_SITES_CONTENT = [
       {
         title: "Download & Use Greenhouse.Flority",
         link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/24537092253467-How-to-Download-Use-greenhouse-Flority"
+      }
+    ]
+  },
+  {
+    frameworks: ["hbf"],
+    title: "About Sites",
+    paragraph1:
+      " are the core units for reporting your restoration work in TerraMatch. Each site can include one or more restoration areas or polygons and should reflect a meaningful geographic grouping for your project.",
+    paragraph2:
+      "Keep your site profiles up to date to track progress, report challenges, and share successes. If you have challenges or need assistance, please reach out to your project manager or",
+    links: [
+      {
+        title: "How to Create a Site on TerraMatch",
+        link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/12512561941915-How-to-Create-a-Site-on-TerraMatch"
+      },
+      {
+        title: "Citizen Science App User Manual",
+        link: "https://terramatchsupport.zendesk.com/hc/en-us/articles/27520000999835-Citizen-Science-App-User-Manual"
       }
     ]
   },
