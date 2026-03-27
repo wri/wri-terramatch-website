@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { FC } from "react";
 
 import {
@@ -26,15 +27,15 @@ const AdditionalDocumentationSection: FC<AdditionalDocumentationSectionProps> = 
   const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
 
   return (
-    <>
+    <Flex direction="column" gap={5}>
+      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} />}
       {photos.length > 0 && (
         <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
       {videos.length > 0 && (
         <MediaSection label="Videos" files={videos} entityName={entityName} entityUUID={entityUUID} />
       )}
-      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} />}
-    </>
+    </Flex>
   );
 };
 

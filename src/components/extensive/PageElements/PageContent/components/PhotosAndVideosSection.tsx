@@ -1,3 +1,4 @@
+import { Flex } from "@chakra-ui/react";
 import { FC } from "react";
 
 import {
@@ -25,7 +26,7 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
   }
 
   return (
-    <>
+    <Flex direction="column" gap={5}>
       {photos.length > 0 && (
         <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
@@ -39,7 +40,7 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
           icon={<PlayCircleIcon boxSize={3.5} color="primary.900" />}
         />
       )}
-    </>
+    </Flex>
   );
 };
 
