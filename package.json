@@ -11,6 +11,7 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci",
     "lint": "eslint --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path .gitignore",
+    "lint-staged": "lint-staged",
     "format": "prettier --write",
     "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
@@ -167,9 +168,9 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx,js,jsx}": [
-      "npm run format",
-      "npm run lint"
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write",
+      "eslint --fix"
     ]
   },
   "engines": {
