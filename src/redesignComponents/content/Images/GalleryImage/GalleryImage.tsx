@@ -12,6 +12,7 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onClickAdd?: () => void;
   hoverContent?: React.ReactNode;
   type?: MediaType;
+  classNamesVideoIcon?: string;
 }
 
 const GalleryImage: FC<GalleryImageProps> = ({
@@ -21,6 +22,7 @@ const GalleryImage: FC<GalleryImageProps> = ({
   onClickAdd,
   hoverContent,
   type = "image",
+  classNamesVideoIcon,
   ...rest
 }) => {
   return (
@@ -35,6 +37,7 @@ const GalleryImage: FC<GalleryImageProps> = ({
       onClickAdd={onClickAdd}
       hoverContent={hoverContent}
       type={type}
+      classNamesVideoIcon={classNamesVideoIcon}
     />
   );
 };

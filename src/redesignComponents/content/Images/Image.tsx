@@ -30,6 +30,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   menuLabel?: string;
   style?: CSSProperties;
   type?: MediaType;
+  classNamesVideoIcon?: string;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -48,6 +49,7 @@ const BaseImage: FC<BaseImageProps> = ({
   menuLabel,
   style,
   type = "image",
+  classNamesVideoIcon,
   ...rest
 }) => {
   const t = useT();
@@ -92,7 +94,7 @@ const BaseImage: FC<BaseImageProps> = ({
         borderRadius
       )}
     >
-      {isVideo && <PlayCircleIcon className="text-theme-neutral-100 h-9 w-9" />}
+      {isVideo && <PlayCircleIcon className={classNames("text-theme-neutral-100 h-9 w-9", classNamesVideoIcon)} />}
     </div>
   );
   return (
