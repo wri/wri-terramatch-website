@@ -2,7 +2,7 @@ import { useRecordContext } from "react-admin";
 
 const UserTitle = () => {
   const record = useRecordContext();
-  return <>User {record ? `"${record.first_name} ${record.last_name}"` : ""}</>;
+  return <>User {record ? `"${record.firstName} ${record.lastName}"` : ""}</>;
 };
 
 export default UserTitle;

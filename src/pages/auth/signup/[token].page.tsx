@@ -80,13 +80,16 @@ const InviteSignupPage = () => {
       emailAddress: data.email_address,
       firstName: data.first_name,
       lastName: data.last_name,
+      // @ts-expect-error - password is not part of the UserCreateBaseAttributes, but is required by the API.
       password: data.password,
       phoneNumber: data.phone_number,
       jobRole: data.job_role,
       callbackUrl: window.location.origin + "/auth/login",
       role,
-      token
-    } as Parameters<typeof signUp>[0]);
+      token,
+      country: "",
+      program: ""
+    });
   };
 
   return <SignUpForm form={form} handleSave={handleSave} loading={isCreating} role={role} />;

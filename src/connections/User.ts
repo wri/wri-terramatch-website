@@ -5,14 +5,20 @@ import { v3Resource } from "@/connections/util/apiConnectionFactory";
 import { connectionHook, connectionLoader, selectConnection } from "@/connections/util/connectionShortcuts";
 import {
   userCreation,
+  userDelete,
+  userIndex,
+  UserIndexQueryParams,
   usersFind,
   UsersFindVariables,
   userUpdate
 } from "@/generated/v3/userService/userServiceComponents";
 import { UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 import { ApiDataStore } from "@/store/apiSlice";
-import { Connection } from "@/types/connection";
+import { Connection, Filter } from "@/types/connection";
 import { selectorCache } from "@/utils/selectorCache";
+
+import { deleterAsync } from "./util/resourceDeleter";
+import { resourceCreator, resourceUpdater } from "./util/resourceMutator";
 
 export type ValidLocale = Exclude<UserUpdateAttributes["locale"], null>;
 
@@ -80,6 +86,28 @@ const myUserConnection: Connection<UserConnection> = {
 };
 
 const userCreationConnection = v3Resource("users", userCreation).create<UserDto>().buildConnection();
+
+const userIndexConnection = v3Resource("users", userIndex)
+  .index<UserDto & { lightResource: boolean }>()
+  .pagination()
+  .filter<Filter<UserIndexQueryParams>>()
+  .buildConnection();
+
+const userConnection = v3Resource("users", usersFind)
+  .singleFullResource<UserDto & { lightResource: boolean }>(({ id }) =>
+    id == null ? undefined : { pathParams: { uuid: id } }
+  )
+  .update(userUpdate)
+  .buildConnection();
+
+export const deleteUser = deleterAsync("users", userDelete, uuid => ({ pathParams: { uuid } }));
+
+export const createUser = resourceCreator(userCreationConnection);
+export const updateUserResource = resourceUpdater(userConnection);
+export const useUser = connectionHook(userConnection);
+export const loadUser = connectionLoader(userConnection);
+export const useUserIndex = connectionHook(userIndexConnection);
+export const loadUserIndex = connectionLoader(userIndexConnection);
 
 export const useMyUser = connectionHook(myUserConnection);
 export const loadMyUser = connectionLoader(myUserConnection);

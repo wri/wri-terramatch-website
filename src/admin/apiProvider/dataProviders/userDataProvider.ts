@@ -1,144 +1,161 @@
-import { DataProvider, Identifier } from "react-admin";
-
+import pick from "lodash/pick";
+import pickBy from "lodash/pickBy";
 import {
-  DeleteV2AdminUsersUUIDError,
-  fetchDeleteV2AdminUsersUUID,
-  fetchGetV2AdminUsers,
-  fetchGetV2AdminUsersMulti,
-  fetchGetV2AdminUsersUUID,
-  fetchPostV2AdminUsersCreate,
-  fetchPutV2AdminUsersUUID,
-  GetV2AdminUsersError,
-  GetV2AdminUsersMultiError,
-  GetV2AdminUsersUUIDError,
-  PostV2AdminUsersCreateError,
-  PutV2AdminUsersUUIDError
-} from "@/generated/apiComponents";
-import { V2AdminUserRead } from "@/generated/apiSchemas";
+  CreateParams,
+  DataProvider,
+  DeleteManyParams,
+  DeleteParams,
+  GetListParams,
+  GetManyParams,
+  GetManyResult,
+  GetOneParams,
+  UpdateParams
+} from "react-admin";
 
-import { getFormattedErrorForRA } from "../utils/error";
-import { apiListResponseToRAListResult, raListParamsToQueryParams } from "../utils/listing";
+import { createUser, deleteUser, loadUser, loadUserIndex, updateUserResource } from "@/connections/User";
+import { UserCreateBaseAttributes, UserDto, UserUpdateAttributes } from "@/generated/v3/userService/userServiceSchemas";
 
-const normalizeUserObject = (item: V2AdminUserRead) => ({
-  ...item,
-  id: item.uuid as Identifier,
-  //@ts-ignore
-  role: item.role,
-  //@ts-ignore
-  monitoring_organisations: item?.monitoring_organisations?.map(item => item.uuid)
-});
+import { v3ErrorForRA } from "../utils/error";
+import { raConnectionProps } from "../utils/listing";
 
-export const userDataProvider: DataProvider = {
-  //@ts-ignore
-  async create(__, params) {
-    try {
-      const response = await fetchPostV2AdminUsersCreate({
-        body: params.data
-      });
-
-      // @ts-expect-error
-      return { data: { ...response.data, id: response.id } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as PostV2AdminUsersCreateError);
+/** Coerce form/API shapes to the string[] expected by `UserUpdateAttributes.directFrameworks`. */
+const directFrameworksToApiSlugs = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.map(item => {
+    if (item != null && typeof item === "object" && "slug" in item) {
+      return String((item as { slug: string }).slug);
     }
-  },
-  //@ts-ignore
-  async getList(_, params) {
+    return String(item);
+  });
+};
+
+/** Admin form defaultValues merge the full user record; only these keys may be sent on PATCH. */
+const USER_ADMIN_PATCH_KEYS = [
+  "organisationUuid",
+  "firstName",
+  "lastName",
+  "emailAddress",
+  "jobRole",
+  "phoneNumber",
+  "country",
+  "program",
+  "locale",
+  "primaryRole",
+  "directFrameworks"
+] as const;
+
+type UserAdminPatchKey = (typeof USER_ADMIN_PATCH_KEYS)[number];
+
+/** Merge with previous for all patch fields except `directFrameworks` (always from `data` when present). */
+const USER_ADMIN_PATCH_KEYS_WITHOUT_DIRECT_FRAMEWORKS = USER_ADMIN_PATCH_KEYS.filter(
+  (key): key is Exclude<UserAdminPatchKey, "directFrameworks"> => key !== "directFrameworks"
+);
+
+const buildUserPatchBody = (
+  data: Record<string, unknown>,
+  previousData: Record<string, unknown> | undefined
+): UserUpdateAttributes => {
+  const previous = previousData ?? {};
+  const merged: Record<string, unknown> = {
+    ...pick(previous, USER_ADMIN_PATCH_KEYS_WITHOUT_DIRECT_FRAMEWORKS),
+    ...pick(data, USER_ADMIN_PATCH_KEYS_WITHOUT_DIRECT_FRAMEWORKS)
+  };
+
+  // Never take `directFrameworks` from `previous`; only from the submitted record (UserEdit `transform` always sets it).
+  if (Object.prototype.hasOwnProperty.call(data, "directFrameworks")) {
+    merged.directFrameworks = directFrameworksToApiSlugs(data.directFrameworks);
+  }
+
+  return pickBy(merged, value => value !== undefined) as unknown as UserUpdateAttributes;
+};
+
+export const userDataProvider: Partial<DataProvider> = {
+  async create<RecordType>(_: string, params: CreateParams<RecordType>) {
     try {
-      const response = await fetchGetV2AdminUsers({
-        queryParams: raListParamsToQueryParams(params)
-      });
+      const user = await createUser(params.data as UserCreateBaseAttributes);
 
-      const result = apiListResponseToRAListResult(response);
-
-      return {
-        ...result,
-        data: result.data?.map((item: V2AdminUserRead) => normalizeUserObject(item))
-      };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminUsersError);
-    }
-  },
-
-  //@ts-ignore
-  async getOne(_, params) {
-    try {
-      const response = await fetchGetV2AdminUsersUUID({
-        pathParams: { uuid: params.id }
-      });
-      //@ts-ignore
-      return { data: normalizeUserObject(response.data) };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminUsersUUIDError);
-    }
-  },
-
-  async getMany(_, params) {
-    try {
-      const response = await fetchGetV2AdminUsersMulti({ queryParams: { ids: params.ids.join(",") } });
-      //@ts-ignore
-      return { data: response.data?.map(item => normalizeUserObject(item)) };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as GetV2AdminUsersMultiError);
-    }
-  },
-
-  async getManyReference(_, params) {
-    const res = await fetchGetV2AdminUsers({
-      queryParams: {
-        ...raListParamsToQueryParams(params),
-        ["filter[organisation_uuid]"]: params.id
-      }
-    });
-
-    return apiListResponseToRAListResult(res);
-  },
-
-  //@ts-ignore
-  async delete(_, params) {
-    try {
-      await fetchDeleteV2AdminUsersUUID({
-        pathParams: { uuid: params.id as string }
-      });
-
-      return { data: { id: params.id } };
-    } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminUsersUUIDError);
+      return { data: { id: user.uuid } } as RecordType;
+    } catch (createFailure) {
+      throw v3ErrorForRA("User creation failed", createFailure);
     }
   },
 
-  async deleteMany(_, params) {
+  async getList<RecordType>(_: string, params: GetListParams) {
+    const connected = await loadUserIndex(raConnectionProps(params));
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("User index fetch failed", connected.loadFailure);
+    }
+
+    return {
+      data: (connected.data?.map(user => ({ ...user, id: user.uuid })) ?? []) as RecordType[],
+      total: connected.indexTotal
+    };
+  },
+
+  async getOne<RecordType>(_: string, { id }: GetOneParams) {
+    const connected = await loadUser({ id });
+    if (connected.loadFailure != null) {
+      throw v3ErrorForRA("User get fetch failed", connected.loadFailure);
+    }
+
+    return { data: { ...connected.data, id: connected.data!.uuid } } as RecordType;
+  },
+
+  async getMany(_: string, params: GetManyParams) {
     try {
-      for (const id of params.ids) {
-        await fetchDeleteV2AdminUsersUUID({
-          pathParams: { uuid: id as string }
-        });
+      const results = await Promise.all(params.ids.map(id => loadUser({ id: id as string })));
+      const failed = results.find(r => r.loadFailure != null);
+      if (failed != null) {
+        throw v3ErrorForRA("User get fetch failed", failed.loadFailure);
       }
 
-      return { data: params.ids };
+      const data = results
+        .map(r => (r.data != null ? { ...r.data, id: r.data.uuid } : null))
+        .filter((item): item is UserDto & { id: string; lightResource: boolean } => item != null);
+
+      return { data } as GetManyResult;
     } catch (err) {
-      throw getFormattedErrorForRA(err as DeleteV2AdminUsersUUIDError);
+      throw v3ErrorForRA("User getMany failed", err);
     }
   },
 
-  async update(_, params) {
+  async delete<RecordType>(_: string, { id }: DeleteParams) {
+    try {
+      await deleteUser(id as string);
+
+      return { data: { id } } as RecordType;
+    } catch (err) {
+      throw v3ErrorForRA("User delete failed", err);
+    }
+  },
+
+  async deleteMany<RecordType>(_: string, { ids }: DeleteManyParams) {
+    try {
+      for (const id of ids) {
+        await deleteUser(id as string);
+      }
+
+      return { data: ids } as RecordType;
+    } catch (err) {
+      throw v3ErrorForRA("User deleteMany failed", err);
+    }
+  },
+
+  async update<RecordType>(_: string, params: UpdateParams<RecordType>) {
     const uuid = params.id as string;
-    const body = params.data;
 
-    if (params.data.organisation?.uuid) {
-      body.organisation = params.data.organisation.uuid;
-    } else {
-      body.organisation = null;
-    }
-
-    if (!body.role) delete body.role;
+    const body = buildUserPatchBody(
+      params.data as Record<string, unknown>,
+      params.previousData as Record<string, unknown>
+    );
 
     try {
-      const resp = await fetchPutV2AdminUsersUUID({ pathParams: { uuid }, body });
-      // @ts-ignore
-      return { data: { ...resp.data, id: resp.data.uuid } };
+      const resp = await updateUserResource(body, { id: uuid });
+      return { data: { ...resp, id: resp.uuid } } as RecordType;
     } catch (err) {
-      throw getFormattedErrorForRA(err as PutV2AdminUsersUUIDError);
+      throw v3ErrorForRA("User update failed", err);
     }
   }
 };
