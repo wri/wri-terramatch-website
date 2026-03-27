@@ -13,7 +13,7 @@ interface AttachFileItemProps {
   uploadedDate?: string;
 }
 
-const AttachFileItem: FC<AttachFileItemProps> = ({ fileName, onClick, fileType, uploadedDate = "mm/dd/yyyy" }) => {
+const AttachFileItem: FC<AttachFileItemProps> = ({ fileName, onClick, fileType, uploadedDate = "-" }) => {
   const t = useT();
   return (
     <Flex gap={1} className="flex-col">
