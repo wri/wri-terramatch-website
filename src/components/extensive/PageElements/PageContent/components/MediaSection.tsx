@@ -9,8 +9,8 @@ import GalleryEntryItem from "./GalleryEntryItem";
 export type MediaSectionProps = {
   label: string;
   files: ParsedFile[];
-  entityName: "projects" | "sites";
-  entityUUID: string;
+  entityName?: "projects" | "sites";
+  entityUUID?: string;
 };
 
 const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID }) => (

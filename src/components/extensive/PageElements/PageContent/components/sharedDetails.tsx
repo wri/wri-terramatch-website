@@ -8,7 +8,6 @@ import { FC, Fragment, useMemo } from "react";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
@@ -34,12 +33,7 @@ import {
 import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
-import DocumentsSection from "./DocumentsSection";
-import MediaSection from "./MediaSection";
-
-const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg"]);
-const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "avi", "webm", "mkv"]);
-const MEDIA_EXTENSIONS = new Set([...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS]);
+import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
@@ -241,66 +235,10 @@ const SharedDetails: FC<SharedDetailsProps> = ({
             </Flex>
           );
 
-          if (entry.title === "Photos and videos") {
-            const files = parseFilesFromHtml(typeof entry.value === "string" ? entry.value : "");
-            const photos = files.filter(f => IMAGE_EXTENSIONS.has(f.fileType.toLowerCase()));
-            const videos = files.filter(f => VIDEO_EXTENSIONS.has(f.fileType.toLowerCase()));
-
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
             return (
               <Fragment key={`${step.id}-${entry.title}-${index}`}>
-                {photos.length > 0 && (
-                  <MediaSection label={t("Photos")} files={photos} entityName={entityName} entityUUID={entityUUID} />
-                )}
-                {videos.length > 0 && (
-                  <MediaSection label={t("Videos")} files={videos} entityName={entityName} entityUUID={entityUUID} />
-                )}
-                {photos.length === 0 && videos.length === 0 && (
-                  <MediaSection label={t("Photos")} files={[]} entityName={entityName} entityUUID={entityUUID} />
-                )}
-                {projectStageSection}
-              </Fragment>
-            );
-          }
-
-          if (
-            entry.title === "Additional Documentation" ||
-            entry.title ===
-              "If you have any additional documentation on your site you would like to share, please add it below."
-          ) {
-            const files = parseFilesFromHtml(typeof entry.value === "string" ? entry.value : "");
-            const photos = files.filter(f => IMAGE_EXTENSIONS.has(f.fileType.toLowerCase()));
-            const videos = files.filter(f => VIDEO_EXTENSIONS.has(f.fileType.toLowerCase()));
-            const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
-
-            return (
-              <Fragment key={`${step.id}-${entry.title}-${index}`}>
-                <Flex direction="column" gap={1}>
-                  {files.length === 0 ? (
-                    <Text textStyle="400" color="neutral.900">
-                      -
-                    </Text>
-                  ) : (
-                    <>
-                      {photos.length > 0 && (
-                        <MediaSection
-                          label={t("Photos")}
-                          files={photos}
-                          entityName={entityName}
-                          entityUUID={entityUUID}
-                        />
-                      )}
-                      {videos.length > 0 && (
-                        <MediaSection
-                          label={t("Videos")}
-                          files={videos}
-                          entityName={entityName}
-                          entityUUID={entityUUID}
-                        />
-                      )}
-                      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} />}
-                    </>
-                  )}
-                </Flex>
+                <SpecialEntryRenderer entry={entry} entityName={entityName} entityUUID={entityUUID} />
                 {projectStageSection}
               </Fragment>
             );

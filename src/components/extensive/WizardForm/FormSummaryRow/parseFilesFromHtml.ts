@@ -4,6 +4,10 @@ export type ParsedFile = {
   fileUrl: string;
 };
 
+export const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg"]);
+export const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "avi", "webm", "mkv"]);
+export const MEDIA_EXTENSIONS = new Set([...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS]);
+
 export const parseFilesFromHtml = (value: string): ParsedFile[] => {
   const anchorRegex = /<a[^>]*href="([^"]+)"[^>]*>([^<]+)<\/a>/g;
   const files: ParsedFile[] = [];
