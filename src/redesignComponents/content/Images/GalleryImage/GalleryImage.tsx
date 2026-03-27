@@ -11,9 +11,18 @@ export interface GalleryImageProps extends DetailedHTMLProps<HTMLAttributes<HTML
   onClickEdit?: () => void;
   onClickAdd?: () => void;
   hoverContent?: React.ReactNode;
+  type?: "video" | "image";
 }
 
-const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickEdit, onClickAdd, hoverContent, ...rest }) => {
+const GalleryImage: FC<GalleryImageProps> = ({
+  alt,
+  isAdd,
+  onClickEdit,
+  onClickAdd,
+  hoverContent,
+  type = "image",
+  ...rest
+}) => {
   return (
     <BaseImage
       {...rest}
@@ -25,6 +34,7 @@ const GalleryImage: FC<GalleryImageProps> = ({ alt, isAdd, onClickEdit, onClickA
       onClickEdit={onClickEdit}
       onClickAdd={onClickAdd}
       hoverContent={hoverContent}
+      type={type}
     />
   );
 };

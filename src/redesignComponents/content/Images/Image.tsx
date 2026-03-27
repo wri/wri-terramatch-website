@@ -6,7 +6,8 @@ import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useSta
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
-import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, PlayCircleIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
@@ -27,6 +28,7 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   }[];
   menuLabel?: string;
   style?: CSSProperties;
+  type?: "video" | "image";
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -44,6 +46,7 @@ const BaseImage: FC<BaseImageProps> = ({
   menuItems,
   menuLabel,
   style,
+  type = "image",
   ...rest
 }) => {
   const t = useT();
@@ -52,12 +55,14 @@ const BaseImage: FC<BaseImageProps> = ({
     setLoadError(false);
   }, [src]);
 
+  const isVideo = type === "video";
   const showNotAvailable = src == null || loadError;
 
   const hoverContentComponent = (
     <div
       className={classNames(
         "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        isVideo && "bg-[#3D3B3B80]",
         borderRadius
       )}
       role="button"
@@ -78,6 +83,17 @@ const BaseImage: FC<BaseImageProps> = ({
     </div>
   );
 
+  const videoComponent = (
+    <div
+      className={classNames(
+        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
+        isVideo && "bg-[#3D3B3B80]",
+        borderRadius
+      )}
+    >
+      {isVideo && <PlayCircleIcon className="text-theme-neutral-100 h-9 w-9" />}
+    </div>
+  );
   return (
     <div
       {...rest}
@@ -120,9 +136,19 @@ const BaseImage: FC<BaseImageProps> = ({
                 {t("Image unavailable")}
               </Text>
             </div>
+            {isVideo && videoComponent}
             {onClickEdit && hoverContentComponent}
           </div>
         )
+      ) : isVideo ? (
+        <>
+          <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
+            <video src={src!} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
+          </div>
+
+          {isVideo && videoComponent}
+          {onClickEdit && hoverContentComponent}
+        </>
       ) : (
         <>
           <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>

@@ -56,6 +56,7 @@ export { PeatlandIcon } from "./RestorationAndLand/PeatlandIcon";
 export { PhotosIcon } from "./PhotosIcon";
 export { PhotoAddIcon } from "./Function/PhotoAddIcon";
 export { PhotoLibraryIcon } from "./PhotoLibraryIcon";
+export { PlayCircleIcon } from "./PlayCircleIcon";
 export { PlaceholderIcon } from "./Function/PlaceholderIcon";
 export { PlusIcon } from "./PlusIcon";
 export { ProgrammeIcon } from "./NavigationSections/ProgrammeIcon";
