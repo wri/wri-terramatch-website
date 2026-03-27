@@ -54,8 +54,6 @@ const BaseImage: FC<BaseImageProps> = ({
 
   const showNotAvailable = src == null || loadError;
 
-  console.log(loadError);
-
   const hoverContentComponent = (
     <div
       className={classNames(
