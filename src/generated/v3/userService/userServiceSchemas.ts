@@ -258,6 +258,7 @@ export type EmbeddedMediaDto = {
   description: string | null;
   photographer: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FinancialIndicatorDto = {
@@ -405,6 +406,7 @@ export type MediaDto = {
   photographer: string | null;
   createdByUserName: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FundingTypeDto = {
