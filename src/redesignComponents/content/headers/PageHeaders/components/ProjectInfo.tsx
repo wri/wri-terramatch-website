@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
 import { useMyOrg } from "@/connections/Organisation";
@@ -13,7 +13,7 @@ import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
-import ProjectDescription from "./ProjectDescription";
+import DescriptionHeader from "./DescriptionHeader";
 import SeparatorDot from "./SeparatorDot";
 
 export interface ProjectInfoProps {
@@ -49,6 +49,12 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const [, myOrg] = useMyOrg();
   const router = useRouter();
+
+  const handleOrganizationNav = useCallback(() => {
+    const orgId = myOrg?.organisationId;
+    router.push(orgId != null ? `/organization/${orgId}` : "/");
+  }, [router, myOrg?.organisationId]);
+
   return (
     <Box gap={2} className="flex flex-col">
       <Text
@@ -61,12 +67,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         {title} <ProgressTag {...tag} />
       </Text>
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button
-          variant="borderless"
-          size="small"
-          className="-mr-2"
-          onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
-        >
+        <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>
         <SeparatorDot />
@@ -77,7 +78,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription
+        <DescriptionHeader
           description={description}
           handleEdit={handleEdit}
           downloadButtonProps={{
@@ -88,6 +89,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             loading: exportLoader,
             children: t("Download Project Files")
           }}
+          readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=details`)}
         />
       ) : (
         <div className="w-fit">

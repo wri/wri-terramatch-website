@@ -8,11 +8,8 @@ import FormSummary from "@/components/extensive/WizardForm/FormSummary";
 import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
-import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-import { EntityName } from "@/types/common";
 
 import { FormFooter } from "./FormFooter";
 
@@ -45,7 +42,6 @@ const SummaryItem: FC<SummaryItemProps> = ({
 }) => {
   const t = useT();
   const user = useIsAdmin();
-  const { getReadableEntityName } = useGetReadableEntityName();
   const fieldsProvider = useFieldsProvider();
   const [, { data: actions }] = useActions({
     enabled: !user
@@ -66,36 +62,13 @@ const SummaryItem: FC<SummaryItemProps> = ({
     }
   };
 
-  const isMainEntity = useMemo(
-    () => ["projects", "sites", "nurseries"].includes(entity.model as EntityName),
-    [entity.model]
-  );
-  const entityName = useMemo(
-    () => getReadableEntityName(entity.model as EntityName, true),
-    [entity.model, getReadableEntityName]
-  );
-
   return (
     <div
       className={classNames("h-full overflow-auto pr-[12px]", {
         "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": user
       })}
     >
-      <FormStepHeader
-        id="step"
-        title={title}
-        subtitle={subtitle}
-        actionButtonProps={
-          downloadButtonText == null
-            ? undefined
-            : {
-                children: isMainEntity ? `Download ${entityName}` : downloadButtonText,
-                leftIcon: <DownloadIcon className="text-theme-primary-800 h-4" />,
-                variant: "secondary",
-                onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
-              }
-        }
-      >
+      <FormStepHeader id="step" title={title} subtitle={subtitle}>
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
       <FormFooter
@@ -111,9 +84,8 @@ const SummaryItem: FC<SummaryItemProps> = ({
         }}
         secondaryButtonProps={undefined}
         tertiaryButtonProps={{
-          children: t("Previous"),
-          leftIcon: <ChevronRightIcon className="rotate-180" />,
-          onClick: () => setSelectedStepIndex(n => n - 1)
+          children: t("Download"),
+          onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
         }}
       />
     </div>

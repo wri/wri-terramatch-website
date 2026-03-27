@@ -65,7 +65,6 @@ const NurseryDetailPage = () => {
         {nursery == null ? null : (
           <>
             <NurseryBanner
-              className="top-[70px]"
               nursery={nursery}
               breadcrumbs={[
                 {
@@ -117,7 +116,7 @@ const NurseryDetailPage = () => {
                 }
               }}
             />
-            <div className="w-full">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
+            <div className="flex flex-1">{suffixContent ?? TabItems.find(item => item.key === activeTab)?.body}</div>
           </>
         )}
         <PageFooter />

@@ -1,4 +1,5 @@
 import { Grid, GridItem } from "@chakra-ui/react";
+import { useT } from "@transifex/react";
 import { DetailedHTMLProps, FC, HTMLAttributes } from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -35,6 +36,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
   const itemsToShow = Math.max(minimumCapacity, roundedCapacity);
   const placeholderCount = itemsToShow - imageCount;
   const isEmpty = imageCount === 0;
+  const t = useT();
 
   return (
     <Grid
@@ -42,7 +44,7 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
       gapY={5}
       gapX={5}
       onScroll={onScroll}
-      className={twMerge("bg-theme-neutral-100 rounded-md p-5", className)}
+      className={twMerge("rounded-md bg-theme-neutral-100 p-5", className)}
     >
       {images?.map(image => (
         <GridItem key={image.uuid}>
@@ -51,28 +53,28 @@ const ImageGalleryCard: FC<IImageGalleryCardProps> = ({
             src={image.src}
             alt={image.alt}
             size={imageSize}
-            className="bg-theme-neutral-200 min-w-full"
+            className="min-w-full bg-theme-neutral-200"
             hoverContent={" "}
           />
         </GridItem>
       ))}
       {Array.from({ length: placeholderCount }).map((_, index) => {
         const isFirstPlaceholder = index === 0;
-        const showContent = isEmpty && isFirstPlaceholder;
+        const showAddSlot = onClickAdd != null && isFirstPlaceholder;
 
         return (
           <GridItem key={`placeholder-${index}`}>
-            {showContent ? (
+            {showAddSlot ? (
               <GalleryImage
-                className="min-w-full"
-                alt="No images available"
+                className="min-w-full bg-theme-neutral-200"
+                alt={isEmpty ? t("No images available") : t("Add image")}
                 isAdd={true}
                 onClickAdd={onClickAdd}
                 size={imageSize}
               />
             ) : (
               <div
-                className="bg-theme-neutral-200 min-w-full rounded-md"
+                className="min-w-full rounded-md bg-theme-neutral-200"
                 style={{ width: imageSize, height: imageSize }}
               />
             )}

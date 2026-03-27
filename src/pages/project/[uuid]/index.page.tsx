@@ -143,7 +143,6 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
         <title>{t("Project")}</title>
       </Head>
       <ProjectBanner
-        className="top-[70px]"
         project={project}
         onAddTeamClick={handleInvite}
         gotoTeamMembers={() => navigateToTab("team-members")}
@@ -188,7 +187,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           }
         }}
       />
-      <div className="w-full">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
+      <div className="flex flex-1">{suffixViewContent ?? tabItems.find(item => item.key === activeTab)?.body}</div>
       <PageFooter />
     </>
   );

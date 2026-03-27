@@ -11,6 +11,7 @@ export interface PageItemProps {
   children?: ReactNode;
   flexProps?: FlexProps;
   tag?: ReactNode;
+  className?: string;
 }
 
 const PageItem: FC<PageItemProps> = ({
@@ -19,9 +20,10 @@ const PageItem: FC<PageItemProps> = ({
   downloadButtonProps = null,
   children,
   flexProps,
-  tag
+  tag,
+  className
 }) => (
-  <Flex direction="column" gap={4} flex={1} {...flexProps}>
+  <Flex direction="column" gap={4} flex={1} {...flexProps} className={className}>
     <Flex alignItems="center" justifyContent="space-between">
       <div className="flex items-center gap-2">
         <Text color="primary.900" textStyle="600">

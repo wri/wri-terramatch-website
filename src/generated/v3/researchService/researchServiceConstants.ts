@@ -9,7 +9,8 @@ import {
   BoundingBoxDto,
   ValidationSummaryDto,
   ClippedVersionDto,
-  ProjectPolygonDto
+  ProjectPolygonDto,
+  AnrPlotGeometryDto
 } from "./researchServiceSchemas";
 
 export const RESEARCH_SERVICE_RESOURCES = [
@@ -21,7 +22,8 @@ export const RESEARCH_SERVICE_RESOURCES = [
   "boundingBoxes",
   "validationSummaries",
   "clippedVersions",
-  "projectPolygons"
+  "projectPolygons",
+  "anrPlotGeometries"
 ] as const;
 
 export type ResearchServiceApiResources = {
@@ -34,4 +36,5 @@ export type ResearchServiceApiResources = {
   validationSummaries: StoreResourceMap<ValidationSummaryDto>;
   clippedVersions: StoreResourceMap<ClippedVersionDto>;
   projectPolygons: StoreResourceMap<ProjectPolygonDto>;
+  anrPlotGeometries: StoreResourceMap<AnrPlotGeometryDto>;
 };
