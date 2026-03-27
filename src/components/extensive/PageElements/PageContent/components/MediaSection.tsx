@@ -19,7 +19,7 @@ export type MediaSectionProps = {
 const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID, type, icon }) => (
   <Flex direction="column" gap={1}>
     <Text display="flex" alignItems="center" gap={1} lineHeight="normal" textStyle="300-bold" color="primary.900">
-      {icon ?? <PhotosIcon boxSize={3.5} color="primary.900" />}
+      {icon != null ? icon : <PhotosIcon boxSize={3.5} color="primary.900" />}
       {label}
     </Text>
     {files.length === 0 ? (
@@ -32,7 +32,7 @@ const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityU
           <GalleryEntryItem
             key={file.fileUrl}
             src={file.fileUrl}
-            name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
+            name={file.fileType != null ? `${file.fileName}.${file.fileType}` : file.fileName}
             entityName={entityName}
             entityUUID={entityUUID}
             type={type}
