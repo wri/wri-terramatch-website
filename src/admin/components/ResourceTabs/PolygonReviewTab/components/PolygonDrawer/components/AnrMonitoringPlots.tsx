@@ -1,5 +1,6 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useT } from "@transifex/react";
 import { ChangeEvent, FC, useCallback, useEffect, useRef, useState } from "react";
 
@@ -46,10 +47,12 @@ const AnrMonitoringPlots: FC<{
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
-  const [, { data: anrPlotGeometry, isLoading }] = useAnrPlotGeometry({
+  const [connectionReady, { data: anrPlotGeometry, isLoading }] = useAnrPlotGeometry({
     sitePolygonUuid,
     enabled: sitePolygonUuid !== "" && dataFetchEnabled
   });
+
+  const isPlotsRequestPending = !connectionReady || Boolean(isLoading) || isUploading;
 
   const hasAnrPlotGeometry = anrPlotGeometry?.geojson?.features != null;
 
@@ -195,9 +198,10 @@ const AnrMonitoringPlots: FC<{
     );
   }
 
-  if (isLoading || isUploading) {
+  if (isPlotsRequestPending) {
     return (
-      <div className="flex items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center gap-3 p-4">
+        <CircularProgress size={28} aria-label={t("Loading")} />
         <Text variant="text-14-light">{t("Loading ANR monitoring plots...")}</Text>
       </div>
     );
