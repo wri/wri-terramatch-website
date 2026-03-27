@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, TableCell, TableRow, Text } from "@chakra-ui/react";
+import { Box, Flex, TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Dictionary } from "lodash";
@@ -8,14 +8,13 @@ import { FC, Fragment, useMemo } from "react";
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { ParsedFile, parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
+import { parseFilesFromHtml } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
-import AttachFileItem from "@/pages/project/[uuid]/components/AttachFileItem";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   getPlantingStatus,
@@ -32,12 +31,15 @@ import {
   FULL_WIDTH_TABLE_HEADER_STYLES,
   NO_HEADER_TABLE_WRAPPER_STYLES
 } from "@/redesignComponents/dataDisplay/Table/tableStyles";
-import { ArrowForward, EditIcon, PhotosIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
-import GalleryEntryItem from "./GalleryEntryItem";
+import DocumentsSection from "./DocumentsSection";
+import MediaSection from "./MediaSection";
 
-const MEDIA_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg", "mp4", "mov", "avi", "webm", "mkv"]);
+const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "gif", "webp", "svg"]);
+const VIDEO_EXTENSIONS = new Set(["mp4", "mov", "avi", "webm", "mkv"]);
+const MEDIA_EXTENSIONS = new Set([...IMAGE_EXTENSIONS, ...VIDEO_EXTENSIONS]);
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
@@ -67,80 +69,6 @@ type EntryValueRendererProps = {
 
 const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID }: EntryValueRendererProps) => {
   const rawValue = entry.value ?? "-";
-
-  if (entry.title === "Photos and videos") {
-    const images = parseFilesFromHtml(typeof rawValue === "string" ? rawValue : "");
-
-    if (images.length === 0) {
-      return (
-        <Text textStyle="400" color="neutral.900">
-          -
-        </Text>
-      );
-    }
-
-    return (
-      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
-        {images.map(file => (
-          <GalleryEntryItem
-            key={file.fileUrl}
-            src={file.fileUrl}
-            name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
-            entityName={entityName}
-            entityUUID={entityUUID}
-          />
-        ))}
-      </Grid>
-    );
-  }
-  if (
-    entry.title ===
-      "If you have any additional documentation on your site you would like to share, please add it below." ||
-    entry.title === "Additional Documentation"
-  ) {
-    const files = parseFilesFromHtml(typeof rawValue === "string" ? rawValue : "");
-
-    if (files.length === 0) {
-      return (
-        <Text textStyle="400" color="neutral.900">
-          -
-        </Text>
-      );
-    }
-
-    const mediaFiles = files.filter(f => MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
-    const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
-
-    return (
-      <>
-        {mediaFiles.length > 0 && (
-          <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
-            {mediaFiles.map((file: ParsedFile) => (
-              <GalleryEntryItem
-                key={file.fileUrl}
-                src={file.fileUrl}
-                name={file.fileType ? `${file.fileName}.${file.fileType}` : file.fileName}
-                entityName={entityName}
-                entityUUID={entityUUID}
-              />
-            ))}
-          </Grid>
-        )}
-        {documentFiles.length > 0 && (
-          <Grid templateColumns="repeat(2, minmax(0, 1fr))" gap={4}>
-            {documentFiles.map((file: ParsedFile) => (
-              <AttachFileItem
-                key={file.fileUrl}
-                fileName={file.fileName}
-                onClick={() => window.open(file.fileUrl, "_blank")}
-                fileType={file.fileType}
-              />
-            ))}
-          </Grid>
-        )}
-      </>
-    );
-  }
 
   if (typeof rawValue === "string" || typeof rawValue === "number") {
     return (
@@ -286,6 +214,98 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         {entries.map((entry, index) => {
           const isAdditionalInformation =
             entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information";
+
+          const projectStageSection = stepIndex === 0 && index === 0 && entityName === "projects" && (
+            <Flex direction="column" gap={1}>
+              <Text textStyle="300-bold" color="primary.900">
+                {t("Project Stage")}:
+              </Text>
+              {entity.plantingStatus !== null ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
+                    {(entity.plantingStatus === "replacement-planting" ||
+                      entity.plantingStatus === "no-restoration-expected") && (
+                      <>
+                        <ArrowForward boxSize={4} color="neutral.900" />
+                        <Text textStyle="400" color="neutral.900">
+                          {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
+                        </Text>
+                      </>
+                    )}
+                  </div>
+                </>
+              ) : (
+                "-"
+              )}
+            </Flex>
+          );
+
+          if (entry.title === "Photos and videos") {
+            const files = parseFilesFromHtml(typeof entry.value === "string" ? entry.value : "");
+            const photos = files.filter(f => IMAGE_EXTENSIONS.has(f.fileType.toLowerCase()));
+            const videos = files.filter(f => VIDEO_EXTENSIONS.has(f.fileType.toLowerCase()));
+
+            return (
+              <Fragment key={`${step.id}-${entry.title}-${index}`}>
+                {photos.length > 0 && (
+                  <MediaSection label={t("Photos")} files={photos} entityName={entityName} entityUUID={entityUUID} />
+                )}
+                {videos.length > 0 && (
+                  <MediaSection label={t("Videos")} files={videos} entityName={entityName} entityUUID={entityUUID} />
+                )}
+                {photos.length === 0 && videos.length === 0 && (
+                  <MediaSection label={t("Photos")} files={[]} entityName={entityName} entityUUID={entityUUID} />
+                )}
+                {projectStageSection}
+              </Fragment>
+            );
+          }
+
+          if (
+            entry.title === "Additional Documentation" ||
+            entry.title ===
+              "If you have any additional documentation on your site you would like to share, please add it below."
+          ) {
+            const files = parseFilesFromHtml(typeof entry.value === "string" ? entry.value : "");
+            const photos = files.filter(f => IMAGE_EXTENSIONS.has(f.fileType.toLowerCase()));
+            const videos = files.filter(f => VIDEO_EXTENSIONS.has(f.fileType.toLowerCase()));
+            const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
+
+            return (
+              <Fragment key={`${step.id}-${entry.title}-${index}`}>
+                <Flex direction="column" gap={1}>
+                  {files.length === 0 ? (
+                    <Text textStyle="400" color="neutral.900">
+                      -
+                    </Text>
+                  ) : (
+                    <>
+                      {photos.length > 0 && (
+                        <MediaSection
+                          label={t("Photos")}
+                          files={photos}
+                          entityName={entityName}
+                          entityUUID={entityUUID}
+                        />
+                      )}
+                      {videos.length > 0 && (
+                        <MediaSection
+                          label={t("Videos")}
+                          files={videos}
+                          entityName={entityName}
+                          entityUUID={entityUUID}
+                        />
+                      )}
+                      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} />}
+                    </>
+                  )}
+                </Flex>
+                {projectStageSection}
+              </Fragment>
+            );
+          }
+
           return (
             <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
@@ -297,9 +317,8 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                   textStyle={isAdditionalInformation ? "400" : "300-bold"}
                   color={isAdditionalInformation ? "neutral.700" : "primary.900"}
                 >
-                  {entry.title === "Photos and videos" ? <PhotosIcon boxSize={3.5} color="primary.900" /> : null}
-                  {t(entry.title === "Photos and videos" ? "Photos" : entry.title)}
-                  {!isAdditionalInformation && entry.title !== "Photos and videos" && ":"}
+                  {entry.title}
+                  {!isAdditionalInformation && ":"}
                 </Text>
                 <div
                   className={classNames("bg-theme-neutral-300 my-2 h-px w-full", !isAdditionalInformation && "hidden")}
@@ -311,31 +330,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                   entityUUID={entityUUID}
                 />
               </Flex>
-              {stepIndex === 0 && index === 0 && entityName === "projects" && (
-                <Flex direction="column" gap={1}>
-                  <Text textStyle="300-bold" color="primary.900">
-                    {t("Project Stage")}:
-                  </Text>
-                  {entity.plantingStatus !== null ? (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
-                        {(entity.plantingStatus === "replacement-planting" ||
-                          entity.plantingStatus === "no-restoration-expected") && (
-                          <>
-                            <ArrowForward boxSize={4} color="neutral.900" />
-                            <Text textStyle="400" color="neutral.900">
-                              {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
-                            </Text>
-                          </>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </Flex>
-              )}
+              {projectStageSection}
             </Fragment>
           );
         })}
