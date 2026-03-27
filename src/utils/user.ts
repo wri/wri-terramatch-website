@@ -1,7 +1,6 @@
-import { UserRead } from "@/generated/apiSchemas";
+import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-export const getFullName = (user: UserRead | string) => {
+export const getFullName = (user: UserDto | string) => {
   if (typeof user === "string") return user;
-  // @ts-ignore
-  return `${(user?.firstName ?? user?.firstName) || ""} ${(user?.lastName ?? user?.lastName) || ""}`.trim();
+  return `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
 };
