@@ -2606,6 +2606,19 @@ export type GetAnrPlotGeometryPathParams = {
 
 export type GetAnrPlotGeometryError = Fetcher.ErrorWrapper<
   | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
       status: 401;
       payload: {
         /**
@@ -2742,6 +2755,8 @@ export type UpsertAnrPlotGeometryVariables = {
  * Uploads a GeoJSON FeatureCollection as the ANR monitoring plot grid for
  *       the specified site polygon. If a plot already exists it is soft-deleted and replaced
  *       atomically. Supported formats: GeoJSON (.geojson), KML (.kml), Shapefile (.zip).
+ *       Feature properties must use camelCase only: plotId, areaM2, and optionally select
+ *       (snake_case or other keys are rejected).
  *       Admin only (polygons-manage permission required).
  */
 export const upsertAnrPlotGeometry = new V3ApiEndpoint<
@@ -2756,6 +2771,19 @@ export type DeleteAnrPlotGeometryPathParams = {
 };
 
 export type DeleteAnrPlotGeometryError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
   | {
       status: 401;
       payload: {
@@ -2814,6 +2842,19 @@ export type GetAnrPlotGeometryGeoJsonPathParams = {
 };
 
 export type GetAnrPlotGeometryGeoJsonError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
   | {
       status: 401;
       payload: {

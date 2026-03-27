@@ -65,7 +65,6 @@ const BaseImage: FC<BaseImageProps> = ({
     <div
       className={classNames(
         "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-        isVideo && "bg-[#3D3B3B80]",
         borderRadius
       )}
       role="button"

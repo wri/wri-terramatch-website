@@ -1928,8 +1928,8 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
       const popupContent = document.createElement("div");
       popupContent.className = "popup-content-map";
       const root = createRoot(popupContent);
-      const rawPlotId = props.plot_id;
-      const rawArea = props.area_m2;
+      const rawPlotId = props.plotId;
+      const rawArea = props.areaM2;
       const plotIdParsed =
         typeof rawPlotId === "number"
           ? rawPlotId

@@ -16,13 +16,14 @@ import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types"
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 
 interface ReportOverviewTabProps {
   report: ProjectReportFullDto;
   dueAt?: string;
+  projectPlantingStatus?: ProjectFullDto["plantingStatus"];
 }
 
 type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid" | "domain">;
@@ -70,7 +71,12 @@ const ALL_BENEFICIARIES: UseTotalProps = {
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
   String(useCollectionsTotal({ ...props, domain: "demographics", entity: "projectReports", uuid }) ?? "N/A");
 
-const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
+const isCompletedPlantingToken = (value: string | null | undefined): boolean => {
+  if (value == null) return false;
+  return value.trim().toLowerCase() === "completed";
+};
+
+const ReportDataTab = ({ report, dueAt, projectPlantingStatus }: ReportOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
   const { framework } = useFrameworkContext();
@@ -90,6 +96,14 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
   const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
+  const resolvedPlantingStatus = report.plantingStatus ?? projectPlantingStatus ?? null;
+  const normalizedLandscapeContribution = report.landscapeCommunityContribution?.trim();
+  const completedPlantingLabel = t("Completed planting") || "Completed planting";
+  const plantingCompletedFromStatus = isCompletedPlantingToken(resolvedPlantingStatus);
+  const contributionIsCompletedPlaceholder = isCompletedPlantingToken(normalizedLandscapeContribution);
+  const landscapeProgressOverviewValue = contributionIsCompletedPlaceholder
+    ? completedPlantingLabel
+    : normalizedLandscapeContribution || (plantingCompletedFromStatus ? completedPlantingLabel : null);
 
   return (
     <PageBody>
@@ -97,7 +111,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
         <PageColumn>
           <PageCard title={Framework.HBF ? t("General Report Updates") : t("Reported Data")} gap={8}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{landscapeProgressOverviewValue}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
               <LongTextField title={t("Climate Resilience Progress")}>{report.resilienceProgress}</LongTextField>
               <LongTextField title={t("Response to Local Priorities")}>
@@ -120,7 +134,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Public Narrative")}>{report.publicNarrative}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{landscapeProgressOverviewValue}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
               <LongTextField title={t("Community Engagement Approach")}>
                 {report.localEngagementDescription}
