@@ -135,11 +135,12 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
               <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
-              <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
-                {t("Image unavailable")}
-              </Text>
+              {size >= 80 && (
+                <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
+                  {t("Image unavailable")}
+                </Text>
+              )}
             </div>
-            {isVideo && videoComponent}
             {onClickEdit && hoverContentComponent}
           </div>
         )

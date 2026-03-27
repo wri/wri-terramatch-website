@@ -23,7 +23,14 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
 
   return (
     <Flex gap={0.5}>
-      <GalleryImage src={src} alt={name} className="!h-12 !w-15 shrink-0" type={type} classNamesVideoIcon="!h-3 !w-3" />
+      <GalleryImage
+        src={src}
+        alt={name}
+        className="!h-12 !w-15 shrink-0"
+        size={48}
+        type={type}
+        classNamesVideoIcon="!h-3 !w-3"
+      />
       <Box>
         <Text textStyle="400" color="neutral.800" pl={2}>
           {name}
