@@ -64,7 +64,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
 
   const optionsCohort = [
     { title: "Top 100", value: "terrafund" },
-    { title: "Landscapes", value: "terrafund-landscapes" }
+    { title: "Landscapes", value: "terrafund-landscapes" },
+    { title: "TerraFund Cohort Three", value: "terrafund-3" }
   ];
 
   const activeCountries = useMemo(() => {
