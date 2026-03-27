@@ -1066,11 +1066,11 @@ export type AnrPlotGeometryDto = {
         /**
          * @example 37
          */
-        plot_id?: number;
+        plotId?: number;
         /**
          * @example 897
          */
-        area_m2?: number;
+        areaM2?: number;
         /**
          * @example Yes
          */
