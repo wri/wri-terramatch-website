@@ -63,8 +63,8 @@ const HeaderDashboard = (props: HeaderDashboardProps) => {
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const optionsCohort = [
-    { title: "Top 100", value: "terrafund" },
-    { title: "Landscapes", value: "terrafund-landscapes" },
+    { title: "TerraFund Cohort One", value: "terrafund-cohort-1" },
+    { title: "TerraFund Cohort Two", value: "terrafund-cohort-2" },
     { title: "TerraFund Cohort Three", value: "terrafund-3" }
   ];
 
