@@ -648,8 +648,29 @@ export type UserDto = {
    * @format date-time
    */
   emailAddressVerifiedAt: string | null;
+  phoneNumber: string | null;
+  /**
+   * Name of the user's primary organisation, if any.
+   */
+  organisationName: string | null;
+  /**
+   * UUID of the user's primary organisation, if any.
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  lastLoggedInAt: string | null;
+  jobRole: string | null;
+  country: string | null;
+  program: string | null;
   locale: string | null;
   frameworks: UserFramework[];
+  directFrameworks: UserFramework[];
 };
 
 export type OrganisationCreateAttributes = {
@@ -731,9 +752,47 @@ export type ActionDto = {
 
 export type UserUpdateAttributes = {
   /**
+   * Organisation UUID
+   *
+   * @format uuid
+   */
+  organisationUuid?: Record<string, any> | null;
+  /**
+   * First name
+   */
+  firstName?: Record<string, any> | null;
+  /**
+   * Last name
+   */
+  lastName?: Record<string, any> | null;
+  /**
+   * Email address
+   *
+   * @format email
+   */
+  emailAddress?: Record<string, any> | null;
+  /**
+   * Job role
+   */
+  jobRole?: Record<string, any> | null;
+  /**
+   * Phone number
+   */
+  phoneNumber?: Record<string, any> | null;
+  /**
+   * Country
+   */
+  country?: Record<string, any> | null;
+  /**
+   * Program
+   */
+  program?: Record<string, any> | null;
+  /**
    * New default locale for the given user
    */
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+  primaryRole: string;
+  directFrameworks: string[];
 };
 
 export type UserData = {
@@ -749,30 +808,23 @@ export type UserUpdateBody = {
   data: UserData;
 };
 
-export type UserCreateAttributes = {
+export type UserCreateBaseAttributes = {
   firstName: string;
   lastName: string;
-  password: string;
   emailAddress: string;
   phoneNumber: string;
   jobRole: string;
-  role: string;
   country: string;
   program: string;
-  callbackUrl: string;
-  /**
-   * Token for invite-based signup completion
-   */
-  token?: string;
 };
 
-export type UserCreateData = {
+export type UserCreateBaseData = {
   type: "users";
-  attributes: UserCreateAttributes;
+  attributes: UserCreateBaseAttributes;
 };
 
-export type UserCreateBody = {
-  data: UserCreateData;
+export type UserCreateBaseBody = {
+  data: UserCreateBaseData;
 };
 
 export type UserAssociationDto = {
