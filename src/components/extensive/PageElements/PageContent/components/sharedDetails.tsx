@@ -248,10 +248,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
             <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
                 <Text
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  lineHeight={"normal"}
+                  className="flex items-center gap-1 leading-normal"
                   textStyle={isAdditionalInformation ? "400" : "300-bold"}
                   color={isAdditionalInformation ? "neutral.700" : "primary.900"}
                 >
