@@ -71,9 +71,47 @@ const ALL_BENEFICIARIES: UseTotalProps = {
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
   String(useCollectionsTotal({ ...props, domain: "demographics", entity: "projectReports", uuid }) ?? "N/A");
 
+const getLandscapeProgressRawText = (report: ProjectReportFullDto): string | null => {
+  const fromLocalEngagement = report.localEngagement?.trim();
+  if (fromLocalEngagement) {
+    return fromLocalEngagement;
+  }
+  const fromLegacy = report.landscapeCommunityContribution?.trim();
+  return fromLegacy || null;
+};
+
 const isCompletedPlantingToken = (value: string | null | undefined): boolean => {
   if (value == null) return false;
   return value.trim().toLowerCase() === "completed";
+};
+
+const isAffirmativePlantingToken = (value: string | null | undefined): boolean => {
+  if (value == null) return false;
+  return value.trim().toLowerCase() === "yes";
+};
+
+const getLandscapeProgressOverviewValue = (
+  report: ProjectReportFullDto,
+  projectPlantingStatus: ProjectFullDto["plantingStatus"] | undefined,
+  plantingCompletedLabel: string
+): string | null => {
+  const resolvedPlantingStatus = report.plantingStatus ?? projectPlantingStatus ?? null;
+  const normalizedLandscape = getLandscapeProgressRawText(report);
+  const plantingCompletedFromStatus = isCompletedPlantingToken(resolvedPlantingStatus);
+  const contributionIsCompletedPlaceholder =
+    normalizedLandscape != null &&
+    (isCompletedPlantingToken(normalizedLandscape) || isAffirmativePlantingToken(normalizedLandscape));
+
+  if (contributionIsCompletedPlaceholder) {
+    return plantingCompletedLabel;
+  }
+  if (normalizedLandscape) {
+    return normalizedLandscape;
+  }
+  if (plantingCompletedFromStatus) {
+    return plantingCompletedLabel;
+  }
+  return null;
 };
 
 const ReportDataTab = ({ report, dueAt, projectPlantingStatus }: ReportOverviewTabProps) => {
@@ -96,14 +134,12 @@ const ReportDataTab = ({ report, dueAt, projectPlantingStatus }: ReportOverviewT
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
   const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
-  const resolvedPlantingStatus = report.plantingStatus ?? projectPlantingStatus ?? null;
-  const normalizedLandscapeContribution = report.landscapeCommunityContribution?.trim();
-  const completedPlantingLabel = t("Completed planting") || "Completed planting";
-  const plantingCompletedFromStatus = isCompletedPlantingToken(resolvedPlantingStatus);
-  const contributionIsCompletedPlaceholder = isCompletedPlantingToken(normalizedLandscapeContribution);
-  const landscapeProgressOverviewValue = contributionIsCompletedPlaceholder
-    ? completedPlantingLabel
-    : normalizedLandscapeContribution || (plantingCompletedFromStatus ? completedPlantingLabel : null);
+  const plantingCompletedLabel = t("Planting Completed") || "Planting Completed";
+  const landscapeProgressOverviewValue = getLandscapeProgressOverviewValue(
+    report,
+    projectPlantingStatus,
+    plantingCompletedLabel
+  );
 
   return (
     <PageBody>

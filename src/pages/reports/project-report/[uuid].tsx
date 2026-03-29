@@ -63,7 +63,13 @@ const ProjectReportDetailPage = () => {
                   {
                     key: "report-data",
                     title: t("Report Data"),
-                    body: <ReportDataTab report={report} dueAt={task?.dueAt} />
+                    body: (
+                      <ReportDataTab
+                        report={report}
+                        dueAt={task?.dueAt}
+                        projectPlantingStatus={project?.plantingStatus}
+                      />
+                    )
                   },
                   {
                     key: "gallery",
