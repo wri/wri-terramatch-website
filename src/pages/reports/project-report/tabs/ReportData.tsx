@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -13,17 +14,119 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import type { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { useEntityFormData } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
+import { type FormFieldsProvider, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectFullDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { FormQuestionOptionDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+
+type LandscapeProgressOverviewParams = {
+  landscapeCommunityContribution: ProjectReportFullDto["landscapeCommunityContribution"];
+  plantingCompletedLabel: string;
+  reportPlantingStatus: ProjectReportFullDto["plantingStatus"];
+  formAnswersSayPlantingCompleted?: boolean;
+};
+
+const isPlantingCompletedAnswerToken = (value: string | null | undefined): boolean => {
+  if (value == null) return false;
+  const normalized = value.trim().toLowerCase();
+  return normalized === "completed" || normalized === "yes" || normalized === "true";
+};
+
+const isReportPlantingQuestionAnsweredYes = (reportPlantingStatus: ProjectReportFullDto["plantingStatus"]): boolean => {
+  if (reportPlantingStatus == null) return false;
+  const normalized = reportPlantingStatus.trim().toLowerCase();
+  return normalized === "completed" || normalized === "yes" || normalized === "true";
+};
+
+const collectFieldNamesForStep = (stepId: string, fieldsProvider: FormFieldsProvider): string[] => {
+  const result: string[] = [];
+  const visit = (name: string) => {
+    result.push(name);
+    for (const child of fieldsProvider.childNames(name)) {
+      visit(child);
+    }
+  };
+  for (const name of fieldsProvider.fieldNames(stepId)) {
+    visit(name);
+  }
+  return result;
+};
+
+const isPlantingCompletedQuestionField = (field: FieldDefinition): boolean => {
+  const key = field.linkedFieldKey?.toLowerCase() ?? "";
+  if (key.length > 0) {
+    if (key.includes("planting") && (key.includes("complete") || key.includes("completed"))) {
+      return true;
+    }
+    if (key.includes("landscape") && key.includes("planting")) {
+      return true;
+    }
+  }
+  const label = field.label.toLowerCase();
+  return (
+    /completed\s+planting|planting\s+completed|already\s+completed\s+planting/.test(label) ||
+    /has\s+your\s+project\s+already\s+completed\s+planting/.test(label)
+  );
+};
+
+const radioAnswerIsYesOption = (field: FieldDefinition, raw: unknown): boolean => {
+  if (field.inputType !== "radio" || field.options == null) return false;
+  if (typeof raw !== "string" && typeof raw !== "number" && typeof raw !== "boolean") return false;
+  const valueStr = String(raw);
+  const options = toFormOptions(field.options as FormQuestionOptionDto[]);
+  const selected = options.find(o => String(o.value) === valueStr);
+  if (selected == null) return false;
+  const title = selected.title.trim().toLowerCase();
+  return title === "yes" || title === "sí" || title.startsWith("yes ") || title.startsWith("sí ");
+};
+
+const formAnswersIndicatePlantingCompletedYes = (
+  answers: Record<string, unknown>,
+  fieldsProvider: FormFieldsProvider
+): boolean => {
+  for (const stepId of fieldsProvider.stepIds()) {
+    for (const fieldName of collectFieldNamesForStep(stepId, fieldsProvider)) {
+      const field = fieldsProvider.fieldByName(fieldName);
+      if (field == null || !isPlantingCompletedQuestionField(field)) continue;
+
+      const raw = answers[fieldName];
+
+      if (field.inputType === "radio" && radioAnswerIsYesOption(field, raw)) {
+        return true;
+      }
+      if (field.inputType === "boolean" && raw === true) {
+        return true;
+      }
+      if (field.inputType === "conditional" && raw === true) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const getLandscapeProgressOverviewValue = (params: LandscapeProgressOverviewParams): string | null => {
+  const normalized = params.landscapeCommunityContribution?.trim() ?? "";
+
+  if (
+    params.formAnswersSayPlantingCompleted === true ||
+    isReportPlantingQuestionAnsweredYes(params.reportPlantingStatus) ||
+    isPlantingCompletedAnswerToken(normalized)
+  ) {
+    return params.plantingCompletedLabel;
+  }
+  return normalized.length > 0 ? normalized : null;
+};
 
 interface ReportOverviewTabProps {
   report: ProjectReportFullDto;
   dueAt?: string;
-  projectPlantingStatus?: ProjectFullDto["plantingStatus"];
 }
 
 type UseTotalProps = Omit<CollectionsTotalProps, "entity" | "uuid" | "domain">;
@@ -71,12 +174,7 @@ const ALL_BENEFICIARIES: UseTotalProps = {
 const useTotal = (props: UseTotalProps, { uuid }: { uuid: string }) =>
   String(useCollectionsTotal({ ...props, domain: "demographics", entity: "projectReports", uuid }) ?? "N/A");
 
-const isCompletedPlantingToken = (value: string | null | undefined): boolean => {
-  if (value == null) return false;
-  return value.trim().toLowerCase() === "completed";
-};
-
-const ReportDataTab = ({ report, dueAt, projectPlantingStatus }: ReportOverviewTabProps) => {
+const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const t = useT();
   const { format } = useDate();
   const { framework } = useFrameworkContext();
@@ -96,14 +194,30 @@ const ReportDataTab = ({ report, dueAt, projectPlantingStatus }: ReportOverviewT
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
   const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
-  const resolvedPlantingStatus = report.plantingStatus ?? projectPlantingStatus ?? null;
-  const normalizedLandscapeContribution = report.landscapeCommunityContribution?.trim();
-  const completedPlantingLabel = t("Completed planting") || "Completed planting";
-  const plantingCompletedFromStatus = isCompletedPlantingToken(resolvedPlantingStatus);
-  const contributionIsCompletedPlaceholder = isCompletedPlantingToken(normalizedLandscapeContribution);
-  const landscapeProgressOverviewValue = contributionIsCompletedPlaceholder
-    ? completedPlantingLabel
-    : normalizedLandscapeContribution || (plantingCompletedFromStatus ? completedPlantingLabel : null);
+  const [formDataLoaded, { data: reportFormData }] = useEntityFormData({
+    entity: "projectReports",
+    uuid: report.uuid,
+    enabled: report.uuid != null
+  });
+  const [formProviderLoaded, formFieldsProvider] = useApiFieldsProvider(reportFormData?.formUuid);
+
+  const formAnswersSayPlantingCompleted = useMemo(() => {
+    if (!formDataLoaded || !formProviderLoaded || reportFormData?.answers == null) {
+      return false;
+    }
+    return formAnswersIndicatePlantingCompletedYes(
+      reportFormData.answers as Record<string, unknown>,
+      formFieldsProvider
+    );
+  }, [formDataLoaded, formProviderLoaded, reportFormData?.answers, formFieldsProvider]);
+
+  const plantingCompletedLabel = t("Planting Completed") || "Planting Completed";
+  const landscapeProgressOverviewValue = getLandscapeProgressOverviewValue({
+    landscapeCommunityContribution: report.landscapeCommunityContribution,
+    reportPlantingStatus: report.plantingStatus,
+    formAnswersSayPlantingCompleted,
+    plantingCompletedLabel
+  });
 
   return (
     <PageBody>
