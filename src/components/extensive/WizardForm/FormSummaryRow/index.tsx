@@ -16,6 +16,9 @@ import { EditIcon } from "@/redesignComponents/foundations/Icons";
 import { EntityName } from "@/types/common";
 
 import List from "../../List/List";
+import SpecialEntryRenderer, {
+  SPECIAL_ENTRY_TITLES
+} from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
@@ -77,39 +80,47 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       <List
         className="flex flex-col gap-4"
         items={entries}
-        render={entry => (
-          <div
-            className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-              "w-full flex-col": isTrackingType(entry.value?.props?.type)
-            })}
-          >
-            <Text variant="text-body-500" className=" flex-1">
-              {entry.title}
-            </Text>
-            <div
-              className={classNames("flex-1", {
-                "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
-              })}
-            >
-              <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
-                <Then>
-                  <Text variant="text-body-300" className="flex-1" containHtml>
-                    {formatEntryValue(entry.value)}
-                  </Text>
-                </Then>
-                <Else>
-                  <div
-                    className={classNames("", {
-                      "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
-                    })}
-                  >
-                    {formatEntryValue(entry.value)}
-                  </div>
-                </Else>
-              </If>
-            </div>
-          </div>
-        )}
+        render={entry => {
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
+            return <SpecialEntryRenderer entry={entry} />;
+          }
+
+          return (
+            <>
+              <div
+                className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
+                  "w-full flex-col": isTrackingType(entry.value?.props?.type)
+                })}
+              >
+                <Text variant="text-body-500" className=" flex-1">
+                  {entry.title}
+                </Text>
+                <div
+                  className={classNames("flex-1", {
+                    "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                  })}
+                >
+                  <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
+                    <Then>
+                      <Text variant="text-body-300" className="flex-1" containHtml>
+                        {formatEntryValue(entry.value)}
+                      </Text>
+                    </Then>
+                    <Else>
+                      <div
+                        className={classNames("", {
+                          "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
+                        })}
+                      >
+                        {formatEntryValue(entry.value)}
+                      </div>
+                    </Else>
+                  </If>
+                </div>
+              </div>
+            </>
+          );
+        }}
       />
     </Accordion>
   );

@@ -47,3 +47,11 @@ export const Add: Story = {
     size: 164
   }
 };
+
+export const Video: Story = {
+  args: {
+    src: "https://www.w3schools.com/html/mov_bbb.mp4",
+    size: 164,
+    type: "video"
+  }
+};
