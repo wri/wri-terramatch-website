@@ -61,6 +61,10 @@ export const Default: Story = {
     content: <></>
   },
   render: function Render(args) {
+    const [tags, setTags] = useState<string[]>(["Label", "Label 2", "Label 3"]);
+    const handleClose = (tag: string) => {
+      setTags(tags.filter(t => t !== tag));
+    };
     return (
       <FilterPanel
         {...args}

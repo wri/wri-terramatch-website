@@ -6,7 +6,9 @@ import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useSta
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
-import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, PlayCircleIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+
+export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
@@ -27,6 +29,8 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   }[];
   menuLabel?: string;
   style?: CSSProperties;
+  type?: MediaType;
+  classNamesVideoIcon?: string;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -44,6 +48,8 @@ const BaseImage: FC<BaseImageProps> = ({
   menuItems,
   menuLabel,
   style,
+  type = "image",
+  classNamesVideoIcon,
   ...rest
 }) => {
   const t = useT();
@@ -52,6 +58,7 @@ const BaseImage: FC<BaseImageProps> = ({
     setLoadError(false);
   }, [src]);
 
+  const isVideo = type === "video";
   const showNotAvailable = src == null || loadError;
 
   const hoverContentComponent = (
@@ -78,6 +85,17 @@ const BaseImage: FC<BaseImageProps> = ({
     </div>
   );
 
+  const videoComponent = (
+    <div
+      className={classNames(
+        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
+        isVideo && "bg-[#3D3B3B80]",
+        borderRadius
+      )}
+    >
+      {isVideo && <PlayCircleIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
+    </div>
+  );
   return (
     <div
       {...rest}
@@ -116,13 +134,24 @@ const BaseImage: FC<BaseImageProps> = ({
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
               <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
-                {t("Image unavailable")}
-              </Text>
+              {size >= 80 && (
+                <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+                  {t("Image unavailable")}
+                </Text>
+              )}
             </div>
             {onClickEdit && hoverContentComponent}
           </div>
         )
+      ) : isVideo ? (
+        <>
+          <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
+            <video src={src!} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
+          </div>
+
+          {isVideo && videoComponent}
+          {onClickEdit && hoverContentComponent}
+        </>
       ) : (
         <>
           <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>

@@ -33,6 +33,7 @@ import {
 import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
+import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
@@ -56,16 +57,20 @@ export type SharedDetailsProps = {
 type EntryValueRendererProps = {
   entry: FormEntry;
   noGoalTableColumns: { key: string; label: string }[];
+  entityName: "projects" | "sites";
+  entityUUID: string;
 };
 
-const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererProps) => {
+const EntryValueRenderer = ({ entry, noGoalTableColumns, entityName, entityUUID }: EntryValueRendererProps) => {
   const rawValue = entry.value ?? "-";
+
   if (typeof rawValue === "string" || typeof rawValue === "number") {
     return (
       <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
     );
   }
-  if (rawValue.props.tableType == "noCount") {
+
+  if (rawValue.props.tableType === "noCount") {
     const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
     const dataPlants = plantsToNoCountRows(rawValue.props.plants);
 
@@ -103,7 +108,9 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
         }}
       />
     );
-  } else if (rawValue.props.tableType == "noGoal") {
+  }
+
+  if (rawValue.props.tableType === "noGoal") {
     return (
       <Table
         data={rawValue.props.plants}
@@ -118,13 +125,13 @@ const EntryValueRenderer = ({ entry, noGoalTableColumns }: EntryValueRendererPro
         )}
       />
     );
-  } else {
-    return (
-      <Text textStyle="400" color="neutral.900">
-        {formatEntryValue(rawValue)}
-      </Text>
-    );
   }
+
+  return (
+    <Text textStyle="400" color="neutral.900">
+      {formatEntryValue(rawValue)}
+    </Text>
+  );
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -201,46 +208,64 @@ const SharedDetails: FC<SharedDetailsProps> = ({
         {entries.map((entry, index) => {
           const isAdditionalInformation =
             entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information";
+
+          const projectStageSection = stepIndex === 0 && index === 0 && entityName === "projects" && (
+            <Flex direction="column" gap={1}>
+              <Text textStyle="300-bold" color="primary.900">
+                {t("Project Stage")}:
+              </Text>
+              {entity.plantingStatus !== null ? (
+                <>
+                  <div className="flex items-center gap-2">
+                    <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
+                    {(entity.plantingStatus === "replacement-planting" ||
+                      entity.plantingStatus === "no-restoration-expected") && (
+                      <>
+                        <ArrowForward boxSize={4} color="neutral.900" />
+                        <Text textStyle="400" color="neutral.900">
+                          {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
+                        </Text>
+                      </>
+                    )}
+                  </div>
+                </>
+              ) : (
+                "-"
+              )}
+            </Flex>
+          );
+
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
+            return (
+              <Fragment key={`${step.id}-${entry.title}-${index}`}>
+                <SpecialEntryRenderer entry={entry} entityName={entityName} entityUUID={entityUUID} />
+                {projectStageSection}
+              </Fragment>
+            );
+          }
+
           return (
             <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
                 <Text
+                  className="flex items-center gap-1 leading-normal"
                   textStyle={isAdditionalInformation ? "400" : "300-bold"}
                   color={isAdditionalInformation ? "neutral.700" : "primary.900"}
                 >
-                  {t(entry.title)}
+                  {entry.title}
                   {!isAdditionalInformation && ":"}
                 </Text>
                 <div
                   className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
                 />
-                <EntryValueRenderer entry={entry} noGoalTableColumns={noGoalTableColumns} />
+                <EntryValueRenderer
+                  entry={entry}
+                  noGoalTableColumns={noGoalTableColumns}
+                  entityName={entityName}
+                  entityUUID={entityUUID}
+                />
               </Flex>
-              {stepIndex === 0 && index === 0 && entityName === "projects" && (
-                <Flex direction="column" gap={1}>
-                  <Text textStyle="300-bold" color="primary.900">
-                    {t("Project Stage")}:
-                  </Text>
-                  {entity.plantingStatus !== null ? (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <ProgressTag state={getPlantingStatus(entity.plantingStatus)} />
-                        {(entity.plantingStatus === "replacement-planting" ||
-                          entity.plantingStatus === "no-restoration-expected") && (
-                          <>
-                            <ArrowForward boxSize={4} color="neutral.900" />
-                            <Text textStyle="400" color="neutral.900">
-                              {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
-                            </Text>
-                          </>
-                        )}
-                      </div>
-                    </>
-                  ) : (
-                    "-"
-                  )}
-                </Flex>
-              )}
+              {projectStageSection}
             </Fragment>
           );
         })}
