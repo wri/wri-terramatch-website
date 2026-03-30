@@ -105,7 +105,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             buttonProps={{
               variant: "secondary",
               size: "small",
-              children: "View all Areas",
+              children: t("View site map"),
               rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("map")
             }}
