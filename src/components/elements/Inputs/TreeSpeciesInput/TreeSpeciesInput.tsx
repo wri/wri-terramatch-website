@@ -65,7 +65,12 @@ const getColumnTitles = ({
       totalToDateColumn: "TOTAL SEEDLINGS PRODUCED TO DATE:"
     };
   }
-
+  if (collection === "anr") {
+    return {
+      totalReportedColumn: isReport ? "TOTAL REGENERATING THIS REPORT:" : withNumbers ? "TREES REGENERATING:" : "",
+      totalToDateColumn: "TOTAL REGENERATING TO DATE:"
+    };
+  }
   return {
     totalReportedColumn: isReport ? "TOTAL PLANTED THIS REPORT:" : withNumbers ? "TREES TO BE PLANTED:" : "",
     totalToDateColumn: "TOTAL PLANTED TO DATE:"

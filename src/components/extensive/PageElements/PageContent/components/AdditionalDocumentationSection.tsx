@@ -7,11 +7,11 @@ import {
   parseFilesFromHtml,
   VIDEO_EXTENSIONS
 } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
+import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 import DocumentsSection from "./DocumentsSection";
 import MediaSection from "./MediaSection";
-import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
-import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 type AdditionalDocumentationSectionProps = {
   value: string;
