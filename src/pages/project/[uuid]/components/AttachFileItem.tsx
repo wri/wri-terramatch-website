@@ -17,18 +17,12 @@ const AttachFileItem: FC<AttachFileItemProps> = ({ fileName, onClick, fileType, 
   const t = useT();
   return (
     <Flex gap={1} className="flex-col">
-      <Flex alignItems="center" gap={1}>
+      <Flex gap={1} className="min-w-0 items-center">
         <AttachFileIcon boxSize={4} color="neutral.800" />
-        <Text textStyle="300" color="neutral.900">
+        <Text textStyle="300" color="neutral.900" className="truncate" title={`${fileName}.${fileType}`}>
           {fileName}.{fileType}
         </Text>
-        <Button
-          variant="borderless"
-          size="small"
-          onClick={onClick}
-          className="self-end"
-          rightIcon={<ChevronRightIcon boxSize={2.5} />}
-        >
+        <Button variant="borderless" size="small" onClick={onClick} rightIcon={<ChevronRightIcon boxSize={2.5} />}>
           {t("View")}
         </Button>
       </Flex>

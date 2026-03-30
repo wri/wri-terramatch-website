@@ -1,4 +1,4 @@
-import { Flex, Grid, Text } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { ParsedFile } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
@@ -17,7 +17,7 @@ export type MediaSectionProps = {
 };
 
 const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityUUID, type, icon }) => (
-  <Flex direction="column" gap={1}>
+  <Flex direction="column" gap={3}>
     <Text display="flex" alignItems="center" gap={1} lineHeight="normal" textStyle="300-bold" color="primary.900">
       {icon ?? <PhotosIcon boxSize={3.5} color="primary.900" />}
       {label}
@@ -27,18 +27,24 @@ const MediaSection: FC<MediaSectionProps> = ({ label, files, entityName, entityU
         -
       </Text>
     ) : (
-      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={2}>
-        {files.map(file => (
-          <GalleryEntryItem
-            key={file.fileUrl}
-            src={file.fileUrl}
-            name={file.fileType != null ? `${file.fileName}.${file.fileType}` : file.fileName}
-            entityName={entityName}
-            entityUUID={entityUUID}
-            type={type}
-            url={file.fileUrl}
-          />
-        ))}
+      <Grid templateColumns="repeat(4, minmax(0, 1fr))" gap={4}>
+        {files.map(file => {
+          const count = files.length;
+          const colSpan = count === 1 ? 4 : count === 2 ? 2 : 1;
+
+          return (
+            <GridItem key={file.fileUrl} colSpan={colSpan}>
+              <GalleryEntryItem
+                src={file.fileUrl}
+                name={file.fileType != null ? `${file.fileName}.${file.fileType}` : file.fileName}
+                entityName={entityName}
+                entityUUID={entityUUID}
+                type={type}
+                url={file.fileUrl}
+              />
+            </GridItem>
+          );
+        })}
       </Grid>
     )}
   </Flex>

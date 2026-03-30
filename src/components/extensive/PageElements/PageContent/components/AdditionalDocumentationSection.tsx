@@ -10,6 +10,8 @@ import {
 
 import DocumentsSection from "./DocumentsSection";
 import MediaSection from "./MediaSection";
+import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 type AdditionalDocumentationSectionProps = {
   value: string;
@@ -27,13 +29,21 @@ const AdditionalDocumentationSection: FC<AdditionalDocumentationSectionProps> = 
   const documentFiles = files.filter(f => !MEDIA_EXTENSIONS.has(f.fileType.toLowerCase()));
 
   return (
-    <Flex direction="column" gap={5}>
-      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} />}
+    <Flex direction="column" gap={6}>
+      {documentFiles.length > 0 && <DocumentsSection files={documentFiles} showTitle={entityName === "projects"} />}
+      {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {photos.length > 0 && (
         <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
+      {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {videos.length > 0 && (
-        <MediaSection label="Videos" files={videos} entityName={entityName} entityUUID={entityUUID} />
+        <MediaSection
+          label="Videos"
+          files={videos}
+          entityName={entityName}
+          entityUUID={entityUUID}
+          icon={<PlayCircleIcon boxSize={3.5} color="primary.900" />}
+        />
       )}
     </Flex>
   );

@@ -22,7 +22,7 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
   const router = useRouter();
 
   return (
-    <Flex gap={0.5}>
+    <Flex gap={0.5} alignItems="center">
       <GalleryImage
         src={src}
         alt={name}
@@ -31,8 +31,8 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
         type={type}
         classNamesVideoIcon="!h-3 !w-3"
       />
-      <Box>
-        <Text textStyle="400" color="neutral.800" pl={2}>
+      <Flex direction="column" alignItems="start">
+        <Text textStyle="300" color="neutral.800" pl={2} className="truncate" title={name}>
           {name}
         </Text>
         <Button
@@ -49,7 +49,7 @@ const GalleryEntryItem: FC<GalleryEntryItemProps> = ({ src, name, entityName, en
         >
           {t("Edit")}
         </Button>
-      </Box>
+      </Flex>
     </Flex>
   );
 };

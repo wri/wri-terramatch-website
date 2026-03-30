@@ -9,6 +9,7 @@ import {
 import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
 
 import MediaSection from "./MediaSection";
+import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 
 type PhotosAndVideosSectionProps = {
   value: string;
@@ -26,10 +27,11 @@ const PhotosAndVideosSection: FC<PhotosAndVideosSectionProps> = ({ value, entity
   }
 
   return (
-    <Flex direction="column" gap={5}>
+    <Flex direction="column" gap={6}>
       {photos.length > 0 && (
         <MediaSection label="Photos" files={photos} entityName={entityName} entityUUID={entityUUID} />
       )}
+      {photos.length > 0 && videos.length > 0 && <SimpleDivider />}
       {videos.length > 0 && (
         <MediaSection
           label="Videos"
