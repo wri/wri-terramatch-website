@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Tag } from "@worldresources/wri-design-systems";
-import { useState } from "react";
 
 import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
 
@@ -62,10 +61,6 @@ export const Default: Story = {
     content: <></>
   },
   render: function Render(args) {
-    const [tags, setTags] = useState<string[]>(["Label", "Label 2", "Label 3"]);
-    const handleClose = (tag: string) => {
-      setTags(tags.filter(t => t !== tag));
-    };
     return (
       <FilterPanel
         {...args}
@@ -75,9 +70,8 @@ export const Default: Story = {
           <>
             <Search options={sampleOptions} placeholder="Search" />
             <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
-              {tags.map(tag => (
-                <Tag key={tag} variant="info-white" label={tag} closable onClose={() => handleClose(tag)} />
-              ))}
+              <Tag variant="info-white" label="Label" closable />
+              <Tag variant="info-white" label="Label 1" closable />
             </div>
             <FilterCard label="Label" caption="Caption">
               <div>
