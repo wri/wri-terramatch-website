@@ -125,8 +125,8 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
 
   return (
     <Box
-      width="300px"
-      minWidth="300px"
+      width="350px"
+      minWidth="350px"
       height="auto"
       className="flex flex-col gap-5 pt-5"
       css={{ "&": { alignItems: "self-end !important" } }}
