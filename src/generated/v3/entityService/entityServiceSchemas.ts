@@ -1540,6 +1540,7 @@ export type SiteFullDto = {
    */
   endDate: string | null;
   landTenures: string[] | null;
+  landTenureApproach: string | null;
   survivalRatePlanted: number | null;
   directSeedingSurvivalRate: number | null;
   aNatRegenerationTreesPerHectare: number | null;
