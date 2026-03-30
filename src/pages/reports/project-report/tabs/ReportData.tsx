@@ -69,7 +69,7 @@ const radioAnswerIsYesOption = (field: FieldDefinition, raw: unknown): boolean =
   const selected = toFormOptions(field.options as FormQuestionOptionDto[]).find(o => String(o.value) === String(raw));
   if (selected == null) return false;
   const title = selected.title.trim().toLowerCase();
-  return title === "yes" || title === "sí" || title.startsWith("yes ") || title.startsWith("sí ");
+  return title === "yes" || title.startsWith("yes ");
 };
 
 const formAnswersIndicatePlantingCompletedYes = (answers: Record<string, unknown>, fp: FormFieldsProvider): boolean => {
