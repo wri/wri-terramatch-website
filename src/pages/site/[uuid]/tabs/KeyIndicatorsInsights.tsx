@@ -73,7 +73,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         className={METRIC_CARD_CLASS_NAME}
         title={t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}
         variant="large"
-        progress={site.regeneratedTreesCount ?? 0}
+        progress={site.treesRegeneratingSpeciesCount ?? 0}
         goal={0}
         icon={<RegenerationIcon />}
         tooltipContent={
