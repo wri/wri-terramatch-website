@@ -212,7 +212,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               <MapPlaceholder
                 icon={<SiteIcon boxSize={6} color="neutral.100" />}
                 title={t("Siting Strategy not defined yet.")}
-                className="bg-map-project-placeholder"
+                className="z-10 bg-map-project-placeholder"
                 buttonGroupProps={
                   !isProjectSetupComplete
                     ? {
