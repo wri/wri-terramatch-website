@@ -19,6 +19,7 @@ export { CorrectIcon } from "./Function/CorrectIcon";
 export { DashboardIcon } from "./NavigationSections/DashboardIcon";
 export { DeleteIcon } from "./Function/DeleteIcon";
 export { DirectSeedingIcon } from "./RestorationAndLand/DirectSeedingIcon";
+export { DocumentIcon } from "./Function/DocumentIcon";
 export { DownloadIcon } from "./Function/DownloadIcon";
 export { DraftIcon } from "./Status/DraftIcon";
 export { DragIcon } from "./Function/DragIcon";
