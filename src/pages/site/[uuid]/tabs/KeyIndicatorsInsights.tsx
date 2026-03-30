@@ -89,7 +89,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         className={METRIC_CARD_CLASS_NAME}
         title={t("Survival Rate")}
         variant="large"
-        progress={site.survivalRatePlanted ?? 0}
+        progress={site.lastReportedSurvivalRate ?? 0}
         goal={0}
         icon={<SurvivalRateIcon />}
         tooltipContent={
