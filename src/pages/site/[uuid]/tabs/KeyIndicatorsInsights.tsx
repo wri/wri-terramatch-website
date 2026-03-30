@@ -13,10 +13,10 @@ import { MetricCardVariant } from "@/redesignComponents/dataDisplay/Metrics/type
 import {
   AreaHectaresIcon,
   JobsIcon,
-  ProjectIcon,
   RegenerationIcon,
   SeedlingsIcon,
-  SurvivalRateIcon
+  SurvivalRateIcon,
+  TreeIcon
 } from "@/redesignComponents/foundations/Icons";
 
 import { KEY_INDICATORS_TOOLTIP_CONTENT } from "./constants/keyIndicatorsTooltipContent";
@@ -41,7 +41,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         progress={site.treesPlantedCount ?? 0}
         goal={0}
         variant={keyIndicatorsTooltipContentItem?.treesRestored.type as MetricCardVariant}
-        icon={<ProjectIcon />}
+        icon={<TreeIcon />}
         color="secondary.600"
         type="treesRestored"
         className={METRIC_CARD_CLASS_NAME}
