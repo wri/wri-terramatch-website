@@ -32,78 +32,56 @@ type LandscapeProgressOverviewParams = {
   formAnswersSayPlantingCompleted?: boolean;
 };
 
-const isPlantingCompletedAnswerToken = (value: string | null | undefined): boolean => {
+const isYesCompletedToken = (value: string | null | undefined): boolean => {
   if (value == null) return false;
-  const normalized = value.trim().toLowerCase();
-  return normalized === "completed" || normalized === "yes" || normalized === "true";
+  const n = value.trim().toLowerCase();
+  return n === "completed" || n === "yes" || n === "true";
 };
 
-const isReportPlantingQuestionAnsweredYes = (reportPlantingStatus: ProjectReportFullDto["plantingStatus"]): boolean => {
-  if (reportPlantingStatus == null) return false;
-  const normalized = reportPlantingStatus.trim().toLowerCase();
-  return normalized === "completed" || normalized === "yes" || normalized === "true";
-};
-
-const collectFieldNamesForStep = (stepId: string, fieldsProvider: FormFieldsProvider): string[] => {
-  const result: string[] = [];
-  const visit = (name: string) => {
-    result.push(name);
-    for (const child of fieldsProvider.childNames(name)) {
-      visit(child);
-    }
+const collectFieldNamesForStep = (stepId: string, fp: FormFieldsProvider): string[] => {
+  const out: string[] = [];
+  const walk = (name: string) => {
+    out.push(name);
+    fp.childNames(name).forEach(walk);
   };
-  for (const name of fieldsProvider.fieldNames(stepId)) {
-    visit(name);
-  }
-  return result;
+  fp.fieldNames(stepId).forEach(walk);
+  return out;
 };
+
+const PLANTING_Q_LABEL =
+  /completed\s+planting|planting\s+completed|already\s+completed\s+planting|has\s+your\s+project\s+already\s+completed\s+planting/;
 
 const isPlantingCompletedQuestionField = (field: FieldDefinition): boolean => {
   const key = field.linkedFieldKey?.toLowerCase() ?? "";
-  if (key.length > 0) {
-    if (key.includes("planting") && (key.includes("complete") || key.includes("completed"))) {
-      return true;
-    }
-    if (key.includes("landscape") && key.includes("planting")) {
-      return true;
-    }
+  if (
+    key &&
+    ((key.includes("planting") && (key.includes("complete") || key.includes("completed"))) ||
+      (key.includes("landscape") && key.includes("planting")))
+  ) {
+    return true;
   }
-  const label = field.label.toLowerCase();
-  return (
-    /completed\s+planting|planting\s+completed|already\s+completed\s+planting/.test(label) ||
-    /has\s+your\s+project\s+already\s+completed\s+planting/.test(label)
-  );
+  return PLANTING_Q_LABEL.test(field.label.toLowerCase());
 };
 
 const radioAnswerIsYesOption = (field: FieldDefinition, raw: unknown): boolean => {
   if (field.inputType !== "radio" || field.options == null) return false;
-  if (typeof raw !== "string" && typeof raw !== "number" && typeof raw !== "boolean") return false;
-  const valueStr = String(raw);
-  const options = toFormOptions(field.options as FormQuestionOptionDto[]);
-  const selected = options.find(o => String(o.value) === valueStr);
+  if (raw == null || (typeof raw !== "string" && typeof raw !== "number" && typeof raw !== "boolean")) return false;
+  const selected = toFormOptions(field.options as FormQuestionOptionDto[]).find(o => String(o.value) === String(raw));
   if (selected == null) return false;
   const title = selected.title.trim().toLowerCase();
   return title === "yes" || title === "sí" || title.startsWith("yes ") || title.startsWith("sí ");
 };
 
-const formAnswersIndicatePlantingCompletedYes = (
-  answers: Record<string, unknown>,
-  fieldsProvider: FormFieldsProvider
-): boolean => {
-  for (const stepId of fieldsProvider.stepIds()) {
-    for (const fieldName of collectFieldNamesForStep(stepId, fieldsProvider)) {
-      const field = fieldsProvider.fieldByName(fieldName);
+const formAnswersIndicatePlantingCompletedYes = (answers: Record<string, unknown>, fp: FormFieldsProvider): boolean => {
+  for (const stepId of fp.stepIds()) {
+    for (const fieldName of collectFieldNamesForStep(stepId, fp)) {
+      const field = fp.fieldByName(fieldName);
       if (field == null || !isPlantingCompletedQuestionField(field)) continue;
-
       const raw = answers[fieldName];
-
-      if (field.inputType === "radio" && radioAnswerIsYesOption(field, raw)) {
-        return true;
-      }
-      if (field.inputType === "boolean" && raw === true) {
-        return true;
-      }
-      if (field.inputType === "conditional" && raw === true) {
+      if (
+        (field.inputType === "radio" && radioAnswerIsYesOption(field, raw)) ||
+        ((field.inputType === "boolean" || field.inputType === "conditional") && raw === true)
+      ) {
         return true;
       }
     }
@@ -113,11 +91,10 @@ const formAnswersIndicatePlantingCompletedYes = (
 
 const getLandscapeProgressOverviewValue = (params: LandscapeProgressOverviewParams): string | null => {
   const normalized = params.landscapeCommunityContribution?.trim() ?? "";
-
   if (
     params.formAnswersSayPlantingCompleted === true ||
-    isReportPlantingQuestionAnsweredYes(params.reportPlantingStatus) ||
-    isPlantingCompletedAnswerToken(normalized)
+    isYesCompletedToken(params.reportPlantingStatus) ||
+    isYesCompletedToken(normalized)
   ) {
     return params.plantingCompletedLabel;
   }
