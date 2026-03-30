@@ -92,7 +92,7 @@ const formAnswersIndicatePlantingCompletedYes = (answers: Record<string, unknown
 const getLandscapeProgressOverviewValue = (params: LandscapeProgressOverviewParams): string | null => {
   const normalized = params.landscapeCommunityContribution?.trim() ?? "";
   if (
-    params.formAnswersSayPlantingCompleted === true ||
+    params.formAnswersSayPlantingCompleted ||
     isYesCompletedToken(params.reportPlantingStatus) ||
     isYesCompletedToken(normalized)
   ) {
