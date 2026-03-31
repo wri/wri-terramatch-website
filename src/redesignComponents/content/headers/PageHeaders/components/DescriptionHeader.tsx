@@ -39,7 +39,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             marginBottom: 0,
             overflow: "hidden",
             textOverflow: "ellipsis",
-            display: isExpanded ? "block" : "-webkit-box",
+            display: isExpanded ? "contents" : "-webkit-box",
             WebkitLineClamp: isExpanded ? undefined : maxLines,
             WebkitBoxOrient: isExpanded ? undefined : "vertical",
             lineClamp: isExpanded ? undefined : maxLines
@@ -67,23 +67,22 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             <Button
               variant="borderless"
               size="small"
-              rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "rotate-90")} />}
+              rightIcon={<ChevronRightIcon className={classNames({ "rotate-90": !readMoreOnClick })} />}
               onClick={readMoreOnClick ?? toggleExpand}
             >
               {t("Read More")}
             </Button>
           </Text>
         ) : null}
-        {isClamped && isExpanded ? (
+        {isExpanded ? (
           <Button
             variant="borderless"
             size="small"
             onClick={toggleExpand}
-            rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "-rotate-90")} />}
+            rightIcon={<ChevronRightIcon className={classNames({ "-rotate-90": !readMoreOnClick })} />}
             style={{
               display: "inline-flex",
-              lineHeight: "20px",
-              marginTop: "4px"
+              lineHeight: "20px"
             }}
           >
             {t("Read Less")}

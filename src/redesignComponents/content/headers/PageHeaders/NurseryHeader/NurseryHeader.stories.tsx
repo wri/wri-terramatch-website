@@ -25,7 +25,7 @@ const baseNursery: NurseryFullDto = {
   projectName: "Project Name",
   projectUuid: "00000000-0000-0000-0000-000000000000",
   plantingContribution:
-    "The Arable Nursery plays a central role in the restoration work in Songa forest and village. The trees planted here are trees in local demand such as fruit trees (Mangoes, citrus, avocadoes, pawpaw etc.) for food, commercial purposes and shade for the target households. trees for livestock feeds such as Leucaena fodder tree and others that are medicinal such as neem tree and moringa are included. These tree species are also...",
+    "The Arable Nursery plays a central role in the restoration work in Songa forest and village. The trees planted here are trees in local demand such as fruit trees (Mangoes, citrus, avocadoes, pawpaw etc.) for food, commercial purposes and shade for the target households. trees for livestock feeds such as Leucaena fodder tree and others that are medicinal such as neem tree and moringa are included. These tree species are also.",
   startDate: "2024-01-01",
   endDate: "2026-12-31",
   name: "Nursery Name"
