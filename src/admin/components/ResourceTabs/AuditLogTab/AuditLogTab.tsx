@@ -6,7 +6,6 @@ import modules from "@/admin/modules";
 import Text from "@/components/elements/Text/Text";
 import { AuditStatusEntityType } from "@/connections/AuditStatus";
 import useAuditLogActions from "@/hooks/AuditStatus/useAuditLogActions";
-import Log from "@/utils/log";
 
 import AuditLogSiteTabSelection from "./components/AuditLogSiteTabSelection";
 import AuditLogTable from "./components/AuditLogTable";
@@ -91,43 +90,6 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
       ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/4`
       : `/${modules.site.ResourceName}/${selected?.uuid}/show/6`
   }`;
-
-  useEffect(() => {
-    const hasBrokenSegment =
-      redirectTo.includes("/undefined/") || redirectTo.includes("undefined/show") || redirectTo.endsWith("/undefined");
-    if (!hasBrokenSegment) {
-      return;
-    }
-    Log.warn("[TM-3128] Audit log link built with a missing UUID (href would break navigation)", {
-      redirectTo,
-      entityLevel: entity != null ? ReverseButtonStates2[entity] : undefined,
-      buttonToggle: buttonToggle != null ? ReverseButtonStates2[buttonToggle] : undefined,
-      selectedUuid: selected?.uuid,
-      selectedTitle: selected?.title ?? selected?.name,
-      recordReportUuid: record?.uuid,
-      recordHasProjectReport: record?.project_report != null,
-      recordProjectReportUuid: record?.project_report?.uuid,
-      isProjectReportPage: isProjectReport
-    });
-  }, [redirectTo, entity, buttonToggle, selected, record, isProjectReport]);
-
-  useEffect(() => {
-    if (buttonToggle !== AuditLogButtonStates.PROJECT_REPORT || !showOpenEntity) {
-      return;
-    }
-    const nestedUuid = record?.project_report?.uuid;
-    if (nestedUuid != null && nestedUuid !== "") {
-      return;
-    }
-    Log.warn(
-      "[TM-3128] OPEN PROJECT REPORT AUDIT LOG would use a missing nested UUID (API may not embed project_report on this record)",
-      {
-        entityLevel: entity != null ? ReverseButtonStates2[entity] : undefined,
-        recordUuid: record?.uuid,
-        recordKeys: record != null && typeof record === "object" ? Object.keys(record as Record<string, unknown>) : []
-      }
-    );
-  }, [buttonToggle, showOpenEntity, record, entity]);
 
   const title = () => selected?.title ?? selected?.name ?? record?.report_title;
 
