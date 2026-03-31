@@ -56,7 +56,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ site }) => {
         }
       />
       <ContextCondition frameworksHide={[Framework.PPC, Framework.HBF]}>
-        <ContextCondition frameworksHide={ALL_TF}>
+        <ContextCondition frameworksHide={ALL_TF.concat(Framework.EPA_GHANA_PILOT)}>
           <MetricCard
             className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
             title={t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}
