@@ -38,13 +38,9 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
   const basename = useBasename();
   const isProjectReport = entity == AuditLogButtonStates.PROJECT_REPORT;
   const isNurseryToggle = buttonToggle == AuditLogButtonStates.NURSERY;
-  const showOpenEntity = [
-    "nursery-reports",
-    "site-reports",
-    "disturbance-reports",
-    "srp-reports",
-    "financial-reports"
-  ].includes(ReverseButtonStates2[entity!]);
+  // TM-3128: Only disturbance/SRP reports keep linked project vs report audit toggles.
+  // Site/nursery report pages show audit for that report only (no project-report cross-links).
+  const showOpenEntity = ["disturbance-reports", "srp-reports"].includes(ReverseButtonStates2[entity!]);
   const reportsLevel = buttonToggle === AuditLogButtonStates.PROJECT_REPORT && showOpenEntity;
 
   const {
@@ -94,6 +90,7 @@ const AuditLogTab: FC<IProps> = ({ label, entity, ...rest }) => {
       ? `/${modules.nursery.ResourceName}/${selected?.uuid}/show/4`
       : `/${modules.site.ResourceName}/${selected?.uuid}/show/6`
   }`;
+
   const title = () => selected?.title ?? selected?.name ?? record?.report_title;
 
   const verifyEntity = ["nursery"].some(word => ReverseButtonStates2[entity!].includes(word));

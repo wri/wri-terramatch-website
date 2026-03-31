@@ -19,6 +19,7 @@ import {
   DashboardIcon,
   DeleteIcon,
   DirectSeedingIcon,
+  DocumentIcon,
   DownloadIcon,
   DraftIcon,
   DragIcon,
@@ -235,6 +236,9 @@ export const AllIcons: Story = {
           <IconWrapper name="Delete">
             <DeleteIcon boxSize={8} />
           </IconWrapper>
+          <IconWrapper name="Document">
+            <DocumentIcon boxSize={8} />
+          </IconWrapper>
           <IconWrapper name="Drag">
             <DragIcon boxSize={8} />
           </IconWrapper>
@@ -432,6 +436,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="Delete">
           <DeleteIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="Document">
+          <DocumentIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Drag">
           <DragIcon boxSize={8} />

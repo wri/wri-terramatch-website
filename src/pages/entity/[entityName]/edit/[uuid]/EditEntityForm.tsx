@@ -71,6 +71,9 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     if (entity != null && isTaskReport(model.model, entity) && entity.taskUuid != null) {
       ApiSlice.pruneCache("tasks", [entity.taskUuid]);
     }
+    ApiSlice.pruneCache("treeSpecies");
+    ApiSlice.pruneCache("seedings");
+    ApiSlice.pruneCache("treeReportCounts");
   });
 
   const isReport = isEntityReport(entityName);
