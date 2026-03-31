@@ -1,5 +1,6 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import classNames from "classnames";
 import { FC } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
@@ -66,7 +67,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             <Button
               variant="borderless"
               size="small"
-              rightIcon={<ChevronRightIcon />}
+              rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "rotate-90")} />}
               onClick={readMoreOnClick ?? toggleExpand}
             >
               {t("Read More")}
@@ -78,6 +79,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             variant="borderless"
             size="small"
             onClick={toggleExpand}
+            rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "-rotate-90")} />}
             style={{
               display: "inline-flex",
               lineHeight: "20px",
