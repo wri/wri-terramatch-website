@@ -67,7 +67,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             <Button
               variant="borderless"
               size="small"
-              rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "rotate-90")} />}
+              rightIcon={<ChevronRightIcon className={classNames({ "rotate-90": !readMoreOnClick })} />}
               onClick={readMoreOnClick ?? toggleExpand}
             >
               {t("Read More")}
@@ -79,7 +79,7 @@ const DescriptionHeader: FC<DescriptionHeaderProps> = ({
             variant="borderless"
             size="small"
             onClick={toggleExpand}
-            rightIcon={<ChevronRightIcon className={classNames(readMoreOnClick ? "" : "-rotate-90")} />}
+            rightIcon={<ChevronRightIcon className={classNames({ "-rotate-90": !readMoreOnClick })} />}
             style={{
               display: "inline-flex",
               lineHeight: "20px"
