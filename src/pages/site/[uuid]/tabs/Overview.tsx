@@ -123,7 +123,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                         size: "small",
                         rightIcon: <ChevronRightIcon boxSize={4} />,
                         className: "!text-theme-neutral-100",
-                        children: t("Add Polygons")
+                        children: t("Add Polygons"),
+                        onClick: () => goToTab("map")
                       }
                     ]
                   }}
