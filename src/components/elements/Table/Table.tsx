@@ -97,7 +97,7 @@ function Table<TData extends RowData>({
   isLoading,
   invertSelectPagination = false,
   hasPagination = false,
-  visibleRows = 10,
+  visibleRows,
   resetOnDataChange = true, // maintains default behavior
   onRowClick,
   contentClassName,
@@ -153,15 +153,16 @@ function Table<TData extends RowData>({
   });
 
   const tableState = getState();
-  const defaultPageSize = galleryType === "treeSpeciesPD" ? 8 : initialTableState?.pagination?.pageSize || 5;
+  const resolvedPageSize = visibleRows ?? initialTableState?.pagination?.pageSize ?? 10;
+  const defaultPageSize = galleryType === "treeSpeciesPD" ? 8 : resolvedPageSize;
   const rowCount = Object.keys(getRowModel().rowsById).length;
   const verifyPageSize = alwaysShowPagination ? alwaysShowPagination : rowCount > defaultPageSize;
 
   useEffect(() => {
     setSorting(initialTableState?.sorting ?? []);
-    setPageSize(visibleRows);
+    setPageSize(resolvedPageSize);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleRows]);
+  }, [resolvedPageSize]);
 
   return (
     <div className={classNames("w-full", variant.className, contentClassName)}>
@@ -278,7 +279,7 @@ function Table<TData extends RowData>({
                   <LoadingCell />
                 </Then>
                 <Else>
-                  {getRowModel().rows.length === 0 && (
+                  {getRowModel().rows.length === 0 ? (
                     <tr className={variant.trHeader}>
                       <td
                         className={classNames(`text-normal-subtitle-400 px-6 py-4 ${variant.tdBody}`)}
@@ -288,18 +289,19 @@ function Table<TData extends RowData>({
                         {t("No results")}
                       </td>
                     </tr>
+                  ) : (
+                    getRowModel().rows.map(row => (
+                      <tr
+                        key={row.id}
+                        className={classNames(getRowClassName?.(row.original), "rounded-lg", variant.trBody)}
+                        onClick={() => onRowClick?.(row.original)}
+                      >
+                        {row.getVisibleCells().map(cell => (
+                          <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
+                        ))}
+                      </tr>
+                    ))
                   )}
-                  {getRowModel().rows.map(row => (
-                    <tr
-                      key={row.id}
-                      className={classNames(getRowClassName?.(row.original), "rounded-lg", variant.trBody)}
-                      onClick={() => onRowClick?.(row.original)}
-                    >
-                      {row.getVisibleCells().map(cell => (
-                        <TableCell<TData> key={cell.id} cell={cell} variant={variant} />
-                      ))}
-                    </tr>
-                  ))}
                 </Else>
               </If>
             </tbody>

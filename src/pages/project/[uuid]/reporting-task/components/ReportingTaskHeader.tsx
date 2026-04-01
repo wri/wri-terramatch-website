@@ -71,7 +71,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       },
       secondaryButtonProps: {
         children: t("Cancel"),
-        onClick: closeModal
+        onClick: () => closeModal(ModalId.MODALS_MAPPING)
       }
     },
 
@@ -100,7 +100,7 @@ const ReportingTaskHeader = ({ project, taskUuid, reports }: ReportingTaskHeader
       },
       secondaryButtonProps: {
         children: t("Cancel"),
-        onClick: closeModal
+        onClick: () => closeModal(ModalId.MODALS_MAPPING)
       }
     }
   };

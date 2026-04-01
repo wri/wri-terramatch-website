@@ -85,6 +85,7 @@ const SignUpPage = ({
       emailAddress: data.email_address,
       firstName: data.first_name,
       lastName: data.last_name,
+      // @ts-expect-error - password is not part of the UserCreateBaseAttributes, but is required by the API.
       password: data.password,
       phoneNumber: data.phone_number,
       jobRole: data.job_role,

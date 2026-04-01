@@ -148,6 +148,8 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
+  profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type ImpactStoryLightDto = {
@@ -631,6 +633,18 @@ export type MediaRequestBulkAttributes = {
    * The longitude of the media
    */
   lng: number | null;
+  /**
+   * Whether the media is a cover
+   */
+  isCover: boolean | null;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestBulkData = {
@@ -661,6 +675,18 @@ export type MediaRequestAttributes = {
    * The longitude of the media
    */
   lng: number | null;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: number | null;
+  /**
+   * Whether the media is a cover
+   */
+  isCover: boolean | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestData = {
@@ -697,6 +723,14 @@ export type MediaUpdateAttributes = {
    * The cover of the project
    */
   isCover?: boolean;
+  /**
+   * The profile image scale
+   */
+  profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaData = {
@@ -847,6 +881,41 @@ export type DisturbanceDto = {
   description: string | null;
   actionDescription: string | null;
   propertyAffected: string | null;
+};
+
+export type ReminderDto = {
+  /**
+   * UUID of the audit status record created for this reminder
+   */
+  uuid: string;
+  /**
+   * The entity type the reminder was sent for
+   */
+  entityType: string;
+  /**
+   * The UUID of the entity the reminder was sent for
+   */
+  entityUuid: string;
+  /**
+   * The feedback included in the reminder
+   */
+  feedback: string | null;
+};
+
+export type CreateReminderAttributes = {
+  /**
+   * Optional feedback message to include in the reminder email
+   */
+  feedback?: string | null;
+};
+
+export type CreateReminderData = {
+  type: "reminders";
+  attributes: CreateReminderAttributes;
+};
+
+export type CreateReminderBody = {
+  data: CreateReminderData;
 };
 
 export type AuditStatusDto = {
@@ -1156,6 +1225,11 @@ export type FinancialReportLightDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -1350,6 +1424,10 @@ export type ProjectFullDto = {
   incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project
+   */
+  treesRegeneratingSpeciesCount: number;
   workdayCount: number;
   selfReportedWorkdayCount: number;
   combinedWorkdayCount: number;
@@ -1441,6 +1519,10 @@ export type SiteFullDto = {
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this site
+   */
+  treesRegeneratingSpeciesCount: number;
   combinedWorkdayCount: number;
   workdayCount: number;
   ppcExternalId: number | null;
@@ -1642,6 +1724,10 @@ export type ProjectReportFullDto = {
   seedsPlantedCount: number | null;
   treesPlantedCount: number | null;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project report
+   */
+  treesRegeneratingSpeciesCount: number;
   topThreeSuccesses: string | null;
   challengesFaced: string | null;
   lessonsLearned: string | null;
@@ -1874,6 +1960,10 @@ export type SiteReportFullDto = {
   totalNonTreeSpeciesPlantedCount: number | null;
   totalTreeReplantingCount: number | null;
   totalTreesPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
   totalSeedsPlantedCount: number | null;
   plantingStatus: string | null;
   survivalCalculation: string | null;
@@ -1916,6 +2006,8 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FinancialIndicatorDto = {
@@ -2012,6 +2104,11 @@ export type FinancialReportFullDto = {
    */
   organisationUuid: string | null;
   yearOfReport: number | null;
+  frameworkKey: string | null;
+  /**
+   * @format date-time
+   */
+  dueAt: string | null;
   /**
    * @format date-time
    */
@@ -2030,11 +2127,6 @@ export type FinancialReportFullDto = {
    */
   approvedAt: string | null;
   completion: number | null;
-  /**
-   * @format date-time
-   */
-  dueAt: string | null;
-  frameworkKey: string | null;
   nothingToReport: boolean | null;
   feedback: string | null;
   feedbackFields: string[] | null;
@@ -3423,6 +3515,7 @@ export type ReportingFrameworkDto = {
   siteReportFormUuid: string | null;
   nurseryFormUuid: string | null;
   nurseryReportFormUuid: string | null;
+  financialReportFormUuid: string | null;
   totalProjectsCount: number;
 };
 
@@ -3455,6 +3548,10 @@ export type CreateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   /**
    * Framework name; used to generate slug
    */
@@ -3499,6 +3596,10 @@ export type UpdateReportingFrameworkAttributes = {
    * @format uuid
    */
   nurseryReportFormUuid?: string | null;
+  /**
+   * @format uuid
+   */
+  financialReportFormUuid?: string | null;
   name?: string | null;
 };
 

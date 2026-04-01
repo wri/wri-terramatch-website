@@ -46,8 +46,44 @@ export type VerificationUserResponseDto = {
   verified: boolean;
 };
 
-export type VerificationUserRequest = {
+export type VerificationUserAttributes = {
   token: string;
+};
+
+export type VerificationUserData = {
+  type: "verifications";
+  attributes: VerificationUserAttributes;
+};
+
+export type VerificationUserBody = {
+  data: VerificationUserData;
+};
+
+export type ResendVerificationResponseDto = {
+  /**
+   * Email address the verification was (or would have been) sent to
+   */
+  emailAddress: string;
+};
+
+export type ResendVerificationAttributes = {
+  /**
+   * User email address to resend verification to
+   */
+  emailAddress: string;
+  /**
+   * Optional callback URL used as prefix for the verification token link
+   */
+  callbackUrl?: string;
+};
+
+export type ResendVerificationData = {
+  type: "verifications";
+  attributes: ResendVerificationAttributes;
+};
+
+export type ResendVerificationBody = {
+  data: ResendVerificationData;
 };
 
 export type OrganisationLightDto = {
@@ -194,6 +230,8 @@ export type OrganisationFullDto = {
   bioeconomyTraditionalKnowledge: string | null;
   bioeconomyProductProcessing: string | null;
   bioeconomyBuyers: string | null;
+  bioeconomyProductList: string[] | null;
+  bioeconomyDescription: string | null;
   /**
    * @format date-time
    */
@@ -219,6 +257,8 @@ export type EmbeddedMediaDto = {
   createdAt: string;
   description: string | null;
   photographer: string | null;
+  profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FinancialIndicatorDto = {
@@ -365,6 +405,8 @@ export type MediaDto = {
   description: string | null;
   photographer: string | null;
   createdByUserName: string | null;
+  profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FundingTypeDto = {
@@ -606,8 +648,29 @@ export type UserDto = {
    * @format date-time
    */
   emailAddressVerifiedAt: string | null;
+  phoneNumber: string | null;
+  /**
+   * Name of the user's primary organisation, if any.
+   */
+  organisationName: string | null;
+  /**
+   * UUID of the user's primary organisation, if any.
+   */
+  organisationUuid: string | null;
+  /**
+   * @format date-time
+   */
+  createdAt: string;
+  /**
+   * @format date-time
+   */
+  lastLoggedInAt: string | null;
+  jobRole: string | null;
+  country: string | null;
+  program: string | null;
   locale: string | null;
   frameworks: UserFramework[];
+  directFrameworks: UserFramework[];
 };
 
 export type OrganisationCreateAttributes = {
@@ -689,9 +752,47 @@ export type ActionDto = {
 
 export type UserUpdateAttributes = {
   /**
+   * Organisation UUID
+   *
+   * @format uuid
+   */
+  organisationUuid?: Record<string, any> | null;
+  /**
+   * First name
+   */
+  firstName?: Record<string, any> | null;
+  /**
+   * Last name
+   */
+  lastName?: Record<string, any> | null;
+  /**
+   * Email address
+   *
+   * @format email
+   */
+  emailAddress?: Record<string, any> | null;
+  /**
+   * Job role
+   */
+  jobRole?: Record<string, any> | null;
+  /**
+   * Phone number
+   */
+  phoneNumber?: Record<string, any> | null;
+  /**
+   * Country
+   */
+  country?: Record<string, any> | null;
+  /**
+   * Program
+   */
+  program?: Record<string, any> | null;
+  /**
    * New default locale for the given user
    */
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
+  primaryRole: string;
+  directFrameworks: string[];
 };
 
 export type UserData = {
@@ -707,26 +808,23 @@ export type UserUpdateBody = {
   data: UserData;
 };
 
-export type UserCreateAttributes = {
+export type UserCreateBaseAttributes = {
   firstName: string;
   lastName: string;
-  password: string;
   emailAddress: string;
   phoneNumber: string;
   jobRole: string;
-  role: string;
   country: string;
   program: string;
-  callbackUrl: string;
 };
 
-export type UserCreateData = {
+export type UserCreateBaseData = {
   type: "users";
-  attributes: UserCreateAttributes;
+  attributes: UserCreateBaseAttributes;
 };
 
-export type UserCreateBody = {
-  data: UserCreateData;
+export type UserCreateBaseBody = {
+  data: UserCreateBaseData;
 };
 
 export type UserAssociationDto = {
@@ -737,6 +835,9 @@ export type UserAssociationDto = {
   isManager: boolean;
   organisationName: string;
   roleName: string | null;
+  phoneNumber: string | null;
+  jobRole: string | null;
+  lastLoggedInAt: string | null;
   associatedType: string;
 };
 
@@ -810,4 +911,38 @@ export type OrganisationInviteRequestDto = {
    * Optional callback URL base for the signup link in the email.
    */
   callbackUrl?: Record<string, any>;
+};
+
+export type ProjectInviteAcceptanceDto = {
+  /**
+   * Primary key of the project invite.
+   */
+  id: number;
+  /**
+   * UUID of the project invite.
+   */
+  uuid: string;
+  /**
+   * ID of the project this invite belongs to.
+   */
+  projectId: number;
+  /**
+   * Email address this invite was sent to.
+   */
+  emailAddress: string;
+  /**
+   * Timestamp when the invite was accepted.
+   */
+  acceptedAt: string | null;
+  /**
+   * Name of the project.
+   */
+  projectName: string | null;
+};
+
+export type ProjectInviteAcceptBodyDto = {
+  /**
+   * Token from the project invite email.
+   */
+  token: string;
 };

@@ -105,7 +105,9 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
           photographer: formData.photographer,
           description: formData.description ?? undefined,
           isPublic: formData.is_public,
-          isCover: formData.is_cover
+          isCover: formData.is_cover,
+          profileImageScale: data.profileImageScale,
+          profileImagePosition: data.profileImagePosition
         },
         { id: data.uuid }
       );
@@ -114,7 +116,10 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     }
 
     if (formData.is_cover !== initialFormData.is_cover && formData.is_cover) {
-      const result = updateMedia({ isCover: true }, { id: data.uuid });
+      const result = updateMedia(
+        { isCover: true, profileImageScale: data.profileImageScale, profileImagePosition: data.profileImagePosition },
+        { id: data.uuid }
+      );
       updatePromises.push(result);
     }
 
@@ -179,6 +184,13 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
     );
   };
 
+  const breadcrumbLinks =
+    entityData?.project != null
+      ? [{ title: entityData.project.name, path: "/#" }, { title: entityData.name, path: "/#" }, { title: name }]
+      : entityData != null
+      ? [{ title: entityData.name, path: "/#" }, { title: name }]
+      : [{ title: name }];
+
   return (
     <ModalBaseImageDetail {...rest}>
       <button onClick={onClose} className="absolute top-8 right-8 ml-2 rounded p-1 hover:bg-grey-800">
@@ -186,19 +198,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
       </button>
       <div className="w-full">
         <Text variant="text-24-bold">{title}</Text>
-        <PageBreadcrumbs
-          links={
-            entityData.project
-              ? [
-                  { title: entityData.project.name, path: "/#" },
-                  { title: entityData.name, path: "/#" },
-                  { title: name }
-                ]
-              : [{ title: entityData.name, path: "/#" }, { title: name }]
-          }
-          className="bg-white pt-0"
-          textVariant="text-12"
-        />
+        <PageBreadcrumbs links={breadcrumbLinks} className="bg-white pt-0" textVariant="text-12" />
       </div>
       <div className="flex w-full gap-12">
         <div className="grid max-h-[62vh] flex-1 gap-4 overflow-auto pr-2">
@@ -214,7 +214,7 @@ const ModalImageDetails: FC<ModalImageDetailProps> = ({
             onChange={e => handleInputChange("name", e.target.value)}
             labelClassName="text-14-bold !normal-case"
           />
-          {entityData.project || entityData.model !== "project" ? (
+          {entityData?.project != null || entityData?.model !== "project" ? (
             <></>
           ) : (
             <div>

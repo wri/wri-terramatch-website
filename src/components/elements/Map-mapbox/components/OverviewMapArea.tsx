@@ -8,6 +8,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -76,24 +77,6 @@ const OverviewMapArea = ({
     polygonCriteriaMap,
     loading
   } = useLoadSitePolygonsData(entityModel.uuid, type, checkedValues.join(","), sortField, sortDirection, validFilter);
-
-  const sitePolygonDataV2 = sitePolygonDataV3?.map(v3Polygon => ({
-    id: v3Polygon.uuid,
-    uuid: v3Polygon.uuid,
-    poly_id: v3Polygon.polygonUuid,
-    poly_name: v3Polygon.name,
-    primary_uuid: v3Polygon.primaryUuid,
-    status: v3Polygon.status,
-    site_id: v3Polygon.siteId,
-    practice: Array.isArray(v3Polygon.practice) ? v3Polygon.practice.join(", ") : v3Polygon.practice,
-    target_sys: v3Polygon.targetSys,
-    distr: Array.isArray(v3Polygon.distr) ? v3Polygon.distr.join(", ") : v3Polygon.distr,
-    num_trees: v3Polygon.numTrees,
-    calc_area: v3Polygon.calcArea,
-    plantstart: v3Polygon.plantStart,
-    source: v3Polygon.source,
-    is_active: true
-  }));
 
   const modelBbox = useBoundingBox(
     type === "sites" ? { siteUuid: entityModel.uuid } : { projectUuid: entityModel.uuid }
@@ -165,14 +148,14 @@ const OverviewMapArea = ({
   };
 
   return (
-    <>
+    <AnrMapOverlayProvider>
       {!disabledPolygonPanel && (
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
+          className="absolute z-20 flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -211,11 +194,11 @@ const OverviewMapArea = ({
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
         modelFilesData={modelFilesData}
-        sitePolygonData={sitePolygonDataV2 as any}
+        sitePolygonData={sitePolygonDataV3}
         pdView={true}
         disabledPolygonPanel={disabledPolygonPanel}
       />
-    </>
+    </AnrMapOverlayProvider>
   );
 };
 

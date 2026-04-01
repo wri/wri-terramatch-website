@@ -9,7 +9,6 @@ import { downloadAnswersCSV } from "@/components/extensive/WizardForm/utils";
 import { useActions } from "@/connections/Action";
 import { FormModel, FormModelsDefinition, useFieldsProvider } from "@/context/wizardForm.provider";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
-import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
 
 import { FormFooter } from "./FormFooter";
@@ -22,6 +21,7 @@ type SummaryItemProps = {
   downloadButtonText?: string;
   setSelectedStepIndex: (value: SetStateAction<number>) => void;
   onSubmitStep: (data: any) => void;
+  onSaveAndExit: () => void;
   submitButtonDisable?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
@@ -35,13 +35,13 @@ const SummaryItem: FC<SummaryItemProps> = ({
   downloadButtonText,
   setSelectedStepIndex,
   onSubmitStep,
+  onSaveAndExit,
   submitButtonDisable,
   enableSaveChangesButton,
   saveChanges
 }) => {
   const t = useT();
   const user = useIsAdmin();
-
   const fieldsProvider = useFieldsProvider();
   const [, { data: actions }] = useActions({
     enabled: !user
@@ -68,21 +68,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         "h-[calc(100vh-354px)] md:h-[calc(100vh-355px)] lg:h-[calc(100vh-355px)]": user
       })}
     >
-      <FormStepHeader
-        id="step"
-        title={title}
-        subtitle={subtitle}
-        actionButtonProps={
-          downloadButtonText == null
-            ? undefined
-            : {
-                children: downloadButtonText,
-                leftIcon: <DownloadIcon className="h-4 text-theme-primary-800" />,
-                variant: "secondary",
-                onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
-              }
-        }
-      >
+      <FormStepHeader id="step" title={title} subtitle={subtitle}>
         <FormSummary values={formHook.getValues()} onEdit={setSelectedStepIndex} />
       </FormStepHeader>
       <FormFooter
@@ -92,28 +78,15 @@ const SummaryItem: FC<SummaryItemProps> = ({
         )}
         cancelButtonProps={undefined}
         primaryButtonProps={{
-          children: t(`${enableSaveChangesButton ? "Save changes" : "Submit"}`),
-          onClick: enableSaveChangesButton ? saveChanges : handleSubmitClick,
+          children: t("Submit"),
+          onClick: handleSubmitClick,
           disabled: submitButtonDisable
         }}
-        secondaryButtonProps={
-          !enableSaveChangesButton
-            ? {
-                children: t("Save and Exit"),
-                onClick: handleSubmitClick,
-                disabled: submitButtonDisable
-              }
-            : undefined
-        }
-        tertiaryButtonProps={
-          !enableSaveChangesButton
-            ? {
-                children: t("Previous"),
-                leftIcon: <ChevronRightIcon className="rotate-180" />,
-                onClick: () => setSelectedStepIndex(n => n - 1)
-              }
-            : undefined
-        }
+        secondaryButtonProps={undefined}
+        tertiaryButtonProps={{
+          children: t("Download"),
+          onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())
+        }}
       />
     </div>
   );

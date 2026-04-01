@@ -47,7 +47,10 @@ export interface ChartDataVolunteers {
 const FRAMEWORK_NAME_MAP = {
   terrafund: "TerraFund Top 100",
   "terrafund-landscapes": "TerraFund Landscapes",
-  enterprises: "TerraFund Enterprises"
+  enterprises: "TerraFund Enterprises",
+  "terrafund-cohort-1": "TerraFund Cohort One",
+  "terrafund-cohort-2": "TerraFund Cohort Two",
+  "terrafund-3": "TerraFund Cohort Three"
 };
 
 export const parseJobCreatedByType = (
@@ -200,6 +203,9 @@ export const cohortNames = {
   ppc: "PPC",
   terrafund: "TerraFund Top 100",
   "terrafund-landscapes": "TerraFund Landscapes",
+  "terrafund-cohort-1": "TerraFund Cohort One",
+  "terrafund-cohort-2": "TerraFund Cohort Two",
+  "terrafund-3": "TerraFund Cohort Three",
   hbf: "HBF",
   "epa-ghana-pilot": "EPA-Ghana Pilot"
 };

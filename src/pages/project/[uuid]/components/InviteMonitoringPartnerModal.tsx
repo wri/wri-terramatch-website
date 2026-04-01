@@ -1,22 +1,22 @@
+import { Text } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useT } from "@transifex/react";
 import { useCallback } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import Button from "@/components/elements/Button/Button";
-import Input from "@/components/elements/Inputs/Input/Input";
-import Text from "@/components/elements/Text/Text";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { ModalBase } from "@/components/extensive/Modal/ModalsBases";
 import { useUserAssociationCreation } from "@/connections/UserAssociation";
-import { useModalContext } from "@/context/modal.provider";
 import { useToastContext } from "@/context/toast.provider";
 import { useRequestComplete } from "@/hooks/useConnectionUpdate";
+import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/ButtonGroup";
+import Modal from "@/redesignComponents/containers/Modal/Modal";
+import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
+import { InformationRequiredIcon } from "@/redesignComponents/foundations/Icons";
 import ApiSlice from "@/store/apiSlice";
-
 interface InviteMonitoringPartnerModalProps {
   projectUUID: string;
+  open: boolean;
+  onClose: () => void;
   onSuccess?: () => void;
 }
 
@@ -26,13 +26,12 @@ const schema = yup.object({
 
 type FormValues = yup.InferType<typeof schema>;
 
-const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitoringPartnerModalProps) => {
+const InviteMonitoringPartnerModal = ({ projectUUID, open, onClose, onSuccess }: InviteMonitoringPartnerModalProps) => {
   const t = useT();
-  const { closeModal } = useModalContext();
   const { openToast } = useToastContext();
 
   const {
-    register,
+    control,
     formState: { errors },
     setError,
     reset,
@@ -44,10 +43,10 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
     model: "projects"
   });
 
-  const hideModal = useCallback(() => {
-    closeModal(ModalId.INVITE_MONITORING_PARTNER_MODAL);
+  const handleClose = useCallback(() => {
     reset();
-  }, [closeModal, reset]);
+    onClose();
+  }, [reset, onClose]);
 
   useRequestComplete(
     isCreating,
@@ -63,9 +62,9 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
         ApiSlice.pruneCache("associatedUsers");
         onSuccess?.();
         openToast(t("Invitation sent successfully"));
-        hideModal();
+        handleClose();
       }
-    }, [createFailure, setError, onSuccess, openToast, hideModal, t])
+    }, [createFailure, setError, onSuccess, openToast, handleClose, t])
   );
 
   const onSubmit = (data: FormValues) => {
@@ -76,30 +75,54 @@ const InviteMonitoringPartnerModal = ({ projectUUID, onSuccess }: InviteMonitori
   };
 
   return (
-    <ModalBase>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-8">
-        <Text variant="text-bold-headline-1000" className="text-center uppercase">
-          {t("Invite Monitoring Partner")}
-        </Text>
-        <Text variant="text-light-body-300" className="mt-2 text-center" containHtml>
-          {t(
-            "Here, you can invite someone to create a TerraMatch account as an observer. This will allow them to access all your project data and reports."
-          )}
-        </Text>
-        <Input
-          {...register("email", { required: true })}
-          label={t("Email Address")}
-          type="email"
-          error={errors.email}
-        />
-        <div className="flex w-full justify-between gap-3">
-          <Button variant="secondary" onClick={() => hideModal()}>
-            {t("Cancel")}
-          </Button>
-          <Button type="submit">{t("Invite monitoring partner")}</Button>
+    <Modal
+      open={open}
+      onClose={handleClose}
+      header={<b className="text-theme-neutral-800">{t("Invite Monitoring Partner")}</b>}
+      content={
+        <div className="mb-[-12px] flex flex-col gap-3">
+          <Text textStyle="400" color="neutral.900">
+            {t("Invite a new team member to join your project as a Monitoring Partner.")}
+          </Text>
+          <div className="flex items-center gap-2">
+            <InformationRequiredIcon color="neutral.700" className="mb-[21px]" />
+            <Text textStyle="300" color="neutral.800" lineHeight="20px">
+              {t("This action will provide them access to all your project data and reports.")}
+            </Text>
+          </div>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label={t("Email Address")}
+                type="email"
+                errorMessage={errors.email?.message}
+                required
+              />
+            )}
+          />
         </div>
-      </form>
-    </ModalBase>
+      }
+      footer={
+        <ButtonGroup
+          buttons={[
+            {
+              id: "cancel",
+              variant: "borderless",
+              children: t("Cancel"),
+              onClick: handleClose
+            },
+            {
+              id: "send",
+              children: t("Send Invite"),
+              onClick: handleSubmit(onSubmit)
+            }
+          ]}
+        />
+      }
+    />
   );
 };
 

@@ -1,13 +1,25 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
-import { Search } from "@worldresources/wri-design-systems";
+
+import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons/Function/PlaceholderIcon";
+
+import Search from "./Search";
 
 const mockOptions = [
-  { id: "1", label: "Apple", caption: "Fruit" },
-  { id: "2", label: "Banana", caption: "Fruit" },
-  { id: "3", label: "Carrot", caption: "Vegetable" },
-  { id: "4", label: "Broccoli", caption: "Vegetable" },
-  { id: "5", label: "Orange", caption: "Fruit" },
-  { id: "6", label: "Tomato", caption: "Vegetable" }
+  { id: "1", label: "Option 1", caption: "Caption 1" },
+  { id: "2", label: "Option 2", caption: "Caption 2" },
+  { id: "3", label: "Option 3", caption: "Caption 3" },
+  { id: "4", label: "Option 4", caption: "Caption 4" },
+  { id: "5", label: "Option 5", caption: "Caption 5" },
+  { id: "6", label: "Option 6", caption: "Caption 6" }
+];
+const metaData = [
+  { id: "1", city: "City", address: "Address 1" },
+  { id: "2", city: "City", address: "Address 2" },
+  { id: "3", city: "City", address: "Address 3" },
+  { id: "4", city: "City", address: "Address 4" },
+  { id: "5", city: "City", address: "Address 5" },
+  { id: "6", city: "City", address: "Address 6" }
 ];
 
 const meta: Meta<typeof Search> = {
@@ -83,6 +95,46 @@ export const CustomResultsRendering: Story = {
           </div>
         ))}
       </div>
+    ),
+    onSelect: option => {
+      console.log("Selected:", option);
+    }
+  }
+};
+
+export const CustomResultsRenderingLocation: Story = {
+  args: {
+    placeholder: "Search with custom rendering...",
+    options: mockOptions,
+    displayResults: "custom",
+    renderResults: ({ items, highlightedIndex, query, onSelect }) => (
+      <Box shadow="md" rounded="6px" border="1px solid" borderColor="neutral.300" bg="neutral.200">
+        <Text textStyle="300" color="neutral.700" padding={3}>
+          Showing {items.length} results
+        </Text>
+        {items.map((item, index) => (
+          <Flex
+            key={item.id || item.label}
+            onClick={() => onSelect(item.id || item.label)}
+            padding="3"
+            gap="3"
+            cursor="pointer"
+            bg={index === highlightedIndex ? "neutral.400" : "transparent"}
+            className="hover:bg-theme-neutral-300"
+          >
+            <PlaceholderIcon boxSize={6} color="primary.700" />
+            <Flex direction="column" gap="1">
+              <Text as="strong" textStyle="300-bold" color="neutral.900">
+                {item.label}
+              </Text>
+              <Text as="span" textStyle="300" color="neutral.700">
+                {metaData.find(meta => meta.id === item.id)?.city} •{" "}
+                {metaData.find(meta => meta.id === item.id)?.address}
+              </Text>
+            </Flex>
+          </Flex>
+        ))}
+      </Box>
     ),
     onSelect: option => {
       console.log("Selected:", option);

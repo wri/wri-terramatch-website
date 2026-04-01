@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import Modal from "@/components/extensive/Modal/Modal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { useModalContext } from "@/context/modal.provider";
 import { useGetReadableEntityName } from "@/hooks/entity/useGetReadableEntityName";
 import { EntityName } from "@/types/common";
@@ -28,6 +29,7 @@ export const useGetEditEntityHandler = ({
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
   const { getReadableEntityName } = useGetReadableEntityName();
+  const readableEntityNameSingular = (getReadableEntityName(entityName, true) ?? t("Entity")).toLowerCase();
   let editTitle = t("Are you sure you want to edit your {entityName}?", {
     entityName: getReadableEntityName(entityName)
   });
@@ -39,13 +41,16 @@ export const useGetEditEntityHandler = ({
   );
 
   if (entityStatus === "started") {
-    editTitle = t("Continue working on draft report?");
+    editTitle = t("Continue working on draft {entityName}?", {
+      entityName: readableEntityNameSingular
+    });
     editContent = t(
-      'By clicking "Edit," you\'ll access your draft report. You can edit the report contents and either save the report as a draft again, or click to the end and press "Submit" to send it to your project manager for review.'
+      'By clicking "Edit," you\'ll access your draft {entityName}. You can edit the {entityName} contents and either save it as a draft again, or click to the end and press "Submit" to send it to your project manager for review.',
+      { entityName: readableEntityNameSingular }
     );
   }
 
-  const handleEdit = () => {
+  const handleEdit = (stepId?: string | null) => {
     if (entityStatus === "awaiting-approval" || updateRequestStatus === "awaiting-approval") {
       openModal(
         ModalId.REVIEW_IN_PROGRESS,
@@ -72,7 +77,13 @@ export const useGetEditEntityHandler = ({
           primaryButtonProps={{
             children: t("Edit"),
             onClick: () => {
-              router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+              if (stepId != null) {
+                router.push(
+                  `/entity/${entityName}/edit/${entityUUID}?${STEP_QUERY_PARAM}=${encodeURIComponent(stepId)}`
+                );
+              } else {
+                router.push(`/entity/${entityName}/edit/${entityUUID}?mode=edit`);
+              }
               closeModal(ModalId.CONFIRM_EDIT);
             }
           }}

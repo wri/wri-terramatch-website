@@ -44,12 +44,12 @@ export interface MetricCardCommonVariantProps
 
 export type NoGoalMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "color" | "iconWithColor" | "type" | "tooltipContent"
+  "title" | "progress" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
 >;
 
 export type ProgressBarMetricCardContentProps = Pick<
   MetricCardCommonVariantProps,
-  "title" | "progress" | "goal" | "color" | "iconWithColor" | "type" | "tooltipContent"
+  "title" | "progress" | "goal" | "color" | "iconWithColor" | "type" | "tooltipContent" | "classNameTitle"
 >;
 
 export type DonutChartMetricCardContentProps = MetricCardCommonVariantProps;

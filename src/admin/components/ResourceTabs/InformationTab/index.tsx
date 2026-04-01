@@ -75,6 +75,7 @@ const InformationTab: FC<IProps> = props => {
   const totalCountSeeds = usePlantTotalCount({ entity, entityUuid, collection: "seeds" });
   const totalCountTreePlanted = usePlantTotalCount({ entity, entityUuid, collection: "tree-planted" });
   const totalCountReplanting = usePlantTotalCount({ entity, entityUuid, collection: "replanting" });
+  const totalCountAnr = usePlantTotalCount({ entity, entityUuid, collection: "anr" });
 
   const { formData, isLoading: queryLoading } = useEntityForm(v3EntityName(props.type) as FormEntity, record?.uuid);
   const [updateRequestLoaded, { data: updateRequest }] = useUpdateRequest({
@@ -239,22 +240,24 @@ const InformationTab: FC<IProps> = props => {
                             <TreeSpeciesTable {...{ entity, entityUuid }} collection="seeds" secondColumnWidth="45%" />
                           </div>
                         </ContextCondition>
-                        <div className="flex flex-col gap-1">
-                          <div className="flex items-center gap-1 py-1">
-                            <Text variant="text-16-bold" className="capitalize">
-                              Trees Planted:
-                            </Text>
-                            <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
-                              {totalCountTreePlanted.toLocaleString() ?? 0}
-                            </Text>
-                          </div>
-                          <TreeSpeciesTable
-                            {...{ entity, entityUuid }}
-                            collection="tree-planted"
-                            secondColumnWidth="45%"
-                          />
-                        </div>
                       </>
+                    ) : null}
+                    {props.type !== "nursery-reports" ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Trees Planted:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountTreePlanted.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable
+                          {...{ entity, entityUuid }}
+                          collection="tree-planted"
+                          secondColumnWidth="45%"
+                        />
+                      </div>
                     ) : null}
                     {props.type === "project-reports" ? (
                       <ContextCondition frameworksShow={ALL_TF}>
@@ -274,6 +277,32 @@ const InformationTab: FC<IProps> = props => {
                           />
                         </div>
                       </ContextCondition>
+                    ) : null}
+                    {props.type === "site-reports" ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            Trees Regenerating By Species:
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountAnr.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
+                      </div>
+                    ) : null}
+                    {["projects", "sites"].includes(props.type) ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-1 py-1">
+                          <Text variant="text-16-bold" className="capitalize">
+                            {props.type === "projects" ? "Tree Regenerating:" : "Trees Regenerating:"}
+                          </Text>
+                          <Text variant="text-18-semibold" className="capitalize text-primary" as="span">
+                            {totalCountAnr.toLocaleString() ?? 0}
+                          </Text>
+                        </div>
+                        <TreeSpeciesTable {...{ entity, entityUuid }} collection="anr" secondColumnWidth="45%" />
+                      </div>
                     ) : null}
                   </div>
                 ) : null}

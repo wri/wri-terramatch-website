@@ -1,18 +1,19 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
 import { useMyOrg } from "@/connections/Organisation";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
+import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
-import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
-import ProjectDescription from "./ProjectDescription";
+import DescriptionHeader from "./DescriptionHeader";
 import SeparatorDot from "./SeparatorDot";
 
 export interface ProjectInfoProps {
@@ -45,8 +46,15 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     entityStatus: project.status ?? "started",
     updateRequestStatus: project.updateRequestStatus ?? "no-update"
   });
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const [, myOrg] = useMyOrg();
   const router = useRouter();
+
+  const handleOrganizationNav = useCallback(() => {
+    const orgId = myOrg?.organisationId;
+    router.push(orgId != null ? `/organization/${orgId}` : "/");
+  }, [router, myOrg?.organisationId]);
+
   return (
     <Box gap={2} className="flex flex-col">
       <Text
@@ -59,12 +67,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         {title} <ProgressTag {...tag} />
       </Text>
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button
-          variant="borderless"
-          size="small"
-          className="-mr-2"
-          onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
-        >
+        <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>
         <SeparatorDot />
@@ -75,17 +78,38 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription description={description} handleEdit={handleEdit} />
+        <DescriptionHeader
+          description={description}
+          handleEdit={handleEdit}
+          downloadButtonProps={{
+            variant: "secondary",
+            size: "small",
+            leftIcon: <DownloadIcon />,
+            onClick: handleExport,
+            loading: exportLoader,
+            children: t("Download Project Files")
+          }}
+          readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=details`)}
+        />
       ) : (
         <div className="w-fit">
           <Button
-            onClick={handleEdit}
+            onClick={() => handleEdit()}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}
-            className="w-auto"
+            className="mr-3 w-auto"
           >
             {t("Add Project Information")}
+          </Button>
+          <Button
+            variant="secondary"
+            size="small"
+            leftIcon={<DownloadIcon />}
+            onClick={handleExport}
+            loading={exportLoader}
+          >
+            {t("Download Project Files")}
           </Button>
         </div>
       )}

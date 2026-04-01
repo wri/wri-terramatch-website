@@ -3,13 +3,13 @@ import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
 import Card from "@/components/elements/Cards/Generic/GenericCard";
-import { UserRead } from "@/generated/apiSchemas";
+import { UserAssociationDto } from "@/generated/v3/userService/userServiceSchemas";
 
 export type TeamMemberCardProps = {
   type?: "pending" | "approved";
-  user?: UserRead;
-  onApprove?: (user?: UserRead) => void;
-  onReject?: (user?: UserRead) => void;
+  user?: UserAssociationDto;
+  onApprove?: (user?: UserAssociationDto) => void;
+  onReject?: (user?: UserAssociationDto) => void;
 };
 
 const TeamMemberCard = ({ user, type = "approved", onApprove, onReject }: TeamMemberCardProps) => {
@@ -20,26 +20,26 @@ const TeamMemberCard = ({ user, type = "approved", onApprove, onReject }: TeamMe
       <Card.Image imageUrl="/images/pitch-placeholder.webp" />
 
       <Card.Body>
-        <Card.Title className="line-clamp-1">{`${user?.first_name} ${user?.last_name}`}</Card.Title>
+        <Card.Title className="line-clamp-1">{user?.fullName}</Card.Title>
 
         <Card.DataRow className="overflow-hidden text-ellipsis whitespace-nowrap">{`<strong> ${t(
           "Job Title:"
-        )}</strong>${user?.job_role}`}</Card.DataRow>
+        )}</strong>${user?.jobRole}`}</Card.DataRow>
         <Card.DataRow className="overflow-hidden text-ellipsis whitespace-nowrap">{`<strong>${t(
           "Email:"
-        )}</strong> ${user?.email_address?.trim()}`}</Card.DataRow>
+        )}</strong> ${user?.emailAddress?.trim()}`}</Card.DataRow>
         <Card.DataRow className="overflow-hidden text-ellipsis whitespace-nowrap">{`<strong>${t("Phone:")}</strong> ${
-          user?.phone_number
+          user?.phoneNumber
         }`}</Card.DataRow>
       </Card.Body>
 
       <When condition={type === "pending"}>
         <Card.ActionContainer className="flex justify-between gap-3">
-          <Button onClick={() => (onApprove ? onApprove(user) : null)} className="flex-1">
+          <Button onClick={() => (onApprove != null ? onApprove(user) : null)} className="flex-1">
             {t("Approve")}
           </Button>
 
-          <Button variant="secondary" onClick={() => (onReject ? onReject(user) : null)} className="flex-1">
+          <Button variant="secondary" onClick={() => (onReject != null ? onReject(user) : null)} className="flex-1">
             {t("Reject")}
           </Button>
         </Card.ActionContainer>

@@ -34,6 +34,13 @@ export const TreeSpeciesField: FormFieldFactory = {
     />
   ),
 
+  normalizeValue: ({ name }, formValues) => {
+    if (formValues[name] == null) {
+      return { ...formValues, [name]: [] };
+    }
+    return formValues;
+  },
+
   appendAnswers: (field, csv, formValues, fieldsProvider) => {
     const value = ((getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[]).filter(isNotNull);
     if (value.length > 0) {
@@ -53,7 +60,7 @@ export const TreeSpeciesField: FormFieldFactory = {
 
   addFormEntries: addEntryWith((field, formValues, { entity, fieldsProvider }) => {
     const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
-    const collection = value[0]?.collection;
+    const collection = value[0]?.collection ?? field.collection ?? undefined;
     return treeSpeciesEntryValue(collection, entity, field, formValues, fieldsProvider);
   }),
 

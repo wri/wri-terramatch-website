@@ -95,6 +95,7 @@ const MapPolygonPanel = ({
             type={type}
             recallEntityData={recallEntityData}
             entityUuid={entityUuid}
+            setTabEditPolygon={setTabEditPolygon}
           />
         </Else>
       </If>

@@ -14,19 +14,20 @@ import { AdditionalPolygonProperties } from "@/components/elements/Map-mapbox/Ma
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import ModalImageDetails from "@/components/extensive/Modal/ModalImageDetails";
+import { useAnrPlotGeometry } from "@/connections/AnrPlotGeometry";
 import { useBoundingBox } from "@/connections/BoundingBox";
-import { deleteMedia, updateMedia } from "@/connections/Media";
+import { deleteMedia, downloadImage, updateMedia } from "@/connections/Media";
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS, FORM_POLYGONS } from "@/constants/statuses";
+import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useDashboardContext } from "@/context/dashboard.provider";
 import { useLoading } from "@/context/loaderAdmin.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
-import { usePostV2ExportImage } from "@/generated/apiComponents";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
@@ -70,6 +71,7 @@ import {
   drawTemporaryPolygon,
   fetchPolygonGeometry,
   getCurrentMapStyle,
+  removeAnrPlotGeometryOverlay,
   removeBorderCountry,
   removeBorderLandscape,
   removePopups,
@@ -77,6 +79,7 @@ import {
   startDrawing,
   stopDrawing,
   updatePolygonProjectGeometry,
+  upsertAnrPlotGeometryOverlay,
   zoomToBbox,
   zoomToCenter
 } from "./utils";
@@ -253,7 +256,6 @@ export const MapContainer = ({
   const { setFilters, dashboardCountries } = dashboardContextFromHook ?? {};
   const { reloadSiteData } = context ?? {};
   const t = useT();
-  const { mutateAsync } = usePostV2ExportImage();
   const { showLoader, hideLoader } = useLoading();
   const router = useRouter();
   const { openModal, closeModal } = useModalContext();
@@ -268,6 +270,20 @@ export const MapContainer = ({
     setStatusSelectedPolygon,
     selectedPolygonsInCheckbox
   } = contextMapArea;
+
+  const anrMapOverlay = useAnrMapOverlayOptional();
+  const anrPlotGeometryFetchEnabled =
+    anrMapOverlay != null &&
+    anrMapOverlay.drawerOpen &&
+    anrMapOverlay.anrTabActive &&
+    anrMapOverlay.showPlotsOnMap &&
+    anrMapOverlay.sitePolygonUuidForApi != null &&
+    anrMapOverlay.sitePolygonUuidForApi !== "";
+
+  const [, { data: anrPlotGeometryDto }] = useAnrPlotGeometry({
+    sitePolygonUuid: anrMapOverlay?.sitePolygonUuidForApi ?? "",
+    enabled: anrPlotGeometryFetchEnabled
+  });
 
   const handleStyleChange = (newStyle: MapStyle) => {
     setCurrentStyle(newStyle);
@@ -448,6 +464,36 @@ export const MapContainer = ({
   useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
 
   useEffect(() => {
+    if (!map?.current) {
+      return;
+    }
+    const currentMap = map.current;
+
+    const applyAnrOverlay = () => {
+      const features = anrPlotGeometryDto?.geojson?.features;
+      const shouldShow =
+        anrMapOverlay != null &&
+        anrMapOverlay.drawerOpen &&
+        anrMapOverlay.anrTabActive &&
+        anrMapOverlay.showPlotsOnMap &&
+        features != null &&
+        features.length > 0;
+      if (!shouldShow) {
+        removeAnrPlotGeometryOverlay(currentMap);
+        return;
+      }
+      upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
+    };
+
+    currentMap.on("style.load", applyAnrOverlay);
+    applyAnrOverlay();
+    return () => {
+      currentMap.off("style.load", applyAnrOverlay);
+      removeAnrPlotGeometryOverlay(currentMap);
+    };
+  }, [map, anrMapOverlay, anrPlotGeometryDto, styleLoaded, sourcesAdded]);
+
+  useEffect(() => {
     if (!map.current || !styleLoaded) return;
 
     if (mapStyleProp != null && mapStyleProp !== currentStyle) {
@@ -562,7 +608,7 @@ export const MapContainer = ({
     };
 
     const setImageCover = async (uuid: string) => {
-      const result = await updateMedia({ isCover: true }, { id: uuid });
+      const result = await updateMedia({ isCover: true, profileImageScale: 0, profileImagePosition: {} }, { id: uuid });
       if (result) {
         openNotification("success", t("Success!"), t("Image set as cover successfully"));
         setShouldRefetchMediaData(true);
@@ -574,19 +620,7 @@ export const MapContainer = ({
     const handleDownload = async (uuid: string, file_name: string): Promise<void> => {
       showLoader();
       try {
-        const response = await mutateAsync({
-          body: {
-            uuid: uuid
-          }
-        });
-
-        if (!response) {
-          Log.error("No response received from the server.");
-          openNotification("error", t("Error!"), t("No response received from the server."));
-          return;
-        }
-
-        const blob = new Blob([response], { type: "image/jpeg" });
+        const blob = await downloadImage(uuid);
         const url = window.URL.createObjectURL(blob);
 
         const link = document.createElement("a");
@@ -956,7 +990,7 @@ export const MapContainer = ({
               <ZoomControl map={map.current} />
             </ControlGroup>
 
-            {record?.uuid != null && validationType === "bulkValidation" ? (
+            {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
                 <CheckPolygonControl
                   siteRecord={record}
