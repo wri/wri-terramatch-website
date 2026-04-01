@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useContext, useState } from "react";
 
 import { SitePolygon } from "@/generated/apiSchemas";
 
@@ -51,6 +51,7 @@ type MapAreaType = {
   setValidFilter: (value: string) => void;
   isFetchingValidationData: boolean;
   setIsFetchingValidationData: (value: boolean) => void;
+  resetSiteMapInteractionState: () => void;
 };
 
 const defaultValue: MapAreaType = {
@@ -96,7 +97,8 @@ const defaultValue: MapAreaType = {
   validFilter: "all",
   setValidFilter: () => {},
   isFetchingValidationData: false,
-  setIsFetchingValidationData: () => {}
+  setIsFetchingValidationData: () => {},
+  resetSiteMapInteractionState: () => {}
 };
 
 const MapAreaContext = createContext<MapAreaType>(defaultValue);
@@ -146,6 +148,25 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setOpenEditNewPolygon(isOpen);
   };
 
+  const resetSiteMapInteractionState = useCallback(() => {
+    setIsUserDrawingEnabled(false);
+    setOpenEditNewPolygon(false);
+    setEditPolygonInternal({ isOpen: false, uuid: "", primary_uuid: "" });
+    setShouldRefetchPolygonData(false);
+    setSelectedPolyVersion(undefined);
+    setOpenModalConfirmation(false);
+    setPreviewVersion(false);
+    setStatusSelectedPolygon("");
+    setSelectedPolygonsInCheckbox([]);
+    setpolygonNotificationStatus({
+      open: false,
+      message: "",
+      type: "success",
+      title: ""
+    });
+    setHasOverlaps(false);
+  }, []);
+
   const contextValue: MapAreaType = {
     isUserDrawingEnabled,
     setIsUserDrawingEnabled,
@@ -184,7 +205,8 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     validFilter,
     setValidFilter,
     isFetchingValidationData,
-    setIsFetchingValidationData
+    setIsFetchingValidationData,
+    resetSiteMapInteractionState
   };
 
   return <MapAreaContext.Provider value={contextValue}>{children}</MapAreaContext.Provider>;
