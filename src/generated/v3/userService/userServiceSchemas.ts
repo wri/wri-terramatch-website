@@ -791,8 +791,11 @@ export type UserUpdateAttributes = {
    * New default locale for the given user
    */
   locale: "en-US" | "es-MX" | "fr-FR" | "pt-BR" | null;
-  primaryRole: string;
-  directFrameworks: string[];
+  /**
+   * Primary role
+   */
+  primaryRole?: Record<string, any> | null;
+  directFrameworks?: string[] | null;
 };
 
 export type UserData = {
