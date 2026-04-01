@@ -966,12 +966,12 @@ export const MapContainer = ({
         ) : null}
         {hasControls ? (
           <>
-            {polygonFromMap?.isOpen && !formMap ? (
+            {polygonFromMap?.isOpen && !formMap && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-centerSite" : "top-center"}>
                 <EditControl onClick={handleEditPolygon} onSave={onSaveEdit} onCancel={onCancelEdit} />
               </ControlGroup>
             ) : null}
-            {selectedPolygonsInCheckbox.length > 0 ? (
+            {selectedPolygonsInCheckbox.length > 0 && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-centerSite" : "top-centerPolygonsInCheckbox"}>
                 <ProcessBulkPolygonsControl
                   entityData={record}
@@ -1016,7 +1016,7 @@ export const MapContainer = ({
                 </ControlGroup>
               </>
             ) : null}
-            {status && validationType === "individualValidation" ? (
+            {status && validationType === "individualValidation" && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-left-site" : "top-left"}>
                 <CheckIndividualPolygonControl viewRequestSuport={!siteData} entityData={record} />
               </ControlGroup>

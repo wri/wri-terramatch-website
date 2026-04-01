@@ -37,7 +37,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const { openModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
-  const { setSiteData } = contextMapArea;
+  const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
+
+  useEffect(() => {
+    resetSiteMapInteractionState();
+  }, [resetSiteMapInteractionState]);
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
 
   const { handleEdit } = useGetEditEntityHandler({
