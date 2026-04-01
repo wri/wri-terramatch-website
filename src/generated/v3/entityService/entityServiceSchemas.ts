@@ -2686,6 +2686,8 @@ export type TrackingDto = {
     | "training-beneficiaries"
     | "indirect-beneficiaries"
     | "associates"
+    | "elp-beneficiaries"
+    | "livelihood-activities"
     | "hectares-goal"
     | "hectares-historical"
     | "trees-goal"
@@ -2903,6 +2905,8 @@ export type LinkedFieldDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   optionListKey: string | null;
@@ -3084,6 +3088,8 @@ export type FormQuestionDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;
@@ -3238,6 +3244,8 @@ export type StoreFormQuestionAttributes = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;
