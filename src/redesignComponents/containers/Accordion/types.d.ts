@@ -8,6 +8,7 @@ export interface AccordionProps {
   actions?: ReactNode;
   variant?: AccordionVariant;
   className?: string;
+  classNameHeader?: string;
 }
 
 export type AccordionStatus = "success" | "error" | "complete";
