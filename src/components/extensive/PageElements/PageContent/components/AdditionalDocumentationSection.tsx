@@ -9,13 +9,14 @@ import {
 } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 import DocumentsSection from "./DocumentsSection";
 import MediaSection from "./MediaSection";
 
 type AdditionalDocumentationSectionProps = {
   value: string;
-  entityName?: "projects" | "sites";
+  entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
 };
 

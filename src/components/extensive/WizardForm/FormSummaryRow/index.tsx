@@ -1,10 +1,10 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
 import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { Framework, toFramework, useFramework } from "@/context/framework.provider";
@@ -55,6 +55,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
+
   return (
     <Accordion
       variant="primary"
@@ -81,10 +82,9 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         className="flex flex-col gap-4"
         items={entries}
         render={entry => {
-          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
-            return <SpecialEntryRenderer entry={entry} />;
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "treeSpecies") {
+            return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
           }
-
           return (
             <>
               <div
@@ -92,7 +92,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                   "w-full flex-col": isTrackingType(entry.value?.props?.type)
                 })}
               >
-                <Text variant="text-body-500" className=" flex-1">
+                <Text textStyle="300-bold" className=" flex-1" color="primary.900">
                   {entry.title}
                 </Text>
                 <div
@@ -102,7 +102,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                 >
                   <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
                     <Then>
-                      <Text variant="text-body-300" className="flex-1" containHtml>
+                      <Text textStyle="400" className="flex-1" color="neutral.900">
                         {formatEntryValue(entry.value)}
                       </Text>
                     </Then>
