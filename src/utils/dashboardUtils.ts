@@ -1,6 +1,7 @@
 import { useT } from "@transifex/react";
 
 import { CHART_TYPES, DEFAULT_POLYGONS_DATA } from "@/constants/dashboardConsts";
+import { formatLandTenureProjectAreaDisplay } from "@/constants/options/landTenure";
 import {
   DashboardProjectsLightDto,
   TotalJobsCreatedDto,
@@ -612,9 +613,7 @@ export const parseDataToObjetive = (projectData?: {
   landTenureProjectArea?: string[] | null;
 }): Objetive => {
   const objetiveText = projectData?.objectives || "No Objective";
-  const landTenure = projectData?.landTenureProjectArea
-    ? projectData?.landTenureProjectArea.join(", ")
-    : "Under Review";
+  const landTenure = formatLandTenureProjectAreaDisplay(projectData?.landTenureProjectArea);
   return {
     objetiveText,
     preferredLanguage: "English",

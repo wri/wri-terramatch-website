@@ -208,13 +208,8 @@ function WizardForm(props: WizardFormProps) {
       formHook.handleSubmit(onSubmitStep)();
       return;
     }
-    let values = formHook.getValues();
-    values = { ...values };
-
-    props.onChange?.(values, true);
-    formHook.reset(values);
-    props.saveAndCloseModal?.onConfirm?.();
-  }, [formHook, props, isAdmin, onSubmitStep]);
+    onClickSaveAndClose();
+  }, [onClickSaveAndClose, isAdmin, formHook, onSubmitStep]);
 
   useEffect(() => {
     if (props.errors != null) {

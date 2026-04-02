@@ -77,6 +77,7 @@ const UserCreate = () => {
           source="directFrameworks"
           label="Direct Frameworks"
           choices={directFrameworkChoices}
+          defaultValue={[]}
           fullWidth
         />
       </SimpleForm>
