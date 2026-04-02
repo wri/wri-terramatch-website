@@ -71,7 +71,7 @@ const FeedbackStepSection = ({
 
   return (
     <List
-      className="flex flex-col gap-4 bg-theme-warning-100 p-4"
+      className="bg-theme-warning-100 flex flex-col gap-4 p-4"
       backgroundColor="warning.100"
       items={entries}
       render={entry => <EntryRow entry={entry} />}
@@ -85,6 +85,7 @@ const FeedbackReviewer = ({ feedbackFieldsOptions, stepIds, values }: FeedbackRe
   return (
     <div className="mt-6">
       <Accordion
+        defaultOpen={true}
         variant="primary"
         header={<AccordionHeader title={"Feedback from Reviewer"} />}
         classNameHeader="!mb-0"

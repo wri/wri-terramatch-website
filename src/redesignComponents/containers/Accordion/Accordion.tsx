@@ -70,7 +70,8 @@ const Accordion: FC<AccordionProps> = ({
   actions,
   variant = "primary",
   className,
-  classNameHeader
+  classNameHeader,
+  defaultOpen = false
 }) => {
   const { container, header: headerStyles } = variantStyles[variant];
 
@@ -80,8 +81,8 @@ const Accordion: FC<AccordionProps> = ({
 
   return (
     <Box className={className}>
-      <AccordionChakra.Root multiple>
-        <AccordionChakra.Item>
+      <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
+        <AccordionChakra.Item value="default-item">
           <Flex {...container} gap={4} className={classNameHeader}>
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
