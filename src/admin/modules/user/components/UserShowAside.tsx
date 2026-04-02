@@ -95,7 +95,7 @@ export const UserShowAside = () => {
             </Typography>
             <FunctionField
               source="emailAddressVerifiedAt"
-              render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "Verified" : "Not Verified")}
+              render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
               className="admin-text-16 !font-medium text-darkCustom"
             />
           </Grid>

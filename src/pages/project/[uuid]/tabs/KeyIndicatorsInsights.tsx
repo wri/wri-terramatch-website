@@ -66,6 +66,8 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
     return KEY_INDICATORS_TOOLTIP_CONTENT.find(content => content.frameworks.includes(project.frameworkKey!));
   }, [project.frameworkKey]);
 
+  const MAX_CARD = 4;
+
   return (
     <MetricCardsRow>
       <MetricCard
@@ -76,7 +78,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         icon={<ProjectIcon />}
         color="secondary.600"
         type="treesRestored"
-        className={METRIC_CARD_CLASS_NAME}
+        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.treesRestored.title}`)}</b>
@@ -94,7 +96,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<RegenerationIcon />}
           color="secondary.600"
           type="treesRegenerated"
-          className={METRIC_CARD_CLASS_NAME}
+          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesRegenerated.title}`)}</b>
@@ -111,7 +113,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<SeedlingsIcon />}
           color="secondary.600"
           type="saplingsRestored"
-          className={METRIC_CARD_CLASS_NAME}
+          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.saplingsRestored.title}`)}</b>
@@ -130,7 +132,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           icon={<TreeIcon />}
           color="secondary.600"
           type="treesToBeRestored"
-          className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
+          className={`${METRIC_CARD_CLASS_NAME(MAX_CARD)} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.treesToBeRestored.title}`)}</b>
@@ -148,7 +150,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
         icon={<AreaHectaresIcon />}
         color="secondary.700"
         type="hectaresRestored"
-        className={METRIC_CARD_CLASS_NAME}
+        className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
         tooltipContent={
           <Box fontSize="14px" lineHeight="20px">
             <b>{t(`${keyIndicatorsTooltipContentItem?.hectaresRestored.title}`)}</b>
@@ -171,7 +173,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="large"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={`${METRIC_CARD_CLASS_NAME} !h-auto`}
+          className={`${METRIC_CARD_CLASS_NAME(MAX_CARD)} !h-auto`}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>
@@ -189,7 +191,7 @@ const KeyIndicatorsInsightsTab: FC<KeyIndicatorsInsightsProps> = ({ project }) =
           variant="donutChart"
           icon={<JobsIcon />}
           type="jobsCreated"
-          className={METRIC_CARD_CLASS_NAME}
+          className={METRIC_CARD_CLASS_NAME(MAX_CARD)}
           tooltipContent={
             <Box fontSize="14px" lineHeight="20px">
               <b>{t(`${keyIndicatorsTooltipContentItem?.jobsCreated.title}`)}</b>

@@ -37,7 +37,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const { openModal } = useModalContext();
   const contextMapArea = useMapAreaContext();
-  const { setSiteData } = contextMapArea;
+  const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
+
+  useEffect(() => {
+    resetSiteMapInteractionState();
+  }, [resetSiteMapInteractionState]);
   const [isSiteSetupComplete, setIsSiteSetupComplete] = useState(false);
 
   const { handleEdit } = useGetEditEntityHandler({
@@ -105,7 +109,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             buttonProps={{
               variant: "secondary",
               size: "small",
-              children: "View all Areas",
+              children: t("View site map"),
               rightIcon: <ChevronRightIcon />,
               onClick: () => goToTab("map")
             }}
@@ -123,7 +127,8 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
                         size: "small",
                         rightIcon: <ChevronRightIcon boxSize={4} />,
                         className: "!text-theme-neutral-100",
-                        children: t("Add Polygons")
+                        children: t("Add Polygons"),
+                        onClick: () => goToTab("map")
                       }
                     ]
                   }}

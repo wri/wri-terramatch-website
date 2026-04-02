@@ -2,9 +2,15 @@ import { Flex } from "@chakra-ui/react";
 import classNames from "classnames";
 import { FC, ReactNode } from "react";
 
-export const METRIC_CARD_CLASS_NAME = classNames(
-  "flex-1 max-w-[calc((100%/2)-6px)] ws-1100:max-w-[calc((100%/3)-6px)] md:!max-w-[calc((100%/4)-6px)] lg:!max-w-[calc((100%/4)-1rem)] w-[350px] h-auto"
-);
+export const METRIC_CARD_CLASS_NAME = (maxCard?: number) =>
+  classNames(
+    classNames(
+      "flex-1 max-w-[calc((100%/2)-6px)] min-w-[calc((100%/2)-6px)]  w-[350px] h-auto",
+      maxCard === 5
+        ? "ws-1100:max-w-[calc((100%/3)-8px)] ws-1100:min-w-[calc((100%/3)-8px)] md:!max-w-[calc((100%/4)-9px)] md:!min-w-[calc((100%/4)-9px)] lg:!max-w-[calc((100%/5)-26px)] lg:!min-w-[calc((100%/5)-26px)]"
+        : "ws-1100:max-w-[calc((100%/3)-6px)] ws-1100:min-w-[calc((100%/3)-6px)] md:!max-w-[calc((100%/4)-6px)] md:!min-w-[calc((100%/4)-6px)] lg:!max-w-[calc((100%/4)-1rem)] lg:!min-w-[calc((100%/4)-1rem)]"
+    )
+  );
 
 interface MetricCardsRowProps {
   children: ReactNode;

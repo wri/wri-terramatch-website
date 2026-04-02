@@ -1,8 +1,10 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
+import router from "next/router";
 import { FC, ReactNode } from "react";
 
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import Tooltip from "@/redesignComponents/actions/Tooltip/Tooltip";
 import {
   AgriculturalLandIcon,
@@ -119,14 +121,19 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
   const restorationStrategyConfig =
     restorationStrategyKey != null ? SITE_RESTORATION_STRATEGY_MAP[restorationStrategyKey] ?? null : null;
 
-  const targetLandUseKey =
-    site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes[0] : site.landUseTypes) : null;
-  const targetLandUseConfig = targetLandUseKey != null ? SITE_TARGET_LAND_USE_MAP[targetLandUseKey] ?? null : null;
+  const targetLandUseKeys: string[] =
+    site.landUseTypes != null ? (Array.isArray(site.landUseTypes) ? site.landUseTypes : [site.landUseTypes]) : [];
+  const targetLandUseConfigs = targetLandUseKeys
+    .map(key => SITE_TARGET_LAND_USE_MAP[key])
+    .filter((c): c is SiteTypeConfig => c != null);
+
+  const MAX_VISIBLE_LAND_USE = 2;
+  const visibleLandUseConfigs = targetLandUseConfigs.slice(0, MAX_VISIBLE_LAND_USE);
+  const hiddenCount = targetLandUseConfigs.length - MAX_VISIBLE_LAND_USE;
 
   return (
     <Box
-      width="294px"
-      minWidth="294px"
+      width="fit-content"
       height="auto"
       className="flex flex-col gap-5 pt-5"
       css={{ "&": { alignItems: "self-end !important" } }}
@@ -170,30 +177,37 @@ const SitePlantingStatus: FC<{ site: SiteFullDto }> = ({ site }) => {
           <Text color="primary.900" textStyle="300" textWrap="nowrap">
             {t("Target Land Use:")}
           </Text>
-          <Flex className="w-auto flex-col" alignItems="center" gap={2}>
-            {targetLandUseConfig != null ? (
-              <>
-                {targetLandUseConfig.icon}
-                <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
-                  {t(targetLandUseConfig.label)}{" "}
-                  {targetLandUseConfig.tooltip != null && (
-                    <Tooltip
-                      content={
-                        <>
-                          <span className="text-sm font-semibold">{t(targetLandUseConfig.label)}: </span>
-                          {t(targetLandUseConfig.tooltip)}
-                        </>
-                      }
-                    >
-                      <InfoIcon className="h-3 w-3 text-theme-neutral-800" />
-                    </Tooltip>
-                  )}
-                </Text>
-              </>
+          <Flex className="w-auto" alignItems="center" gap={3}>
+            {visibleLandUseConfigs.length > 0 ? (
+              visibleLandUseConfigs.map((config, idx) => (
+                <Flex key={targetLandUseKeys[idx]} className="flex-col" minWidth={"136px"} alignItems="center" gap={1}>
+                  {config.icon}
+                  <Text textStyle="400-bold" color="secondary.800" className="text-center leading-5">
+                    {t(config.label)}{" "}
+                    {config.tooltip != null && (
+                      <Tooltip
+                        content={
+                          <>
+                            <span className="text-sm font-semibold">{t(config.label)}: </span>
+                            {t(config.tooltip)}
+                          </>
+                        }
+                      >
+                        <InfoIcon className="h-3 w-3 text-theme-neutral-800" />
+                      </Tooltip>
+                    )}
+                  </Text>
+                </Flex>
+              ))
             ) : (
               <Text textStyle="400-bold" color="neutral.600" className="text-center leading-5">
                 {t("N/A")}
               </Text>
+            )}
+            {hiddenCount > 0 && (
+              <Button variant="borderless" onClick={() => router.push(`/site/${site.uuid}?tab=details`)}>
+                {t("+{count} More", { count: hiddenCount })}
+              </Button>
             )}
           </Flex>
         </div>
