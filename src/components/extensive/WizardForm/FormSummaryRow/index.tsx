@@ -55,6 +55,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
+
   return (
     <Accordion
       variant="primary"
@@ -81,10 +82,9 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         className="flex flex-col gap-4"
         items={entries}
         render={entry => {
-          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
-            return <SpecialEntryRenderer entry={entry} />;
+          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "treeSpecies") {
+            return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
           }
-
           return (
             <>
               <div
