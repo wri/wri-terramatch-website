@@ -18,6 +18,10 @@ export const useFrameworkTitle = () => {
     case Framework.ENTERPRISES:
       return t("TerraFund");
 
+    case Framework.FF:
+    case Framework.FF_1:
+      return t("Fundo Flora");
+
     case Framework.TF_3:
       return t("TerraFund 3");
 
