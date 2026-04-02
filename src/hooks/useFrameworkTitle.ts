@@ -18,6 +18,9 @@ export const useFrameworkTitle = () => {
     case Framework.ENTERPRISES:
       return t("TerraFund");
 
+    case Framework.TF_3:
+      return t("TerraFund 3");
+
     case Framework.UNDEFINED:
     default:
       return null;
