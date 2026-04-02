@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import Checkbox from "@/redesignComponents/Forms/Actions/Checkbox/Checkbox";
 import CheckboxList from "@/redesignComponents/Forms/Inputs/CheckboxList";
-import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateRangeInputs/DateRangeInput";
+import DateRangeInput from "@/redesignComponents/Forms/Inputs/DateInputs/DateRangeInputs/DateRangeInput";
 import SelectInput from "@/redesignComponents/Forms/Inputs/SelectInput";
 import TextInput from "@/redesignComponents/Forms/Inputs/TextInput";
 

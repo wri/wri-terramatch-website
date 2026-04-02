@@ -2,27 +2,25 @@ import type { DatePickerRootProps, DateValue } from "@ark-ui/react";
 import { DatePicker, Portal, useDatePicker } from "@ark-ui/react";
 import { Global } from "@emotion/react";
 import styled from "@emotion/styled";
-import classNames from "classnames";
 import type { FC } from "react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { CalendarIcon } from "@/redesignComponents/foundations/Icons";
 import { formatDateValue, getDateFormatString, parseDateInput } from "@/utils/date";
 
-import { DateRangeInputs, DayView, MonthView, YearView } from "./components";
+import { DayView, MonthView, YearView } from "../components";
 import {
-  calendarGlobalStyles,
-  dateRangePickerStyles,
+  calendarBaseGlobalStyles,
+  datePickerControlStyles,
   FieldCaption,
   FieldContainer,
   FieldErrorBar,
   FieldErrorMessage,
   FieldLabel,
   RequiredIndicator
-} from "./styled";
-import type { PreservedDate } from "./types";
+} from "../styled";
 
-interface DateRangeInputProps {
+interface DatePickerInputProps {
   min?: DatePickerRootProps["min"];
   max?: DatePickerRootProps["max"];
   label?: string;
@@ -35,10 +33,10 @@ interface DateRangeInputProps {
 }
 
 const StyledPickerWrapper = styled.div<{ $size: "default" | "small" }>`
-  ${({ $size }) => dateRangePickerStyles($size)}
+  ${({ $size }) => datePickerControlStyles($size)}
 `;
 
-export const DateRangeInput: FC<DateRangeInputProps> = ({
+export const DatePickerInput: FC<DatePickerInputProps> = ({
   min,
   max,
   label,
@@ -49,72 +47,31 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   size = "default",
   noMarginBottom = false
 }) => {
-  const [dates, setDates] = useState<DateValue[]>([]);
-  const preservedRef = useRef<PreservedDate | null>(null);
+  const [date, setDate] = useState<DateValue[]>([]);
   const browserLocale = useMemo(() => navigator.language, []);
   const dateFormat = useMemo(() => getDateFormatString(browserLocale), [browserLocale]);
 
   const picker = useDatePicker({
-    selectionMode: "range",
+    selectionMode: "single",
     fixedWeeks: true,
     locale: browserLocale,
     min,
     max,
-    value: dates,
+    value: date,
     disabled,
-    format(date) {
-      return formatDateValue(date, dateFormat);
+    format(dateVal) {
+      return formatDateValue(dateVal, dateFormat);
     },
     parse(value): DateValue | undefined {
       return parseDateInput(value, dateFormat) as DateValue | undefined;
     },
     onValueChange({ value }) {
-      const preserved = preservedRef.current;
-
-      if (preserved && value.length === 1) {
-        preservedRef.current = null;
-        const [a, b] = value[0].compare(preserved.date) > 0 ? [preserved.date, value[0]] : [value[0], preserved.date];
-        setDates([a, b]);
-        return;
-      }
-
-      if (preserved && value.length === 0) return;
-
-      preservedRef.current = null;
-      setDates(value);
-
-      if (value.length === 1) {
-        requestAnimationFrame(() => picker.setOpen(true));
-      }
+      setDate(value);
     }
   });
 
-  const handleClearDate = useCallback(
-    (index: 0 | 1) => {
-      if (preservedRef.current) {
-        preservedRef.current = null;
-        setDates([]);
-        picker.setOpen(true);
-        return;
-      }
-
-      const keepDate = index === 0 ? dates[1] : dates[0];
-
-      if (!keepDate) {
-        preservedRef.current = null;
-        setDates([]);
-      } else {
-        preservedRef.current = { date: keepDate, clearedIndex: index };
-        setDates([keepDate]);
-      }
-
-      picker.setOpen(true);
-    },
-    [dates, picker]
-  );
-
   return (
-    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-range-input-container">
+    <FieldContainer $size={size} $noMarginBottom={noMarginBottom} className="ds-date-picker-input-container">
       {errorMessage != null ? <FieldErrorBar /> : null}
       <div style={{ marginLeft: errorMessage != null ? "19px" : "0px" }}>
         {label != null ? (
@@ -139,33 +96,18 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
           </FieldErrorMessage>
         ) : null}
         <StyledPickerWrapper $size={size} data-invalid={errorMessage != null ? "" : undefined}>
-          <Global styles={calendarGlobalStyles} />
+          <Global styles={calendarBaseGlobalStyles} />
           <DatePicker.RootProvider value={picker}>
             <DatePicker.Control
               onClick={() => !disabled && picker.setOpen(true)}
               style={{ cursor: disabled ? "not-allowed" : "pointer" }}
             >
               <CalendarIcon />
-              <div className="flex justify-center">
-                <DatePicker.Input index={0} placeholder={dateFormat} />
-              </div>
-
-              <span
-                className={classNames("text-14-light text-theme-neutral-800", {
-                  "!text-theme-neutral-500": !dates[0] && !dates[1]
-                })}
-              >
-                —
-              </span>
-
-              <div className="flex justify-center">
-                <DatePicker.Input index={1} placeholder={dateFormat} />
-              </div>
+              <DatePicker.Input index={0} placeholder={dateFormat} />
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
                 <DatePicker.Content>
-                  <DateRangeInputs onClearDate={handleClearDate} preservedRef={preservedRef} dateFormat={dateFormat} />
                   <DayView />
                   <MonthView />
                   <YearView />
@@ -179,4 +121,4 @@ export const DateRangeInput: FC<DateRangeInputProps> = ({
   );
 };
 
-export default DateRangeInput;
+export default DatePickerInput;
