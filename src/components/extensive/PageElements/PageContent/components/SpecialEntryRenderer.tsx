@@ -1,16 +1,20 @@
+import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import AdditionalDocumentationSection from "./AdditionalDocumentationSection";
+import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import PhotosAndVideosSection from "./PhotosAndVideosSection";
 import { PlantTableEntryRenderer } from "./PlantTableEntryRenderer";
 
 export const SPECIAL_ENTRY_TITLES = new Set([
   "Photos and videos",
   "Additional Documentation",
-  "If you have any additional documentation on your site you would like to share, please add it below."
+  "If you have any additional documentation on your site you would like to share, please add it below.",
+  "Additional Information",
+  "Tree Species - Additional Information"
 ]);
 
 type SpecialEntryRendererProps = {
@@ -32,6 +36,18 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
       return null;
     }
     return <PlantTableEntryRenderer rawValue={{ props: { tableType: "noCount", plants } }} />;
+  }
+
+  if (entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information") {
+    return (
+      <Flex direction="column" gap={1}>
+        <Text className="flex items-center gap-1 leading-normal" textStyle="400" color="neutral.700">
+          {entry.title}
+        </Text>
+        <div className="my-2 h-px w-full bg-theme-neutral-300" />
+        <EntryDefaultValueRenderer entry={entry} />
+      </Flex>
+    );
   }
 
   return <AdditionalDocumentationSection value={value} entityName={entityName} entityUUID={entityUUID} />;

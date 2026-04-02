@@ -1,14 +1,11 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import classNames from "classnames";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 
-import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
-import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
 import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -22,7 +19,7 @@ import AccordionHeader from "@/redesignComponents/containers/Accordion/Accordion
 import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
-import { PlantTableEntryRenderer } from "./PlantTableEntryRenderer";
+import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
@@ -42,30 +39,6 @@ export type SharedDetailsProps = {
   updateRequestStatus?: string | null;
   stepIndex: number;
   entity: ProjectFullDto | SiteFullDto;
-};
-
-type EntryValueRendererProps = {
-  entry: FormEntry;
-};
-
-const EntryValueRenderer = ({ entry }: EntryValueRendererProps) => {
-  const rawValue = entry.value ?? "-";
-
-  if (typeof rawValue === "string" || typeof rawValue === "number") {
-    return (
-      <Text textStyle="400" color="neutral.900" dangerouslySetInnerHTML={{ __html: formatEntryValue(rawValue) }} />
-    );
-  }
-
-  if (rawValue.props.tableType === "noCount" || rawValue.props.tableType === "noGoal") {
-    return <PlantTableEntryRenderer rawValue={rawValue} />;
-  }
-
-  return (
-    <Text textStyle="400" color="neutral.900">
-      {formatEntryValue(rawValue)}
-    </Text>
-  );
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -132,9 +105,6 @@ const SharedDetails: FC<SharedDetailsProps> = ({
     >
       <Flex flexDirection="column" gap={3}>
         {entries.map((entry, index) => {
-          const isAdditionalInformation =
-            entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information";
-
           const projectStageSection = stepIndex === 0 && index === 0 && entityName === "projects" && (
             <Flex direction="column" gap={1}>
               <Text textStyle="300-bold" color="primary.900">
@@ -173,18 +143,10 @@ const SharedDetails: FC<SharedDetailsProps> = ({
           return (
             <Fragment key={`${step.id}-${entry.title}-${index}`}>
               <Flex direction="column" gap={1}>
-                <Text
-                  className="flex items-center gap-1 leading-normal"
-                  textStyle={isAdditionalInformation ? "400" : "300-bold"}
-                  color={isAdditionalInformation ? "neutral.700" : "primary.900"}
-                >
-                  {entry.title}
-                  {!isAdditionalInformation && ":"}
+                <Text className="flex items-center gap-1 leading-normal" textStyle="300-bold" color="primary.900">
+                  {entry.title}:
                 </Text>
-                <div
-                  className={classNames("my-2 h-px w-full bg-theme-neutral-300", !isAdditionalInformation && "hidden")}
-                />
-                <EntryValueRenderer entry={entry} />
+                <EntryDefaultValueRenderer entry={entry} />
               </Flex>
               {projectStageSection}
             </Fragment>

@@ -97,3 +97,5 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
 
   return null;
 };
+
+export default PlantTableEntryRenderer;
