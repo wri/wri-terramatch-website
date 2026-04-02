@@ -79,7 +79,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       }
     >
       <List
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-3"
         items={entries}
         render={entry => {
           if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "treeSpecies") {
@@ -87,11 +87,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
           }
           return (
             <>
-              <div
-                className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-                  "w-full flex-col": isTrackingType(entry.value?.props?.type)
-                })}
-              >
+              <div className={classNames("flex flex-col items-start gap-1 transition-all delay-300 duration-300")}>
                 <Text textStyle="300-bold" className=" flex-1" color="primary.900">
                   {entry.title}
                 </Text>
