@@ -13,6 +13,7 @@ import { useModalContext } from "@/context/modal.provider";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { parseV3ValidationData } from "@/helpers/polygonValidation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { AssistedNaturalRegenIcon } from "@/redesignComponents/foundations/Icons";
 import {
   COMPLETED_DATA_CRITERIA_ID,
   ESTIMATED_AREA_CRITERIA_ID,
@@ -43,6 +44,7 @@ export interface MapMenuPanelItemProps extends DetailedHTMLProps<HTMLAttributes<
   isCollapsed?: boolean;
   validationStatus?: string;
   isAdmin?: boolean;
+  anrMonitoringPlotsEligible?: boolean;
 }
 
 const MapMenuPanelItem = ({
@@ -61,6 +63,7 @@ const MapMenuPanelItem = ({
   isCollapsed,
   validationStatus,
   isAdmin,
+  anrMonitoringPlotsEligible = false,
   ...props
 }: MapMenuPanelItemProps) => {
   let imageStatus = `IC_${status.toUpperCase().replace(/-/g, "_")}`;
@@ -208,7 +211,21 @@ const MapMenuPanelItem = ({
         </Text>
       ),
       onClick: () => openFormModalHandlerConfirm()
-    }
+    },
+    ...(anrMonitoringPlotsEligible
+      ? [
+          {
+            id: "6",
+            render: () => (
+              <Text variant="text-14-semibold" className="flex items-center">
+                <AssistedNaturalRegenIcon className="h-4 w-4 lg:h-5 lg:w-5" />
+                &nbsp; {t("ANR Monitoring Plots")}
+              </Text>
+            ),
+            onClick: () => setClickedButton("anrMonitoringPlots")
+          }
+        ]
+      : [])
   ];
 
   return (

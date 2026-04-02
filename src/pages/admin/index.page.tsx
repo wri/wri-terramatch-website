@@ -37,7 +37,7 @@ const AdminPanel: FC = () => {
               edit={modules.user.Edit}
               create={modules.user.Create}
               icon={() => <Icon className="h-8 w-8" name={IconNames.USERS} />}
-              recordRepresentation={record => `${record?.first_name} ${record?.last_name}`}
+              recordRepresentation={record => `${record?.firstName} ${record?.lastName}`}
             />
             <Resource
               name={modules.organisation.ResourceName}

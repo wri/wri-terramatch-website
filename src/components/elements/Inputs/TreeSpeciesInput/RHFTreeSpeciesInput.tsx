@@ -31,6 +31,9 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
   const { formHook, collection } = props;
 
   const value = formHook.watch(props.name);
+  const defaultValues = formHook.formState.defaultValues;
+  const formDefaultIncludesFieldKey =
+    defaultValues != null && Object.prototype.hasOwnProperty.call(defaultValues, props.name);
 
   const clearErrors = useCallback(() => {
     formHook.clearErrors(props.name);
@@ -43,6 +46,7 @@ const RHFTreeSpeciesInput = (props: PropsWithChildren<RHFTreeSpeciesInputProps>)
       buttonCaptionSuffix={t("Species")}
       withPreviousCounts={true}
       useTaxonomicBackbone={true}
+      formDefaultIncludesFieldKey={formDefaultIncludesFieldKey}
       value={value ?? []}
       onChange={onChange}
       collection={collection}

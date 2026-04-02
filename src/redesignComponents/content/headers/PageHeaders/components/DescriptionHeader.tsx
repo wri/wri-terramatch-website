@@ -1,31 +1,32 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
-import { FC, useCallback } from "react";
+import classNames from "classnames";
+import { FC } from "react";
 
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ChevronRightIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { useClampedText } from "../hooks/useClampedText";
 
-export interface ProjectDescriptionProps {
+export interface DescriptionHeaderProps {
   description: string;
-  handleEdit: () => void;
+  handleEdit?: () => void;
   backgroundColor?: string;
   downloadButtonProps?: IButtonProps;
+  maxLines?: number;
+  readMoreOnClick?: () => void;
 }
 
-const ProjectDescription: FC<ProjectDescriptionProps> = ({
+const DescriptionHeader: FC<DescriptionHeaderProps> = ({
   description,
   handleEdit,
   backgroundColor = "secondary.neutral",
-  downloadButtonProps = null
+  downloadButtonProps = null,
+  maxLines = 3,
+  readMoreOnClick
 }) => {
   const t = useT();
-  const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description);
-
-  const handleToggleExpand = useCallback(() => {
-    toggleExpand();
-  }, [toggleExpand]);
+  const { descriptionRef, isClamped, isExpanded, toggleExpand } = useClampedText(description, maxLines);
 
   return (
     <>
@@ -38,15 +39,15 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({
             marginBottom: 0,
             overflow: "hidden",
             textOverflow: "ellipsis",
-            display: isExpanded ? "block" : "-webkit-box",
-            WebkitLineClamp: isExpanded ? undefined : 3,
+            display: isExpanded ? "contents" : "-webkit-box",
+            WebkitLineClamp: isExpanded ? undefined : maxLines,
             WebkitBoxOrient: isExpanded ? undefined : "vertical",
-            lineClamp: isExpanded ? undefined : 3
+            lineClamp: isExpanded ? undefined : maxLines
           }}
         >
           {description}
         </Text>
-        {isClamped && !isExpanded && (
+        {isClamped && !isExpanded ? (
           <Text
             textStyle="300"
             color="neutral.900"
@@ -63,34 +64,39 @@ const ProjectDescription: FC<ProjectDescriptionProps> = ({
             }}
           >
             {"..."}
-            <Button variant="borderless" size="small" rightIcon={<ChevronRightIcon />} onClick={handleToggleExpand}>
+            <Button
+              variant="borderless"
+              size="small"
+              rightIcon={<ChevronRightIcon className={classNames({ "rotate-90": !readMoreOnClick })} />}
+              onClick={readMoreOnClick ?? toggleExpand}
+            >
               {t("Read More")}
             </Button>
           </Text>
-        )}
-        {isClamped && isExpanded && (
+        ) : null}
+        {isExpanded ? (
           <Button
             variant="borderless"
             size="small"
-            onClick={handleToggleExpand}
+            onClick={toggleExpand}
+            rightIcon={<ChevronRightIcon className={classNames({ "-rotate-90": !readMoreOnClick })} />}
             style={{
               display: "inline-flex",
-              lineHeight: "20px",
-              marginTop: "4px"
+              lineHeight: "20px"
             }}
           >
             {t("Read Less")}
           </Button>
-        )}
+        ) : null}
       </Box>
       <div className="flex w-fit gap-2">
         <Button variant="secondary" size="small" leftIcon={<EditIcon />} className="w-auto" onClick={handleEdit}>
           {t("Edit")}
         </Button>
-        {downloadButtonProps !== null && <Button {...downloadButtonProps} />}
+        {downloadButtonProps != null ? <Button {...downloadButtonProps} /> : null}
       </div>
     </>
   );
 };
 
-export default ProjectDescription;
+export default DescriptionHeader;

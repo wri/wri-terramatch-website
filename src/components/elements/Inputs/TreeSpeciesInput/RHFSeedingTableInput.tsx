@@ -34,6 +34,9 @@ const RHFSeedingTableInput: FC<PropsWithChildren<RHFSeedingTableInputProps>> = p
   const { formHook } = props;
 
   const value = formHook.watch(props.name);
+  const defaultValues = formHook.formState.defaultValues;
+  const formDefaultIncludesFieldKey =
+    defaultValues != null && Object.prototype.hasOwnProperty.call(defaultValues, props.name);
 
   const clearErrors = useCallback(() => {
     formHook.clearErrors(props.name);
@@ -49,6 +52,7 @@ const RHFSeedingTableInput: FC<PropsWithChildren<RHFSeedingTableInputProps>> = p
       buttonCaptionSuffix={t("Species or mix")}
       withPreviousCounts={true}
       useTaxonomicBackbone={false}
+      formDefaultIncludesFieldKey={formDefaultIncludesFieldKey}
       value={value ?? []}
       onChange={onChange}
       collection={"seeds"}

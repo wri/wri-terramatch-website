@@ -1,12 +1,10 @@
 import { Stack } from "@mui/material";
 import {
-  BooleanField,
   Datagrid,
   DateField,
   EditButton,
   FunctionField,
   List,
-  ReferenceField,
   SearchInput,
   SelectField,
   SelectInput,
@@ -22,9 +20,8 @@ import Menu from "@/components/elements/Menu/Menu";
 import { MENU_PLACEMENT_BOTTOM_LEFT } from "@/components/elements/Menu/MenuVariant";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
-import { V2AdminUserRead } from "@/generated/apiSchemas";
+import { UserDto } from "@/generated/v3/userService/userServiceSchemas";
 
-import modules from "../..";
 import { userPrimaryRoleChoices } from "../const";
 
 const filters = [
@@ -32,7 +29,7 @@ const filters = [
   <SelectInput
     key="c"
     label="User Status"
-    source="verified"
+    source="isVerified"
     className="select-page-admin"
     choices={[
       {
@@ -66,25 +63,18 @@ const UserDataGrid = () => {
 
   return (
     <Datagrid rowClick={"show"}>
+      <TextField source="fullName" label="Name" sortBy="firstName" />
+      <TextField source="organisationName" label="Organization" />
+      <TextField source="emailAddress" label="Email" />
       <FunctionField
-        label="Name"
-        source="first_name"
-        render={(record: V2AdminUserRead) => `${record?.first_name || ""} ${record?.last_name || ""}`}
+        source="emailAddressVerifiedAt"
+        label="Verified"
+        render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
+        sortBy="emailAddressVerifiedAt"
       />
-      <ReferenceField
-        source="organisation.uuid"
-        label="Organization"
-        reference={modules.organisation.ResourceName}
-        link="show"
-        sortBy="organisation_name"
-      >
-        <TextField source="name" />
-      </ReferenceField>
-      <TextField source="email_address" label="Email" />
-      <BooleanField source="verified" label="Verified" sortBy="email_address_verified_at" />
-      <SelectField source="role" label="Type" choices={userPrimaryRoleChoices} />
-      <DateField source="last_logged_in_at" label="Last Login" locales="en-GB" />
-      <DateField source="created_at" label="Date Added" locales="en-GB" />
+      <SelectField source="primaryRole" label="Type" choices={userPrimaryRoleChoices} sortable={false} />
+      <DateField source="lastLoggedInAt" label="Last Login" locales="en-GB" />
+      <DateField source="createdAt" label="Date Added" locales="en-GB" />
       <FunctionField
         label="Actions"
         render={(record: any) => {

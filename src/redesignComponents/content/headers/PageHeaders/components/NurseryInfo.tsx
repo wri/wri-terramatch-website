@@ -6,6 +6,7 @@ import { FC, useCallback, useMemo } from "react";
 import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
 import { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -14,7 +15,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { DownloadIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
-import ProjectDescription from "./ProjectDescription";
+import DescriptionHeader from "./DescriptionHeader";
 import SeparatorDot from "./SeparatorDot";
 
 export interface NurseryInfoProps {
@@ -46,11 +47,10 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
     entityStatus: nursery.status ?? "started",
     updateRequestStatus: nursery.updateRequestStatus ?? "no-update"
   });
-  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery?.uuid, nursery?.name);
+  const { handleExport, loading: exportLoader } = useGetExportEntityHandler("nurseries", nursery.uuid, nursery.name);
 
   const needMoreInformation =
-    nursery.updateRequestStatus === "needs-more-information" ||
-    (nursery.updateRequestStatus === "no-update" && nursery.status === "needs-more-information");
+    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
 
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
@@ -65,7 +65,7 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
   }, [needMoreInformation, hasUpdateRequest, t]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && statusProps) {
+    if (needMoreInformation && statusProps != null) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -93,13 +93,13 @@ const NurseryInfo: FC<NurseryInfoProps> = ({
           {projectName}
         </Button>
         <SeparatorDot />
-        <Button variant="borderless" size="small" className="-mr-2" onClick={() => router.push(`/my-projects`)}>
+        <Button variant="borderless" size="small" className="-ml-2" onClick={() => router.push(`/my-projects`)}>
           {organization}
         </Button>
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription
+        <DescriptionHeader
           description={description}
           handleEdit={handleEditClick}
           backgroundColor="neutral.100"

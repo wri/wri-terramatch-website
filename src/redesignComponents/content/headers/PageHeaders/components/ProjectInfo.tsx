@@ -1,10 +1,15 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useCallback, useMemo } from "react";
 import Twemoji from "react-twemoji";
 
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMyOrg } from "@/connections/Organisation";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -13,7 +18,7 @@ import { ProgressTag, ProgressTagProps } from "@/redesignComponents/actions/Tags
 import { ChevronRightIcon, DownloadIcon } from "@/redesignComponents/foundations/Icons";
 
 import DateRange from "./DateRange";
-import ProjectDescription from "./ProjectDescription";
+import DescriptionHeader from "./DescriptionHeader";
 import SeparatorDot from "./SeparatorDot";
 
 export interface ProjectInfoProps {
@@ -40,6 +45,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   project
 }) => {
   const t = useT();
+  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -49,6 +55,33 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("projects", project.uuid, project.name);
   const [, myOrg] = useMyOrg();
   const router = useRouter();
+
+  const handleOrganizationNav = useCallback(() => {
+    const orgId = myOrg?.organisationId;
+    router.push(orgId != null ? `/organization/${orgId}` : "/");
+  }, [router, myOrg?.organisationId]);
+
+  const needMoreInformation =
+    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
+  const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps!}
+          feedback={project.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="projects"
+          entityUuid={project.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit]);
+
   return (
     <Box gap={2} className="flex flex-col">
       <Text
@@ -61,12 +94,7 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
         {title} <ProgressTag {...tag} />
       </Text>
       <Text textStyle="400" color="neutral.900" className="-ml-[8px] flex items-center gap-2">
-        <Button
-          variant="borderless"
-          size="small"
-          className="-mr-2"
-          onClick={() => router.push(myOrg?.organisationId ? `/organization/${myOrg?.organisationId}` : "/")}
-        >
+        <Button variant="borderless" size="small" className="-mr-2" onClick={handleOrganizationNav}>
           {organization}
         </Button>
         <SeparatorDot />
@@ -77,9 +105,9 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
       </Text>
       <DateRange startDate={startDate} endDate={endDate} />
       {description != null ? (
-        <ProjectDescription
+        <DescriptionHeader
           description={description}
-          handleEdit={handleEdit}
+          handleEdit={handleEditClick}
           downloadButtonProps={{
             variant: "secondary",
             size: "small",
@@ -88,11 +116,12 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
             loading: exportLoader,
             children: t("Download Project Files")
           }}
+          readMoreOnClick={() => router.push(`/project/${project.uuid}?tab=details`)}
         />
       ) : (
         <div className="w-fit">
           <Button
-            onClick={() => handleEdit()}
+            onClick={handleEditClick}
             variant="secondary"
             size="small"
             rightIcon={<ChevronRightIcon />}

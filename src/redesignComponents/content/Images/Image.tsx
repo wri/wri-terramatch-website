@@ -1,11 +1,14 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Image from "next/image";
-import { DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
+import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useState } from "react";
 
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
-import { EditIcon, PhotoAddIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
+import { EditIcon, PhotoAddIcon, PlayCircleIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+
+export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   src?: string;
   alt?: string;
@@ -15,7 +18,19 @@ export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDiv
   defaultAlt?: string;
   classNamesHover?: string;
   isAdd?: boolean;
+  hoverContent?: React.ReactNode;
   onClickEdit?: () => void;
+  onClickAdd?: () => void;
+  menuItems?: {
+    label: string;
+    value: string;
+    startIcon?: React.ReactNode;
+    onClick?: () => void;
+  }[];
+  menuLabel?: string;
+  style?: CSSProperties;
+  type?: MediaType;
+  classNamesVideoIcon?: string;
 }
 
 const BaseImage: FC<BaseImageProps> = ({
@@ -27,18 +42,60 @@ const BaseImage: FC<BaseImageProps> = ({
   defaultAlt = "Image",
   classNamesHover,
   isAdd = false,
+  hoverContent,
   onClickEdit,
+  onClickAdd,
+  menuItems,
+  menuLabel,
+  style,
+  type = "image",
+  classNamesVideoIcon,
   ...rest
 }) => {
   const t = useT();
   const [loadError, setLoadError] = useState(false);
-
   useEffect(() => {
     setLoadError(false);
   }, [src]);
 
+  const isVideo = type === "video";
   const showNotAvailable = src == null || loadError;
 
+  const hoverContentComponent = (
+    <div
+      className={classNames(
+        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        borderRadius
+      )}
+      role="button"
+      tabIndex={0}
+      onClick={onClickEdit}
+    >
+      <div className={classNamesHover} />
+      <Text variant="text-16-bold" className="flex items-center gap-1 text-white" onClick={onClickEdit}>
+        {hoverContent ? (
+          hoverContent
+        ) : (
+          <>
+            <EditIcon className="h-4 w-4" />
+            {t("Edit")}
+          </>
+        )}
+      </Text>
+    </div>
+  );
+
+  const videoComponent = (
+    <div
+      className={classNames(
+        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-[#3D3B3B80] duration-200 group-hover:opacity-0",
+        isVideo && "bg-[#3D3B3B80]",
+        borderRadius
+      )}
+    >
+      {isVideo && <PlayCircleIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
+    </div>
+  );
   return (
     <div
       {...rest}
@@ -61,25 +118,40 @@ const BaseImage: FC<BaseImageProps> = ({
             )}
           >
             <PhotoAddIcon className="h-6 w-6" />
-            <Button variant="borderless" size="small" onClick={onClickEdit}>
-              {t("Add Image")}
-            </Button>
+            {onClickAdd && (
+              <Button onClick={onClickAdd} variant="borderless" size="small">
+                {t("Add Image")}
+              </Button>
+            )}
+            {menuItems && <MenuCustom label={menuLabel ?? "Add Image"} items={menuItems} />}
           </div>
         ) : (
           <div
-            role="button"
-            tabIndex={0}
-            onClick={onClickEdit}
-            className={classNames("flex h-full w-full items-center justify-center bg-theme-neutral-300", borderRadius)}
+            className={classNames(
+              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
+              borderRadius
+            )}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
               <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
-              <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
-                {t("Image unavailable")}
-              </Text>
+              {size >= 80 && (
+                <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+                  {t("Image unavailable")}
+                </Text>
+              )}
             </div>
+            {onClickEdit && hoverContentComponent}
           </div>
         )
+      ) : isVideo ? (
+        <>
+          <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
+            <video src={src!} className="h-full w-full object-cover" muted onError={() => setLoadError(true)} />
+          </div>
+
+          {isVideo && videoComponent}
+          {onClickEdit && hoverContentComponent}
+        </>
       ) : (
         <>
           <div className={classNames("relative h-[calc(100%-4px)] w-[calc(100%-4px)] overflow-hidden", borderRadius)}>
@@ -89,21 +161,11 @@ const BaseImage: FC<BaseImageProps> = ({
               fill
               className="object-cover"
               sizes={`${size}px`}
+              style={style}
               onError={() => setLoadError(true)}
             />
           </div>
-          <div
-            className={classNames(
-              "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
-              borderRadius
-            )}
-          >
-            <div className={classNamesHover} />
-            <Text variant="text-16-bold" className="flex items-center gap-1 text-white">
-              <EditIcon className="h-4 w-4" />
-              {t("Edit")}
-            </Text>
-          </div>
+          {onClickEdit && hoverContentComponent}
         </>
       )}
     </div>

@@ -9,6 +9,19 @@ import { getAnswer, treeSpeciesEntryValue } from "@/components/extensive/WizardF
 import { isNotNull } from "@/utils/array";
 import { addValidationWith } from "@/utils/yup";
 
+function resolveTreeSpeciesFormCollection(
+  collection: string | null | undefined,
+  linkedFieldKey: string | null | undefined
+): string {
+  if (collection != null && String(collection).trim() !== "") {
+    return collection;
+  }
+  if (linkedFieldKey === "site-rep-rel-anr-tree-species") {
+    return "anr";
+  }
+  return "";
+}
+
 export const TreeSpeciesField: FormFieldFactory = {
   addValidation: addValidationWith(({ additionalProps, validation }) => {
     const validator = yup.array(
@@ -24,15 +37,22 @@ export const TreeSpeciesField: FormFieldFactory = {
     return validation?.required === true ? validator.min(1) : validator;
   }),
 
-  renderInput: ({ additionalProps, collection, model }, sharedProps) => (
+  renderInput: ({ additionalProps, collection, linkedFieldKey, model }, sharedProps) => (
     <RHFTreeSpeciesInput
       {...sharedProps}
       error={sharedProps.error}
       withNumbers={additionalProps?.with_numbers}
-      collection={collection ?? ""}
+      collection={resolveTreeSpeciesFormCollection(collection, linkedFieldKey)}
       model={model!}
     />
   ),
+
+  normalizeValue: ({ name }, formValues) => {
+    if (formValues[name] == null) {
+      return { ...formValues, [name]: [] };
+    }
+    return formValues;
+  },
 
   appendAnswers: (field, csv, formValues, fieldsProvider) => {
     const value = ((getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[]).filter(isNotNull);
@@ -53,8 +73,8 @@ export const TreeSpeciesField: FormFieldFactory = {
 
   addFormEntries: addEntryWith((field, formValues, { entity, fieldsProvider }) => {
     const value = (getAnswer(field, formValues, fieldsProvider) ?? []) as TreeSpeciesValue[];
-    const collection = value[0]?.collection;
-    return treeSpeciesEntryValue(collection, entity, field, formValues, fieldsProvider);
+    const collection = resolveTreeSpeciesFormCollection(value[0]?.collection ?? field.collection, field.linkedFieldKey);
+    return treeSpeciesEntryValue(collection || undefined, entity, field, formValues, fieldsProvider);
   }),
 
   formBuilderAdditionalOptions: ({ getSource }) => (
@@ -64,5 +84,7 @@ export const TreeSpeciesField: FormFieldFactory = {
       helperText="To allow users enter count for each tree species record."
       defaultValue={false}
     />
-  )
+  ),
+
+  formBuilderDefaults: ({ collection, formModelType }) => ({ collection, model: formModelType })
 };

@@ -1,5 +1,6 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
+import { useMemo } from "react";
 
 import Button from "@/components/elements/Button/Button";
 import GenericField from "@/components/elements/Field/GenericField";
@@ -13,12 +14,92 @@ import TreeSpeciesTable from "@/components/extensive/Tables/TreeSpeciesTable";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
 import useCollectionsTotal, { CollectionsTotalProps } from "@/components/extensive/TrackingCollapseGrid/hooks";
 import { TrackingType } from "@/components/extensive/TrackingCollapseGrid/types";
+import type { FieldDefinition } from "@/components/extensive/WizardForm/types";
+import { toFormOptions } from "@/components/extensive/WizardForm/utils";
+import { useEntityFormData } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
+import { type FormFieldsProvider, useApiFieldsProvider } from "@/context/wizardForm.provider";
 import { DemographicCollections } from "@/generated/v3/entityService/entityServiceConstants";
-import { ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
+import type { FormQuestionOptionDto, ProjectReportFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { getEntityDetailPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+
+type LandscapeProgressOverviewParams = {
+  landscapeCommunityContribution: ProjectReportFullDto["landscapeCommunityContribution"];
+  plantingCompletedLabel: string;
+  reportPlantingStatus: ProjectReportFullDto["plantingStatus"];
+  formAnswersSayPlantingCompleted?: boolean;
+};
+
+const isYesCompletedToken = (value: string | null | undefined): boolean => {
+  if (value == null) return false;
+  const n = value.trim().toLowerCase();
+  return n === "completed" || n === "yes" || n === "true";
+};
+
+const collectFieldNamesForStep = (stepId: string, fp: FormFieldsProvider): string[] => {
+  const out: string[] = [];
+  const walk = (name: string) => {
+    out.push(name);
+    fp.childNames(name).forEach(walk);
+  };
+  fp.fieldNames(stepId).forEach(walk);
+  return out;
+};
+
+const PLANTING_Q_LABEL =
+  /completed\s+planting|planting\s+completed|already\s+completed\s+planting|has\s+your\s+project\s+already\s+completed\s+planting/;
+
+const isPlantingCompletedQuestionField = (field: FieldDefinition): boolean => {
+  const key = field.linkedFieldKey?.toLowerCase() ?? "";
+  if (
+    key &&
+    ((key.includes("planting") && (key.includes("complete") || key.includes("completed"))) ||
+      (key.includes("landscape") && key.includes("planting")))
+  ) {
+    return true;
+  }
+  return PLANTING_Q_LABEL.test(field.label.toLowerCase());
+};
+
+const radioAnswerIsYesOption = (field: FieldDefinition, raw: unknown): boolean => {
+  if (field.inputType !== "radio" || field.options == null) return false;
+  if (raw == null || (typeof raw !== "string" && typeof raw !== "number" && typeof raw !== "boolean")) return false;
+  const selected = toFormOptions(field.options as FormQuestionOptionDto[]).find(o => String(o.value) === String(raw));
+  if (selected == null) return false;
+  const title = selected.title.trim().toLowerCase();
+  return title === "yes" || title.startsWith("yes ");
+};
+
+const formAnswersIndicatePlantingCompletedYes = (answers: Record<string, unknown>, fp: FormFieldsProvider): boolean => {
+  for (const stepId of fp.stepIds()) {
+    for (const fieldName of collectFieldNamesForStep(stepId, fp)) {
+      const field = fp.fieldByName(fieldName);
+      if (field == null || !isPlantingCompletedQuestionField(field)) continue;
+      const raw = answers[fieldName];
+      if (
+        (field.inputType === "radio" && radioAnswerIsYesOption(field, raw)) ||
+        ((field.inputType === "boolean" || field.inputType === "conditional") && raw === true)
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+const getLandscapeProgressOverviewValue = (params: LandscapeProgressOverviewParams): string | null => {
+  const normalized = params.landscapeCommunityContribution?.trim() ?? "";
+  if (
+    params.formAnswersSayPlantingCompleted ||
+    isYesCompletedToken(params.reportPlantingStatus) ||
+    isYesCompletedToken(normalized)
+  ) {
+    return params.plantingCompletedLabel;
+  }
+  return normalized.length > 0 ? normalized : null;
+};
 
 interface ReportOverviewTabProps {
   report: ProjectReportFullDto;
@@ -90,6 +171,30 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
   const jobs = useTotal(JOBS, report);
   const volunteers = useTotal(VOLUNTEERS, report);
   const beneficiaries = useTotal(ALL_BENEFICIARIES, report);
+  const [formDataLoaded, { data: reportFormData }] = useEntityFormData({
+    entity: "projectReports",
+    uuid: report.uuid,
+    enabled: report.uuid != null
+  });
+  const [formProviderLoaded, formFieldsProvider] = useApiFieldsProvider(reportFormData?.formUuid);
+
+  const formAnswersSayPlantingCompleted = useMemo(() => {
+    if (!formDataLoaded || !formProviderLoaded || reportFormData?.answers == null) {
+      return false;
+    }
+    return formAnswersIndicatePlantingCompletedYes(
+      reportFormData.answers as Record<string, unknown>,
+      formFieldsProvider
+    );
+  }, [formDataLoaded, formProviderLoaded, reportFormData?.answers, formFieldsProvider]);
+
+  const plantingCompletedLabel = t("Planting Completed") || "Planting Completed";
+  const landscapeProgressOverviewValue = getLandscapeProgressOverviewValue({
+    landscapeCommunityContribution: report.landscapeCommunityContribution,
+    reportPlantingStatus: report.plantingStatus,
+    formAnswersSayPlantingCompleted,
+    plantingCompletedLabel
+  });
 
   return (
     <PageBody>
@@ -97,7 +202,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
         <PageColumn>
           <PageCard title={Framework.HBF ? t("General Report Updates") : t("Reported Data")} gap={8}>
             <ContextCondition frameworksShow={[Framework.HBF]}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{landscapeProgressOverviewValue}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
               <LongTextField title={t("Climate Resilience Progress")}>{report.resilienceProgress}</LongTextField>
               <LongTextField title={t("Response to Local Priorities")}>
@@ -120,7 +225,7 @@ const ReportDataTab = ({ report, dueAt }: ReportOverviewTabProps) => {
               <LongTextField title={t("Public Narrative")}>{report.publicNarrative}</LongTextField>
             </ContextCondition>
             <ContextCondition frameworksShow={ALL_TF}>
-              <LongTextField title={t("Landscape Progress")}>{report.landscapeCommunityContribution}</LongTextField>
+              <LongTextField title={t("Landscape Progress")}>{landscapeProgressOverviewValue}</LongTextField>
               <LongTextField title={t("Community Engagement Progress")}>{report.communityProgress}</LongTextField>
               <LongTextField title={t("Community Engagement Approach")}>
                 {report.localEngagementDescription}

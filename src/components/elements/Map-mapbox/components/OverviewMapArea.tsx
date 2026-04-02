@@ -8,6 +8,7 @@ import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import { useBoundingBox } from "@/connections/BoundingBox";
 import { SupportedEntity, useMedias } from "@/connections/EntityAssociation";
 import { APPROVED, DRAFT, NEEDS_MORE_INFORMATION, SUBMITTED } from "@/constants/statuses";
+import { AnrMapOverlayProvider } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
@@ -105,12 +106,16 @@ const OverviewMapArea = ({
   }, [checkedValues, sortField, sortDirection, validFilter]);
 
   useEffect(() => {
+    if (disabledPolygonPanel) {
+      setPolygonFromMap({ isOpen: false, uuid: "" });
+      return;
+    }
     const { isOpen, uuid } = editPolygon;
     setPolygonFromMap({ isOpen, uuid });
     if (isOpen) {
       setSelectedPolygonsInCheckbox([]);
     }
-  }, [editPolygon, setSelectedPolygonsInCheckbox]);
+  }, [editPolygon, disabledPolygonPanel, setSelectedPolygonsInCheckbox]);
 
   useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
@@ -147,14 +152,14 @@ const OverviewMapArea = ({
   };
 
   return (
-    <>
+    <AnrMapOverlayProvider>
       {!disabledPolygonPanel && (
         <MapPolygonPanel
           title={type === "sites" ? t("Site Polygons") : t("Polygons")}
           items={(polygonsData ?? []) as SitePolygonLightDto[]}
           mapFunctions={mapFunctions}
           polygonsData={polygonDataMap}
-          className="absolute z-20 flex h-full w-[23vw] flex-col rounded-l bg-[#ffffff12] p-8"
+          className="absolute z-20 flex h-full w-[29vw] flex-col rounded-l bg-[#ffffff12] p-6"
           emptyText={t("No polygons are available.")}
           checkedValues={checkedValues}
           onCheckboxChange={handleCheckboxChange}
@@ -184,8 +189,14 @@ const OverviewMapArea = ({
         showPopups
         showLegend
         siteData={true}
-        status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
-        validationType={type === "sites" ? (editPolygon.isOpen ? "individualValidation" : "bulkValidation") : ""}
+        status={type === "sites" && !disabledPolygonPanel && (stateViewPanel || editPolygon.isOpen)}
+        validationType={
+          type === "sites" && !disabledPolygonPanel
+            ? editPolygon.isOpen
+              ? "individualValidation"
+              : "bulkValidation"
+            : ""
+        }
         record={entityModel}
         className={classNames("h-[650px] flex-1 rounded-r-lg wide:h-[1225px]", className)}
         polygonsExists={polygonsData.length > 0}
@@ -197,7 +208,7 @@ const OverviewMapArea = ({
         pdView={true}
         disabledPolygonPanel={disabledPolygonPanel}
       />
-    </>
+    </AnrMapOverlayProvider>
   );
 };
 

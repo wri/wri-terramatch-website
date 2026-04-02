@@ -27,18 +27,6 @@ const AuditLogSiteTabSelection: FC<AuditLogSiteTabSelectionProps> = ({
   const t = useT();
   const tabNames = useMemo(() => {
     const doesNotHaveNurseries = framework === null || ["ppc", "hbf"].includes(framework);
-    if (entityLevel == AuditLogButtonStates.SITE_REPORT) {
-      return [
-        { index: 4, name: t("Project Report") },
-        { index: 5, name: t("Site Report") }
-      ];
-    }
-    if (entityLevel == AuditLogButtonStates.NURSERY_REPORT) {
-      return [
-        { index: 4, name: t("Project Report") },
-        { index: 6, name: t("Nursery Report") }
-      ];
-    }
     if (entityLevel == AuditLogButtonStates.DISTURBANCE_REPORT) {
       return [
         { index: 0, name: t("Project Status") },

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type AccordionVariant = "primary" | "secondary";
+export type AccordionVariant = "primary" | "secondary" | "borderless";
 
 export interface AccordionProps {
   children: ReactNode;

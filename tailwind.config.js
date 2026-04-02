@@ -306,7 +306,9 @@ module.exports = {
       tabScrollLeft: 'url("/images/mask.png")',
       tabScrollRight: 'url("/images/maskRight.png")',
       mask: 'url("/images/mask.png")',
-      "image-background": 'url("/images/image-background.png")'
+      "image-background": 'url("/images/image-background.png")',
+      "map-sites-placeholder": 'url("/images/map-sites-placeholder.png")',
+      "map-project-placeholder": 'url("/images/map-project-placeholder.png")'
     }
   },
   plugins: [

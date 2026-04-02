@@ -295,10 +295,8 @@ const DataCard = ({
   const { openNotification } = useNotificationContext();
   const [exporting, setExporting] = useState<boolean>(false);
   const t = useT();
-  const totalHectaresRestoredGoal = Number(
-    record?.total_hectares_restored_goal ?? record?.totalHectaresRestoredGoal ?? 0
-  );
-  const totalHectaresRestoredSum = record?.total_hectares_restored_sum ?? record?.totalHectaresRestoredSum;
+  const totalHectaresRestoredGoal = record?.totalHectaresRestoredGoal ?? 0;
+  const totalHectaresRestoredSum = record?.totalHectaresRestoredSum ?? 0;
   const landUseData = filteredPolygonsIndicator
     ? parsePolygonsIndicatorDataForLandUse(filteredPolygonsIndicator, totalHectaresRestoredGoal)
     : DEFAULT_POLYGONS_DATA;

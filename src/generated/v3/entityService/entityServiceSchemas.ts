@@ -149,6 +149,7 @@ export type MediaDto = {
   photographer: string | null;
   createdByUserName: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type ImpactStoryLightDto = {
@@ -640,6 +641,10 @@ export type MediaRequestBulkAttributes = {
    * The profile image scale
    */
   profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestBulkData = {
@@ -678,6 +683,10 @@ export type MediaRequestAttributes = {
    * Whether the media is a cover
    */
   isCover: boolean | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaRequestData = {
@@ -718,6 +727,10 @@ export type MediaUpdateAttributes = {
    * The profile image scale
    */
   profileImageScale: number | null;
+  /**
+   * The profile image position
+   */
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type MediaData = {
@@ -1411,6 +1424,10 @@ export type ProjectFullDto = {
   incomeGeneratingActivities: string[] | null;
   seedsPlantedCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project
+   */
+  treesRegeneratingSpeciesCount: number;
   workdayCount: number;
   selfReportedWorkdayCount: number;
   combinedWorkdayCount: number;
@@ -1502,6 +1519,10 @@ export type SiteFullDto = {
   overdueSiteReportsTotal: number;
   selfReportedWorkdayCount: number;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this site
+   */
+  treesRegeneratingSpeciesCount: number;
   combinedWorkdayCount: number;
   workdayCount: number;
   ppcExternalId: number | null;
@@ -1519,6 +1540,7 @@ export type SiteFullDto = {
    */
   endDate: string | null;
   landTenures: string[] | null;
+  landTenureApproach: string | null;
   survivalRatePlanted: number | null;
   directSeedingSurvivalRate: number | null;
   aNatRegenerationTreesPerHectare: number | null;
@@ -1703,6 +1725,10 @@ export type ProjectReportFullDto = {
   seedsPlantedCount: number | null;
   treesPlantedCount: number | null;
   regeneratedTreesCount: number;
+  /**
+   * Sum of tree species amounts for collection 'anr' across approved site reports for this project report
+   */
+  treesRegeneratingSpeciesCount: number;
   topThreeSuccesses: string | null;
   challengesFaced: string | null;
   lessonsLearned: string | null;
@@ -1935,6 +1961,10 @@ export type SiteReportFullDto = {
   totalNonTreeSpeciesPlantedCount: number | null;
   totalTreeReplantingCount: number | null;
   totalTreesPlantedCount: number | null;
+  /**
+   * Sum of tree species amounts for collection 'anr' on this site report (disaggregated ANR reporting)
+   */
+  totalTreesRegeneratingSpeciesCount: number | null;
   totalSeedsPlantedCount: number | null;
   plantingStatus: string | null;
   survivalCalculation: string | null;
@@ -1978,6 +2008,7 @@ export type EmbeddedMediaDto = {
   description: string | null;
   photographer: string | null;
   profileImageScale: number | null;
+  profileImagePosition: Record<string, any> | null;
 };
 
 export type FinancialIndicatorDto = {
