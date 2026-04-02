@@ -13,7 +13,6 @@ import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -72,16 +71,6 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         image: `https://i.pravatar.cc/300?img=${index}&w=640&q=71`
       }));
   }, [associatedUsers]);
-
-  const goToContinueEditingTab = () => {
-    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
-      handleEdit();
-    } else {
-      router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
-        shallow: true
-      });
-    }
-  };
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -222,7 +211,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                             size: "small",
                             className: "!text-theme-neutral-100",
                             children: t("Please finish project set-up before adding sites."),
-                            onClick: goToContinueEditingTab
+                            onClick: () => handleEdit()
                           }
                         ]
                       }
@@ -250,7 +239,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: isProjectSetupComplete ? t("Edit") : t("Continue"),
             rightIcon: <ChevronRightIcon />,
-            onClick: goToContinueEditingTab
+            onClick: () => handleEdit()
           }}
         >
           <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>
