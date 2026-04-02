@@ -16,9 +16,10 @@ export const useTableType = (entity: SupportedEntity, collection?: string, fromP
 
     switch (collection) {
       case "non-tree":
-        return (entity === "projects" || entity === "sites") && framework === Framework.HBF
-          ? "treeCountGoal"
-          : "noGoal";
+        if (entity === "projects" && (framework === Framework.HBF || isTerrafund(framework))) {
+          return "treeCountGoal";
+        }
+        return "noGoal";
 
       case "nursery-seedling":
         return entity === "projects" || entity === "nurseryReports" || entity === "projectReports"

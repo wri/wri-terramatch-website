@@ -1540,6 +1540,7 @@ export type SiteFullDto = {
    */
   endDate: string | null;
   landTenures: string[] | null;
+  landTenureApproach: string | null;
   survivalRatePlanted: number | null;
   directSeedingSurvivalRate: number | null;
   aNatRegenerationTreesPerHectare: number | null;
@@ -2686,6 +2687,8 @@ export type TrackingDto = {
     | "training-beneficiaries"
     | "indirect-beneficiaries"
     | "associates"
+    | "elp-beneficiaries"
+    | "livelihood-activities"
     | "hectares-goal"
     | "hectares-historical"
     | "trees-goal"
@@ -2903,6 +2906,8 @@ export type LinkedFieldDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   optionListKey: string | null;
@@ -3084,6 +3089,8 @@ export type FormQuestionDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;
@@ -3238,6 +3245,8 @@ export type StoreFormQuestionAttributes = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;

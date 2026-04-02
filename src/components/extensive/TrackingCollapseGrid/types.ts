@@ -50,7 +50,9 @@ export const DEMOGRAPHIC_TYPES = [
   "allBeneficiaries",
   "trainingBeneficiaries",
   "indirectBeneficiaries",
-  "associates"
+  "associates",
+  "elpBeneficiaries",
+  "livelihoodActivities"
 ] as const;
 export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
 export const isDemographicType = (value: unknown): value is DemographicType =>
@@ -115,6 +117,16 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
     sectionLabel: "Total",
     rowLabelSingular: "Associate",
     rowLabelPlural: "Associates"
+  },
+  elpBeneficiaries: {
+    sectionLabel: "Total ELP",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  livelihoodActivities: {
+    sectionLabel: "Total Livelihood Activities",
+    rowLabelSingular: "Activity",
+    rowLabelPlural: "Activities"
   },
   treesHistorical: {
     sectionLabel: "Total",
@@ -227,6 +239,19 @@ const TRADITIONAL_COMMUNITIES: Dictionary<string> = {
   member: "Member",
   "non-member": "Non-member",
   unknown: "Unknown"
+};
+
+const LIVELIHOODS: Dictionary<string> = {
+  "oil-processing": "Oil Processing from Tree Crops",
+  "soil-water-conservation": "Soil and Water Conservation Practices",
+  "small-animals": "Small Animal Farming",
+  "farmer-field-schools": "Farmer Field Schools",
+  "home-gardens": "Home Gardens",
+  cookstoves: "Energy-saving Cookstoves",
+  "fruits-vegetables": "Non-tree Fruit and Vegetable Farming",
+  "cover-crops": "Cover Crops, Fodder Crops & Intercropping",
+  "savings-loans": "Village Savings & Loans Associations or Local Cooperatives",
+  beekeeping: "Beekeeping & Apiary Management"
 };
 
 type TypeMapValue = {
@@ -385,6 +410,14 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
+const LIVELIHOODS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  livelihoods: {
+    title: "Livelihood",
+    typeMap: LIVELIHOODS,
+    balanced: true
+  }
+};
+
 const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
   if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
     switch (framework) {
@@ -407,6 +440,8 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
         default:
           return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
       }
+    } else if (type === "elpBeneficiaries") {
+      return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
     } else {
       switch (framework) {
         case Framework.HBF:
@@ -418,6 +453,8 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
           return BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
       }
     }
+  } else if (type === "livelihoodActivities") {
+    return LIVELIHOODS_TYPE_MAP;
   } else {
     switch (framework) {
       case Framework.HBF:

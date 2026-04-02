@@ -97,6 +97,12 @@ const useGetTrackingTitle = (type: TrackingType, collection: string) => {
       associates: {
         all: t("All Associates")
       },
+      elpBeneficiaries: {
+        elp: t("ELP Beneficiaries")
+      },
+      livelihoodActivities: {
+        all: t("Livelihood Activity")
+      },
       hectaresGoal: {
         all: t("Hectares Goal")
       },
