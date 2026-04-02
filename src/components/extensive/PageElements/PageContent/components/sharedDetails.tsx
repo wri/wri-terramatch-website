@@ -22,7 +22,8 @@ import AccordionHeader from "@/redesignComponents/containers/Accordion/Accordion
 import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
-import SpecialEntryRenderer, { PlantTableEntryRenderer, SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
+import { PlantTableEntryRenderer } from "./PlantTableEntryRenderer";
+import SpecialEntryRenderer, { SPECIAL_ENTRY_TITLES } from "./SpecialEntryRenderer";
 
 export { getFieldsRequiringAttentionCount, plantsToNoCountRows };
 
