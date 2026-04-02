@@ -29,7 +29,7 @@ const filters = [
   <SelectInput
     key="c"
     label="User Status"
-    source="verified"
+    source="isVerified"
     className="select-page-admin"
     choices={[
       {
@@ -63,15 +63,16 @@ const UserDataGrid = () => {
 
   return (
     <Datagrid rowClick={"show"}>
-      <TextField source="fullName" label="Name" />
+      <TextField source="fullName" label="Name" sortBy="firstName" />
       <TextField source="organisationName" label="Organization" />
       <TextField source="emailAddress" label="Email" />
       <FunctionField
         source="emailAddressVerifiedAt"
         label="Verified"
-        render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "Verified" : "Not Verified")}
+        render={(record?: UserDto) => (record?.emailAddressVerifiedAt != null ? "✓" : "x")}
+        sortBy="emailAddressVerifiedAt"
       />
-      <SelectField source="primaryRole" label="Type" choices={userPrimaryRoleChoices} />
+      <SelectField source="primaryRole" label="Type" choices={userPrimaryRoleChoices} sortable={false} />
       <DateField source="lastLoggedInAt" label="Last Login" locales="en-GB" />
       <DateField source="createdAt" label="Date Added" locales="en-GB" />
       <FunctionField

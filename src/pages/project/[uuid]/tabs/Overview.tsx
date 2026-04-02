@@ -5,15 +5,19 @@ import { useCallback, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
 import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-mapbox/utils";
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import { MapPlaceholder } from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
+import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
-import { isEntityAwaitingApproval } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import Button, { IButtonProps } from "@/redesignComponents/actions/Buttons/Button/Button";
 import TagSubmission from "@/redesignComponents/actions/Tags/TagSubmission/TagSubmission";
@@ -37,6 +41,7 @@ interface ProjectOverviewTabProps {
 const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
+  const { openModal } = useModalContext();
   const { framework } = useFrameworkContext();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
@@ -73,15 +78,26 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
       }));
   }, [associatedUsers]);
 
-  const goToContinueEditingTab = () => {
-    if (isEntityAwaitingApproval(project?.status, project?.updateRequestStatus)) {
-      handleEdit();
+  const needMoreInformation =
+    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
+  const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
+
+  const handleEditClick = useCallback(() => {
+    if (needMoreInformation) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps!}
+          feedback={project.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="projects"
+          entityUuid={project.uuid}
+        />
+      );
     } else {
-      router.push(`/entity/projects/edit/${project.uuid}`, undefined, {
-        shallow: true
-      });
+      handleEdit();
     }
-  };
+  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit]);
 
   const goToTab = useCallback(
     (tab: string) => {
@@ -212,7 +228,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
               <MapPlaceholder
                 icon={<SiteIcon boxSize={6} color="neutral.100" />}
                 title={t("Siting Strategy not defined yet.")}
-                className="bg-map-project-placeholder"
+                className="z-10 bg-map-project-placeholder"
                 buttonGroupProps={
                   !isProjectSetupComplete
                     ? {
@@ -222,7 +238,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
                             size: "small",
                             className: "!text-theme-neutral-100",
                             children: t("Please finish project set-up before adding sites."),
-                            onClick: goToContinueEditingTab
+                            onClick: handleEditClick
                           }
                         ]
                       }
@@ -250,7 +266,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             size: "small",
             children: isProjectSetupComplete ? t("Edit") : t("Continue"),
             rightIcon: <ChevronRightIcon />,
-            onClick: goToContinueEditingTab
+            onClick: handleEditClick
           }}
         >
           <Box backgroundColor="neutral.100" padding={5} borderRadius={1}>

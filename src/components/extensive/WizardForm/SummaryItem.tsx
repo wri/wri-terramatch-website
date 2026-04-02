@@ -82,7 +82,14 @@ const SummaryItem: FC<SummaryItemProps> = ({
           onClick: handleSubmitClick,
           disabled: submitButtonDisable
         }}
-        secondaryButtonProps={undefined}
+        secondaryButtonProps={
+          entity?.model != "organisations"
+            ? {
+                children: "Save and Exit",
+                onClick: saveChanges
+              }
+            : undefined
+        }
         tertiaryButtonProps={{
           children: t("Download"),
           onClick: () => downloadAnswersCSV(fieldsProvider, formHook.getValues())

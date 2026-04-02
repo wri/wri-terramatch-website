@@ -106,12 +106,16 @@ const OverviewMapArea = ({
   }, [checkedValues, sortField, sortDirection, validFilter]);
 
   useEffect(() => {
+    if (disabledPolygonPanel) {
+      setPolygonFromMap({ isOpen: false, uuid: "" });
+      return;
+    }
     const { isOpen, uuid } = editPolygon;
     setPolygonFromMap({ isOpen, uuid });
     if (isOpen) {
       setSelectedPolygonsInCheckbox([]);
     }
-  }, [editPolygon, setSelectedPolygonsInCheckbox]);
+  }, [editPolygon, disabledPolygonPanel, setSelectedPolygonsInCheckbox]);
 
   useValueChanged(shouldRefetchPolygonData, async () => {
     if (shouldRefetchPolygonData) {
@@ -185,8 +189,14 @@ const OverviewMapArea = ({
         showPopups
         showLegend
         siteData={true}
-        status={type === "sites" && (stateViewPanel || editPolygon.isOpen)}
-        validationType={type === "sites" ? (editPolygon.isOpen ? "individualValidation" : "bulkValidation") : ""}
+        status={type === "sites" && !disabledPolygonPanel && (stateViewPanel || editPolygon.isOpen)}
+        validationType={
+          type === "sites" && !disabledPolygonPanel
+            ? editPolygon.isOpen
+              ? "individualValidation"
+              : "bulkValidation"
+            : ""
+        }
         record={entityModel}
         className={classNames("h-[650px] flex-1 rounded-r-lg wide:h-[1225px]", className)}
         polygonsExists={polygonsData.length > 0}

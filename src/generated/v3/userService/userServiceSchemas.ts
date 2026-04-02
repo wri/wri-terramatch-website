@@ -815,10 +815,10 @@ export type UserCreateBaseAttributes = {
   firstName: string;
   lastName: string;
   emailAddress: string;
-  phoneNumber: string;
-  jobRole: string;
-  country: string;
-  program: string;
+  phoneNumber: string | null;
+  jobRole: string | null;
+  country: string | null;
+  program: string | null;
 };
 
 export type UserCreateBaseData = {
