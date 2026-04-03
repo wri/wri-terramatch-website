@@ -3,7 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Case, Default, Switch } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -12,6 +12,7 @@ import StatusPill from "@/components/elements/StatusPill/StatusPill";
 import Table from "@/components/elements/Table/Table";
 import { FilterValue } from "@/components/elements/TableFilters/TableFilter";
 import Text from "@/components/elements/Text/Text";
+import ModalConfirm from "@/components/extensive/Modal/ModalConfirm";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import PageBody from "@/components/extensive/PageElements/Body/PageBody";
 import PageCard from "@/components/extensive/PageElements/Card/PageCard";
@@ -134,15 +135,16 @@ const ReportingTaskPage = () => {
   const t = useT();
   const { format } = useDate();
   const router = useRouter();
-  const { openModal } = useModalContext();
+  const { openModal, closeModal } = useModalContext();
   const [tourEnabled, setTourEnabled] = useState(false);
   const reportingTaskUUID = router.query.reportingTaskUUID as string;
   const projectUUID = router.query.uuid as string;
 
   const [filters, setFilters] = useState<FilterValue[]>([]);
-  const [, { data: task, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids }] = useTask({
-    id: reportingTaskUUID
-  });
+  const [, { data: task, update: updateTask, projectReportUuid, siteReportUuids, nurseryReportUuids, srpReportUuids }] =
+    useTask({
+      id: reportingTaskUUID
+    });
   const [, { data: projectReport }] = useLightProjectReport({ id: projectReportUuid });
   const [, { data: siteReports }] = useLightSiteReportList({ ids: siteReportUuids });
   const [, { data: nurseryReports }] = useLightNurseryReportList({ ids: nurseryReportUuids });
@@ -348,18 +350,51 @@ const ReportingTaskPage = () => {
     }
   ];
 
+  const openBulkConfirmationModal = useCallback(
+    (reports: TaskReport[]) => {
+      if (reports.length === 0) return;
+      openModal(
+        ModalId.CONFIRMATION_MODAL,
+        <ModalConfirm
+          className="pointer-events-auto z-[99999]"
+          title={t("Confirm Bulk Nothing to Report Submission")}
+          content={
+            <div className="max-h-[140px] overflow-y-auto lg:max-h-[150px]">
+              {reports.map(report => (
+                <li key={report.uuid} className="text-12-light">
+                  {`${report.type === "site-report" ? t("Site") : t("Nursery")} Report - ${report.parentName}`}
+                </li>
+              ))}
+            </div>
+          }
+          onClose={() => closeModal(ModalId.CONFIRMATION_MODAL)}
+          onConfirm={() => {
+            updateTask?.({
+              siteReportNothingToReportUuids: reports
+                .filter(report => report.type === "site-report")
+                .map(({ uuid }) => uuid),
+              nurseryReportNothingToReportUuids: reports
+                .filter(report => report.type === "nursery-report")
+                .map(({ uuid }) => uuid)
+            });
+          }}
+        />
+      );
+    },
+    [closeModal, openModal, t, updateTask]
+  );
+
   const openBulkModal = useCallback(() => {
     openModal(
       ModalId.BULK_NOTHING_TO_REPORT,
       <BulkNothingToReportModal
         data={reports.nothingToReportEligible}
         content={t(BULK_MODAL_COPY)}
-        onSubmit={reports => {
-          console.log("submitted reports", reports);
-        }}
+        onClose={() => closeModal(ModalId.BULK_NOTHING_TO_REPORT)}
+        onSubmit={openBulkConfirmationModal}
       />
     );
-  }, [openModal, reports.nothingToReportEligible, t]);
+  }, [closeModal, openBulkConfirmationModal, openModal, reports.nothingToReportEligible, t]);
 
   return (
     projectLoaded && (

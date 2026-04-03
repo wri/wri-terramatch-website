@@ -6,14 +6,13 @@ import Checkbox from "@/components/elements/Inputs/Checkbox/Checkbox";
 import Text from "@/components/elements/Text/Text";
 import Icon, { IconNames } from "@/components/extensive/Icon/Icon";
 import { ModalProps } from "@/components/extensive/Modal/Modal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { ModalBaseSubmit } from "@/components/extensive/Modal/ModalsBases";
-import { useModalContext } from "@/context/modal.provider";
 import { TaskReport } from "@/pages/project/[uuid]/reporting-task/[reportingTaskUUID].page";
 import { isNotNull } from "@/utils/array";
 
 export type BulkNothingToReportProps = Pick<ModalProps, "content"> & {
   data: TaskReport[];
+  onClose: () => void;
   onSubmit: (reports: TaskReport[]) => void;
 };
 
@@ -45,16 +44,14 @@ const Row: FC<RowProps> = ({ report, selected, onToggle }) => {
   );
 };
 
-const BulkNothingToReportModal: FC<BulkNothingToReportProps> = props => {
-  const { content, data, onSubmit } = props;
+const BulkNothingToReportModal: FC<BulkNothingToReportProps> = ({ content, data, onClose, onSubmit }) => {
   const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
-  const { closeModal } = useModalContext();
 
   const submitAction = useCallback(() => {
-    closeModal(ModalId.BULK_NOTHING_TO_REPORT);
+    onClose();
     onSubmit(selected.map(uuid => data.find(report => report.uuid === uuid)).filter(isNotNull));
-  }, [closeModal, data, onSubmit, selected]);
+  }, [data, onClose, onSubmit, selected]);
 
   const buttons = useMemo(
     (): {
@@ -73,11 +70,11 @@ const BulkNothingToReportModal: FC<BulkNothingToReportProps> = props => {
         props: {
           className: "px-8 py-3",
           variant: "white-page-admin",
-          onClick: () => closeModal(ModalId.BULK_NOTHING_TO_REPORT)
+          onClick: onClose
         }
       }
     }),
-    [closeModal, t]
+    [onClose, t]
   );
 
   const toggleSelect = useCallback((uuid: string) => {
