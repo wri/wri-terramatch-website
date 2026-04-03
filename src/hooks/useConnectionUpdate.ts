@@ -43,3 +43,16 @@ export const useRequestSuccess = (
     }, [failureMessage, fetchFailure, onSuccess, openToast, t])
   );
 };
+
+export const useFailureToast = (
+  isFetching: boolean,
+  fetchFailure: PendingError | undefined,
+  failureMessage?: string
+) => {
+  useRequestSuccess(
+    isFetching,
+    fetchFailure,
+    useCallback(() => {}, []),
+    failureMessage
+  );
+};
