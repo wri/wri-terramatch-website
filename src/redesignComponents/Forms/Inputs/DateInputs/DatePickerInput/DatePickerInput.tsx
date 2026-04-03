@@ -107,7 +107,7 @@ export const DatePickerInput: FC<DatePickerInputProps> = ({
             </DatePicker.Control>
             <Portal>
               <DatePicker.Positioner>
-                <DatePicker.Content>
+                <DatePicker.Content className="!min-h-[325px]">
                   <DayView />
                   <MonthView />
                   <YearView />

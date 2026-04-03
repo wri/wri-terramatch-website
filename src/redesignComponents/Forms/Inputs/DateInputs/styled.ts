@@ -139,6 +139,7 @@ export const datePickerControlStyles = (size: "default" | "small" = "default") =
     flex-shrink: 0;
     color: ${getThemedColor("neutral", 700)};
     transition: color 0.15s;
+    margin-right: 0.25rem;
   }
 
   [data-part="control"]:hover > .chakra-icon {
