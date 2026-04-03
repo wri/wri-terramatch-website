@@ -38,6 +38,7 @@ import {
 } from "@/generated/v3/entityService/entityServiceSchemas";
 import { v3EntityName } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
+import BulkNothingToReportModal from "@/pages/project/[uuid]/reporting-task/BulkNothingToReportModal";
 import ReportingTaskHeader from "@/pages/project/[uuid]/reporting-task/components/ReportingTaskHeader";
 import NothingToReportModal from "@/pages/project/[uuid]/reporting-task/NothingToReportModal";
 import {
@@ -58,6 +59,9 @@ const StatusMapping: { [index: string]: Status } = {
 
 const NOTHING_TO_REPORT_DISPLAYABLE_STATUSES = ["due", "started"];
 
+const BULK_MODAL_COPY =
+  'Indicate here if any of the sites/nurseries below had no activity to report during the reporting period. You can select sites/nurseries individually, or use the "Select All" button if applicable. Be sure to press "Submit" to confirm your selection and send to your project manager for review. <br />Please note: you must report any planting, assisted natural regeneration activities, maintenance, monitoring, or nursery seedlings by filling out the reports for that site/nursery individually.';
+
 export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryReportLightDto | SrpReportLightDto) & {
   completionStatus: string;
   type: "site-report" | "nursery-report" | "project-report" | "srp-report";
@@ -67,6 +71,7 @@ export type TaskReport = (ProjectReportLightDto | SiteReportLightDto | NurseryRe
 export type TaskReports = {
   mandatory: TaskReport[];
   additional: TaskReport[];
+  nothingToReportEligible: TaskReport[];
   srpReports: TaskReport[];
   outstandingMandatoryCount: number;
   outstandingAdditionalCount: number;
@@ -155,11 +160,14 @@ const ReportingTaskPage = () => {
       return true;
     });
 
+    const nothingToReportEligible = additional.filter(shouldShowNothingToReportButton);
+
     const mandatory = projectReport == null ? [] : [mapTaskReport(format)(projectReport)];
     return {
       mandatory,
       additional,
-      srpReports: srpReports?.map(mapTaskReport(format)),
+      nothingToReportEligible,
+      srpReports: srpReports?.map(mapTaskReport(format)) ?? [],
       outstandingMandatoryCount: mandatory.filter(report => report.completion! < 100).length,
       outstandingAdditionalCount: additional.filter(report => report!.completion! < 100).length
     } as TaskReports;
@@ -340,6 +348,19 @@ const ReportingTaskPage = () => {
     }
   ];
 
+  const openBulkModal = useCallback(() => {
+    openModal(
+      ModalId.BULK_NOTHING_TO_REPORT,
+      <BulkNothingToReportModal
+        data={reports.nothingToReportEligible}
+        content={t(BULK_MODAL_COPY)}
+        onSubmit={reports => {
+          console.log("submitted reports", reports);
+        }}
+      />
+    );
+  }, [openModal, reports.nothingToReportEligible, t]);
+
   return (
     projectLoaded && (
       <FrameworkProvider frameworkKey={project?.frameworkKey}>
@@ -362,7 +383,11 @@ const ReportingTaskPage = () => {
             <PageSection>
               <PageCard
                 title={t("Additional Reports")}
-                headerChildren={<Button onClick={() => {}}>{t('Report "No Updates"')}</Button>}
+                headerChildren={
+                  <Button disabled={reports.nothingToReportEligible.length === 0} onClick={openBulkModal}>
+                    {t('Report "No Updates"')}
+                  </Button>
+                }
               >
                 <Table
                   data={reports.additional}
