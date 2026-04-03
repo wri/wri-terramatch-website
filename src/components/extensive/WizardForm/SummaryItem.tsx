@@ -25,7 +25,7 @@ type SummaryItemProps = {
   submitButtonDisable?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
-  feedbackFields?: any;
+  feedbackFields?: string[] | null;
 };
 
 const SummaryItem: FC<SummaryItemProps> = ({

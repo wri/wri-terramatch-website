@@ -55,7 +55,7 @@ export type WizardFormEntity = {
   projectName?: string | null;
   projectUuid?: string | null;
   taskUuid?: string | null;
-  feedbackFields?: string[];
+  feedbackFields?: string[] | null;
 };
 
 export interface WizardFormProps {
@@ -442,7 +442,7 @@ function WizardForm(props: WizardFormProps) {
             {entity != null && (
               <Box
                 className={classNames(
-                  "sticky top-0 z-20 bg-theme-neutral-200 pb-1",
+                  "bg-theme-neutral-200 sticky top-0 z-20 pb-1",
                   isAdmin ? "top-0" : "sm:!top-[70px]"
                 )}
               >

@@ -16,7 +16,7 @@ import { useGetFormEntries } from "./getFormEntries";
 import { FormEntry } from "./types";
 
 interface FeedbackReviewerProps {
-  feedbackFieldsOptions: string[];
+  feedbackFieldsOptions: string[] | null;
   stepIds: string[];
   values: any;
 }
@@ -62,7 +62,7 @@ const FeedbackStepSection = ({
   stepId: string;
   values: any;
   entity: any;
-  feedbackFieldsOptions: string[];
+  feedbackFieldsOptions: string[] | null;
 }) => {
   const entries = useGetFormEntries({ stepId, values: values, entity });
   // TODO: Apply feedbackFieldsOptions for validation in the Reviewer Feedback section and remove this console.log.
@@ -71,7 +71,7 @@ const FeedbackStepSection = ({
 
   return (
     <List
-      className="flex flex-col gap-4 bg-theme-warning-100 p-4"
+      className="bg-theme-warning-100 flex flex-col gap-4 p-4"
       backgroundColor="warning.100"
       items={entries}
       render={entry => <EntryRow entry={entry} />}

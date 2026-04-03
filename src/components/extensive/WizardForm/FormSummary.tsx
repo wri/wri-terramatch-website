@@ -9,7 +9,7 @@ import List from "../List/List";
 export interface FormSummaryProps {
   values: any;
   onEdit?: (stepIndex: number) => void;
-  feedbackFieldsOptions?: string[];
+  feedbackFieldsOptions?: string[] | null;
 }
 
 export type FormSummaryOptions = {
