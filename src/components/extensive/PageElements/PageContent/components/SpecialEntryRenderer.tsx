@@ -44,7 +44,7 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
         <Text className="flex items-center gap-1 leading-normal" textStyle="400" color="neutral.700">
           {entry.title}
         </Text>
-        <div className="bg-theme-neutral-300 my-2 h-px w-full" />
+        <div className="my-2 h-px w-full bg-theme-neutral-300" />
         <EntryDefaultValueRenderer entry={entry} />
       </Flex>
     );

@@ -62,7 +62,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
                     <Box
                       className={classNames(
-                        "border-theme-neutral-300 border-b py-4",
+                        "border-b border-theme-neutral-300 py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                     >
