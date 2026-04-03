@@ -7,7 +7,7 @@ import { When } from "react-if";
 import Input from "@/components/elements/Inputs/Input/Input";
 import Text from "@/components/elements/Text/Text";
 import Form from "@/components/extensive/Form/Form";
-import { PostAuthLoginError } from "@/generated/apiComponents";
+import { PendingError } from "@/store/apiSlice";
 
 import { RequestResetData } from "../index.page";
 
@@ -15,7 +15,7 @@ type RequestResetProps = {
   form: UseFormReturn<RequestResetData>;
   handleSave: (data: RequestResetData) => Promise<any>;
   loading?: boolean;
-  apiError?: PostAuthLoginError | null;
+  apiError?: PendingError | null;
   success?: boolean;
 };
 

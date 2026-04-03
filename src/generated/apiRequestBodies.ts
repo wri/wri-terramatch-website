@@ -3,48 +3,7 @@
  *
  * @version 1.0.0
  */
-export type PatchAuthChangeBody = {
-  token?: string;
-  password?: string;
-};
-
-export type PatchV2AuthVerifyBody = {
-  token?: string;
-};
-
 export type PostAuthResetBody = {
   email_address?: string;
   callback_url?: string;
-};
-
-export type Body = {
-  id?: number;
-  uuid?: string;
-  poly_name?: string;
-  /**
-   * @format date
-   */
-  plantstart?: string;
-  practice?: string;
-  target_sys?: string;
-  distr?: string;
-  num_trees?: number;
-  /**
-   * @format float
-   */
-  calc_area?: number;
-  status?: string;
-};
-
-export type PostV2FprojectPipelineBody = {
-  /**
-   * @format date
-   */
-  date?: string;
-  id?: number;
-  submitted_by?: string;
-  program?: string;
-  cohort?: string[];
-  publish_for?: string;
-  url?: string;
 };

@@ -16,7 +16,6 @@ import { loadAnrPlotGeometryGeoJson, useAnrPlotGeometry } from "@/connections/An
 import { usePolygonValidation } from "@/connections/Validation";
 import { useAnrMapOverlayOptional } from "@/context/anrMapOverlay.provider";
 import { useMapAreaContext } from "@/context/mapArea.provider";
-import { V2TerrafundCriteriaData } from "@/generated/apiSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { ValidationCriteriaDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnUnmount } from "@/hooks/useOnMount";
@@ -26,7 +25,7 @@ import { isSitePolygonEligibleForAnrMonitoringPlots } from "@/utils/sitePolygonA
 import Button from "../Button/Button";
 import Text from "../Text/Text";
 import AttributeInformation from "./AttributeInformation";
-import ChecklistInformation from "./ChecklistInformation";
+import ChecklistInformation, { CriteriaData } from "./ChecklistInformation";
 import VersionInformation from "./VersionInformation";
 
 export interface MapEditPolygonPanelProps {
@@ -71,7 +70,7 @@ const MapEditPolygonPanel = ({
     recallEntityData?.();
   };
 
-  const [criteriaData, setCriteriaData] = useState<V2TerrafundCriteriaData | null>(null);
+  const [criteriaData, setCriteriaData] = useState<CriteriaData | null>(null);
   const [plotsVisible, setPlotsVisible] = useState(true);
   const [attributePlotsVisible, setAttributePlotsVisible] = useState(true);
 
@@ -137,13 +136,13 @@ const MapEditPolygonPanel = ({
         (criteria: ValidationCriteriaDto) => criteria.criteriaId === 3 && !criteria.valid
       );
       setHasOverlaps(hasOverlapsV3);
-      const transformedData: V2TerrafundCriteriaData = {
-        polygon_id: polygonValidationData.polygonUuid,
-        criteria_list: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
-          criteria_id: criteria.criteriaId,
+      const transformedData: CriteriaData = {
+        polygonId: polygonValidationData.polygonUuid,
+        criteriaList: polygonValidationData.criteriaList.map((criteria: ValidationCriteriaDto) => ({
+          criteriaId: criteria.criteriaId,
           valid: criteria.valid ? 1 : 0,
-          latest_created_at: criteria.createdAt ?? undefined,
-          extra_info: criteria.extraInfo ?? undefined
+          latestCreatedAt: criteria.createdAt ?? undefined,
+          extraInfo: criteria.extraInfo ?? undefined
         }))
       };
 
@@ -277,7 +276,7 @@ const MapEditPolygonPanel = ({
           />
         </When>
         <When condition={tabEditPolygon === "Checklist"}>
-          <ChecklistInformation criteriaData={criteriaData ?? {}} />
+          <ChecklistInformation criteriaData={criteriaData ?? ({} as CriteriaData)} />
         </When>
         <When condition={tabEditPolygon === "Version"}>
           <VersionInformation

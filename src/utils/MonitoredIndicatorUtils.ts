@@ -1,7 +1,7 @@
 import { isEmpty } from "lodash";
 
+import { MonitoredIndicator } from "@/admin/components/ResourceTabs/MonitoredTab/hooks/useMonitoredData";
 import { Indicator } from "@/connections/SitePolygons";
-import { Indicators } from "@/generated/apiSchemas";
 import {
   IndicatorHectaresDto,
   IndicatorTreeCoverDto,
@@ -265,7 +265,7 @@ const formatDate = (dateString?: null | string | number | Date) => {
 export const transformSitePolygonsToIndicators = (
   polygons: SitePolygonLightDto[],
   indicatorSlug: Indicator
-): Indicators[] => {
+): MonitoredIndicator[] => {
   if (isEmpty(polygons)) {
     return [];
   }
@@ -279,16 +279,17 @@ export const transformSitePolygonsToIndicators = (
 
       if (indicator == null) return null;
 
-      const baseIndicator = {
-        poly_name: sitePolygon.name || undefined,
-        status: sitePolygon.status || undefined,
+      const baseIndicator: MonitoredIndicator = {
+        poly_name: sitePolygon.name ?? undefined,
+        status: sitePolygon.status ?? undefined,
         plantstart: sitePolygon.plantStart ? formatDate(sitePolygon.plantStart) : undefined,
-        site_name: sitePolygon.siteName || undefined,
-        poly_id: sitePolygon.polygonUuid || undefined,
-        site_id: sitePolygon.siteId || undefined,
+        site_name: sitePolygon.siteName ?? undefined,
+        poly_id: sitePolygon.polygonUuid ?? undefined,
+        site_id: sitePolygon.siteId ?? undefined,
+        created_at: sitePolygon.createdAt ?? undefined,
         indicator_slug: indicatorSlug,
         year_of_analysis: (indicator as { yearOfAnalysis?: number }).yearOfAnalysis
-      } as Indicators & { poly_id?: string; site_id?: string };
+      };
 
       switch (indicatorSlug) {
         case "treeCoverLoss":
@@ -443,5 +444,5 @@ export const transformSitePolygonsToIndicators = (
           return baseIndicator;
       }
     })
-    .filter((row): row is Indicators => row != null);
+    .filter((row): row is MonitoredIndicator => row != null);
 };
