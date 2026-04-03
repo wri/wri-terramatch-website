@@ -1,7 +1,7 @@
 import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { sortBy, startCase } from "lodash";
+import { sortBy } from "lodash";
 import { FC, useCallback } from "react";
 
 import TrackingRow from "@/components/extensive/TrackingCollapseGrid/TrackingRow";
@@ -31,9 +31,8 @@ const TrackingSection: FC<TrackingSectionProps> = ({
   status
 }) => {
   const t = useT();
-  const { title, rows, total } = useSectionData(domain, trackingType, entryType, entries);
+  const { title, rows, total, displayTrackingType } = useSectionData(domain, trackingType, entryType, entries);
   const { addNameLabel, typeMap } = useEntryTypeDefinition(domain, trackingType, entryType);
-  const displayTrackingType = trackingType.includes("Beneficiaries") ? "Beneficiaries" : startCase(trackingType);
 
   const onRowChange = useCallback(
     (index: number, subtype: string, amount: number, userLabel?: string) => {
