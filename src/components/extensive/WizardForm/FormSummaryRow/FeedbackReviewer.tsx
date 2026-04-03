@@ -71,8 +71,7 @@ const FeedbackStepSection = ({
 
   return (
     <List
-      className="flex flex-col gap-4 bg-theme-warning-100 p-4"
-      backgroundColor="warning.100"
+      className="bg-theme-warning-100 flex flex-col gap-4 p-4"
       items={entries}
       render={entry => <EntryRow entry={entry} />}
     />
