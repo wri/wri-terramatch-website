@@ -510,14 +510,12 @@ const TREES_GOAL: Dictionary<TypeMapValue> = {
   years: {
     title: "Years",
     typeMap: GOAL_YEARS,
-    balanced: true,
-    onlyIfPresent: ["unknown"]
+    balanced: true
   },
   strategy: {
     title: "Strategy",
     typeMap: GOAL_STRATEGY,
-    balanced: false,
-    onlyIfPresent: ["unknown"]
+    balanced: false
   }
 };
 
@@ -525,14 +523,12 @@ const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   ...TREES_GOAL,
   strategy: {
     ...TREES_GOAL.strategy,
-    balanced: true,
-    onlyIfPresent: ["unknown"]
+    balanced: true
   },
   "land-use": {
     title: "Land Use",
     typeMap: LAND_USE,
-    balanced: true,
-    onlyIfPresent: ["unknown"]
+    balanced: true
   }
 };
 
