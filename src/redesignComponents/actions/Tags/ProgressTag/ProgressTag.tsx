@@ -34,7 +34,7 @@ export function ProgressTag({ state = null, className }: ProgressTagProps) {
     >
       <Tag.Label className="flex items-center gap-2">
         {config?.icon}
-        <span className="text-nowrap text-theme-neutral-900 whitespace-nowrap text-sm font-bold">
+        <span className="text-nowrap whitespace-nowrap text-sm font-bold text-theme-neutral-900">
           {t(config.label)}
         </span>
       </Tag.Label>
