@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import SliderInput from "./SliderInput";
 
 const meta = {
-  title: "Forms/Inputs/Slider Input",
+  title: "Redesign Components/Forms/Input/Slider Input",
   component: SliderInput,
   parameters: {
     layout: "centered"
