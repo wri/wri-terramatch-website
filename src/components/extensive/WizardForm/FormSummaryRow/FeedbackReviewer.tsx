@@ -1,9 +1,9 @@
-import { Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import { useFormEntities } from "@/context/wizardForm.provider";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
 
@@ -12,17 +12,16 @@ import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
-import { useGetFormEntries } from "./getFormEntries";
 import { FormEntry } from "./types";
 
 interface FeedbackReviewerProps {
+  feedback?: string | null;
   feedbackFieldsOptions: string[] | null;
-  stepIds: string[];
   values: any;
 }
 
 const EntryRow = ({ entry }: { entry: FormEntry }) => {
-  if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
+  if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
     return <SpecialEntryRenderer entry={entry} />;
   }
 
@@ -39,13 +38,15 @@ const EntryRow = ({ entry }: { entry: FormEntry }) => {
             </Text>
           </Then>
           <Else>
-            <div
+            <Text
+              textStyle="400"
+              color="neutral.900"
               className={classNames("", {
                 "w-full !min-w-full": isTrackingType(entry.value?.props?.type)
               })}
             >
-              {formatEntryValue(entry.value)}
-            </div>
+              {formatEntryValue(entry.value) ?? "Answer Not Provided"}
+            </Text>
           </Else>
         </If>
       </div>
@@ -53,33 +54,22 @@ const EntryRow = ({ entry }: { entry: FormEntry }) => {
   );
 };
 
-const FeedbackStepSection = ({
-  stepId,
-  values,
-  entity,
-  feedbackFieldsOptions
-}: {
-  stepId: string;
-  values: any;
-  entity: any;
-  feedbackFieldsOptions: string[] | null;
-}) => {
-  const entries = useGetFormEntries({ stepId, values: values, entity });
-  // TODO: Apply feedbackFieldsOptions for validation in the Reviewer Feedback section and remove this console.log.
-  console.log("feedbackFieldsOptions", feedbackFieldsOptions);
+const FeedbackReviewer = ({ feedback, feedbackFieldsOptions, values }: FeedbackReviewerProps) => {
+  const fieldsProvider = useFieldsProvider();
+  const entries =
+    feedbackFieldsOptions?.reduce<FormEntry[]>((acc, fieldId) => {
+      const field = fieldsProvider.fieldByName(fieldId) ?? fieldsProvider.fieldByKey(fieldId);
+      if (field == null) return acc;
+
+      acc.push({
+        title: field.label ?? "",
+        inputType: field.inputType,
+        value: values != null && typeof values === "object" && fieldId in values ? values[fieldId] : null
+      });
+      return acc;
+    }, []) ?? [];
+
   if (entries.length === 0) return null;
-
-  return (
-    <List
-      className="flex flex-col gap-4 bg-theme-warning-100 p-4"
-      items={entries}
-      render={entry => <EntryRow entry={entry} />}
-    />
-  );
-};
-
-const FeedbackReviewer = ({ feedbackFieldsOptions, stepIds, values }: FeedbackReviewerProps) => {
-  const entities = useFormEntities();
 
   return (
     <div className="mt-6">
@@ -89,15 +79,14 @@ const FeedbackReviewer = ({ feedbackFieldsOptions, stepIds, values }: FeedbackRe
         header={<AccordionHeader title={"Feedback from Reviewer"} />}
         classNameHeader="!mb-0"
       >
-        {stepIds.map(stepId => (
-          <FeedbackStepSection
-            key={stepId}
-            stepId={stepId}
-            values={values}
-            entity={entities[0]}
-            feedbackFieldsOptions={feedbackFieldsOptions}
-          />
-        ))}
+        <Flex className="flex-col gap-4 bg-theme-warning-100 p-4">
+          {feedback != null && feedback.trim().length > 0 && (
+            <Text textStyle="400" color="neutral.900">
+              {feedback}
+            </Text>
+          )}
+          <List className="flex flex-col gap-4" items={entries} render={entry => <EntryRow entry={entry} />} />
+        </Flex>
       </Accordion>
     </div>
   );

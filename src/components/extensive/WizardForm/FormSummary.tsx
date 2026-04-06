@@ -9,6 +9,7 @@ import List from "../List/List";
 export interface FormSummaryProps {
   values: any;
   onEdit?: (stepIndex: number) => void;
+  feedback?: string | null;
   feedbackFieldsOptions?: string[] | null;
 }
 
@@ -19,14 +20,14 @@ export type FormSummaryOptions = {
 };
 
 const FormSummary = (props: FormSummaryProps) => {
-  const { feedbackFieldsOptions } = props;
+  const { feedback, feedbackFieldsOptions } = props;
   const stepIds = useFieldsProvider().stepIds();
   const hasFeedback = Array.isArray(feedbackFieldsOptions) && feedbackFieldsOptions.length > 0;
 
   return (
     <div className="space-y-6">
       {hasFeedback && (
-        <FeedbackReviewer feedbackFieldsOptions={feedbackFieldsOptions} stepIds={stepIds} values={props.values} />
+        <FeedbackReviewer feedback={feedback} feedbackFieldsOptions={feedbackFieldsOptions} values={props.values} />
       )}
       <List
         className={classNames("space-y-6", { "space-y-4": hasFeedback })}

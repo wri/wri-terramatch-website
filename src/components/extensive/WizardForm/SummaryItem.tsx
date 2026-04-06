@@ -25,6 +25,7 @@ type SummaryItemProps = {
   submitButtonDisable?: boolean;
   enableSaveChangesButton?: boolean;
   saveChanges: () => void;
+  feedback?: string | null;
   feedbackFields?: string[] | null;
 };
 
@@ -40,6 +41,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
   submitButtonDisable,
   enableSaveChangesButton,
   saveChanges,
+  feedback,
   feedbackFields
 }) => {
   const t = useT();
@@ -73,6 +75,7 @@ const SummaryItem: FC<SummaryItemProps> = ({
         <FormSummary
           values={formHook.getValues()}
           onEdit={setSelectedStepIndex}
+          feedback={feedback}
           feedbackFieldsOptions={feedbackFields}
         />
       </FormStepHeader>

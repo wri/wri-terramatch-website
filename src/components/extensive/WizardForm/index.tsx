@@ -36,6 +36,7 @@ import InlineMessage from "@/redesignComponents/status/InlineMessage/InlineMessa
 import Log from "@/utils/log";
 
 import { ModalId } from "../Modal/ModalConst";
+import { hasFeedbackInStep } from "./feedbackUtils";
 import { FormFooter } from "./FormFooter";
 import { FormSummaryOptions } from "./FormSummary";
 import SaveAndCloseModal, { SaveAndCloseModalProps } from "./modals/SaveAndCloseModal";
@@ -55,6 +56,7 @@ export type WizardFormEntity = {
   projectName?: string | null;
   projectUuid?: string | null;
   taskUuid?: string | null;
+  feedback?: string | null;
   feedbackFields?: string[] | null;
 };
 
@@ -319,7 +321,11 @@ function WizardForm(props: WizardFormProps) {
   const stepTabItems = useMemo(
     (): TabItem[] =>
       steps.map(({ id, title, validation }, index) => {
-        const state: TabItem["state"] = validation.isValidSync(formHook.getValues())
+        const hasFeedback = hasFeedbackInStep(props.fieldsProvider, id, entity?.feedbackFields);
+
+        const state: TabItem["state"] = hasFeedback
+          ? "error"
+          : validation.isValidSync(formHook.getValues())
           ? stepsVisited.current.includes(index)
             ? "complete"
             : "unstarted"
@@ -333,7 +339,7 @@ function WizardForm(props: WizardFormProps) {
           }
         };
       }),
-    [formHook, renderStep, steps, t]
+    [entity?.feedbackFields, formHook, props.fieldsProvider, renderStep, steps, t]
   );
 
   const summaryItem = useMemo(
@@ -356,6 +362,7 @@ function WizardForm(props: WizardFormProps) {
             enableSaveChangesButton={isEntityApproved}
             saveChanges={() => onClickSaveChanges()}
             onSaveAndExit={onClickSaveAndExit}
+            feedback={entity?.feedback}
             feedbackFields={entity?.feedbackFields}
           />
         );
@@ -375,6 +382,7 @@ function WizardForm(props: WizardFormProps) {
       isEntityApproved,
       onClickSaveChanges,
       onClickSaveAndExit,
+      entity?.feedback,
       entity?.feedbackFields
     ]
   );
