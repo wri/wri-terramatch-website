@@ -64,7 +64,15 @@ const AccordionIcon: FC<{ variant: AccordionVariant }> = ({ variant }) => (
   </AccordionChakra.ItemIndicator>
 );
 
-const Accordion: FC<AccordionProps> = ({ children, header, actions, variant = "primary", className }) => {
+const Accordion: FC<AccordionProps> = ({
+  children,
+  header,
+  actions,
+  variant = "primary",
+  className,
+  classNameHeader,
+  defaultOpen = false
+}) => {
   const { container, header: headerStyles } = variantStyles[variant];
 
   const handleActionsClick = (e: React.MouseEvent) => {
@@ -73,9 +81,9 @@ const Accordion: FC<AccordionProps> = ({ children, header, actions, variant = "p
 
   return (
     <Box className={className}>
-      <AccordionChakra.Root multiple>
-        <AccordionChakra.Item>
-          <Flex {...container} gap={4}>
+      <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
+        <AccordionChakra.Item value="default-item">
+          <Flex {...container} gap={4} className={classNameHeader}>
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
                 <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">

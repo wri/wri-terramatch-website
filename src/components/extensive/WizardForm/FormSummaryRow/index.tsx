@@ -20,6 +20,7 @@ import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
+import { hasFeedbackInStep } from "../feedbackUtils";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
 const getFieldsRequiringAttentionCount = (
@@ -52,6 +53,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
   const valid = props.values == null || validation.isValidSync(props.values);
+  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
@@ -67,7 +69,7 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
               ? t("{count} requires attention", { count: fieldsRequiringAttention })
               : undefined
           }
-          status={valid ? "complete" : "error"}
+          status={hasStepFeedback ? "error" : valid ? "complete" : "error"}
         />
       }
       actions={
@@ -82,7 +84,11 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         className="flex flex-col gap-3"
         items={entries}
         render={entry => {
-          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "treeSpecies") {
+          if (
+            SPECIAL_ENTRY_TITLES.has(entry.title ?? "") ||
+            entry.inputType === "treeSpecies" ||
+            entry.inputType === "file"
+          ) {
             return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
           }
           return (

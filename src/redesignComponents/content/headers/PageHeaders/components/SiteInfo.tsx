@@ -1,13 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback } from "react";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -39,10 +34,6 @@ const SiteInfo: FC<SiteInfoProps> = ({
 }) => {
   const t = useT();
   const router = useRouter();
-  const { openModal } = useModalContext();
-
-  const needMoreInformation =
-    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
 
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
   const { handleEdit } = useGetEditEntityHandler({
@@ -52,24 +43,9 @@ const SiteInfo: FC<SiteInfoProps> = ({
     updateRequestStatus: site.updateRequestStatus as string
   });
 
-  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
-
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={site.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="sites"
-          entityUuid={site.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
+    handleEdit();
+  }, [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
