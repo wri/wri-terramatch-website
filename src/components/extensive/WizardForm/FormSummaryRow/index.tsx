@@ -104,9 +104,12 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                 >
                   <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
                     <Then>
-                      <Text textStyle="400" className="flex-1" color="neutral.900">
-                        {formatEntryValue(entry.value)}
-                      </Text>
+                      <Text
+                        textStyle="400"
+                        className="with-inner-html flex-1"
+                        color="neutral.900"
+                        dangerouslySetInnerHTML={{ __html: entry.value }}
+                      />
                     </Then>
                     <Else>
                       <div
