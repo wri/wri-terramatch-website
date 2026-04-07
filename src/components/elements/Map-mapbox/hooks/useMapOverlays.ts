@@ -22,7 +22,8 @@ type UseMapOverlaysParams = {
   selectedLandscapes?: string[];
   anrMapOverlay?: AnrMapOverlay;
   anrPlotGeometryDto?: { geojson?: any } | null;
-  styleLoaded: boolean;
+  /** True when style.load fired — from core/useMapReadiness. */
+  styleReady: boolean;
   sourcesAdded: boolean;
 };
 
@@ -38,77 +39,55 @@ export function useMapOverlays({
   selectedLandscapes,
   anrMapOverlay,
   anrPlotGeometryDto,
-  styleLoaded,
+  styleReady,
   sourcesAdded
 }: UseMapOverlaysParams) {
-  // ANR overlay: add/remove when drawer state or geometry changes
+  // ANR overlay: add/remove when drawer state or geometry changes (OV-3, OV-4).
+  // upsertAnrPlotGeometryOverlay already handles its own "idle" retry internally
+  // for the edge case where the map is mid-render when the overlay is requested.
   useEffect(() => {
     if (map.current == null) return;
     const currentMap = map.current;
 
-    const applyAnrOverlay = () => {
-      const features = anrPlotGeometryDto?.geojson?.features;
-      const shouldShow =
-        anrMapOverlay != null &&
-        anrMapOverlay.drawerOpen === true &&
-        anrMapOverlay.anrTabActive === true &&
-        anrMapOverlay.showPlotsOnMap === true &&
-        features != null &&
-        features.length > 0;
+    const features = anrPlotGeometryDto?.geojson?.features;
+    const shouldShow =
+      anrMapOverlay != null &&
+      anrMapOverlay.drawerOpen === true &&
+      anrMapOverlay.anrTabActive === true &&
+      anrMapOverlay.showPlotsOnMap === true &&
+      features != null &&
+      features.length > 0;
 
-      if (!shouldShow) {
-        removeAnrPlotGeometryOverlay(currentMap);
-        return;
-      }
-      upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
-    };
-
-    currentMap.on("style.load", applyAnrOverlay);
-    applyAnrOverlay();
+    if (!shouldShow) {
+      removeAnrPlotGeometryOverlay(currentMap);
+      return;
+    }
+    upsertAnrPlotGeometryOverlay(currentMap, anrPlotGeometryDto?.geojson, { visible: true });
 
     return () => {
-      currentMap.off("style.load", applyAnrOverlay);
       removeAnrPlotGeometryOverlay(currentMap);
     };
-  }, [map, anrMapOverlay, anrPlotGeometryDto, styleLoaded, sourcesAdded]);
+  }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, sourcesAdded]);
 
-  // Country border
+  // Country border (OV-1): gated on sourcesAdded so the source exists before the border is added.
   useEffect(() => {
     if (map.current == null || !sourcesAdded) return;
-
-    const setupBorders = () => {
-      if (selectedCountry) {
-        addBorderCountry(map.current!, selectedCountry);
-      } else {
-        removeBorderCountry(map.current!);
-      }
-    };
-
-    if (map.current.isStyleLoaded()) {
-      setupBorders();
+    if (selectedCountry) {
+      addBorderCountry(map.current, selectedCountry);
     } else {
-      map.current.once("render", setupBorders);
+      removeBorderCountry(map.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCountry, styleLoaded, sourcesAdded]);
+  }, [selectedCountry, styleReady, sourcesAdded]);
 
-  // Landscape border
+  // Landscape border (OV-2)
   useEffect(() => {
     if (map.current == null || !sourcesAdded) return;
-
-    const setupBorders = () => {
-      if (selectedLandscapes != null && selectedLandscapes.length > 0) {
-        addBorderLandscape(map.current!, selectedLandscapes);
-      } else {
-        removeBorderLandscape(map.current!);
-      }
-    };
-
-    if (map.current.isStyleLoaded()) {
-      setupBorders();
+    if (selectedLandscapes != null && selectedLandscapes.length > 0) {
+      addBorderLandscape(map.current, selectedLandscapes);
     } else {
-      map.current.once("render", setupBorders);
+      removeBorderLandscape(map.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLandscapes, styleLoaded, sourcesAdded]);
+  }, [selectedLandscapes, styleReady, sourcesAdded]);
 }

@@ -301,92 +301,35 @@ export const addPolygonCentroidsLayer = (
 
   if (validCentroids.length === 0) return;
 
-  let rafId: number | null = null;
-  let isActive = true;
-  let styleLoadHandler: (() => void) | null = null;
+  // Called only after styleReady is true (from useMapLayers).
+  // The style is already loaded — no polling needed.
+  try {
+    if (map.getLayer(layerName)) map.removeLayer(layerName);
+    if (map.getSource(layerName)) map.removeSource(layerName);
+    if (map.hasImage("pulsing-dot-centroids")) map.removeImage("pulsing-dot-centroids");
 
-  const addLayerToMap = (): boolean => {
-    if (!isActive || !map) return false;
-    if (!map.isStyleLoaded()) return false;
+    const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [centroid.long, centroid.lat] },
+      properties: { uuid: centroid.uuid }
+    }));
 
-    try {
-      if (map.getLayer(layerName)) map.removeLayer(layerName);
-      if (map.getSource(layerName)) map.removeSource(layerName);
-      if (map.hasImage("pulsing-dot-centroids")) map.removeImage("pulsing-dot-centroids");
+    const pulsingDot = getPulsingDot(map, 120, "#72D961");
+    map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
+    map.addSource(layerName, { type: "geojson", data: { type: "FeatureCollection", features } });
 
-      const features: GeoJSON.Feature[] = validCentroids.map(centroid => ({
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [centroid.long, centroid.lat] },
-        properties: { uuid: centroid.uuid }
-      }));
-
-      const pulsingDot = getPulsingDot(map, 120, "#72D961");
-      map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
-      map.addSource(layerName, { type: "geojson", data: { type: "FeatureCollection", features } });
-
-      const filter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
-      map.addLayer({
-        id: layerName,
-        type: "symbol",
-        source: layerName,
-        layout: { "icon-image": "pulsing-dot-centroids" },
-        paint: {},
-        filter
-      });
-
-      return true;
-    } catch (error) {
-      Log.error("Error adding polygon centroids layer:", error);
-      return false;
-    }
-  };
-
-  const pollForStyleLoad = (attemptsLeft = 180) => {
-    if (!isActive) return;
-    if (!map) return;
-    const layerAdded = addLayerToMap();
-    if (layerAdded) {
-      if (rafId != null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-      if (styleLoadHandler && map) {
-        map.off("style.load", styleLoadHandler);
-        styleLoadHandler = null;
-      }
-      return;
-    }
-    if (attemptsLeft > 0) {
-      rafId = requestAnimationFrame(() => pollForStyleLoad(attemptsLeft - 1));
-    } else {
-      Log.error("Failed to add polygon centroids layer after 180 requestAnimationFrame attempts");
-      if (styleLoadHandler && map) {
-        map.off("style.load", styleLoadHandler);
-        styleLoadHandler = null;
-      }
-    }
-  };
-
-  if (addLayerToMap()) return;
-
-  pollForStyleLoad();
-
-  styleLoadHandler = () => {
-    if (isActive && map) {
-      const added = addLayerToMap();
-      if (added) {
-        if (rafId != null) {
-          cancelAnimationFrame(rafId);
-          rafId = null;
-        }
-        if (styleLoadHandler && map) {
-          map.off("style.load", styleLoadHandler);
-          styleLoadHandler = null;
-        }
-      }
-    }
-  };
-  map.on("style.load", styleLoadHandler);
+    const filter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+    map.addLayer({
+      id: layerName,
+      type: "symbol",
+      source: layerName,
+      layout: { "icon-image": "pulsing-dot-centroids" },
+      paint: {},
+      filter
+    });
+  } catch (error) {
+    Log.error("addPolygonCentroidsLayer: unexpected error (style may not be ready):", error);
+  }
 };
 
 type DataPolygonOverview = { status: string; count: number }[];

@@ -232,10 +232,11 @@ Map-mapbox/
   hooks/
     useMap.ts                   # (existing) map instance creation
     useMapReadiness.ts          # (same as core/ — prefer core/ going forward)
-    useMapLayers.ts             # PL contracts effect hook
+    useMapLayers.ts             # PL contracts effect hook (gated on styleReady)
+    useMapPopups.ts             # PP contracts effect hook (gated on sourcesAdded, stable callbacks via ref)
     useMapCamera.ts             # CZ contracts effect hook
-    useMapOverlays.ts           # OV contracts effect hook
-    useMapMedia.ts              # MD contracts effect hook
+    useMapOverlays.ts           # OV contracts effect hook (gated on styleReady + sourcesAdded)
+    useMapMedia.ts              # MD contracts effect hook (gated on styleReady)
     useMapDraw.ts               # DE contracts: draw mode + edit/save/cancel
     useMapFullscreen.ts         # FS contracts
     useGoogleSatellite.ts       # (existing) Google Satellite layer toggle
@@ -311,11 +312,14 @@ For each PR, note in the description: which contract IDs were touched, and how t
 
 These describe today's code. Refactors should replace them, not copy them.
 
-- **Readiness (pending fix):** Map readiness currently uses a mix of `isStyleLoaded()`, `loaded()`, `style.load`, `idle`, and rAF polling in three different places inside `Map.tsx`. Target: converge on one pipeline via `core/useMapReadiness.ts`.
-- **Popup singletons (pending fix):** `popupAttachedMap` and `activeClickHandlers` in `interactions/popups.ts` are module-level — they survive across map instances. Target: use per-instance maps (see `anrPlotOverlayStateByMap` WeakMap pattern in `layers/overlayLayers.ts`).
 - **GeoServer cache busting (pending fix):** Tile URLs include `RND=Math.random()`. Target: deterministic invalidation tied to data update events.
-- **`utils.ts` (pending split):** Originally 1975 lines. Being replaced by domain files in `adapters/`, `layers/`, and `interactions/`. Still serves as a backward-compatible re-export barrel during migration.
+- **`Map.tsx` size (in progress):** Currently ~580 lines. Target ~200 lines. Next: extract style sync into `useMapStyle` and download helpers into `useMapDownload`.
+- **`useGoogleSatellite` rAF polling (pending fix):** The Google Satellite hook still has a 180-attempt rAF loop. Once gated on `styleReady`, this can be replaced with a direct `addGoogleSatelliteLayer()` call, same as `addPolygonCentroidsLayer` was fixed.
 
 ## Resolved implementation notes
 
-_(Move notes here as each phase PR lands.)_
+- **Readiness pipeline (resolved):** The mix of `isStyleLoaded()`, `loaded()`, `style.load`, `idle`, and rAF polling was replaced by a single `core/useMapReadiness.ts` → `styleReady` signal. All hooks (`useMapLayers`, `useMapOverlays`, `useMapMedia`, `useGoogleSatellite`) and style-sync effects in `Map.tsx` are now gated on `styleReady`. The duplicate `.once`/`.on` bug in the former `isMapReady` effect was eliminated.
+- **rAF polling in `addPolygonCentroidsLayer` (resolved):** The 180-attempt `requestAnimationFrame` poll was removed. The function now calls `addLayerToMap()` directly and relies on the caller's `styleReady` gate.
+- **Popup singletons (resolved):** `popupAttachedMap` and `activeClickHandlers` converted to `WeakMap`-scoped registries in `interactions/popups.ts`. Each map instance gets its own popup and click-handler state.
+- **Popup/layer coupling (resolved):** Popup registration extracted from `useMapLayers` into a dedicated `hooks/useMapPopups.ts` hook. The layer effect no longer depends on `sitePolygonData`, `editPolygonSelected`, or unstable callbacks. Popup callbacks (`setPolygonFromMap`, `setEditPolygon`, `setFilters`, `setMobilePopupData`) are stabilized via `useRef` so they never cause popup re-registration on parent re-renders.
+- **`utils.ts` (resolved):** Originally 1975 lines. Replaced by domain files in `adapters/`, `layers/`, `interactions/`. `utils.ts` is now a backward-compatible re-export barrel.

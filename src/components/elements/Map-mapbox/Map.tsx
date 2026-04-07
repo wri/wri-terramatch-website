@@ -27,6 +27,7 @@ import { useOnMount } from "@/hooks/useOnMount";
 import Log from "@/utils/log";
 
 import { PopupMobile } from "./components/PopupMobile";
+import { useMapReadiness } from "./core/useMapReadiness";
 import { BBox } from "./GeoJSON";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
@@ -35,6 +36,7 @@ import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlays } from "./hooks/useMapOverlays";
+import { useMapPopups } from "./hooks/useMapPopups";
 import type { TooltipType } from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
@@ -208,7 +210,6 @@ export const MapContainer = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
   const [userChangedStyle, setUserChangedStyle] = useState(false);
-  const [isMapReady, setIsMapReady] = useState(false);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
@@ -255,7 +256,7 @@ export const MapContainer = ({
   if (!mapFunctions) {
     return null;
   }
-  const { map, mapContainer, draw, onCancel, styleLoaded, initMap, setStyleLoaded } = mapFunctions;
+  const { map, mapContainer, draw, onCancel, initMap, setStyleLoaded } = mapFunctions;
 
   const polygonBbox = useBoundingBox(
     entityData?.entityName == "project-pitch"
@@ -275,21 +276,9 @@ export const MapContainer = ({
     };
   });
 
-  useEffect(() => {
-    if (map?.current == null) return;
-
-    const handleMapReady = () => setIsMapReady(true);
-    if (map.current.isStyleLoaded()) {
-      handleMapReady();
-    } else {
-      map.current.once("style.load", handleMapReady);
-    }
-    map.current.on("style.load", handleMapReady);
-
-    return () => {
-      map.current?.off("style.load", handleMapReady);
-    };
-  }, [map]);
+  // Single source of truth for style readiness — wires core/useMapReadiness.
+  // Replaces the former isMapReady state + duplicate .once/.on style.load registration.
+  const { styleReady } = useMapReadiness(map?.current);
 
   useEffect(() => {
     if (!map) return;
@@ -298,31 +287,40 @@ export const MapContainer = ({
     }
   }, [map, location]);
 
-  // ── Domain hooks (Phases 1-3) ────────────────────────────────────────────────
+  // ── Domain hooks ─────────────────────────────────────────────────────────────
+  // All hooks use styleReady from useMapReadiness as their single gate.
   const { sourcesAdded } = useMapLayers({
     map,
     draw,
+    styleReady,
     polygonsData,
     centroids,
     polygonsCentroids,
-    sitePolygonData,
     isDashboard,
     projectUUID,
     hasAccess,
+    selectedPolygonsInCheckbox
+  });
+
+  // Popup registration is gated on sourcesAdded (separate from layer lifecycle).
+  useMapPopups({
+    map,
+    draw,
+    sourcesAdded,
     showPopups,
+    sitePolygonData,
     tooltipType,
-    editPolygonSelected,
-    setEditPolygon,
-    setPolygonFromMap,
-    dashboardContext,
-    setFilters,
-    dashboardCountries,
-    setLoader,
+    isDashboard,
     selectedCountry,
     isMobile,
+    dashboardCountries,
+    setLoader,
+    setPolygonFromMap,
+    setEditPolygon,
+    editPolygonSelected,
+    setFilters,
     setMobilePopupData,
-    selectedPolygonsInCheckbox,
-    styleLoaded
+    dashboardContext
   });
 
   useMapCamera({ map, bbox, center, zoom, hasControls, shouldBboxZoom, polygonFromMap, polygonBbox });
@@ -333,14 +331,14 @@ export const MapContainer = ({
     selectedLandscapes,
     anrMapOverlay,
     anrPlotGeometryDto,
-    styleLoaded,
+    styleReady,
     sourcesAdded
   });
 
   useMapMedia({
     map,
     modelFilesData: props.modelFilesData,
-    styleLoaded,
+    styleReady,
     entityData,
     t,
     showLoader,
@@ -376,11 +374,11 @@ export const MapContainer = ({
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 
-  useGoogleSatellite(currentStyle, styleLoaded, map, mapContainer);
+  useGoogleSatellite(currentStyle, styleReady, map, mapContainer);
 
   // Style sync: parent prop → local style state
   useEffect(() => {
-    if (map.current == null || !styleLoaded) return;
+    if (map.current == null || !styleReady) return;
     if (mapStyleProp != null && mapStyleProp !== currentStyle) {
       const actualStyle = getCurrentMapStyle(map.current);
       if (actualStyle !== mapStyleProp) {
@@ -389,7 +387,7 @@ export const MapContainer = ({
         setCurrentStyle(mapStyleProp);
       }
     }
-  }, [mapStyleProp, map, currentStyle, styleLoaded]);
+  }, [mapStyleProp, map, currentStyle, styleReady]);
 
   // Auto-satellite when a project is loaded (reset on project change)
   useEffect(() => {
@@ -397,16 +395,10 @@ export const MapContainer = ({
   }, [projectUUID]);
 
   useEffect(() => {
-    if (map.current == null || !projectUUID || userChangedStyle) return;
-    if (map.current.isStyleLoaded()) {
-      setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
-    } else {
-      map.current.once("render", () => {
-        setMapStyle(MapStyle.Satellite, map.current!, setCurrentStyle, currentStyle);
-      });
-    }
+    if (map.current == null || !projectUUID || userChangedStyle || !styleReady) return;
+    setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectUUID, userChangedStyle]);
+  }, [projectUUID, userChangedStyle, styleReady]);
 
   useOnMount(() => {
     if (geojson != null && map.current != null && draw.current != null) {
@@ -498,7 +490,7 @@ export const MapContainer = ({
                 />
               </ControlGroup>
             ) : null}
-            {isDashboard !== "dashboard" && isMapReady && map.current != null ? (
+            {isDashboard !== "dashboard" && styleReady && map.current != null ? (
               <ControlGroup position="top-right">
                 <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               </ControlGroup>
@@ -587,7 +579,7 @@ export const MapContainer = ({
             ) : null}
             {!formMap && showViewGallery ? (
               <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-                {isDashboard === "dashboard" && isMapReady && map.current != null && (
+                {isDashboard === "dashboard" && styleReady && map.current != null && (
                   <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
                 )}
                 {isDashboard !== "dashboard" && isDashboard !== "modal" && !disabledPolygonPanel && (

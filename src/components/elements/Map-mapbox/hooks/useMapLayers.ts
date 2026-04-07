@@ -5,198 +5,82 @@ import { MutableRefObject, useEffect, useState } from "react";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
-import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 
-import { AdminPopup } from "../components/AdminPopup";
-import { DashboardPopup } from "../components/DashboardPopup";
-import { addPopupsToMap } from "../interactions/popups";
 import { addDeleteLayer, addFilterOnLayer, addSourcesToLayers } from "../layers/polygonLayers";
-import type { TooltipType } from "../Map.d";
 import { DashboardGetProjectsData } from "../Map.d";
 
 type UseMapLayersParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   draw: MutableRefObject<MapboxDraw | null>;
+  /** True when style.load has fired — from core/useMapReadiness. This is the single gate. */
+  styleReady: boolean;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
   polygonsCentroids?: any[];
-  sitePolygonData?: SitePolygonLightDto[];
   isDashboard?: string;
   projectUUID?: string;
   hasAccess?: boolean;
-  showPopups?: boolean;
-  tooltipType?: TooltipType;
-  editPolygonSelected: { isOpen: boolean; uuid: string; primary_uuid?: string };
-  setEditPolygon: (v: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
-  setPolygonFromMap?: any;
-  dashboardContext?: { setFilters?: any; dashboardCountries?: any[]; isDashboard?: string } | null;
-  setFilters?: any;
-  dashboardCountries?: any[];
-  setLoader?: (v: boolean) => void;
-  selectedCountry?: string | null;
-  isMobile: boolean;
-  setMobilePopupData: (v: any) => void;
   selectedPolygonsInCheckbox?: string[];
-  styleLoaded: boolean;
 };
 
 /**
- * Manages the polygon source/layer lifecycle (contracts PL-1 through PL-5):
+ * Manages the polygon source/layer lifecycle (contracts PL-1 through PL-4).
  *
- * - WHEN polygonsData or sitePolygonData changes → adds sources and applies uuid filters
- * - WHEN style loads → re-adds all sources (PL-3 + LC-3)
- * - WHEN selectedPolygonsInCheckbox changes → updates the deleted geometry layer (PL-4)
+ * Gated on `styleReady` from core/useMapReadiness — the SINGLE readiness signal.
+ * No internal idle listeners, no isStyleLoaded() calls, no rAF polling.
  *
- * Returns `sourcesAdded` so overlay/border hooks can gate on it (contract PL-2).
+ * - WHEN styleReady goes true → adds sources and filters (PL-1, PL-2)
+ * - WHEN styleReady goes false (style switch) → resets sourcesAdded so overlays
+ *   don't try to add border layers on top of a cleared style (PL-3)
+ * - WHEN polygonsData changes while style is ready → re-adds sources with new data
+ * - WHEN selectedPolygonsInCheckbox changes → updates deleted geometry layer (PL-4)
+ *
+ * Returns `sourcesAdded` as the gate for border/overlay hooks (PL-2).
+ * Popup registration is handled separately in useMapPopups.
  */
 export function useMapLayers({
   map,
-  draw,
+  draw: _draw,
+  styleReady,
   polygonsData,
   centroids,
   polygonsCentroids,
-  sitePolygonData,
   isDashboard,
   projectUUID,
   hasAccess,
-  showPopups,
-  tooltipType,
-  editPolygonSelected,
-  setEditPolygon,
-  setPolygonFromMap,
-  dashboardContext,
-  setFilters,
-  dashboardCountries,
-  setLoader,
-  selectedCountry,
-  isMobile,
-  setMobilePopupData,
-  selectedPolygonsInCheckbox,
-  styleLoaded
+  selectedPolygonsInCheckbox
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
-  // Main layer setup effect (PL-1, PL-2, PL-3)
   useEffect(() => {
-    if (map.current == null || (!isDashboard && _.isEmpty(polygonsData))) return;
-
-    const currentMap = map.current as mapboxgl.Map;
-    let isEffectActive = true;
-    let hasSetupRun = false;
-
-    const setupMap = () => {
-      if (!isEffectActive || hasSetupRun) return;
-      hasSetupRun = true;
-
-      const zoomFilter = isDashboard ? 9 : undefined;
-      let polygonsDataToUse = polygonsData;
-      if (isDashboard != null && projectUUID != null && hasAccess === false) {
-        polygonsDataToUse = {};
-      }
-
-      addSourcesToLayers(currentMap, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
-      setSourcesAdded(true);
-
-      if (showPopups) {
-        addPopupsToMap(
-          currentMap,
-          isDashboard ? DashboardPopup : AdminPopup,
-          setPolygonFromMap,
-          sitePolygonData,
-          tooltipType ?? "goTo",
-          editPolygonSelected,
-          setEditPolygon,
-          draw.current!,
-          isDashboard,
-          dashboardContext?.setFilters ?? setFilters,
-          dashboardContext?.dashboardCountries ?? dashboardCountries,
-          setLoader,
-          selectedCountry,
-          isMobile || isDashboard != null ? setMobilePopupData : undefined
-        );
-      }
-    };
-
-    setSourcesAdded(false);
-
-    const isMapReady = () => {
-      try {
-        return !currentMap.isMoving() && currentMap.loaded() && currentMap.isStyleLoaded();
-      } catch {
-        return false;
-      }
-    };
-
-    if (isMapReady()) {
-      setupMap();
-    } else {
-      const handleIdle = () => setupMap();
-      currentMap.on("idle", handleIdle);
-      currentMap.once("idle", () => {
-        if (hasSetupRun) currentMap.off("idle", handleIdle);
-      });
+    if (!styleReady || map.current == null || (!isDashboard && _.isEmpty(polygonsData))) {
+      setSourcesAdded(false);
+      return;
     }
 
-    const handleStyleLoad = () => {
-      hasSetupRun = false;
-      setSourcesAdded(false);
-      const handleIdleAfterStyle = () => {
-        setupMap();
-        currentMap.off("idle", handleIdleAfterStyle);
-      };
-      if (isMapReady()) {
-        setupMap();
-      } else {
-        currentMap.on("idle", handleIdleAfterStyle);
-      }
-    };
+    const zoomFilter = isDashboard ? 9 : undefined;
+    const polygonsDataToUse = isDashboard != null && projectUUID != null && hasAccess === false ? {} : polygonsData;
 
-    currentMap.on("style.load", handleStyleLoad);
+    addSourcesToLayers(map.current, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
+    setSourcesAdded(true);
+  }, [map, styleReady, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);
 
-    return () => {
-      isEffectActive = false;
-      currentMap.off("style.load", handleStyleLoad);
-    };
-  }, [
-    sitePolygonData,
-    polygonsCentroids,
-    polygonsData,
-    showPopups,
-    centroids,
-    dashboardCountries,
-    draw,
-    editPolygonSelected,
-    isDashboard,
-    isMobile,
-    map,
-    selectedCountry,
-    setMobilePopupData,
-    setEditPolygon,
-    setFilters,
-    setLoader,
-    setPolygonFromMap,
-    tooltipType,
-    projectUUID,
-    hasAccess,
-    dashboardContext
-  ]);
-
-  // Deleted geometry checkbox layer (PL-4)
   useEffect(() => {
-    if (selectedPolygonsInCheckbox == null || map.current == null || !styleLoaded) return;
+    if (!styleReady || selectedPolygonsInCheckbox == null || map.current == null) return;
     addDeleteLayer(
       layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES),
       map.current,
       { [DELETED_POLYGONS]: selectedPolygonsInCheckbox }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedPolygonsInCheckbox, styleLoaded]);
+  }, [map, selectedPolygonsInCheckbox, styleReady]);
 
-  return { sourcesAdded, setSourcesAdded };
+  return { sourcesAdded };
 }
 
-/** Filters a polygon UUID out of the current polygonsData and re-applies the layer filter.
- * Call this when entering edit mode for a specific polygon (contract DE-1). */
+/**
+ * Filters a polygon UUID out of the current polygonsData and re-applies the layer filter.
+ * Called when entering draw/edit mode for a specific polygon (contract DE-1).
+ */
 export function filterPolygonFromLayers(
   polygonuuid: string,
   polygonsData: Record<string, string[]> | undefined,

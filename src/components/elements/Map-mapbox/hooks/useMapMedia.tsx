@@ -12,7 +12,8 @@ import { addMediaSourceAndLayer } from "../layers/mediaLayers";
 type UseMapMediaParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   modelFilesData?: MediaDto[];
-  styleLoaded: boolean;
+  /** True when style.load fired — from core/useMapReadiness. */
+  styleReady: boolean;
   entityData?: any;
   t: (key: string) => string;
   showLoader: () => void;
@@ -33,7 +34,7 @@ type UseMapMediaParams = {
 export function useMapMedia({
   map,
   modelFilesData,
-  styleLoaded,
+  styleReady,
   entityData,
   t,
   showLoader,
@@ -45,7 +46,7 @@ export function useMapMedia({
   router
 }: UseMapMediaParams) {
   useEffect(() => {
-    if (map.current == null || !styleLoaded || modelFilesData == null) return;
+    if (map.current == null || !styleReady || modelFilesData == null) return;
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
@@ -114,5 +115,5 @@ export function useMapMedia({
       isProjectPath
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelFilesData, styleLoaded]);
+  }, [modelFilesData, styleReady]);
 }
