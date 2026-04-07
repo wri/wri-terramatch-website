@@ -5,9 +5,11 @@ import { useRouter } from "next/router";
 import { FC, Fragment } from "react";
 
 import { PLANTING_STATUS_MAP } from "@/components/elements/Status/constants/statusMap";
+import { hasFeedbackInStep } from "@/components/extensive/WizardForm/feedbackUtils";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { STEP_QUERY_PARAM } from "@/components/extensive/WizardForm/useFormNavigation";
 import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFormStepsWithValidation";
+import { useFieldsProvider } from "@/context/wizardForm.provider";
 import { ProjectFullDto, SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { isEntityAwaitingApproval, v3EntityName } from "@/helpers/entity";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -39,6 +41,7 @@ export type SharedDetailsProps = {
   updateRequestStatus?: string | null;
   stepIndex: number;
   entity: ProjectFullDto | SiteFullDto;
+  feedbackFieldsOptions?: string[] | null;
 };
 
 const SharedDetails: FC<SharedDetailsProps> = ({
@@ -49,12 +52,15 @@ const SharedDetails: FC<SharedDetailsProps> = ({
   entityStatus,
   updateRequestStatus,
   stepIndex,
-  entity
+  entity,
+  feedbackFieldsOptions
 }) => {
   const t = useT();
   const router = useRouter();
+  const fieldsProvider = useFieldsProvider();
 
   const isValid = step.validation.isValidSync(formValues);
+  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, step.id, feedbackFieldsOptions);
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(step.validation, formValues);
 
   const entries = useGetFormEntries({
@@ -78,7 +84,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
       header={
         <AccordionHeader
           title={step.title ?? ""}
-          status={isValid ? "complete" : "error"}
+          status={hasStepFeedback ? "error" : isValid ? "complete" : "error"}
           badge={
             !isValid && fieldsRequiringAttention > 0
               ? t("{count} requires attention", { count: fieldsRequiringAttention })
