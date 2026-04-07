@@ -4960,19 +4960,6 @@ export type FormDeletePathParams = {
 
 export type FormDeleteError = Fetcher.ErrorWrapper<
   | {
-      status: 400;
-      payload: {
-        /**
-         * @example 400
-         */
-        statusCode: number;
-        /**
-         * @example Bad Request
-         */
-        message: string;
-      };
-    }
-  | {
       status: 401;
       payload: {
         /**
