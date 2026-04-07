@@ -26,17 +26,22 @@ export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
   Framework.EPA_GHANA_PILOT
 ];
 
-export const showsTerrafundAfr100BannerLogo = (frameworkKey: string | null | undefined): boolean => {
-  const framework = toFramework(frameworkKey);
-  return TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS.includes(framework);
-};
-
 export const ALL_FF = [Framework.FF, Framework.FF_1];
 
 export const toFramework = (frameworkKey?: string | null) =>
   Object.values(Framework).includes(frameworkKey as unknown as Framework)
     ? (frameworkKey as Framework)
     : Framework.UNDEFINED;
+
+/** Which programme logo to show in the project header team column (mutually exclusive). */
+export type ProjectBannerLogoKind = "terrafund-afr100" | "hbf" | null;
+
+export function getProjectBannerLogoKind(frameworkKey: string | null | undefined): ProjectBannerLogoKind {
+  const framework = toFramework(frameworkKey);
+  if (framework === Framework.HBF) return "hbf";
+  if (TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS.includes(framework)) return "terrafund-afr100";
+  return null;
+}
 
 export const useFramework = (frameworkKey?: string | null) => useMemo(() => toFramework(frameworkKey), [frameworkKey]);
 

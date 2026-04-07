@@ -3,8 +3,9 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
-import { showsTerrafundAfr100BannerLogo } from "@/context/framework.provider";
+import { getProjectBannerLogoKind } from "@/context/framework.provider";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { HaritBharatFund } from "@/redesignComponents/foundations/Logos/HaritBharatFund";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -22,6 +23,7 @@ export interface TeamSectionProps {
 
 const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers, frameworkKey }) => {
   const t = useT();
+  const bannerLogoKind = getProjectBannerLogoKind(frameworkKey);
 
   return (
     <Box
@@ -83,7 +85,8 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         </Flex>
       </div>
 
-      {showsTerrafundAfr100BannerLogo(frameworkKey) ? <TerraFundAFR100 className="mt-auto" /> : null}
+      {bannerLogoKind === "terrafund-afr100" ? <TerraFundAFR100 className="mt-auto" /> : null}
+      {bannerLogoKind === "hbf" ? <HaritBharatFund className="mt-auto" /> : null}
     </Box>
   );
 };
