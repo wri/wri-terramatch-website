@@ -24,9 +24,9 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   const t = useT();
   return (
     <Toolbar
-      className={classNames("items-start mobile:mb-6 mobile:flex-col", className)}
+      className={classNames("mobile:mb-6 mobile:flex-col mobile:!items-start", className)}
       contentLeft={
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4 mobile:mb-5 mobile:flex-col mobile:items-start mobile:gap-0">
           {search != null && (
             <div className="flex flex-wrap items-center gap-4">
               <div className="mt-2.5 mb-5">
@@ -48,7 +48,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
               </span>
             </div>
           )}
-          {search != null && filters != null && <span className="text-theme-neutral-500">&#124;</span>}
+          {search != null && filters != null && <span className="text-theme-neutral-500 mobile:hidden">&#124;</span>}
           {filters != null && filters.length > 0 ? (
             <div className="flex flex-wrap items-center gap-4">
               <div className="text-14 text-theme-neutral-900 flex flex-wrap items-center gap-3">

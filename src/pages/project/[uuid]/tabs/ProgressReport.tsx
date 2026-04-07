@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import Button from "@/components/elements/Button/Button";
+import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 
 import DisturbanceReportsTab from "./DisturbanceReports";
 import ReportingTasksTab from "./ReportingTasks";
@@ -57,26 +58,24 @@ const ProgressReportTab = ({ projectUUID }: ProgressReportProps) => {
   };
 
   return (
-    <>
-      <div className="bg-neutral-50 pt-6 pb-0">
-        <div className="mx-auto w-full max-w-[82vw] px-10 xl:px-0">
-          <div className="flex w-full justify-start">
-            <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
-              {subTabs.map((item, index) => (
-                <Button
-                  key={index}
-                  variant={selectedIndex === index ? "white-toggle" : "transparent-toggle"}
-                  onClick={() => handleTabChange(index)}
-                >
-                  {item.title}
-                </Button>
-              ))}
-            </div>
+    <PageContent className="bg-neutral-50">
+      <div className="mx-auto w-full max-w-[82vw] px-10 xl:px-0 mobile:!m-0 mobile:!w-full mobile:!max-w-full mobile:!px-0">
+        <div className="flex w-full justify-start">
+          <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
+            {subTabs.map((item, index) => (
+              <Button
+                key={index}
+                variant={selectedIndex === index ? "white-toggle" : "transparent-toggle"}
+                onClick={() => handleTabChange(index)}
+              >
+                {item.title}
+              </Button>
+            ))}
           </div>
         </div>
       </div>
       {subTabs[selectedIndex]?.body}
-    </>
+    </PageContent>
   );
 };
 
