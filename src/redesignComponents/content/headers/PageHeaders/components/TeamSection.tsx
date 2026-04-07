@@ -28,7 +28,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       width="240px"
       minWidth="240px"
       height="auto"
-      className="flex flex-col gap-2 pt-11"
+      className="flex flex-col gap-2 pt-11 mobile:!w-full mobile:flex-row mobile:items-center mobile:justify-between mobile:pt-0"
       css={{
         "&": {
           alignItems: "self-end !important"
@@ -73,7 +73,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
                 backgroundColor="transparent"
                 color="secondary.900"
                 width="auto"
-                className="flex items-center gap-1 group-hover:bg-theme-primary-500/20"
+                className="group-hover:bg-theme-primary-500/20 flex items-center gap-1"
               >
                 {t("Add Team Members")}
                 <ChevronRightIcon color="neutral.800" className="h-2.5 w-2.5" />

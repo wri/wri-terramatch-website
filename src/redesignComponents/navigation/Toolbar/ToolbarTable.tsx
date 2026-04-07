@@ -24,7 +24,7 @@ const ToolbarTable: FC<ToolbarTableProps> = ({
   const t = useT();
   return (
     <Toolbar
-      className={classNames("mobile:mb-6 mobile:flex-col", className)}
+      className={classNames("items-start mobile:mb-6 mobile:flex-col", className)}
       contentLeft={
         <div className="flex flex-wrap items-center gap-4">
           {search != null && (
