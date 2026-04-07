@@ -29,6 +29,7 @@ const SharedDetailsStep: FC<SharedDetailsStepProps> = ({ step, formValues, proje
     updateRequestStatus={project.updateRequestStatus}
     entity={project}
     stepIndex={stepIndex}
+    feedbackFieldsOptions={project.feedbackFields}
   />
 );
 
