@@ -585,9 +585,17 @@ export type TaskUpdateAttributes = {
    */
   siteReportNothingToReportUuids?: string[];
   /**
+   * UUIDs of site reports to approve
+   */
+  siteReportApprovalUuids?: string[];
+  /**
    * UUIDs of nursery reports to mark as 'Nothing to report'
    */
   nurseryReportNothingToReportUuids?: string[];
+  /**
+   * UUIDs of nursery reports to approve
+   */
+  nurseryReportApprovalUuids?: string[];
 };
 
 export type TaskData = {
