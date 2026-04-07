@@ -1,5 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import classNames from "classnames";
+import { FC } from "react";
 import { Else, If, Then } from "react-if";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
@@ -20,7 +21,7 @@ interface FeedbackReviewerProps {
   values: any;
 }
 
-const EntryRow = ({ entry }: { entry: FormEntry }) => {
+const EntryRow: FC<{ entry: FormEntry }> = ({ entry }) => {
   if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "") || entry.inputType === "file") {
     return <SpecialEntryRenderer entry={entry} />;
   }
@@ -54,7 +55,7 @@ const EntryRow = ({ entry }: { entry: FormEntry }) => {
   );
 };
 
-const FeedbackReviewer = ({ feedback, feedbackFieldsOptions, values }: FeedbackReviewerProps) => {
+const FeedbackReviewer: FC<FeedbackReviewerProps> = ({ feedback, feedbackFieldsOptions, values }) => {
   const fieldsProvider = useFieldsProvider();
   const entries =
     feedbackFieldsOptions?.reduce<FormEntry[]>((acc, fieldId) => {
@@ -79,7 +80,7 @@ const FeedbackReviewer = ({ feedback, feedbackFieldsOptions, values }: FeedbackR
         header={<AccordionHeader title={"Feedback from Reviewer"} />}
         classNameHeader="!mb-0"
       >
-        <Flex className="flex-col gap-4 bg-theme-warning-100 p-4">
+        <Flex className="bg-theme-warning-100 flex-col gap-4 p-4">
           {feedback != null && feedback.trim().length > 0 && (
             <Text textStyle="400" color="neutral.900">
               {feedback}
