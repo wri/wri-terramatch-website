@@ -1,8 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef } from "react";
 
-import Log from "@/utils/log";
-
 import { MapStyle } from "../MapControls/types";
 import { addGoogleSatelliteLayer, removeGoogleSatelliteLayer, updateMapProjection } from "../utils";
 
@@ -19,33 +17,30 @@ export const useGoogleSatellite = (
   useEffect(() => {
     const currentMap = map.current;
     const currentContainer = mapContainer.current;
-    if (!currentMap || !currentContainer) return;
+    if (!currentMap || !currentContainer || !styleReady) return;
 
-    let isEffectActive = true;
-    let rafId: number | null = null;
-
-    const addGoogleLayer = () => {
-      if (!isEffectActive) return true;
-
+    // The effect only runs after styleReady=true and styleVersion bump, which means
+    // style.load has already fired. addGoogleSatelliteLayer's internal isStyleLoaded()
+    // guard is therefore always true here — no polling needed.
+    if (currentStyle === MapStyle.GoogleSatellite) {
       const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
-      if (currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
-        return true;
-      }
-
-      if (currentMap.isStyleLoaded()) {
+      if (!currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
         addGoogleSatelliteLayer(currentMap);
         updateMapProjection(currentMap, MapStyle.GoogleSatellite);
-        return true;
       }
-      return false;
-    };
+    } else {
+      removeGoogleSatelliteLayer(currentMap);
+    }
 
-    const updateAttribution = () => {
+    // Attribution DOM query is deferred because .mapboxgl-ctrl-attrib-inner is
+    // rendered asynchronously by Mapbox's attribution control — it may not exist at
+    // the exact frame style.load fires. 50ms covers the DOM render lag without
+    // a busy rAF loop (the original reason for 180-frame polling).
+    const timeoutId = setTimeout(() => {
       const attributionInner = currentContainer.querySelector(".mapboxgl-ctrl-attrib-inner");
-      if (!attributionInner) return false;
+      if (!attributionInner) return;
 
       const existingGoogle = attributionInner.querySelector(".google-attribution-text");
-
       if (currentStyleRef.current === MapStyle.GoogleSatellite) {
         if (!existingGoogle) {
           const googleText = document.createElement("span");
@@ -53,57 +48,11 @@ export const useGoogleSatellite = (
           googleText.textContent = " © Google";
           attributionInner.appendChild(googleText);
         }
-        return true;
       } else {
         existingGoogle?.remove();
-        return true;
       }
-    };
+    }, 50);
 
-    const pollForGoogleSetup = (attemptsLeft = 180) => {
-      if (!isEffectActive) return;
-      if (currentStyleRef.current !== MapStyle.GoogleSatellite) return;
-
-      const layerAdded = addGoogleLayer();
-      const attributionAdded = updateAttribution();
-
-      if (layerAdded && attributionAdded) return;
-
-      if (attemptsLeft > 0) {
-        rafId = requestAnimationFrame(() => pollForGoogleSetup(attemptsLeft - 1));
-      } else {
-        if (!layerAdded) {
-          Log.error("Failed to add Google layer after 180 attempts");
-        }
-      }
-    };
-
-    if (currentStyle === MapStyle.GoogleSatellite) {
-      const handleStyleLoad = () => {
-        if (isEffectActive && currentStyleRef.current === MapStyle.GoogleSatellite) {
-          pollForGoogleSetup();
-        }
-      };
-
-      const layerAdded = addGoogleLayer();
-      const attributionAdded = updateAttribution();
-
-      if (!layerAdded || !attributionAdded) {
-        pollForGoogleSetup();
-      }
-
-      currentMap.on("style.load", handleStyleLoad);
-
-      return () => {
-        isEffectActive = false;
-        currentMap.off("style.load", handleStyleLoad);
-        if (rafId != null) {
-          cancelAnimationFrame(rafId);
-        }
-      };
-    } else {
-      removeGoogleSatelliteLayer(currentMap);
-      updateAttribution();
-    }
+    return () => clearTimeout(timeoutId);
   }, [currentStyle, styleReady, styleVersion, map, mapContainer]);
 };

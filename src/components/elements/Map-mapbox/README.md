@@ -314,12 +314,18 @@ These describe today's code. Refactors should replace them, not copy them.
 
 - **GeoServer cache busting (pending fix):** Tile URLs include `RND=Math.random()`. Target: deterministic invalidation tied to data update events.
 - **`Map.tsx` size (in progress):** Currently ~580 lines. Target ~200 lines. Next: extract style sync into `useMapStyle` and download helpers into `useMapDownload`.
-- **`useGoogleSatellite` rAF polling (pending fix):** The Google Satellite hook still has a 180-attempt rAF loop. Once gated on `styleReady`, this can be replaced with a direct `addGoogleSatelliteLayer()` call, same as `addPolygonCentroidsLayer` was fixed.
+- **`MapFunctions` in relay components (follow-up):** 8 intermediate components outside `Map-mapbox/` still type `mapFunctions` as `any`. Safe to migrate in a separate cleanup PR — the source (`useMap()`) and sink (`Map.tsx`) are correctly typed.
+- **`useMapCamera` styleReady gate (deferred to v3):** `zoomToBbox`/`zoomToCenter` are called without a `styleReady` guard. In Mapbox v2, `fitBounds`/`flyTo` queue camera moves safely before style load. Address in the v3 upgrade PR.
 
 ## Resolved implementation notes
 
-- **Readiness pipeline (resolved):** The mix of `isStyleLoaded()`, `loaded()`, `style.load`, `idle`, and rAF polling was replaced by a single `core/useMapReadiness.ts` → `styleReady` signal. All hooks (`useMapLayers`, `useMapOverlays`, `useMapMedia`, `useGoogleSatellite`) and style-sync effects in `Map.tsx` are now gated on `styleReady`. The duplicate `.once`/`.on` bug in the former `isMapReady` effect was eliminated.
-- **rAF polling in `addPolygonCentroidsLayer` (resolved):** The 180-attempt `requestAnimationFrame` poll was removed. The function now calls `addLayerToMap()` directly and relies on the caller's `styleReady` gate.
-- **Popup singletons (resolved):** `popupAttachedMap` and `activeClickHandlers` converted to `WeakMap`-scoped registries in `interactions/popups.ts`. Each map instance gets its own popup and click-handler state.
-- **Popup/layer coupling (resolved):** Popup registration extracted from `useMapLayers` into a dedicated `hooks/useMapPopups.ts` hook. The layer effect no longer depends on `sitePolygonData`, `editPolygonSelected`, or unstable callbacks. Popup callbacks (`setPolygonFromMap`, `setEditPolygon`, `setFilters`, `setMobilePopupData`) are stabilized via `useRef` so they never cause popup re-registration on parent re-renders.
-- **`utils.ts` (resolved):** Originally 1975 lines. Replaced by domain files in `adapters/`, `layers/`, `interactions/`. `utils.ts` is now a backward-compatible re-export barrel.
+- **Readiness pipeline (resolved):** The mix of `isStyleLoaded()`, `loaded()`, `style.load`, `idle`, and rAF polling was replaced by a single `core/useMapReadiness.ts` → `styleReady` + `styleVersion` signals. `styleVersion` (an incrementing counter) ensures all hooks re-run after every style switch, not just the first load — fixing a silent LC-3 regression where layers weren't re-added after the second style change.
+- **rAF polling in `addPolygonCentroidsLayer` (resolved):** 180-frame `requestAnimationFrame` loop removed. Direct call, gated on `styleReady`.
+- **rAF polling in `useGoogleSatellite` (resolved):** 180-frame loop removed. `addGoogleSatelliteLayer()` is called directly (style guaranteed loaded by `styleReady` gate). Attribution DOM query uses `setTimeout(50ms)` — the only part that genuinely needed a delay, because `.mapboxgl-ctrl-attrib-inner` is rendered asynchronously by Mapbox's attribution control.
+- **Popup singletons (resolved):** `popupAttachedMap` and `activeClickHandlers` converted to `WeakMap`-scoped registries in `interactions/popups.ts`. Each map instance gets its own state.
+- **Popup/layer coupling (resolved):** Popup registration extracted into `hooks/useMapPopups.ts`. Callbacks stabilized via `useRef` to prevent re-registration on parent re-renders.
+- **Media click handler leak (resolved):** `WeakMap` registry in `mediaLayers.ts` stores and removes the click handler before each re-add.
+- **`addFilterOfPolygonsData` listener accumulation (resolved):** Dead `style.load`/`load` defensive branch removed. Called only from `onCancel` (user interaction), style is always loaded at that point.
+- **`utils.ts` (resolved):** Originally 1975 lines → 241-line re-export barrel.
+- **Dead code removed (resolved):** `addHoverEvent` deleted. `useMap.ts` public API trimmed to the 8 fields Map.tsx actually uses.
+- **Type safety (resolved):** `MapFunctions` interface in `Map.d.ts`. `mapFunctions: any` in `MapProps` → `MapFunctions`. Pre-existing null guard bug on `addMarkerAndZoom` caught and fixed.
