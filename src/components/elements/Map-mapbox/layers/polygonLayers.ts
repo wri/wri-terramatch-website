@@ -62,37 +62,6 @@ export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, s
   addSourceToLayer(layer, map, parsedPolygonData);
 };
 
-export const addHoverEvent = (layer: LayerType, map: mapboxgl.Map) => {
-  const { name, styles } = layer;
-  const layersToHover = styles.map((_, index) => `${name}-${index}`);
-  if (name === LAYERS_NAMES.WORLD_COUNTRIES) {
-    let hoveredPolygonId: any = null;
-    map.on("mousemove", layersToHover, e => {
-      const zoomLevel = map.getZoom();
-      if (zoomLevel <= 4.5) {
-        if (e.features && e.features.length > 0) {
-          if (hoveredPolygonId !== null) {
-            map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
-          }
-          hoveredPolygonId = e.features[0].id;
-          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: true });
-        }
-      } else {
-        if (hoveredPolygonId !== null) {
-          map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
-        }
-        hoveredPolygonId = null;
-      }
-    });
-    map.on("mouseleave", layersToHover, () => {
-      if (hoveredPolygonId !== null) {
-        map.setFeatureState({ source: name, sourceLayer: name, id: hoveredPolygonId }, { hover: false });
-      }
-      hoveredPolygonId = null;
-    });
-  }
-};
-
 export const setFilterCountry = (map: mapboxgl.Map, layerName: string, country: string) => {
   map.setFilter(layerName, ["==", ["get", "iso"], country]);
 };

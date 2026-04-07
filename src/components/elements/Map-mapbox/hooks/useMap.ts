@@ -20,11 +20,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
-  const styleLoadListenerRef = useRef<(() => void) | null>(null);
-  const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [styleLoaded, setStyleLoaded] = useState(false);
-  const [changeStyle, setChangeStyle] = useState(false);
-  const [mapLoaded, setMapLoaded] = useState(false);
 
   const onCancel = (parsedPolygonData: any) => {
     if (map?.current && draw?.current) {
@@ -49,6 +45,8 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
+  // Triggers a re-render so Map.tsx passes the live map instance to useMapReadiness.
+  // Do not remove: this is the mechanism that makes useMapReadiness(map?.current) work.
   const handleStyleLoad = useCallback(() => {
     setStyleLoaded(true);
   }, []);
@@ -64,7 +62,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     map.current = new mapboxgl.Map({
       container: mapContainer.current as HTMLDivElement,
       style: styleToUse,
-      zoom: zoom,
+      zoom: INITIAL_ZOOM,
       minZoom: 2.0,
       accessToken: mapboxToken,
       center: [21.496, 5.456]
@@ -91,7 +89,6 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     };
 
     if (map?.current && draw?.current) {
-      styleLoadListenerRef.current = handleStyleLoad;
       map.current.on("style.load", handleStyleLoad);
 
       if (map.current.isStyleLoaded()) {
@@ -113,24 +110,14 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
-  const notifyStyleChanging = useCallback(() => {
-    setStyleLoaded(false);
-  }, []);
-
   return {
     mapContainer,
     map,
-    setZoom,
     styleLoaded,
     draw,
     onCancel,
     initMap,
     setStyleLoaded,
-    setChangeStyle,
-    changeStyle,
-    mapLoaded,
-    setMapLoaded,
-    handleTrashDelete,
-    notifyStyleChanging
+    handleTrashDelete
   };
 };

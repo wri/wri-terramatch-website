@@ -164,6 +164,9 @@ export function useMapDraw({
           isProjectPolygon ? projectPitchUuid : undefined
         );
         if (updatedGeometry != null && map.current != null) {
+          // Style is guaranteed loaded here: we're responding to a successful async API call
+          // that takes multiple seconds. If a style switch happened mid-save, useMapLayers
+          // will re-add layers on the next styleVersion increment (LC-3).
           addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
         }
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
@@ -204,6 +207,7 @@ export function useMapDraw({
       setStatusSelectedPolygon?.(polygonActive?.status as string);
 
       onCancel(polygonsData);
+      // Same invariant as above: responding to async API — style is loaded.
       if (map.current != null) addSourcesToLayers(map.current, polygonsData, centroids);
       setShouldRefetchPolygonData?.(true);
       openNotification("success", t("Success"), t("Site polygon version created successfully."));

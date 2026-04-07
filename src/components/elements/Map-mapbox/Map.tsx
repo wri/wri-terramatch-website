@@ -37,7 +37,7 @@ import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
-import type { DashboardGetProjectsData, TooltipType } from "./Map.d";
+import type { DashboardGetProjectsData, MapFunctions, TooltipType } from "./Map.d";
 export type { DashboardGetProjectsData };
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
@@ -103,7 +103,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showPopups?: boolean;
   showLegend?: boolean;
   showDownloadPolygons?: boolean;
-  mapFunctions?: any;
+  mapFunctions?: MapFunctions;
   tooltipType?: TooltipType;
   sitePolygonData?: SitePolygonLightDto[];
   polygonsExists?: boolean;
@@ -275,10 +275,8 @@ export const MapContainer = ({
   const { styleReady, styleVersion } = useMapReadiness(map?.current);
 
   useEffect(() => {
-    if (!map) return;
-    if (location != null && location.lat !== 0 && location.lng !== 0) {
-      addMarkerAndZoom(map.current, location);
-    }
+    if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
+    addMarkerAndZoom(map.current, location);
   }, [map, location]);
 
   // ── Domain hooks ─────────────────────────────────────────────────────────────
