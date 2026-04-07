@@ -9,6 +9,7 @@ import { addGoogleSatelliteLayer, removeGoogleSatelliteLayer, updateMapProjectio
 export const useGoogleSatellite = (
   currentStyle: MapStyle,
   styleReady: boolean,
+  styleVersion: number,
   map: React.RefObject<mapboxgl.Map | null>,
   mapContainer: React.RefObject<HTMLDivElement | null>
 ) => {
@@ -104,5 +105,5 @@ export const useGoogleSatellite = (
       removeGoogleSatelliteLayer(currentMap);
       updateAttribution();
     }
-  }, [currentStyle, styleReady, map, mapContainer]);
+  }, [currentStyle, styleReady, styleVersion, map, mapContainer]);
 };

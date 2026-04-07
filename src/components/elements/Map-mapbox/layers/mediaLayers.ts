@@ -10,8 +10,19 @@ import { Feature, GeoJsonProperties, Geometry } from "../GeoJSON";
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
 
+// Per-instance click handler registry — same WeakMap pattern as popups.ts.
+// Prevents anonymous handler accumulation when media data refreshes (contract LC-4).
+const mediaClickHandlers = new WeakMap<mapboxgl.Map, (e: mapboxgl.MapLayerMouseEvent) => void>();
+
 export const removeMediaLayer = (map: mapboxgl.Map) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
+
+  const existingHandler = mediaClickHandlers.get(map);
+  if (existingHandler != null) {
+    map.off("click", layerName, existingHandler);
+    mediaClickHandlers.delete(map);
+  }
+
   map.getLayer(layerName) && map.removeLayer(layerName);
   map.getSource(layerName) && map.removeSource(layerName);
   map.hasImage("pulsing-dot") && map.removeImage("pulsing-dot");
@@ -60,7 +71,7 @@ export const addMediaSourceAndLayer = (
   map.addLayer({ id: layerName, type: "symbol", source: layerName, layout: { "icon-image": "pulsing-dot" } });
   map.moveLayer(layerName);
 
-  map.on("click", layerName, e => {
+  const clickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
     e.preventDefault();
     e.features!.forEach((feature: any) => {
       const popupContent = document.createElement("div");
@@ -86,5 +97,8 @@ export const addMediaSourceAndLayer = (
 
       registerPopup(map, "MEDIA", mediaPopup);
     });
-  });
+  };
+
+  map.on("click", layerName, clickHandler);
+  mediaClickHandlers.set(map, clickHandler);
 };

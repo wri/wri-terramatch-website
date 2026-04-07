@@ -51,15 +51,11 @@ export const loadLayersInMap = (
   }
 };
 
+// Called imperatively from onCancel (user interaction) — style is always loaded at this point.
+// No defensive listeners needed; adding them would accumulate across cancellations (LC-4).
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   if (map == null || polygonsData == null) return;
-  if (map.isStyleLoaded() || map.loaded()) {
-    layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
-  } else {
-    const applyFilters = () => layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
-    map.on("style.load", applyFilters);
-    map.on("load", applyFilters);
-  }
+  layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
 };
 
 export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {

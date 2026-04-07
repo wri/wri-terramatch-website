@@ -12,8 +12,10 @@ import { DashboardGetProjectsData } from "../Map.d";
 type UseMapLayersParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   draw: MutableRefObject<MapboxDraw | null>;
-  /** True when style.load has fired — from core/useMapReadiness. This is the single gate. */
+  /** True when style.load has fired — from core/useMapReadiness. */
   styleReady: boolean;
+  /** Increments on every style.load — ensures effects re-run after each style switch. */
+  styleVersion: number;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
   polygonsCentroids?: any[];
@@ -42,6 +44,7 @@ export function useMapLayers({
   map,
   draw: _draw,
   styleReady,
+  styleVersion,
   polygonsData,
   centroids,
   polygonsCentroids,
@@ -63,7 +66,8 @@ export function useMapLayers({
 
     addSourcesToLayers(map.current, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
     setSourcesAdded(true);
-  }, [map, styleReady, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);
+    // styleVersion ensures this re-runs after every style switch, not just the first load.
+  }, [map, styleReady, styleVersion, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);
 
   useEffect(() => {
     if (!styleReady || selectedPolygonsInCheckbox == null || map.current == null) return;
@@ -72,7 +76,7 @@ export function useMapLayers({
       map.current,
       { [DELETED_POLYGONS]: selectedPolygonsInCheckbox }
     );
-  }, [map, selectedPolygonsInCheckbox, styleReady]);
+  }, [map, selectedPolygonsInCheckbox, styleReady, styleVersion]);
 
   return { sourcesAdded };
 }

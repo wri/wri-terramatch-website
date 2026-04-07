@@ -37,7 +37,8 @@ import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
-import type { TooltipType } from "./Map.d";
+import type { DashboardGetProjectsData, TooltipType } from "./Map.d";
+export type { DashboardGetProjectsData };
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
@@ -69,13 +70,6 @@ interface LegendItem {
   text: string;
   uuid: string;
 }
-
-export type DashboardGetProjectsData = {
-  uuid?: string;
-  name?: string;
-  lat?: number;
-  long?: number;
-};
 
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
@@ -277,8 +271,8 @@ export const MapContainer = ({
   });
 
   // Single source of truth for style readiness — wires core/useMapReadiness.
-  // Replaces the former isMapReady state + duplicate .once/.on style.load registration.
-  const { styleReady } = useMapReadiness(map?.current);
+  // styleVersion increments on every style.load so hooks always re-run after style switches.
+  const { styleReady, styleVersion } = useMapReadiness(map?.current);
 
   useEffect(() => {
     if (!map) return;
@@ -293,6 +287,7 @@ export const MapContainer = ({
     map,
     draw,
     styleReady,
+    styleVersion,
     polygonsData,
     centroids,
     polygonsCentroids,
@@ -332,6 +327,7 @@ export const MapContainer = ({
     anrMapOverlay,
     anrPlotGeometryDto,
     styleReady,
+    styleVersion,
     sourcesAdded
   });
 
@@ -339,6 +335,7 @@ export const MapContainer = ({
     map,
     modelFilesData: props.modelFilesData,
     styleReady,
+    styleVersion,
     entityData,
     t,
     showLoader,
@@ -374,7 +371,7 @@ export const MapContainer = ({
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 
-  useGoogleSatellite(currentStyle, styleReady, map, mapContainer);
+  useGoogleSatellite(currentStyle, styleReady, styleVersion, map, mapContainer);
 
   // Style sync: parent prop → local style state
   useEffect(() => {
@@ -387,7 +384,7 @@ export const MapContainer = ({
         setCurrentStyle(mapStyleProp);
       }
     }
-  }, [mapStyleProp, map, currentStyle, styleReady]);
+  }, [mapStyleProp, map, currentStyle, styleReady, styleVersion]);
 
   // Auto-satellite when a project is loaded (reset on project change)
   useEffect(() => {

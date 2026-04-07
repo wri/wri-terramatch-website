@@ -14,6 +14,8 @@ type UseMapMediaParams = {
   modelFilesData?: MediaDto[];
   /** True when style.load fired — from core/useMapReadiness. */
   styleReady: boolean;
+  /** Increments on every style.load so the media layer re-adds after each style switch. */
+  styleVersion: number;
   entityData?: any;
   t: (key: string) => string;
   showLoader: () => void;
@@ -35,6 +37,7 @@ export function useMapMedia({
   map,
   modelFilesData,
   styleReady,
+  styleVersion,
   entityData,
   t,
   showLoader,
@@ -47,6 +50,7 @@ export function useMapMedia({
 }: UseMapMediaParams) {
   useEffect(() => {
     if (map.current == null || !styleReady || modelFilesData == null) return;
+    // styleVersion unused directly but in dep array — forces re-add after style switch.
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 
@@ -115,5 +119,5 @@ export function useMapMedia({
       isProjectPath
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelFilesData, styleReady]);
+  }, [modelFilesData, styleReady, styleVersion]);
 }

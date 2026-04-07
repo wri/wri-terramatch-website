@@ -24,6 +24,8 @@ type UseMapOverlaysParams = {
   anrPlotGeometryDto?: { geojson?: any } | null;
   /** True when style.load fired — from core/useMapReadiness. */
   styleReady: boolean;
+  /** Increments on every style.load so overlay effects re-run after each style switch. */
+  styleVersion: number;
   sourcesAdded: boolean;
 };
 
@@ -40,6 +42,7 @@ export function useMapOverlays({
   anrMapOverlay,
   anrPlotGeometryDto,
   styleReady,
+  styleVersion,
   sourcesAdded
 }: UseMapOverlaysParams) {
   // ANR overlay: add/remove when drawer state or geometry changes (OV-3, OV-4).
@@ -67,7 +70,7 @@ export function useMapOverlays({
     return () => {
       removeAnrPlotGeometryOverlay(currentMap);
     };
-  }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, sourcesAdded]);
+  }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, styleVersion, sourcesAdded]);
 
   // Country border (OV-1): gated on sourcesAdded so the source exists before the border is added.
   useEffect(() => {
@@ -78,7 +81,7 @@ export function useMapOverlays({
       removeBorderCountry(map.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCountry, styleReady, sourcesAdded]);
+  }, [selectedCountry, styleReady, styleVersion, sourcesAdded]);
 
   // Landscape border (OV-2)
   useEffect(() => {
@@ -89,5 +92,5 @@ export function useMapOverlays({
       removeBorderLandscape(map.current);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedLandscapes, styleReady, sourcesAdded]);
+  }, [selectedLandscapes, styleReady, styleVersion, sourcesAdded]);
 }
