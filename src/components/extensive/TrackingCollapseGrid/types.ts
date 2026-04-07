@@ -124,9 +124,9 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
     rowLabelPlural: "Beneficiaries"
   },
   livelihoodActivities: {
-    sectionLabel: "Total Livelihood Activities",
-    rowLabelSingular: "Activity",
-    rowLabelPlural: "Activities"
+    sectionLabel: "Total Livelihood Activity",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
   },
   treesHistorical: {
     sectionLabel: "Total",
@@ -256,6 +256,7 @@ const LIVELIHOODS: Dictionary<string> = {
 
 type TypeMapValue = {
   title: string;
+  displayTrackingType?: string;
   typeMap: Dictionary<string>;
   // If true, this field is required to balance with other "balanced" fields for a tracking
   // input to be considered complete.
@@ -412,7 +413,8 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
 
 const LIVELIHOODS_TYPE_MAP: Dictionary<TypeMapValue> = {
   livelihoods: {
-    title: "Livelihood",
+    title: "Livelihood Activity",
+    displayTrackingType: "Beneficiaries",
     typeMap: LIVELIHOODS,
     balanced: true
   }

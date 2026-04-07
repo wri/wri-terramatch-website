@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
+import { showsTerrafundAfr100BannerLogo } from "@/context/framework.provider";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -16,9 +17,10 @@ export interface TeamSectionProps {
   team?: TeamMember[];
   onAddTeamClick: () => void;
   gotoTeamMembers: () => void;
+  frameworkKey: string | null;
 }
 
-const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers }) => {
+const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers, frameworkKey }) => {
   const t = useT();
 
   return (
@@ -81,7 +83,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         </Flex>
       </div>
 
-      <TerraFundAFR100 className="mt-auto" />
+      {showsTerrafundAfr100BannerLogo(frameworkKey) ? <TerraFundAFR100 className="mt-auto" /> : null}
     </Box>
   );
 };
