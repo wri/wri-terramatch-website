@@ -3,9 +3,11 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC } from "react";
 
-import { getProjectBannerLogoKind } from "@/context/framework.provider";
+import { ContextCondition } from "@/context/ContextCondition";
+import { Framework, TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS } from "@/context/framework.provider";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
 import { HaritBharatFund } from "@/redesignComponents/foundations/Logos/HaritBharatFund";
+import { PpcProgramBannerLogo } from "@/redesignComponents/foundations/Logos/PpcProgramBannerLogo";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
 
@@ -18,12 +20,10 @@ export interface TeamSectionProps {
   team?: TeamMember[];
   onAddTeamClick: () => void;
   gotoTeamMembers: () => void;
-  frameworkKey: string | null;
 }
 
-const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers, frameworkKey }) => {
+const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembers }) => {
   const t = useT();
-  const bannerLogoKind = getProjectBannerLogoKind(frameworkKey);
 
   return (
     <Box
@@ -85,8 +85,15 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         </Flex>
       </div>
 
-      {bannerLogoKind === "terrafund-afr100" ? <TerraFundAFR100 className="mt-auto" /> : null}
-      {bannerLogoKind === "hbf" ? <HaritBharatFund className="mt-auto" /> : null}
+      <ContextCondition frameworksShow={TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS}>
+        <TerraFundAFR100 className="mt-auto" />
+      </ContextCondition>
+      <ContextCondition frameworksShow={[Framework.HBF]}>
+        <HaritBharatFund className="mt-auto" />
+      </ContextCondition>
+      <ContextCondition frameworksShow={[Framework.PPC]}>
+        <PpcProgramBannerLogo className="mt-auto" />
+      </ContextCondition>
     </Box>
   );
 };

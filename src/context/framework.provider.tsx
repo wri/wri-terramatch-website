@@ -33,16 +33,6 @@ export const toFramework = (frameworkKey?: string | null) =>
     ? (frameworkKey as Framework)
     : Framework.UNDEFINED;
 
-/** Which programme logo to show in the project header team column (mutually exclusive). */
-export type ProjectBannerLogoKind = "terrafund-afr100" | "hbf" | null;
-
-export function getProjectBannerLogoKind(frameworkKey: string | null | undefined): ProjectBannerLogoKind {
-  const framework = toFramework(frameworkKey);
-  if (framework === Framework.HBF) return "hbf";
-  if (TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS.includes(framework)) return "terrafund-afr100";
-  return null;
-}
-
 export const useFramework = (frameworkKey?: string | null) => useMemo(() => toFramework(frameworkKey), [frameworkKey]);
 
 interface IFrameworkContext {
