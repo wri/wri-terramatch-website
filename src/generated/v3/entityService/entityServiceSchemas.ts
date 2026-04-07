@@ -3028,7 +3028,6 @@ export type FormLightDto = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   banner: MediaDto;
 };
 
@@ -3161,7 +3160,6 @@ export type FormFullDto = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   banner: MediaDto;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
@@ -3299,7 +3297,6 @@ export type StoreFormAttributes = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:

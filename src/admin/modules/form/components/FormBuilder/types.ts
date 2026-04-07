@@ -16,7 +16,6 @@ import Log from "@/utils/log";
 
 export type FormBuilderData = Omit<FormFullDto, "banner" | "sections"> & {
   id: string;
-  published: boolean;
   banner?: UploadedFile;
   steps: LocalStep[];
 };
