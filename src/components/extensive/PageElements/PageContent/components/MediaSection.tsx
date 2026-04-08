@@ -4,13 +4,14 @@ import { FC } from "react";
 import { ParsedFile } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
 import { MediaType } from "@/redesignComponents/content/Images/Image";
 import { PhotosIcon } from "@/redesignComponents/foundations/Icons";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 import GalleryEntryItem from "./GalleryEntryItem";
 
 export type MediaSectionProps = {
   label: string;
   files: ParsedFile[];
-  entityName?: "projects" | "sites";
+  entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
   type?: MediaType;
   icon?: React.ReactNode;

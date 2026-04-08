@@ -1,7 +1,7 @@
-import { Accordion as AccordionChakra, Box, Flex, useAccordionItemContext } from "@chakra-ui/react";
+import { Accordion as AccordionChakra, Box, Flex } from "@chakra-ui/react";
 import type { FC } from "react";
 
-import { ChevronDownIcon, MinusIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
+import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 
 import { AccordionProps, AccordionVariant } from "./types";
 
@@ -49,10 +49,8 @@ const variantStyles = {
 };
 
 const AccordionIconInner: FC<{ variant: AccordionVariant }> = ({ variant }) => {
-  const { expanded } = useAccordionItemContext();
   if (variant === "secondary") {
-    const IconComponent = expanded ? MinusIcon : PlusIcon;
-    return <IconComponent boxSize={4} color="neutral.900" />;
+    return <ChevronDownIcon boxSize={4} color="neutral.900" />;
   }
 
   return <ChevronDownIcon boxSize={4} color="neutral.900" />;
@@ -64,7 +62,15 @@ const AccordionIcon: FC<{ variant: AccordionVariant }> = ({ variant }) => (
   </AccordionChakra.ItemIndicator>
 );
 
-const Accordion: FC<AccordionProps> = ({ children, header, actions, variant = "primary", className }) => {
+const Accordion: FC<AccordionProps> = ({
+  children,
+  header,
+  actions,
+  variant = "primary",
+  className,
+  classNameHeader,
+  defaultOpen = false
+}) => {
   const { container, header: headerStyles } = variantStyles[variant];
 
   const handleActionsClick = (e: React.MouseEvent) => {
@@ -73,9 +79,9 @@ const Accordion: FC<AccordionProps> = ({ children, header, actions, variant = "p
 
   return (
     <Box className={className}>
-      <AccordionChakra.Root multiple>
-        <AccordionChakra.Item>
-          <Flex {...container} gap={4}>
+      <AccordionChakra.Root multiple defaultValue={defaultOpen ? ["default-item"] : []}>
+        <AccordionChakra.Item value="default-item">
+          <Flex {...container} gap={4} className={classNameHeader}>
             <AccordionChakra.ItemTrigger css={{ outline: "none" }}>
               <Flex flex="1" alignItems="center" justifyContent="space-between" width="100%" {...headerStyles}>
                 <Flex gap={3} flex="1" alignItems="center" justifyContent="space-between" width="100%">

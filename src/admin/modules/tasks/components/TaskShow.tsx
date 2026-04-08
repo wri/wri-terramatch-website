@@ -237,8 +237,8 @@ function ShowReports() {
           if (updateTask != null) {
             updateTask({
               feedback: text ?? "",
-              siteReportNothingToReportUuids: siteReportUuids,
-              nurseryReportNothingToReportUuids: nurseryReportUuids
+              siteReportApprovalUuids: siteReportUuids,
+              nurseryReportApprovalUuids: nurseryReportUuids
             });
           }
         }}

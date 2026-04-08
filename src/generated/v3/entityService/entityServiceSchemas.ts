@@ -585,9 +585,17 @@ export type TaskUpdateAttributes = {
    */
   siteReportNothingToReportUuids?: string[];
   /**
+   * UUIDs of site reports to approve
+   */
+  siteReportApprovalUuids?: string[];
+  /**
    * UUIDs of nursery reports to mark as 'Nothing to report'
    */
   nurseryReportNothingToReportUuids?: string[];
+  /**
+   * UUIDs of nursery reports to approve
+   */
+  nurseryReportApprovalUuids?: string[];
 };
 
 export type TaskData = {
@@ -2687,6 +2695,8 @@ export type TrackingDto = {
     | "training-beneficiaries"
     | "indirect-beneficiaries"
     | "associates"
+    | "elp-beneficiaries"
+    | "livelihood-activities"
     | "hectares-goal"
     | "hectares-historical"
     | "trees-goal"
@@ -2904,6 +2914,8 @@ export type LinkedFieldDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   optionListKey: string | null;
@@ -3024,7 +3036,6 @@ export type FormLightDto = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   banner: MediaDto;
 };
 
@@ -3085,6 +3096,8 @@ export type FormQuestionDto = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;
@@ -3155,7 +3168,6 @@ export type FormFullDto = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   banner: MediaDto;
   /**
    * Indicates whether the text fields in this form response have been translated to the user's locale
@@ -3239,6 +3251,8 @@ export type StoreFormQuestionAttributes = {
     | "treeSpecies"
     | "volunteers"
     | "workdays"
+    | "elpBeneficiaries"
+    | "livelihoodActivities"
     | "conditional"
     | "tableInput";
   label: string;
@@ -3291,7 +3305,6 @@ export type StoreFormAttributes = {
     | "nursery-report"
     | "srp-report"
     | null;
-  published: boolean;
   subtitle?: string | null;
   description?: string | null;
   frameworkKey?:

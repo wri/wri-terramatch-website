@@ -7,11 +7,12 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import GalleryImage from "@/redesignComponents/content/Images/GalleryImage/GalleryImage";
 import { MediaType } from "@/redesignComponents/content/Images/Image";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
+import { EntityName, SingularEntityName } from "@/types/common";
 
 type GalleryEntryItemProps = {
   src: string;
   name: string;
-  entityName?: "projects" | "sites";
+  entityName?: EntityName | SingularEntityName;
   entityUUID?: string;
   url?: string;
   type?: MediaType;

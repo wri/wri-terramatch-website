@@ -1,7 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { DetailedHTMLProps, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useState } from "react";
-import { When } from "react-if";
+import { DetailedHTMLProps, FC, HTMLAttributes, PropsWithChildren, ReactNode, useEffect, useState } from "react";
 import { twMerge as tw } from "tailwind-merge";
 
 import EmptyField, { EmptyFieldProps } from "@/components/elements/Field/EmptyField";
@@ -37,7 +36,7 @@ export interface PageCardProps
   projectFrameworkKey?: string | null;
 }
 
-const PageCard = ({
+const PageCard: FC<PageCardProps> = ({
   title,
   subtitle,
   children,
@@ -56,8 +55,8 @@ const PageCard = ({
   collapseChildren = false,
   projectFrameworkKey,
   ...props
-}: PageCardProps) => {
-  const [collapseSubtile, setCollapseSubtile] = useState(true);
+}) => {
+  const [collapseSubtitle, setCollapseSubtitle] = useState(true);
   const [subtitleText, setSubtitleText] = useState(subtitle);
   const [openCollapseChildren, setOpenCollapseChildren] = useState(true);
   const t = useT();
@@ -66,12 +65,12 @@ const PageCard = ({
   const maxLength = 278;
 
   useEffect(() => {
-    if (collapseSubtile && (subtitle?.length ?? 0) > maxLength) {
+    if (collapseSubtitle && (subtitle?.length ?? 0) > maxLength) {
       setSubtitleText(subtitle?.slice(0, maxLength));
     } else {
       setSubtitleText(subtitle);
     }
-  }, [collapseSubtile, subtitle]);
+  }, [collapseSubtitle, subtitle]);
 
   return (
     <Paper {...props}>
@@ -81,30 +80,32 @@ const PageCard = ({
         projectFrameworkKey={projectFrameworkKey}
         backendHasAccess={isUserAllowed}
       >
-        <When condition={!!title || !!headerChildren}>
+        {(title != null || headerChildren != null) && (
           <div className="flex flex-wrap justify-between">
-            <When condition={!!title}>
+            {title != null && (
               <Text variant="text-24-bold" className="flex flex-1 items-baseline text-darkCustom">
                 {title}
-                <When condition={!!tooltip}>
-                  &nbsp;
-                  <ToolTip
-                    className="normal-case"
-                    content={tooltip || ""}
-                    width={widthTooltip || "w-44 lg:w-52"}
-                    title={title}
-                    trigger={tooltipTrigger}
-                  >
-                    <Icon
-                      name={IconNames.IC_INFO}
-                      className={tw("h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4", iconClassName)}
-                    />
-                  </ToolTip>
-                </When>
+                {tooltip != null && (
+                  <>
+                    &nbsp;
+                    <ToolTip
+                      className="normal-case"
+                      content={tooltip ?? ""}
+                      width={widthTooltip ?? "w-44 lg:w-52"}
+                      title={title}
+                      trigger={tooltipTrigger}
+                    >
+                      <Icon
+                        name={IconNames.IC_INFO}
+                        className={tw("h-3 w-3 text-blueCustom-600 lg:h-4 lg:w-4", iconClassName)}
+                      />
+                    </ToolTip>
+                  </>
+                )}
               </Text>
-            </When>
-            <When condition={!!title}>{headerChildren}</When>
-            <When condition={collapseChildren}>
+            )}
+            {headerChildren}
+            {collapseChildren && (
               <button onClick={() => setOpenCollapseChildren(!openCollapseChildren)}>
                 <Icon
                   name={IconNames.IC_ARROW_COLLAPSE}
@@ -116,15 +117,15 @@ const PageCard = ({
                   )}
                 />
               </button>
-            </When>
+            )}
           </div>
-        </When>
+        )}
         <div
           className={classNames("delay-400 duration-0 relative h-auto transition-all ease-in-out", {
             "bg-red-500 !h-0 opacity-0": collapseChildren && !openCollapseChildren
           })}
         >
-          <When condition={!!subtitle}>
+          {subtitle != null && (
             <div
               className={classNames(subtitleMore && " ", {
                 hidden: collapseChildren && !openCollapseChildren
@@ -138,27 +139,27 @@ const PageCard = ({
               >
                 {subtitleText}
               </Text>
-              <When condition={subtitleMore && (subtitle?.length ?? 0) > maxLength}>
+              {subtitleMore && (subtitle?.length ?? 0) > maxLength && (
                 <button
                   className="text-14-bold text-darkCustom opacity-80 hover:text-primary"
-                  onClick={() => setCollapseSubtile(!collapseSubtile)}
+                  onClick={() => setCollapseSubtitle(!collapseSubtitle)}
                 >
                   &nbsp;
-                  {collapseSubtile ? t("...See More") : t("See Less")}
+                  {collapseSubtitle ? t("...See More") : t("See Less")}
                 </button>
-              </When>
+              )}
             </div>
-          </When>
+          )}
 
-          <When condition={!!children || isEmpty}>
+          {(children != null || isEmpty) && (
             <div
-              className={classNames(`space-y-${gap}`, (title || subtitle) && "mt-8", {
+              className={classNames(`space-y-${gap}`, (title ?? subtitle) && "mt-8", {
                 hidden: collapseChildren && !openCollapseChildren
               })}
             >
-              {isEmpty && !!emptyStateProps ? <EmptyField {...emptyStateProps} /> : children}
+              {isEmpty && emptyStateProps != null ? <EmptyField {...emptyStateProps} /> : children}
             </div>
-          </When>
+          )}
         </div>
       </BlurContainer>
     </Paper>

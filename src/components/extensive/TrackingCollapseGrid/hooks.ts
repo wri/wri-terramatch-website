@@ -1,4 +1,4 @@
-import { Dictionary, findLastIndex, kebabCase, uniq } from "lodash";
+import { Dictionary, findLastIndex, kebabCase, startCase, uniq } from "lodash";
 import { useMemo } from "react";
 
 import { useTrackings } from "@/connections/EntityAssociation";
@@ -122,15 +122,21 @@ export function useSectionData(
 
   return useMemo(
     function () {
-      const { title, addNameLabel, typeMap, onlyIfPresent } = trackingEntryTypes[entryType];
+      const { title, addNameLabel, typeMap, onlyIfPresent, displayTrackingType } = trackingEntryTypes[entryType];
       const rows = mapRows(addNameLabel != null, typeMap, entries, onlyIfPresent);
       const total = rows.reduce((total, { amount }) => total + amount, 0);
       const entryTypes = Object.keys(trackingEntryTypes);
       const index = entryTypes.indexOf(entryType);
       const position: Position = index == 0 ? "first" : index == entryTypes.length - 1 ? "last" : undefined;
-      return { title, rows, total, position };
+      return {
+        title,
+        rows,
+        total,
+        position,
+        displayTrackingType: displayTrackingType ?? type.includes("Beneficiaries") ? "Beneficiaries" : startCase(type)
+      };
     },
-    [entries, entryType, trackingEntryTypes]
+    [entries, entryType, trackingEntryTypes, type]
   );
 }
 
