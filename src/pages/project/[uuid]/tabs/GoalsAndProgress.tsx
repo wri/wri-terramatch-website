@@ -94,7 +94,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
         <PageCard
           title={t(project.frameworkKey == Framework.HBF ? "Sapling Planting Progress" : "Tree Planting Progress")}
         >
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
             <div className="flex flex-col gap-4">
               <ContextCondition frameworksShow={[Framework.PPC]}>
                 <GoalProgressCard
@@ -401,7 +401,7 @@ const GoalsAndProgressTab = ({ project }: GoalsAndProgressProps) => {
       <ContextCondition frameworksShow={[Framework.HBF]}>
         <PageRow>
           <PageCard title={t("Non-Tree Planting Progress")}>
-            <div className="grid grid-cols-2 gap-16">
+            <div className="grid grid-cols-2 gap-16 mobile:!grid-cols-1">
               <div className="flex flex-col gap-4">
                 <Text variant="text-14" className="uppercase text-neutral-650">
                   {t("number of Non-Trees PLANTED:")}

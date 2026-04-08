@@ -106,7 +106,7 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
   }, [associatedUsers, selectedRole, searchQuery]);
 
   return (
-    <Box paddingX={8} paddingY={6} minHeight="525px">
+    <Box paddingX={8} paddingY={6} minHeight="525px" width="100%" overflow="auto">
       <ToolbarTable
         className="!px-0"
         onClearFilters={() => {
@@ -162,110 +162,113 @@ const TeamMembersTab: FC<TeamMembersTabProps> = ({ project }) => {
         )}
         showClearFilters={selectedRole !== null}
       />
-      <Table
-        data={teamMembers ?? []}
-        renderRow={useCallback(
-          (rowData: RowData) => (
-            <TableRow className="group">
-              <ChakraTableCell>
-                <CustomTableCell
-                  avatars={[
-                    {
-                      name: rowData.fullName,
-                      src: (rowData as any).image,
-                      ariaLabel: rowData.fullName
+      <Box className="mobile:!w-full mobile:overflow-auto">
+        <Table
+          data={teamMembers ?? []}
+          renderRow={useCallback(
+            (rowData: RowData) => (
+              <TableRow className="group">
+                <ChakraTableCell>
+                  <CustomTableCell
+                    avatars={[
+                      {
+                        name: rowData.fullName,
+                        src: (rowData as any).image,
+                        ariaLabel: rowData.fullName
+                      }
+                    ]}
+                  />
+                </ChakraTableCell>
+                <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
+                <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
+                <ChakraTableCell>
+                  {rowData?.roleName != null
+                    ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
+                    : "-"}
+                </ChakraTableCell>
+                <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
+                <ChakraTableCell>
+                  <ActionCell
+                    // TODO: comment out for now as we don't have an edit functionality yet
+                    // button={{
+                    //   children: t("Edit"),
+                    //   onClick: () => Log.debug("Edit team member click"),
+                    //   leftIcon: (
+                    //     <Edit
+                    //       // className="!text-theme-neutral-900 hidden"
+                    //       className="hidden"
+                    //       css={{
+                    //         "& svg path": {
+                    //           fill: getThemedColor("neutral", 900) + " !important",
+                    //           color: getThemedColor("neutral", 900) + " !important"
+                    //         }
+                    //       }}
+                    //     />
+                    //   )
+                    // }}
+                    buttonSecondary={
+                      rowData?.isManager
+                        ? undefined
+                        : {
+                            children: t("Remove"),
+                            variant: "secondary",
+                            onClick: () => setDeletePartnerData(rowData),
+                            leftIcon: (
+                              <DeleteIcon
+                                className="!text-theme-error-500"
+                                css={{
+                                  "& svg path": {
+                                    fill: getThemedColor("error", 500) + " !important",
+                                    color: getThemedColor("error", 500) + " !important"
+                                  }
+                                }}
+                              />
+                            ),
+                            className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
+                            size: "small"
+                          }
                     }
-                  ]}
-                />
-              </ChakraTableCell>
-              <ChakraTableCell>{t(rowData?.organisationName)}</ChakraTableCell>
-              <ChakraTableCell>{rowData?.emailAddress}</ChakraTableCell>
-              <ChakraTableCell>
-                {rowData?.roleName != null
-                  ? t(TEAM_MEMBER_ROLE_CHOICES.find(choice => choice.id === rowData.roleName)?.name)
-                  : "-"}
-              </ChakraTableCell>
-              <ChakraTableCell>{t(rowData?.status)}</ChakraTableCell>
-              <ChakraTableCell>
-                <ActionCell
-                  // TODO: comment out for now as we don't have an edit functionality yet
-                  // button={{
-                  //   children: t("Edit"),
-                  //   onClick: () => Log.debug("Edit team member click"),
-                  //   leftIcon: (
-                  //     <Edit
-                  //       // className="!text-theme-neutral-900 hidden"
-                  //       className="hidden"
-                  //       css={{
-                  //         "& svg path": {
-                  //           fill: getThemedColor("neutral", 900) + " !important",
-                  //           color: getThemedColor("neutral", 900) + " !important"
-                  //         }
-                  //       }}
-                  //     />
-                  //   )
-                  // }}
-                  buttonSecondary={
-                    rowData?.isManager
-                      ? undefined
-                      : {
-                          children: t("Remove"),
-                          variant: "secondary",
-                          onClick: () => setDeletePartnerData(rowData),
-                          leftIcon: (
-                            <DeleteIcon
-                              className="!text-theme-error-500"
-                              css={{
-                                "& svg path": {
-                                  fill: getThemedColor("error", 500) + " !important",
-                                  color: getThemedColor("error", 500) + " !important"
-                                }
-                              }}
-                            />
-                          ),
-                          className: "!text-theme-error-900 !border-theme-error-300 !bg-theme-error-100 aaaaa",
-                          size: "small"
-                        }
-                  }
-                />
-              </ChakraTableCell>
-            </TableRow>
-          ),
-          [t]
-        )}
-        columns={[
-          {
-            key: "fullName",
-            label: t("Name"),
-            sortable: true
-          },
-          {
-            key: "organisationName",
-            label: t("Organization"),
-            sortable: true
-          },
-          {
-            key: "emailAddress",
-            label: t("Email"),
-            sortable: true
-          },
-          {
-            key: "roleName",
-            label: t("Role"),
-            sortable: true
-          },
-          {
-            key: "status",
-            label: t("Status"),
-            sortable: true
-          },
-          {
-            key: "actions",
-            label: t(""),
-            sortable: false
-          }
-        ]}
-      />
+                  />
+                </ChakraTableCell>
+              </TableRow>
+            ),
+            [t]
+          )}
+          columns={[
+            {
+              key: "fullName",
+              label: t("Name"),
+              sortable: true
+            },
+            {
+              key: "organisationName",
+              label: t("Organization"),
+              sortable: true
+            },
+            {
+              key: "emailAddress",
+              label: t("Email"),
+              sortable: true
+            },
+            {
+              key: "roleName",
+              label: t("Role"),
+              sortable: true
+            },
+            {
+              key: "status",
+              label: t("Status"),
+              sortable: true
+            },
+            {
+              key: "actions",
+              label: t(""),
+              sortable: false
+            }
+          ]}
+        />
+      </Box>
+
       <InviteMonitoringPartnerModal
         projectUUID={project?.uuid}
         open={showInviteModal}

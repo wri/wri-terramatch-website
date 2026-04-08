@@ -63,7 +63,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
                     <Text
                       textStyle="400"
                       className={classNames(
-                        "border-b border-theme-neutral-300 py-4",
+                        "border-theme-neutral-300 truncate border-b py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                       color="neutral.900"

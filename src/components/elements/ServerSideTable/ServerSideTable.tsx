@@ -78,6 +78,7 @@ export function ServerSideTable<TData extends RowData>({
         classNameWrapper="!overflow-visible"
         variant={variant ? variant : VARIANT_TABLE_BORDER_ALL}
         alwaysShowPagination={alwaysShowPagination}
+        classNameTableWrapper="overflow-x-auto"
       >
         {children}
       </Table>
