@@ -58,7 +58,7 @@ const ProgressReportTab = ({ projectUUID }: ProgressReportProps) => {
   };
 
   return (
-    <PageContent className="bg-neutral-50">
+    <PageContent className="gap-0 bg-neutral-50">
       <div className="mx-auto w-full max-w-[82vw] px-10 xl:px-0 mobile:!m-0 mobile:!w-full mobile:!max-w-full mobile:!px-0">
         <div className="flex w-full justify-start">
           <div className="flex w-fit gap-1 rounded-lg bg-neutral-200 p-1">
