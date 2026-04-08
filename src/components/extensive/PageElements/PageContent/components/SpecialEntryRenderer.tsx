@@ -5,6 +5,7 @@ import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/type
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import AdditionalDocumentationSection from "./AdditionalDocumentationSection";
+import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import PhotosAndVideosSection from "./PhotosAndVideosSection";
 import { PlantTableEntryRenderer } from "./PlantTableEntryRenderer";
 
@@ -49,7 +50,7 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
   }
 
   if (entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information") {
-    return null;
+    return <EntryDefaultValueRenderer entry={entry} />;
   }
 
   return <AdditionalDocumentationSection value={value} entityName={entityName} entityUUID={entityUUID} />;
