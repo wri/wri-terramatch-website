@@ -20,7 +20,7 @@ import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
-import { hasFeedbackInStep } from "../feedbackUtils";
+import { countFeedbackInStep, hasFeedbackInStep } from "../feedbackUtils";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
 const getFieldsRequiringAttentionCount = (
@@ -52,11 +52,12 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const framework = toFramework(frameworkKey) as Framework;
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
-  const valid = props.values == null || validation.isValidSync(props.values);
   const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
+  const valid = (props.values == null || validation.isValidSync(props.values)) && !hasStepFeedback;
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
+  const feedbackFieldsCount = countFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
 
   return (
     <Accordion
@@ -65,8 +66,8 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         <AccordionHeader
           title={title ?? ""}
           badge={
-            !valid && fieldsRequiringAttention > 0
-              ? t("{count} requires attention", { count: fieldsRequiringAttention })
+            !valid && (fieldsRequiringAttention > 0 || feedbackFieldsCount > 0)
+              ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
               : undefined
           }
           status={hasStepFeedback ? "error" : valid ? "complete" : "error"}

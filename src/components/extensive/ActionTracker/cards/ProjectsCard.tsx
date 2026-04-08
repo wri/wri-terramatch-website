@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { ActionDto } from "@/generated/v3/userService/userServiceSchemas";
-import { getEntityCombinedStatus, getEntityDetailPageLink } from "@/helpers/entity";
+import { getEntityCombinedStatus, getEntityDetailPageLink, getEntityEditPageLink } from "@/helpers/entity";
 import { useDate } from "@/hooks/useDate";
 import { sortByDate } from "@/utils/sort";
 
@@ -61,6 +61,12 @@ const ProjectsCard = ({ actions }: ProjectsCardProps) => {
             ctaText = t("View Project");
             subtitle = "";
             ctaLink = getEntityDetailPageLink("projects", project?.uuid);
+            break;
+          }
+          case "needs-more-information": {
+            ctaText = t("View Project");
+            subtitle = "";
+            ctaLink = getEntityEditPageLink("projects", project?.uuid);
             break;
           }
         }
