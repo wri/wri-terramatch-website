@@ -26,8 +26,6 @@ type SpecialEntryRendererProps = {
 
 const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName, entityUUID }) => {
   const { framework }: { framework: Framework } = useFrameworkContext();
-  // eslint-disable-next-line no-console -- debug
-  console.log("SpecialEntryRenderer framework", framework);
 
   const value = typeof entry.value === "string" ? entry.value : "";
 
