@@ -7,6 +7,7 @@ import { createProjectPolygonWithReplace, updateProjectPolygonResource } from "@
 import { createSitePolygonsResource } from "@/connections/SitePolygons";
 import { CreateSitePolygonAttributesDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { GeoJsonExportDto } from "@/generated/v3/researchService/researchServiceSchemas";
+import ApiSlice from "@/store/apiSlice";
 import Log from "@/utils/log";
 
 import { zoomToBbox } from "../adapters/camera";
@@ -161,6 +162,8 @@ export async function storePolygon(
 
   try {
     const result = await createSitePolygonsResource(attributes);
+    ApiSlice.pruneCache("boundingBoxes");
+    ApiSlice.pruneIndex("boundingBoxes", "");
     if (refetchSitePolygons) await refetchSitePolygons();
     if (setPolygonFromMap) {
       setPolygonFromMap({ uuid: result.polygonUuid, isOpen: true, primary_uuid: result.primaryUuid });

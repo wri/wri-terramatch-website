@@ -10,6 +10,7 @@ import { Else, If, Then } from "react-if";
 import ModalApprove from "@/admin/components/extensive/Modal/ModalApprove";
 import Button from "@/components/elements/Button/Button";
 import { VARIANT_FILE_INPUT_MODAL_ADD_IMAGES } from "@/components/elements/Inputs/FileInput/FileInputVariants";
+import { zoomToBbox } from "@/components/elements/Map-mapbox/adapters/camera";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
 import { MapContainer } from "@/components/elements/Map-mapbox/Map";
 import {
@@ -205,13 +206,17 @@ const PolygonReviewTab: FC<IProps> = props => {
   const compareGeometry = useCompareGeometry({});
   const uploadGeometryWithVersions = useUploadGeometryWithVersions({});
 
+  const isValidBbox = (b: unknown): b is [number, number, number, number] =>
+    Array.isArray(b) && b.length === 4 && (b as unknown[]).every(n => typeof n === "number");
+
+  // Always the site-level bbox — this is what the earth-map "reset zoom" button uses.
+  const siteBbox = useBoundingBox({ siteUuid: record?.uuid });
+  const activeBbox = isValidBbox(siteBbox) ? siteBbox : undefined;
+
+  // Polygon-level bbox — only fetched when the user clicks a polygon row in the table.
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
-  const bbox = useBoundingBox(
-    currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : { siteUuid: record?.uuid }
-  );
-  const isValidBbox = (bbox: unknown): bbox is [number, number, number, number] =>
-    Array.isArray(bbox) && bbox.length === 4 && bbox.every(n => typeof n === "number");
-  const activeBbox = isValidBbox(bbox) ? bbox : undefined;
+  const polygonBboxForFly = useBoundingBox(currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : {});
+
   const {
     data: sitePolygonData,
     refetch,
@@ -224,6 +229,14 @@ const PolygonReviewTab: FC<IProps> = props => {
     storePolygon(geojson, record, setSelectPolygonFromMap, refetch);
   };
   const mapFunctions = useMap(onSave);
+
+  // When polygon bbox resolves, zoom directly without touching the site-level bbox prop.
+  useEffect(() => {
+    if (isValidBbox(polygonBboxForFly) && mapFunctions.map?.current != null) {
+      zoomToBbox(polygonBboxForFly, mapFunctions.map.current, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polygonBboxForFly]);
 
   const flyToPolygonBounds = useCallback(async (uuid: string) => {
     setCurrentPolygonUuid(uuid);
@@ -313,6 +326,8 @@ const PolygonReviewTab: FC<IProps> = props => {
   const deletePolygon = async (uuid: string) => {
     try {
       await deleteSitePolygon(uuid);
+      ApiSlice.pruneCache("boundingBoxes");
+      ApiSlice.pruneIndex("boundingBoxes", "");
       refetch?.();
       const { map } = mapFunctions;
       if (map?.current) {
@@ -484,6 +499,8 @@ const PolygonReviewTab: FC<IProps> = props => {
 
     try {
       await Promise.all(uploadPromises);
+      ApiSlice.pruneCache("boundingBoxes");
+      ApiSlice.pruneIndex("boundingBoxes", "");
       openNotification("success", t("Success!"), t("Polygon uploaded successfully"));
       refetch();
     } catch (error) {
@@ -541,6 +558,8 @@ const PolygonReviewTab: FC<IProps> = props => {
         );
 
         await Promise.all(uploadPromises);
+        ApiSlice.pruneCache("boundingBoxes");
+        ApiSlice.pruneIndex("boundingBoxes", "");
         openNotification("success", t("Success!"), t("Polygons versioned successfully"));
         refetch();
       }

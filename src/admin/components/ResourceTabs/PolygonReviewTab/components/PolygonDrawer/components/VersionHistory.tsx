@@ -294,6 +294,8 @@ const VersionHistory = ({
         await ApiSlice.pruneCache("sitePolygons", [polygonUuidToUpdate]);
       }
       await ApiSlice.pruneIndex("sitePolygons", "");
+      ApiSlice.pruneCache("boundingBoxes");
+      ApiSlice.pruneIndex("boundingBoxes", "");
       await refreshSiteData?.();
       await refreshPolygonList?.();
 

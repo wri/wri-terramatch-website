@@ -169,6 +169,8 @@ export function useMapDraw({
           // will re-add layers on the next styleVersion increment (LC-3).
           addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
         }
+        ApiSlice.pruneCache("boundingBoxes");
+        ApiSlice.pruneIndex("boundingBoxes", "");
         openNotification("success", t("Success"), t("Project polygon updated successfully."));
       } catch (e: any) {
         openNotification("error", t("Error"), e?.message ?? t("Please try again later."));
@@ -198,6 +200,8 @@ export function useMapDraw({
       if (selectedPolygon.polygonUuid != null) {
         await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
       }
+      ApiSlice.pruneCache("boundingBoxes");
+      ApiSlice.pruneIndex("boundingBoxes", "");
 
       const polygonVersionResponse = await loadListPolygonVersions({ uuid: selectedPolygon.primaryUuid });
       const polygonActive = polygonVersionResponse?.data?.find((item: SitePolygonLightDto) => item.isActive);
