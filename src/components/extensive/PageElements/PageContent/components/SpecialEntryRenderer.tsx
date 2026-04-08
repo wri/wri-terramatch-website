@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import { FC } from "react";
 
 import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/types";
+import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import AdditionalDocumentationSection from "./AdditionalDocumentationSection";
@@ -24,6 +25,8 @@ type SpecialEntryRendererProps = {
 };
 
 const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName, entityUUID }) => {
+  const { framework }: { framework: Framework } = useFrameworkContext();
+
   const value = typeof entry.value === "string" ? entry.value : "";
 
   if (entry.title === "Photos and videos") {
@@ -39,12 +42,12 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
 
     return (
       <Flex direction="column" gap={1}>
-        {entityName === "projects" && (
+        {entityName === "projects" && framework != Framework.TF && (
           <Text textStyle="300-bold" color="primary.900">
             {entry.title}:
           </Text>
         )}
-        <PlantTableEntryRenderer rawValue={{ props: { tableType: "noCount", plants } }} />
+        <PlantTableEntryRenderer rawValue={{ props: { tableType: "noCount", plants } }} framework={framework} />
       </Flex>
     );
   }

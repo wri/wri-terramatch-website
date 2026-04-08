@@ -3,6 +3,7 @@ import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
 
+import { Framework } from "@/context/framework.provider";
 import {
   COUNT_TABLE_SPECIES_PER_PAGE_MIN,
   NO_COUNT_TABLE_SPECIES_PER_PAGE,
@@ -26,9 +27,10 @@ export type PlantTableRawValue = {
 
 type PlantTableEntryRendererProps = {
   rawValue: PlantTableRawValue;
+  framework?: Framework;
 };
 
-export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawValue }) => {
+export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawValue, framework }) => {
   const t = useT();
   const noGoalTableColumns = useMemo(
     () => [
@@ -37,6 +39,23 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
     ],
     [t]
   );
+
+  if (rawValue.props.tableType === "noGoal" || framework === Framework.TF) {
+    return (
+      <Table
+        data={rawValue.props.plants}
+        columns={noGoalTableColumns}
+        variant="full-width"
+        css={FULL_WIDTH_TABLE_HEADER_STYLES}
+        totalItems={rawValue.props.plants.length}
+        showItemCount={false}
+        className={classNames(
+          "mt-[2px] !w-[725px]",
+          rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
+        )}
+      />
+    );
+  }
 
   if (rawValue.props.tableType === "noCount") {
     const noCountTableRowCount = rawValue.props.plants.length / NO_COUNT_TABLE_SPECIES_PER_ROW;
@@ -63,7 +82,7 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
                     <Text
                       textStyle="400"
                       className={classNames(
-                        "border-theme-neutral-300 truncate border-b py-4",
+                        "truncate border-b border-theme-neutral-300 py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
                       color="neutral.900"
@@ -76,23 +95,6 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
             </TableRow>
           );
         }}
-      />
-    );
-  }
-
-  if (rawValue.props.tableType === "noGoal") {
-    return (
-      <Table
-        data={rawValue.props.plants}
-        columns={noGoalTableColumns}
-        variant="full-width"
-        css={FULL_WIDTH_TABLE_HEADER_STYLES}
-        totalItems={rawValue.props.plants.length}
-        showItemCount={false}
-        className={classNames(
-          "mt-[2px] !w-[725px]",
-          rawValue.props.plants.length <= COUNT_TABLE_SPECIES_PER_PAGE_MIN && "mb-3"
-        )}
       />
     );
   }
