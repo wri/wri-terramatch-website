@@ -99,10 +99,16 @@ export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle): 
 };
 
 export const addGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
-  if (!map || !map.isStyleLoaded()) {
-    Log.warn("Map or style not loaded, cannot add Google satellite layer");
+  if (!map) return;
+  // isStyleLoaded() checks tiles+sources — too strict for layer operations which only need
+  // the style object to exist (i.e. style.load has fired). Use getStyle() instead.
+  let mapStyle: ReturnType<mapboxgl.Map["getStyle"]>;
+  try {
+    mapStyle = map.getStyle();
+  } catch {
     return;
   }
+  if (mapStyle == null) return;
 
   removeGoogleSatelliteLayer(map);
 
@@ -164,7 +170,12 @@ export const addGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
 };
 
 export const removeGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
-  if (!map || !map.isStyleLoaded()) return;
+  if (!map) return;
+  try {
+    if (map.getStyle() == null) return;
+  } catch {
+    return;
+  }
   try {
     if (map.getLayer(GOOGLE_RASTER_LAYER_ID)) map.removeLayer(GOOGLE_RASTER_LAYER_ID);
     if (map.getSource(GOOGLE_RASTER_SOURCE_ID)) map.removeSource(GOOGLE_RASTER_SOURCE_ID);

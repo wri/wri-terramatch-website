@@ -19,9 +19,6 @@ export const useGoogleSatellite = (
     const currentContainer = mapContainer.current;
     if (!currentMap || !currentContainer || !styleReady) return;
 
-    // The effect only runs after styleReady=true and styleVersion bump, which means
-    // style.load has already fired. addGoogleSatelliteLayer's internal isStyleLoaded()
-    // guard is therefore always true here — no polling needed.
     if (currentStyle === MapStyle.GoogleSatellite) {
       const GOOGLE_RASTER_LAYER_ID = "google-satellite-layer";
       if (!currentMap.getLayer(GOOGLE_RASTER_LAYER_ID)) {
@@ -32,27 +29,27 @@ export const useGoogleSatellite = (
       removeGoogleSatelliteLayer(currentMap);
     }
 
-    // Attribution DOM query is deferred because .mapboxgl-ctrl-attrib-inner is
-    // rendered asynchronously by Mapbox's attribution control — it may not exist at
-    // the exact frame style.load fires. 50ms covers the DOM render lag without
-    // a busy rAF loop (the original reason for 180-frame polling).
-    const timeoutId = setTimeout(() => {
+    const applyAttribution = (): boolean => {
       const attributionInner = currentContainer.querySelector(".mapboxgl-ctrl-attrib-inner");
-      if (!attributionInner) return;
+      if (attributionInner == null) return false;
 
       const existingGoogle = attributionInner.querySelector(".google-attribution-text");
       if (currentStyleRef.current === MapStyle.GoogleSatellite) {
-        if (!existingGoogle) {
-          const googleText = document.createElement("span");
-          googleText.className = "google-attribution-text";
-          googleText.textContent = " © Google";
-          attributionInner.appendChild(googleText);
+        if (existingGoogle == null) {
+          const span = document.createElement("span");
+          span.className = "google-attribution-text";
+          span.textContent = " © Google";
+          attributionInner.appendChild(span);
         }
       } else {
         existingGoogle?.remove();
       }
-    }, 50);
+      return true;
+    };
 
-    return () => clearTimeout(timeoutId);
+    const observer = new MutationObserver(() => applyAttribution());
+    observer.observe(currentContainer, { childList: true, subtree: true });
+    applyAttribution();
+    return () => observer.disconnect();
   }, [currentStyle, styleReady, styleVersion, map, mapContainer]);
 };
