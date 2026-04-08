@@ -1,10 +1,10 @@
+import { Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { Else, If, Then } from "react-if";
 import type * as yup from "yup";
 
 import { formatEntryValue } from "@/admin/apiProvider/utils/entryFormat";
-import Text from "@/components/elements/Text/Text";
 import { FormSummaryProps } from "@/components/extensive/WizardForm/FormSummary";
 import { useGetFormEntries } from "@/components/extensive/WizardForm/FormSummaryRow/getFormEntries";
 import { Framework, toFramework, useFramework } from "@/context/framework.provider";
@@ -20,6 +20,7 @@ import SpecialEntryRenderer, {
   SPECIAL_ENTRY_TITLES
 } from "../../PageElements/PageContent/components/SpecialEntryRenderer";
 import { isTrackingType } from "../../TrackingCollapseGrid/types";
+import { countFeedbackInStep, hasFeedbackInStep } from "../feedbackUtils";
 import { useFormStepsWithValidation } from "../useFormStepsWithValidation";
 
 const getFieldsRequiringAttentionCount = (
@@ -51,10 +52,13 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
   const framework = toFramework(frameworkKey) as Framework;
   const stepsWithValidation = useFormStepsWithValidation(fieldsProvider, framework);
   const validation = stepsWithValidation[index].validation;
-  const valid = props.values == null || validation.isValidSync(props.values);
+  const hasStepFeedback = hasFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
+  const valid = (props.values == null || validation.isValidSync(props.values)) && !hasStepFeedback;
   const fieldsRequiringAttention = getFieldsRequiringAttentionCount(validation, props.values);
   const entities = useFormEntities();
   const entries = useGetFormEntries({ stepId, ...props, entity: entities[0] });
+  const feedbackFieldsCount = countFeedbackInStep(fieldsProvider, stepId, props.feedbackFieldsOptions);
+
   return (
     <Accordion
       variant="primary"
@@ -62,11 +66,11 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
         <AccordionHeader
           title={title ?? ""}
           badge={
-            !valid && fieldsRequiringAttention > 0
-              ? t("{count} requires attention", { count: fieldsRequiringAttention })
+            !valid && (fieldsRequiringAttention > 0 || feedbackFieldsCount > 0)
+              ? t("{count} requires attention", { count: fieldsRequiringAttention + feedbackFieldsCount })
               : undefined
           }
-          status={valid ? "complete" : "error"}
+          status={hasStepFeedback ? "error" : valid ? "complete" : "error"}
         />
       }
       actions={
@@ -78,21 +82,20 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
       }
     >
       <List
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-3"
         items={entries}
         render={entry => {
-          if (SPECIAL_ENTRY_TITLES.has(entry.title ?? "")) {
-            return <SpecialEntryRenderer entry={entry} />;
+          if (
+            SPECIAL_ENTRY_TITLES.has(entry.title ?? "") ||
+            entry.inputType === "treeSpecies" ||
+            entry.inputType === "file"
+          ) {
+            return <SpecialEntryRenderer entry={entry} entityName={entities[0]?.entityName} />;
           }
-
           return (
             <>
-              <div
-                className={classNames("flex items-start gap-12 transition-all delay-300 duration-300", {
-                  "w-full flex-col": isTrackingType(entry.value?.props?.type)
-                })}
-              >
-                <Text variant="text-body-500" className=" flex-1">
+              <div className={classNames("flex flex-col items-start gap-1 transition-all delay-300 duration-300")}>
+                <Text textStyle="300-bold" className=" flex-1" color="primary.900">
                   {entry.title}
                 </Text>
                 <div
@@ -102,9 +105,12 @@ const FormSummaryRow = ({ stepId, index, ...props }: FormSummaryRowProps) => {
                 >
                   <If condition={typeof entry.value === "string" || typeof entry.value === "number"}>
                     <Then>
-                      <Text variant="text-body-300" className="flex-1" containHtml>
-                        {formatEntryValue(entry.value)}
-                      </Text>
+                      <Text
+                        textStyle="400"
+                        className="flex-1"
+                        color="neutral.900"
+                        dangerouslySetInnerHTML={{ __html: entry.value }}
+                      />
                     </Then>
                     <Else>
                       <div

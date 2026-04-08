@@ -8,7 +8,7 @@ import { FormToolbar } from "@/admin/modules/form/components/FormToolbar";
 export const FormEditActions = () => {
   const record = useRecordContext();
 
-  return !record?.published ? (
+  return (
     <ShowActions
       hasEdit={false}
       deleteProps={{
@@ -17,7 +17,7 @@ export const FormEditActions = () => {
         mutationMode: "pessimistic"
       }}
     />
-  ) : null;
+  );
 };
 
 export const FormEdit = () => (
@@ -28,7 +28,7 @@ export const FormEdit = () => (
     sx={{ marginBottom: 2 }}
   >
     <TextField source="title" component="h5" variant="h5" className="mt-10" marginX="1rem" paddingTop="1.75rem" />
-    <SimpleForm toolbar={<FormToolbar isEdit />} noValidate paddingY="1.5rem">
+    <SimpleForm toolbar={<FormToolbar />} noValidate paddingY="1.5rem">
       <FormBuilderForm />
     </SimpleForm>
   </Edit>

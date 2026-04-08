@@ -26,12 +26,16 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
     updateRequestStatus: entity.updateRequestStatus ?? "no-update"
   });
 
+  const feedbackFields = useMemo(() => entity.feedbackFields ?? [], [entity.feedbackFields]);
+
   const tabItemsStep: StepProps[] = useMemo(() => {
     return steps.map((step, index) => {
+      const items = step.validation["_nodes"];
+      const isFeedbackField = items.some((item: string) => feedbackFields.includes(item));
       const valid = defaultValues == null || step.validation.isValidSync(defaultValues);
       return {
         index: index + 1,
-        status: stepStatusToBadge(valid),
+        status: isFeedbackField ? "error" : stepStatusToBadge(valid),
         label: step.title ?? "",
         actions: (
           <Button
@@ -51,7 +55,7 @@ const EntitySetUpSection: FC<EntitySetUpSectionProps> = ({ entity, onStatusChang
         }
       };
     });
-  }, [steps, defaultValues, handleEdit]);
+  }, [steps, defaultValues, handleEdit, feedbackFields]);
 
   const allStepsCompleted = useMemo(() => {
     if (!steps.length) return false;

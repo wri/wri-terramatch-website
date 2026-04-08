@@ -8,6 +8,8 @@ export interface AccordionProps {
   actions?: ReactNode;
   variant?: AccordionVariant;
   className?: string;
+  classNameHeader?: string;
+  defaultOpen?: boolean;
 }
 
 export type AccordionStatus = "success" | "error" | "complete";
@@ -15,6 +17,7 @@ export type AccordionStatus = "success" | "error" | "complete";
 declare module "@chakra-ui/react/dist/types/components/accordion/accordion" {
   export interface AccordionItemProps {
     children?: ReactNode;
+    value?: string;
   }
   export interface AccordionItemTriggerProps {
     children?: ReactNode;

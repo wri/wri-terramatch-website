@@ -1,15 +1,10 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback } from "react";
 import Twemoji from "react-twemoji";
 
-import { getStatusProps } from "@/components/extensive/EntityStatusBar";
-import EntityStatusModal from "@/components/extensive/EntityStatusModal";
-import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { useMyOrg } from "@/connections/Organisation";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
-import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import { useGetExportEntityHandler } from "@/hooks/entity/useGetExportEntityHandler";
@@ -45,7 +40,6 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
   project
 }) => {
   const t = useT();
-  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "projects",
     entityUUID: project.uuid,
@@ -61,26 +55,9 @@ const ProjectInfo: FC<ProjectInfoProps> = ({
     router.push(orgId != null ? `/organization/${orgId}` : "/");
   }, [router, myOrg?.organisationId]);
 
-  const needMoreInformation =
-    project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
-  const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
-
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
-      openModal(
-        ModalId.STATUS,
-        <EntityStatusModal
-          statusProps={statusProps!}
-          feedback={project.feedback}
-          needMoreInformation={needMoreInformation}
-          entityName="projects"
-          entityUuid={project.uuid}
-        />
-      );
-    } else {
-      handleEdit();
-    }
-  }, [needMoreInformation, statusProps, openModal, project.feedback, project.uuid, handleEdit]);
+    handleEdit();
+  }, [handleEdit]);
 
   return (
     <Box gap={2} className="flex flex-col">
