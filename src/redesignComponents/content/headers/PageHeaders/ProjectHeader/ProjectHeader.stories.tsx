@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import FrameworkProvider from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 
 import ProjectHeader from "./ProjectHeader";
@@ -63,7 +64,7 @@ const createMockProject = (overrides: Partial<ProjectFullDto> = {}): ProjectFull
   const baseProject: ProjectFullDto = {
     lightResource: false,
     uuid: "550e8400-e29b-41d4-a716-446655440000",
-    frameworkKey: "TF",
+    frameworkKey: "terrafund",
     organisationName: "Organisation Name",
     organisationUuid: "550e8400-e29b-41d4-a716-446655440001",
     organisationType: "NGO",
@@ -185,11 +186,17 @@ const meta: Meta<typeof ProjectHeader> = {
     }
   },
   decorators: [
-    Story => (
-      <QueryClientProvider client={queryClient}>
-        <Story />
-      </QueryClientProvider>
-    )
+    (Story, context) => {
+      const project = context.args?.project as ProjectFullDto | undefined;
+      const frameworkKey = project?.frameworkKey ?? "terrafund";
+      return (
+        <QueryClientProvider client={queryClient}>
+          <FrameworkProvider frameworkKey={frameworkKey}>
+            <Story />
+          </FrameworkProvider>
+        </QueryClientProvider>
+      );
+    }
   ]
 };
 

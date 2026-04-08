@@ -205,6 +205,7 @@ const ProjectDetailPage = () => {
 
   return (
     <MapAreaProvider>
+      {/* Programme framework for descendants (e.g. ContextCondition in TeamSection logos, tab visibility). */}
       <FrameworkProvider frameworkKey={project.frameworkKey}>
         {loading && (
           <div className="fixed top-0 z-50 flex h-screen w-screen items-center justify-center backdrop-brightness-50">
