@@ -15,3 +15,19 @@ export const hasFeedbackInStep = (
     );
   });
 };
+
+export const countFeedbackInStep = (
+  fieldsProvider: FormFieldsProvider,
+  stepId: string,
+  feedbackFieldIds: string[] | null | undefined
+): number => {
+  if (feedbackFieldIds == null || feedbackFieldIds.length === 0) return 0;
+
+  return fieldsProvider.fieldNames(stepId).filter(fieldName => {
+    const field = fieldsProvider.fieldByName(fieldName);
+    return (
+      feedbackFieldIds.includes(fieldName) ||
+      (field?.linkedFieldKey != null && feedbackFieldIds.includes(field.linkedFieldKey))
+    );
+  }).length;
+};
