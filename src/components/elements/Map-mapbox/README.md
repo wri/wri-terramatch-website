@@ -218,7 +218,10 @@ Map-mapbox/
   Map.d.ts                      # shared type definitions
   GeoJSON.d.ts                  # GeoJSON types
   core/
-    useMapReadiness.ts          # single hook: styleReady + sourcesReady (LC-2, LC-3, LC-4)
+    useMapReadiness.ts          # single hook: { styleReady, styleVersion } (LC-2, LC-3, LC-4)
+                                #   styleReady — true when style.load has fired
+                                #   styleVersion — increments on every style.load so effects
+                                #                  always re-run after style switches, not just the first
   layers/
     polygonLayers.ts            # GeoServer vector layers, filter/source management (PL)
     overlayLayers.ts            # borders, Google Satellite, ANR overlay (OV, BS-3)
@@ -230,9 +233,8 @@ Map-mapbox/
     geoserver.ts                # GeoServer URL builder, ANR layer ID constants
     camera.ts                   # zoomToBbox, zoomToCenter, addMarkerAndZoom (CZ)
   hooks/
-    useMap.ts                   # (existing) map instance creation
-    useMapReadiness.ts          # (same as core/ — prefer core/ going forward)
-    useMapLayers.ts             # PL contracts effect hook (gated on styleReady)
+    useMap.ts                   # map instance creation; returns MapFunctions (typed in Map.d.ts)
+    useMapLayers.ts             # PL contracts effect hook (gated on styleReady + styleVersion)
     useMapPopups.ts             # PP contracts effect hook (gated on sourcesAdded, stable callbacks via ref)
     useMapCamera.ts             # CZ contracts effect hook
     useMapOverlays.ts           # OV contracts effect hook (gated on styleReady + sourcesAdded)
@@ -253,12 +255,12 @@ Map-mapbox/
 ## AI contributor rules
 
 1. **Preserve contracts.** Implementation may change freely as long as every contract still holds. Reference contract IDs in PR descriptions.
-2. **One lifecycle pipeline.** Use `styleReady` from `core/useMapReadiness.ts` as the single gate for adding layers. Do not add new `isStyleLoaded()` / `idle` / rAF polling patterns.
-3. **No new module-level singletons.** Map listeners and popup registries must be scoped to the map instance (use WeakMap or cleanup functions). See `anrPlotOverlayStateByMap` in `layers/overlayLayers.ts` as the reference pattern.
+2. **One lifecycle pipeline.** Use `styleReady` and `styleVersion` from `core/useMapReadiness.ts` as the single gate for adding layers. `styleReady` tells you the style is loaded; `styleVersion` (incrementing counter) ensures effects always re-run after each style switch — include both in dependency arrays of any effect that adds sources or layers. Do not add new `isStyleLoaded()` / `idle` / rAF polling patterns.
+3. **No new module-level singletons.** Map listeners and popup registries must be scoped to the map instance (use `WeakMap` or cleanup functions). See `mediaClickHandlers` in `layers/mediaLayers.ts` and `popupRegistries` in `interactions/popups.ts` as the reference pattern.
 4. **Null checks.** Use `== null` / `!= null` to catch both null and undefined. Use `??` instead of `||` for defaults.
 5. **DRY after boundaries.** Extract a helper only once two call sites share the same contract. Do not pre-abstract.
 6. **Update this README** on every PR: move resolved appendix notes to a "resolved" section, add new files to the folder map, note which contract IDs the PR verified.
-7. **Upgrade Mapbox v3** only in a dedicated PR. The PoC at `map-render-readiness-poc/` must be green before merging. Only `core/useMapReadiness.ts` is expected to need changes.
+7. **Upgrade Mapbox v3** only in a dedicated PR. Only `core/useMapReadiness.ts` is expected to need changes for the readiness pipeline. Address `useMapCamera` styleReady gate and `MapFunctions` relay components as part of that PR.
 
 ---
 
@@ -276,20 +278,21 @@ Map-mapbox/
 - [ ] Style switch × 3: layers reappear each time
 - [ ] Draw → save → cancel → re-draw: no duplicate geometry on tile layer
 
-### PoC stress tests
+### Smoke test before merge (run manually)
 
-Automated stress tests live at [`map-render-readiness-poc/tests/map-readiness.spec.ts`](../../../../map-render-readiness-poc/tests/map-readiness.spec.ts).
+Before opening a PR that touches `core/useMapReadiness.ts`, `hooks/useMapLayers.ts`, or any layer-add function, verify these critical paths:
 
-Run before upgrading Mapbox or touching `core/useMapReadiness.ts`:
-
-| Test | Contract IDs | Description |
-| ---- | ------------ | ----------- |
-| Mount/unmount × 20 | LC-1, LC-4 | Assert no orphan listeners or memory growth after repeated mount cycles |
-| Style switch × 10 (custom layers persist) | LC-3, OV-4 | Assert custom layers reappear after each style switch |
-| Data arrives before style load | LC-2 | Assert layers appear when data arrives before `style.load` fires |
-| Data arrives after style load | LC-2 | Assert layers appear when data arrives after `style.load` fires |
-| Two synced maps style propagation | BS-4 | Assert style change in one map propagates to the linked map |
-| Draw → save → cancel → re-draw | DE-3, DE-6 | Assert no duplicate geometry on tile layer after the full draw cycle |
+| Scenario | Contract IDs |
+| -------- | ------------ |
+| Load site with polygons → switch Street → Satellite → Google Satellite → Street (× 2 full cycles) | LC-3, OV-4, BS-3 |
+| Switch to Google Satellite: raster tiles appear as basemap, polygons render on top, "© Google" attribution shows | BS-3, PL-1 |
+| Switch away from Google Satellite: Street/Satellite layers restore, attribution gone | BS-3, LC-3 |
+| Click polygon popup, switch style, click again — popup works on new style | PP-1, LC-3 |
+| Draw → save → cancel → re-draw: no duplicate geometry | DE-2, DE-3, DE-6 |
+| Edit polygon → cancel → layers restore (tests `addFilterOfPolygonsData`) | DE-6 |
+| Refresh media data 3× → only one popup fires per marker click (tests WeakMap fix) | MD-2, LC-4 |
+| Dashboard: country filter border, project selection → auto-Satellite switch | OV-1, BS-2 |
+| Mount/unmount map screen × 3: no console errors or orphan listeners | LC-1, LC-4 |
 
 ### Contract traceability
 

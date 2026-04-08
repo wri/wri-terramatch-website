@@ -51,8 +51,6 @@ export const loadLayersInMap = (
   }
 };
 
-// Called imperatively from onCancel (user interaction) — style is always loaded at this point.
-// No defensive listeners needed; adding them would accumulate across cancellations (LC-4).
 export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   if (map == null || polygonsData == null) return;
   layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
@@ -107,21 +105,50 @@ export const addGeojsonSourceToLayer = (
   });
 };
 
+/**
+ * Registry of the cacheKey last used per (map, source name) pair.
+ * Allows addSourceToLayer to detect when it must re-create the source (cacheKey
+ * changed) vs. just update filters (cacheKey unchanged, source already present).
+ */
+const sourceCacheKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
+
+function getSourceCacheKeys(map: mapboxgl.Map): Record<string, string> {
+  if (!sourceCacheKeys.has(map)) sourceCacheKeys.set(map, {});
+  return sourceCacheKeys.get(map)!;
+}
+
 export const addSourceToLayer = (
   layer: LayerType,
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined,
-  isDashboard?: string | undefined
+  isDashboard?: string | undefined,
+  cacheKey: string = "0"
 ) => {
   const { name, geoserverLayerName, styles } = layer;
   try {
     if (map == null) return;
-    if (map.getSource(name)) {
+
+    const keys = getSourceCacheKeys(map);
+    const sourceExists = map.getSource(name) != null;
+    const keyChanged = keys[name] !== cacheKey;
+
+    if (sourceExists && !keyChanged) {
+      // Source is already present with the same tile URL — only update filters.
+      // Avoids removing/re-adding the source (which would trigger a full tile refetch).
+      if (polygonsData) {
+        loadLayersInMap(map, polygonsData, layer, zoomFilter);
+      }
+      return;
+    }
+
+    if (sourceExists) {
       styles?.forEach((_: unknown, index: number) => map.removeLayer(`${name}-${index}`));
       map.removeSource(name);
     }
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, isDashboard);
+
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, isDashboard, cacheKey);
+    keys[name] = cacheKey;
     map.addSource(name, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
     styles?.forEach((style: LayerWithStyle, index: number) => {
       addLayerStyle(map, name, geoserverLayerName, style, index, zoomFilter);
@@ -226,15 +253,16 @@ export const addSourcesToLayers = (
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
   isDashboard?: string | undefined,
-  polygonsCentroids?: any[] | undefined
+  polygonsCentroids?: any[] | undefined,
+  cacheKey: string = "0"
 ) => {
   if (map == null) return;
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard);
+      addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard, cacheKey);
     }
     if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
-      addSourceToLayer(layer, map, undefined, undefined);
+      addSourceToLayer(layer, map, undefined, undefined, undefined, cacheKey);
     }
     if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
       addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));

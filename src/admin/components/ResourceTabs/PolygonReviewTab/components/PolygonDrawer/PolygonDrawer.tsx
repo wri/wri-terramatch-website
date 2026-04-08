@@ -183,36 +183,6 @@ const PolygonDrawer = ({
   });
 
   useEffect(() => {
-    if (anrMapOverlay == null) {
-      return;
-    }
-    if (!isOpenPolygonDrawer) {
-      anrMapOverlay.resetAnrMapOverlay();
-      prevActiveTabForAnrRef.current = null;
-      return;
-    }
-    anrMapOverlay.setDrawerOpen(true);
-    const onAnrTab = activeTab === "anrMonitoringPlots";
-    anrMapOverlay.setAnrTabActive(onAnrTab);
-
-    if (selectedPolygon?.uuid != null && selectedPolygon.uuid !== "") {
-      anrMapOverlay.syncDrawerSelection({
-        sitePolygonUuid: selectedPolygon.uuid,
-        geometryPolygonUuid: polygonSelected
-      });
-    }
-
-    if (onAnrTab && prevActiveTabForAnrRef.current !== "anrMonitoringPlots") {
-      anrMapOverlay.setShowPlotsOnMap(true);
-    }
-    prevActiveTabForAnrRef.current = activeTab;
-  }, [anrMapOverlay, activeTab, isOpenPolygonDrawer, polygonSelected, selectedPolygon?.uuid]);
-
-  useOnUnmount(() => {
-    anrMapOverlayRef.current?.resetAnrMapOverlay();
-  });
-
-  useEffect(() => {
     if (Array.isArray(sitePolygonData)) {
       const PolygonData = sitePolygonData.find((data: SitePolygonLightDto) => data.polygonUuid === polygonSelected);
       setSelectedPolygonData(PolygonData ?? undefined);

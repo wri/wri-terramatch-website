@@ -1,7 +1,7 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import _ from "lodash";
 import mapboxgl from "mapbox-gl";
-import { MutableRefObject, useEffect, useState } from "react";
+import { MutableRefObject, useEffect, useRef, useState } from "react";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import { DELETED_POLYGONS } from "@/constants/statuses";
@@ -55,16 +55,42 @@ export function useMapLayers({
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
+  // Tile cache version: a stable string that only changes when polygon geometry
+  // content (UUIDs) actually changes. This prevents re-fetching tiles on every
+  // render while still busting the browser cache when new polygons arrive.
+  const prevPolygonFingerprintRef = useRef<string>("");
+  const tileVersionRef = useRef<string>("0");
+
   useEffect(() => {
     if (!styleReady || map.current == null || (!isDashboard && _.isEmpty(polygonsData))) {
       setSourcesAdded(false);
       return;
     }
 
+    // Compute a content fingerprint from all polygon UUIDs.
+    // Only bump the tile version (forcing a source URL change) when the actual
+    // geometry set changes — not on every render with the same data.
+    const fingerprint = Object.values(polygonsData ?? {})
+      .flat()
+      .sort()
+      .join(",");
+    if (fingerprint !== prevPolygonFingerprintRef.current) {
+      prevPolygonFingerprintRef.current = fingerprint;
+      tileVersionRef.current = String(Date.now());
+    }
+
     const zoomFilter = isDashboard ? 9 : undefined;
     const polygonsDataToUse = isDashboard != null && projectUUID != null && hasAccess === false ? {} : polygonsData;
 
-    addSourcesToLayers(map.current, polygonsDataToUse, centroids, zoomFilter, isDashboard, polygonsCentroids);
+    addSourcesToLayers(
+      map.current,
+      polygonsDataToUse,
+      centroids,
+      zoomFilter,
+      isDashboard,
+      polygonsCentroids,
+      tileVersionRef.current
+    );
     setSourcesAdded(true);
     // styleVersion ensures this re-runs after every style switch, not just the first load.
   }, [map, styleReady, styleVersion, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);

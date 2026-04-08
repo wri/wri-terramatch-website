@@ -192,7 +192,16 @@ export const addPopupToLayer = (
   if (!popupComponent) return;
 
   const { name } = layer;
-  let layers = map.getStyle().layers;
+  // map.getStyle() calls this.style.serialize() internally; throws if the internal
+  // style object is null (mid-switch or after map.remove()). Guard defensively.
+  let style: ReturnType<typeof map.getStyle>;
+  try {
+    style = map.getStyle();
+  } catch {
+    return;
+  }
+  if (style == null) return;
+  let layers = style.layers ?? [];
   let targetLayers = layers.filter(l => l.id.startsWith(name));
 
   if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
