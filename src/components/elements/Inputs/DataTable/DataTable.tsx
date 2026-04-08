@@ -13,7 +13,7 @@ import FormModal from "@/components/extensive/Modal/FormModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import { toFormOptions } from "@/components/extensive/WizardForm/utils";
 import { useModalContext } from "@/context/modal.provider";
-import WizardFormProvider, { FormFieldsProvider } from "@/context/wizardForm.provider";
+import WizardFormProvider, { FormFieldsProvider, OrgFormDetails } from "@/context/wizardForm.provider";
 import { isNotNull } from "@/utils/array";
 
 declare module "@tanstack/react-table" {
@@ -40,6 +40,7 @@ export interface DataTableProps<TData extends RowData & { uuid: string }> extend
   handleCreate?: (value: any) => void;
   handleDelete?: (uuid?: string) => void;
   handleUpdate?: (value: any) => void;
+  orgDetails?: OrgFormDetails;
 }
 
 function DataTable<TData extends RowData & { uuid: string }>(props: DataTableProps<TData>) {
@@ -58,13 +59,14 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     modalEditTitle,
     hasPagination = false,
     invertSelectPagination = false,
+    orgDetails,
     ...inputWrapperProps
   } = props;
 
   const openFormModalHandler = () => {
     openModal(
       ModalId.FORM_MODAL,
-      <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         <FormModal title={props.modalTitle || props.addButtonCaption} onSubmit={onAddNewEntry} />
       </WizardFormProvider>
     );
@@ -74,7 +76,7 @@ function DataTable<TData extends RowData & { uuid: string }>(props: DataTablePro
     const rowValues = props.row.original;
     openModal(
       ModalId.FORM_MODAL,
-      <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         <FormModal
           title={modalEditTitle}
           defaultValues={rowValues}
