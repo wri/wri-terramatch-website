@@ -147,8 +147,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             const tagState = mapStatusToTagStateEntity(
               nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
             );
-
-            return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            return nursery.updateRequestStatus === "awaiting-approval" ? (
+              <TagSubmission state="pending-approval" />
+            ) : nursery?.status != null ? (
+              <TagSubmission state={tagState?.type as TagSubmissionState} />
+            ) : null;
           })()}
           buttonProps={{
             variant: "primary",

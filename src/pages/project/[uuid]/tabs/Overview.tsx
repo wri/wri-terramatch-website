@@ -256,8 +256,11 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
           title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);
-
-            return project?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            return project.updateRequestStatus === "awaiting-approval" ? (
+              <TagSubmission state="pending-approval" />
+            ) : project?.status != null ? (
+              <TagSubmission state={tagState?.type as TagSubmissionState} />
+            ) : null;
           })()}
           buttonProps={{
             variant: "primary",

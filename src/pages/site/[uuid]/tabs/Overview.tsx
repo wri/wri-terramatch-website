@@ -144,8 +144,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             title={t("Sites Set Up")}
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
-
-              return site?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+              return site.updateRequestStatus === "awaiting-approval" ? (
+                <TagSubmission state="pending-approval" />
+              ) : site?.status != null ? (
+                <TagSubmission state={tagState?.type as TagSubmissionState} />
+              ) : null;
             })()}
             buttonProps={{
               variant: "primary",
