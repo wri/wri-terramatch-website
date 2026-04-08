@@ -85,6 +85,7 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
         </Flex>
       </div>
 
+      {/* Logos read framework from FrameworkProvider (project page); no frameworkKey prop. */}
       <ContextCondition frameworksShow={TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS}>
         <TerraFundAFR100 className="mt-auto" />
       </ContextCondition>

@@ -1,6 +1,7 @@
 import { action } from "@storybook/addon-actions";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import FrameworkProvider from "@/context/framework.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProjectIcon } from "@/redesignComponents/foundations/Icons";
@@ -13,7 +14,18 @@ const meta: Meta<typeof ProjectBanner> = {
   component: ProjectBanner,
   parameters: {
     layout: "fullscreen"
-  }
+  },
+  decorators: [
+    (Story, context) => {
+      const project = context.args?.project as ProjectFullDto | undefined;
+      const frameworkKey = project?.frameworkKey ?? "terrafund";
+      return (
+        <FrameworkProvider frameworkKey={frameworkKey}>
+          <Story />
+        </FrameworkProvider>
+      );
+    }
+  ]
 };
 
 export default meta;
@@ -38,7 +50,7 @@ const mockBreadcrumbs = [
 const mockProject: ProjectFullDto = {
   lightResource: false,
   uuid: "project-1",
-  frameworkKey: "standard",
+  frameworkKey: "terrafund",
   organisationName: "WRI Example Organization",
   organisationUuid: "org-1",
   organisationType: "ngo",
