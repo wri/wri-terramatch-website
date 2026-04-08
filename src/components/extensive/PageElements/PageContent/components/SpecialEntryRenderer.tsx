@@ -5,7 +5,6 @@ import { FormEntry } from "@/components/extensive/WizardForm/FormSummaryRow/type
 import { EntityName, SingularEntityName } from "@/types/common";
 
 import AdditionalDocumentationSection from "./AdditionalDocumentationSection";
-import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
 import PhotosAndVideosSection from "./PhotosAndVideosSection";
 import { PlantTableEntryRenderer } from "./PlantTableEntryRenderer";
 
@@ -32,22 +31,25 @@ const SpecialEntryRenderer: FC<SpecialEntryRendererProps> = ({ entry, entityName
 
   if (entry.inputType === "treeSpecies") {
     const plants = entry.value?.props?.plants;
+
     if (plants == null || plants.length === 0) {
       return null;
     }
-    return <PlantTableEntryRenderer rawValue={{ props: { tableType: "noCount", plants } }} />;
+
+    return (
+      <Flex direction="column" gap={1}>
+        {entityName === "projects" && (
+          <Text textStyle="300-bold" color="primary.900">
+            {entry.title}:
+          </Text>
+        )}
+        <PlantTableEntryRenderer rawValue={{ props: { tableType: "noCount", plants } }} />
+      </Flex>
+    );
   }
 
   if (entry.title === "Additional Information" || entry.title === "Tree Species - Additional Information") {
-    return (
-      <Flex direction="column" gap={1}>
-        <Text className="flex items-center gap-1 leading-normal" textStyle="400" color="neutral.700">
-          {entry.title}
-        </Text>
-        <div className="my-2 h-px w-full bg-theme-neutral-300" />
-        <EntryDefaultValueRenderer entry={entry} />
-      </Flex>
-    );
+    return null;
   }
 
   return <AdditionalDocumentationSection value={value} entityName={entityName} entityUUID={entityUUID} />;
