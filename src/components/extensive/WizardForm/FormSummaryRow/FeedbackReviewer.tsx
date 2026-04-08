@@ -38,7 +38,7 @@ const FeedbackReviewer: FC<FeedbackReviewerProps> = ({ feedback, feedbackFieldsO
         header={<AccordionHeader title={"Feedback from Reviewer"} />}
         classNameHeader="!mb-0"
       >
-        <Flex className="bg-theme-warning-100 flex-col gap-4 p-4">
+        <Flex className="flex-col gap-4 bg-theme-warning-100 p-4">
           {feedback != null && feedback.trim().length > 0 && (
             <Text textStyle="400" color="neutral.900">
               {feedback}
