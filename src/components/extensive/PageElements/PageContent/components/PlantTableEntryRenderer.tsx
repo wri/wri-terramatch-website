@@ -1,4 +1,4 @@
-import { Box, TableCell, TableRow } from "@chakra-ui/react";
+import { TableCell, TableRow, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import classNames from "classnames";
 import { FC, useMemo } from "react";
@@ -60,14 +60,16 @@ export const PlantTableEntryRenderer: FC<PlantTableEntryRendererProps> = ({ rawV
               {noCountTableColumns.map((col, idx) => (
                 <TableCell key={col.key + idx} className={idx === 0 ? undefined : "px-0! py-4"}>
                   {row[idx + 1] !== undefined && row[idx + 1] !== "" && (
-                    <Box
+                    <Text
+                      textStyle="400"
                       className={classNames(
                         "border-b border-theme-neutral-300 py-4",
                         idx === noCountTableColumns.length - 1 ? "" : "mr-8"
                       )}
+                      color="neutral.900"
                     >
                       {row[idx + 1]}
-                    </Box>
+                    </Text>
                   )}
                 </TableCell>
               ))}
