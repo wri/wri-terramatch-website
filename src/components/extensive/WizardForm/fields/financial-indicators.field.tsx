@@ -13,6 +13,7 @@ import {
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { formatFinancialAmount, getLocaleForIsoCurrency } from "@/utils/financialReport";
 import { addValidationWith } from "@/utils/yup";
 
 const getTableHtml = (body: string, t: typeof useT) => {
@@ -132,7 +133,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       { title: t("Documentation"), key: "documentationData" }
     ];
 
-    const isEmptyValue = (val: any): boolean => {
+    const isEmptyValue = (val: unknown): boolean => {
       if (typeof val === "string") {
         const trimmed = val.trim();
         return trimmed === "" || trimmed === "-";
@@ -165,9 +166,13 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else if (col === "revenue" || col === "expenses") {
                   const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) ?? 0;
-                  displayValue = isEmptyValue(row[col]) ? "-" : numericValue.toLocaleString();
+                  displayValue = isEmptyValue(row[col])
+                    ? "-"
+                    : formatFinancialAmount(numericValue, currencyCode ?? undefined);
+                } else if (col === "profit") {
+                  displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else {
-                  displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                  displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 }
 
                 return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium text-center">${displayValue}</td>`;
@@ -204,7 +209,19 @@ export const FinancialIndicatorsField: FormFieldFactory = {
               if (col === "year") {
                 return isEmptyValue(row[col]) ? "-" : String(row[col]);
               }
-              return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+              if (col === "budget") {
+                const n = typeof row[col] === "number" ? row[col] : Number(row[col]);
+                return isEmptyValue(row[col]) || !Number.isFinite(n)
+                  ? "-"
+                  : formatFinancialAmount(n, currencyCode ?? undefined);
+              }
+              if (col === "currentRatio") {
+                const n = typeof row[col] === "number" ? row[col] : Number(row[col]);
+                return isEmptyValue(row[col]) || !Number.isFinite(n)
+                  ? "-"
+                  : n.toLocaleString(getLocaleForIsoCurrency(currencyCode ?? undefined));
+              }
+              return isEmptyValue(row[col]) ? "-" : String(row[col]);
             });
             return cellValues.join(", ");
           })
