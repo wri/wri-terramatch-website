@@ -1,5 +1,4 @@
 import { useT } from "@transifex/react";
-import { Dispatch, SetStateAction } from "react";
 import { When } from "react-if";
 
 import Button from "@/components/elements/Button/Button";
@@ -14,8 +13,6 @@ import ApiSlice from "@/store/apiSlice";
 
 interface SiteAreaProps {
   sites: any;
-  editPolygon: boolean;
-  setEditPolygon: Dispatch<SetStateAction<boolean>>;
   refetch?: () => void;
 }
 
