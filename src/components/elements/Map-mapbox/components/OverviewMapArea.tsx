@@ -1,6 +1,6 @@
 import { useT } from "@transifex/react";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BBox } from "@/components/elements/Map-mapbox/GeoJSON";
 import { useMap } from "@/components/elements/Map-mapbox/hooks/useMap";
@@ -39,7 +39,6 @@ const OverviewMapArea = ({
 }: EntityAreaProps) => {
   const t = useT();
   const [polygonDataMap, setPolygonDataMap] = useState<any>({});
-  const [entityBbox, setEntityBbox] = useState<BBox>();
   const [tabEditPolygon, setTabEditPolygon] = useState("Attributes");
   const [stateViewPanel, setStateViewPanel] = useState(false);
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
@@ -86,19 +85,16 @@ const OverviewMapArea = ({
     type === "sites" ? { country: entityModel?.projectCountry } : { country: entityModel?.country }
   );
 
+  const extentBbox = useMemo((): BBox | undefined => {
+    if (polygonsData.length > 0) {
+      return modelBbox as BBox | undefined;
+    }
+    return countryBbox as BBox | undefined;
+  }, [polygonsData.length, modelBbox, countryBbox]);
+
   useValueChanged(loading, () => {
     setPolygonCriteriaMap(polygonCriteriaMap);
     setPolygonData(polygonsData);
-    if (loading) {
-      return;
-    }
-    if (polygonsData.length > 0) {
-      if (modelBbox) {
-        setEntityBbox(modelBbox as BBox);
-      }
-    } else if (countryBbox) {
-      setEntityBbox(countryBbox as BBox);
-    }
   });
   useEffect(() => {
     refetch();
@@ -184,7 +180,7 @@ const OverviewMapArea = ({
       <MapContainer
         mapFunctions={mapFunctions}
         polygonsData={polygonDataMap}
-        bbox={entityBbox}
+        bbox={extentBbox}
         tooltipType={type === "sites" ? "edit" : "goTo"}
         showPopups
         showLegend

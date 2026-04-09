@@ -1,5 +1,5 @@
 import mapboxgl from "mapbox-gl";
-import { MutableRefObject, useEffect } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 
 import { zoomToBbox, zoomToCenter } from "../adapters/camera";
 import { BBox } from "../GeoJSON";
@@ -13,6 +13,8 @@ type UseMapCameraParams = {
   shouldBboxZoom?: boolean;
   polygonFromMap?: { isOpen: boolean; uuid: string } | null;
   polygonBbox?: BBox | null;
+  isUserDrawingEnabled?: boolean;
+  isEditingGeometry?: boolean;
 };
 
 export function useMapCamera({
@@ -23,8 +25,12 @@ export function useMapCamera({
   hasControls,
   shouldBboxZoom,
   polygonFromMap,
-  polygonBbox
+  polygonBbox,
+  isUserDrawingEnabled,
+  isEditingGeometry
 }: UseMapCameraParams) {
+  const lastPolygonFitUuidRef = useRef<string>("");
+
   useEffect(() => {
     if (map.current == null || !shouldBboxZoom) return;
 
@@ -43,8 +49,21 @@ export function useMapCamera({
   }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
 
   useEffect(() => {
-    if (polygonFromMap?.isOpen && polygonFromMap?.uuid && polygonBbox != null && map.current != null) {
-      zoomToBbox(polygonBbox, map.current, true);
+    if (!polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
+      lastPolygonFitUuidRef.current = "";
+      return;
     }
-  }, [polygonFromMap, polygonBbox, map]);
+    if (isUserDrawingEnabled) {
+      return;
+    }
+    if (polygonBbox == null || map.current == null) {
+      return;
+    }
+    const uuid = polygonFromMap.uuid;
+    if (isEditingGeometry === true && uuid === lastPolygonFitUuidRef.current) {
+      return;
+    }
+    lastPolygonFitUuidRef.current = uuid;
+    zoomToBbox(polygonBbox, map.current, true);
+  }, [polygonFromMap?.isOpen, polygonFromMap?.uuid, polygonBbox, map, isUserDrawingEnabled, isEditingGeometry]);
 }

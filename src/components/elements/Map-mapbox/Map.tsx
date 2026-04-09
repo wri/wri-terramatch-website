@@ -310,7 +310,18 @@ export const MapContainer = ({
     dashboardContext
   });
 
-  useMapCamera({ map, bbox, center, zoom, hasControls, shouldBboxZoom, polygonFromMap, polygonBbox });
+  useMapCamera({
+    map,
+    bbox,
+    center,
+    zoom,
+    hasControls,
+    shouldBboxZoom,
+    polygonFromMap,
+    polygonBbox,
+    isUserDrawingEnabled,
+    isEditingGeometry: isEditing
+  });
 
   useMapOverlays({
     map,

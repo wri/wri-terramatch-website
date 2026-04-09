@@ -70,7 +70,7 @@ const pruneProjectPolygonCaches = (options?: { projectPitchUuid?: string; includ
 
 export const deleteProjectPolygon = async (polyUuid: string): Promise<void> => {
   await deleteProjectPolygonBase(polyUuid);
-  pruneProjectPolygonCaches();
+  pruneProjectPolygonCaches({ includeBoundingBoxes: true });
 };
 
 export const useUploadProjectPolygonFile = parallelRequestHook("projectPolygons", uploadProjectPolygonFile);

@@ -58,9 +58,15 @@ const createSitePolygonsConnection = v3Resource("sitePolygons", createSitePolygo
 export const useCreateSitePolygon = connectionHook(createSitePolygonsConnection);
 export const loadCreateSitePolygon = connectionLoader(createSitePolygonsConnection);
 
-export const deleteSitePolygon = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
+const deleteSitePolygonInternal = deleterAsync("sitePolygons", deleteSitePolygonEndpoint, (uuid: string) => ({
   pathParams: { uuid }
 }));
+
+export const deleteSitePolygon = async (uuid: string): Promise<void> => {
+  await deleteSitePolygonInternal(uuid);
+  ApiSlice.pruneCache("boundingBoxes");
+  ApiSlice.pruneIndex("boundingBoxes", "");
+};
 
 type SitePolygonResourceIdentifier = {
   type: "sitePolygons";
@@ -164,6 +170,8 @@ export const bulkDeleteSitePolygons = async (uuids: string[]): Promise<void> => 
 
   ApiSlice.pruneCache("sitePolygons");
   ApiSlice.pruneIndex("sitePolygons", "");
+  ApiSlice.pruneCache("boundingBoxes");
+  ApiSlice.pruneIndex("boundingBoxes", "");
 };
 
 export const loadAllSitePolygons = async (
