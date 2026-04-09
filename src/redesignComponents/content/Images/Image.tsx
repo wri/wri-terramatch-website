@@ -6,7 +6,7 @@ import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useSta
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
-import { EditIcon, PhotoAddIcon, PlayCircleIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, RejectedIcon, VideoIcon } from "@/redesignComponents/foundations/Icons";
 
 export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -64,7 +64,7 @@ const BaseImage: FC<BaseImageProps> = ({
   const hoverContentComponent = (
     <div
       className={classNames(
-        "absolute inset-[3px] flex flex-col items-center justify-center gap-1 bg-theme-primary-900/50 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
+        "bg-theme-primary-900/50 absolute inset-[3px] flex flex-col items-center justify-center gap-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100",
         borderRadius
       )}
       role="button"
@@ -93,7 +93,7 @@ const BaseImage: FC<BaseImageProps> = ({
         borderRadius
       )}
     >
-      {isVideo && <PlayCircleIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
+      {isVideo && <VideoIcon className={classNames("text-theme-neutral-100 h-9 w-9", classNamesVideoIcon)} />}
     </div>
   );
   return (
@@ -113,7 +113,7 @@ const BaseImage: FC<BaseImageProps> = ({
         isAdd ? (
           <div
             className={classNames(
-              "flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1 bg-theme-neutral-200",
+              "bg-theme-neutral-200 flex h-[calc(100%-4px)] w-[calc(100%-4px)] flex-col items-center justify-center gap-1",
               borderRadius
             )}
           >
@@ -128,14 +128,14 @@ const BaseImage: FC<BaseImageProps> = ({
         ) : (
           <div
             className={classNames(
-              "relative flex h-full w-full items-center justify-center bg-theme-neutral-300",
+              "bg-theme-neutral-300 relative flex h-full w-full items-center justify-center",
               borderRadius
             )}
           >
             <div className="flex flex-col items-center justify-center gap-1.5">
-              <RejectedIcon className="h-5 w-5 text-theme-neutral-500" />
+              <RejectedIcon className="text-theme-neutral-500 h-5 w-5" />
               {size >= 80 && (
-                <Text variant="text-12" className="flex items-center gap-1 text-theme-neutral-900">
+                <Text variant="text-12" className="text-theme-neutral-900 flex items-center gap-1">
                   {t("Image unavailable")}
                 </Text>
               )}

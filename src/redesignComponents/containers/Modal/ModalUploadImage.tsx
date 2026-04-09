@@ -8,8 +8,8 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import BaseImage from "@/redesignComponents/content/Images/Image";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
 import {
+  CheckIndeterminateIcon,
   DeleteIcon,
-  MinusIcon,
   PhotoLibraryIcon,
   PlaceholderIcon,
   PlusIcon,
@@ -289,11 +289,11 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
                   WebkitMaskImage: "radial-gradient(circle at center, transparent 0 70%, black 61%)"
                 }}
               />
-              <Box className="absolute top-0 right-0 h-full w-full rounded-full border-2 border-theme-neutral-100 bg-transparent" />
+              <Box className="border-theme-neutral-100 absolute top-0 right-0 h-full w-full rounded-full border-2 bg-transparent" />
             </Box>
           ) : (
             <Box className="relative h-[300px] w-[300px] overflow-hidden">
-              <Flex className="h-full w-full items-center justify-center bg-theme-neutral-200">
+              <Flex className="bg-theme-neutral-200 h-full w-full items-center justify-center">
                 <PlaceholderIcon boxSize={8} color="neutral.600" />
               </Flex>
               <Box
@@ -313,7 +313,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               className="w-fit"
               onClick={() => setSliderValue(v => Math.max(v - 1, 0))}
             >
-              <MinusIcon />
+              <CheckIndeterminateIcon />
             </Button>
             <Slider
               className="w-fit"
