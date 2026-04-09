@@ -251,7 +251,8 @@ const LIVELIHOODS: Dictionary<string> = {
   "fruits-vegetables": "Non-tree Fruit and Vegetable Farming",
   "cover-crops": "Cover Crops, Fodder Crops & Intercropping",
   "savings-loans": "Village Savings & Loans Associations or Local Cooperatives",
-  beekeeping: "Beekeeping & Apiary Management"
+  beekeeping: "Beekeeping & Apiary Management",
+  other: "Other"
 };
 
 type TypeMapValue = {
