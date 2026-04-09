@@ -5,8 +5,6 @@ import { SitePolygon } from "@/generated/apiSchemas";
 type MapAreaType = {
   isUserDrawingEnabled: boolean;
   setIsUserDrawingEnabled: (arg0: boolean) => void;
-  toggleAttribute: (arg0: boolean) => void;
-  openEditNewPolygon: boolean;
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
   siteData: any;
@@ -29,7 +27,7 @@ type MapAreaType = {
     type: "success" | "error" | "warning";
     title: string;
   };
-  setpolygonNotificationStatus: (value: {
+  setPolygonNotificationStatus: (value: {
     open: boolean;
     message: string;
     type: "success" | "error" | "warning";
@@ -57,8 +55,6 @@ type MapAreaType = {
 const defaultValue: MapAreaType = {
   isUserDrawingEnabled: false,
   setIsUserDrawingEnabled: () => {},
-  toggleAttribute: () => {},
-  openEditNewPolygon: false,
   editPolygon: { isOpen: false, uuid: "", primary_uuid: "" },
   setEditPolygon: () => {},
   siteData: undefined,
@@ -81,7 +77,7 @@ const defaultValue: MapAreaType = {
     type: "success",
     title: ""
   },
-  setpolygonNotificationStatus: () => {},
+  setPolygonNotificationStatus: () => {},
   setSelectedPolyVersion: () => {},
   selectedPolyVersion: undefined,
   openModalConfirmation: false,
@@ -105,7 +101,6 @@ const MapAreaContext = createContext<MapAreaType>(defaultValue);
 
 export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isUserDrawingEnabled, setIsUserDrawingEnabled] = useState<boolean>(false);
-  const [openEditNewPolygon, setOpenEditNewPolygon] = useState<boolean>(false);
   const [siteData, setSiteData] = useState<any>();
   const [shouldRefetchPolygonData, setShouldRefetchPolygonData] = useState<boolean>(false);
   const [shouldRefetchMediaData, setShouldRefetchMediaData] = useState<boolean>(false);
@@ -126,14 +121,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     uuid: "",
     primary_uuid: ""
   });
-
-  const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
-    setEditPolygonInternal(value);
-    if (!value.isOpen) {
-      setShouldRefetchPolygonData(false);
-    }
-  };
-  const [polygonNotificationStatus, setpolygonNotificationStatus] = useState<{
+  const [polygonNotificationStatus, setPolygonNotificationStatus] = useState<{
     open: boolean;
     message: string;
     type: "success" | "error" | "warning";
@@ -144,13 +132,16 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     type: "success",
     title: ""
   });
-  const toggleAttribute = (isOpen: boolean) => {
-    setOpenEditNewPolygon(isOpen);
+
+  const setEditPolygon = (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => {
+    setEditPolygonInternal(value);
+    if (!value.isOpen) {
+      setShouldRefetchPolygonData(false);
+    }
   };
 
   const resetSiteMapInteractionState = useCallback(() => {
     setIsUserDrawingEnabled(false);
-    setOpenEditNewPolygon(false);
     setEditPolygonInternal({ isOpen: false, uuid: "", primary_uuid: "" });
     setShouldRefetchPolygonData(false);
     setSelectedPolyVersion(undefined);
@@ -158,7 +149,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     setPreviewVersion(false);
     setStatusSelectedPolygon("");
     setSelectedPolygonsInCheckbox([]);
-    setpolygonNotificationStatus({
+    setPolygonNotificationStatus({
       open: false,
       message: "",
       type: "success",
@@ -170,8 +161,6 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
   const contextValue: MapAreaType = {
     isUserDrawingEnabled,
     setIsUserDrawingEnabled,
-    toggleAttribute,
-    openEditNewPolygon,
     editPolygon,
     setEditPolygon,
     siteData,
@@ -189,7 +178,7 @@ export const MapAreaProvider: React.FC<{ children: ReactNode }> = ({ children })
     selectedPolygonsInCheckbox,
     setSelectedPolygonsInCheckbox,
     polygonNotificationStatus,
-    setpolygonNotificationStatus,
+    setPolygonNotificationStatus,
     setSelectedPolyVersion,
     selectedPolyVersion,
     setOpenModalConfirmation,

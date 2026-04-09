@@ -84,7 +84,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   siteData?: boolean;
   status?: boolean;
   validationType?: string;
-  editPolygon?: boolean;
+  showEditControls?: boolean;
   polygonChecks?: boolean;
   legend?: LegendItem[];
   centroids?: DashboardGetProjectsData[];
@@ -108,11 +108,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   sitePolygonData?: SitePolygonLightDto[];
   polygonsExists?: boolean;
   shouldBboxZoom?: boolean;
-  modelFilesData?: MediaDto[];
+  mediaFiles?: MediaDto[];
   formMap?: boolean;
-  pdView?: boolean;
   location?: LngLat;
-  isDashboard?: "dashboard" | "modal" | undefined;
+  dashboardMode?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
   listViewProjects?: any;
@@ -130,7 +129,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   dashboardContext?: {
     setFilters: (fn: (prev: any) => any) => void;
     dashboardCountries?: any[];
-    isDashboard?: string;
+    dashboardMode?: string;
   };
   disabledPolygonPanel?: boolean;
 }
@@ -153,7 +152,7 @@ export const MapContainer = ({
   siteData = false,
   status = false,
   validationType = "bulkValidation",
-  editPolygon = false,
+  showEditControls = false,
   polygonChecks = false,
   record,
   showPopups = false,
@@ -163,9 +162,8 @@ export const MapContainer = ({
   tooltipType = "view",
   polygonsExists = true,
   shouldBboxZoom = true,
-  isDashboard = undefined,
+  dashboardMode = undefined,
   formMap,
-  pdView = false,
   location,
   entityData,
   imageGalleryRef,
@@ -199,7 +197,7 @@ export const MapContainer = ({
     setLoader
   } = props;
   const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
-    return mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+    return mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
@@ -220,7 +218,7 @@ export const MapContainer = ({
   const {
     isUserDrawingEnabled,
     selectedPolyVersion,
-    editPolygon: editPolygonSelected,
+    editPolygon,
     setEditPolygon,
     setShouldRefetchPolygonData,
     setShouldRefetchMediaData,
@@ -259,8 +257,9 @@ export const MapContainer = ({
   );
 
   useOnMount(() => {
-    const initialStyle = mapStyleProp !== undefined ? mapStyleProp : isDashboard ? MapStyle.Street : MapStyle.Satellite;
-    initMap(!!isDashboard, initialStyle);
+    const initialStyle =
+      mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
+    initMap(!!dashboardMode, initialStyle);
     return () => {
       if (map.current) {
         setStyleLoaded(false);
@@ -285,7 +284,7 @@ export const MapContainer = ({
     polygonsData,
     centroids,
     polygonsCentroids,
-    isDashboard,
+    dashboardMode,
     projectUUID,
     hasAccess,
     selectedPolygonsInCheckbox
@@ -298,14 +297,14 @@ export const MapContainer = ({
     showPopups,
     sitePolygonData,
     tooltipType,
-    isDashboard,
+    dashboardMode,
     selectedCountry,
     isMobile,
     dashboardCountries,
     setLoader,
     setPolygonFromMap,
     setEditPolygon,
-    editPolygonSelected,
+    editPolygon,
     setFilters,
     setMobilePopupData,
     dashboardContext
@@ -326,7 +325,7 @@ export const MapContainer = ({
 
   useMapMedia({
     map,
-    modelFilesData: props.modelFilesData,
+    mediaFiles: props.mediaFiles,
     styleReady,
     styleVersion,
     entityData,
@@ -345,7 +344,6 @@ export const MapContainer = ({
     draw,
     isUserDrawingEnabled,
     formMap,
-    pdView,
     polygonFromMap,
     polygonsData,
     centroids,
@@ -480,7 +478,7 @@ export const MapContainer = ({
                 />
               </ControlGroup>
             ) : null}
-            {isDashboard !== "dashboard" && styleReady && map.current != null ? (
+            {dashboardMode !== "dashboard" && styleReady && map.current != null ? (
               <ControlGroup position="top-right">
                 <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
               </ControlGroup>
@@ -525,7 +523,7 @@ export const MapContainer = ({
                 <ImageControl viewImages={viewImages} setViewImages={setViewImages} />
               </ControlGroup>
             ) : null}
-            {editPolygon ? (
+            {showEditControls ? (
               <ControlGroup position="top-right" className="top-64">
                 <button type="button" className="rounded-lg bg-white p-2.5 text-primary hover:text-primary ">
                   <Icon name={IconNames.EDIT} className="h-5 w-5 lg:h-6 lg:w-6" />
@@ -550,7 +548,7 @@ export const MapContainer = ({
                 <Icon name={IconNames.IC_EARTH_MAP} className="h-6 w-6" />
               </button>
             </ControlGroup>
-            {isDashboard == null ? (
+            {dashboardMode == null ? (
               <ControlGroup position="top-right" className="top-[13.75rem]">
                 <button
                   type="button"
@@ -569,10 +567,10 @@ export const MapContainer = ({
             ) : null}
             {!formMap && showViewGallery ? (
               <ControlGroup position="bottom-right" className="bottom-8 flex flex-row gap-2 mobile:hidden">
-                {isDashboard === "dashboard" && styleReady && map.current != null && (
+                {dashboardMode === "dashboard" && styleReady && map.current != null && (
                   <StyleControl map={map.current} currentStyle={currentStyle} setCurrentStyle={handleStyleChange} />
                 )}
-                {isDashboard !== "dashboard" && isDashboard !== "modal" && !disabledPolygonPanel && (
+                {dashboardMode !== "dashboard" && dashboardMode !== "modal" && !disabledPolygonPanel && (
                   <ViewImageGalleryButton imageGalleryRef={imageGalleryRef} />
                 )}
               </ControlGroup>
@@ -595,7 +593,7 @@ export const MapContainer = ({
           </ControlGroup>
         ) : null}
         {!polygonsExists && !disabledPolygonPanel ? <EmptyStateDisplay /> : null}
-        {(isMobile || isDashboard) && mobilePopupData !== null ? (
+        {(isMobile || dashboardMode) && mobilePopupData !== null ? (
           <PopupMobile
             event={mobilePopupData}
             onClose={() => setMobilePopupData(null)}

@@ -498,7 +498,7 @@ const SiteMapTab: FC<SiteMapTabProps> = ({ site, refetch: refetchEntity }) => {
             </div>
           </div>
         </div>
-        <SiteArea sites={site} setEditPolygon={setEditPolygon} editPolygon={editPolygon} refetch={refetchEntity} />
+        <SiteArea sites={site} setEditPolygon={setEditPolygon} showEditControls={editPolygon} refetch={refetchEntity} />
       </Box>
     </PageBody>
   );

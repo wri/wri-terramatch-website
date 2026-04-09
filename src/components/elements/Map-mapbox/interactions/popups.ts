@@ -38,7 +38,7 @@ const handleLayerClick = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   layerName?: string,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
@@ -51,14 +51,14 @@ const handleLayerClick = (
     return;
   }
 
-  if (setMobilePopupData != null && isDashboard != null) {
+  if (setMobilePopupData != null && dashboardMode != null) {
     setMobilePopupData({
       feature,
       layerName,
       type,
       setPolygonFromMap,
       sitePolygonData,
-      isDashboard,
+      dashboardMode,
       editPolygon,
       setEditPolygon,
       setFilters,
@@ -132,7 +132,7 @@ export const addPopupsToMap = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
@@ -151,7 +151,7 @@ export const addPopupsToMap = (
       editPolygon,
       setEditPolygon,
       draw,
-      isDashboard,
+      dashboardMode,
       setFilters,
       dashboardCountries,
       setLoader,
@@ -171,7 +171,7 @@ export const addPopupToLayer = (
   editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
   setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
   draw: MapboxDraw,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   setFilters?: any,
   dashboardCountries?: any,
   setLoader?: (value: boolean) => void,
@@ -212,7 +212,7 @@ export const addPopupToLayer = (
       editPolygon,
       setEditPolygon,
       name,
-      isDashboard,
+      dashboardMode,
       setFilters,
       dashboardCountries,
       setLoader,

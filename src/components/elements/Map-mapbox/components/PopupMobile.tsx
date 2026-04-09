@@ -15,7 +15,7 @@ interface MobilePopupProps {
   event: {
     setFilters: (fn: (prev: any) => any) => void;
     dashboardCountries?: CountriesProps[];
-    isDashboard?: string;
+    dashboardMode?: string;
     [key: string]: any;
   };
   onClose: () => void;
@@ -25,7 +25,7 @@ interface MobilePopupProps {
 export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, variant = "desktop" }) => {
   const t = useT();
   const { items, label, isoCountry, itemUuid, layerName, projectFullDto, popupType } = usePopupData(event);
-  const { setFilters, dashboardCountries, isDashboard } = event;
+  const { setFilters, dashboardCountries, dashboardMode } = event;
   const countryChoices = useGadmChoices({ level: 0 });
   const router = useRouter();
   const { closeModal } = useModalContext();
@@ -77,7 +77,7 @@ export const PopupMobile: React.FC<MobilePopupProps> = ({ event, onClose, varian
 
     onClose();
 
-    if (isDashboard === "modal") {
+    if (dashboardMode === "modal") {
       closeModal("modalExpand");
     }
   };

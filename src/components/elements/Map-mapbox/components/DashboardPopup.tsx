@@ -16,7 +16,7 @@ const client = new QueryClient();
 export const DashboardPopup = (event: any) => {
   const { popupType, popupData, items, label, isLoading, isoCountry, itemUuid, layerName, projectFullDto } =
     usePopupData(event);
-  const { addPopupToMap, removePopupFromMap, setFilters, dashboardCountries, isDashboard } = event;
+  const { addPopupToMap, removePopupFromMap, setFilters, dashboardCountries, dashboardMode } = event;
   const router = useRouter();
   const { closeModal } = useModalContext();
 
@@ -60,7 +60,7 @@ export const DashboardPopup = (event: any) => {
 
     removePopupFromMap();
 
-    if (isDashboard === "modal") {
+    if (dashboardMode === "modal") {
       closeModal("modalExpand");
     }
   };
@@ -73,7 +73,7 @@ export const DashboardPopup = (event: any) => {
           <TooltipGridMap
             label={label}
             learnMore={
-              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && isDashboard === "dashboard" ? learnMoreEvent : null
+              layerName !== LAYERS_NAMES.POLYGON_GEOMETRY && dashboardMode === "dashboard" ? learnMoreEvent : null
             }
             isoCountry={isoCountry}
             items={items}

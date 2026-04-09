@@ -74,7 +74,7 @@ const PolygonDrawer = ({
   const contextMapArea = useMapAreaContext();
   const sitePolygonData = context?.sitePolygonData as undefined | Array<SitePolygonLightDto>;
   const sitePolygonRefresh = context?.reloadSiteData;
-  const openEditNewPolygon = contextMapArea?.isUserDrawingEnabled;
+  const isDrawingEnabled = contextMapArea?.isUserDrawingEnabled;
   const selectedPolygon = sitePolygonData?.find((item: SitePolygonLightDto) => item?.polygonUuid === polygonSelected);
   const anrPlotsEligible = useMemo(
     () => isSitePolygonEligibleForAnrMonitoringPlots(selectedPolygon),
@@ -193,11 +193,11 @@ const PolygonDrawer = ({
     }
   }, [polygonSelected, setStatusSelectedPolygon, sitePolygonData]);
   useEffect(() => {
-    if (openEditNewPolygon) {
+    if (isDrawingEnabled) {
       setOpenAttributes(true);
       setActiveTab(prev => (initialTopTab === "attributes" ? "attributes" : prev));
     }
-  }, [initialTopTab, openEditNewPolygon]);
+  }, [initialTopTab, isDrawingEnabled]);
 
   useEffect(() => {
     setSelectPolygonVersion(selectedPolygonData);

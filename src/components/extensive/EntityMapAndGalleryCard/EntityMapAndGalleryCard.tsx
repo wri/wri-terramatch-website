@@ -205,7 +205,7 @@ const EntityMapAndGalleryCard = ({
             showLegend
             hasControls
             showPopups
-            modelFilesData={mediaList}
+            mediaFiles={mediaList}
             entityData={entityData}
             imageGalleryRef={imageGalleryRef}
           />

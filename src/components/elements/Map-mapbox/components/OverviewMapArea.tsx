@@ -66,7 +66,7 @@ const OverviewMapArea = ({
 
   const mapFunctions = useMap(onSave);
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: type as SupportedEntity,
     uuid: entityModel?.uuid
   });
@@ -203,9 +203,8 @@ const OverviewMapArea = ({
         setPolygonFromMap={setPolygonFromMap}
         polygonFromMap={polygonFromMap}
         shouldBboxZoom={!shouldRefetchPolygonData}
-        modelFilesData={modelFilesData}
+        mediaFiles={mediaFiles}
         sitePolygonData={sitePolygonDataV3}
-        pdView={true}
         disabledPolygonPanel={disabledPolygonPanel}
       />
     </AnrMapOverlayProvider>

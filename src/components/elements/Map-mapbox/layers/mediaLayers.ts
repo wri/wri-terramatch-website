@@ -29,7 +29,7 @@ export const removeMediaLayer = (map: mapboxgl.Map) => {
 
 export const addMediaSourceAndLayer = (
   map: mapboxgl.Map,
-  modelFilesData: MediaDto[],
+  mediaFiles: MediaDto[],
   setImageCover: Function,
   handleDownload: Function,
   handleDelete: Function,
@@ -40,7 +40,7 @@ export const addMediaSourceAndLayer = (
   removeMediaLayer(map);
   removePopups(map, "MEDIA");
 
-  const modelFilesGeolocalized = modelFilesData.filter(f => f.lat != null && f.lng != null);
+  const modelFilesGeolocalized = mediaFiles.filter(f => f.lat != null && f.lng != null);
   if (modelFilesGeolocalized.length === 0) return;
 
   const features: Feature<Geometry, GeoJsonProperties>[] = modelFilesGeolocalized.map(modelFile => ({

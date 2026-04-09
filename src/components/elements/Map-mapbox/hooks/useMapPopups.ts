@@ -16,14 +16,14 @@ type UseMapPopupsParams = {
   showPopups?: boolean;
   sitePolygonData?: SitePolygonLightDto[];
   tooltipType?: TooltipType;
-  isDashboard?: string;
+  dashboardMode?: string;
   selectedCountry?: string | null;
   isMobile: boolean;
   dashboardCountries?: any[];
   setLoader?: (v: boolean) => void;
   setPolygonFromMap?: (v: any) => void;
   setEditPolygon: (v: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
-  editPolygonSelected: { isOpen: boolean; uuid: string; primary_uuid?: string };
+  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
   setFilters?: any;
   setMobilePopupData: (v: any) => void;
   dashboardContext?: { setFilters?: any; dashboardCountries?: any[] } | null;
@@ -36,14 +36,14 @@ export function useMapPopups({
   showPopups,
   sitePolygonData,
   tooltipType,
-  isDashboard,
+  dashboardMode,
   selectedCountry,
   isMobile,
   dashboardCountries,
   setLoader,
   setPolygonFromMap,
   setEditPolygon,
-  editPolygonSelected,
+  editPolygon,
   setFilters,
   setMobilePopupData,
   dashboardContext
@@ -60,11 +60,11 @@ export function useMapPopups({
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setFilters, setMobilePopupData };
   });
 
-  // editPolygonSelected is an object — stabilize via ref so popup closures always
+  // editPolygon is an object — stabilize via ref so popup closures always
   // read the latest value without triggering re-registration.
-  const editPolygonRef = useRef(editPolygonSelected);
+  const editPolygonRef = useRef(editPolygon);
   useEffect(() => {
-    editPolygonRef.current = editPolygonSelected;
+    editPolygonRef.current = editPolygon;
   });
 
   useEffect(() => {
@@ -72,24 +72,24 @@ export function useMapPopups({
 
     addPopupsToMap(
       map.current,
-      isDashboard ? DashboardPopup : AdminPopup,
+      dashboardMode ? DashboardPopup : AdminPopup,
       callbacksRef.current.setPolygonFromMap,
       sitePolygonData,
       tooltipType ?? "goTo",
       editPolygonRef.current,
       callbacksRef.current.setEditPolygon,
       draw.current,
-      isDashboard,
+      dashboardMode,
       dashboardContext?.setFilters ?? callbacksRef.current.setFilters,
       dashboardContext?.dashboardCountries ?? dashboardCountries,
       setLoader,
       selectedCountry,
-      isMobile || isDashboard != null ? callbacksRef.current.setMobilePopupData : undefined
+      isMobile || dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
     );
   }, [
     sourcesAdded,
     sitePolygonData,
-    isDashboard,
+    dashboardMode,
     tooltipType,
     selectedCountry,
     isMobile,

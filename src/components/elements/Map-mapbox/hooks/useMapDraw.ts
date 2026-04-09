@@ -26,7 +26,6 @@ type UseMapDrawParams = {
   draw: MutableRefObject<MapboxDraw | null>;
   isUserDrawingEnabled: boolean;
   formMap?: boolean;
-  pdView?: boolean;
   polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string } | null;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
@@ -48,7 +47,6 @@ export function useMapDraw({
   draw,
   isUserDrawingEnabled,
   formMap,
-  pdView,
   polygonFromMap,
   polygonsData,
   centroids,
@@ -134,7 +132,6 @@ export function useMapDraw({
     const geojson = draw.current.getAll();
     if (!geojson || !polygonFromMap?.uuid) return;
 
-    !pdView && onCancelEdit();
     const feature = geojson.features[0];
 
     if (formMap) {
@@ -177,11 +174,11 @@ export function useMapDraw({
       const siteId = selectedPolygon.siteId;
       if (!siteId) throw new Error("Missing siteId for polygon");
 
-      await createVersionWithGeometry(
-        selectedPolygon.primaryUuid,
-        pdView ? "Updated geometry" : "Updated geometry from admin panel",
-        { type: "Feature", geometry: feature.geometry, properties: { site_id: siteId } }
-      );
+      await createVersionWithGeometry(selectedPolygon.primaryUuid, "Updated geometry", {
+        type: "Feature",
+        geometry: feature.geometry,
+        properties: { site_id: siteId }
+      });
 
       if (selectedPolygon.polygonUuid != null) {
         await ApiSlice.pruneCache("sitePolygons", [selectedPolygon.polygonUuid]);
@@ -195,9 +192,7 @@ export function useMapDraw({
       reloadSiteData?.();
       setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.polygonUuid as string });
       setStatusSelectedPolygon?.(polygonActive?.status as string);
-      if (pdView && draw.current != null) {
-        draw.current.deleteAll();
-      }
+      draw.current?.deleteAll();
 
       setShouldRefetchPolygonData?.(true);
       openNotification("success", t("Success"), t("Site polygon version created successfully."));

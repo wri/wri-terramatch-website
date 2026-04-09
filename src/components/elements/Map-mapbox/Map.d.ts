@@ -31,7 +31,7 @@ export interface MapFunctions {
   draw: MutableRefObject<MapboxDraw | null>;
   styleLoaded: boolean;
   onCancel: (parsedPolygonData: Record<string, string[]> | undefined) => void;
-  initMap: (isDashboard?: boolean, initialStyle?: MapStyle) => void;
+  initMap: (useDashboardStyle?: boolean, initialStyle?: MapStyle) => void;
   setStyleLoaded: (value: boolean) => void;
   handleTrashDelete: () => void;
 }

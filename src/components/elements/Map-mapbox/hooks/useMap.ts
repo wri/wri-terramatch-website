@@ -50,11 +50,11 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     setStyleLoaded(true);
   }, []);
 
-  const initMap = (isDashboard?: boolean, initialStyle?: MapStyle) => {
+  const initMap = (useDashboardStyle?: boolean, initialStyle?: MapStyle) => {
     if (map.current) return;
 
     const requestedStyle =
-      initialStyle !== undefined ? initialStyle : isDashboard ? MapStyle.Street : MapStyle.Satellite;
+      initialStyle !== undefined ? initialStyle : useDashboardStyle ? MapStyle.Street : MapStyle.Satellite;
     const styleToUse =
       requestedStyle === MapStyle.GoogleSatellite ? BASEMAP_CONFIGS[MapStyle.GoogleSatellite].style : requestedStyle;
 

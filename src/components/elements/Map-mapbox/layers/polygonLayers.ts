@@ -119,7 +119,7 @@ export const addSourceToLayer = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   cacheKey: string = "0"
 ) => {
   const { name, geoserverLayerName, styles } = layer;
@@ -142,7 +142,7 @@ export const addSourceToLayer = (
       map.removeSource(name);
     }
 
-    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, isDashboard, cacheKey);
+    const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName, dashboardMode, cacheKey);
     keys[name] = cacheKey;
     map.addSource(name, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
     styles?.forEach((style: LayerWithStyle, index: number) => {
@@ -247,23 +247,23 @@ export const addSourcesToLayers = (
   polygonsData: Record<string, string[]> | undefined,
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   polygonsCentroids?: any[] | undefined,
   cacheKey: string = "0"
 ) => {
   if (map == null) return;
   layersList.forEach((layer: LayerType) => {
     if (layer.name === LAYERS_NAMES.POLYGON_GEOMETRY) {
-      addSourceToLayer(layer, map, polygonsData, zoomFilter, isDashboard, cacheKey);
+      addSourceToLayer(layer, map, polygonsData, zoomFilter, dashboardMode, cacheKey);
     }
-    if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && isDashboard) {
+    if (layer.name === LAYERS_NAMES.WORLD_COUNTRIES && dashboardMode) {
       addSourceToLayer(layer, map, undefined, undefined, undefined, cacheKey);
     }
-    if (layer.name === LAYERS_NAMES.CENTROIDS && isDashboard) {
+    if (layer.name === LAYERS_NAMES.CENTROIDS && dashboardMode) {
       addGeojsonSourceToLayer(centroids, map, layer, zoomFilter, !_.isEmpty(polygonsData));
     }
   });
-  if (isDashboard) {
+  if (dashboardMode) {
     addPolygonCentroidsLayer(map, polygonsCentroids ?? [], zoomFilter);
   }
 };

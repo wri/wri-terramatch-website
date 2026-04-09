@@ -7,10 +7,10 @@ export const ANR_PLOT_LAYER_PREFIX = "anr_plot_geometry";
 
 export const getGeoserverURL = (
   layerName: string,
-  isDashboard?: string | undefined,
+  dashboardMode?: string | undefined,
   cacheKey: string = "0"
 ): string => {
-  const workspace = isDashboard != null ? `${geoserverWorkspace}_db` : geoserverWorkspace;
+  const workspace = dashboardMode != null ? `${geoserverWorkspace}_db` : geoserverWorkspace;
   return (
     `${geoserverUrl}/geoserver/gwc/service/wmts?REQUEST=GetTile&SERVICE=WMTS` +
     `&VERSION=1.0.0&LAYER=${workspace}:${layerName}&STYLE=&TILEMATRIX=EPSG:900913:{z}` +

@@ -3,19 +3,19 @@ import { useCallback } from "react";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 
 const useAlertHook = () => {
-  const { setpolygonNotificationStatus } = useMapAreaContext();
+  const { setPolygonNotificationStatus } = useMapAreaContext();
 
   const displayNotification = useCallback(
     (message: string, type: "success" | "error" | "warning", title: string) => {
       const time = type === "success" ? 3000 : 5000;
-      setpolygonNotificationStatus({
+      setPolygonNotificationStatus({
         open: true,
         message,
         type,
         title
       });
       setTimeout(() => {
-        setpolygonNotificationStatus({
+        setPolygonNotificationStatus({
           open: false,
           message: "",
           type: "success",
@@ -23,7 +23,7 @@ const useAlertHook = () => {
         });
       }, time);
     },
-    [setpolygonNotificationStatus]
+    [setPolygonNotificationStatus]
   );
 
   return { displayNotification };

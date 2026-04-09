@@ -245,7 +245,7 @@ const PolygonReviewTab: FC<IProps> = props => {
     }
   }, [flyToPolygonBounds, selectPolygonFromMap]);
 
-  const [, { data: modelFilesData }] = useMedias({
+  const [, { data: mediaFiles }] = useMedias({
     entity: "sites",
     uuid: record?.uuid,
     enabled: record?.uuid != null
@@ -942,7 +942,7 @@ const PolygonReviewTab: FC<IProps> = props => {
                   mapFunctions={mapFunctions}
                   tooltipType="edit"
                   sitePolygonData={sitePolygonData}
-                  modelFilesData={modelFilesData}
+                  mediaFiles={mediaFiles}
                   setIsLoadingDelayedJob={props.setIsLoadingDelayedJob}
                   isLoadingDelayedJob={props.isLoadingDelayedJob}
                   setAlertTitle={props.setAlertTitle}

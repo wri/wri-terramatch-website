@@ -21,7 +21,7 @@ export const MapContext = createContext<IMapContext>({
   draw: undefined
 });
 
-interface AuthProviderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+interface MapProviderProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   mapOptions?: Omit<MapboxOptions, "container">;
   drawOptions?: MapboxDrawOptions;
   onLoadMap?: (map: Map, draw?: MapboxDraw) => void;
@@ -37,7 +37,7 @@ const MapProvider = ({
   onDrawSet,
   initialState,
   ...containerProps
-}: PropsWithChildren<AuthProviderProps>) => {
+}: PropsWithChildren<MapProviderProps>) => {
   const mapId = useId();
   const [map, setMap] = useState<Map>();
   const [draw, setDraw] = useState<any>();

@@ -17,7 +17,7 @@ type UseMapLayersParams = {
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
   polygonsCentroids?: any[];
-  isDashboard?: string;
+  dashboardMode?: string;
   projectUUID?: string;
   hasAccess?: boolean;
   selectedPolygonsInCheckbox?: string[];
@@ -31,7 +31,7 @@ export function useMapLayers({
   polygonsData,
   centroids,
   polygonsCentroids,
-  isDashboard,
+  dashboardMode,
   projectUUID,
   hasAccess,
   selectedPolygonsInCheckbox
@@ -42,7 +42,7 @@ export function useMapLayers({
   const tileVersionRef = useRef<string>("0");
 
   useEffect(() => {
-    if (!styleReady || map.current == null || (!isDashboard && _.isEmpty(polygonsData))) {
+    if (!styleReady || map.current == null || (!dashboardMode && _.isEmpty(polygonsData))) {
       setSourcesAdded(false);
       return;
     }
@@ -56,20 +56,30 @@ export function useMapLayers({
       tileVersionRef.current = String(Date.now());
     }
 
-    const zoomFilter = isDashboard ? 9 : undefined;
-    const polygonsDataToUse = isDashboard != null && projectUUID != null && hasAccess === false ? {} : polygonsData;
+    const zoomFilter = dashboardMode ? 9 : undefined;
+    const polygonsDataToUse = dashboardMode != null && projectUUID != null && hasAccess === false ? {} : polygonsData;
 
     addSourcesToLayers(
       map.current,
       polygonsDataToUse,
       centroids,
       zoomFilter,
-      isDashboard,
+      dashboardMode,
       polygonsCentroids,
       tileVersionRef.current
     );
     setSourcesAdded(true);
-  }, [map, styleReady, styleVersion, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);
+  }, [
+    map,
+    styleReady,
+    styleVersion,
+    polygonsData,
+    polygonsCentroids,
+    centroids,
+    dashboardMode,
+    projectUUID,
+    hasAccess
+  ]);
 
   useEffect(() => {
     if (!styleReady || selectedPolygonsInCheckbox == null || map.current == null) return;
