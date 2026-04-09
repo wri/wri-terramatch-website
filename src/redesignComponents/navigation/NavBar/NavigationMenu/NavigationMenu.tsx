@@ -66,6 +66,7 @@ const MegaMenuItem: FC<{ item: NavigationMenuItem; onClick?: () => void; showBor
     onClick={onClick}
     borderColor="neutral.300"
     borderBottom={showBorder ? "1px solid" : "none"}
+    borderBottomColor="neutral.300"
   >
     {item.icon}
     <Box>
