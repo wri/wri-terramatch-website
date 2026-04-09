@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { isNumber } from "lodash";
-import { useCallback, useEffect, useId, useState } from "react";
+import { type FC, useCallback, useEffect, useId, useState } from "react";
 import { useController } from "react-hook-form";
 import * as yup from "yup";
 
@@ -29,7 +29,7 @@ function formatFinancialDisplayValue(value: unknown, currencyCode: string | unde
 }
 
 /** Locale-aware amount input for wizard number fields; keeps RHF value as a number for the API. */
-function FinancialAmountInput(props: SharedFieldProps) {
+const FinancialAmountInput: FC<SharedFieldProps> = props => {
   const { name, control, error, label, required, placeholder, description, feedbackRequired } = props;
   const id = useId();
   const { currency } = useCurrencyContext();
@@ -100,7 +100,7 @@ function FinancialAmountInput(props: SharedFieldProps) {
       />
     </InputWrapper>
   );
-}
+};
 
 export const NumberField: FormFieldFactory = {
   addValidation: addValidationWith((field, _t, _framework) => {
