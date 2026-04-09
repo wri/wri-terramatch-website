@@ -92,6 +92,12 @@ export const createLocalStepsProvider = (
       .map(({ name, children }) => [name, (children ?? []).map(({ name }) => name)])
   );
 
+  const enhancedFeedbackRequired = (fieldId: string): boolean => {
+    if (feedbackRequired(fieldId)) return true;
+    const field = fieldsByName.get(fieldId);
+    return field?.linkedFieldKey != null && feedbackRequired(field.linkedFieldKey);
+  };
+
   return {
     stepIds: () => stepIds ?? [],
     step: (id: string) => stepsById.get(id),
@@ -99,7 +105,7 @@ export const createLocalStepsProvider = (
     fieldByName: (name: string) => fieldsByName.get(name),
     fieldByKey: (linkedFieldKey: string) => fieldsByKey.get(linkedFieldKey),
     childNames: (childName: string) => childNames.get(childName) ?? [],
-    feedbackRequired
+    feedbackRequired: enhancedFeedbackRequired
   };
 };
 
