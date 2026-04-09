@@ -59,39 +59,6 @@ export const usePostV2AdminENTITYUUIDReminder = (
   );
 };
 
-export type GetV2AdminOrganisationsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminOrganisationsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminOrganisationsExport = (
-  variables: GetV2AdminOrganisationsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<undefined, GetV2AdminOrganisationsExportError, undefined, {}, {}, {}>({
-    url: "/v2/admin/organisations/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2AdminOrganisationsExport = <TData = undefined>(
-  variables: GetV2AdminOrganisationsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<undefined, GetV2AdminOrganisationsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<undefined, GetV2AdminOrganisationsExportError, TData>(
-    queryKeyFn({ path: "/v2/admin/organisations/export", operationId: "getV2AdminOrganisationsExport", variables }),
-    ({ signal }) => fetchGetV2AdminOrganisationsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type PostV2LeadershipsError = Fetcher.ErrorWrapper<undefined>;
 
 export type PostV2LeadershipsResponse = {
@@ -1183,11 +1150,6 @@ export const useGetV2SrpReportsExport = <TData = Record<string, any>>(
 };
 
 export type QueryOperation =
-  | {
-      path: "/v2/admin/organisations/export";
-      operationId: "getV2AdminOrganisationsExport";
-      variables: GetV2AdminOrganisationsExportVariables;
-    }
   | {
       path: "/v2/admin/forms/submissions/{UUID}/export";
       operationId: "getV2AdminFormsSubmissionsUUIDExport";
