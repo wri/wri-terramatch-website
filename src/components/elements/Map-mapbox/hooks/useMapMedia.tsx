@@ -12,9 +12,7 @@ import { addMediaSourceAndLayer } from "../layers/mediaLayers";
 type UseMapMediaParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   modelFilesData?: MediaDto[];
-  /** True when style.load fired — from core/useMapReadiness. */
   styleReady: boolean;
-  /** Increments on every style.load so the media layer re-adds after each style switch. */
   styleVersion: number;
   entityData?: any;
   t: (key: string) => string;
@@ -27,12 +25,6 @@ type UseMapMediaParams = {
   router: { isReady: boolean; asPath: string };
 };
 
-/**
- * Manages the media (photo) layer lifecycle (contracts MD-1, MD-2):
- *
- * - WHEN modelFilesData changes + style is loaded → removes old layer, adds new one with geolocalized images
- * - WHEN a media popup is closed → removes all MEDIA popups for this map instance
- */
 export function useMapMedia({
   map,
   modelFilesData,

@@ -64,7 +64,6 @@ export function useMapDraw({
   hideLoader,
   openNotification
 }: UseMapDrawParams) {
-  // Draw mode toggle (DE-1, DE-2)
   useValueChanged(isUserDrawingEnabled, () => {
     if (map.current == null || draw.current == null) return;
     if (isUserDrawingEnabled) {
@@ -196,13 +195,6 @@ export function useMapDraw({
       reloadSiteData?.();
       setPolygonFromMap?.({ isOpen: true, uuid: polygonActive?.polygonUuid as string });
       setStatusSelectedPolygon?.(polygonActive?.status as string);
-
-      // For pdView the draw canvas was NOT cleared at the top (onCancelEdit is guarded
-      // by !pdView), so clear it now. For !pdView it was already cleared by onCancelEdit.
-      // Do NOT call addFilterOfPolygonsData or addSourcesToLayers with the stale
-      // polygonsData closure here — both would re-paint the OLD polygon onto the tile
-      // layer. useMapLayers re-runs reactively with the fresh polygonsData once
-      // reloadSiteData() resolves, correctly showing the new polygon version (PL-2, DE-4).
       if (pdView && draw.current != null) {
         draw.current.deleteAll();
       }

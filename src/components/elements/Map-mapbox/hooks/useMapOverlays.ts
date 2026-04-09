@@ -22,19 +22,11 @@ type UseMapOverlaysParams = {
   selectedLandscapes?: string[];
   anrMapOverlay?: AnrMapOverlay;
   anrPlotGeometryDto?: { geojson?: any } | null;
-  /** True when style.load fired — from core/useMapReadiness. */
   styleReady: boolean;
-  /** Increments on every style.load so overlay effects re-run after each style switch. */
   styleVersion: number;
   sourcesAdded: boolean;
 };
 
-/**
- * Manages all overlay contracts:
- * - OV-1/OV-2: Country and landscape borders appear/disappear when selection changes
- * - OV-3/OV-4: ANR plot overlay is added or removed based on drawer state
- * - OV-4: Custom layers reappear after a style switch
- */
 export function useMapOverlays({
   map,
   selectedCountry,
@@ -45,9 +37,6 @@ export function useMapOverlays({
   styleVersion,
   sourcesAdded
 }: UseMapOverlaysParams) {
-  // ANR overlay: add/remove when drawer state or geometry changes (OV-3, OV-4).
-  // upsertAnrPlotGeometryOverlay already handles its own "idle" retry internally
-  // for the edge case where the map is mid-render when the overlay is requested.
   useEffect(() => {
     if (map.current == null) return;
     const currentMap = map.current;
@@ -72,7 +61,6 @@ export function useMapOverlays({
     };
   }, [map, anrMapOverlay, anrPlotGeometryDto, styleReady, styleVersion, sourcesAdded]);
 
-  // Country border (OV-1): gated on sourcesAdded so the source exists before the border is added.
   useEffect(() => {
     if (map.current == null || !sourcesAdded) return;
     if (selectedCountry) {
@@ -83,7 +71,6 @@ export function useMapOverlays({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCountry, styleReady, styleVersion, sourcesAdded]);
 
-  // Landscape border (OV-2)
   useEffect(() => {
     if (map.current == null || !sourcesAdded) return;
     if (selectedLandscapes != null && selectedLandscapes.length > 0) {

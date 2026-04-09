@@ -13,7 +13,6 @@ const isValidGeographicBBox = (bbox: BBox): boolean => {
   return isValidLng && isValidLat && isOrdered;
 };
 
-/** Animates the map to fit the given bounding box (contract CZ-1). */
 export const zoomToBbox = (
   bbox: BBox,
   map: mapboxgl.Map,
@@ -34,7 +33,6 @@ export const zoomToBbox = (
   }
 };
 
-/** Moves the camera to an exact center+zoom position (contract CZ-2). */
 export const zoomToCenter = (center: [number, number], zoom: number, map: mapboxgl.Map): void => {
   if (map == null || center == null || zoom === undefined) return;
 
@@ -55,8 +53,6 @@ export const zoomToCenter = (center: [number, number], zoom: number, map: mapbox
     Log.warn("zoomToCenter: error:", error);
   }
 };
-
-/** Places a red marker and zooms to a lat/lng location (contract CZ-4). */
 export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }): void => {
   if (map == null) return;
   const { lng, lat } = location;

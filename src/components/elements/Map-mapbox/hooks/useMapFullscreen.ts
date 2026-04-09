@@ -16,14 +16,6 @@ type UseMapFullscreenParams = {
   mapContainer: MutableRefObject<HTMLDivElement | null>;
   map: MutableRefObject<mapboxgl.Map | null>;
 };
-
-/**
- * Encapsulates fullscreen toggle and state (contract FS-1).
- *
- * Returns:
- * - isFullscreen: reflects current fullscreen state (synced via DOM events)
- * - toggleFullscreen: enters or exits fullscreen, then resizes the map
- */
 export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 

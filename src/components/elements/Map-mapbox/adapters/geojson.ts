@@ -2,10 +2,6 @@ import * as turfHelper from "@turf/helpers";
 
 import { FeatureCollection } from "../GeoJSON";
 
-/**
- * Converts any raw GeoJSON shape (Geometry, GeometryCollection, or FeatureCollection)
- * into a FeatureCollection so it can be passed to Mapbox Draw or addSource.
- */
 export const convertToAcceptedGEOJSON = (geojson: any): any => {
   if (geojson.type !== "FeatureCollection" && geojson.type !== "GeometryCollection") {
     return {
@@ -22,10 +18,6 @@ export const convertToAcceptedGEOJSON = (geojson: any): any => {
   return geojson;
 };
 
-/**
- * Unpacks a FeatureCollection into an array of Turf Feature objects.
- * Used by the draw save flow to extract individual feature geometries.
- */
 export const convertToGeoJSON = (featureCollection: FeatureCollection) => {
   const { features } = featureCollection;
   return features.reduce((acc: turfHelper.Feature[], feature) => {

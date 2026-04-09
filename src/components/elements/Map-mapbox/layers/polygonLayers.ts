@@ -131,8 +131,6 @@ export const addSourceToLayer = (
     const keyChanged = keys[name] !== cacheKey;
 
     if (sourceExists && !keyChanged) {
-      // Source is already present with the same tile URL — only update filters.
-      // Avoids removing/re-adding the source (which would trigger a full tile refetch).
       if (polygonsData) {
         loadLayersInMap(map, polygonsData, layer, zoomFilter);
       }

@@ -25,11 +25,6 @@ export type DashboardGetProjectsData = {
   lat?: number;
   long?: number;
 };
-
-/**
- * The object returned by useMap() and passed as the `mapFunctions` prop to Map.tsx.
- * Typed here so all 9 consumer files get IDE autocomplete and compile-time safety.
- */
 export interface MapFunctions {
   map: MutableRefObject<mapboxgl.Map | null>;
   mapContainer: RefObject<HTMLDivElement>;

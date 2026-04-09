@@ -47,7 +47,6 @@ export function useMapLayers({
       return;
     }
 
-    // Only bump tileVersion when polygon UUIDs actually change, not on every render.
     const fingerprint = Object.values(polygonsData ?? {})
       .flat()
       .sort()

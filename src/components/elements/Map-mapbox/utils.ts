@@ -1,21 +1,3 @@
-/**
- * utils.ts — backward-compat re-export barrel.
- *
- * All map logic has been extracted into domain files:
- *   adapters/geojson.ts      — GeoJSON conversion helpers
- *   adapters/geoserver.ts    — Geoserver URL builders + ANR layer constants
- *   adapters/camera.ts       — Camera movement (zoom / center / marker)
- *   layers/polygonLayers.ts  — Polygon source/layer/filter management
- *   layers/overlayLayers.ts  — Borders, ANR overlay, basemap helpers
- *   layers/mediaLayers.ts    — Media source/layer management
- *   interactions/draw.ts     — Draw mode + polygon save operations
- *   interactions/popups.ts   — Popup management (instance-scoped)
- *
- * New code should import directly from those files.
- * This barrel preserves backward compat for existing callers.
- */
-
-// ── Domain re-exports ──────────────────────────────────────────────────────────
 export * from "./adapters/geojson";
 export * from "./adapters/geoserver";
 export * from "./adapters/camera";
@@ -25,7 +7,6 @@ export * from "./layers/mediaLayers";
 export * from "./interactions/draw";
 export * from "./interactions/popups";
 
-// ── Kept here: download / format / validation helpers ─────────────────────────
 import {
   loadPolygonGeoJson,
   loadProjectPolygonsGeoJson,

@@ -10,11 +10,6 @@ import Log from "@/utils/log";
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
 import type { LayerType, TooltipType } from "../Map.d";
 
-/**
- * Instance-scoped popup registries (contract LC-4).
- * Using WeakMap so each map instance has its own popup list;
- * no module-level singletons that bleed across mounts/unmounts.
- */
 const popupRegistries = new WeakMap<mapboxgl.Map, Record<"POLYGON" | "MEDIA", mapboxgl.Popup[]>>();
 
 function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", mapboxgl.Popup[]> {
@@ -24,10 +19,6 @@ function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", mapbox
   return popupRegistries.get(map)!;
 }
 
-/**
- * Instance-scoped click handler registry (contract LC-4).
- * Keyed by layer ID within each map instance.
- */
 const clickHandlerRegistries = new WeakMap<mapboxgl.Map, Record<string, (e: any) => void>>();
 
 function getClickHandlers(map: mapboxgl.Map): Record<string, (e: any) => void> {
@@ -121,12 +112,10 @@ const handleLayerClick = (
   );
 };
 
-/** Registers a popup instance so removePopups can clean it up (used by mediaLayers). */
 export const registerPopup = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA", popup: mapboxgl.Popup): void => {
   getPopupRegistry(map)[key].push(popup);
 };
 
-/** Removes and clears all popups of the given type for this map instance (contract LC-4). */
 export const removePopups = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA"): void => {
   const registry = getPopupRegistry(map);
   if (registry[key] == null) return;
@@ -192,8 +181,6 @@ export const addPopupToLayer = (
   if (!popupComponent) return;
 
   const { name } = layer;
-  // map.getStyle() calls this.style.serialize() internally; throws if the internal
-  // style object is null (mid-switch or after map.remove()). Guard defensively.
   let style: ReturnType<typeof map.getStyle>;
   try {
     style = map.getStyle();

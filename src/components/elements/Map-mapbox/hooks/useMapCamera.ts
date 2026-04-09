@@ -15,13 +15,6 @@ type UseMapCameraParams = {
   polygonBbox?: BBox | null;
 };
 
-/**
- * Handles all camera movement contracts (CZ-1, CZ-2, CZ-3).
- *
- * - WHEN bbox + shouldBboxZoom is set → animates to fit bounds (CZ-1)
- * - WHEN center + zoom are set → flies to exact position (CZ-2)
- * - WHEN a polygon is selected + its bbox is computed → zooms to it (CZ-3)
- */
 export function useMapCamera({
   map,
   bbox,

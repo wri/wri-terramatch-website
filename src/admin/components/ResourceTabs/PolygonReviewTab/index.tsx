@@ -209,11 +209,9 @@ const PolygonReviewTab: FC<IProps> = props => {
   const isValidBbox = (b: unknown): b is [number, number, number, number] =>
     Array.isArray(b) && b.length === 4 && (b as unknown[]).every(n => typeof n === "number");
 
-  // Always the site-level bbox — this is what the earth-map "reset zoom" button uses.
   const siteBbox = useBoundingBox({ siteUuid: record?.uuid });
   const activeBbox = isValidBbox(siteBbox) ? siteBbox : undefined;
 
-  // Polygon-level bbox — only fetched when the user clicks a polygon row in the table.
   const [currentPolygonUuid, setCurrentPolygonUuid] = useState<string | undefined>(undefined);
   const polygonBboxForFly = useBoundingBox(currentPolygonUuid != null ? { polygonUuid: currentPolygonUuid } : {});
 
@@ -230,7 +228,6 @@ const PolygonReviewTab: FC<IProps> = props => {
   };
   const mapFunctions = useMap(onSave);
 
-  // When polygon bbox resolves, zoom directly without touching the site-level bbox prop.
   useEffect(() => {
     if (isValidBbox(polygonBboxForFly) && mapFunctions.map?.current != null) {
       zoomToBbox(polygonBboxForFly, mapFunctions.map.current, true);
