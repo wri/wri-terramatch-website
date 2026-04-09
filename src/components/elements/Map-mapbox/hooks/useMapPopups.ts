@@ -12,7 +12,6 @@ import type { TooltipType } from "../Map.d";
 type UseMapPopupsParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   draw: MutableRefObject<MapboxDraw | null>;
-  /** Gate: true only after addSourcesToLayers completed. Comes from useMapLayers. */
   sourcesAdded: boolean;
   showPopups?: boolean;
   sitePolygonData?: SitePolygonLightDto[];
@@ -22,7 +21,6 @@ type UseMapPopupsParams = {
   isMobile: boolean;
   dashboardCountries?: any[];
   setLoader?: (v: boolean) => void;
-  /** Callbacks — potentially recreated on each render; stabilized via useRef inside. */
   setPolygonFromMap?: (v: any) => void;
   setEditPolygon: (v: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
   editPolygonSelected: { isOpen: boolean; uuid: string; primary_uuid?: string };
@@ -31,17 +29,6 @@ type UseMapPopupsParams = {
   dashboardContext?: { setFilters?: any; dashboardCountries?: any[] } | null;
 };
 
-/**
- * Registers popup click handlers after polygon sources are loaded (contracts PP-1, PP-2).
- *
- * Separated from useMapLayers so that:
- * - Layer changes (sitePolygonData etc.) don't recreate click handlers on every render
- * - Callbacks (setPolygonFromMap, setEditPolygon, setFilters) are captured via ref,
- *   removing them from the dependency array and preventing unnecessary re-registrations
- *
- * WHEN sourcesAdded becomes true → registers click handlers for all visible layers.
- * WHEN sitePolygonData changes → re-registers with updated polygon metadata.
- */
 export function useMapPopups({
   map,
   draw,

@@ -270,8 +270,6 @@ export const MapContainer = ({
     };
   });
 
-  // Single source of truth for style readiness — wires core/useMapReadiness.
-  // styleVersion increments on every style.load so hooks always re-run after style switches.
   const { styleReady, styleVersion } = useMapReadiness(map?.current);
 
   useEffect(() => {
@@ -279,8 +277,6 @@ export const MapContainer = ({
     addMarkerAndZoom(map.current, location);
   }, [map, location]);
 
-  // ── Domain hooks ─────────────────────────────────────────────────────────────
-  // All hooks use styleReady from useMapReadiness as their single gate.
   const { sourcesAdded } = useMapLayers({
     map,
     draw,
@@ -295,7 +291,6 @@ export const MapContainer = ({
     selectedPolygonsInCheckbox
   });
 
-  // Popup registration is gated on sourcesAdded (separate from layer lifecycle).
   useMapPopups({
     map,
     draw,

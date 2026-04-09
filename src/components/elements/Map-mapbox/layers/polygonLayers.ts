@@ -105,11 +105,8 @@ export const addGeojsonSourceToLayer = (
   });
 };
 
-/**
- * Registry of the cacheKey last used per (map, source name) pair.
- * Allows addSourceToLayer to detect when it must re-create the source (cacheKey
- * changed) vs. just update filters (cacheKey unchanged, source already present).
- */
+// Per-instance registry: track last cacheKey per source so we only re-create the
+// tile source when polygon geometry actually changes, not on every render.
 const sourceCacheKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
 
 function getSourceCacheKeys(map: mapboxgl.Map): Record<string, string> {
@@ -294,8 +291,6 @@ export const addPolygonCentroidsLayer = (
 
   if (validCentroids.length === 0) return;
 
-  // Called only after styleReady is true (from useMapLayers).
-  // The style is already loaded — no polling needed.
   try {
     if (map.getLayer(layerName)) map.removeLayer(layerName);
     if (map.getSource(layerName)) map.removeSource(layerName);

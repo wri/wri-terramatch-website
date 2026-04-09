@@ -50,7 +50,6 @@ export function useMapMedia({
 }: UseMapMediaParams) {
   useEffect(() => {
     if (map.current == null || !styleReady || modelFilesData == null) return;
-    // styleVersion unused directly but in dep array — forces re-add after style switch.
 
     const isProjectPath = router.isReady && router.asPath.includes("project");
 

@@ -43,16 +43,6 @@ type UseMapDrawParams = {
   openNotification: (type: "success" | "error" | "warning", title: string, message?: any) => void;
 };
 
-/**
- * Manages the draw interaction lifecycle (contracts DE-1 through DE-6):
- *
- * - WHEN isUserDrawingEnabled flips true → enters draw_polygon mode (DE-1)
- * - WHEN isUserDrawingEnabled flips false → exits draw mode (DE-2)
- * - handleEditPolygon → fetches geometry + adds to draw canvas (DE-3)
- * - onSaveEdit → creates a polygon version and refreshes the tile layer (DE-4, DE-5)
- * - onCancelEdit → restores polygon filters without saving (DE-6)
- * - WHEN selectedPolyVersion changes → renders a temporary overlay polygon (not edit mode)
- */
 export function useMapDraw({
   map,
   draw,
@@ -89,7 +79,7 @@ export function useMapDraw({
     }
   });
 
-  // Polygon version preview: render temporary overlay when version is selected
+  // Polygon version preview
   useValueChanged(selectedPolyVersion, () => {
     if (map.current == null) return;
     const m = map.current;
@@ -164,9 +154,6 @@ export function useMapDraw({
           isProjectPolygon ? projectPitchUuid : undefined
         );
         if (updatedGeometry != null && map.current != null) {
-          // Style is guaranteed loaded here: we're responding to a successful async API call
-          // that takes multiple seconds. If a style switch happened mid-save, useMapLayers
-          // will re-add layers on the next styleVersion increment (LC-3).
           addSourcesToLayers(map.current, { [FORM_POLYGONS]: [polygonFromMap.uuid] }, centroids);
         }
         ApiSlice.pruneCache("boundingBoxes");

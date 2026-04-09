@@ -45,8 +45,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
     }
   };
 
-  // Triggers a re-render so Map.tsx passes the live map instance to useMapReadiness.
-  // Do not remove: this is the mechanism that makes useMapReadiness(map?.current) work.
+  // Triggers a re-render so Map.tsx passes the live map instance to useMapReadiness and make it work.
   const handleStyleLoad = useCallback(() => {
     setStyleLoaded(true);
   }, []);

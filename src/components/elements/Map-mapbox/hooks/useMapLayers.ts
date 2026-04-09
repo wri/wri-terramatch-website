@@ -12,9 +12,7 @@ import { DashboardGetProjectsData } from "../Map.d";
 type UseMapLayersParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
   draw: MutableRefObject<MapboxDraw | null>;
-  /** True when style.load has fired — from core/useMapReadiness. */
   styleReady: boolean;
-  /** Increments on every style.load — ensures effects re-run after each style switch. */
   styleVersion: number;
   polygonsData?: Record<string, string[]>;
   centroids?: DashboardGetProjectsData[];
@@ -25,21 +23,6 @@ type UseMapLayersParams = {
   selectedPolygonsInCheckbox?: string[];
 };
 
-/**
- * Manages the polygon source/layer lifecycle (contracts PL-1 through PL-4).
- *
- * Gated on `styleReady` from core/useMapReadiness — the SINGLE readiness signal.
- * No internal idle listeners, no isStyleLoaded() calls, no rAF polling.
- *
- * - WHEN styleReady goes true → adds sources and filters (PL-1, PL-2)
- * - WHEN styleReady goes false (style switch) → resets sourcesAdded so overlays
- *   don't try to add border layers on top of a cleared style (PL-3)
- * - WHEN polygonsData changes while style is ready → re-adds sources with new data
- * - WHEN selectedPolygonsInCheckbox changes → updates deleted geometry layer (PL-4)
- *
- * Returns `sourcesAdded` as the gate for border/overlay hooks (PL-2).
- * Popup registration is handled separately in useMapPopups.
- */
 export function useMapLayers({
   map,
   draw: _draw,
@@ -55,9 +38,6 @@ export function useMapLayers({
 }: UseMapLayersParams) {
   const [sourcesAdded, setSourcesAdded] = useState(false);
 
-  // Tile cache version: a stable string that only changes when polygon geometry
-  // content (UUIDs) actually changes. This prevents re-fetching tiles on every
-  // render while still busting the browser cache when new polygons arrive.
   const prevPolygonFingerprintRef = useRef<string>("");
   const tileVersionRef = useRef<string>("0");
 
@@ -67,9 +47,7 @@ export function useMapLayers({
       return;
     }
 
-    // Compute a content fingerprint from all polygon UUIDs.
-    // Only bump the tile version (forcing a source URL change) when the actual
-    // geometry set changes — not on every render with the same data.
+    // Only bump tileVersion when polygon UUIDs actually change, not on every render.
     const fingerprint = Object.values(polygonsData ?? {})
       .flat()
       .sort()
@@ -92,7 +70,6 @@ export function useMapLayers({
       tileVersionRef.current
     );
     setSourcesAdded(true);
-    // styleVersion ensures this re-runs after every style switch, not just the first load.
   }, [map, styleReady, styleVersion, polygonsData, polygonsCentroids, centroids, isDashboard, projectUUID, hasAccess]);
 
   useEffect(() => {
@@ -107,10 +84,6 @@ export function useMapLayers({
   return { sourcesAdded };
 }
 
-/**
- * Filters a polygon UUID out of the current polygonsData and re-applies the layer filter.
- * Called when entering draw/edit mode for a specific polygon (contract DE-1).
- */
 export function filterPolygonFromLayers(
   polygonuuid: string,
   polygonsData: Record<string, string[]> | undefined,
