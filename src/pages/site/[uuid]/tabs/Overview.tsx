@@ -13,7 +13,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
@@ -80,11 +80,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
 
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
-
+  const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
+    if (needMoreInformation && !awaitingApproval) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -98,7 +98,7 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>

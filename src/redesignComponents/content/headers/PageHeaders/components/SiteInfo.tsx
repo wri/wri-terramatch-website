@@ -6,7 +6,7 @@ import { FC, useCallback, useMemo } from "react";
 import { getStatusProps } from "@/components/extensive/EntityStatusBar";
 import EntityStatusModal from "@/components/extensive/EntityStatusModal";
 import { ModalId } from "@/components/extensive/Modal/ModalConst";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -43,7 +43,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
 
   const needMoreInformation =
     site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
-
+  const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
   const { handleExport, loading: exportLoader } = useGetExportEntityHandler("sites", site.uuid, site.name ?? "");
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "sites",
@@ -55,7 +55,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
   const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
+    if (needMoreInformation && !awaitingApproval) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -69,7 +69,7 @@ const SiteInfo: FC<SiteInfoProps> = ({
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit]);
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
 
   return (
     <Box gap={2} className="flex flex-col">

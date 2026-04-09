@@ -14,7 +14,7 @@ import PageContent from "@/components/extensive/PageElements/PageContent/PageCon
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { useUserAssociations } from "@/connections/UserAssociation";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { Framework, useFrameworkContext } from "@/context/framework.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -79,9 +79,10 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
   }, [associatedUsers]);
   const needMoreInformation =
     project.updateRequestStatus === NEEDS_MORE_INFORMATION || project.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = project.updateRequestStatus === AWAITING_APPROVAL || project.status === AWAITING_APPROVAL;
   const statusProps = useMemo(() => getStatusProps(t, project, project.status!), [t, project]);
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation) {
+    if (needMoreInformation && !awaitingApproval) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -95,7 +96,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
     } else {
       handleEdit();
     }
-  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps]);
+  }, [openModal, project.feedback, project.uuid, handleEdit, needMoreInformation, statusProps, awaitingApproval]);
 
   const goToTab = useCallback(
     (tab: string) => {

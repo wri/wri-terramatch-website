@@ -10,7 +10,7 @@ import About from "@/components/extensive/PageElements/About/About";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
-import { NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -43,7 +43,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
 
   const needMoreInformation =
     nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
-
+  const awaitingApproval = nursery.updateRequestStatus === AWAITING_APPROVAL || nursery.status === AWAITING_APPROVAL;
   const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
 
   const statusProps: StatusProps | undefined = useMemo(() => {
@@ -57,7 +57,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   }, [needMoreInformation, hasUpdateRequest, t]);
 
   const handleEditClick = useCallback(() => {
-    if (needMoreInformation && statusProps != null) {
+    if (needMoreInformation && !awaitingApproval && statusProps != null) {
       openModal(
         ModalId.STATUS,
         <EntityStatusModal
@@ -71,7 +71,7 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     } else {
       handleEdit();
     }
-  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit]);
+  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit, awaitingApproval]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
