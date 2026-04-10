@@ -251,7 +251,8 @@ const LIVELIHOODS: Dictionary<string> = {
   "fruits-vegetables": "Non-tree Fruit and Vegetable Farming",
   "cover-crops": "Cover Crops, Fodder Crops & Intercropping",
   "savings-loans": "Village Savings & Loans Associations or Local Cooperatives",
-  beekeeping: "Beekeeping & Apiary Management"
+  beekeeping: "Beekeeping & Apiary Management",
+  other: "Other"
 };
 
 type TypeMapValue = {
@@ -486,17 +487,21 @@ const GOAL_STRATEGY: Dictionary<string> = {
   unknown: "Unknown"
 };
 
-const LAND_USE: Dictionary<string> = {
+const FF_LAND_USE: Dictionary<string> = {
   agroforest: "Agroforest",
-  mangrove: "Mangrove",
   "natural-forest": "Natural Forest",
-  "open-natural-ecosystem": "Open Natural Ecosystem",
-  peatland: "Peatland",
   "riparian-area-or-wetland": "Riparian Area or Wetland",
   silvopasture: "Silvopasture",
   "urban-forest": "Urban Forest",
   "woodlot-or-plantation": "Woodlot or Plantation",
   unknown: "Unknown"
+};
+
+const LAND_USE: Dictionary<string> = {
+  ...FF_LAND_USE,
+  mangrove: "Mangrove",
+  peatland: "Peatland",
+  "open-natural-ecosystem": "Open Natural Ecosystem"
 };
 
 const HISTORICAL: Dictionary<TypeMapValue> = {
@@ -534,11 +539,21 @@ const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   }
 };
 
-const getRestorationTypeMap = (type: TrackingType) => {
+const FF_HECTARES_GOAL: Dictionary<TypeMapValue> = {
+  ...HECTARES_GOAL,
+  "land-use": {
+    title: "Land Use",
+    typeMap: FF_LAND_USE,
+    balanced: true,
+    onlyIfPresent: ["unknown"]
+  }
+};
+
+const getRestorationTypeMap = (type: TrackingType, framework: Framework) => {
   if (type === "treesGoal") {
     return TREES_GOAL;
   } else if (type === "hectaresGoal") {
-    return HECTARES_GOAL;
+    return framework === Framework.FF_1 ? FF_HECTARES_GOAL : HECTARES_GOAL;
   } else return HISTORICAL;
 };
 
@@ -551,7 +566,7 @@ export const getTypeMap = (
     case "demographics":
       return getDemographicsTypeMap(type, framework);
     case "restoration":
-      return getRestorationTypeMap(type);
+      return getRestorationTypeMap(type, framework);
 
     default:
       throw new Error(`Unsupported domain: ${domain}`);

@@ -32,11 +32,11 @@ export const UserShowAside = () => {
 
   const handleSendPasswordResetEmail = async () => {
     try {
-      if (record?.email_address == null) {
+      if (record?.emailAddress == null) {
         notify(`User email is not available.`, { type: "warning" });
         return;
       }
-      await sendRequestPasswordReset(record.email_address, window.location.origin + "/auth/reset-password/");
+      await sendRequestPasswordReset(record.emailAddress, window.location.origin + "/auth/reset-password/");
       notify(`Reset password email has been sent successfully.`, { type: "success" });
       refresh();
     } catch (error) {
@@ -109,7 +109,7 @@ export const UserShowAside = () => {
               onClick={() =>
                 sendLoginDetails({
                   body: {
-                    email_address: record?.email_address,
+                    email_address: record?.emailAddress,
                     callback_url: window.location.origin + "/auth/set-password/"
                   }
                 })
@@ -121,13 +121,13 @@ export const UserShowAside = () => {
               variant="contained"
               className="!rounded-lg !bg-primary"
               onClick={() => {
-                if (record?.email_address == null) {
+                if (record?.emailAddress == null) {
                   notify(`User email is not available.`, { type: "warning" });
                   return;
                 }
 
                 resendVerificationEmail({
-                  emailAddress: record.email_address,
+                  emailAddress: record.emailAddress,
                   callbackUrl: window.location.origin + "/auth/verify/email/"
                 });
               }}
