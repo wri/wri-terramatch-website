@@ -50,7 +50,9 @@ export const DEMOGRAPHIC_TYPES = [
   "allBeneficiaries",
   "trainingBeneficiaries",
   "indirectBeneficiaries",
-  "associates"
+  "associates",
+  "elpBeneficiaries",
+  "livelihoodActivities"
 ] as const;
 export type DemographicType = (typeof DEMOGRAPHIC_TYPES)[number];
 export const isDemographicType = (value: unknown): value is DemographicType =>
@@ -115,6 +117,16 @@ const TRACKING_LABELS: { [k in TrackingType]: TrackingLabelProperties } = {
     sectionLabel: "Total",
     rowLabelSingular: "Associate",
     rowLabelPlural: "Associates"
+  },
+  elpBeneficiaries: {
+    sectionLabel: "Total ELP",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
+  },
+  livelihoodActivities: {
+    sectionLabel: "Total Livelihood Activity",
+    rowLabelSingular: "Beneficiary",
+    rowLabelPlural: "Beneficiaries"
   },
   treesHistorical: {
     sectionLabel: "Total",
@@ -229,8 +241,23 @@ const TRADITIONAL_COMMUNITIES: Dictionary<string> = {
   unknown: "Unknown"
 };
 
+const LIVELIHOODS: Dictionary<string> = {
+  "oil-processing": "Oil Processing from Tree Crops",
+  "soil-water-conservation": "Soil and Water Conservation Practices",
+  "small-animals": "Small Animal Farming",
+  "farmer-field-schools": "Farmer Field Schools",
+  "home-gardens": "Home Gardens",
+  cookstoves: "Energy-saving Cookstoves",
+  "fruits-vegetables": "Non-tree Fruit and Vegetable Farming",
+  "cover-crops": "Cover Crops, Fodder Crops & Intercropping",
+  "savings-loans": "Village Savings & Loans Associations or Local Cooperatives",
+  beekeeping: "Beekeeping & Apiary Management",
+  other: "Other"
+};
+
 type TypeMapValue = {
   title: string;
+  displayTrackingType?: string;
   typeMap: Dictionary<string>;
   // If true, this field is required to balance with other "balanced" fields for a tracking
   // input to be considered complete.
@@ -385,6 +412,15 @@ const FF_BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP: Dictionary<TypeMapValue> = {
   }
 };
 
+const LIVELIHOODS_TYPE_MAP: Dictionary<TypeMapValue> = {
+  livelihoods: {
+    title: "Livelihood Activity",
+    displayTrackingType: "Beneficiaries",
+    typeMap: LIVELIHOODS,
+    balanced: true
+  }
+};
+
 const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
   if (["jobs", "volunteers", "employees", "associates"].includes(type)) {
     switch (framework) {
@@ -407,6 +443,8 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
         default:
           return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
       }
+    } else if (type === "elpBeneficiaries") {
+      return BENEFICIARIES_TRAINING_DEMOGRAPHICS_TYPE_MAP;
     } else {
       switch (framework) {
         case Framework.HBF:
@@ -418,6 +456,8 @@ const getDemographicsTypeMap = (type: TrackingType, framework: Framework) => {
           return BENEFICIARIES_DEMOGRAPHICS_TYPE_MAP;
       }
     }
+  } else if (type === "livelihoodActivities") {
+    return LIVELIHOODS_TYPE_MAP;
   } else {
     switch (framework) {
       case Framework.HBF:
@@ -447,17 +487,21 @@ const GOAL_STRATEGY: Dictionary<string> = {
   unknown: "Unknown"
 };
 
-const LAND_USE: Dictionary<string> = {
+const FF_LAND_USE: Dictionary<string> = {
   agroforest: "Agroforest",
-  mangrove: "Mangrove",
   "natural-forest": "Natural Forest",
-  "open-natural-ecosystem": "Open Natural Ecosystem",
-  peatland: "Peatland",
   "riparian-area-or-wetland": "Riparian Area or Wetland",
   silvopasture: "Silvopasture",
   "urban-forest": "Urban Forest",
   "woodlot-or-plantation": "Woodlot or Plantation",
   unknown: "Unknown"
+};
+
+const LAND_USE: Dictionary<string> = {
+  ...FF_LAND_USE,
+  mangrove: "Mangrove",
+  peatland: "Peatland",
+  "open-natural-ecosystem": "Open Natural Ecosystem"
 };
 
 const HISTORICAL: Dictionary<TypeMapValue> = {
@@ -499,11 +543,21 @@ const HECTARES_GOAL: Dictionary<TypeMapValue> = {
   }
 };
 
-const getRestorationTypeMap = (type: TrackingType) => {
+const FF_HECTARES_GOAL: Dictionary<TypeMapValue> = {
+  ...HECTARES_GOAL,
+  "land-use": {
+    title: "Land Use",
+    typeMap: FF_LAND_USE,
+    balanced: true,
+    onlyIfPresent: ["unknown"]
+  }
+};
+
+const getRestorationTypeMap = (type: TrackingType, framework: Framework) => {
   if (type === "treesGoal") {
     return TREES_GOAL;
   } else if (type === "hectaresGoal") {
-    return HECTARES_GOAL;
+    return framework === Framework.FF_1 ? FF_HECTARES_GOAL : HECTARES_GOAL;
   } else return HISTORICAL;
 };
 
@@ -516,7 +570,7 @@ export const getTypeMap = (
     case "demographics":
       return getDemographicsTypeMap(type, framework);
     case "restoration":
-      return getRestorationTypeMap(type);
+      return getRestorationTypeMap(type, framework);
 
     default:
       throw new Error(`Unsupported domain: ${domain}`);
