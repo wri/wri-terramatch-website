@@ -4,14 +4,9 @@ import { FC, PropsWithChildren, useCallback, useMemo, useState } from "react";
 import { useController, UseControllerProps, UseFormReturn } from "react-hook-form";
 
 import { FieldDefinition } from "@/components/extensive/WizardForm/types";
-import { useMyOrg } from "@/connections/Organisation";
 import { getGenderOptions } from "@/constants/options/gender";
 import { useLocalStepsProvider } from "@/context/wizardForm.provider";
-import {
-  useDeleteV2OwnershipStakeUUID,
-  usePatchV2OwnershipStakeUUID,
-  usePostV2OwnershipStake
-} from "@/generated/apiComponents";
+import { OwnershipStakeDto } from "@/generated/v3/userService/userServiceSchemas";
 import { formatOptionsList } from "@/utils/options";
 
 import DataTable, { DataTableProps } from "./DataTable";
@@ -23,29 +18,7 @@ export interface RHFOwnershipStakeTableProps
   formHook?: UseFormReturn;
 }
 
-// TODO: these normalize methods are only needed until we move ownership stake creation to v3 (and
-//  probably have it sync as part of the form data instead of creating with API calls.
-const v2Normalize = (data: any) => {
-  const { firstName, lastName, percentOwnership, yearOfBirth, ...rest } = data;
-  return {
-    first_name: firstName,
-    last_name: lastName,
-    percent_ownership: percentOwnership,
-    year_of_birth: yearOfBirth,
-    ...rest
-  };
-};
-
-const v3Normalize = (data: any) => {
-  const { first_name, last_name, percent_ownership, year_of_birth, ...rest } = data;
-  return {
-    firstName: first_name,
-    lastName: last_name,
-    percentOwnership: percent_ownership,
-    yearOfBirth: year_of_birth,
-    ...rest
-  };
-};
+type OwnershipStake = Partial<Omit<OwnershipStakeDto, "entityType" | "entityUuid">>;
 
 export const getOwnershipTableColumns = (t: typeof useT | Function = (t: string) => t): AccessorKeyColumnDef<any>[] => [
   { accessorKey: "firstName", header: t("First name") },
@@ -102,54 +75,46 @@ const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
 
 const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
-  const { field } = useController(props);
-  const value = field?.value || [];
+  const {
+    field: { value, onChange }
+  } = useController(props);
   const [tableKey, setTableKey] = useState(0);
 
-  const [, { organisationId }] = useMyOrg();
-
-  const refreshTable = () => {
+  const refreshTable = useCallback(() => {
     setTableKey(prev => prev + 1);
-  };
+  }, []);
 
-  const { mutate: createTeamMember } = usePostV2OwnershipStake({
-    onSuccess(data) {
-      const _tmp = [...value];
-      //@ts-ignore
-      _tmp.push(v3Normalize(data.data));
-      field.onChange(_tmp);
-    }
-  });
+  const handleCreate = useCallback(
+    (data: OwnershipStake) => {
+      onChange([...value, data]);
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook, value]
+  );
 
-  const { mutate: removeTeamMember } = useDeleteV2OwnershipStakeUUID({
-    onSuccess(data, variables) {
-      //@ts-ignore
-      _.remove(value, v => v.uuid === variables.pathParams.uuid);
-      field.onChange(value);
-    }
-  });
+  const handleDelete = useCallback(
+    (uuid?: string) => {
+      onChange((value as OwnershipStake[]).filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
+      props.formHook?.trigger();
+    },
+    [onChange, props.formHook, value]
+  );
 
-  const { mutate: updateTeamMember } = usePatchV2OwnershipStakeUUID({
-    onSuccess(data, variables) {
-      const _tmp = [...value];
-      //@ts-ignore
-      const index = _tmp.findIndex(item => item.uuid === data.data.uuid);
-
-      if (index !== -1) {
-        //@ts-ignore
-        _tmp[index] = v3Normalize(data.data);
-        field.onChange(_tmp);
-        onChangeCapture?.();
-        props?.formHook?.reset(props?.formHook.getValues());
-        clearErrors();
-        refreshTable();
-      }
-    }
-  });
-
-  const clearErrors = useCallback(() => {
-    props?.formHook?.clearErrors(props.name);
-  }, [props?.formHook, props.name]);
+  const handleUpdate = useCallback(
+    (data: OwnershipStake) => {
+      onChange(
+        (value as OwnershipStake[]).reduce(
+          (update, entry) => (entry.uuid === data.uuid ? [...update, data] : [...update, entry]),
+          [] as OwnershipStake[]
+        )
+      );
+      props.formHook?.trigger();
+      props.formHook?.reset(props?.formHook.getValues());
+      props.formHook?.clearErrors(props.name);
+      refreshTable();
+    },
+    [onChange, props.formHook, props.name, refreshTable, value]
+  );
 
   const { columns, steps } = useMemo(
     () => ({
@@ -165,27 +130,9 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
       key={tableKey}
       {...props}
       value={value}
-      handleCreate={data => {
-        createTeamMember({
-          body: {
-            ...v2Normalize(data),
-            organisation_id: organisationId
-          }
-        });
-      }}
-      handleDelete={uuid => {
-        if (uuid) {
-          removeTeamMember({ pathParams: { uuid } });
-        }
-      }}
-      handleUpdate={data => {
-        if (data.uuid) {
-          updateTeamMember({
-            pathParams: { uuid: data.uuid },
-            body: { ...v2Normalize(data) }
-          });
-        }
-      }}
+      handleCreate={handleCreate}
+      handleDelete={handleDelete}
+      handleUpdate={handleUpdate}
       addButtonCaption={t("Add Ownership Stake")}
       modalEditTitle={t("Update Ownership Stake")}
       tableColumns={columns}

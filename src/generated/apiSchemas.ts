@@ -1111,32 +1111,6 @@ export type V2LeadershipsRead = {
   collection?: string;
 };
 
-export type V2OwnershipStakeCreate = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  percent_ownership?: number;
-};
-
-export type V2OwnershipStakeRead = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  percent_ownership?: number;
-};
-
-export type V2OwnershipStakeUpdate = {
-  first_name?: string;
-  last_name?: string;
-  title?: string;
-  gender?: string;
-  year_of_birth?: number;
-  percent_ownership?: number;
-};
-
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
