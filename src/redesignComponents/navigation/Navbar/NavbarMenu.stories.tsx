@@ -24,37 +24,13 @@ export const Default: Story = {
     label: "Label",
     prefix: <PlaceholderIcon boxSize={4} />,
     suffix: <PlaceholderIcon boxSize={4} />,
+    variant: "mega",
     items: [
-      {
-        caption: "Caption",
-        label: "Label",
-        startIcon: <PlaceholderIcon />,
-        value: "value-3-2"
-      },
-      {
-        caption: "Caption",
-        label: "Label",
-        startIcon: <PlaceholderIcon />,
-        value: "value-3-2"
-      },
-      {
-        caption: "Caption",
-        label: "Label",
-        startIcon: <PlaceholderIcon />,
-        value: "value-3-2"
-      },
-      {
-        caption: "Caption",
-        label: "Label",
-        startIcon: <PlaceholderIcon />,
-        value: "value-3-2"
-      },
-      {
-        caption: "Caption",
-        label: "Label",
-        startIcon: <PlaceholderIcon />,
-        value: "value-3-2"
-      }
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> }
     ]
   }
 };
@@ -64,15 +40,7 @@ export const Account: Story = {
     label: "Label",
     prefix: <Avatar name="John Doe" size="small" />,
     suffix: <PlaceholderIcon boxSize={4} />,
-    items: [
-      {
-        label: "Profile",
-        value: "profile"
-      },
-      {
-        label: "Sign out",
-        value: "sign-out"
-      }
-    ]
+    variant: "simple",
+    items: [{ label: "Profile" }, { label: "Sign out" }]
   }
 };
