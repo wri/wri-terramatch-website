@@ -23,6 +23,39 @@ type UseMapLayersParams = {
   selectedPolygonsInCheckbox?: string[];
 };
 
+const hashString = (value: string): number => {
+  let hash = 2166136261;
+  for (let i = 0; i < value.length; i++) {
+    hash ^= value.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
+  }
+  return hash >>> 0;
+};
+
+const computePolygonFingerprint = (polygonsData?: Record<string, string[]>): string => {
+  if (polygonsData == null) return "0:0:0";
+  const statuses = Object.keys(polygonsData).sort();
+  let combinedHash = 2166136261;
+  let totalUuids = 0;
+
+  for (const status of statuses) {
+    const uuids = polygonsData[status] ?? [];
+    let statusHash = hashString(status);
+    let statusLength = 0;
+
+    for (const uuid of uuids) {
+      statusHash ^= hashString(uuid);
+      statusLength += uuid.length;
+      totalUuids++;
+    }
+
+    combinedHash ^= statusHash ^ statusLength ^ uuids.length;
+    combinedHash = Math.imul(combinedHash, 16777619);
+  }
+
+  return `${combinedHash >>> 0}:${totalUuids}:${statuses.length}`;
+};
+
 export function useMapLayers({
   map,
   draw: _draw,
@@ -47,10 +80,7 @@ export function useMapLayers({
       return;
     }
 
-    const fingerprint = Object.values(polygonsData ?? {})
-      .flat()
-      .sort()
-      .join(",");
+    const fingerprint = computePolygonFingerprint(polygonsData);
     if (fingerprint !== prevPolygonFingerprintRef.current) {
       prevPolygonFingerprintRef.current = fingerprint;
       tileVersionRef.current = String(Date.now());

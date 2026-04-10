@@ -62,6 +62,19 @@ export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat
   map.setZoom(14);
 };
 
+export const addOrUpdateMarkerAndZoom = (
+  map: mapboxgl.Map,
+  location: { lng: number; lat: number },
+  marker: mapboxgl.Marker | null
+): mapboxgl.Marker => {
+  const { lng, lat } = location;
+  const lngLat = new mapboxgl.LngLat(lng, lat);
+  const nextMarker = marker == null ? createMarker(lngLat, map) : marker.setLngLat(lngLat);
+  map.setCenter([lng, lat]);
+  map.setZoom(14);
+  return nextMarker;
+};
+
 export const createMarker = (lngLat: LngLat, map: mapboxgl.Map): mapboxgl.Marker => {
   return new mapboxgl.Marker({ color: "#ba5856" }).setLngLat(lngLat).addTo(map);
 };

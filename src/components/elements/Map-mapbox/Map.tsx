@@ -2,8 +2,9 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
+import mapboxgl from "mapbox-gl";
 import { useRouter } from "next/router";
-import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
+import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { ValidationError } from "yup";
 
@@ -23,7 +24,7 @@ import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
 
-import { addMarkerAndZoom, zoomToBbox, zoomToCenter } from "./adapters/camera";
+import { addOrUpdateMarkerAndZoom, zoomToBbox, zoomToCenter } from "./adapters/camera";
 import { PopupMobile } from "./components/PopupMobile";
 import { useMapReadiness } from "./core/useMapReadiness";
 import { BBox } from "./GeoJSON";
@@ -194,6 +195,7 @@ export const MapContainer = ({
   const [viewImages, setViewImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [mobilePopupData, setMobilePopupData] = useState<any>(null);
+  const mapMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
   const context = useSitePolygonData();
@@ -242,6 +244,10 @@ export const MapContainer = ({
       mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
     initMap(!!dashboardMode, initialStyle);
     return () => {
+      if (mapMarkerRef.current != null) {
+        mapMarkerRef.current.remove();
+        mapMarkerRef.current = null;
+      }
       if (map.current) {
         setStyleLoaded(false);
         map.current.remove();
@@ -312,7 +318,7 @@ export const MapContainer = ({
     polygonFromMap,
     polygonBbox,
     isUserDrawingEnabled,
-    isEditingGeometry: isEditing
+    isEditing
   });
 
   useMapOverlays({
@@ -377,7 +383,7 @@ export const MapContainer = ({
 
   useEffect(() => {
     if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
-    addMarkerAndZoom(map.current, location);
+    mapMarkerRef.current = addOrUpdateMarkerAndZoom(map.current, location, mapMarkerRef.current);
   }, [map, location]);
 
   return (

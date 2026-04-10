@@ -14,7 +14,7 @@ type UseMapCameraParams = {
   polygonFromMap?: { isOpen: boolean; uuid: string } | null;
   polygonBbox?: BBox | null;
   isUserDrawingEnabled?: boolean;
-  isEditingGeometry?: boolean;
+  isEditing?: boolean;
 };
 
 export function useMapCamera({
@@ -27,12 +27,58 @@ export function useMapCamera({
   polygonFromMap,
   polygonBbox,
   isUserDrawingEnabled,
-  isEditingGeometry
+  isEditing: isEditingGeometry
 }: UseMapCameraParams) {
-  const lastPolygonFitUuidRef = useRef<string>("");
+  const lastPolygonFitKeyRef = useRef<string>("");
+  const polygonUuidAtDrawStartRef = useRef<string>("");
+  const wasPolygonDrawerOpenRef = useRef<boolean>(false);
+  const suppressNextAutoCameraMoveRef = useRef<boolean>(false);
+  const wasDrawingEnabledRef = useRef<boolean>(false);
+  const suppressAutoCameraUntilPolygonSelectionRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (map.current == null || !shouldBboxZoom) return;
+    if (isUserDrawingEnabled === true) {
+      polygonUuidAtDrawStartRef.current =
+        polygonFromMap?.isOpen === true && polygonFromMap?.uuid != null ? polygonFromMap.uuid : "";
+      wasDrawingEnabledRef.current = true;
+      return;
+    }
+    if (wasDrawingEnabledRef.current === true) {
+      suppressAutoCameraUntilPolygonSelectionRef.current = true;
+    }
+    wasDrawingEnabledRef.current = false;
+    if (polygonFromMap?.uuid != null && polygonFromMap.uuid !== polygonUuidAtDrawStartRef.current) {
+      polygonUuidAtDrawStartRef.current = "";
+    }
+  }, [isUserDrawingEnabled, polygonFromMap?.isOpen, polygonFromMap?.uuid]);
+
+  useEffect(() => {
+    const isPolygonDrawerOpen =
+      polygonFromMap?.isOpen === true && polygonFromMap?.uuid != null && polygonFromMap.uuid !== "";
+    if (isPolygonDrawerOpen) {
+      suppressAutoCameraUntilPolygonSelectionRef.current = false;
+    }
+    if (wasPolygonDrawerOpenRef.current === true && isPolygonDrawerOpen === false) {
+      suppressNextAutoCameraMoveRef.current = true;
+    }
+    wasPolygonDrawerOpenRef.current = isPolygonDrawerOpen;
+  }, [polygonFromMap?.isOpen, polygonFromMap?.uuid]);
+
+  useEffect(() => {
+    if (map.current == null || shouldBboxZoom !== true) return;
+    if (isUserDrawingEnabled === true) return;
+
+    const polygonIsOpen = polygonFromMap?.isOpen === true && polygonFromMap?.uuid != null && polygonFromMap.uuid !== "";
+    if (polygonIsOpen) {
+      return;
+    }
+    if (suppressAutoCameraUntilPolygonSelectionRef.current === true) {
+      return;
+    }
+    if (suppressNextAutoCameraMoveRef.current === true) {
+      suppressNextAutoCameraMoveRef.current = false;
+      return;
+    }
 
     if (center != null && zoom !== undefined) {
       const currentCenter = map.current.getCenter();
@@ -46,24 +92,40 @@ export function useMapCamera({
     } else if (bbox != null) {
       zoomToBbox(bbox, map.current, hasControls ?? false);
     }
-  }, [bbox, center, zoom, map, hasControls, shouldBboxZoom]);
+  }, [
+    bbox,
+    center,
+    zoom,
+    map,
+    hasControls,
+    shouldBboxZoom,
+    isUserDrawingEnabled,
+    polygonFromMap?.isOpen,
+    polygonFromMap?.uuid
+  ]);
 
   useEffect(() => {
-    if (!polygonFromMap?.isOpen || polygonFromMap.uuid === "") {
-      lastPolygonFitUuidRef.current = "";
+    if (polygonFromMap?.isOpen !== true || polygonFromMap?.uuid == null || polygonFromMap.uuid === "") {
+      lastPolygonFitKeyRef.current = "";
+      polygonUuidAtDrawStartRef.current = "";
       return;
     }
-    if (isUserDrawingEnabled) {
+    if (isUserDrawingEnabled === true) {
       return;
     }
     if (polygonBbox == null || map.current == null) {
       return;
     }
     const uuid = polygonFromMap.uuid;
-    if (isEditingGeometry === true && uuid === lastPolygonFitUuidRef.current) {
+    if (polygonUuidAtDrawStartRef.current !== "" && polygonUuidAtDrawStartRef.current === uuid) {
       return;
     }
-    lastPolygonFitUuidRef.current = uuid;
+
+    const currentFitKey = `${uuid}:${polygonBbox.join(",")}`;
+    if (currentFitKey === lastPolygonFitKeyRef.current && isEditingGeometry === true) {
+      return;
+    }
+    lastPolygonFitKeyRef.current = currentFitKey;
     zoomToBbox(polygonBbox, map.current, true);
   }, [polygonFromMap?.isOpen, polygonFromMap?.uuid, polygonBbox, map, isUserDrawingEnabled, isEditingGeometry]);
 }

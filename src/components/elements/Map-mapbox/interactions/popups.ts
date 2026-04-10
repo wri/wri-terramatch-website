@@ -95,6 +95,9 @@ const handleLayerClick = (
   popupContent.className = "popup-content-map";
   const root = createRoot(popupContent);
   const newPopup = new mapboxgl.Popup(popupOptions).setLngLat(lngLat).setDOMContent(popupContent);
+  newPopup.on("close", () => {
+    root.unmount();
+  });
 
   newPopup.addTo(map);
   getPopupRegistry(map)["POLYGON"].push(newPopup);

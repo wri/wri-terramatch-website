@@ -192,7 +192,8 @@ const PolygonReviewTab: FC<IProps> = props => {
     polygonData: polygonList,
     shouldRefetchValidation,
     setShouldRefetchValidation,
-    validFilter
+    validFilter,
+    isUserDrawingEnabled
   } = useMapAreaContext();
   const [submitPolygonLoaded, setSubmitPolygonLoaded] = useState<boolean>(false);
   // Local table pagination/sorting over the full dataset already loaded for the map
@@ -229,21 +230,28 @@ const PolygonReviewTab: FC<IProps> = props => {
   const mapFunctions = useMap(onSave);
 
   useEffect(() => {
+    if (isUserDrawingEnabled === true) {
+      return;
+    }
     if (isValidBbox(polygonBboxForFly) && mapFunctions.map?.current != null) {
       zoomToBbox(polygonBboxForFly, mapFunctions.map.current, true);
+      setCurrentPolygonUuid(undefined);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [polygonBboxForFly]);
+  }, [polygonBboxForFly, isUserDrawingEnabled]);
 
   const flyToPolygonBounds = useCallback(async (uuid: string) => {
     setCurrentPolygonUuid(uuid);
   }, []);
 
   useEffect(() => {
-    if (selectPolygonFromMap?.uuid) {
+    if (isUserDrawingEnabled === true) {
+      return;
+    }
+    if (selectPolygonFromMap?.uuid != null && selectPolygonFromMap.uuid !== "") {
       flyToPolygonBounds(selectPolygonFromMap.uuid);
     }
-  }, [flyToPolygonBounds, selectPolygonFromMap]);
+  }, [flyToPolygonBounds, selectPolygonFromMap?.uuid, isUserDrawingEnabled]);
 
   const [, { data: mediaFiles }] = useMedias({
     entity: "sites",

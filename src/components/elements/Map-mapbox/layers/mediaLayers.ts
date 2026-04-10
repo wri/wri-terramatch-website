@@ -93,6 +93,9 @@ export const addMediaSourceAndLayer = (
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(popupContent)
         .addTo(map);
+      mediaPopup.on("close", () => {
+        root.unmount();
+      });
 
       registerPopup(map, "MEDIA", mediaPopup);
     });

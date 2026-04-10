@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import { createElement } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, Root } from "react-dom/client";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
 import Log from "@/utils/log";
@@ -278,15 +278,12 @@ export const setMapStyle = (
   map.once("style.load", () => updateMapProjection(map, targetStyle));
 };
 
-// ──────────────────────────────────────────────────────
-// ANR Plot Geometry Overlay
-// ──────────────────────────────────────────────────────
-
 type AnrPlotOverlayState = {
   clickHandler: ((e: mapboxgl.MapLayerMouseEvent) => void) | null;
   mouseEnterHandler: (() => void) | null;
   mouseLeaveHandler: (() => void) | null;
   popup: mapboxgl.Popup | null;
+  popupRoot: Root | null;
   pendingIdleRetry: { fn: () => void } | null;
 };
 
@@ -300,6 +297,7 @@ function getAnrPlotOverlayState(map: mapboxgl.Map): AnrPlotOverlayState {
     mouseEnterHandler: null,
     mouseLeaveHandler: null,
     popup: null,
+    popupRoot: null,
     pendingIdleRetry: null
   };
   anrPlotOverlayStateByMap.set(map, created);
@@ -322,6 +320,10 @@ export function removeAnrPlotGeometryOverlay(map: mapboxgl.Map | null | undefine
     if (state.popup != null) {
       state.popup.remove();
       state.popup = null;
+    }
+    if (state.popupRoot != null) {
+      state.popupRoot.unmount();
+      state.popupRoot = null;
     }
     if (state.clickHandler != null) {
       map.off("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);
@@ -406,11 +408,16 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         state.popup.remove();
         state.popup = null;
       }
+      if (state.popupRoot != null) {
+        state.popupRoot.unmount();
+        state.popupRoot = null;
+      }
 
       const props = feature.properties ?? {};
       const popupContent = document.createElement("div");
       popupContent.className = "popup-content-map";
       const root = createRoot(popupContent);
+      state.popupRoot = root;
       const rawPlotId = props.plotId;
       const rawArea = props.areaM2;
       const toNum = (v: any) =>
@@ -431,6 +438,11 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
         .setLngLat(e.lngLat)
         .setDOMContent(popupContent)
         .addTo(map);
+      state.popup.on("close", () => {
+        state.popupRoot?.unmount();
+        state.popupRoot = null;
+        state.popup = null;
+      });
     };
 
     map.on("click", ANR_PLOT_FILL_LAYER_ID, state.clickHandler);

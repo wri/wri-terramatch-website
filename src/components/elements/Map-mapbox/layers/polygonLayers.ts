@@ -89,7 +89,7 @@ export const addGeojsonSourceToLayer = (
     type: "Feature",
     geometry: {
       type: "Point",
-      coordinates: [centroid.long || centroid.centroid?.long, centroid.lat || centroid.centroid?.lat]
+      coordinates: [centroid.long ?? centroid.centroid?.long, centroid.lat ?? centroid.centroid?.lat]
     },
     properties: {
       uuid: centroid.uuid,
