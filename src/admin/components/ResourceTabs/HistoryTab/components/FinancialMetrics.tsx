@@ -7,7 +7,7 @@ import { VARIANT_TABLE_FINANCIAL_METRICS } from "@/components/elements/Table/Tab
 import Text from "@/components/elements/Text/Text";
 import { getMonthOptions } from "@/constants/options/months";
 import { FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
-import { currencyInput } from "@/utils/financialReport";
+import { formatFinancialAmount, getCurrencySymbolPrefix, getLocaleForIsoCurrency } from "@/utils/financialReport";
 
 const COLLECTION_LABELS: Record<string, string> = {
   revenue: "Revenue",
@@ -38,9 +38,11 @@ const FinancialMetrics = ({ data, years }: { data: FinancialIndicatorDto[]; year
         acc[collectionLabel] = { financialMetrics: collectionLabel };
       }
 
-      acc[collectionLabel][year] = `${currencyInput[fincialReportData?.currency] ?? ""}${Number(
-        amount
-      ).toLocaleString()}`;
+      const iso = fincialReportData?.currency;
+      const isRatio = financial.collection === "current-ratio";
+      acc[collectionLabel][year] = isRatio
+        ? Number(amount).toLocaleString(getLocaleForIsoCurrency(iso))
+        : `${getCurrencySymbolPrefix(iso)} ${formatFinancialAmount(Number(amount), iso)}`.trim();
 
       return acc;
     }, {} as Record<string, Record<string, string>>) ?? []

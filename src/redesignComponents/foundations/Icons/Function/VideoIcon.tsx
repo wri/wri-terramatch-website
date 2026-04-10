@@ -1,7 +1,7 @@
 import { Icon, IconProps } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-export const PlayCircleIcon: FC<IconProps> = props => (
+export const VideoIcon: FC<IconProps> = props => (
   <Icon {...props}>
     <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
       <mask style={{ maskType: "alpha" }} maskUnits="userSpaceOnUse" x="0" y="0" width="36" height="36">
@@ -17,4 +17,4 @@ export const PlayCircleIcon: FC<IconProps> = props => (
   </Icon>
 );
 
-export default PlayCircleIcon;
+export default VideoIcon;

@@ -7,7 +7,7 @@ import {
   parseFilesFromHtml,
   VIDEO_EXTENSIONS
 } from "@/components/extensive/WizardForm/FormSummaryRow/parseFilesFromHtml";
-import { PlayCircleIcon } from "@/redesignComponents/foundations/Icons";
+import { VideoIcon } from "@/redesignComponents/foundations/Icons";
 import SimpleDivider from "@/redesignComponents/miscellaneous/Dividers/SimpleDivider";
 import { EntityName, SingularEntityName } from "@/types/common";
 
@@ -43,7 +43,7 @@ const AdditionalDocumentationSection: FC<AdditionalDocumentationSectionProps> = 
           files={videos}
           entityName={entityName}
           entityUUID={entityUUID}
-          icon={<PlayCircleIcon boxSize={3.5} color="primary.900" />}
+          icon={<VideoIcon boxSize={3.5} color="primary.900" />}
         />
       )}
     </Flex>
