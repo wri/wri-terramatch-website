@@ -10,10 +10,11 @@
   Portal,
   Text
 } from "@chakra-ui/react";
+import { css, Global } from "@emotion/react";
 import { FC, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { CheckIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckIcon, ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
 import { NavigationMenuItem } from "@/redesignComponents/navigation/NavBar/NavigationMenu/NavigationMenu";
 
 interface MenuTriggerTyped {
@@ -47,23 +48,35 @@ const TypedMenuPositioner = MenuPositioner as FC<MenuContainerTyped>;
 const TypedMenuContent = MenuContent as FC<MenuContainerTyped>;
 const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
-const Caret: FC = () => (
-  <Box pl="20px" mb="-7px" zIndex={1} position="relative">
+const Caret: FC<{ direction: "top" | "bottom" }> = ({ direction }) => {
+  const isTop = direction === "top";
+  return (
     <Box
-      w="12px"
-      h="12px"
-      bg="white"
-      borderTop="1px solid"
-      borderLeft="1px solid"
-      borderColor="neutral.300"
-      transform="rotate(45deg)"
-    />
-  </Box>
-);
+      className={isTop ? "navbar-caret-top" : "navbar-caret-bottom"}
+      pl="20px"
+      mb={isTop ? "-7px" : undefined}
+      mt={isTop ? undefined : "-7px"}
+      zIndex={1}
+      position="relative"
+    >
+      <Box
+        w="12px"
+        h="12px"
+        bg="white"
+        borderTop={isTop ? "1px solid" : undefined}
+        borderLeft={isTop ? "1px solid" : undefined}
+        borderBottom={isTop ? undefined : "1px solid"}
+        borderRight={isTop ? undefined : "1px solid"}
+        borderColor="neutral.300"
+        transform="rotate(45deg)"
+      />
+    </Box>
+  );
+};
 
 interface NavbarMenuButtonBaseProps {
   prefix?: ReactNode;
-  label: string;
+  label: ReactNode;
   suffix?: ReactNode;
   disabled?: boolean;
 }
@@ -105,15 +118,25 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
         >
           {prefix}
           <Text textStyle="400">{label}</Text>
-          {suffix}
+          <ChevronDownIcon boxSize={4} color="neutral.100" className={open ? "rotate-180" : "rotate-0"} />
         </Button>
       </TypedMenuTrigger>
 
       <Portal>
-        <TypedMenuPositioner>
+        <Global
+          styles={css`
+            [data-placement^="top"] .navbar-caret-top {
+              display: none;
+            }
+            [data-placement^="bottom"] .navbar-caret-bottom {
+              display: none;
+            }
+          `}
+        />
+        <TypedMenuPositioner overflow="visible">
           <TypedMenuContent bg="transparent" border="none" p={0} boxShadow="none" overflow="visible">
-            <Box>
-              <Caret />
+            <Box display="flex" flexDirection="column">
+              <Caret direction="top" />
               <Box
                 bg="white"
                 borderRadius="8px"
@@ -196,6 +219,7 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                   );
                 })}
               </Box>
+              <Caret direction="bottom" />
             </Box>
           </TypedMenuContent>
         </TypedMenuPositioner>

@@ -16,39 +16,26 @@ export interface NavigationMenuProps {
   onSelect?: (index: number) => void;
 }
 
-const Caret: FC = () => (
-  <Flex justifyContent="center" mt="-6px" mb="-6px">
-    <Box
-      w="12px"
-      h="12px"
-      bg="white"
-      borderTop="1px solid"
-      borderLeft="1px solid"
-      borderColor="neutral.300"
-      transform="rotate(45deg)"
-      mt="2px"
-    />
-  </Flex>
-);
+const interactiveRowStyles = {
+  cursor: "pointer",
+  _hover: { bg: "neutral.100" },
+  transition: "background 0.15s"
+} as const;
 
 const MenuContainer: FC<{ children: ReactNode; minW?: string }> = ({ children, minW = "200px" }) => (
-  <Box>
-    <Caret />
-    <Box
-      bg="white"
-      borderRadius="8px"
-      border="1px solid"
-      borderColor="neutral.300"
-      boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
-      p={3}
-      minW={minW}
-      display="flex"
-      flexDirection="column"
-      gap={2}
-    >
-      {children}
-    </Box>
-  </Box>
+  <Flex
+    bg="white"
+    borderRadius="8px"
+    border="1px solid"
+    borderColor="neutral.300"
+    boxShadow="0 4px 16px rgba(0, 0, 0, 0.08)"
+    p={3}
+    minW={minW}
+    flexDirection="column"
+    gap={2}
+  >
+    {children}
+  </Flex>
 );
 
 const MegaMenuItem: FC<{ item: NavigationMenuItem; onClick?: () => void; showBorder?: boolean }> = ({
@@ -60,11 +47,8 @@ const MegaMenuItem: FC<{ item: NavigationMenuItem; onClick?: () => void; showBor
     pb={2}
     gap={2}
     alignItems="baseline"
-    cursor="pointer"
-    _hover={{ bg: "neutral.100" }}
-    transition="background 0.15s"
+    {...interactiveRowStyles}
     onClick={onClick}
-    borderColor="neutral.300"
     borderBottom={showBorder ? "1px solid" : "none"}
     borderBottomColor="neutral.300"
   >
@@ -83,7 +67,7 @@ const MegaMenuItem: FC<{ item: NavigationMenuItem; onClick?: () => void; showBor
 );
 
 const SimpleMenuItemRow: FC<{ item: NavigationMenuItem; onClick?: () => void }> = ({ item, onClick }) => (
-  <Box cursor="pointer" _hover={{ bg: "neutral.100" }} transition="background 0.15s" onClick={onClick}>
+  <Box {...interactiveRowStyles} onClick={onClick}>
     <Text textStyle="400" color="neutral.900" fontSize="14px">
       {item.label}
     </Text>
@@ -95,14 +79,7 @@ const ListMenuItemRow: FC<{
   isSelected: boolean;
   onClick?: () => void;
 }> = ({ item, isSelected, onClick }) => (
-  <Flex
-    justifyContent="space-between"
-    alignItems="center"
-    cursor="pointer"
-    _hover={{ bg: "neutral.100" }}
-    transition="background 0.15s"
-    onClick={onClick}
-  >
+  <Flex justifyContent="space-between" alignItems="center" {...interactiveRowStyles} onClick={onClick}>
     <Text textStyle="400" color="neutral.900" fontSize="14px" fontWeight={isSelected ? "700" : "400"}>
       {item.label}
     </Text>

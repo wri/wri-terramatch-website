@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 
 import { PlaceholderIcon } from "@/redesignComponents/foundations/Icons";
 
-import Avatar from "../Avatar/Avatar";
+import Avatar from "../../Avatar/Avatar";
 import NavbarMenu from "./NavbarMenu";
 
 const meta = {
