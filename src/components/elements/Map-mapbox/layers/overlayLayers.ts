@@ -43,7 +43,7 @@ export const addBorderCountry = (map: mapboxgl.Map, country: string): void => {
     } as mapboxgl.AnyLayer);
     setFilterCountry(map, sourceName, country);
   } catch (e) {
-    console.warn(e);
+    Log.warn("addBorderCountry:", e);
   }
 };
 

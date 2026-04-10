@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxgl from "mapbox-gl";
-import { MutableRefObject } from "react";
+import { MutableRefObject, useCallback } from "react";
 
 import { loadListPolygonVersions } from "@/connections/PolygonVersion";
 import { createVersionWithGeometry } from "@/connections/SitePolygons";
@@ -95,7 +95,7 @@ export function useMapDraw({
     }
   });
 
-  const handleEditPolygon = async () => {
+  const handleEditPolygon = useCallback(async () => {
     if (map.current == null) return;
     removePopups(map.current, "POLYGON");
     if (!polygonFromMap?.isOpen || polygonFromMap?.uuid === "") return;
@@ -125,9 +125,16 @@ export function useMapDraw({
       Log.error("Error fetching polygon geometry:", error);
       openNotification("error", t("Error"), t("Failed to load polygon geometry. Please try again."));
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    polygonFromMap?.isOpen,
+    polygonFromMap?.uuid,
+    polygonFromMap?.entityName,
+    polygonFromMap?.projectPitchUuid,
+    polygonsData
+  ]);
 
-  const onSaveEdit = async () => {
+  const onSaveEdit = useCallback(async () => {
     if (map.current == null || draw.current == null) return;
     const geojson = draw.current.getAll();
     if (!geojson || !polygonFromMap?.uuid) return;
@@ -201,11 +208,20 @@ export function useMapDraw({
     } finally {
       hideLoader();
     }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    polygonFromMap?.uuid,
+    polygonFromMap?.entityName,
+    polygonFromMap?.projectPitchUuid,
+    formMap,
+    sitePolygonData,
+    centroids
+  ]);
 
-  const onCancelEdit = () => {
+  const onCancelEdit = useCallback(() => {
     onCancel(polygonsData);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [polygonsData]);
 
   return { handleEditPolygon, onSaveEdit, onCancelEdit };
 }

@@ -17,7 +17,10 @@ type UseMapFullscreenParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
 };
 export function useMapFullscreen({ mapContainer, map }: UseMapFullscreenParams) {
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(() => {
+    const doc = document as DocumentWithFullscreen;
+    return !!(doc.fullscreenElement ?? doc.webkitFullscreenElement);
+  });
 
   const getFullscreenStatus = (): boolean => {
     const doc = document as DocumentWithFullscreen;

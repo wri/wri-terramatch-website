@@ -152,7 +152,7 @@ export const addSourceToLayer = (
       loadLayersInMap(map, polygonsData, layer, zoomFilter);
     }
   } catch (e) {
-    console.warn(e);
+    Log.warn("addSourceToLayer:", e);
   }
 };
 
@@ -184,7 +184,7 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
     map.addSource(name, { type: "vector", tiles: [GEOSERVER_TILE_URL] });
     loadDeleteLayer(layer, map, polygonsData);
   } catch (e) {
-    console.warn(e);
+    Log.warn("addDeleteLayer:", e);
   }
 };
 

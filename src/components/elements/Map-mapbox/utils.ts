@@ -6,6 +6,7 @@ export * from "./layers/overlayLayers";
 export * from "./layers/mediaLayers";
 export * from "./interactions/draw";
 export * from "./interactions/popups";
+export * from "./services/polygonService";
 
 import {
   loadPolygonGeoJson,

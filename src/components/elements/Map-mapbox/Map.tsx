@@ -2,8 +2,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import { useMediaQuery } from "@mui/material";
 import { useT } from "@transifex/react";
-import _ from "lodash";
-import { LngLat } from "mapbox-gl";
 import { useRouter } from "next/router";
 import React, { createContext, DetailedHTMLProps, HTMLAttributes, useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
@@ -24,21 +22,23 @@ import { useSitePolygonData } from "@/context/sitePolygon.provider";
 import { MediaDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { useOnMount } from "@/hooks/useOnMount";
-import Log from "@/utils/log";
 
+import { addMarkerAndZoom, zoomToBbox, zoomToCenter } from "./adapters/camera";
 import { PopupMobile } from "./components/PopupMobile";
 import { useMapReadiness } from "./core/useMapReadiness";
 import { BBox } from "./GeoJSON";
 import { useGoogleSatellite } from "./hooks/useGoogleSatellite";
 import { useMapCamera } from "./hooks/useMapCamera";
+import { useMapDownload } from "./hooks/useMapDownload";
 import { useMapDraw } from "./hooks/useMapDraw";
 import { useMapFullscreen } from "./hooks/useMapFullscreen";
 import { useMapLayers } from "./hooks/useMapLayers";
 import { useMapMedia } from "./hooks/useMapMedia";
 import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
+import { useMapStyle } from "./hooks/useMapStyle";
+import { addGeojsonToDraw } from "./interactions/draw";
 import type { DashboardGetProjectsData, MapFunctions, TooltipType } from "./Map.d";
-export type { DashboardGetProjectsData };
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
@@ -54,16 +54,8 @@ import TrashButton from "./MapControls/TrashButton";
 import { MapStyle } from "./MapControls/types";
 import ViewImageGalleryButton from "./MapControls/ViewImageGalleryButton";
 import { ZoomControl } from "./MapControls/ZoomControl";
-import {
-  addGeojsonToDraw,
-  addMarkerAndZoom,
-  downloadMultiplePolygonsGeoJson,
-  downloadProjectPolygonsGeoJson,
-  getCurrentMapStyle,
-  setMapStyle,
-  zoomToBbox,
-  zoomToCenter
-} from "./utils";
+
+export type { DashboardGetProjectsData };
 
 interface LegendItem {
   color: string;
@@ -74,7 +66,6 @@ interface LegendItem {
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
   geojson?: any;
   editable?: boolean;
-
   onGeojsonChange?: (featuresCollection?: GeoJSON.FeatureCollection | null) => void;
   onError?: (hasError: boolean, errors: { [index: string | number]: ValidationError | undefined }) => void;
   onDeleteImage?: (uuid: string) => void;
@@ -110,7 +101,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   shouldBboxZoom?: boolean;
   mediaFiles?: MediaDto[];
   formMap?: boolean;
-  location?: LngLat;
+  location?: { lat: number; lng: number } | null;
   dashboardMode?: "dashboard" | "modal" | undefined;
   entityData?: any;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
@@ -179,7 +170,10 @@ export const MapContainer = ({
   disabledPolygonPanel = false,
   ...props
 }: MapProps) => {
-  const [viewImages, setViewImages] = useState(false);
+  if (!mapFunctions) return null;
+
+  const { map, mapContainer, draw, onCancel, initMap, setStyleLoaded } = mapFunctions;
+
   const {
     polygonsData,
     polygonsCentroids,
@@ -196,15 +190,12 @@ export const MapContainer = ({
     projectUUID,
     setLoader
   } = props;
-  const [currentStyle, setCurrentStyle] = useState<MapStyle>(() => {
-    return mapStyleProp !== undefined ? mapStyleProp : dashboardMode ? MapStyle.Street : MapStyle.Satellite;
-  });
+
+  const [viewImages, setViewImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [isDownloadingPolygons, setIsDownloadingPolygons] = useState(false);
-  const [userChangedStyle, setUserChangedStyle] = useState(false);
+  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
-  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
   const context = useSitePolygonData();
   const contextMapArea = useMapAreaContext();
   const dashboardContextFromHook = useDashboardContext();
@@ -240,18 +231,8 @@ export const MapContainer = ({
     enabled: anrPlotGeometryFetchEnabled
   });
 
-  const handleStyleChange = (newStyle: MapStyle) => {
-    setCurrentStyle(newStyle);
-    setUserChangedStyle(true);
-    onStyleChange?.(newStyle);
-  };
-  if (!mapFunctions) {
-    return null;
-  }
-  const { map, mapContainer, draw, onCancel, initMap, setStyleLoaded } = mapFunctions;
-
   const polygonBbox = useBoundingBox(
-    entityData?.entityName == "project-pitch"
+    entityData?.entityName === "project-pitch"
       ? { projectPitchUuid: entityData?.entityUUID }
       : { polygonUuid: polygonFromMap?.uuid }
   );
@@ -269,12 +250,23 @@ export const MapContainer = ({
     };
   });
 
+  useOnMount(() => {
+    if (geojson != null && map.current != null && draw.current != null) {
+      addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
+    }
+  });
+
   const { styleReady, styleVersion } = useMapReadiness(map?.current);
 
-  useEffect(() => {
-    if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
-    addMarkerAndZoom(map.current, location);
-  }, [map, location]);
+  const { currentStyle, handleStyleChange } = useMapStyle({
+    map,
+    mapStyleProp,
+    styleReady,
+    styleVersion,
+    projectUUID,
+    dashboardMode,
+    onStyleChange
+  });
 
   const { sourcesAdded } = useMapLayers({
     map,
@@ -373,84 +365,20 @@ export const MapContainer = ({
 
   const { isFullscreen, toggleFullscreen } = useMapFullscreen({ mapContainer, map });
 
-  useGoogleSatellite(currentStyle, styleReady, styleVersion, map, mapContainer);
-
-  // Style sync: parent prop → local style state
-  useEffect(() => {
-    if (map.current == null || !styleReady) return;
-    if (mapStyleProp != null && mapStyleProp !== currentStyle) {
-      const actualStyle = getCurrentMapStyle(map.current);
-      if (actualStyle !== mapStyleProp) {
-        setMapStyle(mapStyleProp, map.current, setCurrentStyle, currentStyle);
-      } else {
-        setCurrentStyle(mapStyleProp);
-      }
-    }
-  }, [mapStyleProp, map, currentStyle, styleReady, styleVersion]);
-
-  // Auto-satellite when a project is loaded (reset on project change)
-  useEffect(() => {
-    setUserChangedStyle(false);
-  }, [projectUUID]);
-
-  useEffect(() => {
-    if (map.current == null || !projectUUID || userChangedStyle || !styleReady) return;
-    setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectUUID, userChangedStyle, styleReady]);
-
-  useOnMount(() => {
-    if (geojson != null && map.current != null && draw.current != null) {
-      addGeojsonToDraw(geojson, "", () => {}, draw.current, map.current);
-    }
+  const { isDownloadingPolygons, downloadGeoJsonPolygon } = useMapDownload({
+    polygonsData,
+    entityData,
+    record,
+    t,
+    openNotification
   });
 
-  const downloadGeoJsonPolygon = async () => {
-    setIsDownloadingPolygons(true);
-    try {
-      const isProjectContext = entityData?.entityName == "project-pitches";
-      const projectPitchUuid = entityData?.entityUUID;
+  useGoogleSatellite(currentStyle, styleReady, styleVersion, map, mapContainer);
 
-      if (isProjectContext && projectPitchUuid != null) {
-        const projectName = record?.organisation?.name ?? "project";
-        const filename = `${_.replace(projectName, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
-        await downloadProjectPolygonsGeoJson(projectPitchUuid, filename);
-        openNotification("success", t("Success"), t("Successfully downloaded project polygons."));
-      } else {
-        let polygonsToDownload: string[] = [];
-        if (polygonsData) {
-          const allPolygons: string[] = [];
-          Object.values(polygonsData).forEach(statusPolygons => {
-            if (Array.isArray(statusPolygons)) {
-              allPolygons.push(...statusPolygons);
-            }
-          });
-          polygonsToDownload = allPolygons;
-        }
-
-        if (polygonsToDownload.length === 0) {
-          openNotification("error", t("Error"), t("No polygons found to download."));
-          return;
-        }
-
-        const nameFile = record?.organisation?.name ?? "polygons";
-        const filename = `${_.replace(nameFile, /\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}`;
-        await downloadMultiplePolygonsGeoJson(polygonsToDownload, filename);
-        openNotification(
-          "success",
-          t("Success"),
-          t(`Successfully downloaded ${polygonsToDownload.length} polygon(s).`)
-        );
-      }
-    } catch (error: any) {
-      Log.error("Download error:", error);
-      // Show more specific error message
-      const errorMessage = error?.message ?? t("Failed to download polygons. Please try again.");
-      openNotification("error", t("Error"), errorMessage);
-    } finally {
-      setIsDownloadingPolygons(false);
-    }
-  };
+  useEffect(() => {
+    if (map.current == null || location == null || location.lat === 0 || location.lng === 0) return;
+    addMarkerAndZoom(map.current, location);
+  }, [map, location]);
 
   return (
     <MapEditingContext.Provider value={{ isEditing, setIsEditing }}>
@@ -547,7 +475,7 @@ export const MapContainer = ({
             <ControlGroup position="top-right" className="top-[10.5rem]">
               <button
                 type="button"
-                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
+                className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
                 onClick={() => {
                   if (center && zoom !== undefined && map.current) {
                     zoomToCenter(center, zoom, map.current);
@@ -563,7 +491,7 @@ export const MapContainer = ({
               <ControlGroup position="top-right" className="top-[13.75rem]">
                 <button
                   type="button"
-                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200 "
+                  className="h-10 w-10 rounded-sm border border-neutral-175 bg-white p-2 text-darkCustom-100 hover:bg-neutral-200"
                   onClick={toggleFullscreen}
                   aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
                 >
