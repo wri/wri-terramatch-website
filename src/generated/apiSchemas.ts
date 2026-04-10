@@ -1084,33 +1084,6 @@ export type V2TreeSpeciesRead = {
   collection?: string;
 };
 
-export type V2LeadershipsCreate = {
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-};
-
-export type V2LeadershipsUpdate = {
-  first_name?: string;
-  last_name?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-};
-
-export type V2LeadershipsRead = {
-  uuid?: string;
-  organisation_id?: string;
-  position?: string;
-  gender?: string;
-  age?: number;
-  nationality?: string;
-  collection?: string;
-};
-
 export type V2FundingTypeRead = {
   uuid?: string;
   organisation_id?: string;
