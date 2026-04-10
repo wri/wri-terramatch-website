@@ -83,6 +83,7 @@ import {
   UploadIcon,
   UrbanForestIcon,
   UserAddIcon,
+  UserIcon,
   VideoIcon,
   VisibilityIcon,
   VisibilityOffIcon,
@@ -316,6 +317,9 @@ export const AllIcons: Story = {
           </IconWrapper>
           <IconWrapper name="Upload">
             <UploadIcon boxSize={8} />
+          </IconWrapper>
+          <IconWrapper name="User">
+            <UserIcon boxSize={8} />
           </IconWrapper>
           <IconWrapper name="User Add">
             <UserAddIcon boxSize={8} />
@@ -559,6 +563,9 @@ export const Function: Story = {
         </IconWrapper>
         <IconWrapper name="User Add">
           <UserAddIcon boxSize={8} />
+        </IconWrapper>
+        <IconWrapper name="User">
+          <UserIcon boxSize={8} />
         </IconWrapper>
         <IconWrapper name="Video">
           <VideoIcon boxSize={8} />
