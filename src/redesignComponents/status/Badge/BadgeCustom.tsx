@@ -44,7 +44,7 @@ const Badge = ({
     >
       <Flex className="relative flex">
         {notification.length > 0 && hasNotification ? (
-          <div className="bg-theme-error-500 absolute -top-2 left-2 flex items-center justify-center rounded-full px-1">
+          <div className="absolute -top-2 left-2 flex items-center justify-center rounded-full bg-theme-error-500 px-1">
             <Text textStyle="300-bold">{notification}</Text>
           </div>
         ) : null}

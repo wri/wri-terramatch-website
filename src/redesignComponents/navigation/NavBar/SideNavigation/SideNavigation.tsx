@@ -42,7 +42,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, notifications, links }
   return (
     <Flex
       className={classNames(
-        "bg-theme-primary-800 flex-col",
+        "flex-col bg-theme-primary-800",
         shellTransition,
         isCollapsed ? COLLAPSED_WIDTH_CLASS : EXPANDED_WIDTH_CLASS
       )}
@@ -92,7 +92,7 @@ const SideNavigation: FC<SideNavigationProps> = ({ title, notifications, links }
             {item.value > 0 ? (
               <div
                 className={classNames(
-                  "bg-theme-error-500 flex min-w-0 items-center justify-center overflow-hidden rounded-full transition-[max-width,opacity,transform,padding] duration-300 ease-in-out motion-reduce:transition-none",
+                  "flex min-w-0 items-center justify-center overflow-hidden rounded-full bg-theme-error-500 transition-[max-width,opacity,transform,padding] duration-300 ease-in-out motion-reduce:transition-none",
                   !isCollapsed ? "max-w-[4rem] scale-100 px-1 opacity-100" : "max-w-0 scale-95 px-0 opacity-0"
                 )}
                 aria-hidden={isCollapsed}
