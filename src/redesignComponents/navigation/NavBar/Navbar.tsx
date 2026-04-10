@@ -55,7 +55,7 @@ const Navbar: FC<NavbarProps> = ({
               onSelect={onAccountSelect}
               prefix={accountPrefix}
               suffix={accountSuffix}
-              variant="simple"
+              variant="mega"
             />
           ) : (
             <>

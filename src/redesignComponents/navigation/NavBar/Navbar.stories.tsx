@@ -36,7 +36,13 @@ export const Default: Story = {
     navLinks: defaultNavLinks,
     languageItems: [{ label: "English" }, { label: "French" }, { label: "Portuguese" }, { label: "Spanish" }],
     onLanguageSelect: action("language:select"),
-    accountItems: [{ label: "Profile" }, { label: "Settings" }, { label: "Sign out" }],
+    accountItems: [
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> },
+      { caption: "Caption", label: "Label", icon: <PlaceholderIcon /> }
+    ],
     accountLabel: "John Doe",
     accountPrefix: <Avatar name="John Doe" size="small" />,
     accountSuffix: <PlaceholderIcon boxSize={4} />,

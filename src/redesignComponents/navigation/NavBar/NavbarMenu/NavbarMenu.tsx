@@ -1,22 +1,13 @@
-﻿import {
-  Box,
-  Button,
-  Flex,
-  Menu,
-  MenuContent,
-  MenuItem,
-  MenuPositioner,
-  MenuTrigger,
-  Portal,
-  Text
-} from "@chakra-ui/react";
+﻿import { Box, Button, Menu, MenuContent, MenuItem, MenuPositioner, MenuTrigger, Portal, Text } from "@chakra-ui/react";
 import { css, Global } from "@emotion/react";
 import { FC, ReactNode, useState } from "react";
 import { twMerge } from "tailwind-merge";
 
-import { CheckIcon, ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
-import { NavigationMenuItem } from "@/redesignComponents/navigation/NavBar/NavigationMenu/NavigationMenu";
-
+import { ChevronDownIcon } from "@/redesignComponents/foundations/Icons";
+import {
+  NavigationMenuItem,
+  NavigationMenuItemRow
+} from "@/redesignComponents/navigation/NavBar/NavigationMenu/NavigationMenu";
 interface MenuTriggerTyped {
   children: ReactNode;
   asChild?: boolean;
@@ -39,6 +30,9 @@ interface MenuItemTyped {
   borderBottom?: string;
   borderColor?: string;
   _hover?: Record<string, string>;
+  _focus?: Record<string, string>;
+  _focusVisible?: Record<string, string>;
+  _highlighted?: Record<string, string>;
   cursor?: string;
   onClick?: () => void;
 }
@@ -149,75 +143,30 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
                 flexDirection="column"
                 gap={2}
               >
-                {items.map((item, index) => {
-                  if (variant === "mega") {
-                    return (
-                      <TypedMenuItem
-                        key={index}
-                        value={String(index)}
-                        pb={2}
-                        borderBottom={index !== items.length - 1 ? "1px solid" : "none"}
-                        borderColor="neutral.300"
-                        _hover={{ bg: "neutral.100" }}
-                        cursor="pointer"
-                        onClick={() => onSelect?.(index)}
-                      >
-                        <Flex gap={2} alignItems="baseline">
-                          {item.icon}
-                          <Box>
-                            <Text textStyle="400" color="neutral.900">
-                              {item.label}
-                            </Text>
-                            {item.caption && (
-                              <Text textStyle="300" color="neutral.700">
-                                {item.caption}
-                              </Text>
-                            )}
-                          </Box>
-                        </Flex>
-                      </TypedMenuItem>
-                    );
-                  }
-
-                  if (variant === "list") {
-                    const isSelected = index === selectedIndex;
-                    return (
-                      <TypedMenuItem
-                        key={index}
-                        value={String(index)}
-                        _hover={{ bg: "neutral.100" }}
-                        cursor="pointer"
-                        onClick={() => onSelect?.(index)}
-                      >
-                        <Flex justifyContent="space-between" alignItems="center" w="full">
-                          <Text
-                            textStyle="400"
-                            color="neutral.900"
-                            fontSize="14px"
-                            fontWeight={isSelected ? "700" : "400"}
-                          >
-                            {item.label}
-                          </Text>
-                          {isSelected && <CheckIcon color="accessible.controls-on-neutral-lights" boxSize={4} />}
-                        </Flex>
-                      </TypedMenuItem>
-                    );
-                  }
-
-                  return (
-                    <TypedMenuItem
-                      key={index}
-                      value={String(index)}
-                      _hover={{ bg: "neutral.100" }}
-                      cursor="pointer"
-                      onClick={() => onSelect?.(index)}
-                    >
-                      <Text textStyle="400" color="neutral.900" fontSize="14px">
-                        {item.label}
-                      </Text>
-                    </TypedMenuItem>
-                  );
-                })}
+                {items.map((item, index) => (
+                  <TypedMenuItem
+                    key={index}
+                    value={String(index)}
+                    pb={variant === "mega" ? 2 : undefined}
+                    borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+                    borderColor="neutral.300"
+                    _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
+                    _highlighted={{
+                      outline: "2px solid",
+                      outlineColor: "primary.700",
+                      backgroundColor: "neutral.100"
+                    }}
+                    cursor="pointer"
+                    onClick={() => onSelect?.(index)}
+                  >
+                    <NavigationMenuItemRow
+                      variant={variant}
+                      item={item}
+                      isSelected={index === selectedIndex}
+                      showBorder={false}
+                    />
+                  </TypedMenuItem>
+                ))}
               </Box>
               <Caret direction="bottom" />
             </Box>
