@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 
-import { ExpandIcon, MinusIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
+import { CheckIndeterminateIcon, ExpandIcon, PlusIcon } from "@/redesignComponents/foundations/Icons";
 
 import MapControls from "./MapControls";
 
@@ -30,7 +30,7 @@ export const Default: Story = {
         gap: false
       },
       {
-        icon: <MinusIcon />,
+        icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out",
         label: "zoom out"
       },
@@ -58,7 +58,7 @@ export const WithTooltip: Story = {
         tooltip: "Expand tooltip"
       },
       {
-        icon: <MinusIcon />,
+        icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out",
         label: "zoom out",
         tooltip: "Zoom out tooltip"
@@ -75,7 +75,7 @@ export const MapControl: Story = {
         ariaLabel: "zoom in"
       },
       {
-        icon: <MinusIcon />,
+        icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out"
       }
     ]
@@ -90,7 +90,7 @@ export const Vertical: Story = {
         ariaLabel: "zoom in"
       },
       {
-        icon: <MinusIcon />,
+        icon: <CheckIndeterminateIcon />,
         ariaLabel: "zoom out"
       }
     ],

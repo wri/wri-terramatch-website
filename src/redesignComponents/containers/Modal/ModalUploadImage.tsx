@@ -8,8 +8,8 @@ import ButtonGroup from "@/redesignComponents/actions/Buttons/ButtonGroup/Button
 import BaseImage from "@/redesignComponents/content/Images/Image";
 import Slider from "@/redesignComponents/Forms/Controls/Slider";
 import {
+  CheckIndeterminateIcon,
   DeleteIcon,
-  MinusIcon,
   PhotoLibraryIcon,
   PlaceholderIcon,
   PlusIcon,
@@ -313,7 +313,7 @@ const ModalUploadImage: FC<ModalUploadImageProps> = ({
               className="w-fit"
               onClick={() => setSliderValue(v => Math.max(v - 1, 0))}
             >
-              <MinusIcon />
+              <CheckIndeterminateIcon />
             </Button>
             <Slider
               className="w-fit"

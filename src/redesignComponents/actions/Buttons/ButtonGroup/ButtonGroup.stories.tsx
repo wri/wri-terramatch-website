@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { PlusIcon } from "@/redesignComponents/foundations/Icons/PlusIcon";
+import { PlusIcon } from "@/redesignComponents/foundations/Icons/Function/PlusIcon";
 
 import ButtonGroup from "./ButtonGroup";
 
