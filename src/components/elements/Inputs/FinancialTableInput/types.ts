@@ -1,6 +1,7 @@
 import { debounce, Dictionary } from "lodash";
 import { useEffect, useMemo } from "react";
 import { UseControllerProps, UseFormReturn } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 
 import { DataTableProps } from "@/components/elements/Inputs/DataTable/DataTable";
 import { FinancialIndicatorDto } from "@/generated/v3/entityService/entityServiceSchemas";
@@ -161,7 +162,7 @@ export function formatFinancialData(
       years?.map(year => {
         const row: Dictionary<FinancialIndicator> = groupedData.profitAnalysisData[year] ?? {};
         return {
-          uuid: row.revenue?.uuid ?? row.expenses?.uuid ?? row.profit?.uuid ?? null,
+          uuid: row.revenue?.uuid ?? row.expenses?.uuid ?? row.profit?.uuid ?? uuidv4(),
           year,
           revenue: row.revenue?.amount ?? 0,
           expenses: row.expenses?.amount ?? 0,
@@ -175,7 +176,7 @@ export function formatFinancialData(
       years?.map(year => {
         const row = groupedData.nonProfitAnalysisData[year] ?? {};
         return {
-          uuid: row.budget?.uuid ?? null,
+          uuid: row.budget?.uuid ?? uuidv4(),
           year,
           budget: row.budget?.amount ?? 0,
           budgetUuid: row.budget?.uuid ?? null
@@ -185,7 +186,8 @@ export function formatFinancialData(
       years?.map(year => {
         const row: Dictionary<FinancialIndicator> = groupedData.currentRatioData[year] ?? {};
         return {
-          uuid: row["current-assets"]?.uuid ?? row["current-liabilities"]?.uuid ?? row["current-ratio"]?.uuid ?? null,
+          uuid:
+            row["current-assets"]?.uuid ?? row["current-liabilities"]?.uuid ?? row["current-ratio"]?.uuid ?? uuidv4(),
           year,
           currentAssets: row["current-assets"]?.amount ?? 0,
           currentLiabilities: row["current-liabilities"]?.amount ?? 0,
@@ -199,7 +201,7 @@ export function formatFinancialData(
       years?.map((year): DocumentationData => {
         const row = groupedData.documentationData[year];
         const emptyDoc: DocumentationData = {
-          uuid: null,
+          uuid: uuidv4(),
           year,
           documentation: [],
           description: "",
@@ -209,7 +211,7 @@ export function formatFinancialData(
           return emptyDoc;
         }
         return {
-          uuid: row.uuid ?? null,
+          uuid: row.uuid ?? uuidv4(),
           year,
           documentation: row.documentation ?? [],
           description: row.description ?? "",
