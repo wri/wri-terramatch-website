@@ -75,10 +75,10 @@ const getOwnershipTableQuestions = (t: typeof useT): FieldDefinition[] => [
 
 const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
-  const {
-    field: { value, onChange }
-  } = useController(props);
+  const { field } = useController(props);
   const [tableKey, setTableKey] = useState(0);
+  const value: OwnershipStake[] = useMemo(() => field.value ?? [], [field.value]);
+  const { onChange } = field;
 
   const refreshTable = useCallback(() => {
     setTableKey(prev => prev + 1);
@@ -94,7 +94,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
 
   const handleDelete = useCallback(
     (uuid?: string) => {
-      onChange((value as OwnershipStake[]).filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
+      onChange(value.filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
       props.formHook?.trigger();
     },
     [onChange, props.formHook, value]
@@ -103,7 +103,7 @@ const RHFOwnershipStakeTable: FC<PropsWithChildren<RHFOwnershipStakeTableProps>>
   const handleUpdate = useCallback(
     (data: OwnershipStake) => {
       onChange(
-        (value as OwnershipStake[]).reduce(
+        value.reduce(
           (update, entry) => (entry.uuid === data.uuid ? [...update, data] : [...update, entry]),
           [] as OwnershipStake[]
         )

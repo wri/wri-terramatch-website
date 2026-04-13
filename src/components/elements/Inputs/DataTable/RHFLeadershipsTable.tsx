@@ -87,9 +87,9 @@ const getLeadershipsTableQuestions = (countryOptions: Option[], t: typeof useT):
 
 const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> = ({ onChangeCapture, ...props }) => {
   const t = useT();
-  const {
-    field: { value, onChange }
-  } = useController(props);
+  const { field } = useController(props);
+  const value: Leadership[] = useMemo(() => field.value ?? [], [field.value]);
+  const { onChange } = field;
   const { collection } = props;
   const countryOptions = useGadmOptions({ level: 0 });
   const [tableKey, setTableKey] = useState(0);
@@ -108,7 +108,7 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
 
   const handleDelete = useCallback(
     (uuid?: string) => {
-      onChange((value as Leadership[]).filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
+      onChange(value.filter(item => (uuid == null ? item.uuid != null : item.uuid !== uuid)));
       props.formHook?.trigger();
     },
     [onChange, props.formHook, value]
@@ -117,7 +117,7 @@ const RHFLeadershipsDataTable: FC<PropsWithChildren<RHFLeadershipsTableProps>> =
   const handleUpdate = useCallback(
     (data: Leadership) => {
       onChange(
-        (value as Leadership[]).reduce(
+        value.reduce(
           (update, entry) => (entry.uuid === data.uuid ? [...update, data] : [...update, entry]),
           [] as Leadership[]
         )
