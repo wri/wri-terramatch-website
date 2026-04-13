@@ -79,7 +79,10 @@ export const addGeojsonSourceToLayer = (
   if (map == null || centroids == null || centroids.length === 0) return;
 
   if (map.getSource(name)) {
-    styles?.forEach((_: unknown, index: number) => map.removeLayer(`${name}-${index}`));
+    styles?.forEach((_: unknown, index: number) => {
+      const layerId = `${name}-${index}`;
+      if (map.getLayer(layerId) != null) map.removeLayer(layerId);
+    });
     map.removeSource(name);
   }
 
@@ -138,7 +141,10 @@ export const addSourceToLayer = (
     }
 
     if (sourceExists) {
-      styles?.forEach((_: unknown, index: number) => map.removeLayer(`${name}-${index}`));
+      styles?.forEach((_: unknown, index: number) => {
+        const layerId = `${name}-${index}`;
+        if (map.getLayer(layerId) != null) map.removeLayer(layerId);
+      });
       map.removeSource(name);
     }
 
@@ -177,7 +183,10 @@ export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Reco
   try {
     if (map == null) return;
     if (map.getSource(name)) {
-      styles?.forEach((_: unknown, index: number) => map.removeLayer(`${name}-${index}`));
+      styles?.forEach((_: unknown, index: number) => {
+        const layerId = `${name}-${index}`;
+        if (map.getLayer(layerId) != null) map.removeLayer(layerId);
+      });
       map.removeSource(name);
     }
     const GEOSERVER_TILE_URL = getGeoserverURL(geoserverLayerName);

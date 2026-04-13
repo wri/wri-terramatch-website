@@ -80,11 +80,9 @@ export function useMapDraw({
   useValueChanged(selectedPolyVersion, () => {
     if (map.current == null) return;
     const m = map.current;
-    if (m.getSource("temp-polygon-source") != null || m.getLayer("temp-polygon-source-line") != null) {
-      m.removeLayer("temp-polygon-source-line");
-      m.removeLayer("temp-polygon-source");
-      m.removeSource("temp-polygon-source");
-    }
+    if (m.getLayer("temp-polygon-source-line") != null) m.removeLayer("temp-polygon-source-line");
+    if (m.getLayer("temp-polygon-source") != null) m.removeLayer("temp-polygon-source");
+    if (m.getSource("temp-polygon-source") != null) m.removeSource("temp-polygon-source");
     const polygonUuid = (selectedPolyVersion as any)?.polygonUuid ?? (selectedPolyVersion as any)?.poly_id;
     if (selectedPolyVersion != null && polygonUuid != null) {
       fetchPolygonGeometry(polygonUuid).then(geometry => {
