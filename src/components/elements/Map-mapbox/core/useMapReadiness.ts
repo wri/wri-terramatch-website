@@ -1,18 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import { useEffect, useState } from "react";
 
-/**
- * WHY styleVersion exists:
- *   Mapbox v2 fires style.load on every style switch. After the first load, styleReady
- *   stays `true` — so `useEffect([styleReady])` won't re-run on subsequent style switches.
- *   styleVersion increments on every style.load, so effects that add layers always re-run
- *   after a style switch even though styleReady never went false.
- *
- * WHY this receives map?.current (a value, not the MutableRefObject):
- *   Passing the ref makes the effect dep [mapRef] stable.
- * Passing map?.current means the effect re-runs when Map.tsx re-renders with
- *   the live instance (triggered by useMap.ts → setStyleLoaded(true)). Do NOT change this.
- */
+/** styleVersion re-triggers deps after each style.load; `map` (instance) must be the effect dep, not the ref. */
 export function useMapReadiness(map: mapboxgl.Map | null | undefined): {
   styleReady: boolean;
   styleVersion: number;

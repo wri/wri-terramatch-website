@@ -141,8 +141,6 @@ function computeCentroidsFingerprint(centroids: DashboardGetProjectsData[]): str
   return `${hash >>> 0}:${centroids.length}`;
 }
 
-// Per-instance registry: track last cacheKey per source so we only re-create the
-// tile source when polygon geometry actually changes, not on every render.
 const sourceCacheKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
 
 function getSourceCacheKeys(map: mapboxgl.Map): Record<string, string> {

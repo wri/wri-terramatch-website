@@ -10,7 +10,6 @@ import { Feature, GeoJsonProperties, Geometry } from "../GeoJSON";
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
 
-// Per-instance handler registry: prevents accumulation when media data refreshes.
 const mediaClickHandlers = new WeakMap<mapboxgl.Map, (e: mapboxgl.MapLayerMouseEvent) => void>();
 
 export const removeMediaLayer = (map: mapboxgl.Map) => {

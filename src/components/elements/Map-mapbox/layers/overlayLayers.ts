@@ -100,8 +100,7 @@ export const updateMapProjection = (map: mapboxgl.Map, currentStyle: MapStyle): 
 
 export const addGoogleSatelliteLayer = (map: mapboxgl.Map): void => {
   if (!map) return;
-  // isStyleLoaded() checks tiles+sources — too strict for layer operations which only need
-  // the style object to exist (i.e. style.load has fired). Use getStyle() instead.
+  // getStyle() is enough here; isStyleLoaded() can stay false until tiles finish loading.
   let mapStyle: ReturnType<mapboxgl.Map["getStyle"]>;
   try {
     mapStyle = map.getStyle();

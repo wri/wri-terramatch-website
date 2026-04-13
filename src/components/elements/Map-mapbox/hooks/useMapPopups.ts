@@ -48,8 +48,6 @@ export function useMapPopups({
   setMobilePopupData,
   dashboardContext
 }: UseMapPopupsParams) {
-  // Callbacks go into a ref so they never appear in the dependency array.
-  // This prevents re-registering all click handlers on every parent render.
   const callbacksRef = useRef({
     setPolygonFromMap,
     setEditPolygon,
@@ -60,8 +58,6 @@ export function useMapPopups({
     callbacksRef.current = { setPolygonFromMap, setEditPolygon, setFilters, setMobilePopupData };
   });
 
-  // editPolygon is an object — stabilize via ref so popup closures always
-  // read the latest value without triggering re-registration.
   const editPolygonRef = useRef(editPolygon);
   useEffect(() => {
     editPolygonRef.current = editPolygon;

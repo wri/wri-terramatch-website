@@ -49,7 +49,6 @@ export function useMapStyle({
         setCurrentStyle(mapStyleProp);
       }
     }
-    // currentStyle intentionally omitted: we only react to external prop changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mapStyleProp, map, styleReady, styleVersion]);
 
@@ -60,7 +59,6 @@ export function useMapStyle({
   useEffect(() => {
     if (map.current == null || !projectUUID || userChangedStyle || !styleReady) return;
     setMapStyle(MapStyle.Satellite, map.current, setCurrentStyle, currentStyle);
-    // currentStyle intentionally omitted — we want this to fire once per project load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectUUID, userChangedStyle, styleReady]);
 

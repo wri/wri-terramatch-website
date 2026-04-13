@@ -76,7 +76,6 @@ export function useMapDraw({
     }
   });
 
-  // Polygon version preview
   useValueChanged(selectedPolyVersion, () => {
     if (map.current == null) return;
     const m = map.current;
