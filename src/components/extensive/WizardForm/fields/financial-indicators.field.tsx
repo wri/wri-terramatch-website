@@ -41,8 +41,11 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       if (!Array.isArray(value)) return true;
 
       const documentationEntries = value.filter(
-        (item: { collection?: string; year?: number | string; documentation?: unknown }) =>
-          item.collection === "description-documents"
+        (item: { uuid?: string; collection?: string }) =>
+          // Don't require documentation until the server has been notified about the entry and it has
+          // a valid UUID. It's not possible to upload documentation to an entry that doesn't have
+          // a UUID.
+          item.uuid != null && item.collection === "description-documents"
       );
 
       if (validation?.required === true && documentationEntries.length === 0) {
