@@ -12,10 +12,10 @@ import React, {
   useState
 } from "react";
 import { useResourceContext } from "react-admin";
-import { useController } from "react-hook-form";
 import { useParams } from "react-router-dom";
 
-import { useTableData } from "@/components/elements/Inputs/FinancialTableInput/useTableData";
+import { DataMutationCallback, useTableData } from "@/components/elements/Inputs/FinancialTableInput/useTableData";
+import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
@@ -42,13 +42,13 @@ import TextArea from "../textArea/TextArea";
 import FinancialTableInput from "./FinancialTableInput";
 import {
   CURRENT_RATIO_COLUMNS,
-  CurrentRatioData,
   DOCUMENTATION_COLUMNS,
+  DocumentationData,
+  FinancialIndicatorTableData,
   FinancialRow,
   ForProfitAnalysisData,
   HandleChangePayload,
   NON_PROFILE_ANALYSIS_COLUMNS,
-  NonProfitAnalysisData,
   PROFIT_ANALYSIS_COLUMNS,
   RHFFinancialIndicatorsDataTableProps,
   useDebouncedChange
@@ -62,43 +62,43 @@ type SelectFileContext = {
   rowIndex: number;
 };
 
-const handleChange = (
-  payload: HandleChangePayload,
-  setData: React.Dispatch<React.SetStateAction<any>>,
+const handleChange = <K extends keyof FinancialIndicatorTableData>(
+  type: K,
+  { value, row, cell }: HandleChangePayload,
+  updateData: (mutator: DataMutationCallback) => void,
   columnMap: string[],
   selectCurrency?: any
 ) => {
-  const { value, row, cell } = payload;
   const columnKey = columnMap[cell];
 
   if (!columnKey || row < 0) return;
 
-  setData((prev: any) => {
-    const updated = [...prev];
-    const currentRow = { ...updated[row], [columnKey]: value };
+  updateData(current => {
+    const updatedRow = { ...current[type][row], [columnKey]: value } as FinancialIndicatorTableData[K][number];
 
-    const lowerKeys = Object.keys(currentRow).map(k => k.toLowerCase());
+    const lowerKeys = Object.keys(updatedRow).map(k => k.toLowerCase());
 
     if (lowerKeys.includes("revenue") && lowerKeys.includes("expenses") && lowerKeys.includes("profit")) {
-      const revenue = Number(currentRow.revenue ?? 0);
-      const expenses = Number(currentRow.expenses ?? 0);
+      const revenue = Number(updatedRow.revenue ?? 0);
+      const expenses = Number(updatedRow.expenses ?? 0);
       const iso = String(selectCurrency ?? "");
       const sym = getCurrencySymbolPrefix(iso);
       const profitNum = revenue - expenses;
       const num = formatFinancialAmount(profitNum, iso);
-      currentRow.profit = sym ? `${sym} ${num}` : num;
+      updatedRow.profit = sym ? `${sym} ${num}` : num;
     }
 
     if (lowerKeys.includes("currentassets") && lowerKeys.includes("currentliabilities")) {
-      const assets = Number(currentRow.currentAssets ?? 0);
-      const liabilities = Number(currentRow.currentLiabilities ?? 0);
+      const assets = Number(updatedRow.currentAssets ?? 0);
+      const liabilities = Number(updatedRow.currentLiabilities ?? 0);
       const iso = String(selectCurrency ?? "");
-      currentRow.currentRatio =
+      updatedRow.currentRatio =
         liabilities !== 0 ? (assets / liabilities).toLocaleString(getLocaleForIsoCurrency(iso)) : "0";
     }
 
-    updated[row] = currentRow;
-    return updated;
+    const updatedType = [...current[type]];
+    updatedType[row] = updatedRow;
+    return { ...current, [type]: updatedType };
   });
 };
 
@@ -107,11 +107,10 @@ const handleChange = (
  * @returns React Hook Form Ready FinancialIndicator Component
  */
 const RHFFinancialIndicatorsDataTable = forwardRef(
-  ({ onChangeCapture, ...props }: PropsWithChildren<RHFFinancialIndicatorsDataTableProps>, ref) => {
+  (props: PropsWithChildren<RHFFinancialIndicatorsDataTableProps>, ref) => {
     const t = useT();
     const router = useRouter();
     const { id } = useParams<"id">();
-    const { field } = useController(props);
     const { files, addFile, removeFile } = useFiles(true);
     const { collection } = props;
     const orgDetails = useOrgFormDetails();
@@ -120,25 +119,20 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const [resetTable, setResetTable] = useState(0);
     const { openNotification } = useNotificationContext();
 
-    const {
-      forProfitAnalysisData,
-      setForProfitAnalysisData,
-      nonProfitAnalysisData,
-      setNonProfitAnalysisData,
-      currentRatioData,
-      setCurrentRatioData,
-      documentationData,
-      setDocumentationData,
-      selectCurrency,
-      setSelectCurrency,
-      selectFinancialMonth,
-      setSelectFinancialMonth
-    } = useTableData(props);
+    const { data, updateData, selectCurrency, setSelectCurrency, selectFinancialMonth, setSelectFinancialMonth } =
+      useTableData(props);
 
     // UUID is filled in with override in the call to uploadFile
     const uploadFile = useUploadFile({
       pathParams: { entity: "financialIndicators", collection: "documentation", uuid: "" }
     });
+
+    const setDocumentationData = useCallback(
+      (callback: (prev: DocumentationData[]) => DocumentationData[]) => {
+        updateData(previous => ({ ...previous, documentationData: callback(previous.documentationData) }));
+      },
+      [updateData]
+    );
 
     const onSelectFile = useCallback(
       async (file: File, context: SelectFileContext) => {
@@ -179,7 +173,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             onSuccess: successFile => {
               addFile(successFile);
               updateDocumentation(successFile);
-              onChangeCapture?.();
             },
 
             onError: (errorFile, errorMessage) => {
@@ -196,7 +189,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           urlVariablesOverride: { pathParams: { uuid: context.uuid } }
         });
       },
-      [addFile, onChangeCapture, openNotification, setDocumentationData, t, uploadFile]
+      [addFile, openNotification, setDocumentationData, t, uploadFile]
     );
 
     const onDeleteFile = useCallback(
@@ -257,7 +250,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = PROFIT_ANALYSIS_COLUMNS[columnOrderIndex];
             const [tempValue, setTempValue] = useState(() =>
               formatFinancialAmount(
-                Number((forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? 0),
+                Number((data.forProfitAnalysisData[row.index] as ForProfitAnalysisData)?.[columnKey] ?? 0),
                 String(selectCurrency)
               )
             );
@@ -269,8 +262,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 if (parsed === null && String(value).trim() === "") return;
                 if (parsed === null) return;
                 handleChange(
+                  "forProfitAnalysisData",
                   { value: parsed, row: row.index, cell: columnOrderIndex },
-                  setForProfitAnalysisData,
+                  updateData,
                   PROFIT_ANALYSIS_COLUMNS,
                   selectCurrency
                 );
@@ -323,7 +317,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             const [tempValue, setTempValue] = useState(() =>
               formatFinancialAmount(
-                Number((forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? 0),
+                Number(data.forProfitAnalysisData[row.index]?.[columnKey] ?? 0),
                 String(selectCurrency)
               )
             );
@@ -335,8 +329,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 if (parsed === null && String(value).trim() === "") return;
                 if (parsed === null) return;
                 handleChange(
+                  "forProfitAnalysisData",
                   { value: parsed, row: row.index, cell: columnOrderIndex },
-                  setForProfitAnalysisData,
+                  updateData,
                   PROFIT_ANALYSIS_COLUMNS,
                   selectCurrency
                 );
@@ -389,7 +384,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           )
         }
       ],
-      [forProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, setForProfitAnalysisData, t]
+      [data.forProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
     );
 
     const nonProfitAnalysisColumns = useMemo(
@@ -415,7 +410,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             const [tempValue, setTempValue] = useState(() =>
               formatFinancialAmount(
-                Number((nonProfitAnalysisData?.[row.index] as NonProfitAnalysisData)?.[columnKey] ?? 0),
+                Number(data.nonProfitAnalysisData[row.index]?.[columnKey] ?? 0),
                 String(selectCurrency)
               )
             );
@@ -427,8 +422,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 if (parsed === null && String(value).trim() === "") return;
                 if (parsed === null) return;
                 handleChange(
+                  "nonProfitAnalysisData",
                   { value: parsed, row: row.index, cell: columnOrderIndex },
-                  setNonProfitAnalysisData,
+                  updateData,
                   NON_PROFILE_ANALYSIS_COLUMNS,
                   selectCurrency
                 );
@@ -469,7 +465,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           }
         }
       ],
-      [nonProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, setNonProfitAnalysisData, t]
+      [data.nonProfitAnalysisData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
     );
 
     const currentRatioColumns = useMemo(
@@ -494,10 +490,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = CURRENT_RATIO_COLUMNS[columnOrderIndex];
 
             const [tempValue, setTempValue] = useState(() =>
-              formatFinancialAmount(
-                Number((currentRatioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? 0),
-                String(selectCurrency)
-              )
+              formatFinancialAmount(Number(data.currentRatioData[row.index]?.[columnKey] ?? 0), String(selectCurrency))
             );
 
             useDebouncedChange({
@@ -507,8 +500,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 if (parsed === null && String(value).trim() === "") return;
                 if (parsed === null) return;
                 handleChange(
+                  "currentRatioData",
                   { value: parsed, row: row.index, cell: columnOrderIndex },
-                  setCurrentRatioData,
+                  updateData,
                   CURRENT_RATIO_COLUMNS,
                   selectCurrency
                 );
@@ -560,10 +554,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = CURRENT_RATIO_COLUMNS[columnOrderIndex];
 
             const [tempValue, setTempValue] = useState(() =>
-              formatFinancialAmount(
-                Number((currentRatioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? 0),
-                String(selectCurrency)
-              )
+              formatFinancialAmount(Number(data.currentRatioData[row.index]?.[columnKey] ?? 0), String(selectCurrency))
             );
 
             useDebouncedChange({
@@ -573,8 +564,9 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 if (parsed === null && String(value).trim() === "") return;
                 if (parsed === null) return;
                 handleChange(
+                  "currentRatioData",
                   { value: parsed, row: row.index, cell: columnOrderIndex },
-                  setCurrentRatioData,
+                  updateData,
                   CURRENT_RATIO_COLUMNS,
                   selectCurrency
                 );
@@ -627,7 +619,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
           )
         }
       ],
-      [currentRatioData, props.formHook, props.name, props.required, selectCurrency, setCurrentRatioData, t]
+      [data.currentRatioData, props.formHook, props.name, props.required, selectCurrency, t, updateData]
     );
 
     const documentationColumns = useMemo(
@@ -652,17 +644,17 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
 
             const [tempValue, setTempValue] = useState<string>(
-              (documentationData?.[row.index]?.[columnKey] as string) ?? ""
+              (data.documentationData[row.index]?.[columnKey] as string) ?? ""
             );
 
             const hasFocus = useRef(false);
 
             useEffect(() => {
               if (!hasFocus.current) {
-                setTempValue((documentationData?.[row.index]?.[columnKey] as string) ?? "");
+                setTempValue((data.documentationData[row.index]?.[columnKey] as string) ?? "");
               }
               // eslint-disable-next-line react-hooks/exhaustive-deps
-            }, [documentationData, row.index, columnKey]);
+            }, [data.documentationData, row.index, columnKey]);
 
             const handleFocus = () => {
               hasFocus.current = true;
@@ -670,15 +662,14 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             const handleBlur = () => {
               hasFocus.current = false;
-              const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
+              const previousValue = data.documentationData[row.index]?.[columnKey] ?? "";
               if (tempValue !== previousValue) {
                 handleChange(
+                  "documentationData",
                   { value: tempValue, row: row.index, cell: columnOrderIndex },
-                  setDocumentationData,
+                  updateData,
                   DOCUMENTATION_COLUMNS
                 );
-                props.formHook?.reset(props.formHook?.getValues());
-                onChangeCapture?.();
               }
             };
 
@@ -708,16 +699,16 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             );
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
             const [tempValue, setTempValue] = useState(
-              (documentationData?.[row.index]?.[columnKey] as number | string) ?? ""
+              (data.documentationData[row.index]?.[columnKey] as number | string) ?? ""
             );
             const hasFocus = useRef(false);
 
             useEffect(() => {
               if (!hasFocus.current) {
-                setTempValue((documentationData?.[row.index]?.[columnKey] as number) ?? "");
+                setTempValue((data.documentationData[row.index]?.[columnKey] as number) ?? "");
               }
               // eslint-disable-next-line react-hooks/exhaustive-deps
-            }, [documentationData, row.index, columnKey]);
+            }, [data.documentationData, row.index, columnKey]);
 
             const handleFocus = () => {
               hasFocus.current = true;
@@ -725,24 +716,23 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
 
             const handleBlur = () => {
               hasFocus.current = false;
-              const previousValue = documentationData?.[row.index]?.[columnKey] ?? "";
+              const previousValue = data.documentationData[row.index]?.[columnKey] ?? "";
               if (tempValue !== previousValue) {
                 if (tempValue === 0 || tempValue === null || tempValue === "") {
                   handleChange(
+                    "documentationData",
                     { value: null, row: row.index, cell: columnOrderIndex },
-                    setDocumentationData,
+                    updateData,
                     DOCUMENTATION_COLUMNS
                   );
-                  onChangeCapture?.();
                   return;
                 }
                 handleChange(
+                  "documentationData",
                   { value: tempValue, row: row.index, cell: columnOrderIndex },
-                  setDocumentationData,
+                  updateData,
                   DOCUMENTATION_COLUMNS
                 );
-                props.formHook?.reset(props.formHook?.getValues());
-                onChangeCapture?.();
               }
             };
 
@@ -773,11 +763,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             const columnKey = DOCUMENTATION_COLUMNS[columnOrderIndex];
             const rowIndex = row.index;
 
-            const files = toArray(documentationData?.[rowIndex]?.[columnKey] as UploadedFile | UploadedFile[]);
+            const files = toArray(data.documentationData[rowIndex]?.[columnKey] as UploadedFile | UploadedFile[]);
 
             // Check if this year has documentation entries but no files uploaded
-            const hasDocumentationEntry =
-              documentationData?.[rowIndex] && documentationData[rowIndex].year === row.original.year;
+            const hasDocumentationEntry = data.documentationData[rowIndex]?.year === row.original.year;
             const hasFiles = files && files.length > 0;
             const showError = hasDocumentationEntry && !hasFiles;
 
@@ -791,6 +780,8 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               });
             };
 
+            console.log("RENDERING ROW", { id: row.id });
+
             return (
               <InputWrapper
                 error={
@@ -802,25 +793,27 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                     : undefined
                 }
               >
-                <FileInput
-                  key={rowIndex}
-                  files={files}
-                  onDelete={file =>
-                    handleDeleteFile(file, {
-                      collection: "documentation",
-                      year: row.original.year,
-                      field: columnKey,
-                      rowIndex: row.index
-                    })
-                  }
-                  onChange={newFiles => newFiles.forEach(handleSelectFile)}
-                />
+                <LoadingContainer loading={!isNaN(Number(row.id))}>
+                  <FileInput
+                    key={rowIndex}
+                    files={files}
+                    onDelete={file =>
+                      handleDeleteFile(file, {
+                        collection: "documentation",
+                        year: row.original.year,
+                        field: columnKey,
+                        rowIndex: row.index
+                      })
+                    }
+                    onChange={newFiles => newFiles.forEach(handleSelectFile)}
+                  />
+                </LoadingContainer>
               </InputWrapper>
             );
           }
         }
       ],
-      [documentationData, handleDeleteFile, onChangeCapture, onSelectFile, props.formHook, setDocumentationData, t]
+      [data.documentationData, handleDeleteFile, onSelectFile, t, updateData]
     );
 
     useEffect(() => {
@@ -836,22 +829,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
       () => resource === "financialReport" || router.query.entityName == "financial-reports",
       [resource, router.query.entityName]
     );
-
-    useEffect(() => {}, [
-      forProfitAnalysisData,
-      nonProfitAnalysisData,
-      currentRatioData,
-      documentationData,
-      selectCurrency,
-      selectFinancialMonth,
-      props.formHook,
-      props.name,
-      id,
-      router.query.uuid,
-      orgDetails?.uuid,
-      collection,
-      field
-    ]);
 
     const syncDocumentationTable = useCallback(() => {
       const inputs = document.querySelectorAll('[data-sync-blur="documentation"]');
@@ -901,7 +878,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 "Revenue is defined as the total amount of money your organization earns or receives during the financial period, before expenses are deducted. This may include sales income, service fees, grants, contracts, donations, or other sources of income.<br><br>Expenses are defined as the total costs your organization incurs during the financial period to operate and carry out its activities, including staff costs, operational costs, program costs, and taxes (if applicable).<br><br>Profit is defined as revenue minus expenses for the financial period.<br><br>Please ensure the numbers you input in this section match the audited financial statements uploaded below."
               )}
               tableColumns={forProfitAnalysisColumns}
-              value={forProfitAnalysisData ?? []}
+              value={data.forProfitAnalysisData}
             />
           </div>
         )}
@@ -916,7 +893,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                   : "The budget represents the total amount of money allocated for the organization's operations and activities during the financial period. It includes all planned expenses for program services, administrative costs, and other operational needs."
               )}
               tableColumns={nonProfitAnalysisColumns}
-              value={nonProfitAnalysisData ?? []}
+              value={data.nonProfitAnalysisData}
             />
           </div>
         )}
@@ -929,7 +906,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 "Current assets are defined as: Cash, accounts receivable, inventory, and other assets that are expected to be converted to cash within one year.Current liabilities are defined as: Accounts payable, short-term debt, and other obligations due within one year.Current ratio is defined as: Current assets divided by current liabilities. A ratio above 1.0 indicates the company can pay its short-term obligations."
               )}
               tableColumns={currentRatioColumns}
-              value={currentRatioData ?? []}
+              value={data.currentRatioData}
             />
           </div>
         )}
@@ -945,7 +922,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                 : "Please provide audited financial statements for each year's financial data and add any relevant notes or context about your financial position. If you do not have audited financial records at the time of reporting, you may use unaudited management accounts. However, in the next reporting cycle, you will be required to submit your audited statements."
             )}
             tableColumns={documentationColumns}
-            value={documentationData ?? []}
+            value={data.documentationData}
           />
         </div>
       </InputWrapper>
