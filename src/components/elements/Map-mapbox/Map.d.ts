@@ -1,10 +1,10 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl, { FillLayer, LineLayer } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import { MutableRefObject, RefObject } from "react";
 
 import { MapStyle } from "./MapControls/types";
 
-type LayerStyle = Pick<mapboxgl.Style, "metadata"> & (FillLayer | LineLayer | CircleLayer);
+type LayerStyle = { [key: string]: unknown; metadata?: mapboxgl.Style["metadata"] };
 
 export type LayerWithStyle = LayerStyle;
 

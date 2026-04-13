@@ -28,13 +28,15 @@ const showPolygons = (
       Log.warn(`Layer ${layerName} does not exist.`);
       return;
     }
-    const polygonStatus = style?.metadata?.polygonStatus;
+    const polygonStatus = (style?.metadata as { polygonStatus?: string } | undefined)?.polygonStatus ?? "";
     const uuidFilter = [
       "in",
       ["get", field],
       ["literal", parsedPolygonData?.[polygonStatus] === undefined ? "" : parsedPolygonData[polygonStatus]]
     ];
-    const completeFilter = zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter];
+    const completeFilter = (
+      zoomFilter ? ["all", uuidFilter, [">", ["zoom"], zoomFilter]] : ["all", uuidFilter]
+    ) as mapboxgl.FilterSpecification;
     map.setFilter(layerName, completeFilter);
     map.setLayoutProperty(layerName, "visibility", "visible");
   });
@@ -313,7 +315,9 @@ export const addPolygonCentroidsLayer = (
     map.addImage("pulsing-dot-centroids", pulsingDot, { pixelRatio: 4 });
     map.addSource(layerName, { type: "geojson", data: { type: "FeatureCollection", features } });
 
-    const filter = zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0];
+    const filter = (
+      zoomFilterValue ? ["<=", ["zoom"], zoomFilterValue] : [">=", ["zoom"], 0]
+    ) as mapboxgl.FilterSpecification;
     map.addLayer({
       id: layerName,
       type: "symbol",

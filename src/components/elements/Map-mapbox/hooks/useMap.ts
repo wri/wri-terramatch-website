@@ -1,5 +1,5 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-import mapboxgl from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
 import { useCallback, useRef, useState } from "react";
 import { useShowContext } from "react-admin";
 
@@ -18,7 +18,7 @@ export const useMap = (onSave?: (geojson: any, record: any) => void) => {
   const { setIsUserDrawingEnabled } = useMapAreaContext();
 
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
+  const map = useRef<MapboxMap | null>(null);
   const draw = useRef<MapboxDraw | null>(null);
   const [styleLoaded, setStyleLoaded] = useState(false);
 

@@ -1,5 +1,5 @@
 import { Canvg } from "canvg";
-import { EventData, GeoJSONSourceRaw, Map, MapboxEvent, MapMouseEvent } from "mapbox-gl";
+import mapboxgl, { GeoJSONSourceSpecification, MapMouseEvent } from "mapbox-gl";
 import { useEffect } from "react";
 
 import ImageGalleryPreviewer from "@/components/elements/ImageGallery/ImageGalleryPreviewer";
@@ -8,7 +8,7 @@ import { useMapContext } from "@/context/map.provider";
 import { useModalContext } from "@/context/modal.provider";
 import { toDataURL } from "@/utils/image";
 
-interface ImagesLayerProps extends Omit<GeoJSONSourceRaw, "cluster" | "type"> {
+interface ImagesLayerProps extends Omit<GeoJSONSourceSpecification, "cluster" | "type"> {
   source: string;
   onDeleteImage?: (uuid: string) => void;
 }
@@ -54,13 +54,13 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
 
   useEffect(() => {
     if (!map) return;
-    const onLoadListener = (e: MapboxEvent & EventData) => {
-      const map = e.target;
+    const onLoadListener = () => {
+      const currentMap = map;
 
       // Add a new source from our GeoJSON data and
       // set the 'cluster' option to true. GL-JS will
       // add the point_count property to your source data.
-      map.addSource(source, {
+      currentMap.addSource(source, {
         type: "geojson",
         // Point to GeoJSON data. This example visualizes all M1.0+ earthquakes
         // from 12/22/15 to 1/21/16 as logged by USGS' Earthquake hazards program.
@@ -70,7 +70,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
         clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "clusters",
         type: "circle",
         source,
@@ -94,7 +94,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
         }
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "cluster-count",
         type: "symbol",
         source,
@@ -109,7 +109,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
         }
       });
 
-      map.addLayer({
+      currentMap.addLayer({
         id: "unclustered-point",
         type: "circle",
         source,
@@ -122,7 +122,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
         }
       });
       // Add a layer to use the image to represent the data.
-      map.addLayer({
+      currentMap.addLayer({
         id: "image",
         type: "symbol",
         filter: ["!", ["has", "point_count"]],
@@ -143,7 +143,7 @@ export const ImagesLayer = ({ source, data, onDeleteImage }: ImagesLayerProps) =
   return null;
 };
 
-const loadImage = async (map: Map, imageName: string, svgString: string) => {
+const loadImage = async (map: mapboxgl.Map, imageName: string, svgString: string) => {
   if (!!imageName && !!svgString && !map?.hasImage(imageName)) {
     const marker = new Image();
     const canvas = document.createElement("canvas");

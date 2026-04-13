@@ -27,7 +27,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "draft" },
         type: "line",
@@ -48,7 +48,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "submitted" },
         type: "line",
@@ -69,7 +69,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "approved" },
         type: "line",
@@ -90,7 +90,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "line",
@@ -111,7 +111,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.1
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: "form-polygons" },
         type: "line",
@@ -121,7 +121,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer
+      } as unknown as mapboxgl.LineLayer
     ]
   },
   {
@@ -137,7 +137,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayer,
       {
         metadata: { polygonStatus: DELETED_POLYGONS },
         type: "line",
@@ -147,7 +147,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as mapboxgl.Style & mapboxgl.LineLayer
+      } as unknown as mapboxgl.LineLayer
     ]
   },
   {
@@ -163,7 +163,7 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 9
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayer,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
@@ -172,7 +172,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayer,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
@@ -181,7 +181,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayer,
       {
         metadata: { type: "big-circle" },
         type: "circle",
@@ -191,7 +191,7 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 8
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayer,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
@@ -200,7 +200,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayer,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
@@ -209,7 +209,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as mapboxgl.Style & mapboxgl.CircleLayer
+      } as unknown as mapboxgl.CircleLayer
     ],
     hover: true
   },

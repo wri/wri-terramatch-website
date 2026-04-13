@@ -282,7 +282,7 @@ type AnrPlotOverlayState = {
   clickHandler: ((e: mapboxgl.MapLayerMouseEvent) => void) | null;
   mouseEnterHandler: (() => void) | null;
   mouseLeaveHandler: (() => void) | null;
-  popup: mapboxgl.Popup | null;
+  popup: InstanceType<typeof mapboxgl.Popup> | null;
   popupRoot: Root | null;
   pendingIdleRetry: { fn: () => void } | null;
 };
@@ -434,11 +434,12 @@ export function upsertAnrPlotGeometryOverlay(map: mapboxgl.Map, geojson: unknown
           }
         })
       );
-      state.popup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
+      const popup = new mapboxgl.Popup({ className: "popup-map", closeButton: false })
         .setLngLat(e.lngLat)
         .setDOMContent(popupContent)
         .addTo(map);
-      state.popup.on("close", () => {
+      state.popup = popup;
+      popup.on("close", () => {
         state.popupRoot?.unmount();
         state.popupRoot = null;
         state.popup = null;

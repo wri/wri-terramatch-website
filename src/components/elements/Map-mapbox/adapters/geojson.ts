@@ -20,7 +20,7 @@ export const convertToAcceptedGEOJSON = (geojson: any): any => {
 
 export const convertToGeoJSON = (featureCollection: FeatureCollection) => {
   const { features } = featureCollection;
-  return features.reduce((acc: turfHelper.Feature[], feature) => {
+  return features.reduce((acc: GeoJSON.Feature[], feature) => {
     const { geometry, properties } = feature;
     const coordinates = geometry.coordinates;
     const type = geometry.type;

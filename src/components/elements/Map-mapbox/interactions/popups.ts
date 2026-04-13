@@ -10,9 +10,11 @@ import Log from "@/utils/log";
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
 import type { LayerType, TooltipType } from "../Map.d";
 
-const popupRegistries = new WeakMap<mapboxgl.Map, Record<"POLYGON" | "MEDIA", mapboxgl.Popup[]>>();
+type MapboxPopup = InstanceType<typeof mapboxgl.Popup>;
 
-function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", mapboxgl.Popup[]> {
+const popupRegistries = new WeakMap<mapboxgl.Map, Record<"POLYGON" | "MEDIA", MapboxPopup[]>>();
+
+function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", MapboxPopup[]> {
   if (!popupRegistries.has(map)) {
     popupRegistries.set(map, { POLYGON: [], MEDIA: [] });
   }
@@ -75,18 +77,18 @@ const handleLayerClick = (
   removePopups(map, "POLYGON");
 
   const isCentroidLayer = layerName === LAYERS_NAMES.CENTROIDS;
-  const popupOptions: mapboxgl.PopupOptions = {
+  const popupOptions = {
     className: isCentroidLayer ? "popup-map no-tip" : "popup-map",
     offset: isCentroidLayer
       ? {
-          top: [0, 9],
-          "top-left": [0, 9],
-          "top-right": [0, 9],
-          bottom: [0, -9],
-          "bottom-left": [0, -9],
-          "bottom-right": [0, -9],
-          left: [9, 0],
-          right: [-9, 0]
+          top: [0, 9] as [number, number],
+          "top-left": [0, 9] as [number, number],
+          "top-right": [0, 9] as [number, number],
+          bottom: [0, -9] as [number, number],
+          "bottom-left": [0, -9] as [number, number],
+          "bottom-right": [0, -9] as [number, number],
+          left: [9, 0] as [number, number],
+          right: [-9, 0] as [number, number]
         }
       : 0
   };
@@ -115,7 +117,7 @@ const handleLayerClick = (
   );
 };
 
-export const registerPopup = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA", popup: mapboxgl.Popup): void => {
+export const registerPopup = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA", popup: MapboxPopup): void => {
   getPopupRegistry(map)[key].push(popup);
 };
 

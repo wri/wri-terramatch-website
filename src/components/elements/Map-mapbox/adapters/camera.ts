@@ -1,4 +1,4 @@
-import mapboxgl, { LngLat } from "mapbox-gl";
+import mapboxgl, { LngLat, Map as MapboxMap, Marker as MapboxMarker } from "mapbox-gl";
 
 import Log from "@/utils/log";
 
@@ -15,7 +15,7 @@ const isValidGeographicBBox = (bbox: BBox): boolean => {
 
 export const zoomToBbox = (
   bbox: BBox,
-  map: mapboxgl.Map,
+  map: MapboxMap,
   hasControls: boolean,
   _currentStyle = MapStyle.Satellite
 ): void => {
@@ -33,7 +33,7 @@ export const zoomToBbox = (
   }
 };
 
-export const zoomToCenter = (center: [number, number], zoom: number, map: mapboxgl.Map): void => {
+export const zoomToCenter = (center: [number, number], zoom: number, map: MapboxMap): void => {
   if (map == null || center == null || zoom === undefined) return;
 
   const [lng, lat] = center;
@@ -53,7 +53,7 @@ export const zoomToCenter = (center: [number, number], zoom: number, map: mapbox
     Log.warn("zoomToCenter: error:", error);
   }
 };
-export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat: number }): void => {
+export const addMarkerAndZoom = (map: MapboxMap, location: { lng: number; lat: number }): void => {
   if (map == null) return;
   const { lng, lat } = location;
   const lngLat = new mapboxgl.LngLat(lng, lat);
@@ -63,10 +63,10 @@ export const addMarkerAndZoom = (map: mapboxgl.Map, location: { lng: number; lat
 };
 
 export const addOrUpdateMarkerAndZoom = (
-  map: mapboxgl.Map,
+  map: MapboxMap,
   location: { lng: number; lat: number },
-  marker: mapboxgl.Marker | null
-): mapboxgl.Marker => {
+  marker: MapboxMarker | null
+): MapboxMarker => {
   const { lng, lat } = location;
   const lngLat = new mapboxgl.LngLat(lng, lat);
   const nextMarker = marker == null ? createMarker(lngLat, map) : marker.setLngLat(lngLat);
@@ -75,6 +75,6 @@ export const addOrUpdateMarkerAndZoom = (
   return nextMarker;
 };
 
-export const createMarker = (lngLat: LngLat, map: mapboxgl.Map): mapboxgl.Marker => {
+export const createMarker = (lngLat: LngLat, map: MapboxMap): MapboxMarker => {
   return new mapboxgl.Marker({ color: "#ba5856" }).setLngLat(lngLat).addTo(map);
 };
