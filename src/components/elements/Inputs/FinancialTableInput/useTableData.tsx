@@ -25,25 +25,16 @@ const getValueFromData = (value: any, fieldName: string, fallbackValue: OptionVa
 };
 
 const indicatorsEqual = (aIndicators: FinancialIndicator[], bIndicators: FinancialIndicator[]) => {
-  if (aIndicators.length !== bIndicators.length) {
-    console.log("DIFFERENT LENGTHS");
-    return false;
-  }
+  if (aIndicators.length !== bIndicators.length) return false;
 
   for (const aIndicator of aIndicators) {
     const { uuid, collection, year } = aIndicator;
     const bIndicator =
       (uuid == null ? undefined : bIndicators.find(b => b.uuid === uuid)) ??
       bIndicators.find(b => b.collection === collection && b.year === year);
-    if (bIndicator == null) {
-      console.log("B NOT FOUND", aIndicator);
-      return false;
-    }
+    if (bIndicator == null) return false;
 
-    if (!isEqual(aIndicator, bIndicator)) {
-      console.log("A B NOT EQUAL", { aIndicator, bIndicator });
-      return false;
-    }
+    if (!isEqual(aIndicator, bIndicator)) return false;
   }
 
   return true;

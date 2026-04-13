@@ -780,8 +780,6 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               });
             };
 
-            console.log("RENDERING ROW", { id: row.id });
-
             return (
               <InputWrapper
                 error={

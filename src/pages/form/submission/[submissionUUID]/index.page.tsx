@@ -83,7 +83,6 @@ const SubmissionPage = () => {
 
   const onChange = useCallback(
     (data: Dictionary<any>) => {
-      console.log("ON CHANGE");
       updateSubmission({ answers: normalizedFormData(data, fieldsProvider) });
     },
     [fieldsProvider, updateSubmission]
