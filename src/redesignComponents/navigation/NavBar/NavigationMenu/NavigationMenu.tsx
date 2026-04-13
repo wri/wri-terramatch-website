@@ -1,4 +1,4 @@
-﻿import { Box, Flex, MenuItem, Text } from "@chakra-ui/react";
+﻿import { Box, Flex, Menu, MenuItem, Text } from "@chakra-ui/react";
 import { FC, ReactNode, useState } from "react";
 
 import { CheckIcon } from "@/redesignComponents/foundations/Icons";
@@ -42,15 +42,7 @@ export const NavigationMenuItemRow: FC<NavigationMenuItemRowProps> = ({
 }) => {
   if (variant === "mega") {
     return (
-      <Flex
-        pb={2}
-        gap={2}
-        alignItems="baseline"
-        {...interactiveRowStyles}
-        onClick={onClick}
-        borderBottom={showBorder ? "1px solid" : "none"}
-        borderBottomColor="neutral.300"
-      >
+      <Flex pb={2} gap={2} alignItems="baseline" {...interactiveRowStyles} onClick={onClick}>
         {item.icon}
         <Box>
           <Text textStyle="400" color="neutral.900">
@@ -68,7 +60,7 @@ export const NavigationMenuItemRow: FC<NavigationMenuItemRowProps> = ({
 
   if (variant === "list") {
     return (
-      <Flex justifyContent="space-between" alignItems="center" {...interactiveRowStyles} onClick={onClick}>
+      <Flex justifyContent="space-between" w="full" alignItems="center" {...interactiveRowStyles} onClick={onClick}>
         <Text textStyle="400" color="neutral.900" fontSize="14px" fontWeight={isSelected ? "700" : "400"}>
           {item.label}
         </Text>
@@ -111,34 +103,36 @@ const NavigationMenu: FC<NavigationMenuProps> = ({ variant, items, selectedIndex
   };
 
   return (
-    <MenuContainer minW={variant === "mega" ? "280px" : "200px"}>
-      {items.map((item, index) => (
-        <TypedMenuItem
-          key={index}
-          value={String(index)}
-          pb={variant === "mega" ? 2 : undefined}
-          borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
-          borderColor="neutral.300"
-          _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
-          _highlighted={{
-            outline: "2px solid",
-            outlineColor: "primary.700",
-            backgroundColor: "neutral.100"
-          }}
-          cursor="pointer"
-          onClick={() => onSelect?.(index)}
-        >
-          <NavigationMenuItemRow
+    <Menu.Root>
+      <MenuContainer minW={variant === "mega" ? "280px" : "200px"}>
+        {items.map((item, index) => (
+          <TypedMenuItem
             key={index}
-            variant={variant}
-            item={item}
-            isSelected={index === selected}
-            showBorder={variant === "mega" && index !== items.length - 1}
-            onClick={() => handleSelect(index)}
-          />
-        </TypedMenuItem>
-      ))}
-    </MenuContainer>
+            value={String(index)}
+            pb={variant === "mega" ? 2 : undefined}
+            borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+            borderColor="neutral.300"
+            _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
+            _highlighted={{
+              outline: "2px solid",
+              outlineColor: "primary.700",
+              backgroundColor: "neutral.100"
+            }}
+            cursor="pointer"
+            onClick={() => onSelect?.(index)}
+          >
+            <NavigationMenuItemRow
+              key={index}
+              variant={variant}
+              item={item}
+              isSelected={index === selected}
+              showBorder={variant === "mega" && index !== items.length - 1}
+              onClick={() => handleSelect(index)}
+            />
+          </TypedMenuItem>
+        ))}
+      </MenuContainer>
+    </Menu.Root>
   );
 };
 
