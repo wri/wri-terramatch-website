@@ -15,7 +15,11 @@ import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FormEntity, FormModelType, useUpdateRequest } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
-import WizardFormProvider, { FormModel, useApiFieldsProvider } from "@/context/wizardForm.provider";
+import WizardFormProvider, {
+  FormModel,
+  useApiFieldsProvider,
+  useV2OrgFormDetails
+} from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -104,6 +108,8 @@ const InformationTab: FC<IProps> = props => {
     [fieldsProvider]
   );
 
+  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(record?.organisationUuid ?? undefined);
+
   const tabTitle = useMemo(() => {
     switch (props.type) {
       case "projects":
@@ -127,7 +133,7 @@ const InformationTab: FC<IProps> = props => {
     }
   }, [props.type]);
 
-  const isLoading = ctxLoading || queryLoading || !providerLoaded || record == null;
+  const isLoading = ctxLoading || queryLoading || !providerLoaded || record == null || !orgDetailsLoaded;
   return isLoading ? null : (
     <TabbedShowLayout.Tab label={tabTitle} {...props}>
       <Grid spacing={2} container>
@@ -177,7 +183,7 @@ const InformationTab: FC<IProps> = props => {
           ) : (
             <Stack gap={4}>
               <Card sx={{ padding: 4 }} className="!shadow-none">
-                <WizardFormProvider fieldsProvider={fieldsProvider} models={model}>
+                <WizardFormProvider fieldsProvider={fieldsProvider} models={model} orgDetails={orgDetails}>
                   <List
                     className={classNames("space-y-12", {
                       "map-span-3": props.type === "sites"

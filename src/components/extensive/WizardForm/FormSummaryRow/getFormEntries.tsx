@@ -71,7 +71,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
         ? getFormEntries(fieldsProvider, props, t, undefined, entityPolygonData, bbox, mapFunctions, record, orgDetails)
         : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded]
+    [externalSourcesLoaded, props, t, entityPolygonData, bbox, externalSourcesLoaded, orgDetails, fieldsProvider]
   );
 };
 

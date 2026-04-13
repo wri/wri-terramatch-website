@@ -106,6 +106,9 @@ export function shouldFormatFinancialNumberField(field: FieldDefinition): boolea
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }
+  if (field.inputType === "number-currency") {
+    return true;
+  }
   if (field.linkedFieldKey?.includes("lat-") || field.linkedFieldKey?.includes("long-")) {
     return false;
   }
