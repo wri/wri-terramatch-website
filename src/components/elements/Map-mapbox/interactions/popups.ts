@@ -108,6 +108,10 @@ const handleLayerClick = (
     createElement(PopupComponent, {
       feature,
       popup: newPopup,
+      layerName,
+      dashboardMode,
+      setFilters,
+      dashboardCountries,
       setPolygonFromMap,
       sitePolygonData,
       type,
@@ -233,6 +237,8 @@ export const addPopupToLayer = (
     }
     handlers[targetLayer.id] = clickHandler;
     map.on("click", targetLayer.id, clickHandler);
-    map.on("touchend", targetLayer.id, clickHandler);
+    if (name !== LAYERS_NAMES.CENTROIDS) {
+      map.on("touchend", targetLayer.id, clickHandler);
+    }
   });
 };

@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
 import { Provider as ReduxProvider } from "react-redux";
 
 import { LAYERS_NAMES } from "@/constants/layers";
@@ -14,17 +13,10 @@ import PopupMapImage from "./PopupMapImage";
 const client = new QueryClient();
 
 export const DashboardPopup = (event: any) => {
-  const { popupType, popupData, items, label, isLoading, isoCountry, itemUuid, layerName, projectFullDto } =
-    usePopupData(event);
-  const { addPopupToMap, removePopupFromMap, setFilters, dashboardCountries, dashboardMode } = event;
+  const { popupType, popupData, items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
+  const { popup, setFilters, dashboardCountries, dashboardMode } = event;
   const router = useRouter();
   const { closeModal } = useModalContext();
-
-  useEffect(() => {
-    if (!isLoading && (items.length > 0 || popupData)) {
-      addPopupToMap();
-    }
-  }, [isLoading, items, popupData, addPopupToMap]);
 
   const learnMoreEvent = () => {
     if (isoCountry && layerName === LAYERS_NAMES.WORLD_COUNTRIES) {
@@ -58,7 +50,7 @@ export const DashboardPopup = (event: any) => {
       }
     }
 
-    removePopupFromMap();
+    popup?.remove();
 
     if (dashboardMode === "modal") {
       closeModal("modalExpand");

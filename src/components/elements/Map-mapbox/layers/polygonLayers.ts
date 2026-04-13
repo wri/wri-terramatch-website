@@ -80,6 +80,10 @@ export const addGeojsonSourceToLayer = (
   const { name, styles } = layer;
   if (map == null || centroids == null || centroids.length === 0) return;
 
+  const keys = getCentroidSourceKeys(map);
+  const cacheKey = `${existsPolygons ? "1" : "0"}:${computeCentroidsFingerprint(centroids)}:${zoomFilterValue ?? "n"}`;
+  if (map.getSource(name) != null && keys[name] === cacheKey) return;
+
   if (map.getSource(name)) {
     styles?.forEach((_: unknown, index: number) => {
       const layerId = `${name}-${index}`;
@@ -88,7 +92,10 @@ export const addGeojsonSourceToLayer = (
     map.removeSource(name);
   }
 
-  if (existsPolygons) return;
+  if (existsPolygons) {
+    keys[name] = cacheKey;
+    return;
+  }
 
   const features: GeoJSON.Feature[] = centroids.map((centroid: any) => ({
     type: "Feature",
@@ -108,7 +115,31 @@ export const addGeojsonSourceToLayer = (
   styles?.forEach((style: LayerWithStyle, index: number) => {
     addLayerGeojsonStyle(map, name, name, style, index);
   });
+  keys[name] = cacheKey;
 };
+
+const centroidSourceKeys = new WeakMap<mapboxgl.Map, Record<string, string>>();
+
+function getCentroidSourceKeys(map: mapboxgl.Map): Record<string, string> {
+  if (!centroidSourceKeys.has(map)) centroidSourceKeys.set(map, {});
+  return centroidSourceKeys.get(map)!;
+}
+
+function computeCentroidsFingerprint(centroids: DashboardGetProjectsData[]): string {
+  let hash = 2166136261;
+  for (const c of centroids) {
+    const centroidData = (c as any)?.centroid;
+    const id = c.uuid ?? "";
+    const lng = String(c.long ?? centroidData?.long ?? "");
+    const lat = String(c.lat ?? centroidData?.lat ?? "");
+    const value = `${id}|${lng}|${lat}`;
+    for (let i = 0; i < value.length; i++) {
+      hash ^= value.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+  }
+  return `${hash >>> 0}:${centroids.length}`;
+}
 
 // Per-instance registry: track last cacheKey per source so we only re-create the
 // tile source when polygon geometry actually changes, not on every render.
