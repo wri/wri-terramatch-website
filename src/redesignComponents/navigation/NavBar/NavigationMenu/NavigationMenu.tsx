@@ -1,7 +1,9 @@
-﻿import { Box, Flex, Text } from "@chakra-ui/react";
+﻿import { Box, Flex, MenuItem, Text } from "@chakra-ui/react";
 import { FC, ReactNode, useState } from "react";
 
 import { CheckIcon } from "@/redesignComponents/foundations/Icons";
+
+import { MenuItemTyped } from "../NavbarMenu/NavbarMenu";
 
 export interface NavigationMenuItem {
   label: string;
@@ -28,6 +30,8 @@ const interactiveRowStyles = {
   cursor: "pointer",
   transition: "background 0.15s"
 } as const;
+
+const TypedMenuItem = MenuItem as FC<MenuItemTyped>;
 
 export const NavigationMenuItemRow: FC<NavigationMenuItemRowProps> = ({
   variant,
@@ -109,14 +113,30 @@ const NavigationMenu: FC<NavigationMenuProps> = ({ variant, items, selectedIndex
   return (
     <MenuContainer minW={variant === "mega" ? "280px" : "200px"}>
       {items.map((item, index) => (
-        <NavigationMenuItemRow
+        <TypedMenuItem
           key={index}
-          variant={variant}
-          item={item}
-          isSelected={index === selected}
-          showBorder={variant === "mega" && index !== items.length - 1}
-          onClick={() => handleSelect(index)}
-        />
+          value={String(index)}
+          pb={variant === "mega" ? 2 : undefined}
+          borderBottom={variant === "mega" && index !== items.length - 1 ? "1px solid" : "none"}
+          borderColor="neutral.300"
+          _hover={{ backgroundColor: "primary.500/20", outline: "none" }}
+          _highlighted={{
+            outline: "2px solid",
+            outlineColor: "primary.700",
+            backgroundColor: "neutral.100"
+          }}
+          cursor="pointer"
+          onClick={() => onSelect?.(index)}
+        >
+          <NavigationMenuItemRow
+            key={index}
+            variant={variant}
+            item={item}
+            isSelected={index === selected}
+            showBorder={variant === "mega" && index !== items.length - 1}
+            onClick={() => handleSelect(index)}
+          />
+        </TypedMenuItem>
       ))}
     </MenuContainer>
   );
