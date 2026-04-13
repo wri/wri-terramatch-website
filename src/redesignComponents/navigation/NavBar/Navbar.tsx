@@ -61,7 +61,7 @@ const Navbar: FC<NavbarProps> = ({
             <>
               <Button
                 variant="outline"
-                className="hover:!border-theme-primary-800 hover:!text-theme-primary-800 !border-white !text-white"
+                className="!border-white !text-white hover:!border-theme-primary-800 hover:!text-theme-primary-800"
                 size="small"
               >
                 Create account
