@@ -104,11 +104,11 @@ const NavbarMenu: FC<NavbarMenuProps> = ({
         <Button
           disabled={disabled}
           className={twMerge(
-            "!text-theme-neutral-100 !h-fit w-fit items-center !gap-2 !rounded-none !px-4 !py-3",
+            "!h-fit w-fit items-center !gap-2 !rounded-none !px-4 !py-3 !text-theme-neutral-100",
             "hover:!bg-theme-primary-700",
             "active:!bg-theme-primary-800",
             "data-[state=open]:!bg-theme-primary-800",
-            "focus-within:ring-theme-primary-700 focus-within:ring-2 focus-within:ring-offset-2",
+            "focus-within:ring-2 focus-within:ring-theme-primary-700 focus-within:ring-offset-2",
             "focus:outline-none",
             "disabled:!text-neutral-200",
             disabled && "cursor-default"
