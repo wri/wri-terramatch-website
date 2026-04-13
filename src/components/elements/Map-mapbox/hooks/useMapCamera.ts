@@ -60,6 +60,7 @@ export function useMapCamera({
     }
     if (wasPolygonDrawerOpenRef.current === true && isPolygonDrawerOpen === false) {
       suppressNextAutoCameraMoveRef.current = true;
+      suppressAutoCameraUntilPolygonSelectionRef.current = true;
     }
     wasPolygonDrawerOpenRef.current = isPolygonDrawerOpen;
   }, [polygonFromMap?.isOpen, polygonFromMap?.uuid]);
