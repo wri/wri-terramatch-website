@@ -117,12 +117,12 @@ export function formatFinancialData(
   const documentationCollections = ["description-documents"];
 
   const groupedData: {
-    profitAnalysisData: Record<number, Record<string, FinancialIndicator>>;
+    forProfitAnalysisData: Record<number, Record<string, FinancialIndicator>>;
     nonProfitAnalysisData: Record<number, Record<string, FinancialIndicator>>;
     currentRatioData: Record<number, Record<string, FinancialIndicator>>;
     documentationData: Record<number, FinancialIndicator>;
   } = {
-    profitAnalysisData: {},
+    forProfitAnalysisData: {},
     nonProfitAnalysisData: {},
     currentRatioData: {},
     documentationData: {}
@@ -134,8 +134,8 @@ export function formatFinancialData(
       if (year == null || collection == null) return;
 
       if (profitCollections.includes(collection)) {
-        if (groupedData.profitAnalysisData[year] == null) groupedData.profitAnalysisData[year] = {};
-        groupedData.profitAnalysisData[year][collection] = item;
+        if (groupedData.forProfitAnalysisData[year] == null) groupedData.forProfitAnalysisData[year] = {};
+        groupedData.forProfitAnalysisData[year][collection] = item;
       } else if (nonProfitCollections.includes(collection)) {
         if (!groupedData.nonProfitAnalysisData[year]) groupedData.nonProfitAnalysisData[year] = {};
         groupedData.nonProfitAnalysisData[year][collection] = item;
@@ -160,7 +160,7 @@ export function formatFinancialData(
   return {
     forProfitAnalysisData:
       years?.map(year => {
-        const row: Dictionary<FinancialIndicator> = groupedData.profitAnalysisData[year] ?? {};
+        const row: Dictionary<FinancialIndicator> = groupedData.forProfitAnalysisData[year] ?? {};
         return {
           uuid: row.revenue?.uuid ?? row.expenses?.uuid ?? row.profit?.uuid ?? uuidv4(),
           year,
