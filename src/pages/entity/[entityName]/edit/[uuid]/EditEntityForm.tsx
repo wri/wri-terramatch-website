@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
-import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
@@ -144,10 +143,15 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     [fieldsProvider, updateEntityAnswers]
   );
 
-  if (loadFailure != null || formLoadFailure != null) {
+  const hasLoadFailure = loadFailure != null || formLoadFailure != null;
+
+  useEffect(() => {
+    if (!hasLoadFailure) return;
     Log.error("Form data load failed", { loadFailure, formLoadFailure });
-    return notFound();
-  }
+    router.replace("/home");
+  }, [formLoadFailure, hasLoadFailure, loadFailure, router]);
+
+  if (hasLoadFailure) return null;
 
   return (
     <LoadingContainer loading={isLoading || !providerLoaded || orgLoading || !entityLoaded}>

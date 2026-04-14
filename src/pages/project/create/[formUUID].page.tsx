@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -31,9 +30,12 @@ const ProjectIntroPage = () => {
     "Project creation failed"
   );
 
-  if (loadFailure != null) {
-    return notFound();
-  }
+  useEffect(() => {
+    if (loadFailure == null) return;
+    router.replace("/home");
+  }, [loadFailure, router]);
+
+  if (loadFailure != null) return null;
 
   return (
     <BackgroundLayout>
