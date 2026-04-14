@@ -241,7 +241,7 @@ export const useMonitoredData = (entity?: EntityName, entity_uuid?: string) => {
     };
   });
 
-  const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key === "approved")?.count;
+  const totalPolygonsApproved = headerBarPolygonStatus.find(item => item.status_key == "approved")?.count;
 
   const { data: missingPolygonsData } = useAllSitePolygons({
     entityName: entity as "sites" | "projects",
