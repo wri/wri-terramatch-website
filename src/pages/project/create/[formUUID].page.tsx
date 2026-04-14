@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 import WizardFormIntro from "@/components/extensive/WizardForm/WizardFormIntro";
 import BackgroundLayout from "@/components/generic/Layout/BackgroundLayout";
@@ -9,6 +9,7 @@ import ContentLayout from "@/components/generic/Layout/ContentLayout";
 import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { useCreateProject } from "@/connections/Entity";
 import { useForm } from "@/connections/Form";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 
 /**
  * Use this route to create a project with a given form_uuid
@@ -16,6 +17,8 @@ import { useForm } from "@/connections/Form";
 const ProjectIntroPage = () => {
   const t = useT();
   const router = useRouter();
+  const { openToast } = useToastContext();
+  const loadFailureHandled = useRef(false);
   const formUUID = router.query.formUUID as string;
 
   const [, { data: form, loadFailure }] = useForm({ id: formUUID, enabled: formUUID != null });
@@ -31,9 +34,11 @@ const ProjectIntroPage = () => {
   );
 
   useEffect(() => {
-    if (loadFailure == null) return;
+    if (loadFailure == null || loadFailureHandled.current) return;
+    loadFailureHandled.current = true;
+    openToast(t("We couldn't load this form."), ToastType.ERROR);
     router.replace("/home");
-  }, [loadFailure, router]);
+  }, [loadFailure, openToast, router, t]);
 
   if (loadFailure != null) return null;
 

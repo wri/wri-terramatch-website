@@ -1,7 +1,7 @@
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
@@ -9,6 +9,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { EntityFullDto, pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import {
   DisturbanceReportFullDto,
   FinancialReportFullDto,
@@ -42,6 +43,8 @@ const isTaskReport = (formEntityName: FormEntity, entity: EntityFullDto): entity
 const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
+  const { openToast } = useToastContext();
+  const loadFailureHandled = useRef(false);
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
 
   const {
@@ -146,10 +149,12 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const hasLoadFailure = loadFailure != null || formLoadFailure != null;
 
   useEffect(() => {
-    if (!hasLoadFailure) return;
+    if (!hasLoadFailure || loadFailureHandled.current) return;
+    loadFailureHandled.current = true;
     Log.error("Form data load failed", { loadFailure, formLoadFailure });
+    openToast(t("We couldn't load this form."), ToastType.ERROR);
     router.replace("/home");
-  }, [formLoadFailure, hasLoadFailure, loadFailure, router]);
+  }, [formLoadFailure, hasLoadFailure, loadFailure, openToast, router, t]);
 
   if (hasLoadFailure) return null;
 
