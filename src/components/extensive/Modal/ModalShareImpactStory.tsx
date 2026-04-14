@@ -4,6 +4,7 @@ import { twMerge as tw } from "tailwind-merge";
 
 import Button from "@/components/elements/Button/Button";
 import Text from "@/components/elements/Text/Text";
+import Log from "@/utils/log";
 
 import Icon, { IconNames } from "../Icon/Icon";
 import IconSocialImpactStory from "../Icon/IconSocialImpactStory";
@@ -30,7 +31,7 @@ const ModalShareImpactStory: FC<ModalShareImpactStoryProps> = ({
       onCopySuccess();
       onClose();
     } catch (err) {
-      console.error("Failed to copy:", err);
+      Log.error("Failed to copy:", err);
     }
   }, [shareUrl, onCopySuccess, onClose]);
 

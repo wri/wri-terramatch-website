@@ -10,6 +10,7 @@ import { downloadProjectSitePolygonsGeoJson } from "@/components/elements/Map-ma
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework } from "@/context/framework.provider";
 import { fetchGetV2ProjectsUUIDENTITYExport } from "@/generated/apiComponents";
+import Log from "@/utils/log";
 import { downloadFileBlob } from "@/utils/network";
 
 const QuickActions: FC = () => {
@@ -27,7 +28,7 @@ const QuickActions: FC = () => {
       try {
         await downloadProjectSitePolygonsGeoJson(record.uuid, record.name, { includeExtendedData: true });
       } catch (error) {
-        console.error("Failed to download project polygons:", error);
+        Log.error("Failed to download project polygons:", error);
       }
     } else {
       // Use V2 API for other exports (CSV reports)
