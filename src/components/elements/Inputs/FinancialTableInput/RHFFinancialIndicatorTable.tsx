@@ -20,7 +20,7 @@ import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } f
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
 import { UploadedFile } from "@/types/common";
@@ -113,7 +113,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const { id } = useParams<"id">();
     const { files, addFile, removeFile } = useFiles(true);
     const { collection } = props;
-    const orgDetails = useOrgFormDetails();
+    const orgDetails = useWizardOrgFormDetails();
     const resource = useResourceContext();
 
     const [resetTable, setResetTable] = useState(0);

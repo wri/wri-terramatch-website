@@ -19,7 +19,7 @@ import WizardFormProvider, {
   useApiFieldsProvider,
   useFieldsProvider,
   useFormEntities,
-  useV2OrgFormDetails
+  useOrgFormDetails
 } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
 
@@ -67,7 +67,7 @@ const ApplicationTab: FC<{ submissionUuid: string }> = ({ submissionUuid }) => {
     ],
     [submission?.organisationUuid, submission?.projectPitchUuid]
   );
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(submission?.organisationUuid ?? undefined);
+  const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(submission?.organisationUuid ?? undefined);
 
   return !providerLoaded || !orgDetailsLoaded ? null : (
     <WizardFormProvider models={models} fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
