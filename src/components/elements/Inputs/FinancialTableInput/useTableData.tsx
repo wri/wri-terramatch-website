@@ -3,7 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { useController } from "react-hook-form";
 
 import { useCurrencyContext } from "@/context/currency.provider";
-import { useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValue } from "@/types/common";
 
@@ -46,7 +46,7 @@ export const useTableData = (props: RHFFinancialIndicatorsDataTableProps) => {
   const { collection, years, formHook, name, onChangeCapture } = props;
   const { field } = useController(props);
 
-  const orgDetails = useOrgFormDetails();
+  const orgDetails = useWizardOrgFormDetails();
   const { setCurrency } = useCurrencyContext();
 
   const [selectCurrency, setSelectCurrency] = useState<OptionValue>(() =>

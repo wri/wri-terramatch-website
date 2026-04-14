@@ -21,7 +21,6 @@ import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useNotificationContext } from "@/context/notification.provider";
 import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
-import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
 import { UploadedFile } from "@/types/common";
@@ -113,7 +112,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const router = useRouter();
     const { id } = useParams<"id">();
     const { files, addFile, removeFile } = useFiles(true);
-    const { years, collection } = props;
+    const { collection } = props;
     const orgDetails = useWizardOrgFormDetails();
     const resource = useResourceContext();
 
