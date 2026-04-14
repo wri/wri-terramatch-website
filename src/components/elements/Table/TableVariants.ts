@@ -194,21 +194,21 @@ export const VARIANT_TABLE_AIRTABLE_DASHBOARD = {
 };
 
 export const VARIANT_TABLE_MONITORED = {
-  table: "w-full border-collapse",
+  table: "w-full border-separate border-spacing-0",
   name: "border-airtable",
   tableWrapper: "border-b rounded-lg border-neutral-200",
-  trHeader: "bg-neutral-50 z-[1] first:rounded-tl-lg last:rounded-tr-lg first:!border-b-0",
+  trHeader: "bg-white static z-[1] top-[72px] lg:top-[77px] first:rounded-tl-lg last:rounded-tr-lg first:!border-b-0",
   thHeader:
-    "first:border-l last:border-r last:!border-l-0 first:rounded-tl-lg last:rounded-tr-lg z-[1] text-nowrap first:pl-2 first:pr-2 last:pr-2 border-neutral-200 text-12-semibold px-1.5 border-y py-2 bg-neutral-50 align-top",
+    "border-collapse first:border-l last:border-r last:!border-l-0 first:rounded-tl-lg last:rounded-tr-lg z-[1] sticky top-[77px] lg:top-[77px] text-nowrap first:pl-2 first:pr-2 last:pr-2  border-neutral-200 text-12-semibold px-1.5 border-y py-2 bg-neutral-50",
   tBody: "",
   thHeaderSort: "!border-x !place-items-center py-2",
-  trBody: "bg-white border-y border-neutral-200 last:border-b",
+  trBody: "bg-white border-y border-neutral-200 sticky z-[0] top-[87px] last:border-b",
   tdBody:
-    "text-12-light px-1.5 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white first:border-l last:border-r border-neutral-200 align-top z-[0]",
-  thead: "bg-white",
+    "text-12-light px-1.5 py-2 first:pl-2 first:pr-2 last:pr-2 bg-white border-collapse sticky z-[0] top-[87px] first:border-l last:border-r border-neutral-200 ",
+  thead: "bg-white ",
   paginationVariant: VARIANT_PAGINATION_MONITORED,
-  thHeaderSticky: "bg-neutral-50 z-10",
-  tdBodySticky: "bg-white z-10",
+  thHeaderSticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
+  tdBodySticky: "sticky left-0 z-10 after:drop-shadow-lg drop-shadow-lg",
   iconSort: "!w-2.5 !h-2.5 object-cover !ml-0"
 };
 

@@ -950,9 +950,9 @@ const DataCard = ({
   return (
     <>
       <div className="-mx-4 h-[calc(100vh-200px)] overflow-auto px-4 pb-4">
-        <div className="sticky top-[0px] z-[150] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
-          <div className="sticky top-[0px] z-[160] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
-            <div className="relative z-[120] flex items-center gap-2">
+        <div className="sticky top-[0px] z-[10] rounded-lg border border-grey-850 bg-white shadow-monitored" {...rest}>
+          <div className="sticky top-[0px] z-[11] flex items-center justify-between rounded-t-lg bg-white px-6 pb-3 pt-6">
+            <div className="flex items-center gap-2">
               <Icon name={IconNames.MONITORING_PROFILE} className="h-8 w-8" />
               <Dropdown
                 options={DROPDOWN_OPTIONS}
@@ -962,9 +962,9 @@ const DataCard = ({
                 }}
                 variant={VARIANT_DROPDOWN_SIMPLE}
                 inputVariant="text-18-semibold"
-                className="!z-[130]"
+                className="z-50"
                 value={[DROPDOWN_OPTIONS.find(item => item.slug === indicatorSlug)?.value!]}
-                optionsClassName="w-max !z-[200]"
+                optionsClassName="w-max z-50"
               />
             </div>
 
