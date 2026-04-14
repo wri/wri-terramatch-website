@@ -6,7 +6,7 @@ import { CSSProperties, DetailedHTMLProps, FC, HTMLAttributes, useEffect, useSta
 import Text from "@/components/elements/Text/Text";
 import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import MenuCustom from "@/redesignComponents/actions/Buttons/Menu/MenuCustom";
-import { EditIcon, PhotoAddIcon, PlayCircleIcon, RejectedIcon } from "@/redesignComponents/foundations/Icons";
+import { EditIcon, PhotoAddIcon, RejectedIcon, VideoIcon } from "@/redesignComponents/foundations/Icons";
 
 export type MediaType = "video" | "image";
 export interface BaseImageProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -93,7 +93,7 @@ const BaseImage: FC<BaseImageProps> = ({
         borderRadius
       )}
     >
-      {isVideo && <PlayCircleIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
+      {isVideo && <VideoIcon className={classNames("h-9 w-9 text-theme-neutral-100", classNamesVideoIcon)} />}
     </div>
   );
   return (

@@ -30,7 +30,7 @@ const CardFinancial = ({ title, data, description, currency }: CardFinancialProp
         return dataValue;
       }
 
-      const formattedNumber = formatLargeNumber(Math.abs(numericValue), currencySymbol);
+      const formattedNumber = formatLargeNumber(Math.abs(numericValue), currencySymbol, currency);
       const sign = isPositive ? "" : "-";
 
       return `${sign}${formattedNumber}`;

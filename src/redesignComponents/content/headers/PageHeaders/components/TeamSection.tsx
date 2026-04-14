@@ -6,7 +6,6 @@ import { FC } from "react";
 import { ContextCondition } from "@/context/ContextCondition";
 import { Framework, TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS } from "@/context/framework.provider";
 import { ChevronRightIcon } from "@/redesignComponents/foundations/Icons";
-import { HaritBharatFund } from "@/redesignComponents/foundations/Logos/HaritBharatFund";
 import { PpcProgramBannerLogo } from "@/redesignComponents/foundations/Logos/PpcProgramBannerLogo";
 import { TerraFundAFR100 } from "@/redesignComponents/foundations/Logos/TerraFundAFR100";
 import Avatar, { AvatarProps } from "@/redesignComponents/navigation/Avatar/Avatar";
@@ -88,9 +87,6 @@ const TeamSection: FC<TeamSectionProps> = ({ team, onAddTeamClick, gotoTeamMembe
       {/* Logos read framework from FrameworkProvider (project page); no frameworkKey prop. */}
       <ContextCondition frameworksShow={TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS}>
         <TerraFundAFR100 className="mt-auto" />
-      </ContextCondition>
-      <ContextCondition frameworksShow={[Framework.HBF]}>
-        <HaritBharatFund className="mt-auto" />
       </ContextCondition>
       <ContextCondition frameworksShow={[Framework.PPC]}>
         <PpcProgramBannerLogo className="mt-auto" />

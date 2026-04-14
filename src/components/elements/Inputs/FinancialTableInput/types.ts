@@ -1,7 +1,34 @@
 import { debounce } from "lodash";
 import { useEffect, useMemo } from "react";
 
-import { currencySymbol } from "@/constants/options/localCurrency";
+import { EmbeddedMediaDto, FinancialIndicatorDto } from "@/generated/v3/userService/userServiceSchemas";
+import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
+
+/** API rows may include uuid alongside FinancialIndicatorDto fields. */
+type FinancialIndicatorRow = FinancialIndicatorDto & { uuid?: string | null };
+
+function embeddedDocumentationToUploaded(files: EmbeddedMediaDto[] | null): UploadedFile[] {
+  if (files == null) {
+    return [];
+  }
+  return files.map(
+    (dto): UploadedFile => ({
+      uuid: dto.uuid,
+      url: dto.url ?? "",
+      thumbUrl: dto.thumbUrl ?? undefined,
+      size: dto.size,
+      fileName: dto.fileName,
+      mimeType: dto.mimeType ?? "",
+      createdAt: dto.createdAt,
+      collectionName: dto.collectionName,
+      isPublic: dto.isPublic,
+      isCover: dto.isCover,
+      lat: dto.lat ?? undefined,
+      lng: dto.lng ?? undefined,
+      profileImageScale: dto.profileImageScale ?? undefined
+    })
+  );
+}
 import { UploadedFile } from "@/types/common";
 
 export type BaseYearlyData = {
@@ -81,17 +108,22 @@ export function useDebouncedChange<T>({ value, delay = 700, onDebouncedChange }:
   }, [value, debouncedFn]);
 }
 
-export function formatFinancialData(rawData: any, years: number[] | undefined, currency: any) {
+export function formatFinancialData(
+  rawData: FinancialIndicatorDto[] | undefined,
+  years: number[] | undefined,
+  currency: string | number
+) {
+  const currencyKey = String(currency ?? "");
   const profitCollections = ["revenue", "expenses", "profit"];
   const nonProfitCollections = ["budget"];
   const ratioCollections = ["current-assets", "current-liabilities", "current-ratio"];
   const documentationCollections = ["description-documents"];
 
   const groupedData: {
-    profitAnalysisData: Record<number, Record<string, ForProfitAnalysisData>>;
-    nonProfitAnalysisData: Record<number, Record<string, NonProfitAnalysisData>>;
-    currentRatioData: Record<number, Record<string, CurrentRatioData>>;
-    documentationData: Record<number, Record<string, any>>;
+    profitAnalysisData: Record<number, Record<string, FinancialIndicatorRow>>;
+    nonProfitAnalysisData: Record<number, Record<string, FinancialIndicatorRow>>;
+    currentRatioData: Record<number, Record<string, FinancialIndicatorRow>>;
+    documentationData: Record<number, FinancialIndicatorRow>;
   } = {
     profitAnalysisData: {},
     nonProfitAnalysisData: {},
@@ -100,7 +132,7 @@ export function formatFinancialData(rawData: any, years: number[] | undefined, c
   };
 
   if (Array.isArray(rawData)) {
-    rawData.forEach((item: any) => {
+    rawData.forEach(item => {
       const { year, collection } = item;
 
       if (profitCollections.includes(collection)) {
@@ -118,8 +150,14 @@ export function formatFinancialData(rawData: any, years: number[] | undefined, c
     });
   }
 
-  const formatCurrency = (value: number) =>
-    value ? `${currencySymbol(currency)}${Number(value).toLocaleString()}` : undefined;
+  const formatCurrency = (value: number | null | undefined) => {
+    if (value == null || !Number.isFinite(value)) {
+      return undefined;
+    }
+    const sym = getCurrencySymbolPrefix(currencyKey);
+    const num = formatFinancialAmount(value, currencyKey);
+    return sym ? `${sym} ${num}` : num;
+  };
 
   return {
     profitAnalysisData: years?.map((year, index) => {
@@ -129,7 +167,7 @@ export function formatFinancialData(rawData: any, years: number[] | undefined, c
         year,
         revenue: row.revenue?.amount ?? 0,
         expenses: row.expenses?.amount ?? 0,
-        profit: formatCurrency(row.profit?.amount) ?? 0,
+        profit: formatCurrency(row.profit?.amount) ?? "0",
         revenueUuid: row.revenue?.uuid,
         expensesUuid: row.expenses?.uuid,
         profitUuid: row.profit?.uuid
@@ -158,11 +196,21 @@ export function formatFinancialData(rawData: any, years: number[] | undefined, c
       };
     }),
     documentationData: years?.map((year, index): DocumentationData => {
-      const row = groupedData.documentationData[year] ?? {};
-      return {
-        uuid: row?.uuid ?? index,
+      const row = groupedData.documentationData[year];
+      const emptyDoc: DocumentationData = {
+        uuid: null,
         year,
-        documentation: row.documentation,
+        documentation: [],
+        description: "",
+        exchangeRate: null
+      };
+      if (row == null) {
+        return emptyDoc;
+      }
+      return {
+        uuid: row.uuid ?? null,
+        year,
+        documentation: embeddedDocumentationToUploaded(row.documentation),
         description: row.description ?? "",
         exchangeRate: row.exchangeRate
       };

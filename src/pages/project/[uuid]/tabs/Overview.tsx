@@ -253,7 +253,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
         </PageItem>
         <PageItem
           flexProps={{ width: "fit-content", overflow: "hidden" }}
-          className="!w-full !max-w-full sm:!w-[30%] sm:!max-w-[30%]"
+          className="!w-full !max-w-full sm:!w-[35%] sm:!max-w-[35%] lg:!w-[30%] lg:!max-w-[30%]"
           title={t("Project Set Up")}
           tag={(() => {
             const tagState = mapStatusToTagStateEntity(project?.status);

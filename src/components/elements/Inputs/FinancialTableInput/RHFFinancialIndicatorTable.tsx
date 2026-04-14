@@ -18,7 +18,7 @@ import { When } from "react-if";
 import { useParams } from "react-router-dom";
 
 import { deleteMedia, fileUploadOptions, prepareFileForUpload, useUploadFile } from "@/connections/Media";
-import { currencySymbol, getCurrencyOptions } from "@/constants/options/localCurrency";
+import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
@@ -31,6 +31,12 @@ import { useValueChanged } from "@/hooks/useValueChanged";
 import { OptionValue, UploadedFile } from "@/types/common";
 import { toArray } from "@/utils/array";
 import { getErrorMessages } from "@/utils/errors";
+import {
+  formatFinancialAmount,
+  getCurrencySymbolPrefix,
+  getLocaleForIsoCurrency,
+  parseFinancialAmountInput
+} from "@/utils/financialReport";
 
 import Text from "../../Text/Text";
 import { DataTableProps } from "../DataTable/DataTable";
@@ -84,13 +90,19 @@ const handleChange = (
     if (lowerKeys.includes("revenue") && lowerKeys.includes("expenses") && lowerKeys.includes("profit")) {
       const revenue = Number(currentRow.revenue ?? 0);
       const expenses = Number(currentRow.expenses ?? 0);
-      currentRow.profit = `${currencySymbol(selectCurrency)}${(revenue - expenses).toLocaleString()}`;
+      const iso = String(selectCurrency ?? "");
+      const sym = getCurrencySymbolPrefix(iso);
+      const profitNum = revenue - expenses;
+      const num = formatFinancialAmount(profitNum, iso);
+      currentRow.profit = sym ? `${sym} ${num}` : num;
     }
 
     if (lowerKeys.includes("currentassets") && lowerKeys.includes("currentliabilities")) {
       const assets = Number(currentRow.currentAssets ?? 0);
       const liabilities = Number(currentRow.currentLiabilities ?? 0);
-      currentRow.currentRatio = liabilities !== 0 ? (assets / liabilities).toLocaleString() : "0";
+      const iso = String(selectCurrency ?? "");
+      currentRow.currentRatio =
+        liabilities !== 0 ? (assets / liabilities).toLocaleString(getLocaleForIsoCurrency(iso)) : "0";
     }
 
     updated[row] = currentRow;
@@ -143,7 +155,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             amount: 0,
             revenue: 0,
             expenses: 0,
-            profit: `${currencySymbol(selectCurrency)}0`,
+            profit: `${getCurrencySymbolPrefix(String(selectCurrency))} ${formatFinancialAmount(
+              0,
+              String(selectCurrency)
+            )}`.trim(),
             revenueUuid: null,
             expensesUuid: null,
             profitUuid: null
@@ -175,13 +190,13 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             amount: 0,
             currentAssets: 0,
             currentLiabilities: 0,
-            currentRatio: `${currencySymbol(selectCurrency)}0`,
+            currentRatio: "0",
             currentAssetsUuid: null,
             currentLiabilitiesUuid: null,
             currentRatioUuid: null
           })
         ),
-      [selectCurrency, years]
+      [years]
     );
 
     const initialDocumentationData = useMemo(
@@ -355,15 +370,21 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               (c: Cell<FinancialRow, unknown>) => c.column.id === cell.column.id
             );
             const columnKey = PROFIT_ANALYSIS_COLUMNS[columnOrderIndex];
-            const [tempValue, setTempValue] = useState(
-              (forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? ""
+            const [tempValue, setTempValue] = useState(() =>
+              formatFinancialAmount(
+                Number((forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? 0),
+                String(selectCurrency)
+              )
             );
 
             useDebouncedChange({
               value: tempValue,
               onDebouncedChange: value => {
+                const parsed = parseFinancialAmountInput(String(value), String(selectCurrency));
+                if (parsed === null && String(value).trim() === "") return;
+                if (parsed === null) return;
                 handleChange(
-                  { value: Number(value), row: row.index, cell: columnOrderIndex },
+                  { value: parsed, row: row.index, cell: columnOrderIndex },
                   setForProfitAnalysisData,
                   PROFIT_ANALYSIS_COLUMNS,
                   selectCurrency
@@ -375,16 +396,22 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               <InputWrapper required={props.required}>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
-                    {currencySymbol(selectCurrency)}
+                    {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       variant="secondary"
                       className="border-none !p-0"
                       name={`row-${row.index}-${columnKey}`}
                       value={tempValue}
                       onChange={e => {
                         setTempValue(e.target.value);
-                        if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                        if (e.target.value.trim() === "") {
+                          props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                          return;
+                        }
+                        const parsed = parseFinancialAmountInput(e.target.value, String(selectCurrency));
+                        if (parsed === null) {
                           props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
                           return;
                         }
@@ -409,15 +436,21 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             );
             const columnKey = PROFIT_ANALYSIS_COLUMNS[columnOrderIndex];
 
-            const [tempValue, setTempValue] = useState(
-              (forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? ""
+            const [tempValue, setTempValue] = useState(() =>
+              formatFinancialAmount(
+                Number((forProfitAnalysisData?.[row.index] as ForProfitAnalysisData)?.[columnKey] ?? 0),
+                String(selectCurrency)
+              )
             );
 
             useDebouncedChange({
               value: tempValue,
               onDebouncedChange: value => {
+                const parsed = parseFinancialAmountInput(String(value), String(selectCurrency));
+                if (parsed === null && String(value).trim() === "") return;
+                if (parsed === null) return;
                 handleChange(
-                  { value: Number(value), row: row.index, cell: columnOrderIndex },
+                  { value: parsed, row: row.index, cell: columnOrderIndex },
                   setForProfitAnalysisData,
                   PROFIT_ANALYSIS_COLUMNS,
                   selectCurrency
@@ -429,9 +462,10 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               <InputWrapper required={props.required}>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
-                    {currencySymbol(selectCurrency)}
+                    {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       variant="secondary"
                       required
                       className="border-none !p-0"
@@ -439,7 +473,12 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
                       value={tempValue}
                       onChange={e => {
                         setTempValue(e.target.value);
-                        if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                        if (e.target.value.trim() === "") {
+                          props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                          return;
+                        }
+                        const parsed = parseFinancialAmountInput(e.target.value, String(selectCurrency));
+                        if (parsed === null) {
                           props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
                           return;
                         }
@@ -489,15 +528,21 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             );
             const columnKey = NON_PROFILE_ANALYSIS_COLUMNS[columnOrderIndex];
 
-            const [tempValue, setTempValue] = useState(
-              (nonProfitAnalysisData?.[row.index] as NonProfitAnalysisData)?.[columnKey] ?? ""
+            const [tempValue, setTempValue] = useState(() =>
+              formatFinancialAmount(
+                Number((nonProfitAnalysisData?.[row.index] as NonProfitAnalysisData)?.[columnKey] ?? 0),
+                String(selectCurrency)
+              )
             );
 
             useDebouncedChange({
               value: tempValue,
               onDebouncedChange: value => {
+                const parsed = parseFinancialAmountInput(String(value), String(selectCurrency));
+                if (parsed === null && String(value).trim() === "") return;
+                if (parsed === null) return;
                 handleChange(
-                  { value: Number(value), row: row.index, cell: columnOrderIndex },
+                  { value: parsed, row: row.index, cell: columnOrderIndex },
                   setNonProfitAnalysisData,
                   NON_PROFILE_ANALYSIS_COLUMNS,
                   selectCurrency
@@ -509,16 +554,22 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               <InputWrapper required={props.required}>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
-                    {currencySymbol(selectCurrency)}
+                    {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       variant="secondary"
                       className="border-none !p-0"
                       name={`row-${row.index}-${columnKey}`}
                       value={tempValue}
                       onChange={e => {
                         setTempValue(e.target.value);
-                        if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                        if (e.target.value.trim() === "") {
+                          props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                          return;
+                        }
+                        const parsed = parseFinancialAmountInput(e.target.value, String(selectCurrency));
+                        if (parsed === null) {
                           props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
                           return;
                         }
@@ -557,15 +608,21 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             );
             const columnKey = CURRENT_RATIO_COLUMNS[columnOrderIndex];
 
-            const [tempValue, setTempValue] = useState(
-              (currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? ""
+            const [tempValue, setTempValue] = useState(() =>
+              formatFinancialAmount(
+                Number((currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? 0),
+                String(selectCurrency)
+              )
             );
 
             useDebouncedChange({
               value: tempValue,
               onDebouncedChange: value => {
+                const parsed = parseFinancialAmountInput(String(value), String(selectCurrency));
+                if (parsed === null && String(value).trim() === "") return;
+                if (parsed === null) return;
                 handleChange(
-                  { value: Number(value), row: row.index, cell: columnOrderIndex },
+                  { value: parsed, row: row.index, cell: columnOrderIndex },
                   setCurrentRadioData,
                   CURRENT_RATIO_COLUMNS,
                   selectCurrency
@@ -577,16 +634,22 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               <InputWrapper required={props.required}>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
-                    {currencySymbol(selectCurrency)}
+                    {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       variant="secondary"
                       className="border-none !p-0"
                       name={`row-${row.index}-${columnKey}`}
                       value={tempValue}
                       onChange={e => {
                         setTempValue(e.target.value);
-                        if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                        if (e.target.value.trim() === "") {
+                          props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                          return;
+                        }
+                        const parsed = parseFinancialAmountInput(e.target.value, String(selectCurrency));
+                        if (parsed === null) {
                           props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
                           return;
                         }
@@ -611,15 +674,21 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
             );
             const columnKey = CURRENT_RATIO_COLUMNS[columnOrderIndex];
 
-            const [tempValue, setTempValue] = useState(
-              (currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? ""
+            const [tempValue, setTempValue] = useState(() =>
+              formatFinancialAmount(
+                Number((currentRadioData?.[row.index] as CurrentRatioData)?.[columnKey] ?? 0),
+                String(selectCurrency)
+              )
             );
 
             useDebouncedChange({
               value: tempValue,
               onDebouncedChange: value => {
+                const parsed = parseFinancialAmountInput(String(value), String(selectCurrency));
+                if (parsed === null && String(value).trim() === "") return;
+                if (parsed === null) return;
                 handleChange(
-                  { value: Number(value), row: row.index, cell: columnOrderIndex },
+                  { value: parsed, row: row.index, cell: columnOrderIndex },
                   setCurrentRadioData,
                   CURRENT_RATIO_COLUMNS,
                   selectCurrency
@@ -631,17 +700,23 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
               <InputWrapper required={props.required}>
                 <div className="border-light flex h-fit items-center justify-between rounded-lg border py-2 px-2.5 hover:border-primary hover:shadow-input">
                   <div className="flex items-center gap-2">
-                    {currencySymbol(selectCurrency)}
+                    {getCurrencySymbolPrefix(String(selectCurrency))}
                     <Input
                       required
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       variant="secondary"
                       className="border-none !p-0"
                       name={`row-${row.index}-${columnKey}`}
                       value={tempValue}
                       onChange={e => {
                         setTempValue(e.target.value);
-                        if (e.target.value === "" || isNaN(Number(e.target.value))) {
+                        if (e.target.value.trim() === "") {
+                          props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
+                          return;
+                        }
+                        const parsed = parseFinancialAmountInput(e.target.value, String(selectCurrency));
+                        if (parsed === null) {
                           props.formHook?.setError(props.name, { type: "manual", message: "This field is required" });
                           return;
                         }

@@ -1,7 +1,7 @@
 import { Icon, IconProps } from "@chakra-ui/react";
 import React, { FC } from "react";
 
-export const ArrowForward: FC<IconProps> = props => (
+export const ArrowForwardIcon: FC<IconProps> = props => (
   <Icon {...props}>
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12.175 9H0V7H12.175L6.575 1.4L8 0L16 8L8 16L6.575 14.6L12.175 9Z" fill="currentColor" />
@@ -9,4 +9,4 @@ export const ArrowForward: FC<IconProps> = props => (
   </Icon>
 );
 
-export default ArrowForward;
+export default ArrowForwardIcon;

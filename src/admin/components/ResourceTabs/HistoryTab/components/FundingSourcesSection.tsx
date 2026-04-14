@@ -7,7 +7,7 @@ import Toggle from "@/components/elements/Toggle/Toggle";
 import { VARIANT_TOGGLE_SECONDARY } from "@/components/elements/Toggle/ToggleVariants";
 import { getFundingTypesOptions } from "@/constants/options/fundingTypes";
 import { FundingTypeDto } from "@/generated/v3/userService/userServiceSchemas";
-import { currencyInput } from "@/utils/financialReport";
+import { formatFinancialAmount, getCurrencySymbolPrefix } from "@/utils/financialReport";
 
 interface IProps {
   data?: FundingTypeDto[];
@@ -65,13 +65,19 @@ const FundingSourcesSection: FC<IProps> = ({ data, currency }) => {
   const filteredData =
     selectedKey && selectedKey !== "all" ? data?.filter(item => String(item.year) === selectedKey) : data;
 
-  const tableData = filteredData?.map((item: any, index) => ({
-    id: index + 1,
-    fundingYear: item?.year,
-    fundingType: getFundingTypesOptions(t).find(opt => opt.value == item?.type)?.title,
-    fundingSource: item?.source,
-    fundingAmount: `${currencyInput[currency!] ?? ""} ${item?.amount ? item?.amount?.toLocaleString() : ""}`
-  }));
+  const tableData = filteredData?.map((item: FundingTypeDto, index: number) => {
+    const amount =
+      item?.amount != null && Number.isFinite(Number(item.amount))
+        ? `${getCurrencySymbolPrefix(currency)} ${formatFinancialAmount(Number(item.amount), currency)}`.trim()
+        : "";
+    return {
+      id: index + 1,
+      fundingYear: item?.year,
+      fundingType: getFundingTypesOptions(t).find(opt => opt.value == item?.type)?.title,
+      fundingSource: item?.source,
+      fundingAmount: amount
+    };
+  });
 
   const handleToggle = (index: number) => {
     setActiveIndex(index);
