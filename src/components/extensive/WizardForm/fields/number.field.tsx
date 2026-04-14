@@ -9,7 +9,7 @@ import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrappe
 import { FormFieldFactory, SharedFieldProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { useCurrencyContext } from "@/context/currency.provider";
-import { useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import {
   formatFinancialAmount,
   parseFinancialAmountInput,
@@ -33,7 +33,7 @@ const FinancialAmountInput: FC<SharedFieldProps> = props => {
   const { name, control, error, label, required, placeholder, description, feedbackRequired } = props;
   const id = useId();
   const { currency } = useCurrencyContext();
-  const orgDetails = useOrgFormDetails();
+  const orgDetails = useWizardOrgFormDetails();
   const isoCurrency =
     currency != null && currency !== ""
       ? String(currency)

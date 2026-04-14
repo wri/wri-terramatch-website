@@ -15,11 +15,7 @@ import { SupportedEntity } from "@/connections/EntityAssociation";
 import { FormEntity, FormModelType, useUpdateRequest } from "@/connections/Form";
 import { ContextCondition } from "@/context/ContextCondition";
 import { ALL_TF, Framework, useFrameworkContext } from "@/context/framework.provider";
-import WizardFormProvider, {
-  FormModel,
-  useApiFieldsProvider,
-  useV2OrgFormDetails
-} from "@/context/wizardForm.provider";
+import WizardFormProvider, { FormModel, useApiFieldsProvider, useOrgFormDetails } from "@/context/wizardForm.provider";
 import { formDefaultValues } from "@/helpers/customForms";
 import { singularEntityName, v3EntityName } from "@/helpers/entity";
 import { useEntityForm } from "@/hooks/useFormGet";
@@ -108,7 +104,7 @@ const InformationTab: FC<IProps> = props => {
     [fieldsProvider]
   );
 
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(record?.organisationUuid ?? undefined);
+  const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(record?.organisationUuid ?? undefined);
 
   const tabTitle = useMemo(() => {
     switch (props.type) {

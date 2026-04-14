@@ -22,7 +22,7 @@ import { getCurrencyOptions } from "@/constants/options/localCurrency";
 import { getMonthOptions } from "@/constants/options/months";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useNotificationContext } from "@/context/notification.provider";
-import { useOrgFormDetails } from "@/context/wizardForm.provider";
+import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import { usePatchV2FinancialIndicators } from "@/generated/apiComponents";
 import { isTranslatableError } from "@/generated/v3/utils";
 import { useFiles } from "@/hooks/useFiles";
@@ -133,7 +133,7 @@ const RHFFinancialIndicatorsDataTable = forwardRef(
     const value = field?.value ?? [];
     const { files, addFile, removeFile } = useFiles(true);
     const { years, collection } = props;
-    const orgDetails = useOrgFormDetails();
+    const orgDetails = useWizardOrgFormDetails();
     const resource = useResourceContext();
 
     const [selectCurrency, setSelectCurrency] = useState<OptionValue>(

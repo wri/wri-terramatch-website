@@ -58,6 +58,16 @@ export function formatFinancialAmount(value: number, currencyCode: string | unde
   }).format(value);
 }
 
+export function formatMonetaryCanonicalForDisplay(
+  value: number | null | undefined,
+  currencyCode: string | undefined
+): string {
+  if (value == null || !Number.isFinite(value)) {
+    return "";
+  }
+  return formatFinancialAmount(value, currencyCode);
+}
+
 export function getCurrencySymbolPrefix(currencyCode: string | undefined): string {
   if (currencyCode == null || currencyCode === "") {
     return "";
@@ -86,6 +96,9 @@ function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undef
   const k = linkedFieldKey.toLowerCase().replace(/_/g, "-");
   if (k.includes("lat-") || k.includes("long-")) {
     return false;
+  }
+  if (k === "pro-pit-bgt") {
+    return true;
   }
   if (k.includes("average-worker-income") || k.includes("averageworkerincome")) {
     return true;

@@ -17,8 +17,6 @@ import { CSVGenerator } from "@/utils/CsvGeneratorClass";
 
 export type FieldInputType =
   | FormQuestionDto["inputType"]
-  // Monetary amount fields (TM-2925); keep explicit so Record<FieldInputType, …> stays valid if codegen lags OpenAPI
-  | "number-currency"
   // "tel" is only used in FE hardcoded forms, and cannot be selected as a type in FormBuilder
   | "tel"
   // "empty" is a placeholder used in the FormBuilder for a new question that hasn't selected a

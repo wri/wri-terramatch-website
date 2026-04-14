@@ -16,7 +16,7 @@ import {
   FormFieldsProvider,
   OrgFormDetails,
   useFieldsProvider,
-  useOrgFormDetails
+  useWizardOrgFormDetails
 } from "@/context/wizardForm.provider";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import { Entity, EntityName } from "@/types/common";
@@ -27,7 +27,7 @@ export const useGetFormEntries = (props: GetFormEntriesProps) => {
   let { record } = useShowContext();
   const { type, entity } = props;
   const fieldsProvider = useFieldsProvider();
-  const orgDetails = useOrgFormDetails();
+  const orgDetails = useWizardOrgFormDetails();
 
   const uuid = entity?.entityUUID ?? record?.uuid;
   const entityType = entity?.entityName ?? (type as EntityName);
