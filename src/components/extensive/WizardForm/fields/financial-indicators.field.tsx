@@ -100,7 +100,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
     const years = field.years;
     const columnMaps: Record<string, string[]> = {
-      profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
+      forProfitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
       nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
       currentRatioData: CURRENT_RATIO_COLUMNS,
       documentationData: DOCUMENTATION_COLUMNS
@@ -117,7 +117,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
 
     if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
-      delete columnMaps.profitAnalysisData;
+      delete columnMaps.forProfitAnalysisData;
     }
 
     if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
@@ -130,7 +130,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
     const formatted = formatFinancialData(values, years ?? undefined, currencyCode ?? "");
     const sections = [
-      { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
+      { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "forProfitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
       { title: t("Current Ratio"), key: "currentRatioData" },
       { title: t("Documentation"), key: "documentationData" }
@@ -158,7 +158,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
         if (filteredRows.length === 0) return "";
 
-        const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
+        const shouldShowAsTable = section.key === "forProfitAnalysisData" && columns?.includes("profit");
 
         if (shouldShowAsTable) {
           const tableHtml = filteredRows
