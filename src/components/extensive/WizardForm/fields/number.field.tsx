@@ -6,13 +6,12 @@ import * as yup from "yup";
 
 import Input from "@/components/elements/Inputs/Input/Input";
 import InputWrapper from "@/components/elements/Inputs/InputElements/InputWrapper";
-import { FormFieldFactory, SharedFieldProps } from "@/components/extensive/WizardForm/types";
+import { FieldDefinition, FormFieldFactory, SharedFieldProps } from "@/components/extensive/WizardForm/types";
 import { getFormattedAnswer } from "@/components/extensive/WizardForm/utils";
 import { useCurrencyContext } from "@/context/currency.provider";
 import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import {
   formatFinancialAmount,
-  isProjectBudgetIntegerField,
   parseFinancialAmountInput,
   shouldFormatFinancialNumberField
 } from "@/utils/financialReport";
@@ -27,6 +26,17 @@ function formatFinancialDisplayValue(value: unknown, currencyCode: string | unde
     return "";
   }
   return formatFinancialAmount(n, currencyCode);
+}
+
+function isIntegerNumberField(field: FieldDefinition): boolean {
+  if (field.inputType !== "number") {
+    return false;
+  }
+  const props = field.additionalProps;
+  if (props == null) {
+    return false;
+  }
+  return props.integer === true || props.integerOnly === true || props.decimals === 0 || props.precision === 0;
 }
 
 /** Locale-aware amount input for wizard number fields; keeps RHF value as a number for the API. */
@@ -138,7 +148,7 @@ export const NumberField: FormFieldFactory = {
       return validator;
     }
 
-    if (isProjectBudgetIntegerField(field)) {
+    if (isIntegerNumberField(field)) {
       let validator = yup
         .number()
         .transform((value, originalValue) => (originalValue === "" || originalValue == null ? undefined : value))
@@ -165,8 +175,8 @@ export const NumberField: FormFieldFactory = {
     if (shouldFormatFinancialNumberField(field)) {
       return <FinancialAmountInput {...sharedProps} />;
     }
-    if (isProjectBudgetIntegerField(field)) {
-      return <Input {...sharedProps} type="number" step={1} />;
+    if (isIntegerNumberField(field)) {
+      return <Input {...sharedProps} type="number" step={additionalProps?.step ?? 1} />;
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   },
@@ -200,7 +210,7 @@ export const NumberField: FormFieldFactory = {
     }
     const { name, validation } = field;
     const value = formValues[name];
-    if (isProjectBudgetIntegerField(field)) {
+    if (isIntegerNumberField(field)) {
       if (value == null || value === "") {
         return formValues;
       }
