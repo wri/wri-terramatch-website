@@ -99,11 +99,10 @@ function hasIntegerNumberAdditionalProps(field: FieldDefinition): boolean {
 
 function isLegacyProjectBudgetField(field: FieldDefinition): boolean {
   const model = String(field.model ?? "").toLowerCase();
-  const label = String(field.label ?? "")
-    .trim()
-    .toLowerCase();
+  const isProjectModel = model === "projects" || model === "project-pitches" || model === "projectpitches";
   // Temporary compatibility fallback until these questions are explicitly configured via additionalProps.
-  return (model === "projects" || model === "project-pitches") && label === "budget";
+  // If project/pitch budget was switched to number-currency via backend data migration, force integer behavior.
+  return isProjectModel && field.inputType === "number-currency" && field.additionalProps?.financialAmount !== true;
 }
 
 export function shouldUseIntegerNumberInput(field: FieldDefinition): boolean {
