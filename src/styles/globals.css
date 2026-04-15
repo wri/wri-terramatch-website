@@ -31,7 +31,7 @@ input[type="radio"]:focus {
 }
 
 .content-login:focus-within .label-login,
-.input-login:not(:placeholder-shown) + .label-login {
+.input-login:not(:placeholder-shown)+.label-login {
   transform: translate(0, -108%) scale(1);
 }
 
@@ -50,11 +50,11 @@ input[type="number"]::-webkit-outer-spin-button {
   filter: invert(100%) brightness(1000%);
 }
 
-.lastRow:last-child > :last-child {
+.lastRow:last-child> :last-child {
   @apply rounded-br-lg;
 }
 
-.lastRow:last-child > :first-child {
+.lastRow:last-child> :first-child {
   @apply rounded-bl-lg;
 }
 
@@ -65,6 +65,7 @@ input[type="number"]::-webkit-outer-spin-button {
 .custom-popup-close-button .mapboxgl-popup {
   z-index: 2;
 }
+
 strong {
   font-size: inherit;
 }
@@ -88,12 +89,31 @@ strong {
 }
 
 @media (max-width: 1200px) {
+
   html,
   body {
     height: 100%;
     width: 100%;
     overflow: hidden;
     overscroll-behavior: none;
+  }
+}
+
+@media (min-width: 1600px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+@media (min-width: 2400px) {
+  html {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 3700px) {
+  html {
+    font-size: 26px;
   }
 }
 
