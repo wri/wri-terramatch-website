@@ -10,7 +10,7 @@ import { Feature, GeoJsonProperties, Geometry } from "../GeoJSON";
 import { registerPopup, removePopups } from "../interactions/popups";
 import { getPulsingDot } from "../pulsing.dot";
 
-const mediaClickHandlers = new WeakMap<mapboxgl.Map, (e: mapboxgl.MapLayerMouseEvent) => void>();
+const mediaClickHandlers = new WeakMap<mapboxgl.Map, (e: mapboxgl.MapMouseEvent) => void>();
 
 export const removeMediaLayer = (map: mapboxgl.Map) => {
   const layerName = LAYERS_NAMES.MEDIA_IMAGES;
@@ -69,7 +69,7 @@ export const addMediaSourceAndLayer = (
   map.addLayer({ id: layerName, type: "symbol", source: layerName, layout: { "icon-image": "pulsing-dot" } });
   map.moveLayer(layerName);
 
-  const clickHandler = (e: mapboxgl.MapLayerMouseEvent) => {
+  const clickHandler = (e: mapboxgl.MapMouseEvent) => {
     e.preventDefault();
     e.features!.forEach((feature: any) => {
       const popupContent = document.createElement("div");

@@ -113,11 +113,9 @@ export function useMapLayers({
 
   useEffect(() => {
     if (!styleReady || selectedPolygonsInCheckbox == null || map.current == null) return;
-    addDeleteLayer(
-      layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES),
-      map.current,
-      { [DELETED_POLYGONS]: selectedPolygonsInCheckbox }
-    );
+    const deleteLayer = layersList.find(layer => layer.name === LAYERS_NAMES.DELETED_GEOMETRIES);
+    if (deleteLayer == null) return;
+    addDeleteLayer(deleteLayer, map.current, { [DELETED_POLYGONS]: selectedPolygonsInCheckbox });
   }, [map, selectedPolygonsInCheckbox, styleReady, styleVersion]);
 
   return { sourcesAdded };
@@ -136,9 +134,6 @@ export function filterPolygonFromLayers(
       newPolygonData[status] = newPolygonData[status].filter((feature: string) => feature !== polygonuuid);
     }
   });
-  addFilterOnLayer(
-    layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY),
-    newPolygonData,
-    map
-  );
+  const polygonLayer = layersList.find(layer => layer.name === LAYERS_NAMES.POLYGON_GEOMETRY);
+  if (polygonLayer != null) addFilterOnLayer(polygonLayer, newPolygonData, map);
 }

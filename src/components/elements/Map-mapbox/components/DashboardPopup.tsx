@@ -9,10 +9,12 @@ import TooltipGridMap from "@/pages/dashboard/components/TooltipGridMap";
 import { usePopupData } from "@/pages/dashboard/hooks/usePopupsData";
 import ApiSlice from "@/store/apiSlice";
 
+import type { PopupComponentProps } from "../Map.d";
 import PopupMapImage from "./PopupMapImage";
+
 const client = new QueryClient();
 
-export const DashboardPopup = (event: any) => {
+export const DashboardPopup = (event: PopupComponentProps) => {
   const { popupType, popupData, items, label, isoCountry, itemUuid, layerName, projectFullDto } = usePopupData(event);
   const { popup, setFilters, dashboardCountries, dashboardMode } = event;
   const router = useRouter();
@@ -24,8 +26,8 @@ export const DashboardPopup = (event: any) => {
         (country: CountriesProps) => country.country_slug === isoCountry
       );
       if (selectedCountry) {
-        setFilters((prevValues: any) => ({
-          ...prevValues,
+        setFilters?.(prev => ({
+          ...prev,
           uuid: "",
           country: selectedCountry
         }));
@@ -37,8 +39,8 @@ export const DashboardPopup = (event: any) => {
       );
 
       if (selectedCountry) {
-        setFilters((prevValues: any) => ({
-          ...prevValues,
+        setFilters?.(prev => ({
+          ...prev,
           uuid: itemUuid,
           country: selectedCountry
         }));

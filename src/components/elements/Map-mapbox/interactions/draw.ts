@@ -11,14 +11,23 @@ import { zoomToBbox } from "../adapters/camera";
 import { convertToAcceptedGEOJSON } from "../adapters/geojson";
 import { BBox } from "../GeoJSON";
 
+/** Shape of a polygon version record as returned by the versions API. */
+export type PolygonVersion = {
+  poly_id?: string;
+  is_active?: boolean;
+  status?: string;
+};
+
 const extractGeoJsonFromResponse = (
   response: GeoJsonExportDto | { data?: { attributes?: GeoJsonExportDto } } | undefined
 ): GeoJSON.FeatureCollection | undefined => {
-  if (!response) return undefined;
-  if ("type" in response && (response as any).type === "FeatureCollection")
+  if (response == null) return undefined;
+  if ("type" in response && (response as { type: unknown }).type === "FeatureCollection")
     return response as unknown as GeoJSON.FeatureCollection;
-  if ("data" in response && (response as any).data?.attributes?.type === "FeatureCollection")
-    return (response as any).data.attributes as unknown as GeoJSON.FeatureCollection;
+  if ("data" in response) {
+    const nested = (response as { data?: { attributes?: { type?: string } } }).data?.attributes;
+    if (nested?.type === "FeatureCollection") return nested as unknown as GeoJSON.FeatureCollection;
+  }
   return undefined;
 };
 
@@ -33,23 +42,23 @@ export const stopDrawing = (draw: MapboxDraw, map: mapboxgl.Map): void => {
 };
 
 export const addGeojsonToDraw = (
-  geojson: any,
+  geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
   uuid: string,
-  cb: Function,
+  cb: (uuid: string) => void,
   currentDraw: MapboxDraw,
   map?: mapboxgl.Map
 ): void => {
-  if (!geojson) return;
+  if (geojson == null) return;
 
   const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
   const addToDrawAndFilter = () => {
-    if (!currentDraw) return;
+    if (currentDraw == null) return;
     currentDraw.add(geojsonFormatted);
     const currentDrawFeatures = currentDraw.getAll();
     currentDraw.set(currentDrawFeatures);
     const featureId = currentDrawFeatures.features[0].id;
     currentDraw.changeMode("direct_select", { featureId: featureId as string });
-    if (map) {
+    if (map != null) {
       zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
     }
     cb(uuid);
@@ -57,7 +66,7 @@ export const addGeojsonToDraw = (
   addToDrawAndFilter();
 };
 
-const getPolygonColor = (polygonStatus: string): string => {
+const getPolygonColor = (polygonStatus: string | undefined): string => {
   switch (polygonStatus) {
     case "draft":
       return "#E468EF";
@@ -72,11 +81,16 @@ const getPolygonColor = (polygonStatus: string): string => {
   }
 };
 
-export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.Map, polygonVersion?: any): void => {
-  if (!geojson) return;
+export const drawTemporaryPolygon = (
+  geojson: GeoJSON.FeatureCollection | GeoJSON.Feature | GeoJSON.Geometry,
+  cb: (polyId: string) => void,
+  map: mapboxgl.Map,
+  polygonVersion?: PolygonVersion
+): void => {
+  if (geojson == null) return;
 
   const geojsonFormatted = convertToAcceptedGEOJSON(geojson);
-  if (polygonVersion?.poly_id && !polygonVersion?.is_active) {
+  if (polygonVersion?.poly_id != null && polygonVersion?.is_active !== true) {
     map.addSource("temp-polygon-source", { type: "geojson", data: geojsonFormatted });
     map.addLayer({
       id: "temp-polygon-source",
@@ -98,14 +112,14 @@ export const drawTemporaryPolygon = (geojson: any, cb: Function, map: mapboxgl.M
     });
   }
   zoomToBbox(bbox(geojsonFormatted) as BBox, map, false);
-  cb(polygonVersion?.poly_id as string);
+  cb(polygonVersion?.poly_id ?? "");
 };
 
 export async function fetchPolygonGeometry(
   polygonUuid: string,
   geometryOnly: boolean = true,
   projectPitchUuid?: string
-): Promise<any | null> {
+): Promise<GeoJSON.Geometry | null> {
   if (polygonUuid == null || polygonUuid === "") {
     Log.error("fetchPolygonGeometry called with undefined or empty polygonUuid");
     throw new Error("polygonUuid is required");
@@ -131,23 +145,23 @@ export async function fetchPolygonGeometry(
   }
 }
 
-export async function updatePolygonProjectGeometry(geojson: any, polygonUuid: string, refetch: any): Promise<void> {
-  if (!geojson?.length || !polygonUuid) return;
+export async function updatePolygonProjectGeometry(
+  geojson: GeoJSON.Feature[],
+  polygonUuid: string,
+  refetch?: (() => void) | (() => Promise<void>) | (() => unknown)
+): Promise<void> {
+  if (geojson == null || geojson.length === 0 || polygonUuid == null || polygonUuid === "") return;
 
   const geometries = [
     {
       type: "FeatureCollection",
-      features: geojson.map((feature: any) => ({
-        type: "Feature",
-        geometry: feature.geometry,
-        properties: {}
-      }))
+      features: geojson.map(feature => ({ type: "Feature", geometry: feature.geometry, properties: {} })) as any
     }
   ];
 
   await updateProjectPolygonResource(polygonUuid, { geometries });
-  const refetchResult = refetch?.();
-  if (refetchResult && typeof refetchResult.then === "function") {
-    await refetchResult;
+  if (refetch != null) {
+    const refetchResult = refetch();
+    if (refetchResult instanceof Promise) await refetchResult;
   }
 }

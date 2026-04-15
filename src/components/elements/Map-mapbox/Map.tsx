@@ -39,7 +39,16 @@ import { useMapOverlays } from "./hooks/useMapOverlays";
 import { useMapPopups } from "./hooks/useMapPopups";
 import { useMapStyle } from "./hooks/useMapStyle";
 import { addGeojsonToDraw } from "./interactions/draw";
-import type { DashboardGetProjectsData, MapFunctions, TooltipType } from "./Map.d";
+import type {
+  DashboardGetProjectsData,
+  DashboardPopupContext,
+  EntityData,
+  MapFunctions,
+  MobilePopupData,
+  PolygonFromMapState,
+  SetPolygonFromMap,
+  TooltipType
+} from "./Map.d";
 import CheckIndividualPolygonControl from "./MapControls/CheckIndividualPolygonControl";
 import CheckPolygonControl from "./MapControls/CheckPolygonControl";
 import EditControl from "./MapControls/EditControl";
@@ -65,7 +74,7 @@ interface LegendItem {
 }
 
 interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, "onError"> {
-  geojson?: any;
+  geojson?: GeoJSON.FeatureCollection | GeoJSON.Feature | null;
   editable?: boolean;
   onGeojsonChange?: (featuresCollection?: GeoJSON.FeatureCollection | null) => void;
   onError?: (hasError: boolean, errors: { [index: string | number]: ValidationError | undefined }) => void;
@@ -81,17 +90,15 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   legend?: LegendItem[];
   centroids?: DashboardGetProjectsData[];
   polygonsData?: Record<string, string[]>;
-  polygonsCentroids?: any[];
+  polygonsCentroids?: { uuid: string; long: number; lat: number }[];
   bbox?: BBox;
   center?: [number, number];
   zoom?: number;
   mapStyle?: MapStyle;
   onStyleChange?: (style: MapStyle) => void;
-  setPolygonFromMap?: React.Dispatch<
-    React.SetStateAction<{ uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string }>
-  >;
-  polygonFromMap?: { uuid: string; isOpen: boolean; entityName?: string; projectPitchUuid?: string };
-  record?: any;
+  setPolygonFromMap?: SetPolygonFromMap;
+  polygonFromMap?: PolygonFromMapState;
+  record?: { uuid?: string; organisation?: { name?: string } };
   showPopups?: boolean;
   showLegend?: boolean;
   showDownloadPolygons?: boolean;
@@ -104,10 +111,10 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   formMap?: boolean;
   location?: { lat: number; lng: number } | null;
   dashboardMode?: "dashboard" | "modal" | undefined;
-  entityData?: any;
+  entityData?: EntityData;
   imageGalleryRef?: React.RefObject<HTMLDivElement>;
-  listViewProjects?: any;
-  role?: any;
+  listViewProjects?: DashboardGetProjectsData[];
+  role?: string;
   selectedCountry?: string | null;
   selectedLandscapes?: string[];
   projectUUID?: string | undefined;
@@ -118,11 +125,7 @@ interface MapProps extends Omit<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>
   showViewGallery?: boolean;
   legendPosition?: ControlMapPosition;
   hasAccess?: boolean;
-  dashboardContext?: {
-    setFilters: (fn: (prev: any) => any) => void;
-    dashboardCountries?: any[];
-    dashboardMode?: string;
-  };
+  dashboardContext?: DashboardPopupContext;
   disabledPolygonPanel?: boolean;
 }
 
@@ -194,7 +197,7 @@ export const MapContainer = ({
 
   const [viewImages, setViewImages] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [mobilePopupData, setMobilePopupData] = useState<any>(null);
+  const [mobilePopupData, setMobilePopupData] = useState<MobilePopupData | null>(null);
   const mapMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const isMobile = useMediaQuery("(max-width: 1200px)");
 
@@ -202,6 +205,17 @@ export const MapContainer = ({
   const contextMapArea = useMapAreaContext();
   const dashboardContextFromHook = useDashboardContext();
   const { setFilters, dashboardCountries } = dashboardContextFromHook ?? {};
+
+  // Resolve the dashboard popup context: prefer the explicit prop (passed from dashboard pages),
+  // fall back to the hook values available via DashboardProvider. Only set when in dashboard mode.
+  const resolvedDashboardContext: DashboardPopupContext | undefined =
+    dashboardMode != null
+      ? {
+          dashboardMode,
+          setFilters: dashboardContext?.setFilters ?? setFilters,
+          dashboardCountries: dashboardContext?.dashboardCountries ?? dashboardCountries
+        }
+      : undefined;
   const { reloadSiteData } = context ?? {};
   const t = useT();
   const { showLoader, hideLoader } = useLoading();
@@ -295,17 +309,13 @@ export const MapContainer = ({
     showPopups,
     sitePolygonData,
     tooltipType,
-    dashboardMode,
-    selectedCountry,
     isMobile,
-    dashboardCountries,
     setLoader,
     setPolygonFromMap,
     setEditPolygon,
     editPolygon,
-    setFilters,
     setMobilePopupData,
-    dashboardContext
+    dashboardContext: resolvedDashboardContext
   });
 
   useMapCamera({
@@ -435,7 +445,7 @@ export const MapContainer = ({
             {record?.uuid != null && validationType === "bulkValidation" && !disabledPolygonPanel ? (
               <ControlGroup position={siteData ? "top-left-site" : "top-left"} isFullscreen={isFullscreen}>
                 <CheckPolygonControl
-                  siteRecord={record}
+                  siteRecord={record?.uuid != null ? { ...record, uuid: record.uuid } : undefined}
                   polygonCheck={!siteData}
                   setIsLoadingDelayedJob={setIsLoadingDelayedJob!}
                   isLoadingDelayedJob={isLoadingDelayedJob!}

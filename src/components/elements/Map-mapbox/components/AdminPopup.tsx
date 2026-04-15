@@ -4,10 +4,11 @@ import { Provider as ReduxProvider } from "react-redux";
 import ApiSlice from "@/store/apiSlice";
 
 import TooltipMap from "../../TooltipMap/TooltipMap";
+import type { PopupComponentProps } from "../Map.d";
 
 const client = new QueryClient();
 
-export const AdminPopup = (event: any) => {
+export const AdminPopup = (event: PopupComponentProps) => {
   const { feature, popup, setPolygonFromMap, type, setEditPolygon } = event;
   const uuidPolygon = feature.properties?.uuid;
   return (

@@ -27,7 +27,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: "draft" },
         type: "line",
@@ -38,7 +38,7 @@ export const layersList: LayerType[] = [
           "line-dasharray": [2, 4]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.LineLayerSpecification,
       {
         metadata: { polygonStatus: "submitted" },
         type: "fill",
@@ -48,7 +48,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: "submitted" },
         type: "line",
@@ -59,7 +59,7 @@ export const layersList: LayerType[] = [
           "line-dasharray": [4, 2]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.LineLayerSpecification,
       {
         metadata: { polygonStatus: "approved" },
         type: "fill",
@@ -69,7 +69,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: "approved" },
         type: "line",
@@ -80,7 +80,7 @@ export const layersList: LayerType[] = [
           "line-dasharray": [1, 3]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.LineLayerSpecification,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "fill",
@@ -90,7 +90,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: "needs-more-information" },
         type: "line",
@@ -101,7 +101,7 @@ export const layersList: LayerType[] = [
           "line-dasharray": [3, 1]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.LineLayerSpecification,
       {
         metadata: { polygonStatus: "form-polygons" },
         type: "fill",
@@ -111,7 +111,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.1
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: "form-polygons" },
         type: "line",
@@ -121,7 +121,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayer
+      } as unknown as mapboxgl.LineLayerSpecification
     ]
   },
   {
@@ -137,7 +137,7 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayer,
+      } as unknown as mapboxgl.FillLayerSpecification,
       {
         metadata: { polygonStatus: DELETED_POLYGONS },
         type: "line",
@@ -147,7 +147,7 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayer
+      } as unknown as mapboxgl.LineLayerSpecification
     ]
   },
   {
@@ -163,7 +163,7 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 9
         }
-      } as unknown as mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayerSpecification,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
@@ -172,7 +172,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayerSpecification,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
@@ -181,7 +181,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayerSpecification,
       {
         metadata: { type: "big-circle" },
         type: "circle",
@@ -191,7 +191,7 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 8
         }
-      } as unknown as mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayerSpecification,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
@@ -200,7 +200,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayer,
+      } as unknown as mapboxgl.CircleLayerSpecification,
       {
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
@@ -209,7 +209,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayer
+      } as unknown as mapboxgl.CircleLayerSpecification
     ],
     hover: true
   },
@@ -223,14 +223,14 @@ export const layersList: LayerType[] = [
           "line-color": "#ff5a5f",
           "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
         }
-      } as unknown as mapboxgl.Style & mapboxgl.LineLayer,
+      } as unknown as mapboxgl.LineLayerSpecification,
       {
         type: "fill",
         paint: {
           "fill-color": "#ff5a5f",
           "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
         }
-      } as unknown as mapboxgl.FillLayer
+      } as unknown as mapboxgl.FillLayerSpecification
     ],
     hover: true
   },

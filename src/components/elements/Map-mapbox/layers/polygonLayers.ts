@@ -10,8 +10,8 @@ import type { LayerType, LayerWithStyle } from "../Map.d";
 import { DashboardGetProjectsData } from "../Map.d";
 import { getPulsingDot } from "../pulsing.dot";
 
-export const getFeatureProperties = <T extends any>(properties: any, key: string): T | undefined => {
-  return properties[key] ?? properties[`user_${key}`];
+export const getFeatureProperties = <T>(properties: GeoJSON.GeoJsonProperties, key: string): T | undefined => {
+  return (properties?.[key] ?? properties?.[`user_${key}`]) as T | undefined;
 };
 
 const showPolygons = (
@@ -19,15 +19,12 @@ const showPolygons = (
   name: string,
   map: mapboxgl.Map,
   field: string,
-  parsedPolygonData: any,
+  parsedPolygonData: Record<string, string[]> | undefined,
   zoomFilter?: number | undefined
 ) => {
   styles.forEach((style: LayerWithStyle, index: number) => {
     const layerName = `${name}-${index}`;
-    if (!map.getLayer(layerName)) {
-      Log.warn(`Layer ${layerName} does not exist.`);
-      return;
-    }
+    if (!map.getLayer(layerName)) return;
     const polygonStatus = (style?.metadata as { polygonStatus?: string } | undefined)?.polygonStatus ?? "";
     const uuidFilter = [
       "in",
@@ -45,10 +42,10 @@ const showPolygons = (
 export const loadLayersInMap = (
   map: mapboxgl.Map,
   polygonsData: Record<string, string[]> | undefined,
-  layer: any,
+  layer: LayerType,
   zoomFilter?: number | undefined
 ) => {
-  if (map) {
+  if (map != null) {
     showPolygons(layer.styles, layer.name, map, "uuid", polygonsData, zoomFilter);
   }
 };
@@ -58,7 +55,7 @@ export const addFilterOfPolygonsData = (map: mapboxgl.Map, polygonsData: Record<
   layersList.forEach((layer: LayerType) => loadLayersInMap(map, polygonsData, layer));
 };
 
-export const addFilterOnLayer = (layer: any, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
+export const addFilterOnLayer = (layer: LayerType, parsedPolygonData: Record<string, string[]>, map: mapboxgl.Map) => {
   addSourceToLayer(layer, map, parsedPolygonData);
 };
 
@@ -97,18 +94,24 @@ export const addGeojsonSourceToLayer = (
     return;
   }
 
-  const features: GeoJSON.Feature[] = centroids.map((centroid: any) => ({
-    type: "Feature",
-    geometry: {
-      type: "Point",
-      coordinates: [centroid.long ?? centroid.centroid?.long, centroid.lat ?? centroid.centroid?.lat]
-    },
-    properties: {
-      uuid: centroid.uuid,
-      name: centroid.name || centroid.uuid,
-      type: centroid.type || "polygon_centroid"
-    }
-  }));
+  const features: GeoJSON.Feature[] = centroids
+    .filter(centroid => {
+      const lng = centroid.long ?? centroid.centroid?.long;
+      const lat = centroid.lat ?? centroid.centroid?.lat;
+      return lng != null && lat != null;
+    })
+    .map(centroid => ({
+      type: "Feature" as const,
+      geometry: {
+        type: "Point" as const,
+        coordinates: [centroid.long ?? centroid.centroid!.long!, centroid.lat ?? centroid.centroid!.lat!]
+      },
+      properties: {
+        uuid: centroid.uuid,
+        name: centroid.name ?? centroid.uuid,
+        type: centroid.type ?? "polygon_centroid"
+      }
+    }));
 
   map.addSource(name, { type: "geojson", data: { type: "FeatureCollection", features } });
 
@@ -128,7 +131,7 @@ function getCentroidSourceKeys(map: mapboxgl.Map): Record<string, string> {
 function computeCentroidsFingerprint(centroids: DashboardGetProjectsData[]): string {
   let hash = 2166136261;
   for (const c of centroids) {
-    const centroidData = (c as any)?.centroid;
+    const centroidData = c.centroid;
     const id = c.uuid ?? "";
     const lng = String(c.long ?? centroidData?.long ?? "");
     const lat = String(c.lat ?? centroidData?.lat ?? "");
@@ -193,7 +196,7 @@ export const addSourceToLayer = (
   }
 };
 
-const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+const loadDeleteLayer = (layer: LayerType, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
   const { name, geoserverLayerName, styles } = layer;
   styles?.forEach((style: LayerWithStyle, index: number) => {
     if (map.getLayer(`${name}-${index}`)) {
@@ -204,12 +207,16 @@ const loadDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<str
       id: `${name}-${index}`,
       source: name,
       "source-layer": geoserverLayerName
-    } as mapboxgl.AnyLayer);
+    } as mapboxgl.LayerSpecification);
   });
   loadLayersInMap(map, polygonsData, layer);
 };
 
-export const addDeleteLayer = (layer: any, map: mapboxgl.Map, polygonsData: Record<string, string[]> | undefined) => {
+export const addDeleteLayer = (
+  layer: LayerType,
+  map: mapboxgl.Map,
+  polygonsData: Record<string, string[]> | undefined
+) => {
   const { name, geoserverLayerName, styles } = layer;
   try {
     if (map == null) return;
@@ -251,7 +258,10 @@ export const addLayerGeojsonStyle = (
   if (map.getLayer(`${layerName}-${index}`)) {
     map.removeLayer(`${layerName}-${index}`);
   }
-  map.addLayer({ ...style, id: `${layerName}-${index}`, source: sourceName } as mapboxgl.AnyLayer, beforeLayer);
+  map.addLayer(
+    { ...style, id: `${layerName}-${index}`, source: sourceName } as mapboxgl.LayerSpecification,
+    beforeLayer
+  );
   moveDeleteLayers(map);
 };
 
@@ -276,7 +286,7 @@ export const addLayerStyle = (
       ...(zoomFilter && {
         filter: ["all", style.filter || ["==", true, true], [">=", ["zoom"], zoomFilter]]
       })
-    } as mapboxgl.AnyLayer,
+    } as mapboxgl.LayerSpecification,
     beforeLayer
   );
   moveDeleteLayers(map);
@@ -288,7 +298,7 @@ export const addSourcesToLayers = (
   centroids: DashboardGetProjectsData[] | undefined,
   zoomFilter?: number | undefined,
   dashboardMode?: string | undefined,
-  polygonsCentroids?: any[] | undefined,
+  polygonsCentroids?: { uuid: string; long: number; lat: number }[] | undefined,
   cacheKey: string = "0"
 ) => {
   if (map == null) return;

@@ -1,3 +1,4 @@
+import mapboxgl from "mapbox-gl";
 import { useEffect, useMemo, useState } from "react";
 
 import { useDashboardProject } from "@/connections/DashboardEntity";
@@ -7,19 +8,21 @@ import { LAYERS_NAMES } from "@/constants/layers";
 import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServiceSchemas";
 import Log from "@/utils/log";
 
+type PopupEvent = { feature?: mapboxgl.GeoJSONFeature; layerName?: string };
+
 type Item = {
   id: string;
   title: string;
   value: string;
 };
 
-export function usePopupData(event: any) {
+export function usePopupData(event: PopupEvent) {
   const isoCountry = event?.feature?.properties?.iso;
   const itemUuid = event?.feature?.properties?.uuid;
   const { layerName } = event;
 
   const [popupType, setPopupType] = useState<"country" | "project" | "polygon" | null>(null);
-  const [popupData, setPopupData] = useState<any>(null);
+  const [popupData, setPopupData] = useState<{ label?: string; organization?: string; hectares?: string } | null>(null);
   const [items, setItems] = useState<Item[]>([]);
   const [label, setLabel] = useState<string>(event?.feature?.properties?.country);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,8 +50,17 @@ export function usePopupData(event: any) {
     return polygonDataArray?.[0];
   }, [polygonDataArray]);
 
-  const createProjectDataFromEntity = (projectFullDto: any) => {
-    if (!projectFullDto) return null;
+  const createProjectDataFromEntity = (
+    projectFullDto:
+      | {
+          name?: string | null;
+          organisationName?: string | null;
+          totalHectaresRestoredSum?: number;
+        }
+      | null
+      | undefined
+  ) => {
+    if (projectFullDto == null) return null;
 
     const data = [
       {
@@ -114,7 +126,7 @@ export function usePopupData(event: any) {
 
           if (entityData) {
             const label = projectFullDto.name ?? "Unknown Project";
-            const organization = projectFullDto.organisationName;
+            const organization = projectFullDto.organisationName ?? undefined;
             const hectares = projectFullDto.totalHectaresRestoredSum?.toString();
 
             setPopupType("project");

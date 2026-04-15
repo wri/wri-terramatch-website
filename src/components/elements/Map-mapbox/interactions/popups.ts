@@ -1,6 +1,6 @@
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
 import mapboxgl from "mapbox-gl";
-import { createElement } from "react";
+import React, { createElement } from "react";
 import { createRoot } from "react-dom/client";
 
 import { LAYERS_NAMES, layersList } from "@/constants/layers";
@@ -8,7 +8,15 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import Log from "@/utils/log";
 
 import { ANR_PLOT_FILL_LAYER_ID } from "../adapters/geoserver";
-import type { LayerType, TooltipType } from "../Map.d";
+import type {
+  DashboardPopupContext,
+  EditPolygonState,
+  LayerType,
+  MobilePopupData,
+  PopupComponentProps,
+  SetPolygonFromMap,
+  TooltipType
+} from "../Map.d";
 
 type MapboxPopup = InstanceType<typeof mapboxgl.Popup>;
 
@@ -21,50 +29,69 @@ function getPopupRegistry(map: mapboxgl.Map): Record<"POLYGON" | "MEDIA", Mapbox
   return popupRegistries.get(map)!;
 }
 
-const clickHandlerRegistries = new WeakMap<mapboxgl.Map, Record<string, (e: any) => void>>();
+// Mapbox click and touchend layer events share the same data shape (lngLat, features, point).
+type MapLayerInteractionEvent = mapboxgl.MapMouseEvent | mapboxgl.MapTouchEvent;
 
-function getClickHandlers(map: mapboxgl.Map): Record<string, (e: any) => void> {
+const clickHandlerRegistries = new WeakMap<mapboxgl.Map, Record<string, (e: MapLayerInteractionEvent) => void>>();
+
+function getClickHandlers(map: mapboxgl.Map): Record<string, (e: MapLayerInteractionEvent) => void> {
   if (!clickHandlerRegistries.has(map)) {
     clickHandlerRegistries.set(map, {});
   }
   return clickHandlerRegistries.get(map)!;
 }
 
+/** Options forwarded from useMapPopups down to every layer click handler. */
+export type PopupHandlerOptions = {
+  setPolygonFromMap?: SetPolygonFromMap;
+  sitePolygonData?: SitePolygonLightDto[];
+  type: TooltipType;
+  editPolygon: EditPolygonState;
+  setEditPolygon: (value: EditPolygonState) => void;
+  /** Present only in dashboard mode; drives popup content and filter callbacks. */
+  dashboard?: DashboardPopupContext;
+  setLoader?: (value: boolean) => void;
+  setMobilePopupData?: (value: MobilePopupData) => void;
+};
+
 const handleLayerClick = (
-  e: any,
-  PopupComponent: any,
+  e: MapLayerInteractionEvent,
+  PopupComponent: React.ComponentType<PopupComponentProps>,
   map: mapboxgl.Map,
-  setPolygonFromMap: any,
-  sitePolygonData: SitePolygonLightDto[] | undefined,
-  type: TooltipType,
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
-  layerName?: string,
-  dashboardMode?: string | undefined,
-  setFilters?: any,
-  dashboardCountries?: any,
-  setLoader?: (value: boolean) => void,
-  setMobilePopupData?: (value: any) => void
-) => {
+  layerName: string | undefined,
+  options: PopupHandlerOptions
+): void => {
   const { lngLat, features } = e;
   const feature = features?.[0];
-  if (!feature) {
+  if (feature == null) {
     Log.warn("No feature found in click event");
     return;
   }
 
-  if (setMobilePopupData != null && dashboardMode != null) {
+  const {
+    setPolygonFromMap,
+    sitePolygonData,
+    type,
+    editPolygon,
+    setEditPolygon,
+    dashboard,
+    setLoader,
+    setMobilePopupData
+  } = options;
+
+  if (setMobilePopupData != null && dashboard?.dashboardMode != null) {
     setMobilePopupData({
       feature,
       layerName,
       type,
       setPolygonFromMap,
       sitePolygonData,
-      dashboardMode,
       editPolygon,
       setEditPolygon,
-      setFilters,
-      dashboardCountries
+      setLoader,
+      setFilters: dashboard.setFilters,
+      dashboardCountries: dashboard.dashboardCountries,
+      dashboardMode: dashboard.dashboardMode
     });
     return;
   }
@@ -109,9 +136,9 @@ const handleLayerClick = (
       feature,
       popup: newPopup,
       layerName,
-      dashboardMode,
-      setFilters,
-      dashboardCountries,
+      setFilters: dashboard?.setFilters,
+      dashboardCountries: dashboard?.dashboardCountries,
+      dashboardMode: dashboard?.dashboardMode,
       setPolygonFromMap,
       sitePolygonData,
       type,
@@ -134,60 +161,24 @@ export const removePopups = (map: mapboxgl.Map, key: "POLYGON" | "MEDIA"): void 
 
 export const addPopupsToMap = (
   map: mapboxgl.Map,
-  popupComponent: any,
-  setPolygonFromMap: any,
-  sitePolygonData: SitePolygonLightDto[] | undefined,
-  type: TooltipType,
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  popupComponent: React.ComponentType<PopupComponentProps>,
   draw: MapboxDraw,
-  dashboardMode?: string | undefined,
-  setFilters?: any,
-  dashboardCountries?: any,
-  setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null,
-  setMobilePopupData?: (value: any) => void
+  options: PopupHandlerOptions
 ): void => {
-  if (!popupComponent) return;
+  if (popupComponent == null) return;
   layersList.forEach((layer: LayerType) => {
-    addPopupToLayer(
-      map,
-      popupComponent,
-      layer,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon,
-      draw,
-      dashboardMode,
-      setFilters,
-      dashboardCountries,
-      setLoader,
-      selectedCountry,
-      setMobilePopupData
-    );
+    addPopupToLayer(map, popupComponent, layer, draw, options);
   });
 };
 
 export const addPopupToLayer = (
   map: mapboxgl.Map,
-  popupComponent: any,
-  layer: any,
-  setPolygonFromMap: any,
-  sitePolygonData: SitePolygonLightDto[] | undefined,
-  type: TooltipType,
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string },
-  setEditPolygon: (value: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void,
+  popupComponent: React.ComponentType<PopupComponentProps>,
+  layer: LayerType,
   draw: MapboxDraw,
-  dashboardMode?: string | undefined,
-  setFilters?: any,
-  dashboardCountries?: any,
-  setLoader?: (value: boolean) => void,
-  selectedCountry?: string | null,
-  setMobilePopupData?: (value: any) => void
+  options: PopupHandlerOptions
 ): void => {
-  if (!popupComponent) return;
+  if (popupComponent == null) return;
 
   const { name } = layer;
   let style: ReturnType<typeof map.getStyle>;
@@ -197,36 +188,22 @@ export const addPopupToLayer = (
     return;
   }
   if (style == null) return;
-  let layers = style.layers ?? [];
+  const layers = style.layers ?? [];
   let targetLayers = layers.filter(l => l.id.startsWith(name));
 
   if (name === LAYERS_NAMES.CENTROIDS && targetLayers.length > 0) {
-    targetLayers = targetLayers.filter(l => (l as any)?.metadata?.type === "big-circle");
+    targetLayers = targetLayers.filter(
+      l => (l as mapboxgl.LayerSpecification & { metadata?: { type?: string } })?.metadata?.type === "big-circle"
+    );
   }
 
   const handlers = getClickHandlers(map);
 
-  const clickHandler = (e: any) => {
+  const clickHandler = (e: MapLayerInteractionEvent) => {
     const currentMode = draw?.getMode();
     if (currentMode === "draw_polygon" || currentMode === "draw_line_string") return;
     if (name === LAYERS_NAMES.WORLD_COUNTRIES) return;
-
-    handleLayerClick(
-      e,
-      popupComponent,
-      map,
-      setPolygonFromMap,
-      sitePolygonData,
-      type,
-      editPolygon,
-      setEditPolygon,
-      name,
-      dashboardMode,
-      setFilters,
-      dashboardCountries,
-      setLoader,
-      setMobilePopupData
-    );
+    handleLayerClick(e, popupComponent, map, name, options);
   };
 
   targetLayers.forEach(targetLayer => {

@@ -7,7 +7,13 @@ import { SitePolygonLightDto } from "@/generated/v3/researchService/researchServ
 import { AdminPopup } from "../components/AdminPopup";
 import { DashboardPopup } from "../components/DashboardPopup";
 import { addPopupsToMap } from "../interactions/popups";
-import type { TooltipType } from "../Map.d";
+import type {
+  DashboardPopupContext,
+  EditPolygonState,
+  MobilePopupData,
+  SetPolygonFromMap,
+  TooltipType
+} from "../Map.d";
 
 type UseMapPopupsParams = {
   map: MutableRefObject<mapboxgl.Map | null>;
@@ -16,17 +22,14 @@ type UseMapPopupsParams = {
   showPopups?: boolean;
   sitePolygonData?: SitePolygonLightDto[];
   tooltipType?: TooltipType;
-  dashboardMode?: string;
-  selectedCountry?: string | null;
   isMobile: boolean;
-  dashboardCountries?: any[];
   setLoader?: (v: boolean) => void;
-  setPolygonFromMap?: (v: any) => void;
-  setEditPolygon: (v: { isOpen: boolean; uuid: string; primary_uuid?: string }) => void;
-  editPolygon: { isOpen: boolean; uuid: string; primary_uuid?: string };
-  setFilters?: any;
-  setMobilePopupData: (v: any) => void;
-  dashboardContext?: { setFilters?: any; dashboardCountries?: any[] } | null;
+  setPolygonFromMap?: SetPolygonFromMap;
+  setEditPolygon: (v: EditPolygonState) => void;
+  editPolygon: EditPolygonState;
+  setMobilePopupData: (v: MobilePopupData) => void;
+  /** Full dashboard context; undefined in admin mode — drives popup component choice and filter callbacks. */
+  dashboardContext?: DashboardPopupContext | null;
 };
 
 export function useMapPopups({
@@ -36,26 +39,17 @@ export function useMapPopups({
   showPopups,
   sitePolygonData,
   tooltipType,
-  dashboardMode,
-  selectedCountry,
   isMobile,
-  dashboardCountries,
   setLoader,
   setPolygonFromMap,
   setEditPolygon,
   editPolygon,
-  setFilters,
   setMobilePopupData,
   dashboardContext
 }: UseMapPopupsParams) {
-  const callbacksRef = useRef({
-    setPolygonFromMap,
-    setEditPolygon,
-    setFilters,
-    setMobilePopupData
-  });
+  const callbacksRef = useRef({ setPolygonFromMap, setEditPolygon, setMobilePopupData });
   useEffect(() => {
-    callbacksRef.current = { setPolygonFromMap, setEditPolygon, setFilters, setMobilePopupData };
+    callbacksRef.current = { setPolygonFromMap, setEditPolygon, setMobilePopupData };
   });
 
   const editPolygonRef = useRef(editPolygon);
@@ -66,34 +60,18 @@ export function useMapPopups({
   useEffect(() => {
     if (!sourcesAdded || map.current == null || draw.current == null || !showPopups) return;
 
-    addPopupsToMap(
-      map.current,
-      dashboardMode ? DashboardPopup : AdminPopup,
-      callbacksRef.current.setPolygonFromMap,
+    const PopupComponent = dashboardContext?.dashboardMode != null ? DashboardPopup : AdminPopup;
+
+    addPopupsToMap(map.current, PopupComponent, draw.current, {
+      setPolygonFromMap: callbacksRef.current.setPolygonFromMap,
       sitePolygonData,
-      tooltipType ?? "goTo",
-      editPolygonRef.current,
-      callbacksRef.current.setEditPolygon,
-      draw.current,
-      dashboardMode,
-      dashboardContext?.setFilters ?? callbacksRef.current.setFilters,
-      dashboardContext?.dashboardCountries ?? dashboardCountries,
+      type: tooltipType ?? "goTo",
+      editPolygon: editPolygonRef.current,
+      setEditPolygon: callbacksRef.current.setEditPolygon,
+      dashboard: dashboardContext ?? undefined,
       setLoader,
-      selectedCountry,
-      isMobile || dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
-    );
-  }, [
-    sourcesAdded,
-    sitePolygonData,
-    dashboardMode,
-    tooltipType,
-    selectedCountry,
-    isMobile,
-    showPopups,
-    dashboardCountries,
-    setLoader,
-    dashboardContext,
-    map,
-    draw
-  ]);
+      setMobilePopupData:
+        isMobile || dashboardContext?.dashboardMode != null ? callbacksRef.current.setMobilePopupData : undefined
+    });
+  }, [sourcesAdded, sitePolygonData, tooltipType, isMobile, showPopups, setLoader, dashboardContext, map, draw]);
 }
