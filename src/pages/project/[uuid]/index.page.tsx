@@ -44,6 +44,28 @@ type SuffixButtonConfig = {
 
 const SUFFIX_VIEW_KEYS = ["reporting-tasks", "sites", "nurseries"];
 
+const ProjectResponsiveTypography = () => (
+  <style>{`
+    @media (min-width: 1800px) {
+      html {
+        font-size: 18px;
+      }
+    }
+
+    @media (min-width: 2400px) {
+      html {
+        font-size: 22px;
+      }
+    }
+
+    @media (min-width: 3700px) {
+      html {
+        font-size: 26px;
+      }
+    }
+  `}</style>
+);
+
 const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
   const t = useT();
   const router = useRouter();
@@ -134,6 +156,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
 
   return (
     <>
+      <ProjectResponsiveTypography />
       <InviteMonitoringPartnerModal
         projectUUID={project.uuid}
         open={showInviteModal}
@@ -162,7 +185,7 @@ const ProjectContent: FC<ProjectContentProps> = ({ project, refetch }) => {
           <div className="flex gap-1.5">
             {suffixButtons.map((button, index) => (
               <div key={button.key} className="flex gap-1.5">
-                {index > 0 && <span className="text-sm text-theme-neutral-300">|</span>}
+                {index > 0 && <span className="text-theme-neutral-300 text-sm">|</span>}
                 <Button
                   variant="borderless"
                   size="small"
