@@ -89,15 +89,36 @@ export function getCurrencySymbolPrefix(currencyCode: string | undefined): strin
   }
 }
 
-function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
+function normalizeLinkedFieldKey(linkedFieldKey: string | null | undefined): string {
   if (linkedFieldKey == null || linkedFieldKey === "") {
+    return "";
+  }
+  return linkedFieldKey.toLowerCase().replace(/[_.]/g, "-");
+}
+
+export function isProjectBudgetIntegerLinkedField(linkedFieldKey: string | null | undefined): boolean {
+  const k = normalizeLinkedFieldKey(linkedFieldKey);
+  if (k === "") {
     return false;
   }
-  const k = linkedFieldKey.toLowerCase().replace(/_/g, "-");
+  return (
+    k === "pro-pit-bgt" ||
+    k === "pro-budget" ||
+    k === "v2-pro-bgt" ||
+    k.includes("project-pitches-project-budget") ||
+    k.includes("v2-projects-budget")
+  );
+}
+
+function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
+  const k = normalizeLinkedFieldKey(linkedFieldKey);
+  if (k === "") {
+    return false;
+  }
   if (k.includes("lat-") || k.includes("long-")) {
     return false;
   }
-  if (k === "pro-pit-bgt") {
+  if (isProjectBudgetIntegerLinkedField(k)) {
     return true;
   }
   if (k.includes("average-worker-income") || k.includes("averageworkerincome")) {
@@ -115,7 +136,14 @@ function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undef
   return false;
 }
 
+export function isProjectBudgetIntegerField(field: FieldDefinition): boolean {
+  return isProjectBudgetIntegerLinkedField(field.linkedFieldKey);
+}
+
 export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
+  if (isProjectBudgetIntegerField(field)) {
+    return false;
+  }
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }
