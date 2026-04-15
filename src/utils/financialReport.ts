@@ -30,6 +30,9 @@ export const currencyInput: Record<string, string> = {
   GBP: "£"
 };
 
+const PROJECT_BUDGET_INTEGER_EXACT_KEYS: string[] = ["pro-pit-bgt", "pro-budget", "v2-pro-bgt"];
+const PROJECT_BUDGET_INTEGER_PARTIAL_KEYS: string[] = ["project-pitches-project-budget", "v2-projects-budget"];
+
 /**
  * Normalizes a user-typed amount string to a JS decimal string (`.` as decimal separator).
  */
@@ -102,11 +105,8 @@ export function isProjectBudgetIntegerLinkedField(linkedFieldKey: string | null 
     return false;
   }
   return (
-    k === "pro-pit-bgt" ||
-    k === "pro-budget" ||
-    k === "v2-pro-bgt" ||
-    k.includes("project-pitches-project-budget") ||
-    k.includes("v2-projects-budget")
+    PROJECT_BUDGET_INTEGER_EXACT_KEYS.includes(k) ||
+    PROJECT_BUDGET_INTEGER_PARTIAL_KEYS.some(partialKey => k.includes(partialKey))
   );
 }
 
