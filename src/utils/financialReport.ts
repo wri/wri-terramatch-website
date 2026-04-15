@@ -30,6 +30,9 @@ export const currencyInput: Record<string, string> = {
   GBP: "£"
 };
 
+const PROJECT_BUDGET_INTEGER_EXACT_KEYS: string[] = ["pro-pit-bgt", "pro-budget", "v2-pro-bgt"];
+const PROJECT_BUDGET_INTEGER_PARTIAL_KEYS: string[] = ["project-pitches-project-budget", "v2-projects-budget"];
+
 /**
  * Normalizes a user-typed amount string to a JS decimal string (`.` as decimal separator).
  */
@@ -89,15 +92,33 @@ export function getCurrencySymbolPrefix(currencyCode: string | undefined): strin
   }
 }
 
-function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
+function normalizeLinkedFieldKey(linkedFieldKey: string | null | undefined): string {
   if (linkedFieldKey == null || linkedFieldKey === "") {
+    return "";
+  }
+  return linkedFieldKey.toLowerCase().replace(/[_.]/g, "-");
+}
+
+export function isProjectBudgetIntegerLinkedField(linkedFieldKey: string | null | undefined): boolean {
+  const k = normalizeLinkedFieldKey(linkedFieldKey);
+  if (k === "") {
     return false;
   }
-  const k = linkedFieldKey.toLowerCase().replace(/_/g, "-");
+  return (
+    PROJECT_BUDGET_INTEGER_EXACT_KEYS.includes(k) ||
+    PROJECT_BUDGET_INTEGER_PARTIAL_KEYS.some(partialKey => k.includes(partialKey))
+  );
+}
+
+function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
+  const k = normalizeLinkedFieldKey(linkedFieldKey);
+  if (k === "") {
+    return false;
+  }
   if (k.includes("lat-") || k.includes("long-")) {
     return false;
   }
-  if (k === "pro-pit-bgt") {
+  if (isProjectBudgetIntegerLinkedField(k)) {
     return true;
   }
   if (k.includes("average-worker-income") || k.includes("averageworkerincome")) {
@@ -115,7 +136,14 @@ function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undef
   return false;
 }
 
+export function isProjectBudgetIntegerField(field: FieldDefinition): boolean {
+  return isProjectBudgetIntegerLinkedField(field.linkedFieldKey);
+}
+
 export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
+  if (isProjectBudgetIntegerField(field)) {
+    return false;
+  }
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }

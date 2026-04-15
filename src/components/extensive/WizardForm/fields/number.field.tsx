@@ -12,6 +12,7 @@ import { useCurrencyContext } from "@/context/currency.provider";
 import { useWizardOrgFormDetails } from "@/context/wizardForm.provider";
 import {
   formatFinancialAmount,
+  isProjectBudgetIntegerField,
   parseFinancialAmountInput,
   shouldFormatFinancialNumberField
 } from "@/utils/financialReport";
@@ -137,6 +138,16 @@ export const NumberField: FormFieldFactory = {
       return validator;
     }
 
+    if (isProjectBudgetIntegerField(field)) {
+      let validator = yup
+        .number()
+        .transform((value, originalValue) => (originalValue === "" || originalValue == null ? undefined : value))
+        .integer();
+      if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
+      if (isNumber(validation?.max)) validator = validator.max(validation?.max!);
+      return validator;
+    }
+
     let validator = yup.number();
     if (isNumber(validation?.min)) validator = validator.min(validation?.min!);
     if (isNumber(validation?.max)) validator = validator.max(validation?.max!);
@@ -153,6 +164,9 @@ export const NumberField: FormFieldFactory = {
     }
     if (shouldFormatFinancialNumberField(field)) {
       return <FinancialAmountInput {...sharedProps} />;
+    }
+    if (isProjectBudgetIntegerField(field)) {
+      return <Input {...sharedProps} type="number" step={1} />;
     }
     return <Input {...sharedProps} type="number" step={additionalProps?.step} />;
   },
@@ -186,6 +200,14 @@ export const NumberField: FormFieldFactory = {
     }
     const { name, validation } = field;
     const value = formValues[name];
+    if (isProjectBudgetIntegerField(field)) {
+      if (value == null || value === "") {
+        return formValues;
+      }
+      const numberValue = Number(value);
+      formValues[name] = Number.isFinite(numberValue) ? Math.trunc(numberValue) : value;
+      return formValues;
+    }
     formValues[name] = value == null && (validation?.min ?? 0) < 0 ? value : Number(value);
     return formValues;
   }
