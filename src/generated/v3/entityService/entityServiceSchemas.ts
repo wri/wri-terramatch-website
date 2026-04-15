@@ -988,20 +988,6 @@ export type AggregateReportsDto = {
   treesRegenerating?: AggregateReportSeriesItemDto[];
 };
 
-export type ANRDto = {
-  /**
-   * Site name
-   */
-  name: string;
-  treeCount: number;
-};
-
-export type ProjectApplicationDto = {
-  uuid: string;
-  fundingProgrammeName: string | null;
-  projectPitchUuid: string | null;
-};
-
 export type EntitySideload = {
   /**
    * Entity or association type to sideload
@@ -1027,6 +1013,20 @@ export type EntitySideload = {
    * The page size to include.
    */
   pageSize: number;
+};
+
+export type ANRDto = {
+  /**
+   * Site name
+   */
+  name: string;
+  treeCount: number;
+};
+
+export type ProjectApplicationDto = {
+  uuid: string;
+  fundingProgrammeName: string | null;
+  projectPitchUuid: string | null;
 };
 
 /**

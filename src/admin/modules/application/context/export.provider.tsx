@@ -2,10 +2,8 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 import { useNotify } from "react-admin";
 
 import ExportProcessingAlert from "@/admin/components/Alerts/ExportProcessingAlert";
-import {
-  fetchGetV2AdminFormsApplicationsUUIDExport,
-  fetchGetV2AdminFormsSubmissionsUUIDExport
-} from "@/generated/apiComponents";
+import { fetchGetV2AdminFormsApplicationsUUIDExport } from "@/generated/apiComponents";
+import { formSubmissionsExportCsv } from "@/generated/v3/entityService/entityServiceComponents";
 import { downloadFileBlob, downloadPresignedUrl } from "@/utils/network";
 
 type ExportType = {
@@ -56,7 +54,7 @@ const ExportProvider = ({ children }: ExportProviderProps) => {
       };
 
       if (formUuid != null) {
-        return exporter(fileName, () => fetchGetV2AdminFormsSubmissionsUUIDExport({ pathParams: { uuid: formUuid } }));
+        return exporter(fileName, () => formSubmissionsExportCsv.fetchBlob({ pathParams: { uuid: formUuid } }));
       } else if (fundingProgrammeUuid != null) {
         return exporter(fileName, () =>
           fetchGetV2AdminFormsApplicationsUUIDExport({ pathParams: { uuid: fundingProgrammeUuid } })

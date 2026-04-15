@@ -2382,6 +2382,137 @@ export const getAggregateReports = new V3ApiEndpoint<
   {}
 >("/entities/v3/{entity}/{uuid}/aggregateReports", "GET");
 
+export type FinancialReportExportCsvError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export const financialReportExportCsv = new V3ApiEndpoint<undefined, FinancialReportExportCsvError, {}, {}>(
+  "/entities/v3/financialReports/export",
+  "GET"
+);
+
+export type SrpReportExportCsvQueryParams = {
+  ["sort[field]"]?: string;
+  /**
+   * @default ASC
+   */
+  ["sort[direction]"]?: "ASC" | "DESC";
+  /**
+   * The size of page being requested
+   *
+   * @minimum 1
+   * @maximum 100
+   * @default 100
+   */
+  ["page[size]"]?: number;
+  /**
+   * The page number to return. If page[number] is not provided, the first page is returned.
+   */
+  ["page[number]"]?: number;
+  search?: string;
+  /**
+   * Search query used for filtering selectable options in autocomplete fields.
+   */
+  searchFilter?: string;
+  frameworkKey?: string[];
+  organisationUuid?: string;
+  country?: string;
+  status?: string;
+  updateRequestStatus?: string;
+  projectUuid?: string;
+  nurseryUuid?: string;
+  siteUuid?: string;
+  /**
+   * Filter by landscape 3-letter codes: gcb, grv, ikr
+   */
+  landscape?: string[];
+  /**
+   * Filter by organisation types
+   */
+  organisationType?: string[];
+  /**
+   * Filter by cohorts
+   */
+  cohort?: string[];
+  /**
+   * If the base entity supports it, this will load the first page of associated entities
+   */
+  sideloads?: Schemas.EntitySideload[];
+  polygonStatus?: "no-polygons" | "submitted" | "approved" | "needs-more-information" | "draft";
+  nothingToReport?: boolean;
+  shortName?: string;
+  plantingStatus?: Schemas.Object;
+  /**
+   * Filter reports by task ID (used to get site/nursery reports for a specific reporting period)
+   */
+  taskId?: number;
+};
+
+export type SrpReportExportCsvError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type SrpReportExportCsvVariables = {
+  queryParams?: SrpReportExportCsvQueryParams;
+};
+
+export const srpReportExportCsv = new V3ApiEndpoint<
+  undefined,
+  SrpReportExportCsvError,
+  SrpReportExportCsvVariables,
+  {}
+>("/entities/v3/srpReports/export", "GET");
+
 export type EntityIndexPathParams = {
   /**
    * Entity type to retrieve
@@ -5248,6 +5379,50 @@ export const formPullTranslations = new V3ApiEndpoint<
   {}
 >("/forms/v3/forms/{uuid}/translations", "GET");
 
+export type FormSubmissionsExportCsvPathParams = {
+  uuid: string;
+};
+
+export type FormSubmissionsExportCsvError = Fetcher.ErrorWrapper<
+  | {
+      status: 400;
+      payload: {
+        /**
+         * @example 400
+         */
+        statusCode: number;
+        /**
+         * @example Bad Request
+         */
+        message: string;
+      };
+    }
+  | {
+      status: 401;
+      payload: {
+        /**
+         * @example 401
+         */
+        statusCode: number;
+        /**
+         * @example Unauthorized
+         */
+        message: string;
+      };
+    }
+>;
+
+export type FormSubmissionsExportCsvVariables = {
+  pathParams: FormSubmissionsExportCsvPathParams;
+};
+
+export const formSubmissionsExportCsv = new V3ApiEndpoint<
+  undefined,
+  FormSubmissionsExportCsvError,
+  FormSubmissionsExportCsvVariables,
+  {}
+>("/forms/v3/forms/{uuid}/exportSubmissions", "GET");
+
 export type ApplicationIndexQueryParams = {
   ["sort[field]"]?: string;
   /**
@@ -6299,6 +6474,8 @@ export const operationsByTag = {
   reminders: { sendReminder },
   auditStatus: { getAuditStatuses, createAuditStatus, deleteAuditStatus },
   aggregateReports: { getAggregateReports },
+  financialReport: { financialReportExportCsv },
+  srpReport: { srpReportExportCsv },
   entities: { entityIndex, entityCreate, entityGet, entityDelete, entityUpdate },
   formData: { formDataGet, formDataUpdate },
   updateRequests: { updateRequestGet, updateRequestUpdate },
@@ -6306,7 +6483,16 @@ export const operationsByTag = {
   optionLabels: { optionLabelsIndex, optionLabelsGetList },
   linkedFields: { linkedFieldsIndex },
   submissions: { submissionGet, submissionUpdate, submissionCreate },
-  forms: { formIndex, formCreate, formGet, formDelete, formUpdate, formPushTranslation, formPullTranslations },
+  forms: {
+    formIndex,
+    formCreate,
+    formGet,
+    formDelete,
+    formUpdate,
+    formPushTranslation,
+    formPullTranslations,
+    formSubmissionsExportCsv
+  },
   applications: { applicationIndex, applicationGet, applicationDelete, applicationHistoryGet },
   fundingProgrammes: {
     fundingProgrammesIndex,

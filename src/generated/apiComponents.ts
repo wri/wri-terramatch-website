@@ -376,51 +376,6 @@ export const useDeleteV2OwnershipStakeUUID = (
   );
 };
 
-export type GetV2AdminFormsSubmissionsUUIDExportPathParams = {
-  uuid: string;
-};
-
-export type GetV2AdminFormsSubmissionsUUIDExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2AdminFormsSubmissionsUUIDExportVariables = {
-  pathParams: GetV2AdminFormsSubmissionsUUIDExportPathParams;
-} & ApiContext["fetcherOptions"];
-
-export const fetchGetV2AdminFormsSubmissionsUUIDExport = (
-  variables: GetV2AdminFormsSubmissionsUUIDExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<
-    Record<string, any>,
-    GetV2AdminFormsSubmissionsUUIDExportError,
-    undefined,
-    {},
-    {},
-    GetV2AdminFormsSubmissionsUUIDExportPathParams
-  >({ url: "/v2/admin/forms/submissions/{uuid}/export", method: "get", ...variables, signal });
-
-export const useGetV2AdminFormsSubmissionsUUIDExport = <TData = Record<string, any>>(
-  variables: GetV2AdminFormsSubmissionsUUIDExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2AdminFormsSubmissionsUUIDExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2AdminFormsSubmissionsUUIDExportError, TData>(
-    queryKeyFn({
-      path: "/v2/admin/forms/submissions/{UUID}/export",
-      operationId: "getV2AdminFormsSubmissionsUUIDExport",
-      variables
-    }),
-    ({ signal }) => fetchGetV2AdminFormsSubmissionsUUIDExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2AdminFormsApplicationsUUIDExportPathParams = {
   uuid: string;
 };
@@ -1150,11 +1105,6 @@ export const useGetV2SrpReportsExport = <TData = Record<string, any>>(
 };
 
 export type QueryOperation =
-  | {
-      path: "/v2/admin/forms/submissions/{UUID}/export";
-      operationId: "getV2AdminFormsSubmissionsUUIDExport";
-      variables: GetV2AdminFormsSubmissionsUUIDExportVariables;
-    }
   | {
       path: "/v2/admin/forms/applications/{UUID}/export";
       operationId: "getV2AdminFormsApplicationsUUIDExport";
