@@ -89,7 +89,31 @@ export function getCurrencySymbolPrefix(currencyCode: string | undefined): strin
   }
 }
 
+function hasIntegerNumberAdditionalProps(field: FieldDefinition): boolean {
+  const props = field.additionalProps;
+  if (props == null) {
+    return false;
+  }
+  return props.integer === true || props.integerOnly === true || props.decimals === 0 || props.precision === 0;
+}
+
+function isLegacyProjectBudgetField(field: FieldDefinition): boolean {
+  const model = String(field.model ?? "").toLowerCase();
+  const label = String(field.label ?? "")
+    .trim()
+    .toLowerCase();
+  // Temporary compatibility fallback until these questions are explicitly configured via additionalProps.
+  return (model === "projects" || model === "project-pitches") && label === "budget";
+}
+
+export function shouldUseIntegerNumberInput(field: FieldDefinition): boolean {
+  return hasIntegerNumberAdditionalProps(field) || isLegacyProjectBudgetField(field);
+}
+
 export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
+  if (shouldUseIntegerNumberInput(field)) {
+    return false;
+  }
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }
