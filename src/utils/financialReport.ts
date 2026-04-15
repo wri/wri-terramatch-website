@@ -30,9 +30,6 @@ export const currencyInput: Record<string, string> = {
   GBP: "£"
 };
 
-const PROJECT_BUDGET_INTEGER_EXACT_KEYS: string[] = ["pro-pit-bgt", "pro-budget", "v2-pro-bgt"];
-const PROJECT_BUDGET_INTEGER_PARTIAL_KEYS: string[] = ["project-pitches-project-budget", "v2-projects-budget"];
-
 /**
  * Normalizes a user-typed amount string to a JS decimal string (`.` as decimal separator).
  */
@@ -92,68 +89,11 @@ export function getCurrencySymbolPrefix(currencyCode: string | undefined): strin
   }
 }
 
-function normalizeLinkedFieldKey(linkedFieldKey: string | null | undefined): string {
-  if (linkedFieldKey == null || linkedFieldKey === "") {
-    return "";
-  }
-  return linkedFieldKey.toLowerCase().replace(/[_.]/g, "-");
-}
-
-export function isProjectBudgetIntegerLinkedField(linkedFieldKey: string | null | undefined): boolean {
-  const k = normalizeLinkedFieldKey(linkedFieldKey);
-  if (k === "") {
-    return false;
-  }
-  return (
-    PROJECT_BUDGET_INTEGER_EXACT_KEYS.includes(k) ||
-    PROJECT_BUDGET_INTEGER_PARTIAL_KEYS.some(partialKey => k.includes(partialKey))
-  );
-}
-
-function linkedKeyMatchesFinancialPatterns(linkedFieldKey: string | null | undefined): boolean {
-  const k = normalizeLinkedFieldKey(linkedFieldKey);
-  if (k === "") {
-    return false;
-  }
-  if (k.includes("lat-") || k.includes("long-")) {
-    return false;
-  }
-  if (isProjectBudgetIntegerLinkedField(k)) {
-    return true;
-  }
-  if (k.includes("average-worker-income") || k.includes("averageworkerincome")) {
-    return true;
-  }
-  if (k.includes("project-budget") || k.includes("projectbudget")) {
-    return true;
-  }
-  if (k.includes("loan-status-amount") || k.includes("loanstatusamount")) {
-    return true;
-  }
-  if (/-budget$/.test(k) || k.endsWith("budget")) {
-    return true;
-  }
-  return false;
-}
-
-export function isProjectBudgetIntegerField(field: FieldDefinition): boolean {
-  return isProjectBudgetIntegerLinkedField(field.linkedFieldKey);
-}
-
 export function shouldFormatFinancialNumberField(field: FieldDefinition): boolean {
-  if (isProjectBudgetIntegerField(field)) {
-    return false;
-  }
   if (field.additionalProps?.financialAmount === true) {
     return true;
   }
-  if (field.inputType === "number-currency") {
-    return true;
-  }
-  if (field.linkedFieldKey?.includes("lat-") || field.linkedFieldKey?.includes("long-")) {
-    return false;
-  }
-  return linkedKeyMatchesFinancialPatterns(field.linkedFieldKey);
+  return field.inputType === "number-currency";
 }
 
 export const formatDocumentData = (documents: FinancialIndicatorDto[]) => {

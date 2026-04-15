@@ -27,7 +27,22 @@ export const formatEntryValue = (entry: any) => {
 };
 
 const isDateType = (value: any) => {
-  return isValid(parseISO(value));
+  if (typeof value !== "string") {
+    return false;
+  }
+  const trimmedValue = value.trim();
+  if (trimmedValue === "") {
+    return false;
+  }
+
+  // Avoid treating plain numeric values (e.g. "1000") as year-based dates.
+  // We only accept ISO-like date strings used by the API.
+  const isoDatePattern = /^\d{4}-\d{2}-\d{2}(?:[T ][\d:.+-Z]*)?$/;
+  if (!isoDatePattern.test(trimmedValue)) {
+    return false;
+  }
+
+  return isValid(parseISO(trimmedValue));
 };
 
 export const convertDateFormat = (value: any) => {
