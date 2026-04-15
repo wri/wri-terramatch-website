@@ -1,10 +1,9 @@
 export type AvatarSize = "small" | "medium" | "large";
 
-// Size mapping in rem (16px = 1rem)
 export const AVATAR_SIZE_MAP: Record<AvatarSize, string> = {
-  small: "1.5625rem", // 25px
-  medium: "2.375rem", // 38px
-  large: "3rem" // 48px
+  small: "1.5625rem",
+  medium: "2.375rem",
+  large: "3rem"
 };
 
 // Icon size mapping for "add" variant (chakra boxSize)

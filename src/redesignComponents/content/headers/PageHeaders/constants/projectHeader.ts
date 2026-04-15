@@ -1,6 +1,13 @@
+// Base size for JS calculations (cover position factor, Next.js image optimization hint)
 export const IMAGE_SIZE = 164;
 
-export const IMAGE_CONTAINER_CLASSES = "!min-w-40 !min-h-40 !h-44 !w-44";
+export const IMAGE_CONTAINER_CLASSES = [
+  "!min-w-[10rem]",
+  "!min-h-[10rem]",
+  "!w-[11rem]",
+  "!h-[11rem]",
+  "[&>div]:!w-full [&>div]:!h-full"
+].join(" ");
 
 export const FLAG_OFFSET = 127397;
 

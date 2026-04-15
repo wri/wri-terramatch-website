@@ -220,7 +220,7 @@ const ProjectOverviewTab = ({ project, onViewSites }: ProjectOverviewTabProps) =
             <OverviewMapArea
               entityModel={project}
               type="projects"
-              className="max-h-[432px]"
+              className="max-h-[27rem]"
               disabledPolygonPanel={true}
             />
             {showSiteAreasMapPlaceholder && (

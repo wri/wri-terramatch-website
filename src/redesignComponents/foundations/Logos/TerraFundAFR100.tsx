@@ -4,8 +4,8 @@ import React, { FC } from "react";
 export const TerraFundAFR100: FC<IconProps> = props => (
   <Icon {...props}>
     <svg
-      width="80"
-      height="61"
+      width="5rem"
+      height="3.8125rem"
       viewBox="0 0 80 61"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
