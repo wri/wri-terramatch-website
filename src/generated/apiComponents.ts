@@ -1008,39 +1008,6 @@ export const usePatchV2FinancialIndicators = (
   );
 };
 
-export type GetV2FinancialReportsExportError = Fetcher.ErrorWrapper<undefined>;
-
-export type GetV2FinancialReportsExportVariables = ApiContext["fetcherOptions"];
-
-export const fetchGetV2FinancialReportsExport = (
-  variables: GetV2FinancialReportsExportVariables,
-  signal?: AbortSignal
-) =>
-  apiFetch<Record<string, any>, GetV2FinancialReportsExportError, undefined, {}, {}, {}>({
-    url: "/v2/financial-reports/export",
-    method: "get",
-    ...variables,
-    signal
-  });
-
-export const useGetV2FinancialReportsExport = <TData = Record<string, any>>(
-  variables: GetV2FinancialReportsExportVariables,
-  options?: Omit<
-    reactQuery.UseQueryOptions<Record<string, any>, GetV2FinancialReportsExportError, TData>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const { fetcherOptions, queryOptions, queryKeyFn } = useApiContext(options);
-  return reactQuery.useQuery<Record<string, any>, GetV2FinancialReportsExportError, TData>(
-    queryKeyFn({ path: "/v2/financial-reports/export", operationId: "getV2FinancialReportsExport", variables }),
-    ({ signal }) => fetchGetV2FinancialReportsExport({ ...fetcherOptions, ...variables }, signal),
-    {
-      ...options,
-      ...queryOptions
-    }
-  );
-};
-
 export type GetV2DisturbanceReportsExportError = Fetcher.ErrorWrapper<undefined>;
 
 export type GetV2DisturbanceReportsExportVariables = ApiContext["fetcherOptions"];
@@ -1139,11 +1106,6 @@ export type QueryOperation =
       path: "/v2/{ENTITY}/{UUID}/export";
       operationId: "getV2ENTITYUUIDExport";
       variables: GetV2ENTITYUUIDExportVariables;
-    }
-  | {
-      path: "/v2/financial-reports/export";
-      operationId: "getV2FinancialReportsExport";
-      variables: GetV2FinancialReportsExportVariables;
     }
   | {
       path: "/v2/disturbance-reports/export";
