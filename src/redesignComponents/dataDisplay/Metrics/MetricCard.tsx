@@ -37,7 +37,7 @@ const NoGoalMediumMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
         {title}
       </Text>
       <Tooltip content={tooltipContent} position="top">
-        <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+        <InformationRequiredIcon color="neutral.800" boxSize={3.5} />
       </Tooltip>
     </Flex>
     <Text textStyle="400-bold" color="neutral.900">
@@ -62,7 +62,7 @@ const NoGoalLargeMetricCardContent: FC<NoGoalMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+          <InformationRequiredIcon color="neutral.800" boxSize={3.5} />
         </Tooltip>
       </Flex>
       <Text textStyle="600-bold" color="neutral.900">
@@ -92,7 +92,7 @@ const ProgressBarMetricCardContent: FC<ProgressBarMetricCardContentProps> = ({
           {title}
         </Text>
         <Tooltip content={tooltipContent} position="top">
-          <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+          <InformationRequiredIcon color="neutral.800" boxSize={3.5} />
         </Tooltip>
       </Flex>
       <Flex gap={2} alignItems="center">
@@ -137,7 +137,7 @@ const DonutChartMetricCardContent: FC<DonutChartMetricCardContentProps> = ({
             {title}
           </Text>
           <Tooltip content={tooltipContent} position="top">
-            <InformationRequiredIcon color="neutral.800" boxSize="14px" />
+            <InformationRequiredIcon color="neutral.800" boxSize={3.5} />
           </Tooltip>
         </Flex>
         {frameworkKey === Framework.PPC && type === "jobsCreated" ? (
@@ -182,9 +182,9 @@ const MetricCard: FC<MetricCardProps> = props => {
     classNameTitle,
     frameworkKey
   } = props;
-  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "14px", color, variant);
-  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "24px", color, variant);
-  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "50px", color, variant);
+  const iconWithColor14 = getIconWithProgressColor(icon, progress, goal, "0.875rem", color, variant);
+  const iconWithColor24 = getIconWithProgressColor(icon, progress, goal, "1.5rem", color, variant);
+  const iconWithColor50 = getIconWithProgressColor(icon, progress, goal, "3.125rem", color, variant);
 
   let content: ReactNode;
 

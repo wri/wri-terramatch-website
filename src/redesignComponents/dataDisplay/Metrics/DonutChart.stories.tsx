@@ -16,8 +16,8 @@ const meta: Meta<typeof DonutChart> = {
       description: "Progress value between 0 and 100"
     },
     size: {
-      control: { type: "number", min: 40, max: 200, step: 10 },
-      description: "Size of the donut chart in pixels"
+      control: { type: "number", min: 2.5, max: 12.5, step: 0.5 },
+      description: "Size of the donut chart in rems"
     }
   }
 };
@@ -76,10 +76,10 @@ export const AllProgressLevels: Story = {
 export const DifferentSizes: Story = {
   render: () => (
     <Flex gap={6} alignItems="center" flexWrap="wrap">
-      <DonutChart progress={60} size={60} />
-      <DonutChart progress={60} size={80} />
-      <DonutChart progress={60} size={100} />
-      <DonutChart progress={60} size={120} />
+      <DonutChart progress={60} size={3.75} />
+      <DonutChart progress={60} size={5} />
+      <DonutChart progress={60} size={6.25} />
+      <DonutChart progress={60} size={7.5} />
     </Flex>
   )
 };

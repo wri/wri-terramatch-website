@@ -30,14 +30,14 @@ const MultiMetricCard: FC<MultiMetricCardProps> = props => {
           metric.icon,
           metric.progress,
           metric.goal,
-          "16px",
+          "1rem",
           metric.color,
           "donutChart"
         );
 
         return (
           <Flex key={metric.title} gap={3} alignItems="center">
-            <DonutChart progress={progressValue} color={metric.color} size={54}>
+            <DonutChart progress={progressValue} color={metric.color} size={3.375}>
               {iconWithColor}
             </DonutChart>
             <Flex direction="column" gap={1}>

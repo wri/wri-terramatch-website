@@ -7,7 +7,7 @@ import { DonutChartProps } from "./types";
 
 const DonutChart: FC<DonutChartProps> = ({
   progress,
-  size = 90,
+  size = 5.625,
   color,
   backgroundColor,
   className,
@@ -43,8 +43,8 @@ const DonutChart: FC<DonutChartProps> = ({
       display="inline-flex"
       alignItems="center"
       justifyContent="center"
-      width={`${size}px`}
-      height={`${size}px`}
+      width={`${size}rem`}
+      height={`${size}rem`}
       position="relative"
       color={progressColor}
       {...rest}
@@ -54,8 +54,8 @@ const DonutChart: FC<DonutChartProps> = ({
         top={"50%"}
         left={"50%"}
         transform={"translate(-50%, -50%)"}
-        width={`${size / 2}px`}
-        height={`${size / 2}px`}
+        width={`${size / 2}rem`}
+        height={`${size / 2}rem`}
         backgroundColor="white"
         rounded="full"
         display="flex"
@@ -65,11 +65,11 @@ const DonutChart: FC<DonutChartProps> = ({
         {children}
       </Box>
       {type === "jobsCreated" && progressValue > 0 ? (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <svg width={`${size}rem`} height={`${size}rem`} viewBox={`0 0 ${size} ${size}`}>
           <circle cx={center} cy={center} r={radius} fill="currentColor" />
         </svg>
       ) : (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <svg width={`${size}rem`} height={`${size}rem`} viewBox={`0 0 ${size} ${size}`}>
           {progressValue < 100 && <circle cx={center} cy={center} r={radius} fill={bgColor} />}
           {progressValue === 100 ? (
             <circle cx={center} cy={center} r={radius} fill="currentColor" />
