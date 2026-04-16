@@ -11,8 +11,7 @@ export const SPECIAL_ENTRY_TITLES = new Set([
   "Photos and videos",
   "Additional Documentation",
   "If you have any additional documentation on your site you would like to share, please add it below.",
-  "Additional Information",
-  "Tree Species - Additional Information"
+  "Additional Information"
 ]);
 
 type SpecialEntryRendererProps = {
