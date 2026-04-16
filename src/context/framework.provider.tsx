@@ -26,11 +26,6 @@ export const TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS: readonly Framework[] = [
   Framework.EPA_GHANA_PILOT
 ];
 
-export const showsTerrafundAfr100BannerLogo = (frameworkKey: string | null | undefined): boolean => {
-  const framework = toFramework(frameworkKey);
-  return TERRAFUND_AFR100_BANNER_LOGO_FRAMEWORKS.includes(framework);
-};
-
 export const ALL_FF = [Framework.FF, Framework.FF_1];
 
 export const toFramework = (frameworkKey?: string | null) =>

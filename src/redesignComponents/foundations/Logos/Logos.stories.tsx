@@ -1,6 +1,8 @@
 import { Box, Flex, Text, VStack } from "@chakra-ui/react";
 import type { Meta, StoryObj } from "@storybook/react";
 
+import { HaritBharatFund } from "./HaritBharatFund";
+import { PpcProgramBannerLogo } from "./PpcProgramBannerLogo";
 import { TerraFundAFR100 } from "./TerraFundAFR100";
 import { TMLogo } from "./TMLogo";
 
@@ -64,6 +66,54 @@ export const AllLogos: Story = {
         </Box>
         <Box flex="0 0 auto">
           <TerraFundAFR100 boxSize="80px" />
+        </Box>
+      </Flex>
+
+      <Flex
+        align="center"
+        justify="space-between"
+        gap={8}
+        flexWrap="wrap"
+        borderRadius="16px"
+        borderWidth="1px"
+        borderColor="neutral.300"
+        bg="neutral.100"
+        p={4}
+      >
+        <Box minW="120px">
+          <Text fontSize="400" color="neutral.900">
+            Harit Bharat Fund
+          </Text>
+          <Text fontSize="300" color="neutral.600">
+            HBF program logo (project banner)
+          </Text>
+        </Box>
+        <Box flex="0 0 auto">
+          <HaritBharatFund />
+        </Box>
+      </Flex>
+
+      <Flex
+        align="center"
+        justify="space-between"
+        gap={8}
+        flexWrap="wrap"
+        borderRadius="16px"
+        borderWidth="1px"
+        borderColor="neutral.300"
+        bg="neutral.100"
+        p={4}
+      >
+        <Box minW="120px">
+          <Text fontSize="400" color="neutral.900">
+            PPC (Priceless Planet + Mastercard)
+          </Text>
+          <Text fontSize="300" color="neutral.600">
+            White-background horizontal lockup — project banner
+          </Text>
+        </Box>
+        <Box flex="0 0 auto">
+          <PpcProgramBannerLogo />
         </Box>
       </Flex>
     </VStack>

@@ -12,7 +12,7 @@ import WizardFormProvider, {
   FormModel,
   OrgFormDetails,
   useApiFieldsProvider,
-  useV2OrgFormDetails
+  useOrgFormDetails
 } from "@/context/wizardForm.provider";
 import { SubmissionDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { formDefaultValues } from "@/helpers/customForms";
@@ -68,7 +68,7 @@ const ApplicationOverview: FC<ApplicationOverviewProps> = props => {
     [submissions]
   );
   const titles = useFormTitles(formUuids);
-  const [orgDetailsLoaded, orgDetails] = useV2OrgFormDetails(organisationUuid);
+  const [orgDetailsLoaded, orgDetails] = useOrgFormDetails(organisationUuid);
 
   return titles == null || !orgDetailsLoaded ? null : (
     <section>

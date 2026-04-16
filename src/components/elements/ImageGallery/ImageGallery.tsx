@@ -330,7 +330,7 @@ const ImageGallery = ({
   return (
     <>
       <div {...rest} className={classNames("space-y-8", className)}>
-        <div className="flex justify-between gap-4">
+        <div className="flex justify-between gap-4 mobile:!flex-col">
           <div className="flex gap-4">
             <FilterSearchBox
               value={searchText}
@@ -395,7 +395,7 @@ const ImageGallery = ({
         ) : (
           <>
             {data.length > 0 ? (
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-4 mobile:!grid-cols-2">
                 {data.map(item => (
                   <ItemComponent
                     key={item.uuid}

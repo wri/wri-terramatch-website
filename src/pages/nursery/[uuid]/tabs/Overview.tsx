@@ -1,12 +1,17 @@
 import { Box, Flex, Link, Text } from "@chakra-ui/react";
 import { useT } from "@transifex/react";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
+import EntityStatusModal, { StatusProps } from "@/components/extensive/EntityStatusModal";
+import { IconNames } from "@/components/extensive/Icon/Icon";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { usePlantTotalCount } from "@/components/extensive/Tables/TreeSpeciesTable/hooks";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
+import { useModalContext } from "@/context/modal.provider";
 import { NurseryFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
 import EntitySetUpSection from "@/pages/project/[uuid]/tabs/EntitySetUpSection";
@@ -23,6 +28,7 @@ interface NurseryOverviewTabProps {
 const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
   const router = useRouter();
   const t = useT();
+  const { openModal } = useModalContext();
   const { handleEdit } = useGetEditEntityHandler({
     entityName: "nurseries",
     entityUUID: nursery.uuid,
@@ -35,9 +41,37 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
     collection: "nursery-seedling"
   });
 
+  const needMoreInformation =
+    nursery.updateRequestStatus === NEEDS_MORE_INFORMATION || nursery.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = nursery.updateRequestStatus === AWAITING_APPROVAL || nursery.status === AWAITING_APPROVAL;
+  const hasUpdateRequest = !["draft", "no-update", "approved"].includes(nursery.updateRequestStatus ?? "");
+
+  const statusProps: StatusProps | undefined = useMemo(() => {
+    if (!needMoreInformation) return undefined;
+    const titlePrefix = hasUpdateRequest ? "Change Request Status:" : "Status:";
+    return {
+      title: t(`${titlePrefix} More Info Requested`),
+      icon: IconNames.EXCLAMATION_CIRCLE_FILL,
+      className: "fill-tertiary"
+    };
+  }, [needMoreInformation, hasUpdateRequest, t]);
+
   const handleEditClick = useCallback(() => {
-    handleEdit();
-  }, [handleEdit]);
+    if (needMoreInformation && !awaitingApproval && statusProps != null) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps}
+          feedback={nursery.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="nurseries"
+          entityUuid={nursery.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, nursery.feedback, nursery.uuid, handleEdit, awaitingApproval]);
 
   const goToTab = (tab: string) => {
     router.push({ pathname: router.pathname, query: { ...router.query, tab: tab } }, undefined, {
@@ -113,8 +147,11 @@ const NurseryOverviewTab = ({ nursery }: NurseryOverviewTabProps) => {
             const tagState = mapStatusToTagStateEntity(
               nursery?.updateRequestStatus == "awaiting-approval" ? nursery?.updateRequestStatus : nursery?.status
             );
-
-            return nursery?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+            return nursery.updateRequestStatus === "awaiting-approval" ? (
+              <TagSubmission state="pending-approval" />
+            ) : nursery?.status != null ? (
+              <TagSubmission state={tagState?.type as TagSubmissionState} />
+            ) : null;
           })()}
           buttonProps={{
             variant: "primary",

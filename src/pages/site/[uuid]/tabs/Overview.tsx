@@ -4,13 +4,18 @@ import router from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import OverviewMapArea from "@/components/elements/Map-mapbox/components/OverviewMapArea";
+import { getStatusProps } from "@/components/extensive/EntityStatusBar";
+import EntityStatusModal from "@/components/extensive/EntityStatusModal";
+import { ModalId } from "@/components/extensive/Modal/ModalConst";
 import About from "@/components/extensive/PageElements/About/About";
 import MapPlaceholder from "@/components/extensive/PageElements/MapPlaceholder/MapPlaceholder";
 import PageContent from "@/components/extensive/PageElements/PageContent/PageContent";
 import PageItem from "@/components/extensive/PageElements/PageItem/PageItem";
 import { useAllSitePolygons } from "@/connections/SitePolygons";
 import { ABOUT_SITES_CONTENT } from "@/constants/AboutSites.constants";
+import { AWAITING_APPROVAL, NEEDS_MORE_INFORMATION } from "@/constants/statuses";
 import { useMapAreaContext } from "@/context/mapArea.provider";
+import { useModalContext } from "@/context/modal.provider";
 import { SitePolygonDataProvider } from "@/context/sitePolygon.provider";
 import { SiteFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useGetEditEntityHandler } from "@/hooks/entity/useGetEditEntityHandler";
@@ -31,6 +36,8 @@ interface SiteOverviewTabProps {
 const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
   const t = useT();
   const contextMapArea = useMapAreaContext();
+  const { openModal } = useModalContext();
+
   const { setSiteData, resetSiteMapInteractionState } = contextMapArea;
 
   useEffect(() => {
@@ -71,9 +78,27 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
     return ABOUT_SITES_CONTENT.find(content => content.frameworks.includes(site.frameworkKey!));
   }, [site.frameworkKey]);
 
+  const needMoreInformation =
+    site.updateRequestStatus === NEEDS_MORE_INFORMATION || site.status === NEEDS_MORE_INFORMATION;
+  const awaitingApproval = site.updateRequestStatus === AWAITING_APPROVAL || site.status === AWAITING_APPROVAL;
+  const statusProps = useMemo(() => getStatusProps(t, site, site.status!), [t, site]);
+
   const handleEditClick = useCallback(() => {
-    handleEdit();
-  }, [handleEdit]);
+    if (needMoreInformation && !awaitingApproval) {
+      openModal(
+        ModalId.STATUS,
+        <EntityStatusModal
+          statusProps={statusProps!}
+          feedback={site.feedback}
+          needMoreInformation={needMoreInformation}
+          entityName="sites"
+          entityUuid={site.uuid}
+        />
+      );
+    } else {
+      handleEdit();
+    }
+  }, [needMoreInformation, statusProps, openModal, site.feedback, site.uuid, handleEdit, awaitingApproval]);
 
   return (
     <SitePolygonDataProvider sitePolygonData={sitePolygonDataV3} reloadSiteData={reload}>
@@ -119,8 +144,11 @@ const SiteOverviewTab = ({ site }: SiteOverviewTabProps) => {
             title={t("Sites Set Up")}
             tag={(() => {
               const tagState = mapStatusToTagStateEntity(site?.status);
-
-              return site?.status != null ? <TagSubmission state={tagState?.type as TagSubmissionState} /> : null;
+              return site.updateRequestStatus === "awaiting-approval" ? (
+                <TagSubmission state="pending-approval" />
+              ) : site?.status != null ? (
+                <TagSubmission state={tagState?.type as TagSubmissionState} />
+              ) : null;
             })()}
             buttonProps={{
               variant: "primary",

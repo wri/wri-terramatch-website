@@ -34,6 +34,7 @@ import { DashboardImpactStoryFullDto } from "@/generated/v3/dashboardService/das
 import { useValueChanged } from "@/hooks/useValueChanged";
 import { HectaresUnderRestorationData } from "@/utils/dashboardUtils";
 import { parseImpactStoryContent } from "@/utils/impactStory";
+import Log from "@/utils/log";
 
 import ContentDashboardtWrapper from "./ContentDashboardWrapper";
 import SecDashboard from "./SecDashboard";
@@ -167,7 +168,7 @@ const ContentOverview = (props: ContentOverviewProps<RowData>) => {
 
   useEffect(() => {
     if (selectedStoryId && pendingStoryData && loadFailure) {
-      console.error("Error fetching story details:", loadFailure.message);
+      Log.error("Error fetching story details:", loadFailure.message);
       openModal(ModalId.MODAL_STORY, <ModalStory data={pendingStoryData} preview={false} title={t("IMPACT STORY")} />);
 
       setSelectedStoryId(undefined);

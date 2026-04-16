@@ -13,6 +13,7 @@ import {
 } from "@/components/elements/Inputs/FinancialTableInput/types";
 import { FormFieldFactory } from "@/components/extensive/WizardForm/types";
 import { getCurrencyOptions } from "@/constants/options/localCurrency";
+import { formatFinancialAmount, getLocaleForIsoCurrency } from "@/utils/financialReport";
 import { addValidationWith } from "@/utils/yup";
 
 const getTableHtml = (body: string, t: typeof useT) => {
@@ -40,8 +41,11 @@ export const FinancialIndicatorsField: FormFieldFactory = {
       if (!Array.isArray(value)) return true;
 
       const documentationEntries = value.filter(
-        (item: { collection?: string; year?: number | string; documentation?: unknown }) =>
-          item.collection === "description-documents"
+        (item: { uuid?: string; collection?: string }) =>
+          // Don't require documentation until the server has been notified about the entry and it has
+          // a valid UUID. It's not possible to upload documentation to an entry that doesn't have
+          // a UUID.
+          item.uuid != null && item.collection === "description-documents"
       );
 
       if (validation?.required === true && documentationEntries.length === 0) {
@@ -96,7 +100,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
     const years = field.years;
     const columnMaps: Record<string, string[]> = {
-      profitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
+      forProfitAnalysisData: PROFIT_ANALYSIS_COLUMNS,
       nonProfitAnalysisData: NON_PROFILE_ANALYSIS_COLUMNS,
       currentRatioData: CURRENT_RATIO_COLUMNS,
       documentationData: DOCUMENTATION_COLUMNS
@@ -113,7 +117,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
     const isCollectionPresent = (collections: string[]) => collections.some(col => selectedCollections.has(col));
 
     if (!isGroupPresent(profitCollections) || !isCollectionPresent(profitCollections)) {
-      delete columnMaps.profitAnalysisData;
+      delete columnMaps.forProfitAnalysisData;
     }
 
     if (!isGroupPresent(nonProfitCollections) || !isCollectionPresent(nonProfitCollections)) {
@@ -126,13 +130,13 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
     const formatted = formatFinancialData(values, years ?? undefined, currencyCode ?? "");
     const sections = [
-      { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "profitAnalysisData" },
+      { title: t("Profit Analysis (Revenue, Expenses, and Profit)"), key: "forProfitAnalysisData" },
       { title: t("Budget Analysis"), key: "nonProfitAnalysisData" },
       { title: t("Current Ratio"), key: "currentRatioData" },
       { title: t("Documentation"), key: "documentationData" }
     ];
 
-    const isEmptyValue = (val: any): boolean => {
+    const isEmptyValue = (val: unknown): boolean => {
       if (typeof val === "string") {
         const trimmed = val.trim();
         return trimmed === "" || trimmed === "-";
@@ -154,7 +158,7 @@ export const FinancialIndicatorsField: FormFieldFactory = {
 
         if (filteredRows.length === 0) return "";
 
-        const shouldShowAsTable = section.key === "profitAnalysisData" && columns?.includes("profit");
+        const shouldShowAsTable = section.key === "forProfitAnalysisData" && columns?.includes("profit");
 
         if (shouldShowAsTable) {
           const tableHtml = filteredRows
@@ -165,9 +169,13 @@ export const FinancialIndicatorsField: FormFieldFactory = {
                   displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else if (col === "revenue" || col === "expenses") {
                   const numericValue = typeof row[col] === "number" ? row[col] : Number(row[col]) ?? 0;
-                  displayValue = isEmptyValue(row[col]) ? "-" : numericValue.toLocaleString();
+                  displayValue = isEmptyValue(row[col])
+                    ? "-"
+                    : formatFinancialAmount(numericValue, currencyCode ?? undefined);
+                } else if (col === "profit") {
+                  displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 } else {
-                  displayValue = isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+                  displayValue = isEmptyValue(row[col]) ? "-" : String(row[col]);
                 }
 
                 return `<td class="py-2.5 border-b border-neutral-300 text-sm text-black font-medium text-center">${displayValue}</td>`;
@@ -204,7 +212,19 @@ export const FinancialIndicatorsField: FormFieldFactory = {
               if (col === "year") {
                 return isEmptyValue(row[col]) ? "-" : String(row[col]);
               }
-              return isEmptyValue(row[col]) ? "-" : row[col].toLocaleString();
+              if (col === "budget") {
+                const n = typeof row[col] === "number" ? row[col] : Number(row[col]);
+                return isEmptyValue(row[col]) || !Number.isFinite(n)
+                  ? "-"
+                  : formatFinancialAmount(n, currencyCode ?? undefined);
+              }
+              if (col === "currentRatio") {
+                const n = typeof row[col] === "number" ? row[col] : Number(row[col]);
+                return isEmptyValue(row[col]) || !Number.isFinite(n)
+                  ? "-"
+                  : n.toLocaleString(getLocaleForIsoCurrency(currencyCode ?? undefined));
+              }
+              return isEmptyValue(row[col]) ? "-" : String(row[col]);
             });
             return cellValues.join(", ");
           })

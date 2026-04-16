@@ -18,7 +18,7 @@ import Button from "@/redesignComponents/actions/Buttons/Button/Button";
 import { ProgressTag } from "@/redesignComponents/actions/Tags/ProgressTag/ProgressTag";
 import Accordion from "@/redesignComponents/containers/Accordion/Accordion";
 import AccordionHeader from "@/redesignComponents/containers/Accordion/AccordionHeader";
-import { ArrowForward, EditIcon } from "@/redesignComponents/foundations/Icons";
+import { ArrowForwardIcon, EditIcon } from "@/redesignComponents/foundations/Icons";
 
 import { getFieldsRequiringAttentionCount, plantsToNoCountRows } from "../utils/detailUtils";
 import { EntryDefaultValueRenderer } from "./EntryDefaultValueRenderer";
@@ -123,7 +123,7 @@ const SharedDetails: FC<SharedDetailsProps> = ({
                     {(entity.plantingStatus === "replacement-planting" ||
                       entity.plantingStatus === "no-restoration-expected") && (
                       <>
-                        <ArrowForward boxSize={4} color="neutral.900" />
+                        <ArrowForwardIcon boxSize={4} color="neutral.900" />
                         <Text textStyle="400" color="neutral.900">
                           {t(PLANTING_STATUS_MAP[entity.plantingStatus!])}
                         </Text>

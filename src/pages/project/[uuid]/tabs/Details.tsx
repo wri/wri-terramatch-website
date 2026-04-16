@@ -7,6 +7,7 @@ import { FormStepWithValidation } from "@/components/extensive/WizardForm/useFor
 import WizardFormProvider from "@/context/wizardForm.provider";
 import { ProjectFullDto } from "@/generated/v3/entityService/entityServiceSchemas";
 import { useEntityFormSetup } from "@/hooks/useEntityFormSetup";
+import { useProjectOrgFormData } from "@/hooks/useProjectOrgFormData";
 
 interface ProjectDetailsTabProps {
   project: ProjectFullDto;
@@ -38,16 +39,17 @@ const ProjectDetailTab: FC<ProjectDetailsTabProps> = ({ project }) => {
     "projects",
     project?.uuid
   );
+  const { orgDetails, isLoading: orgLoading } = useProjectOrgFormData("projects", project);
 
   const formValues = defaultValues ?? {};
 
-  if (isFormLoading || !providerLoaded) {
+  if (isFormLoading || !providerLoaded || orgLoading) {
     return null;
   }
 
   return (
     <PageContent className="gap-2 bg-theme-neutral-100 sm:px-32">
-      <WizardFormProvider fieldsProvider={fieldsProvider}>
+      <WizardFormProvider fieldsProvider={fieldsProvider} orgDetails={orgDetails}>
         {steps.map((step, index) => (
           <SharedDetailsStep key={step.id} step={step} formValues={formValues} project={project} stepIndex={index} />
         ))}

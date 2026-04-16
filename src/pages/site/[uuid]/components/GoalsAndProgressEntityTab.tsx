@@ -284,7 +284,7 @@ const GoalsAndProgressEntityTab = ({ entity, project = false }: GoalsAndProgress
             tooltipContent: project ? TOOLTIP_TREES_REGENERATING_PROJECT : TOOLTIP_TREES_REGENERATING_SITE
           }
         ]}
-        className="pr-[41px] lg:pr-[150px]"
+        className="pr-[41px] lg:pr-[150px] mobile:w-[400px] mobile:!pr-0"
       />
     </div>
   );

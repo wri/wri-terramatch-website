@@ -1,8 +1,7 @@
 import { useT } from "@transifex/react";
 import { Dictionary } from "lodash";
-import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 
 import { formatDateForEnGb } from "@/admin/apiProvider/utils/entryFormat";
 import WizardForm from "@/components/extensive/WizardForm";
@@ -10,6 +9,7 @@ import LoadingContainer from "@/components/generic/Loading/LoadingContainer";
 import { EntityFullDto, pruneEntityCache, ReportFullDto, useFullEntity } from "@/connections/Entity";
 import { FormEntity } from "@/connections/Form";
 import { CurrencyProvider } from "@/context/currency.provider";
+import { ToastType, useToastContext } from "@/context/toast.provider";
 import {
   DisturbanceReportFullDto,
   FinancialReportFullDto,
@@ -43,6 +43,8 @@ const isTaskReport = (formEntityName: FormEntity, entity: EntityFullDto): entity
 const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
   const t = useT();
   const router = useRouter();
+  const { openToast } = useToastContext();
+  const loadFailureHandled = useRef(false);
   const mode = router.query.mode as string | undefined; //edit, provide-feedback-entity, provide-feedback-change-request
 
   const {
@@ -144,10 +146,17 @@ const EditEntityForm = ({ entityName, entityUUID }: EditEntityFormProps) => {
     [fieldsProvider, updateEntityAnswers]
   );
 
-  if (loadFailure != null || formLoadFailure != null) {
+  const hasLoadFailure = loadFailure != null || formLoadFailure != null;
+
+  useEffect(() => {
+    if (!hasLoadFailure || loadFailureHandled.current) return;
+    loadFailureHandled.current = true;
     Log.error("Form data load failed", { loadFailure, formLoadFailure });
-    return notFound();
-  }
+    openToast(t("We couldn't load this form."), ToastType.ERROR);
+    router.replace("/home");
+  }, [formLoadFailure, hasLoadFailure, loadFailure, openToast, router, t]);
+
+  if (hasLoadFailure) return null;
 
   return (
     <LoadingContainer loading={isLoading || !providerLoaded || orgLoading || !entityLoaded}>
