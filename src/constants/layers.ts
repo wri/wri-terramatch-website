@@ -1,8 +1,18 @@
-import mapboxgl from "mapbox-gl";
-
 import type { LayerType } from "@/components/elements/Map-mapbox/Map.d";
 
 import { DELETED_POLYGONS } from "./statuses";
+
+type LayerStyleFragment<T extends mapboxgl.LayerSpecification> = Omit<T, "id" | "source" | "source-layer"> & {
+  metadata?: unknown;
+};
+
+type FillStyle = LayerStyleFragment<mapboxgl.FillLayerSpecification>;
+type LineStyle = LayerStyleFragment<mapboxgl.LineLayerSpecification>;
+type CircleStyle = LayerStyleFragment<mapboxgl.CircleLayerSpecification>;
+
+const fillStyle = (style: FillStyle) => style;
+const lineStyle = (style: LineStyle) => style;
+const circleStyle = (style: CircleStyle) => style;
 
 export const LAYERS_NAMES = {
   POLYGON_GEOMETRY: "polygon_geometry",
@@ -18,7 +28,7 @@ export const layersList: LayerType[] = [
     name: LAYERS_NAMES.POLYGON_GEOMETRY,
     geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
-      {
+      fillStyle({
         metadata: { polygonStatus: "draft" },
         type: "fill",
         layout: {},
@@ -27,8 +37,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: "draft" },
         type: "line",
         layout: {},
@@ -38,8 +48,8 @@ export const layersList: LayerType[] = [
           "line-dasharray": [2, 4]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification,
-      {
+      }),
+      fillStyle({
         metadata: { polygonStatus: "submitted" },
         type: "fill",
         layout: {},
@@ -48,8 +58,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: "submitted" },
         type: "line",
         layout: {},
@@ -59,8 +69,8 @@ export const layersList: LayerType[] = [
           "line-dasharray": [4, 2]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification,
-      {
+      }),
+      fillStyle({
         metadata: { polygonStatus: "approved" },
         type: "fill",
         layout: {},
@@ -69,8 +79,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: "approved" },
         type: "line",
         layout: {},
@@ -80,8 +90,8 @@ export const layersList: LayerType[] = [
           "line-dasharray": [1, 3]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification,
-      {
+      }),
+      fillStyle({
         metadata: { polygonStatus: "needs-more-information" },
         type: "fill",
         layout: {},
@@ -90,8 +100,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: "needs-more-information" },
         type: "line",
         layout: {},
@@ -101,8 +111,8 @@ export const layersList: LayerType[] = [
           "line-dasharray": [3, 1]
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification,
-      {
+      }),
+      fillStyle({
         metadata: { polygonStatus: "form-polygons" },
         type: "fill",
         layout: {},
@@ -111,8 +121,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.1
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: "form-polygons" },
         type: "line",
         layout: {},
@@ -121,14 +131,14 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification
+      })
     ]
   },
   {
     name: LAYERS_NAMES.DELETED_GEOMETRIES,
     geoserverLayerName: LAYERS_NAMES.POLYGON_GEOMETRY,
     styles: [
-      {
+      fillStyle({
         metadata: { polygonStatus: DELETED_POLYGONS },
         type: "fill",
         layout: {},
@@ -137,8 +147,8 @@ export const layersList: LayerType[] = [
           "fill-opacity": 0.5
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.FillLayerSpecification,
-      {
+      }),
+      lineStyle({
         metadata: { polygonStatus: DELETED_POLYGONS },
         type: "line",
         layout: {},
@@ -147,14 +157,14 @@ export const layersList: LayerType[] = [
           "line-width": 2
         },
         filter: ["==", ["get", "uuid"], ""]
-      } as unknown as mapboxgl.LineLayerSpecification
+      })
     ]
   },
   {
     name: LAYERS_NAMES.CENTROIDS,
     geoserverLayerName: "",
     styles: [
-      {
+      circleStyle({
         metadata: { type: "big-circle" },
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
@@ -163,8 +173,8 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 9
         }
-      } as unknown as mapboxgl.CircleLayerSpecification,
-      {
+      }),
+      circleStyle({
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
@@ -172,8 +182,8 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayerSpecification,
-      {
+      }),
+      circleStyle({
         type: "circle",
         filter: ["==", ["get", "type"], "non-profit-organization"],
         paint: {
@@ -181,8 +191,8 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayerSpecification,
-      {
+      }),
+      circleStyle({
         metadata: { type: "big-circle" },
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
@@ -191,8 +201,8 @@ export const layersList: LayerType[] = [
           "circle-opacity": 0.2,
           "circle-radius": 8
         }
-      } as unknown as mapboxgl.CircleLayerSpecification,
-      {
+      }),
+      circleStyle({
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
         paint: {
@@ -200,8 +210,8 @@ export const layersList: LayerType[] = [
           "circle-radius": 4.5,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayerSpecification,
-      {
+      }),
+      circleStyle({
         type: "circle",
         filter: ["==", ["get", "type"], "for-profit-organization"],
         paint: {
@@ -209,7 +219,7 @@ export const layersList: LayerType[] = [
           "circle-radius": 3,
           "circle-opacity": 1
         }
-      } as unknown as mapboxgl.CircleLayerSpecification
+      })
     ],
     hover: true
   },
@@ -217,20 +227,20 @@ export const layersList: LayerType[] = [
     name: LAYERS_NAMES.WORLD_COUNTRIES,
     geoserverLayerName: LAYERS_NAMES.WORLD_COUNTRIES,
     styles: [
-      {
+      lineStyle({
         type: "line",
         paint: {
           "line-color": "#ff5a5f",
           "line-width": ["case", ["boolean", ["feature-state", "hover"], false], 2, 0]
         }
-      } as unknown as mapboxgl.LineLayerSpecification,
-      {
+      }),
+      fillStyle({
         type: "fill",
         paint: {
           "fill-color": "#ff5a5f",
           "fill-opacity": ["case", ["boolean", ["feature-state", "hover"], false], 0.4, 0]
         }
-      } as unknown as mapboxgl.FillLayerSpecification
+      })
     ],
     hover: true
   },
